@@ -78,10 +78,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Direction.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Pod.cpp" />
+    <ClCompile Include="Tunnel.cpp" />
+    <ClCompile Include="Vine.cpp" />
     <ClCompile Include="Vinezors.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Direction.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Pod.h" />
+    <ClInclude Include="Tunnel.h" />
+    <ClInclude Include="Vine.h" />
     <ClInclude Include="Vinezors.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
