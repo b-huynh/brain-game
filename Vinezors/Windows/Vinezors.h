@@ -1,56 +1,23 @@
-#pragma once
-
 #include "PolycodeView.h"
 #include "Polycode3DPhysics.h"
 #include "Polycode.h"
 
 using namespace Polycode;
 
-#include <vector>
 #include <cmath>
 #include <sstream>
+#include "Player.h"
+#include "Tunnel.h"
 
 using namespace std;
 
-#define TUNNEL_WIDTH 5.0
-#define TUNNEL_DEPTH 10.0
-#define LIGHT_INTENSITY 5.0
+static const double TUNNEL_WIDTH = 5.0;
+static const double TUNNEL_DEPTH = 5.0;
+static const double LIGHT_INTENSITY = 5.0;
+static const double VINE_LENGTH = TUNNEL_WIDTH / 4;
+static const double VINE_RADIUS = 0.5;
 
-class TunnelSlice
-{
-public:
-	TunnelSlice();
-	TunnelSlice(CollisionScene *scene, Vector3 center, Number width, Number depth, Number intensity);
-	
-	void addToCollisionScene(CollisionScene *scene) const;
-
-private:
-	ScenePrimitive *topLeftWall;
-	ScenePrimitive *topWall;
-	ScenePrimitive *topRightWall;
-	ScenePrimitive *rightWall;
-	ScenePrimitive *bottomRightWall;
-	ScenePrimitive *bottomWall;
-	ScenePrimitive *bottomLeftWall;
-	ScenePrimitive *leftWall;
-	
-	ScenePrimitive *topLeftWallBorder;
-	ScenePrimitive *topWallBorder;
-	ScenePrimitive *topRightWallBorder;
-	ScenePrimitive *rightWallBorder;
-	ScenePrimitive *bottomRightWallBorder;
-	ScenePrimitive *bottomWallBorder;
-	ScenePrimitive *bottomLeftWallBorder;
-	ScenePrimitive *leftWallBorder;
-
-	SceneLight *light;
-};
-
-class Tunnel
-{
-};
-
-class Vinezors {
+class Vinezors : public EventHandler {
 public:
     Vinezors(PolycodeView *view);
     ~Vinezors();
@@ -59,13 +26,17 @@ public:
     bool Update();
     
 private:
-
     Core *core;
 
 	Screen *screen;
+
+	ScreenLabel *label;
+
 	CollisionScene *scene;
 	
 	Vector3 origin;
-	Vector3 camPos;
-	vector<TunnelSlice> tunnels;
+
+	Player *player;
+
+	Tunnel *tunnel;
 };

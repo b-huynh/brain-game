@@ -7,7 +7,7 @@ using namespace Polycode;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	PolycodeView *view = new PolycodeView(hInstance, nCmdShow, L"Polycode Formation");
+	PolycodeView *view = new PolycodeView(hInstance, nCmdShow, L"Polycode Vinezors");
 	Vinezors *app = new Vinezors(view);
 
 	MSG Msg;
