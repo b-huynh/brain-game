@@ -79,10 +79,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Poppy.cpp" />
     <ClCompile Include="Popzors.cpp" />
+    <ClCompile Include="Pot.cpp" />
+    <ClCompile Include="Selectable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Poppy.h" />
     <ClInclude Include="Popzors.h" />
+    <ClInclude Include="Pot.h" />
+    <ClInclude Include="Selectable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
