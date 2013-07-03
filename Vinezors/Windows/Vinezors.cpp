@@ -1,112 +1,122 @@
 #include "Vinezors.h"
 
-TunnelSlice::TunnelSlice()
-	: topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), 
-	topLeftWallBorder(NULL), topWallBorder(NULL), topRightWallBorder(NULL), rightWallBorder(NULL), bottomRightWallBorder(NULL), bottomWallBorder(NULL), bottomLeftWallBorder(NULL), leftWallBorder(NULL),
-	light(NULL)
-{}
-
-TunnelSlice::TunnelSlice(CollisionScene *scene, Vector3 center, Number width, Number depth, Number intensity)
-{
-	Number wallLength = width / (2 * cos(PI / 4) + 1);
-
-	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-	topLeftWall->setRoll(225);
-	topLeftWall->setMaterialByName("WallMaterial");
-	
-	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topWall->setPosition(center.x, center.y + width / 2, center.z);
-	topWall->setRoll(180);
-	topWall->setMaterialByName("WallMaterial");
-	
-	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topRightWall->setPosition(center.x + (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-	topRightWall->setRoll(135);
-	topRightWall->setMaterialByName("WallMaterial");
-
-	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	rightWall->setPosition(center.x + width / 2, center.y, center.z);
-	rightWall->setRoll(90);
-	rightWall->setMaterialByName("WallMaterial");
-	
-	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomRightWall->setPosition(center.x + (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-	bottomRightWall->setRoll(45);
-	bottomRightWall->setMaterialByName("WallMaterial");
-
-	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomWall->setPosition(center.x, center.y - width / 2, center.z);
-	bottomWall->setRoll(0);
-	bottomWall->setMaterialByName("WallMaterial");
-	
-	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-	bottomLeftWall->setRoll(-45);
-	bottomLeftWall->setMaterialByName("WallMaterial");
-
-	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	leftWall->setPosition(center.x - width / 2, center.y, center.z);
-	leftWall->setRoll(-90);
-	leftWall->setMaterialByName("WallMaterial");
-	
-	light = new SceneLight(SceneLight::AREA_LIGHT, scene, intensity);
-	light->setPosition(center);
-
-	addToCollisionScene(scene);
-}
-
-void TunnelSlice::addToCollisionScene(CollisionScene *scene) const
-{
-	scene->addCollisionChild(topLeftWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(topWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(topRightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(rightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomRightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomLeftWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(leftWall, CollisionSceneEntity::SHAPE_PLANE);
-
-	scene->addLight(light);
-}
-
 Vinezors::Vinezors(PolycodeView *view)
 {
-	core = new Win32Core(view, 640,480,false, false, 0, 0,60);	  
+	core = new Win32Core(view, 640, 480, false, false, 0, 0, 60);	  
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
 	
 	screen = new Screen();
+	label = new ScreenLabel("Hello!", 14);
+	screen->addEntity(label);
+
 	scene = new CollisionScene();
 	origin = Vector3(0, 0, 0);
-	
-	tunnels.push_back(TunnelSlice(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH, LIGHT_INTENSITY));
-	tunnels.push_back(TunnelSlice(scene, origin + Vector3(0, 0, -TUNNEL_DEPTH), TUNNEL_WIDTH, TUNNEL_DEPTH, LIGHT_INTENSITY));
-	tunnels.push_back(TunnelSlice(scene, origin + Vector3(0, 0, -2 * TUNNEL_DEPTH), TUNNEL_WIDTH, TUNNEL_DEPTH, LIGHT_INTENSITY));
 
-	camPos = Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2);
-	scene->getDefaultCamera()->setPosition(camPos);
+	player = new Player("The Player", Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2));
+	player->addVine(new Vine(scene, player->getCamPos() + Vector3(0, 0, -TUNNEL_WIDTH), VINE_LENGTH, VINE_RADIUS));
+
+	tunnel = new Tunnel(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH);
+	for (int i = 0; i < 50; ++i)	
+		tunnel->addSegment();
+
+	scene->getDefaultCamera()->setPosition(player->getCamPos());
 	scene->getDefaultCamera()->lookAt(origin);
+
+	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYDOWN);
+	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYUP);
+	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEMOVE);
+	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEDOWN);
+	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEUP);
 }
 
 Vinezors::~Vinezors() 
-{   
+{
+	delete player; player = NULL;
+	delete tunnel; tunnel = NULL;
+}
+
+void Vinezors::handleEvent(Event *e)
+{
+	if(e->getDispatcher() == core->getInput()) 
+	{
+		InputEvent *inputEvent = (InputEvent*)e;
+		
+		switch(e->getEventCode()) 
+		{
+			case InputEvent::EVENT_MOUSEMOVE:
+				if (player->getMouseLeft())
+				{
+					Vector2 dmove = inputEvent->getMousePosition() - player->getMousePos();	
+					scene->getDefaultCamera()->setYaw(scene->getDefaultCamera()->getYaw() - dmove.x);
+					scene->getDefaultCamera()->setPitch(scene->getDefaultCamera()->getPitch() - dmove.y);
+
+					player->setMousePos(inputEvent->getMousePosition());
+				}
+				break;
+			case InputEvent::EVENT_MOUSEDOWN:
+				if (inputEvent->getMouseButton() == 0)
+				{
+					player->setMouseLeft(true);
+					player->setMousePos(inputEvent->getMousePosition());
+				}
+				break;			
+			case InputEvent::EVENT_MOUSEUP:
+				if (inputEvent->getMouseButton() == 0)
+				{
+					player->setMouseLeft(false);
+					player->setMousePos(inputEvent->getMousePosition());
+				}
+				break;		
+			case InputEvent::EVENT_KEYDOWN:
+				switch (inputEvent->keyCode()) 
+				{
+					case KEY_UP:
+						player->setKeyUp(true);
+						break;
+					case KEY_DOWN:
+						player->setKeyDown(true);			
+						break;
+					case KEY_LEFT:
+						player->setKeyLeft(true);
+						player->setDir(leftOf(player->getDir()));
+						break;
+					case KEY_RIGHT:
+						player->setKeyRight(true);			
+						player->setDir(rightOf(player->getDir()));
+						break;		
+				}
+				break;
+			case InputEvent::EVENT_KEYUP:
+				switch (inputEvent->key) 
+				{
+					case KEY_UP:
+						player->setKeyUp(false);
+						break;
+					case KEY_DOWN:
+						player->setKeyDown(false);			
+						break;					
+					case KEY_LEFT:
+						player->setKeyLeft(false);
+						break;
+					case KEY_RIGHT:
+						player->setKeyRight(false);			
+						break;				
+				}
+				break;			
+		}
+		
+	}
 }
 
 bool Vinezors::Update() 
 {
 	Number elapsed = core->getElapsed();
 
-	/*
-	if (scene->getNumEntities() > 1) {
-	std::stringstream ss;
-	ss << scene->getEntity(1)->getPosition().x << " " 
-	   << scene->getEntity(1)->getPosition().y << " "
-	   << scene->getEntity(1)->getPosition().z << " "
-	   << scene->getEntity(1)->getPitch();
-	label->setText(ss.str());
-	}
-	*/
+	player->update(elapsed);
+
+	scene->getDefaultCamera()->setPosition(player->getCamPos());
+
 	return core->Update();
 }
