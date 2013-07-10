@@ -2,71 +2,86 @@
 
 #include <cstdlib>
 
+const Number infinityDepth = 1024;
+
 TunnelSlice::TunnelSlice()
-	: center(), width(0), depth(0),
+	: center(), width(0), depth(0), type(NORMAL_BLANK),
 	topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), 
 	pods()
 {}
 
-TunnelSlice::TunnelSlice(CollisionScene *scene, Vector3 center, Number width, Number depth)
-	: center(center), width(width), depth(depth),
+TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Number width, Number depth)
+	: center(center), width(width), depth(depth), type(type),
 	topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), 
 	pods()
 {
+	string filePathWallTexture;
+	if (type == NORMAL_WITH_PODS)
+		filePathWallTexture = "resources/yellow_solid_circle.png";
+	else if (type == NORMAL_BLANK)
+		filePathWallTexture = "resources/yellow_solid.png";
+	else if (type == NORMAL_ELONGATED)
+		filePathWallTexture = "resources/yellow_solid_ellipse.png";
+
 	Number wallLength = width / (2 * cos(PI / 4) + 1);
 
 	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
 	topLeftWall->setRoll(225);
-	//topLeftWall->setMaterialByName("WallMaterial");
-	topLeftWall->loadTexture("resources/yellow_solid.png");
+	topLeftWall->loadTexture(filePathWallTexture);
 	
 	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topWall->setPosition(center.x, center.y + width / 2, center.z);
 	topWall->setRoll(180);
-	//topWall->setMaterialByName("WallMaterial");
-	topWall->loadTexture("resources/yellow_solid.png");
+	topWall->loadTexture(filePathWallTexture);
 	
 	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topRightWall->setPosition(center.x + (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
 	topRightWall->setRoll(135);
-	//topRightWall->setMaterialByName("WallMaterial");
-	topRightWall->loadTexture("resources/yellow_solid.png");
+	topRightWall->loadTexture(filePathWallTexture);
 
 	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	rightWall->setPosition(center.x + width / 2, center.y, center.z);
 	rightWall->setRoll(90);
-	//rightWall->setMaterialByName("WallMaterial");
-	rightWall->loadTexture("resources/yellow_solid.png");
+	rightWall->loadTexture(filePathWallTexture);
 
 	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomRightWall->setPosition(center.x + (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
 	bottomRightWall->setRoll(45);
-	//bottomRightWall->setMaterialByName("WallMaterial");
-	bottomRightWall->loadTexture("resources/yellow_solid.png");
+	bottomRightWall->loadTexture(filePathWallTexture);
 
 	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomWall->setPosition(center.x, center.y - width / 2, center.z);
 	bottomWall->setRoll(0);
-	//bottomWall->setMaterialByName("WallMaterial");
-	bottomWall->loadTexture("resources/yellow_solid.png");
+	bottomWall->loadTexture(filePathWallTexture);
 	
 	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
 	bottomLeftWall->setRoll(-45);
-	//bottomLeftWall->setMaterialByName("WallMaterial");
-	bottomLeftWall->loadTexture("resources/yellow_solid.png");
+	bottomLeftWall->loadTexture(filePathWallTexture);
 
 	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	leftWall->setPosition(center.x - width / 2, center.y, center.z);
 	leftWall->setRoll(-90);
-	//leftWall->setMaterialByName("WallMaterial");
-	leftWall->loadTexture("resources/yellow_solid.png");
-	
-	//light = new SceneLight(SceneLight::AREA_LIGHT, scene, intensity);
-	//light->setPosition(center);
+	leftWall->loadTexture(filePathWallTexture);
 
 	addToCollisionScene(scene);
+}
+
+Vector3 TunnelSlice::getCenter() const
+{
+	return center;
+}
+
+vector<Pod *> TunnelSlice::findCollisions(CollisionScene *scene, SceneEntity *ent) const
+{
+	vector<Pod *> ret;
+	for (int i = 0; i < pods.size(); ++i)
+	{
+		if (scene->testCollision(ent,  pods[i]->getHead()).collided)
+			ret.push_back(pods[i]);
+	}
+	return ret;
 }
 
 void TunnelSlice::move(Vector3 delta)
@@ -85,10 +100,29 @@ void TunnelSlice::move(Vector3 delta)
 	leftWall->Translate(delta);
 
 	for (int i = 0; i < pods.size(); ++i)
-		pods[i].move(delta);
+		pods[i]->move(delta);
 }
 
-void TunnelSlice::addPod(CollisionScene *scene, Direction loc)
+void TunnelSlice::changeWallTexture()
+{
+	string filePathWallTexture;
+	if (type == NORMAL_WITH_PODS)
+		filePathWallTexture = "resources/red_solid_circle.png";
+	else if (type == NORMAL_BLANK)
+		filePathWallTexture = "resources/red_solid.png";
+	else if (type == NORMAL_ELONGATED)
+		filePathWallTexture = "resources/red_solid_ellipse.png";
+	topLeftWall->loadTexture(filePathWallTexture);
+	topWall->loadTexture(filePathWallTexture);
+	topRightWall->loadTexture(filePathWallTexture);
+	rightWall->loadTexture(filePathWallTexture);
+	bottomRightWall->loadTexture(filePathWallTexture);
+	bottomWall->loadTexture(filePathWallTexture);
+	bottomLeftWall->loadTexture(filePathWallTexture);
+	leftWall->loadTexture(filePathWallTexture);
+}
+
+void TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)
 {
 	Number wallLength = width / (2 * cos(PI / 4) + 1);;
 	const Number STEM_RADIUS = width / 100;
@@ -136,7 +170,7 @@ void TunnelSlice::addPod(CollisionScene *scene, Direction loc)
 		return;
 	}
 
-	pods.push_back(Pod(scene, base, head, STEM_RADIUS, HEAD_RADIUS));
+	pods.push_back(new Pod(scene, type, base, head, STEM_RADIUS, HEAD_RADIUS));
 }
 
 void TunnelSlice::addToCollisionScene(CollisionScene *scene)
@@ -149,8 +183,6 @@ void TunnelSlice::addToCollisionScene(CollisionScene *scene)
 	scene->addCollisionChild(bottomWall, CollisionSceneEntity::SHAPE_PLANE);
 	scene->addCollisionChild(bottomLeftWall, CollisionSceneEntity::SHAPE_PLANE);
 	scene->addCollisionChild(leftWall, CollisionSceneEntity::SHAPE_PLANE);
-
-	//scene->addLight(light);
 }
 
 void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
@@ -163,13 +195,9 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	scene->removeEntity(bottomWall);
 	scene->removeEntity(bottomLeftWall);
 	scene->removeEntity(leftWall);
-
-	//scene->removeLight(light);
 	
-	//delete light; light = NULL;
-
 	for (int i = 0; i < pods.size(); ++i)
-		pods[i].removeFromCollisionScene(scene);
+		pods[i]->removeFromCollisionScene(scene);
 	delete topLeftWall; topLeftWall = NULL;
 	delete topWall; topWall = NULL;
 	delete topRightWall; topRightWall = NULL;
@@ -182,24 +210,65 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	pods.clear();
 }
 
-const Number infinityDepth = 1024;
-
 Tunnel::Tunnel()
-	: scene(NULL), start(), end(), segments(), segmentWidth(0.0), segmentDepth(0.0)
+	: scene(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0)
 {
 }
 
 Tunnel::Tunnel(CollisionScene *scene, Vector3 start, Number segmentWidth, Number segmentDepth)
-	: scene(scene), start(start), end(start), segments(), segmentWidth(segmentWidth), segmentDepth(segmentDepth)
+	: scene(scene), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth)
 {
-	segments.push_back(new TunnelSlice(scene, end + Vector3(0, 0, (segmentDepth - infinityDepth) / 2), segmentWidth, infinityDepth));
+	segments.push_back(new TunnelSlice(scene, NORMAL_WITH_PODS, end + Vector3(0, 0, (segmentDepth - infinityDepth) / 2), segmentWidth, infinityDepth));
+	current = segments.begin();
+}
+
+CollisionScene *Tunnel::getScene() const
+{
+	return scene;
+}
+
+Vector3 Tunnel::getStart() const
+{
+	return start;
+}
+
+Vector3 Tunnel::getEnd() const
+{
+	return end;
+}
+
+Vector3 Tunnel::getCenter() const
+{
+	return (start + end) / 2;
+}
+
+TunnelSlice *Tunnel::getCurrent() const
+{
+	if (current == segments.end())
+		return NULL;
+	return *current;
+}
+
+Number Tunnel::getSegmentWidth() const
+{
+	return segmentWidth;
+}
+
+Number Tunnel::getSegmentDepth() const
+{
+	return segmentDepth;
 }
 
 void Tunnel::addSegment()
 {
+	TunnelSlice *newSegment = new TunnelSlice(scene, NORMAL_WITH_PODS, end, segmentWidth, segmentDepth);
+	if (segments.size() < 0)
+	{
+		segments.push_back(newSegment);
+		current = segments.begin();
+		return;
+	}
 	TunnelSlice *backTunnel = segments.back();
-
-	TunnelSlice *newSegment = new TunnelSlice(scene, end, segmentWidth, segmentDepth);
 
 	vector<Direction> dirs(8);
 	dirs[0] = NORTHWEST;
@@ -210,17 +279,19 @@ void Tunnel::addSegment()
 	dirs[5] = SOUTH;
 	dirs[6] = SOUTHWEST;
 	dirs[7] = WEST;
-	int numPods = rand() % dirs.size();
+	int numPods = rand() % 1 + 1;
 
 	for (int i = 0; i < numPods; ++i)
 	{
 		int randDirIndex = rand() % dirs.size();
-		newSegment->addPod(scene, dirs[randDirIndex]);
+		int randPod = rand() % 5;
+		newSegment->addPod(scene, dirs[randDirIndex], (PodType)randPod);
 		dirs[randDirIndex] = dirs[dirs.size() - 1];
 		dirs.pop_back();
 	}
 	segments.back() = newSegment;
-	
+	if (segments.size() == 1)
+		newSegment->changeWallTexture();
 	end += Vector3(0, 0, -segmentDepth);
 	segments.push_back(backTunnel);
 	segments.back()->move(Vector3(0, 0, -segmentDepth));
@@ -233,14 +304,31 @@ void Tunnel::removeSegment()
 	start += Vector3(0, 0, -segmentDepth);
 }
 
-// Determines whether a new segment should be updated to look like the tunnel is infinitely long.
-// However, this is not used anymore due to inefficiency. Everything currently is pre-allocated
+// Moves a segment in front to the back of the list.
+// The infinite segment is maintained to be the last element.
+void Tunnel::renewSegment()
+{
+	TunnelSlice *backTunnel = segments.back();
+	segments.pop_back();
+	TunnelSlice *frontTunnel = segments.front();
+	frontTunnel->move(segments.back()->getCenter() - frontTunnel->getCenter() + Vector3(0, 0, -segmentDepth));
+	segments.pop_front();
+	segments.push_back(frontTunnel);
+	backTunnel->move(Vector3(0, 0, -segmentDepth));
+	segments.push_back(backTunnel);
+
+}
+
+// Determines whether the current segment should be updated depending on the position compared.
 void Tunnel::renewIfNecessary(Vector3 checkPos)
 {
-	if (checkPos.z < start.z - segmentDepth)
+	if (current == segments.end())
+		return;
+	if (checkPos.z < (*current)->getCenter().z - segmentDepth)
 	{
-		addSegment();
-		//removeSegment();
+		++current;
+		renewSegment();
+		(*current)->changeWallTexture();
 	}
 }
 
