@@ -1,11 +1,12 @@
+#pragma once
+
 #include "PolycodeView.h"
 #include "Polycode3DPhysics.h"
 #include "Polycode.h"
 
 using namespace Polycode;
 
-#include <cmath>
-#include <sstream>
+#include "Util.h"
 #include "Player.h"
 #include "Tunnel.h"
 
@@ -39,4 +40,8 @@ private:
 	Player *player;
 
 	Tunnel *tunnel;
+	
+	ScenePrimitive *fog1;
+	ScenePrimitive *fog2;
+	ScenePrimitive *fog3;
 };
