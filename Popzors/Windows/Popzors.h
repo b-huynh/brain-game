@@ -11,10 +11,10 @@
 
 using namespace Polycode;
 
-static const Color Cpot1 = Color(204,0,204,255);
-static const Color Cpot2 = Color(105,100,100,255);
-static const Color Cpot3 = Color(150,150,0,255);
-static const Color Cpot4 = Color(0,255,145,255);
+static const Color Cpot1 = Color(71,60,139,255);
+static const Color Cpot2 = Color(107,142,35,255);
+static const Color Cpot3 = Color(210,105,30,255);
+static const Color Cpot4 = Color(205,55,0,255);
 
 Color getRandomPotColor();
 
@@ -57,6 +57,8 @@ private:
 	bool signaled;
 	Number signalStart;
 	Number signalLength;
+
+	Number resultsLength;
 
 	int currentPoppyID;
 

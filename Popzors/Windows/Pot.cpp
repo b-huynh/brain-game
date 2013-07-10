@@ -3,7 +3,7 @@
 Pot::Pot(Vector3 pos)
 	:pos(pos)
 {
-	body = new ScenePrimitive(ScenePrimitive::TYPE_CYLINDER, 0.5, 1.0, 100.0);
+	body = new ScenePrimitive(ScenePrimitive::TYPE_UNCAPPED_CYLINDER, 0.3, 1.0, 100.0);
 }
 
 bool Pot::hasEntity(SceneEntity * entity)

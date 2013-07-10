@@ -4,6 +4,11 @@
 #include <cstdlib>
 #include <time.h>
 
+Color floatColor (int r, int g, int b, int a)
+{
+	return Color( (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0 );
+}
+
 int fibonacci(int k)
 {
 	if (k == 0) return 0;
@@ -24,12 +29,30 @@ Color getRandomPotColor()
 Popzors::Popzors(PolycodeView *view)
 	:EventHandler()
 {
-	core = new Win32Core(view, 640,480,false, false, 0, 0,60);	  
+	int width = 640;
+	int height = 480;
+
+	core = new Win32Core(view, width, height, false, false, 0, 0,60);	  
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
-
+	
+	//SCREEN
 	screen = new Screen();
 
+	ScreenShape * x1 = new ScreenShape(ScreenShape::SHAPE_RECT, 1000, 100);
+	ScreenShape * x2 = new ScreenShape(ScreenShape::SHAPE_RECT, 1000, 100);
+	x1->setColor(1.0, 0.0, 0.0, 0.25);
+	x2->setColor(1.0, 0.0, 0.0, 0.25);
+	x1->setPosition(width/2, height/2);
+	x2->setPosition(width/2, height/2);
+	x1->setRotation(45);
+	x2->setRotation(315);
+
+	ScreenShape * circle = new ScreenShape(ScreenShape::SHAPE_CIRCLE, height, height);
+	circle->setColor(0.0, 1.0, 0.0, 0.25);
+	circle->setPosition(width/2, height/2);
+
+	//SCENE
 	scene = new CollisionScene();
 	cameraPos = Vector3(0,7,7);
 	origin = Vector3(0,0,0);
@@ -41,17 +64,19 @@ Popzors::Popzors(PolycodeView *view)
 	signalStart = 3;
 	signalLength = 1;
 
+	resultsLength = 1;
+
 	currentPoppyID = 0;
 	selected = NULL;
 	
 	//Make Ground
 	ScenePrimitive * ground = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, 8, 8);
-	ground->setColor(1.0, 0.25, 0.0, 1.0);
+	ground->setColor(floatColor(255,231,186,128));
 	ground->setPosition(0,-0.5,0);
 	scene->addCollisionChild(ground, CollisionSceneEntity::SHAPE_PLANE);
 
 	//Make some poppies
-	for (int i = -2; i < 3; ++i) {
+	for (int i = -1; i < 2; ++i) {
 		Poppy dummy (Vector3(i,0,rand()%3-1), Color(0,255,255,255), getRandomPotColor(), signalLength);
 		dummy.addToCollisionScene(scene);
 		poppies.push_back(dummy);
@@ -169,6 +194,7 @@ bool Popzors::Update()
 		for (int i = 0; i < poppies.size(); ++i)
 			poppies[i].unblink();
 	}
+	
 
 	return core->updateAndRender();
 }
