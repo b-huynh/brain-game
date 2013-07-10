@@ -8,21 +8,36 @@ Vinezors::Vinezors(PolycodeView *view)
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
 	
 	screen = new Screen();
-	label = new ScreenLabel("Hello!", 14);
-	screen->addEntity(label);
 
 	scene = new CollisionScene();
 	origin = Vector3(0, 0, 0);
 
-	player = new Player("The Player", Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2));
-	player->addVine(new Vine(scene, player->getCamPos() + Vector3(0, 0, -TUNNEL_WIDTH), VINE_LENGTH, VINE_RADIUS));
+	player = new Player(scene, "The Player", Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2), Vector3(0, 0, -TUNNEL_DEPTH));
+	player->addVine(new Vine(scene, player->getCamPos() + player->getVineOffset(), VINE_LENGTH, VINE_RADIUS));
 
 	tunnel = new Tunnel(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH);
-	for (int i = 0; i < 50; ++i)	
+	for (int i = 0; i < 20; ++i)	
 		tunnel->addSegment();
+	
+	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
+	fog1->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+	fog1->setColor(0.5, 0.5, 0.5, 1.0);
+	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 4.0 * TUNNEL_DEPTH);
+	fog2->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+	fog2->setColor(0.8, 0.8, 0.8, 0.8);
+	fog3 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 5.0 * TUNNEL_DEPTH);
+	fog3->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+	fog3->setColor(1.0, 1.0, 1.0, 0.5);
+	scene->addChild(fog1);
+	scene->addChild(fog2);
+	scene->addChild(fog3);
 
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
 	scene->getDefaultCamera()->lookAt(origin);
+
+	label = new ScreenLabel(toStringInt(player->getScore()), 36);
+	label->setColor(0.0, 0.0, 0.0, 1.0);
+	screen->addChild(label);
 
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYDOWN);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYUP);
@@ -35,6 +50,9 @@ Vinezors::~Vinezors()
 {
 	delete player; player = NULL;
 	delete tunnel; tunnel = NULL;
+	delete fog1; fog2 = NULL;
+	delete fog2; fog2 = NULL;
+	delete fog3; fog3 = NULL;
 }
 
 void Vinezors::handleEvent(Event *e)
@@ -113,9 +131,14 @@ void Vinezors::handleEvent(Event *e)
 bool Vinezors::Update() 
 {
 	Number elapsed = core->getElapsed();
-
-	player->update(elapsed);
-
+	
+	player->update(elapsed, tunnel);
+	fog1->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
+	fog2->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
+	fog3->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
+	tunnel->renewIfNecessary(player->getCamPos() + player->getVineOffset());
+	player->checkCollisions(tunnel);
+	label->setText(toStringInt(player->getScore()));
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
 
 	return core->Update();
