@@ -32,7 +32,7 @@ Popzors::Popzors(PolycodeView *view)
 	int width = 640;
 	int height = 480;
 
-	core = new Win32Core(view, width, height, false, false, 0, 0,60);	  
+	core = new CocoaCore(view, width, height, false, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	

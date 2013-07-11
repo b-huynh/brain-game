@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PolycodeView.h"
+#import "PolycodeView.h"
 #include "Polycode3DPhysics.h"
 #include "Polycode.h"
 #include "Poppy.h"
