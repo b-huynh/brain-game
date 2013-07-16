@@ -17,6 +17,7 @@ private:
 	PodType type;
 	ScenePrimitive *stem;
 	ScenePrimitive *head;
+    bool pastFog;
 public:
 	Pod();
 	Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius);
@@ -32,4 +33,9 @@ public:
 	void addToCollisionScene(CollisionScene *scene);
 
 	void removeFromCollisionScene(CollisionScene * scene);
+    
+    PodType getPodType();
+    
+    bool getPastFog() {return pastFog;}
+    void setPastFog(bool past) {pastFog = past;}
 };

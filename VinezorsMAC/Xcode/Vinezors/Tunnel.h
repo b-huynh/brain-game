@@ -38,6 +38,7 @@ public:
 	TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Number width, Number depth);
 	
 	Vector3 getCenter() const;
+    vector<Pod *> getPods();
 	vector<Pod *> findCollisions(CollisionScene *scene, SceneEntity *ent) const;
 
 	void move(Vector3 delta);
@@ -47,6 +48,8 @@ public:
 	void addToCollisionScene(CollisionScene *scene);
 	void postAddToCollisionScene(CollisionScene *scene);
 	void removeFromCollisionScene(CollisionScene * scene);
+    
+    PodType getPodType();
 };
 
 // Stores the list of tunnel segments
@@ -73,11 +76,15 @@ public:
 	Number getSegmentWidth() const;
 	Number getSegmentDepth() const;
 
-	void addSegment();
+    void addSegment(PodType type, Direction loc);
+	void addSegment(PodType type);
 	void removeSegment();
 	void renewSegment();
 	
 	void renewIfNecessary(Vector3 checkPos);
+    
+    void constructTunnel(int size, int nback);
+    vector<Pod *> findPodCollisions(CollisionScene * scene, SceneEntity * entity);
 
 	~Tunnel();
 };

@@ -16,8 +16,7 @@ Vinezors::Vinezors(PolycodeView *view)
 	player->addVine(new Vine(scene, player->getCamPos() + player->getVineOffset(), VINE_LENGTH, VINE_RADIUS));
 
 	tunnel = new Tunnel(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH);
-	for (int i = 0; i < 20; ++i)	
-		tunnel->addSegment();
+    tunnel->constructTunnel(200, 1);
 	
 	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
 	fog1->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
@@ -38,6 +37,25 @@ Vinezors::Vinezors(PolycodeView *view)
 	label = new ScreenLabel(toStringInt(player->getScore()), 36);
 	label->setColor(0.0, 0.0, 0.0, 1.0);
 	screen->addChild(label);
+    
+//    label2 = new ScreenLabel("aghhh", 36);
+//    label2->setPosition(50,50,0);
+//    screen->addChild(label2);
+    
+    
+    //Sounds
+    speaker = new SceneEntity();
+    
+    string soundFiles [] = {"blip.wav", "gulp.wav", "pluck.wav", "womp.wav", "test.wav"};
+    
+    for (int i = 0; i < sizeof(soundFiles) / sizeof(soundFiles[0]); ++i) {
+        SceneSound * sound = new SceneSound("Resources/" + soundFiles[i], 20, 50);
+        speaker->addChild(sound);
+        podSounds.push_back(sound);
+    }
+    
+    SceneSoundListener * listener = new SceneSoundListener();
+    scene->addEntity(listener);
 
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYDOWN);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYUP);
@@ -128,6 +146,12 @@ void Vinezors::handleEvent(Event *e)
 	}
 }
 
+void Vinezors::playPodSound(Pod * pod)
+{
+    if (pod->getPodType() == POD_YELLOW) return;
+    podSounds[(int)pod->getPodType()]->getSound()->Play();
+}
+
 bool Vinezors::Update() 
 {
 	Number elapsed = core->getElapsed();
@@ -137,8 +161,15 @@ bool Vinezors::Update()
 	fog2->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
 	fog3->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
 	tunnel->renewIfNecessary(player->getCamPos() + player->getVineOffset());
+
+    int currentScore = player->getScore();
 	player->checkCollisions(tunnel);
-	label->setText(toStringInt(player->getScore()));
+    if (currentScore < player->getScore()) podSounds[(int)POD_YELLOW]->getSound()->Play();
+    vector<Pod *> pods = tunnel->findPodCollisions(scene, fog3);
+    for (int i = 0; i < pods.size(); ++i)
+        playPodSound(pods[i]);
+
+    label->setText(toStringInt(player->getScore()));
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
 
 	return core->updateAndRender();

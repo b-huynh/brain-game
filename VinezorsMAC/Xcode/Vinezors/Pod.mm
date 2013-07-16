@@ -9,7 +9,7 @@ Pod::Pod()
 }
 
 Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius)
-	: type(type), stem(NULL), head(NULL)
+    : type(type), stem(NULL), head(NULL), pastFog(false)
 {
 	Number stemLength = base.distance(tip);
 
@@ -86,4 +86,9 @@ void Pod::removeFromCollisionScene(CollisionScene * scene)
 	scene->removeEntity(head);
 	delete stem; stem = NULL;
 	delete head; head = NULL;
+}
+
+PodType Pod::getPodType()
+{
+    return type;
 }

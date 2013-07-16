@@ -1,6 +1,7 @@
 #include "Util.h"
 
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -52,6 +53,23 @@ Direction rightOf(Direction dir)
 	default:
 		return NO_DIRECTION;
 	}
+}
+
+Direction randDirection()
+{
+    vector<Direction> dirs(8);
+	dirs[0] = NORTHWEST;
+	dirs[1] = NORTH;
+	dirs[2] = NORTHEAST;
+	dirs[3] = EAST;
+	dirs[4] = SOUTHEAST;
+	dirs[5] = SOUTH;
+	dirs[6] = SOUTHWEST;
+	dirs[7] = WEST;
+    
+    int randDirIndex = rand() % dirs.size();
+    
+    return dirs[randDirIndex];
 }
 
 string toStringInt(int value)

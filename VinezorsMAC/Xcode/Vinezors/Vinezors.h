@@ -32,6 +32,7 @@ private:
 	Screen *screen;
 
 	ScreenLabel *label;
+    ScreenLabel *label2;
 
 	CollisionScene *scene;
 	
@@ -44,4 +45,9 @@ private:
 	ScenePrimitive *fog1;
 	ScenePrimitive *fog2;
 	ScenePrimitive *fog3;
+    
+    SceneEntity * speaker;
+    vector<SceneSound *> podSounds;
+    
+    void playPodSound(Pod *);
 };

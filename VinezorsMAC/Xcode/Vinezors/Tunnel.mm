@@ -1,6 +1,7 @@
 #include "Tunnel.h"
 
 #include <cstdlib>
+#include <iostream>
 
 const Number infinityDepth = 1024;
 
@@ -71,6 +72,11 @@ TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center,
 Vector3 TunnelSlice::getCenter() const
 {
 	return center;
+}
+
+vector<Pod *> TunnelSlice::getPods()
+{
+    return pods;
 }
 
 vector<Pod *> TunnelSlice::findCollisions(CollisionScene *scene, SceneEntity *ent) const
@@ -210,6 +216,15 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	pods.clear();
 }
 
+PodType TunnelSlice::getPodType()
+{
+    for (int i = 0; i < pods.size(); ++i) {
+        return pods[i]->getPodType();
+    }
+    return POD_UNKNOWN;
+}
+
+
 Tunnel::Tunnel()
 	: scene(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0)
 {
@@ -259,7 +274,7 @@ Number Tunnel::getSegmentDepth() const
 	return segmentDepth;
 }
 
-void Tunnel::addSegment()
+void Tunnel::addSegment(PodType type, Direction loc)
 {
 	TunnelSlice *newSegment = new TunnelSlice(scene, NORMAL_WITH_PODS, end, segmentWidth, segmentDepth);
 	if (segments.size() <= 0)
@@ -270,24 +285,15 @@ void Tunnel::addSegment()
 	}
 	TunnelSlice *backTunnel = segments.back();
 
-	vector<Direction> dirs(8);
-	dirs[0] = NORTHWEST;
-	dirs[1] = NORTH;
-	dirs[2] = NORTHEAST;
-	dirs[3] = EAST;
-	dirs[4] = SOUTHEAST;
-	dirs[5] = SOUTH;
-	dirs[6] = SOUTHWEST;
-	dirs[7] = WEST;
+
 	int numPods = rand() % 1 + 1;
 
 	for (int i = 0; i < numPods; ++i)
 	{
-		int randDirIndex = rand() % dirs.size();
 		int randPod = rand() % 5;
-		newSegment->addPod(scene, dirs[randDirIndex], (PodType)randPod);
-		dirs[randDirIndex] = dirs[dirs.size() - 1];
-		dirs.pop_back();
+        randPod = (int)type;
+        
+		newSegment->addPod(scene, loc, (PodType)randPod);
 	}
 	segments.back() = newSegment;
 	if (segments.size() == 1)
@@ -295,6 +301,11 @@ void Tunnel::addSegment()
 	end += Vector3(0, 0, -segmentDepth);
 	segments.push_back(backTunnel);
 	segments.back()->move(Vector3(0, 0, -segmentDepth));
+}
+
+void Tunnel::addSegment(PodType type)
+{
+    addSegment(type, randDirection());
 }
 
 void Tunnel::removeSegment()
@@ -328,8 +339,62 @@ void Tunnel::renewIfNecessary(Vector3 checkPos)
 	{
 		++current;
 		renewSegment();
-		(*current)->changeWallTexture();
+		//(*current)->changeWallTexture();
 	}
+}
+
+void Tunnel::constructTunnel(int size, int nback)
+{
+    if (size <= nback) return;
+    
+    vector<PodType> colors (size);
+    for (int i = 0; i < size; ++i) {
+        colors[i] = (PodType)(rand() % 5);
+        while (colors[i] == POD_YELLOW)
+            colors[i] = (PodType)(rand() % 5);
+    }
+    
+    for (int i = 0; i < size - nback - 1; ++i) {
+        if (colors[i] != POD_YELLOW && colors[i] == colors[i + nback])
+            colors[i + nback + 1] = POD_YELLOW;
+    }
+    
+    cout << "Unknown is:" << POD_UNKNOWN << endl;
+    cout << "Yellow is:" << POD_YELLOW << endl;
+    
+    Direction dir = randDirection();
+    for (int i = 0; i < size; ++i) {
+        cout << colors[i] << std::endl;
+        if (colors[i] == POD_YELLOW) {
+            addSegment(colors[i],dir);
+        } else {
+            dir = randDirection();
+            addSegment(colors[i], dir);
+        }
+    }
+}
+
+vector<Pod *> Tunnel::findPodCollisions(CollisionScene *scene, SceneEntity *entity)
+{
+    vector<Pod *> collisions;
+    list<TunnelSlice *>::iterator it = segments.begin();
+    for (it = current; it != segments.end(); ++it) {
+        
+        //Fog3 Size Hardcoded... FIX!
+        Number entDist = entity->getPosition().z + ((5.0 * 5.0)/2);
+        
+        Pod * pod = NULL;
+        if ( (*it)->getPods().size() > 0 )
+            pod = (*it)->getPods()[0];
+    
+        if (pod && entDist < pod->getHead()->getPosition().z && !pod->getPastFog()) {
+            pod->setPastFog(true);
+            collisions.push_back(pod);
+        }
+        
+        if (collisions.size() > 0) return collisions;
+    }
+    return collisions;
 }
 
 Tunnel::~Tunnel()

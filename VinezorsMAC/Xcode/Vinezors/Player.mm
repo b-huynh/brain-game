@@ -171,7 +171,7 @@ void Player::checkCollisions(Tunnel *tunnel)
 
 void Player::update(Number elapsed, Tunnel *tunnel)
 {
-	const double CAM_SPEED = 10.0;
+	const double CAM_SPEED = 14.0;
 
 	move(Vector3(0, 0, -CAM_SPEED * elapsed));
 	
