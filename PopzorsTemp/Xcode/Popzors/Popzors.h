@@ -1,22 +1,15 @@
 #pragma once
 
-#import "PolycodeView.h"
-#include "Polycode3DPhysics.h"
-#include "Polycode.h"
+#include "Pch.h"
+#include "Ground.h"
 #include "Poppy.h"
 #include "Pot.h"
+#include "PoppyPattern.h"
 
 #include <vector>
 #include <cstdlib>
 
 using namespace Polycode;
-
-static const Color Cpot1 = Color(71,60,139,255);
-static const Color Cpot2 = Color(107,142,35,255);
-static const Color Cpot3 = Color(210,105,30,255);
-static const Color Cpot4 = Color(205,55,0,255);
-
-Color getRandomPotColor();
 
 struct ClickedResult {
 		Poppy * poppy;
@@ -30,16 +23,20 @@ public:
     Popzors(PolycodeView *view);
     ~Popzors();
     
+    void handlePoppyCollisions(Number elapsed);
+    
 	void handleEvent(Event *e);
     bool Update();
-    
 private:
     Core *core;
 
 	//Screen
 	Screen *screen;
 	CollisionScene *scene;
-
+    
+    //Ground
+    Ground ground;
+    
 	//Camera
 	Vector3 cameraPos;
 	Vector3 origin;
@@ -52,16 +49,13 @@ private:
 	vector<Pot> pots;
 
 	//State variables
-	Number timeElapsed;
-
-	bool signaled;
-	Number signalStart;
 	Number signalLength;
+	Number timeElapsed;
 
 	Number resultsLength;
 
-	int currentPoppyID;
-
+    PoppyPattern pattern;
+    
 	//Utility Functions
 	ClickedResult getClicked(Vector3 origin, Vector3 dest);				
 };
