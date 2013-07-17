@@ -4,11 +4,6 @@
 #include <cstdlib>
 #include <time.h>
 
-Color floatColor (int r, int g, int b, int a)
-{
-	return Color( (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0 );
-}
-
 int fibonacci(int k)
 {
 	if (k == 0) return 0;
@@ -16,19 +11,11 @@ int fibonacci(int k)
 	return fibonacci(k-1) + fibonacci(k-2);
 }
 
-Color getRandomPotColor()
-{
-	int choice = rand() % 4 + 1;
-
-	if (choice == 1) return Cpot1;
-	if (choice == 2) return Cpot2;
-	if (choice == 3) return Cpot3;
-	if (choice == 4) return Cpot4;
-}
-
 Popzors::Popzors(PolycodeView *view)
 	:EventHandler()
 {
+	srand(time(0));
+    
 	int width = 640;
 	int height = 480;
 
@@ -60,40 +47,20 @@ Popzors::Popzors(PolycodeView *view)
 	//set state
 	timeElapsed = 0.0;
 
-	signaled = false;
-	signalStart = 3;
-	signalLength = 1;
-
 	resultsLength = 1;
-
-	currentPoppyID = 0;
+    
 	selected = NULL;
 	
 	//Make Ground
-	ScenePrimitive * ground = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, 8, 8);
-	ground->setColor(floatColor(255,231,186,128));
-	ground->setPosition(0,-0.5,0);
-	scene->addCollisionChild(ground, CollisionSceneEntity::SHAPE_PLANE);
-
-	//Make some poppies
-	for (int i = -1; i < 2; ++i) {
-		Poppy dummy (Vector3(i,0,rand()%3-1), Color(0,255,255,255), getRandomPotColor(), signalLength);
-		dummy.addToCollisionScene(scene);
-		poppies.push_back(dummy);
-	}
+    ground = Ground(Vector3(0, -0.5, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
+	ground.addToCollisionScene(scene);
 
 	//Make some pots
-	Pot pot1, pot2, pot3, pot4;
-	pot1.setPosition(2.5,0.5,2.5);
-	pot2.setPosition(2.5,0.5,-2.5);
-	pot3.setPosition(-2.5,0.5,2.5);
-	pot4.setPosition(-2.5,0.5,-2.5);
-
-	pot1.setColor(Cpot1);
-	pot2.setColor(Cpot2);
-	pot3.setColor(Cpot3);
-	pot4.setColor(Cpot4);
-
+	Pot pot1(Vector3(2.5, 0.0, 2.5), Cpot1, Cpot1, 1, Spot1);
+    Pot pot2(Vector3(2.5, 0.0, -2.5), Cpot2, Cpot2, 1, Spot2);
+    Pot pot3(Vector3(-2.5, 0.0, 2.5), Cpot3, Cpot3, 1, Spot3);
+    Pot pot4(Vector3(-2.5, 0.0, -2.5), Cpot4, Cpot4, 1, Spot4);
+    
 	pot1.addToCollisionScene(scene);
 	pot2.addToCollisionScene(scene);
 	pot3.addToCollisionScene(scene);
@@ -103,13 +70,28 @@ Popzors::Popzors(PolycodeView *view)
 	pots.push_back(pot2);
 	pots.push_back(pot3);
 	pots.push_back(pot4);
+    
+    for (int i = 0; i < pots.size(); ++i)
+        pots[i].setId(i);
 	
+    pattern = PoppyPattern();
+    pattern.setPoppyPattern(scene, ground, pots, poppies);
+    
 	scene->getDefaultCamera()->setPosition(cameraPos);
 	scene->getDefaultCamera()->lookAt(origin);
 
 	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEMOVE);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEDOWN);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEUP);
+}
+
+void Popzors::handlePoppyCollisions(Number elapsed)
+{
+    for (int i = 0; i < poppies.size(); ++i)
+        for (int j = i + 1; j < poppies.size(); ++j)
+        {
+            poppies[i].handleCollision(elapsed, scene, poppies[j]);
+        }
 }
 
 void Popzors::handleEvent(Event * e)
@@ -128,16 +110,23 @@ void Popzors::handleEvent(Event * e)
 					//deselect
 					if ( (selected != res.poppy) && (selected != NULL) )
 						Poppy * old = (Poppy*)selected;
-					res.poppy->setColor(255,255,0,255);
+					res.poppy->setColor(SELECT_COLOR);
 					selected = res.poppy;
 				}
 
 				if (res.pot) {
-					if (selected && selected != res.pot)
+                    res.pot->playSound();
+					if (selected && selected != res.pot && pattern.isReady())
 						if (selected->getType() == Selectable::TYPE_POPPY) {
 							Poppy * old = (Poppy*)selected;
 							Vector3 potpos = res.pot->getPosition();
-							old->setPosition(potpos.x,potpos.y,potpos.z);
+							old->setPosition(potpos.x + randRangeDouble(-0.5, 0.5), potpos.y,potpos.z + randRangeDouble(-0.5, 0.5));
+                            old->setSelectable(false);
+                            old->setPotIdRef(res.pot->getId());
+                            selected = NULL;
+                            
+                            // If pattern is done, reset and set a new pattern.
+                            pattern.updatePlayerChoice(ground, *old, *res.pot);
 						}
 				}
 			}
@@ -155,8 +144,11 @@ ClickedResult Popzors::getClicked(Vector3 origin, Vector3 dest)
 	res.poppy = NULL;
 	RayTestResult ray = scene->getFirstEntityInRay(origin, dest);
 	for (int i = 0; i < poppies.size(); ++i) {
-		if (poppies[i].hasEntity(ray.entity)) { 
-			res.poppy = &poppies[i];
+		if (poppies[i].hasEntity(ray.entity)) {
+            if (poppies[i].isSelectable()) // If the poppy is not in a pot
+                res.poppy = &poppies[i];
+            else
+                res.pot = &pots[poppies[i].getPotIdRef()]; // Otherwise, select the pot
 		}
 	}
 
@@ -173,28 +165,19 @@ Popzors::~Popzors()
 
 bool Popzors::Update() 
 {
-	srand((NULL));
-
 	Number elapsed = core->getElapsed();
-	timeElapsed += elapsed;
-
-	if (timeElapsed > signalStart && !signaled) signaled = true;
-	/*
-	if (signaled && currentPoppyID < poppies.size())
-		if (!poppies[currentPoppyID].blink(elapsed)) {
-			poppies[currentPoppyID].unblink();
-			currentPoppyID++;
-		}
-		*/
-	if (signaled && currentPoppyID < poppies.size()) {
-		if (!poppies[currentPoppyID].blink(elapsed)) 
-			currentPoppyID++;
-	}
-	else {
-		for (int i = 0; i < poppies.size(); ++i)
-			poppies[i].unblink();
-	}
-	
+    
+    ground.update(elapsed);
+    for (int i = 0; i < pots.size(); ++i)
+        pots[i].update(elapsed);
+    for (int i = 0; i < poppies.size(); ++i)
+        poppies[i].update(elapsed);
+    
+    handlePoppyCollisions(elapsed);
+    
+	pattern.update(elapsed, ground, pots, poppies);
+    if (pattern.isPlayerDone() && !ground.isBlinking())
+        pattern.setPoppyPattern(scene, ground, pots, poppies);
 
 	return core->updateAndRender();
 }

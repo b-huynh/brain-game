@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D6165DD17949E380065CF18 /* Blinkable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D6165DB17949E380065CF18 /* Blinkable.mm */; };
+		5DCF97F3178F5A3B00D3EF1C /* Pch.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DCF97F1178F5A3B00D3EF1C /* Pch.mm */; };
+		5DCF97F6178F846400D3EF1C /* PoppyPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */; };
+		5DE1542C1790C7F300A8BC5F /* Ground.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DE1542A1790C7F300A8BC5F /* Ground.mm */; };
 		6D2800BC13760D3E00BD8D0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800BB13760D3E00BD8D0D /* Cocoa.framework */; };
 		6D2800E113760D7400BD8D0D /* libPolyCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800E013760D7400BD8D0D /* libPolyCore.a */; };
 		6D2800F213760DD500BD8D0D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800F113760DD500BD8D0D /* OpenGL.framework */; };
@@ -37,6 +41,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D6165DB17949E380065CF18 /* Blinkable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Blinkable.mm; sourceTree = "<group>"; };
+		5D6165DC17949E380065CF18 /* Blinkable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Blinkable.h; sourceTree = "<group>"; };
+		5DCF97F1178F5A3B00D3EF1C /* Pch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pch.mm; sourceTree = "<group>"; };
+		5DCF97F2178F5A3B00D3EF1C /* Pch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pch.h; sourceTree = "<group>"; };
+		5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoppyPattern.mm; sourceTree = "<group>"; };
+		5DCF97F5178F846400D3EF1C /* PoppyPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoppyPattern.h; sourceTree = "<group>"; };
+		5DE1542A1790C7F300A8BC5F /* Ground.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ground.mm; sourceTree = "<group>"; };
+		5DE1542B1790C7F300A8BC5F /* Ground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ground.h; sourceTree = "<group>"; };
 		6D2800B713760D3E00BD8D0D /* Popzors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Popzors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D2800BB13760D3E00BD8D0D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6D2800BE13760D3E00BD8D0D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -69,14 +81,14 @@
 		B6515AEA178E1D2100908A06 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B6515AEC178E1D2100908A06 /* Popzors-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Popzors-Prefix.pch"; sourceTree = "<group>"; };
 		B6515AFC178E1D2100908A06 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		B6515B10178E21EB00908A06 /* Poppy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poppy.h; sourceTree = SOURCE_ROOT; };
-		B6515B11178E21EB00908A06 /* Poppy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Poppy.mm; sourceTree = SOURCE_ROOT; };
-		B6515B12178E21EB00908A06 /* Popzors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Popzors.h; sourceTree = SOURCE_ROOT; };
-		B6515B13178E21EC00908A06 /* Popzors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Popzors.mm; sourceTree = SOURCE_ROOT; };
-		B6515B14178E21EC00908A06 /* Pot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pot.h; sourceTree = SOURCE_ROOT; };
-		B6515B15178E21EC00908A06 /* Pot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pot.mm; sourceTree = SOURCE_ROOT; };
-		B6515B16178E21EC00908A06 /* Selectable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Selectable.h; sourceTree = SOURCE_ROOT; };
-		B6515B17178E21EC00908A06 /* Selectable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Selectable.mm; sourceTree = SOURCE_ROOT; };
+		B6515B10178E21EB00908A06 /* Poppy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poppy.h; path = Popzors/Poppy.h; sourceTree = SOURCE_ROOT; };
+		B6515B11178E21EB00908A06 /* Poppy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Poppy.mm; path = Popzors/Poppy.mm; sourceTree = SOURCE_ROOT; };
+		B6515B12178E21EB00908A06 /* Popzors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Popzors.h; path = Popzors/Popzors.h; sourceTree = SOURCE_ROOT; };
+		B6515B13178E21EC00908A06 /* Popzors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Popzors.mm; path = Popzors/Popzors.mm; sourceTree = SOURCE_ROOT; };
+		B6515B14178E21EC00908A06 /* Pot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pot.h; path = Popzors/Pot.h; sourceTree = SOURCE_ROOT; };
+		B6515B15178E21EC00908A06 /* Pot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pot.mm; path = Popzors/Pot.mm; sourceTree = SOURCE_ROOT; };
+		B6515B16178E21EC00908A06 /* Selectable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selectable.h; path = Popzors/Selectable.h; sourceTree = SOURCE_ROOT; };
+		B6515B17178E21EC00908A06 /* Selectable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Selectable.mm; path = Popzors/Selectable.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +175,11 @@
 		B6515AE4178E1D2100908A06 /* Popzors */ = {
 			isa = PBXGroup;
 			children = (
+				B6515AE5178E1D2100908A06 /* Supporting Files */,
+				5D6165DC17949E380065CF18 /* Blinkable.h */,
+				5D6165DB17949E380065CF18 /* Blinkable.mm */,
+				5DCF97F5178F846400D3EF1C /* PoppyPattern.h */,
+				5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */,
 				B64C5721178E29FB00C774FF /* PolycodeTemplateAppDelegate.h */,
 				B64C5722178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm */,
 				B6515B10178E21EB00908A06 /* Poppy.h */,
@@ -173,7 +190,10 @@
 				B6515B15178E21EC00908A06 /* Pot.mm */,
 				B6515B16178E21EC00908A06 /* Selectable.h */,
 				B6515B17178E21EC00908A06 /* Selectable.mm */,
-				B6515AE5178E1D2100908A06 /* Supporting Files */,
+				5DCF97F1178F5A3B00D3EF1C /* Pch.mm */,
+				5DCF97F2178F5A3B00D3EF1C /* Pch.h */,
+				5DE1542A1790C7F300A8BC5F /* Ground.mm */,
+				5DE1542B1790C7F300A8BC5F /* Ground.h */,
 			);
 			path = Popzors;
 			sourceTree = "<group>";
@@ -203,6 +223,7 @@
 				6D2800B313760D3E00BD8D0D /* Sources */,
 				6D2800B413760D3E00BD8D0D /* Frameworks */,
 				6D2800B513760D3E00BD8D0D /* Resources */,
+				5DDD466C1795D89000721D27 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -252,6 +273,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5DDD466C1795D89000721D27 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -R $PROJECT_DIR/resources \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6D2800B313760D3E00BD8D0D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -264,6 +301,10 @@
 				B6515B19178E21EC00908A06 /* Popzors.mm in Sources */,
 				B6515B1A178E21EC00908A06 /* Pot.mm in Sources */,
 				B6515B1B178E21EC00908A06 /* Selectable.mm in Sources */,
+				5DCF97F3178F5A3B00D3EF1C /* Pch.mm in Sources */,
+				5DCF97F6178F846400D3EF1C /* PoppyPattern.mm in Sources */,
+				5DE1542C1790C7F300A8BC5F /* Ground.mm in Sources */,
+				5D6165DD17949E380065CF18 /* Blinkable.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
