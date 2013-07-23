@@ -11,6 +11,9 @@
 		5DCF97F3178F5A3B00D3EF1C /* Pch.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DCF97F1178F5A3B00D3EF1C /* Pch.mm */; };
 		5DCF97F6178F846400D3EF1C /* PoppyPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */; };
 		5DE1542C1790C7F300A8BC5F /* Ground.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DE1542A1790C7F300A8BC5F /* Ground.mm */; };
+		5DE427381799ED1F00AF5C76 /* PotPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DE427361799ED1F00AF5C76 /* PotPattern.mm */; };
+		5DEF5B671798861400DCE2F1 /* Pattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DEF5B651798861400DCE2F1 /* Pattern.mm */; };
+		5DEF5B6A1798920F00DCE2F1 /* Stage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DEF5B681798920F00DCE2F1 /* Stage.mm */; };
 		6D2800BC13760D3E00BD8D0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800BB13760D3E00BD8D0D /* Cocoa.framework */; };
 		6D2800E113760D7400BD8D0D /* libPolyCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800E013760D7400BD8D0D /* libPolyCore.a */; };
 		6D2800F213760DD500BD8D0D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2800F113760DD500BD8D0D /* OpenGL.framework */; };
@@ -49,6 +52,12 @@
 		5DCF97F5178F846400D3EF1C /* PoppyPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoppyPattern.h; sourceTree = "<group>"; };
 		5DE1542A1790C7F300A8BC5F /* Ground.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ground.mm; sourceTree = "<group>"; };
 		5DE1542B1790C7F300A8BC5F /* Ground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ground.h; sourceTree = "<group>"; };
+		5DE427361799ED1F00AF5C76 /* PotPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PotPattern.mm; sourceTree = "<group>"; };
+		5DE427371799ED1F00AF5C76 /* PotPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PotPattern.h; sourceTree = "<group>"; };
+		5DEF5B651798861400DCE2F1 /* Pattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pattern.mm; sourceTree = "<group>"; };
+		5DEF5B661798861400DCE2F1 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
+		5DEF5B681798920F00DCE2F1 /* Stage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Stage.mm; sourceTree = "<group>"; };
+		5DEF5B691798920F00DCE2F1 /* Stage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stage.h; sourceTree = "<group>"; };
 		6D2800B713760D3E00BD8D0D /* Popzors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Popzors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D2800BB13760D3E00BD8D0D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6D2800BE13760D3E00BD8D0D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -119,6 +128,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5DBB91941798A4D600A8851A /* Pattern Modes */ = {
+			isa = PBXGroup;
+			children = (
+				5DCF97F5178F846400D3EF1C /* PoppyPattern.h */,
+				5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */,
+				5DEF5B661798861400DCE2F1 /* Pattern.h */,
+				5DEF5B651798861400DCE2F1 /* Pattern.mm */,
+				5DE427371799ED1F00AF5C76 /* PotPattern.h */,
+				5DE427361799ED1F00AF5C76 /* PotPattern.mm */,
+			);
+			name = "Pattern Modes";
+			sourceTree = "<group>";
+		};
+		5DBB91951798A52900A8851A /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				5DEF5B691798920F00DCE2F1 /* Stage.h */,
+				5DEF5B681798920F00DCE2F1 /* Stage.mm */,
+				B6515B14178E21EC00908A06 /* Pot.h */,
+				B6515B15178E21EC00908A06 /* Pot.mm */,
+				B6515B10178E21EB00908A06 /* Poppy.h */,
+				B6515B11178E21EB00908A06 /* Poppy.mm */,
+				5DE1542B1790C7F300A8BC5F /* Ground.h */,
+				5DE1542A1790C7F300A8BC5F /* Ground.mm */,
+				B6515B16178E21EC00908A06 /* Selectable.h */,
+				B6515B17178E21EC00908A06 /* Selectable.mm */,
+				5D6165DC17949E380065CF18 /* Blinkable.h */,
+				5D6165DB17949E380065CF18 /* Blinkable.mm */,
+			);
+			name = Entities;
+			sourceTree = "<group>";
+		};
 		6D2800AC13760D3E00BD8D0D = {
 			isa = PBXGroup;
 			children = (
@@ -176,24 +217,12 @@
 			isa = PBXGroup;
 			children = (
 				B6515AE5178E1D2100908A06 /* Supporting Files */,
-				5D6165DC17949E380065CF18 /* Blinkable.h */,
-				5D6165DB17949E380065CF18 /* Blinkable.mm */,
-				5DCF97F5178F846400D3EF1C /* PoppyPattern.h */,
-				5DCF97F4178F846400D3EF1C /* PoppyPattern.mm */,
-				B64C5721178E29FB00C774FF /* PolycodeTemplateAppDelegate.h */,
-				B64C5722178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm */,
-				B6515B10178E21EB00908A06 /* Poppy.h */,
-				B6515B11178E21EB00908A06 /* Poppy.mm */,
+				5DBB91951798A52900A8851A /* Entities */,
+				5DBB91941798A4D600A8851A /* Pattern Modes */,
 				B6515B12178E21EB00908A06 /* Popzors.h */,
 				B6515B13178E21EC00908A06 /* Popzors.mm */,
-				B6515B14178E21EC00908A06 /* Pot.h */,
-				B6515B15178E21EC00908A06 /* Pot.mm */,
-				B6515B16178E21EC00908A06 /* Selectable.h */,
-				B6515B17178E21EC00908A06 /* Selectable.mm */,
-				5DCF97F1178F5A3B00D3EF1C /* Pch.mm */,
 				5DCF97F2178F5A3B00D3EF1C /* Pch.h */,
-				5DE1542A1790C7F300A8BC5F /* Ground.mm */,
-				5DE1542B1790C7F300A8BC5F /* Ground.h */,
+				5DCF97F1178F5A3B00D3EF1C /* Pch.mm */,
 			);
 			path = Popzors;
 			sourceTree = "<group>";
@@ -201,6 +230,8 @@
 		B6515AE5178E1D2100908A06 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B64C5721178E29FB00C774FF /* PolycodeTemplateAppDelegate.h */,
+				B64C5722178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm */,
 				B64C5726178E348E00C774FF /* MainMenu.xib */,
 				6D2800F713760E7C00BD8D0D /* PolycodeView.h */,
 				6D2800F813760E7C00BD8D0D /* PolycodeView.mm */,
@@ -305,6 +336,9 @@
 				5DCF97F6178F846400D3EF1C /* PoppyPattern.mm in Sources */,
 				5DE1542C1790C7F300A8BC5F /* Ground.mm in Sources */,
 				5D6165DD17949E380065CF18 /* Blinkable.mm in Sources */,
+				5DEF5B671798861400DCE2F1 /* Pattern.mm in Sources */,
+				5DEF5B6A1798920F00DCE2F1 /* Stage.mm in Sources */,
+				5DE427381799ED1F00AF5C76 /* PotPattern.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

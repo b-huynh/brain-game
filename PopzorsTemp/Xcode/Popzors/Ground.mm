@@ -7,6 +7,11 @@ Ground::Ground(Vector3 pos, Color baseColor,
 	//Make Ground
 	body = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, 8, 8);
 	body->setPosition(pos);
+    this->setColor(baseColor);
+}
+
+Ground::~Ground()
+{
 }
 
 void Ground::setColor(int r, int g, int b, int a)
@@ -22,6 +27,12 @@ void Ground::setColor(Color color)
 void Ground::addToCollisionScene(CollisionScene * scene)
 {
     scene->addCollisionChild(body, CollisionSceneEntity::SHAPE_PLANE);
+}
+
+void Ground::removeFromCollisionScene(CollisionScene * scene)
+{
+    scene->removeEntity(body);
+    delete body;
 }
 
 void Ground::reset()

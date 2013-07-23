@@ -2,161 +2,218 @@
 
 #include <cstdlib>
 
-PoppyPattern::PoppyPattern()
-: signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), poppyOrderList(), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0), playerIsRight(true), playerLevel(1)
+PoppyPattern::PoppyPattern(Screen *screen, CollisionScene *scene)
+: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0), selected(NULL)
 {
+}
+
+void PoppyPattern::setup()
+{
+    stage.ground = new Ground(Vector3(0, -0.5, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
+	stage.ground->addToCollisionScene(stage.scene);
     
+	//Make some pots
+    const Number POT_RADIUS = 1.0;
+	Pot* pot1 = new Pot(Vector3(2.5, 0.0, 2.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
+    pot1->setId(0);
+    Pot* pot2 = new Pot(Vector3(2.5, 0.0, -2.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
+    pot2->setId(1);
+    Pot* pot3 = new Pot(Vector3(-2.5, 0.0, 2.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
+    pot3->setId(2);
+    Pot* pot4 = new Pot(Vector3(-2.5, 0.0, -2.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
+    pot4->setId(3);
+    
+	pot1->addToCollisionScene(stage.scene);
+	pot2->addToCollisionScene(stage.scene);
+	pot3->addToCollisionScene(stage.scene);
+	pot4->addToCollisionScene(stage.scene);
+	
+	stage.pots.push_back(pot1);
+	stage.pots.push_back(pot2);
+	stage.pots.push_back(pot3);
+	stage.pots.push_back(pot4);
+    
+	//Make some poppies
+    numImportantPoppies = playerLevel;
+    numDistractingPoppies = playerLevel;
+    
+    playerTotalProblems = numImportantPoppies; // For base class Pattern
+	for (int i = 0; i < numImportantPoppies + numDistractingPoppies; ++i) {
+		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1.5, 1.5),0,randRangeDouble(-1.5, 1.5)),
+                     BLAND_COLOR, BLAND_COLOR);
+        poppy->setId(i);
+		poppy->addToCollisionScene(stage.scene);
+        
+        if (stage.pots.size() > 0)
+        {
+            int r = rand() % stage.pots.size();
+            poppy->setPotIdRef(stage.pots[r]->getId()); // Used tempoarily to play pot sound
+            poppy->setBlinkColor(stage.pots[r]->getBaseColor());
+        }
+		stage.poppies.push_back(poppy);
+	}
 }
 
 void PoppyPattern::reset()
 {
+    PopzorsPattern::reset();
     signaled = false;
     signalStart = SIGNAL_START;
     signalLength = SIGNAL_LENGTH;
     timer = 0;
-    poppyOrderList.clear();
+    numImportantPoppies = 0;
+    numDistractingPoppies = 0;
     backwardsOrder = false;
     blinkPoppyIndex = 0;
     playerPoppyIndex = 0;
-    playerIsRight = true;
-    ready = false;
+    selected = NULL;
 }
 
-void PoppyPattern::setPoppyPattern(CollisionScene *scene, Ground & ground, vector<Pot> & pots, vector<Poppy> & poppies)
+void PoppyPattern::setPattern()
 {
     reset();
+    setup();
     
-    for (int i = 0; i < poppies.size(); ++i)
-        poppies[i].removeFromCollisionScene(scene);
-    poppies.clear();
- 
-	//Make some poppies
-    int numPoppies = playerLevel;;
-	for (int i = 0; i < numPoppies; ++i) {
-		Poppy dummy (Vector3(randRangeDouble(-1, 1),0,randRangeDouble(-1, 1)),
-                     POPPY_COLOR, POPPY_COLOR);
-        dummy.setId(i);
-		dummy.addToCollisionScene(scene);
-        
-        if (pots.size() > 0)
-        {
-            int r = rand() % pots.size();
-            dummy.setPotIdRef(pots[r].getId()); // Used tempoarily to play pot sound
-            dummy.setBlinkColor(pots[r].getBaseColor());
-        }
-        
-		poppies.push_back(dummy);
-	}
-    
+    // Make pots flash red to notify a backwards pattern
     backwardsOrder = rand() % 2;
-    if (poppies.size() > 1 && backwardsOrder)
+    if (numImportantPoppies > 1 && backwardsOrder)
     {
-        for (int i = 0; i < pots.size(); ++i)
+        for (int i = 0; i < stage.pots.size(); ++i)
         {
-            pots[i].setBlinkColor(Color(1.0, 0.0, 0.0, 1.0));
-            pots[i].setTimeBlinkLength(signalStart / 2, 0.1, 0.1);
-            pots[i].activateBlink();
+            stage.pots[i]->setBlinkColor(Color(1.0, 0.0, 0.0, 1.0));
+            stage.pots[i]->setTimeBlinkLength(signalStart / 2, 0.1, 0.1);
+            stage.pots[i]->activateBlink();
         }
     }
     
-    vector<int> tempIds(poppies.size());
-    for (int i = 0; i < poppies.size(); ++i)
-    {
-        tempIds[i] = poppies[i].getId();
-    }
-
+    // Initialize poppy blink time length
     int count = 0;
-    while (tempIds.size() > 0)
+    while (count < numImportantPoppies)
     {
-        int r = rand() % tempIds.size();
-        poppyOrderList.push_back(tempIds[r]);
-        
         if (backwardsOrder)
-        {
-            poppies[tempIds[r]].setTimeBlinkLength(signalLength * (count + 1));
-        }
+            stage.poppies[numImportantPoppies - count - 1]->setTimeBlinkLength(signalLength * (numImportantPoppies - count));
         else
-        {
-            poppies[tempIds[r]].setTimeBlinkLength(signalLength * (poppies.size() - count));
-        }
-        
-        tempIds[r] = tempIds[tempIds.size() - 1];
-        tempIds.pop_back();
-        
+            stage.poppies[count]->setTimeBlinkLength(signalLength * (numImportantPoppies - count));
         ++count;
     }
     
-    if (backwardsOrder && poppyOrderList.size() > 0)
-        blinkPoppyIndex = (int)poppyOrderList.size() - 1;
+    if (backwardsOrder)
+        blinkPoppyIndex = numImportantPoppies - 1;
 }
 
-void PoppyPattern::updatePlayerChoice(Ground & ground, Poppy & poppy, Pot & pot)
+bool PoppyPattern::isFinished() const
 {
-    if (pot.getBaseColor() != poppy.getBlinkColor() || poppy.getId() != poppyOrderList[playerPoppyIndex])
-    {
-        playerIsRight = false;
-    }
-    playerPoppyIndex++;
-    if (isPlayerDone())
-    {
-        if (playerIsRight)
-            playerLevel++;
-        if (playerLevel <= 0)
-            playerLevel = 1;
+    return playerPoppyIndex >= numImportantPoppies;
+}
+
+void PoppyPattern::processSelect(ClickedResult res)
+{
+    if (res.poppy) {
+        
+        if (!res.poppy->isSelectable())
+            res.pot = stage.pots[res.poppy->getPotIdRef()]; // Otherwise, select the pot
+        
+        //deselect
+        if ( (selected != res.poppy) && (selected != NULL) )
+            selected = NULL;
+        res.poppy->setColor(SELECT_COLOR);
+        selected = res.poppy;
+        selected->getType();
     }
     
-    if (isPlayerDone())
-    {
-        if (isPlayerRight())
-            ground.setBlinkColor(FEEDBACK_COLOR_GOOD);
-        else
-            ground.setBlinkColor(FEEDBACK_COLOR_BAD);
-        ground.activateBlink();
+    if (res.pot) {
+        res.pot->playSound();
+        if (selected && selected != res.pot && isReady())
+            if (selected->getType() == Selectable::TYPE_POPPY) {
+                Poppy * old = (Poppy*)selected;
+                Vector3 potpos = res.pot->getPosition();
+                old->setPosition(potpos.x + randRangeDouble(-0.5, 0.5), potpos.y, potpos.z + randRangeDouble(-0.5, 0.5));
+                old->setSelectable(false);
+                old->setPotIdRef(res.pot->getId());
+                old->deactivateJump();
+                selected = NULL;
+                
+                updatePlayerChoice(old, res.pot);
+            }
     }
 }
 
-bool PoppyPattern::isPlayerDone()
+void PoppyPattern::update(Number elapsed)
 {
-    return playerPoppyIndex >= poppyOrderList.size();
+    updatePoppyBlinks(elapsed);
+    stage.ground->update(elapsed);
+    for (int i = 0; i < stage.pots.size(); ++i)
+        stage.pots[i]->update(elapsed);
+    for (int i = 0; i < stage.poppies.size(); ++i)
+        stage.poppies[i]->update(elapsed);
+    
+    stage.handlePoppyCollisions(elapsed);
+    
+    if (isFinished() && !stage.ground->isBlinking())
+        setPattern();
 }
 
-bool PoppyPattern::isPlayerRight()
+void PoppyPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
 {
-    return playerIsRight;
+    if (pot->getId() == poppy->getPotIdRef() && poppy->getId() == playerPoppyIndex)
+    {
+        playerNumCorrect++;
+    }
+    playerPoppyIndex++;
+    if (isFinished())
+    {
+        if (playerNumCorrect >= playerTotalProblems)
+        {
+            stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
+            playerLevel++;
+        }
+        else
+        {
+            const double PASSING_CHECK = 0.75;
+            double correctness = getPlayerCorrectness();
+            if (correctness > PASSING_CHECK)
+            {
+                double range = 1 - PASSING_CHECK;
+                double value = correctness - PASSING_CHECK;
+                stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
+                                            Color(198, 0, 198, 0) * (1 - (value / range)));
+            }
+            else
+            {
+                double range = PASSING_CHECK;
+                double value = PASSING_CHECK - correctness;
+                stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
+                                            Color(0, 198, 198, 0) * (1 - (value / range)));
+            }
+        }
+        stage.ground->activateBlink();
+    }
 }
 
-bool PoppyPattern::isReady()
-{
-    return ready;
-}
-
-void PoppyPattern::updatePoppyBlinks(Number elapsed, vector<Pot> & pots, vector<Poppy> & poppies)
+void PoppyPattern::updatePoppyBlinks(Number elapsed)
 {
     timer += elapsed;
-	if (!signaled && timer > signalStart && poppyOrderList.size() > 0)
+	if (!signaled && timer > signalStart && stage.poppies.size() > 0)
     {
         signaled = true;
-        poppies[poppyOrderList[blinkPoppyIndex]].activateBlink();
-        pots[poppies[poppyOrderList[blinkPoppyIndex]].getPotIdRef()].playSound();
+        stage.poppies[blinkPoppyIndex]->activateBlink();
+        stage.poppies[blinkPoppyIndex]->activateJump();
+        stage.pots[stage.poppies[blinkPoppyIndex]->getPotIdRef()]->playSound();
         timer = 0;
     }
-	if (signaled && blinkPoppyIndex >= 0 && blinkPoppyIndex < poppyOrderList.size() && timer >= signalLength) {
+	if (signaled && blinkPoppyIndex >= 0 && blinkPoppyIndex < numImportantPoppies && timer >= signalLength) {
         if (backwardsOrder)
             blinkPoppyIndex--;
         else
             blinkPoppyIndex++;
         
-        if (blinkPoppyIndex >= 0 && blinkPoppyIndex < poppyOrderList.size())
+        if (blinkPoppyIndex >= 0 && blinkPoppyIndex < numImportantPoppies)
         {
-            poppies[poppyOrderList[blinkPoppyIndex]].activateBlink();
-            pots[poppies[poppyOrderList[blinkPoppyIndex]].getPotIdRef()].playSound();
+            stage.poppies[blinkPoppyIndex]->activateBlink();
+            stage.poppies[blinkPoppyIndex]->activateJump();
+            stage.pots[stage.poppies[blinkPoppyIndex]->getPotIdRef()]->playSound();
         }
         else ready = true;
         timer = 0;
 	}
-}
-
-void PoppyPattern::update(Number elapsed, Ground & ground, vector<Pot> & pots, vector<Poppy> & poppies)
-{
-    updatePoppyBlinks(elapsed, pots, poppies);        
 }

@@ -1,12 +1,14 @@
 #pragma once
 
+// Important Header Files
 #import "PolycodeView.h"
 #include "Polycode3DPhysics.h"
 #include "Polycode.h"
 
 using namespace Polycode;
 
-const Color POPPY_COLOR = Color(0,192,192,255);
+// Special Constants
+const Color BLAND_COLOR = Color(0,192,192,255);
 const Color SELECT_COLOR = Color(255,255,0,255);
 
 const Color Cpot1 = Color(192,0,0,255);
@@ -24,6 +26,7 @@ const Number SIGNAL_LENGTH = 0.5;
 int randRangeInt(int min, int max);
 double randRangeDouble(double min, double max);
 Color getRandomPotColor();
+String getSoundAccordingToColor(Color col);
 
 const String Spot1 = "resources/blip.wav";
 const String Spot2 = "resources/bloop.wav";

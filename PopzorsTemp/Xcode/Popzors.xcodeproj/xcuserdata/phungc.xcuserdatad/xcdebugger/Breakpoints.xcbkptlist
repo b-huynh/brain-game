@@ -18,39 +18,13 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Popzors/Pattern.h"
-         timestampString = "395281094.550605"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "7"
-         endingLineNumber = "7"
-         landmarkName = "class Test"
-         landmarkType = "3">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "Popzors/PoppyPattern.mm"
-         timestampString = "395699640.893561"
+         timestampString = "396226833.228707"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "23"
-         endingLineNumber = "23"
-         landmarkName = "PoppyPattern::reset()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Popzors/PoppyPattern.mm"
-         timestampString = "395703139.480151"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "70"
-         endingLineNumber = "70"
-         landmarkName = "PoppyPattern::setPoppyPattern(CollisionScene *scene, Ground &amp; ground, vector&lt;Pot&gt; &amp; pots, vector&lt;Poppy&gt; &amp; poppies)"
+         startingLineNumber = "76"
+         endingLineNumber = "76"
+         landmarkName = "PoppyPattern::setPattern()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -94,26 +68,89 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Popzors/PoppyPattern.mm"
-         timestampString = "395778263.674682"
+         filePath = "Popzors/Blinkable.mm"
+         timestampString = "395975713.439065"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "43"
-         endingLineNumber = "43"
-         landmarkName = "PoppyPattern::setPoppyPattern(CollisionScene *scene, Ground &amp; ground, vector&lt;Pot&gt; &amp; pots, vector&lt;Poppy&gt; &amp; poppies)"
+         startingLineNumber = "68"
+         endingLineNumber = "68"
+         landmarkName = "Blinkable::reset()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Popzors/Blinkable.mm"
-         timestampString = "395701641.30902"
+         filePath = "Popzors/Pattern.h"
+         timestampString = "395880293.996703"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "68"
-         endingLineNumber = "68"
-         landmarkName = "Blinkable::reset()"
+         startingLineNumber = "10"
+         endingLineNumber = "10"
+         landmarkName = "class PopzorsPattern"
+         landmarkType = "3">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Popzors/PoppyPattern.mm"
+         timestampString = "395976509.819046"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "54"
+         endingLineNumber = "54"
+         landmarkName = "PoppyPattern::setup()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Popzors/Pot.mm"
+         timestampString = "396225516.360541"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "24"
+         endingLineNumber = "24">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Popzors/PotPattern.mm"
+         timestampString = "396225385.946239"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "33"
+         endingLineNumber = "33"
+         landmarkName = "PotPattern::setup()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Popzors/PotPattern.mm"
+         timestampString = "396229310.357287"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "208"
+         endingLineNumber = "208"
+         landmarkName = "PotPattern::addPoppy()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Popzors/PotPattern.mm"
+         timestampString = "396226833.228707"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "86"
+         endingLineNumber = "86"
+         landmarkName = "PotPattern::processSelect(ClickedResult res)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
