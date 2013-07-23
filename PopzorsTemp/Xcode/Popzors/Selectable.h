@@ -15,16 +15,18 @@ public:
     : Blinkable(baseColor, blinkColor, blinktime, ontime, offtime), selectable(true)
     {}
     
-    bool isSelectable() { return selectable; }
+    bool isSelectable() const { return selectable; }
     void setSelectable(bool value) { selectable = value; }
     
 	static const int TYPE_POPPY = 0;
 	static const int TYPE_POT = 1;
 
-	virtual int getType() = 0;
+	virtual int getType() const = 0;
 	virtual bool hasEntity(SceneEntity * entity) = 0;
     
     virtual void reset();
     virtual void update(Number elapsed);
+    
+    ~Selectable() {}
 };
 

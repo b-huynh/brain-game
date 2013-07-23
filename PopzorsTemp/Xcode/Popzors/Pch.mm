@@ -22,3 +22,12 @@ Color getRandomPotColor()
 	if (choice == 4) return Cpot4;
     return Color();
 }
+
+String getSoundAccordingToColor(Color col)
+{
+    if (col == Cpot1) return Spot1;
+    if (col == Cpot2) return Spot2;
+    if (col == Cpot3) return Spot3;
+    if (col == Cpot4) return Spot4;
+    return "";
+}
