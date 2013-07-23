@@ -31,11 +31,13 @@ public:
 	void setBlinkColor(Color color);
     void updateBlinkTime(Number elapsed);
     
-    bool isBlinking() { return timeBlinked > 0; }
-    bool isToggling() { return timeToggle > 0; }
-	Color getBaseColor() { return baseColor; }
-	Color getBlinkColor() { return blinkColor; }
+    bool isBlinking() const { return timeBlinked > 0; }
+    bool isToggling() const { return timeToggle > 0; }
+	Color getBaseColor() const { return baseColor; }
+	Color getBlinkColor() const { return blinkColor; }
     
     virtual void reset();
     virtual void update(Number elapsed);
+    
+    ~Blinkable() {}
 };

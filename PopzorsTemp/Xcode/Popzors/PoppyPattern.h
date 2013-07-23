@@ -1,38 +1,35 @@
 #pragma once
 
 #include "Pch.h"
-#include "Ground.h"
-#include "Poppy.h"
-#include "Pot.h"
-#include <vector>
+#include "Pattern.h"
 
-using namespace std;
-
-class PoppyPattern
+class PoppyPattern : public PopzorsPattern
 {
 public:
-    PoppyPattern();
+    PoppyPattern(Screen *screen, CollisionScene *scene);
     
-    void reset();
-    void setPoppyPattern(CollisionScene *scene, Ground & ground, vector<Pot> & pots, vector<Poppy> & poppies);
-    void updatePlayerChoice(Ground & ground, Poppy & poppy, Pot & pot);
-    bool isPlayerDone();
-    bool isPlayerRight();
-    bool isReady();
-    void updatePoppyBlinks(Number elapsed, vector<Pot> & pots, vector<Poppy> & poppies);
+    virtual void setup();
+    virtual void reset();
+    virtual void setPattern();
+    virtual bool isFinished() const;
+    virtual void processSelect(ClickedResult res);
+    virtual void update(Number elapsed);
     
-    void update(Number elapsed, Ground & ground, vector<Pot> & pots, vector<Poppy> & poppies);
+    // Helper Functions
+    void updatePlayerChoice(Poppy* poppy, Pot* pot);
+    void updatePoppyBlinks(Number elapsed);
 private:
 	bool signaled;
 	Number signalStart;
     Number signalLength;
     Number timer;
-    bool ready;
     
-    vector<int> poppyOrderList;
+    int numImportantPoppies;
+    int numDistractingPoppies;
+
     bool backwardsOrder;
 	int blinkPoppyIndex;
     int playerPoppyIndex;
-    bool playerIsRight;
-    int playerLevel;
+    
+    Selectable* selected;
 };
