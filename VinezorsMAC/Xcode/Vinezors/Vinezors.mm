@@ -7,16 +7,18 @@ Vinezors::Vinezors(PolycodeView *view)
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
 	
-	screen = new Screen();
+	screen = new Screen();  
 
 	scene = new CollisionScene();
+    scene->enableLighting(true);
+    
 	origin = Vector3(0, 0, 0);
 
 	player = new Player(scene, "The Player", Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2), Vector3(0, 0, -TUNNEL_DEPTH));
 	player->addVine(new Vine(scene, player->getCamPos() + player->getVineOffset(), VINE_LENGTH, VINE_RADIUS));
 
 	tunnel = new Tunnel(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH);
-    tunnel->constructTunnel(200, 1);
+    tunnel->constructTunnel(200, 2);
 	
 	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
 	fog1->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
@@ -35,12 +37,13 @@ Vinezors::Vinezors(PolycodeView *view)
 	scene->getDefaultCamera()->lookAt(origin);
 
 	label = new ScreenLabel(toStringInt(player->getScore()), 36);
-	label->setColor(0.0, 0.0, 0.0, 1.0);
+	//label->setColor(0.0, 0.0, 0.0, 1.0);
 	screen->addChild(label);
     
-//    label2 = new ScreenLabel("aghhh", 36);
-//    label2->setPosition(50,50,0);
-//    screen->addChild(label2);
+    
+    label2 = new ScreenLabel("", 36);
+    label2->setPosition(50,50,0);
+    screen->addChild(label2);
     
     
     //Sounds
@@ -148,7 +151,6 @@ void Vinezors::handleEvent(Event *e)
 
 void Vinezors::playPodSound(Pod * pod)
 {
-    if (pod->getPodType() == POD_YELLOW) return;
     podSounds[(int)pod->getPodType()]->getSound()->Play();
 }
 
@@ -162,9 +164,12 @@ bool Vinezors::Update()
 	fog3->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
 	tunnel->renewIfNecessary(player->getCamPos() + player->getVineOffset());
 
+    //Play Gold Sound
     int currentScore = player->getScore();
 	player->checkCollisions(tunnel);
     if (currentScore < player->getScore()) podSounds[(int)POD_YELLOW]->getSound()->Play();
+    
+    //Play pod sounds as they come out of the fog
     vector<Pod *> pods = tunnel->findPodCollisions(scene, fog3);
     for (int i = 0; i < pods.size(); ++i)
         playPodSound(pods[i]);

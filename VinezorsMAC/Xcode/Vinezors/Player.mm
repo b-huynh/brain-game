@@ -11,6 +11,18 @@ Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Vecto
 	cursor->renderWireframe = true;
 	cursor->setColor(1.0, 0.0, 0.0, 1.0);
 	scene->addChild(cursor);
+    
+    light = new SceneLight(SceneLight::AREA_LIGHT, scene, 7);
+    light->setPosition( camPos + Vector3(0, 0, -3) );
+    scene->addLight(light);
+    
+    light2 = new SceneLight(SceneLight::AREA_LIGHT, scene, 5);
+    light2->setPosition( camPos + Vector3(0, 0, -5) );
+    scene->addLight(light2);
+    
+    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 3);
+    light3->setPosition( camPos + Vector3(0, 0, -10) );
+    scene->addLight(light3);
 }
 
 int Player::getScore() const
@@ -143,7 +155,10 @@ void Player::setCamPos(Vector3 value)
 
 void Player::move(Vector3 delta)
 {
-	camPos += delta; 
+    light->Translate(delta);
+    light2->Translate(delta);
+    light3->Translate(delta);
+	camPos += delta;
 	for (int i = 0; i < vines.size(); ++i)
 		vines[i]->move(delta);
 }
@@ -171,7 +186,7 @@ void Player::checkCollisions(Tunnel *tunnel)
 
 void Player::update(Number elapsed, Tunnel *tunnel)
 {
-	const double CAM_SPEED = 14.0;
+	const double CAM_SPEED = 10;
 
 	move(Vector3(0, 0, -CAM_SPEED * elapsed));
 	

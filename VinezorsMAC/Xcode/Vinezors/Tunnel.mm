@@ -18,53 +18,53 @@ TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center,
 {
 	string filePathWallTexture;
 	if (type == NORMAL_WITH_PODS)
-		filePathWallTexture = "resources/yellow_solid_circle.png";
+		filePathWallTexture = "resources/metal.png";
 	else if (type == NORMAL_BLANK)
 		filePathWallTexture = "resources/yellow_solid.png";
 	else if (type == NORMAL_ELONGATED)
 		filePathWallTexture = "resources/yellow_solid_ellipse.png";
-
+    
 	Number wallLength = width / (2 * cos(PI / 4) + 1);
 
 	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
 	topLeftWall->setRoll(225);
-	topLeftWall->loadTexture(filePathWallTexture);
+	topLeftWall->setMaterialByName("WallMaterial");
 	
 	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topWall->setPosition(center.x, center.y + width / 2, center.z);
 	topWall->setRoll(180);
-	topWall->loadTexture(filePathWallTexture);
+	topWall->setMaterialByName("WallMaterial");
 	
 	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	topRightWall->setPosition(center.x + (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
 	topRightWall->setRoll(135);
-	topRightWall->loadTexture(filePathWallTexture);
-
+	topRightWall->setMaterialByName("WallMaterial");
+    
 	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	rightWall->setPosition(center.x + width / 2, center.y, center.z);
 	rightWall->setRoll(90);
-	rightWall->loadTexture(filePathWallTexture);
+	rightWall->setMaterialByName("WallMaterial");
 
 	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomRightWall->setPosition(center.x + (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
 	bottomRightWall->setRoll(45);
-	bottomRightWall->loadTexture(filePathWallTexture);
-
+	bottomRightWall->setMaterialByName("WallMaterial");
+    
 	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomWall->setPosition(center.x, center.y - width / 2, center.z);
 	bottomWall->setRoll(0);
-	bottomWall->loadTexture(filePathWallTexture);
+	bottomWall->setMaterialByName("WallMaterial");
 	
 	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	bottomLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
 	bottomLeftWall->setRoll(-45);
-	bottomLeftWall->loadTexture(filePathWallTexture);
+	bottomLeftWall->setMaterialByName("WallMaterial");
 
 	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
 	leftWall->setPosition(center.x - width / 2, center.y, center.z);
 	leftWall->setRoll(-90);
-	leftWall->loadTexture(filePathWallTexture);
+	leftWall->setMaterialByName("WallMaterial");
 
 	addToCollisionScene(scene);
 }
@@ -216,15 +216,6 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	pods.clear();
 }
 
-PodType TunnelSlice::getPodType()
-{
-    for (int i = 0; i < pods.size(); ++i) {
-        return pods[i]->getPodType();
-    }
-    return POD_UNKNOWN;
-}
-
-
 Tunnel::Tunnel()
 	: scene(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0)
 {
@@ -338,7 +329,8 @@ void Tunnel::renewIfNecessary(Vector3 checkPos)
 	if (checkPos.z < (*current)->getCenter().z - segmentDepth)
 	{
 		++current;
-		renewSegment();
+        removeSegment();
+		//renewSegment();
 		//(*current)->changeWallTexture();
 	}
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<polycode>
+    <materials>
+        <material name="PodUnknownMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/black_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="PodBlueMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/blue_fixed.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="PodGreenMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/green_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="PodPinkMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/red_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="PodYellowMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/yellow_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="PodBlackMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/black_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="WallMaterial">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/metal.png</texture>
+                </textures>
+            </shader>
+        </material>
+    </materials>
+</polycode>

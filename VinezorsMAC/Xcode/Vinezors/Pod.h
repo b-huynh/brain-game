@@ -17,6 +17,8 @@ private:
 	PodType type;
 	ScenePrimitive *stem;
 	ScenePrimitive *head;
+    ScenePrimitive * shell;
+    
     bool pastFog;
 public:
 	Pod();
@@ -36,6 +38,6 @@ public:
     
     PodType getPodType();
     
-    bool getPastFog() {return pastFog;}
-    void setPastFog(bool past) {pastFog = past;}
+    bool getPastFog();
+    void setPastFog(bool past);
 };

@@ -38,6 +38,8 @@
 		6DE4C7F913E24B92009A9862 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F213E24B92009A9862 /* libphysfs.a */; };
 		6DE4C7FA13E24B92009A9862 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F313E24B92009A9862 /* libpng15.a */; };
 		6DE4C7FB13E24B92009A9862 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F413E24B92009A9862 /* libz.a */; };
+		B66F016617988D7A009BED93 /* Materials.mat in Resources */ = {isa = PBXBuildFile; fileRef = B66F016517988D7A009BED93 /* Materials.mat */; };
+		B6C94B7D17973E0100220D65 /* Change Notes in Resources */ = {isa = PBXBuildFile; fileRef = B6C94B7C17973E0100220D65 /* Change Notes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +89,8 @@
 		6DE4C7F213E24B92009A9862 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = ../../Core/Dependencies/lib/libphysfs.a; sourceTree = "<group>"; };
 		6DE4C7F313E24B92009A9862 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../Core/Dependencies/lib/libpng15.a; sourceTree = "<group>"; };
 		6DE4C7F413E24B92009A9862 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Core/Dependencies/lib/libz.a; sourceTree = "<group>"; };
+		B66F016517988D7A009BED93 /* Materials.mat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Materials.mat; path = resources/Materials.mat; sourceTree = SOURCE_ROOT; };
+		B6C94B7C17973E0100220D65 /* Change Notes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Change Notes"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +196,7 @@
 		6D2800C213760D3E00BD8D0D /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B66F016517988D7A009BED93 /* Materials.mat */,
 				5DFB5A19178E750300B5CED6 /* MainMenu.xib */,
 				5DFB5A16178E74EB00B5CED6 /* InfoPlist.strings */,
 				5DFB5A13178E74E400B5CED6 /* Credits.rtf */,
@@ -204,6 +209,7 @@
 				6D2800C313760D3E00BD8D0D /* Vinezors-Info.plist */,
 				6D2800C713760D3E00BD8D0D /* Vinezors-Prefix.pch */,
 				6D2800C813760D3E00BD8D0D /* main.m */,
+				B6C94B7C17973E0100220D65 /* Change Notes */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -264,6 +270,8 @@
 				5DFB5A15178E74E400B5CED6 /* Credits.rtf in Resources */,
 				5DFB5A18178E74EB00B5CED6 /* InfoPlist.strings in Resources */,
 				5DFB5A1B178E750300B5CED6 /* MainMenu.xib in Resources */,
+				B6C94B7D17973E0100220D65 /* Change Notes in Resources */,
+				B66F016617988D7A009BED93 /* Materials.mat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

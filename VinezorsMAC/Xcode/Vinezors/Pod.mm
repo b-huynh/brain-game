@@ -9,7 +9,7 @@ Pod::Pod()
 }
 
 Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius)
-    : type(type), stem(NULL), head(NULL), pastFog(false)
+    : type(type), stem(NULL), head(NULL), shell(NULL), pastFog(false)
 {
 	Number stemLength = base.distance(tip);
 
@@ -22,29 +22,58 @@ Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number 
 
 	head = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, headRadius, 10, 10);
 	head->setPosition(tip);
-
+    
+    shell = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, headRadius + 0.1, 10, 10);
+    shell->setColor(1.0 ,0.0, 0.0, 0.1);
+    shell->setPosition(tip);
+    
 	switch (type)
 	{
 	case POD_BLUE:
-		head->loadTexture("resources/blue_texture.png");
+		head->loadTexture("resources/blue_fixed.png");
 		break;
 	case POD_GREEN:
-		head->loadTexture("resources/green_texture.png");
+		head->loadTexture("resources/green_fixed.png");
 		break;
 	case POD_PINK:
-		head->loadTexture("resources/pink_texture.png");
+		head->loadTexture("resources/red_solid.png");
 		break;
 	case POD_YELLOW:
-		head->loadTexture("resources/yellow_texture.png");
+		head->loadTexture("resources/yellow_solid.png");
 		break;
 	case POD_BLACK:
-		head->loadTexture("resources/grey_texture.png");
+		head->loadTexture("resources/black_solid.png");
 		break;
 	default:
-		head->loadTexture("resources/grey_texture.png");	
+		head->loadTexture("resources/black_solid.png");	
 		break;
 	}
-
+    
+    /*
+    //Testing Pod Material and Lighting
+    switch (type)
+	{
+        case POD_BLUE:
+            head->setMaterialByName("PodBlueMat");
+            break;
+        case POD_GREEN:
+            head->setMaterialByName("PodGreenMat");
+            break;
+        case POD_PINK:
+            head->setMaterialByName("PodPinkMat");
+            break;
+        case POD_YELLOW:
+            head->setMaterialByName("PodYellowMat");
+            break;
+        case POD_BLACK:
+            head->setMaterialByName("PodBlackMat");
+            break;
+        default:
+            head->setMaterialByName("PodUnknownMat");
+            break;
+	}
+     */
+ 
 	addToCollisionScene(scene);
 }
 
@@ -78,17 +107,29 @@ void Pod::addToCollisionScene(CollisionScene *scene)
 {
 	scene->addChild(stem);
 	scene->addCollisionChild(head, CollisionSceneEntity::SHAPE_SPHERE);
+    scene->addCollisionChild(shell);
 }
 
 void Pod::removeFromCollisionScene(CollisionScene * scene)
 {
 	scene->removeEntity(stem);
 	scene->removeEntity(head);
+    scene->removeEntity(shell);
 	delete stem; stem = NULL;
 	delete head; head = NULL;
+    delete shell; shell = NULL;
 }
 
 PodType Pod::getPodType()
 {
     return type;
+}
+
+bool Pod::getPastFog()
+{
+    return pastFog;
+}
+void Pod::setPastFog(bool past)
+{
+    pastFog = past;
 }

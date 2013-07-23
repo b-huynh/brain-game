@@ -25,6 +25,11 @@ private:
 	Vector2 mousePos;
 	Vector3 camPos;
 	Vector3 vineOffset; // offset to camPos
+    
+    SceneLight * light;
+    SceneLight * light2;
+    SceneLight * light3;
+    
 public:
 	Player();
 	Player(CollisionScene *scene, const string & name, Vector3 camPos, Vector3 offset);
