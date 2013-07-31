@@ -5,227 +5,15 @@
 
 const Number infinityDepth = 1024;
 
-TunnelSlice::TunnelSlice()
-	: center(), width(0), depth(0), type(NORMAL_BLANK),
-	topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), 
-	pods()
-{}
-
-TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Number width, Number depth)
-	: center(center), width(width), depth(depth), type(type),
-	topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), 
-	pods()
-{
-	string filePathWallTexture;
-	if (type == NORMAL_WITH_PODS)
-		filePathWallTexture = "resources/metal.png";
-	else if (type == NORMAL_BLANK)
-		filePathWallTexture = "resources/yellow_solid.png";
-	else if (type == NORMAL_ELONGATED)
-		filePathWallTexture = "resources/yellow_solid_ellipse.png";
-    
-	Number wallLength = width / (2 * cos(PI / 4) + 1);
-
-	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-	topLeftWall->setRoll(225);
-	topLeftWall->setMaterialByName("WallMaterial");
-	
-	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topWall->setPosition(center.x, center.y + width / 2, center.z);
-	topWall->setRoll(180);
-	topWall->setMaterialByName("WallMaterial");
-	
-	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topRightWall->setPosition(center.x + (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-	topRightWall->setRoll(135);
-	topRightWall->setMaterialByName("WallMaterial");
-    
-	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	rightWall->setPosition(center.x + width / 2, center.y, center.z);
-	rightWall->setRoll(90);
-	rightWall->setMaterialByName("WallMaterial");
-
-	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomRightWall->setPosition(center.x + (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-	bottomRightWall->setRoll(45);
-	bottomRightWall->setMaterialByName("WallMaterial");
-    
-	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomWall->setPosition(center.x, center.y - width / 2, center.z);
-	bottomWall->setRoll(0);
-	bottomWall->setMaterialByName("WallMaterial");
-	
-	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomLeftWall->setPosition(center.x - (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-	bottomLeftWall->setRoll(-45);
-	bottomLeftWall->setMaterialByName("WallMaterial");
-
-	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	leftWall->setPosition(center.x - width / 2, center.y, center.z);
-	leftWall->setRoll(-90);
-	leftWall->setMaterialByName("WallMaterial");
-
-	addToCollisionScene(scene);
-}
-
-Vector3 TunnelSlice::getCenter() const
-{
-	return center;
-}
-
-vector<Pod *> TunnelSlice::getPods()
-{
-    return pods;
-}
-
-vector<Pod *> TunnelSlice::findCollisions(CollisionScene *scene, SceneEntity *ent) const
-{
-	vector<Pod *> ret;
-	for (int i = 0; i < pods.size(); ++i)
-	{
-		if (scene->testCollision(ent,  pods[i]->getHead()).collided)
-			ret.push_back(pods[i]);
-	}
-	return ret;
-}
-
-void TunnelSlice::move(Vector3 delta)
-{
-	center.x += delta.x;
-	center.y += delta.y;
-	center.z += delta.z;
-	
-	topLeftWall->Translate(delta);
-	topWall->Translate(delta);
-	topRightWall->Translate(delta);
-	rightWall->Translate(delta);
-	bottomRightWall->Translate(delta);
-	bottomWall->Translate(delta);
-	bottomLeftWall->Translate(delta);
-	leftWall->Translate(delta);
-
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->move(delta);
-}
-
-void TunnelSlice::changeWallTexture()
-{
-	string filePathWallTexture;
-	if (type == NORMAL_WITH_PODS)
-		filePathWallTexture = "resources/red_solid_circle.png";
-	else if (type == NORMAL_BLANK)
-		filePathWallTexture = "resources/red_solid.png";
-	else if (type == NORMAL_ELONGATED)
-		filePathWallTexture = "resources/red_solid_ellipse.png";
-	topLeftWall->loadTexture(filePathWallTexture);
-	topWall->loadTexture(filePathWallTexture);
-	topRightWall->loadTexture(filePathWallTexture);
-	rightWall->loadTexture(filePathWallTexture);
-	bottomRightWall->loadTexture(filePathWallTexture);
-	bottomWall->loadTexture(filePathWallTexture);
-	bottomLeftWall->loadTexture(filePathWallTexture);
-	leftWall->loadTexture(filePathWallTexture);
-}
-
-void TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)
-{
-	Number wallLength = width / (2 * cos(PI / 4) + 1);;
-	const Number STEM_RADIUS = width / 100;
-	const Number HEAD_RADIUS = width / 25;
-	const Number STEM_LENGTH = wallLength / 3;
-
-	Vector3 base;
-	Vector3 head;
-	switch (loc)
-	{
-	case NORTHWEST:
-		base = Vector3(center.x - (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-		head = Vector3(base.x - cos(3 * PI / 4) * STEM_LENGTH, base.y - sin(3 * PI / 4) * STEM_LENGTH, base.z);
-		break;
-	case NORTH:
-		base = Vector3(center.x, center.y + width / 2, center.z);
-		head = Vector3(base.x - cos(PI / 2) * STEM_LENGTH, base.y - sin(PI / 2) * STEM_LENGTH, base.z);
-		break;
-	case NORTHEAST:
-		base = Vector3(center.x + (width + wallLength) / 4, center.y + (width + wallLength) / 4, center.z);
-		head = Vector3(base.x - cos(PI / 4) * STEM_LENGTH, base.y - sin(PI / 4) * STEM_LENGTH, base.z);
-		break;
-	case EAST:
-		base = Vector3(center.x + width / 2, center.y, center.z);
-		head = Vector3(base.x - cos(0.0) * STEM_LENGTH, base.y - sin(0.0) * STEM_LENGTH, base.z);
-		break;
-	case SOUTHEAST:
-		base = Vector3(center.x + (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-		head = Vector3(base.x - cos(-PI / 4) * STEM_LENGTH, base.y - sin(-PI / 4) * STEM_LENGTH, base.z);
-		break;
-	case SOUTH:
-		base = Vector3(center.x, center.y - width / 2, center.z);
-		head = Vector3(base.x - cos(-PI / 2) * STEM_LENGTH, base.y - sin(-PI / 2) * STEM_LENGTH, base.z);
-		break;
-	case SOUTHWEST:
-		base = Vector3(center.x - (width + wallLength) / 4, center.y - (width + wallLength) / 4, center.z);
-		head = Vector3(base.x - cos(-3 * PI / 4) * STEM_LENGTH, base.y - sin(-3 * PI / 4) * STEM_LENGTH, base.z);
-		break;
-	case WEST:
-		base = Vector3(center.x - width / 2, center.y, center.z);
-		head = Vector3(base.x - cos(-PI) * STEM_LENGTH, base.y - sin(-PI) * STEM_LENGTH, base.z);
-		break;
-	default:
-		// No Direction
-		return;
-	}
-
-	pods.push_back(new Pod(scene, type, base, head, STEM_RADIUS, HEAD_RADIUS));
-}
-
-void TunnelSlice::addToCollisionScene(CollisionScene *scene)
-{
-	scene->addCollisionChild(topLeftWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(topWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(topRightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(rightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomRightWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(bottomLeftWall, CollisionSceneEntity::SHAPE_PLANE);
-	scene->addCollisionChild(leftWall, CollisionSceneEntity::SHAPE_PLANE);
-}
-
-void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
-{
-	scene->removeEntity(topLeftWall);
-	scene->removeEntity(topWall);
-	scene->removeEntity(topRightWall);
-	scene->removeEntity(rightWall);
-	scene->removeEntity(bottomRightWall);
-	scene->removeEntity(bottomWall);
-	scene->removeEntity(bottomLeftWall);
-	scene->removeEntity(leftWall);
-	
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->removeFromCollisionScene(scene);
-	delete topLeftWall; topLeftWall = NULL;
-	delete topWall; topWall = NULL;
-	delete topRightWall; topRightWall = NULL;
-	delete rightWall; rightWall = NULL;
-	delete bottomRightWall; bottomRightWall = NULL;
-	delete bottomWall; bottomWall = NULL;
-	delete bottomLeftWall; bottomLeftWall = NULL;
-	delete leftWall; leftWall = NULL;
-
-	pods.clear();
-}
-
 Tunnel::Tunnel()
-	: scene(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0)
+: scene(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0)
 {
 }
 
 Tunnel::Tunnel(CollisionScene *scene, Vector3 start, Number segmentWidth, Number segmentDepth)
-	: scene(scene), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth)
+: scene(scene), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth)
 {
-	segments.push_back(new TunnelSlice(scene, NORMAL_WITH_PODS, end + Vector3(0, 0, (segmentDepth - infinityDepth) / 2), segmentWidth, infinityDepth));
-	current = segments.begin();
+	current = segments.end();
 }
 
 CollisionScene *Tunnel::getScene() const
@@ -248,11 +36,58 @@ Vector3 Tunnel::getCenter() const
 	return (start + end) / 2;
 }
 
-TunnelSlice *Tunnel::getCurrent() const
+list<TunnelSlice*>::iterator Tunnel::getCurrentIterator()
+{
+    return current;
+}
+
+list<TunnelSlice*>::iterator Tunnel::getBeginIterator()
+{
+    return segments.begin();
+}
+
+list<TunnelSlice*>::iterator Tunnel::getEndIterator()
+{
+    return segments.end();
+}
+
+// An estimate of which Segment contains the position with a certain linear interpolated offset
+TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset) const
+{
+    list<TunnelSlice*>::iterator it = current;
+    
+    Number t = 0;
+    while (it != segments.end())
+    {
+        
+        t = (*it)->getT(pos) + tOffset;
+        if (t <= 1)
+        {
+            return *it;
+        }
+        ++it;
+    }
+    return NULL;
+}
+
+TunnelSlice* Tunnel::getCurrent() const
 {
 	if (current == segments.end())
 		return NULL;
 	return *current;
+}
+
+// Get the ith segment from current. Returns NULL if no ith segment exists
+TunnelSlice* Tunnel::getNext(int i) const
+{
+    list<TunnelSlice*>::iterator it = current;
+    for (int n = 0; n < i; ++n)
+    {
+        it++;
+        if (it == segments.end())
+            return NULL;
+    }
+	return *it;
 }
 
 Number Tunnel::getSegmentWidth() const
@@ -267,15 +102,74 @@ Number Tunnel::getSegmentDepth() const
 
 void Tunnel::addSegment(PodType type, Direction loc)
 {
-	TunnelSlice *newSegment = new TunnelSlice(scene, NORMAL_WITH_PODS, end, segmentWidth, segmentDepth);
-	if (segments.size() <= 0)
-	{
-		segments.push_back(newSegment);
-		current = segments.begin();
-		return;
-	}
-	TunnelSlice *backTunnel = segments.back();
-
+    Quaternion rot;
+    Vector3 forward;
+    Vector3 upward;
+    Vector3 right;
+    if (segments.size() > 0) {
+        rot = segments.back()->getQuaternion();
+        forward = segments.back()->getForward();
+        upward = segments.back()->getUpward();
+        right = segments.back()->getRight();
+        
+        int dir = rand() % 9;
+        double degrees = randRangeInt(0, 10);
+        Quaternion rot1;
+        Quaternion rot2;
+        switch (dir)
+        {
+            case 0:
+                rot1.createFromAxisAngle(right.x, right.y, right.z, degrees);
+                rot = rot1 * rot;
+                break;
+            case 1:
+                rot1.createFromAxisAngle(right.x, right.y, right.z, -degrees);
+                rot = rot1 * rot;
+                break;
+            case 2:
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, degrees);
+                rot = rot1 * rot;
+                break;
+            case 3:
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, -degrees);
+                rot = rot1 * rot;
+                break;
+            case 4:              
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, degrees);
+                rot2.createFromAxisAngle(right.x, right.y, right.z, degrees);
+                rot = rot2 * rot1 * rot;
+                break;
+            case 5:
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, -degrees);
+                rot2.createFromAxisAngle(right.x, right.y, right.z, degrees);
+                rot = rot2 * rot1 * rot;
+                break;
+            case 6:
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, degrees);
+                rot2.createFromAxisAngle(right.x, right.y, right.z, -degrees);
+                rot = rot2 * rot1 * rot;
+                break;
+            case 7:
+                rot1.createFromAxisAngle(upward.x, upward.y, upward.z, -degrees);
+                rot2.createFromAxisAngle(right.x, right.y, right.z, -degrees);
+                rot = rot2 * rot1 * rot;
+                break;
+            default:
+                // no rotation
+                break;
+        }
+    } else {
+        rot.set(1, 0, 0, 0);
+        forward = TUNNEL_REFERENCE_FORWARD;
+        upward = TUNNEL_REFERENCE_UPWARD;
+        right = TUNNEL_REFERENCE_RIGHT;
+    }
+    
+    forward = rot.applyTo(TUNNEL_REFERENCE_FORWARD);
+    right = rot.applyTo(TUNNEL_REFERENCE_RIGHT);
+    upward = rot.applyTo(TUNNEL_REFERENCE_UPWARD);
+    Vector3 stepend = end + forward * (segmentDepth + TUNNEL_ANGLE_BUFFER);
+	TunnelSlice* newSegment = new TunnelSlice(scene, NORMAL_WITH_PODS, (end + stepend) / 2, rot, segmentWidth, segmentDepth);
 
 	int numPods = rand() % 1 + 1;
 
@@ -286,12 +180,16 @@ void Tunnel::addSegment(PodType type, Direction loc)
         
 		newSegment->addPod(scene, loc, (PodType)randPod);
 	}
-	segments.back() = newSegment;
-	if (segments.size() == 1)
-		newSegment->changeWallTexture();
-	end += Vector3(0, 0, -segmentDepth);
-	segments.push_back(backTunnel);
-	segments.back()->move(Vector3(0, 0, -segmentDepth));
+	end = stepend;
+	if (segments.size() <= 0) // Init TunnelSlice iterator
+    {
+        segments.push_back(newSegment);
+		current = segments.begin();
+    }
+    else {
+        segments.back()->connect(scene, newSegment);
+        segments.push_back(newSegment);
+    }
 }
 
 void Tunnel::addSegment(PodType type)
@@ -301,38 +199,40 @@ void Tunnel::addSegment(PodType type)
 
 void Tunnel::removeSegment()
 {
+	start += segments.front()->getForward() * (segmentDepth + TUNNEL_ANGLE_BUFFER);
 	segments.front()->removeFromCollisionScene(scene);
 	segments.pop_front();
-	start += Vector3(0, 0, -segmentDepth);
 }
 
 // Moves a segment in front to the back of the list.
 // The infinite segment is maintained to be the last element.
 void Tunnel::renewSegment()
 {
-	TunnelSlice *backTunnel = segments.back();
-	segments.pop_back();
 	TunnelSlice *frontTunnel = segments.front();
-	frontTunnel->move(segments.back()->getCenter() - frontTunnel->getCenter() + Vector3(0, 0, -segmentDepth));
+    Vector3 endStep = end + segments.front()->getForward() * (segmentDepth * TUNNEL_ANGLE_BUFFER);
+	frontTunnel->move((end + endStep) / 2 - frontTunnel->getCenter());
 	segments.pop_front();
 	segments.push_back(frontTunnel);
-	backTunnel->move(Vector3(0, 0, -segmentDepth));
-	segments.push_back(backTunnel);
-
 }
 
 // Determines whether the current segment should be updated depending on the position compared.
-void Tunnel::renewIfNecessary(Vector3 checkPos)
+// Returns true if a renew was necessary
+bool Tunnel::renewIfNecessary(Vector3 checkPos)
 {
 	if (current == segments.end())
-		return;
-	if (checkPos.z < (*current)->getCenter().z - segmentDepth)
+		return false;
+    TunnelSlice* currentSlice = *current;
+    Vector3 endOfSlice = currentSlice->getCenter() + (currentSlice->getForward() * segmentDepth / 2);
+    if ((checkPos - endOfSlice).dot(currentSlice->getForward()) >= 0)
 	{
 		++current;
-        removeSegment();
+        //removeSegment();
 		//renewSegment();
 		//(*current)->changeWallTexture();
+        
+        return true;
 	}
+    return false;
 }
 
 void Tunnel::constructTunnel(int size, int nback)
@@ -358,7 +258,7 @@ void Tunnel::constructTunnel(int size, int nback)
     for (int i = 0; i < size; ++i) {
         cout << colors[i] << std::endl;
         if (colors[i] == POD_YELLOW) {
-            addSegment(colors[i],dir);
+            addSegment(colors[i], dir);
         } else {
             dir = randDirection();
             addSegment(colors[i], dir);

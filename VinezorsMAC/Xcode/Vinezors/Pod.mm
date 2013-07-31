@@ -3,12 +3,15 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <iostream>
+using namespace std;
+
 Pod::Pod()
 	: stem(NULL), head(NULL)
 {
 }
 
-Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius)
+Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius)
     : type(type), stem(NULL), head(NULL), shell(NULL), pastFog(false)
 {
 	Number stemLength = base.distance(tip);
@@ -16,10 +19,16 @@ Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number 
 	stem = new ScenePrimitive(ScenePrimitive::TYPE_CYLINDER, stemLength, stemRadius, 10);
 	stem->setPosition((base + tip) / 2);
 	stem->loadTexture("resources/green_solid.png");
-
-	Number angle = std::atan2(base.y - tip.y, base.x - tip.x);
-	stem->setRoll((angle + PI / 2) * 180 / PI);
-
+    double angle;
+    Vector3 v = base - tip;
+    v = (rot.Inverse()).applyTo(v); // Reverse to old coordinates to find x-y angle
+    angle = (std::atan2(v.y, v.x) + PI / 2) * (180.0 / PI);
+    Quaternion q;
+    q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
+    q = q.Inverse();
+    q = rot * q;
+    stem->setRotationQuat(q.w, q.x, q.y, q.z);
+    
 	head = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, headRadius, 10, 10);
 	head->setPosition(tip);
     
@@ -73,9 +82,25 @@ Pod::Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number 
             break;
 	}
      */
- 
+     
 	addToCollisionScene(scene);
 }
+
+/*
+Quaternion Pod::getTunnelQuaternion(Vector3 center, Vector3 forward)
+{
+    Quaternion rot;
+    Vector3 axis = forward.crossProduct(TUNNEL_REFERENCE_FORWARD);
+    if (axis == Vector3(0,0,0)) axis = TUNNEL_REFERENCE_FORWARD;
+    axis.Normalize();
+    Number angle = forward.angleBetween(TUNNEL_REFERENCE_FORWARD) * (180.0/ PI);
+    //if (axis.dot(Vector3(1,1,1)) >= 0) angle += 180;
+    rot.createFromAxisAngle(axis.x, axis.y, axis.z, angle);
+    //if (angle <= 180)
+        rot = rot.Inverse();
+    return rot;
+}
+ */
 
 PodType Pod::getType() const
 {

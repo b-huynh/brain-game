@@ -6,35 +6,39 @@ Vinezors::Vinezors(PolycodeView *view)
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
+
+    pause = false;
 	
 	screen = new Screen();  
 
 	scene = new CollisionScene();
+    scene->ambientColor = Color(0.5, 0.5, 0.5, 0.2);
     scene->enableLighting(true);
     
 	origin = Vector3(0, 0, 0);
 
-	player = new Player(scene, "The Player", Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2), Vector3(0, 0, -TUNNEL_DEPTH));
-	player->addVine(new Vine(scene, player->getCamPos() + player->getVineOffset(), VINE_LENGTH, VINE_RADIUS));
+	scene->getDefaultCamera()->setPosition(Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2));
+	scene->getDefaultCamera()->lookAt(origin);
+	player = new Player(scene, "The Player", scene->getDefaultCamera()->getPosition(), scene->getDefaultCamera()->getRotationQuat(), VINE_T_OFFSET);
+	player->addVine(new Vine(scene, player->getCamPos(), VINE_RADIUS));
 
-	tunnel = new Tunnel(scene, origin, TUNNEL_WIDTH, TUNNEL_DEPTH);
-    tunnel->constructTunnel(200, 2);
+	tunnel = new Tunnel(scene, origin + TUNNEL_REFERENCE_FORWARD * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH);
+    tunnel->constructTunnel(NUM_SEGMENTS, NBACK);
 	
-	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
+    /*
+	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
 	fog1->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
 	fog1->setColor(0.5, 0.5, 0.5, 1.0);
-	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 4.0 * TUNNEL_DEPTH);
+	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 4.0 * TUNNEL_DEPTH);
 	fog2->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
 	fog2->setColor(0.8, 0.8, 0.8, 0.8);
-	fog3 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, TUNNEL_WIDTH, TUNNEL_WIDTH, 5.0 * TUNNEL_DEPTH);
+	fog3 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 5.0 * TUNNEL_DEPTH);
 	fog3->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
 	fog3->setColor(1.0, 1.0, 1.0, 0.5);
 	scene->addChild(fog1);
 	scene->addChild(fog2);
 	scene->addChild(fog3);
-
-	scene->getDefaultCamera()->setPosition(player->getCamPos());
-	scene->getDefaultCamera()->lookAt(origin);
+     */
 
 	label = new ScreenLabel(toStringInt(player->getScore()), 36);
 	//label->setColor(0.0, 0.0, 0.0, 1.0);
@@ -71,9 +75,11 @@ Vinezors::~Vinezors()
 {
 	delete player; player = NULL;
 	delete tunnel; tunnel = NULL;
+    /*
 	delete fog1; fog2 = NULL;
 	delete fog2; fog2 = NULL;
 	delete fog3; fog3 = NULL;
+     */
 }
 
 void Vinezors::handleEvent(Event *e)
@@ -87,10 +93,20 @@ void Vinezors::handleEvent(Event *e)
 			case InputEvent::EVENT_MOUSEMOVE:
 				if (player->getMouseLeft())
 				{
-					Vector2 dmove = inputEvent->getMousePosition() - player->getMousePos();	
-					scene->getDefaultCamera()->setYaw(scene->getDefaultCamera()->getYaw() - dmove.x);
-					scene->getDefaultCamera()->setPitch(scene->getDefaultCamera()->getPitch() - dmove.y);
-
+					Vector2 dmove = inputEvent->getMousePosition() - player->getMousePos();
+                    
+                    Vector3 right = player->getCamRight();
+                    Vector3 up = player->getCamUpward();
+                    Quaternion yawRot;
+                    Quaternion pitchRot;
+                    yawRot.createFromAxisAngle(up.x, up.y, up.z, dmove.x);
+                    pitchRot.createFromAxisAngle(right.x, right.y, right.z, dmove.y);
+                    
+                    Quaternion curRot = player->getCamRot();
+                    curRot = pitchRot * yawRot * curRot;
+                    player->setCamRot(curRot);
+                    scene->getDefaultCamera()->setRotationQuat(curRot.w, curRot.x, curRot.y, curRot.z);
+                    
 					player->setMousePos(inputEvent->getMousePosition());
 				}
 				break;
@@ -124,7 +140,17 @@ void Vinezors::handleEvent(Event *e)
 					case KEY_RIGHT:
 						player->setKeyRight(true);			
 						player->setDir(rightOf(player->getDir()));
-						break;		
+						break;
+                    case KEY_p:
+                        pause = !pause;
+                        if (!pause) {
+                            player->setCamPos(player->getOldPos());
+                            player->setCamRot(player->getOldRot());
+                        } else {
+                            player->setOldPos(player->getCamPos());
+                            player->setOldRot(player->getCamRot());
+                        }
+                        break;
 				}
 				break;
 			case InputEvent::EVENT_KEYUP:
@@ -154,28 +180,66 @@ void Vinezors::playPodSound(Pod * pod)
     podSounds[(int)pod->getPodType()]->getSound()->Play();
 }
 
-bool Vinezors::Update() 
+bool Vinezors::Update()     
 {
 	Number elapsed = core->getElapsed();
 	
-	player->update(elapsed, tunnel);
-	fog1->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
-	fog2->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
-	fog3->setPosition(player->getCamPos() + Vector3(0, 0, -5 * TUNNEL_DEPTH));
-	tunnel->renewIfNecessary(player->getCamPos() + player->getVineOffset());
-
-    //Play Gold Sound
-    int currentScore = player->getScore();
-	player->checkCollisions(tunnel);
-    if (currentScore < player->getScore()) podSounds[(int)POD_YELLOW]->getSound()->Play();
+    if (!pause) {
+        player->update(elapsed, tunnel);
+        /*
+        Quaternion rot = player->getCamRot();
+        fog1->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
+        fog2->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
+        fog3->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
+        fog1->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
+        fog2->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
+        fog3->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
+        */
     
-    //Play pod sounds as they come out of the fog
-    vector<Pod *> pods = tunnel->findPodCollisions(scene, fog3);
-    for (int i = 0; i < pods.size(); ++i)
-        playPodSound(pods[i]);
+        //tunnel->renewIfNecessary(player->getCamPos() + player->getVineOffset());
+        if (tunnel->renewIfNecessary(player->getCamPos())) {
+            player->setOldPos(player->getCamPos());
+            player->setOldRot(player->getCamRot());
+            TunnelSlice* nextSlice = tunnel->getNext(NBACK);
+            if (nextSlice)
+            {
+                player->setDesireRot(nextSlice->getQuaternion());
+         
+                for (int i = 0; i < nextSlice->getPods().size(); ++i)
+                    playPodSound(nextSlice->getPods()[i]);
+            }
+        }
 
-    label->setText(toStringInt(player->getScore()));
+        //Play Gold Sound
+        int currentScore = player->getScore();
+        player->checkCollisions(tunnel);
+        if (currentScore < player->getScore()) podSounds[(int)POD_YELLOW]->getSound()->Play();
+    
+        /*
+         //Play pod sounds as they come out of the fog
+         vector<Pod *> pods = tunnel->findPodCollisions(scene, fog3);
+         for (int i = 0; i < pods.size(); ++i)
+            playPodSound(pods[i]);
+        */
+        
+        label->setText(toStringInt(player->getScore()));
+    } else {
+        // Navigation Keys
+        if (player->getKeyUp())
+            player->move(Vector3(player->getCamForward() * CAM_SPEED * elapsed));
+        if (player->getKeyDown())
+            player->move(Vector3(player->getCamForward() * -CAM_SPEED * elapsed));
+        if (player->getKeyLeft())
+        	player->move(Vector3(player->getCamRight() * -CAM_SPEED * elapsed));
+        if (player->getKeyRight())
+        	player->move(Vector3(player->getCamRight() * CAM_SPEED * elapsed));
+    }
+    
+    Quaternion camRot = player->getCamRot();
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
+	scene->getDefaultCamera()->setRotationQuat(camRot.w, camRot.x, camRot.y, camRot.z);
 
+    
+    
 	return core->updateAndRender();
 }
