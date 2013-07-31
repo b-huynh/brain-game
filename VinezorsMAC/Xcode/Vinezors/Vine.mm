@@ -4,10 +4,10 @@ Vine::Vine()
 	: tip(NULL), dest()
 {}
 
-Vine::Vine(CollisionScene *scene, Vector3 pos, Number length, Number radius)
+Vine::Vine(CollisionScene *scene, Vector3 pos, Number radius)
 	: tip(NULL), dest()
 {
-	tip = new ScenePrimitive(ScenePrimitive::TYPE_CONE, length, radius, 10);
+	tip = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, radius, 10, 10);
 	tip->setPitch(-90);
 	tip->setPosition(pos);
 	//tip->setMaterialByName("VineMaterial");
@@ -48,25 +48,21 @@ void Vine::move(Vector3 delta)
 
 void Vine::update(Number elapsed)
 {
-	const Number VINE_SPEED = 100.0;
+	const Number VINE_SPEED = 25.0;
 
-	Vector2 dist = Vector2(dest.x - tip->getPosition().x, dest.y - tip->getPosition().y);
-	
+	Vector3 dist = dest - tip->getPosition();
+    
 	if (dist.length() < 0.1)
 	{
-		dist.x = 0;
-		dist.y = 0;
+		dist = Vector3(0,0,0);
 	}
-	Vector2 norm = dist;
+	Vector3 norm = dist;
 	norm.Normalize();
-	tip->setPitch(-90 + norm.y * 180 / PI);
-	tip->setRoll(norm.x * 180 / PI);
-	Vector2 move = norm * VINE_SPEED;
-	if (move.length() > dist.length())
-		move = dist;
-	tip->Translate(Vector3(move.x, move.y, 0.0));
-	
-	//tip->Translate(Vector3(dist.x, dist.y, 0.0));
+	Vector3 delta = norm * VINE_SPEED * elapsed;
+	if (delta.length() > dist.length())
+		delta = dist;
+    
+	move(delta);
 }
 
 void Vine::addToCollisionScene(CollisionScene *scene)

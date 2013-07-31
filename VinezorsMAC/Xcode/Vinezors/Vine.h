@@ -15,7 +15,7 @@ struct Vine
 	Vector3 dest;
 
 	Vine();
-	Vine(CollisionScene *scene, Vector3 pos, Number length, Number radius);
+	Vine(CollisionScene *scene, Vector3 pos, Number radius);
 	
 	ScenePrimitive *getTip() const;
 	Vector3 getPos() const;
