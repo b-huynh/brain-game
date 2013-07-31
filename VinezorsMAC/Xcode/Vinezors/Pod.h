@@ -22,7 +22,7 @@ private:
     bool pastFog;
 public:
 	Pod();
-	Pod(CollisionScene *scene, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius);
+	Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius);
 	
 	PodType getType() const;
 	ScenePrimitive *getStem() const;

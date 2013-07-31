@@ -8,48 +8,9 @@ using namespace Polycode;
 #include <list>
 #include <vector>
 #include "Util.h"
-#include "Pod.h"
+#include "TunnelSlice.h"
 
 using namespace std;
-
-enum TunnelType { NORMAL_WITH_PODS, NORMAL_ELONGATED, NORMAL_BLANK };
-
-// Contains the components of a segment of a tunnel which include the wall and pod information
-class TunnelSlice
-{
-private:
-	Vector3 center;
-	double width;
-	double depth;
-	
-	TunnelType type;
-	ScenePrimitive *topLeftWall;
-	ScenePrimitive *topWall;
-	ScenePrimitive *topRightWall;
-	ScenePrimitive *rightWall;
-	ScenePrimitive *bottomRightWall;
-	ScenePrimitive *bottomWall;
-	ScenePrimitive *bottomLeftWall;
-	ScenePrimitive *leftWall;
-
-	vector<Pod *> pods;
-public:
-	TunnelSlice();
-	TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Number width, Number depth);
-	
-	Vector3 getCenter() const;
-    vector<Pod *> getPods();
-    
-	vector<Pod *> findCollisions(CollisionScene *scene, SceneEntity *ent) const;
-
-	void move(Vector3 delta);
-	void changeWallTexture();
-	void addPod(CollisionScene *scene, Direction loc,  PodType type);
-
-	void addToCollisionScene(CollisionScene *scene);
-	void postAddToCollisionScene(CollisionScene *scene);
-	void removeFromCollisionScene(CollisionScene * scene);
-};
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -59,8 +20,8 @@ private:
 	
 	Vector3 start;
 	Vector3 end;
-	list<TunnelSlice *> segments;
-	list<TunnelSlice *>::iterator current;
+	list<TunnelSlice*> segments;
+	list<TunnelSlice*>::iterator current;
 	Number segmentWidth;
 	Number segmentDepth;
 public:
@@ -71,7 +32,12 @@ public:
 	Vector3 getStart() const;
 	Vector3 getEnd() const;
 	Vector3 getCenter() const;
-	TunnelSlice *getCurrent() const;
+	list<TunnelSlice*>::iterator getCurrentIterator();
+	list<TunnelSlice*>::iterator getBeginIterator();
+	list<TunnelSlice*>::iterator getEndIterator();
+    TunnelSlice* findSliceFromCurrent(Vector3 pos, Number tOffset) const;
+	TunnelSlice* getCurrent() const;
+	TunnelSlice* getNext(int i) const;
 	Number getSegmentWidth() const;
 	Number getSegmentDepth() const;
 
@@ -80,7 +46,7 @@ public:
 	void removeSegment();
 	void renewSegment();
 	
-	void renewIfNecessary(Vector3 checkPos);
+	bool renewIfNecessary(Vector3 checkPos);
 
     vector<Pod *> findPodCollisions(CollisionScene * scene, SceneEntity * entity);
     

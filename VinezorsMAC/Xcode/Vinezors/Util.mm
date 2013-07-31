@@ -2,8 +2,19 @@
 
 #include <sstream>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
+
+int randRangeInt(int min, int max)
+{
+    return min + rand () % (max - min + 1);
+}
+
+double randRangeDouble(double min, double max)
+{
+    return min + static_cast<double>(rand()) / RAND_MAX * (max - min);
+}
 
 Direction leftOf(Direction dir)
 {

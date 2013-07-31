@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5DC23E1217A8C3C500FBFB5D /* TunnelSlice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DC23E1017A8C3C400FBFB5D /* TunnelSlice.mm */; };
 		5DFB5A15178E74E400B5CED6 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB5A13178E74E400B5CED6 /* Credits.rtf */; };
 		5DFB5A18178E74EB00B5CED6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB5A16178E74EB00B5CED6 /* InfoPlist.strings */; };
 		5DFB5A1B178E750300B5CED6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB5A19178E750300B5CED6 /* MainMenu.xib */; };
@@ -15,7 +16,6 @@
 		5DFB5A23178E791B00B5CED6 /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DFB5A21178E791B00B5CED6 /* libBulletDynamics.a */; };
 		5DFB5A25178E793700B5CED6 /* libLinearMath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DFB5A24178E793700B5CED6 /* libLinearMath.a */; };
 		5DFB5A27178E794A00B5CED6 /* libPolycode3DPhysics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DFB5A26178E794A00B5CED6 /* libPolycode3DPhysics.a */; };
-		5DFB5A2E178E7A3200B5CED6 /* Pattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB5A29178E7A3100B5CED6 /* Pattern.mm */; };
 		5DFB5A2F178E7A3200B5CED6 /* Player.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB5A2B178E7A3100B5CED6 /* Player.mm */; };
 		5DFB5A30178E7A3200B5CED6 /* Pod.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB5A2D178E7A3200B5CED6 /* Pod.mm */; };
 		5DFB5A37178E7A3E00B5CED6 /* Tunnel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB5A32178E7A3E00B5CED6 /* Tunnel.mm */; };
@@ -39,10 +39,11 @@
 		6DE4C7FA13E24B92009A9862 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F313E24B92009A9862 /* libpng15.a */; };
 		6DE4C7FB13E24B92009A9862 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F413E24B92009A9862 /* libz.a */; };
 		B66F016617988D7A009BED93 /* Materials.mat in Resources */ = {isa = PBXBuildFile; fileRef = B66F016517988D7A009BED93 /* Materials.mat */; };
-		B6C94B7D17973E0100220D65 /* Change Notes in Resources */ = {isa = PBXBuildFile; fileRef = B6C94B7C17973E0100220D65 /* Change Notes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5DC23E1017A8C3C400FBFB5D /* TunnelSlice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TunnelSlice.mm; sourceTree = "<group>"; };
+		5DC23E1117A8C3C500FBFB5D /* TunnelSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TunnelSlice.h; sourceTree = "<group>"; };
 		5DFB5A14178E74E400B5CED6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = Vinezors/en.lproj/Credits.rtf; sourceTree = SOURCE_ROOT; };
 		5DFB5A17178E74EB00B5CED6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Vinezors/en.lproj/InfoPlist.strings; sourceTree = SOURCE_ROOT; };
 		5DFB5A1A178E750300B5CED6 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Vinezors/en.lproj/MainMenu.xib; sourceTree = SOURCE_ROOT; };
@@ -52,8 +53,6 @@
 		5DFB5A21178E791B00B5CED6 /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = ../../Modules/Dependencies/lib/libBulletDynamics.a; sourceTree = "<group>"; };
 		5DFB5A24178E793700B5CED6 /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = ../../Modules/Dependencies/lib/libLinearMath.a; sourceTree = "<group>"; };
 		5DFB5A26178E794A00B5CED6 /* libPolycode3DPhysics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPolycode3DPhysics.a; path = ../../Modules/lib/libPolycode3DPhysics.a; sourceTree = "<group>"; };
-		5DFB5A28178E7A3100B5CED6 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
-		5DFB5A29178E7A3100B5CED6 /* Pattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pattern.mm; sourceTree = "<group>"; };
 		5DFB5A2A178E7A3100B5CED6 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
 		5DFB5A2B178E7A3100B5CED6 /* Player.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Player.mm; sourceTree = "<group>"; };
 		5DFB5A2C178E7A3200B5CED6 /* Pod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pod.h; sourceTree = "<group>"; };
@@ -90,7 +89,6 @@
 		6DE4C7F313E24B92009A9862 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../Core/Dependencies/lib/libpng15.a; sourceTree = "<group>"; };
 		6DE4C7F413E24B92009A9862 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Core/Dependencies/lib/libz.a; sourceTree = "<group>"; };
 		B66F016517988D7A009BED93 /* Materials.mat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Materials.mat; path = resources/Materials.mat; sourceTree = SOURCE_ROOT; };
-		B6C94B7C17973E0100220D65 /* Change Notes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Change Notes"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +122,6 @@
 			isa = PBXGroup;
 			children = (
 				6D2800C113760D3E00BD8D0D /* Vinezors */,
-				6D2800BA13760D3E00BD8D0D /* Frameworks */,
 				6D2800B813760D3E00BD8D0D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -159,6 +156,7 @@
 				6D2800BD13760D3E00BD8D0D /* Other Frameworks */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		6D2800BD13760D3E00BD8D0D /* Other Frameworks */ = {
@@ -177,18 +175,19 @@
 				6D2800C213760D3E00BD8D0D /* Supporting Files */,
 				5DFB5A31178E7A3E00B5CED6 /* Tunnel.h */,
 				5DFB5A32178E7A3E00B5CED6 /* Tunnel.mm */,
+				5DC23E1117A8C3C500FBFB5D /* TunnelSlice.h */,
+				5DC23E1017A8C3C400FBFB5D /* TunnelSlice.mm */,
 				5DFB5A33178E7A3E00B5CED6 /* Util.h */,
 				5DFB5A34178E7A3E00B5CED6 /* Util.mm */,
 				5DFB5A35178E7A3E00B5CED6 /* Vine.h */,
 				5DFB5A36178E7A3E00B5CED6 /* Vine.mm */,
-				5DFB5A28178E7A3100B5CED6 /* Pattern.h */,
-				5DFB5A29178E7A3100B5CED6 /* Pattern.mm */,
 				5DFB5A2A178E7A3100B5CED6 /* Player.h */,
 				5DFB5A2B178E7A3100B5CED6 /* Player.mm */,
 				5DFB5A2C178E7A3200B5CED6 /* Pod.h */,
 				5DFB5A2D178E7A3200B5CED6 /* Pod.mm */,
-				5DFB5A1E178E752500B5CED6 /* Vinezors.mm */,
 				5DFB5A1D178E752500B5CED6 /* Vinezors.h */,
+				5DFB5A1E178E752500B5CED6 /* Vinezors.mm */,
+				6D2800BA13760D3E00BD8D0D /* Frameworks */,
 			);
 			path = Vinezors;
 			sourceTree = "<group>";
@@ -209,7 +208,6 @@
 				6D2800C313760D3E00BD8D0D /* Vinezors-Info.plist */,
 				6D2800C713760D3E00BD8D0D /* Vinezors-Prefix.pch */,
 				6D2800C813760D3E00BD8D0D /* main.m */,
-				B6C94B7C17973E0100220D65 /* Change Notes */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -270,7 +268,6 @@
 				5DFB5A15178E74E400B5CED6 /* Credits.rtf in Resources */,
 				5DFB5A18178E74EB00B5CED6 /* InfoPlist.strings in Resources */,
 				5DFB5A1B178E750300B5CED6 /* MainMenu.xib in Resources */,
-				B6C94B7D17973E0100220D65 /* Change Notes in Resources */,
 				B66F016617988D7A009BED93 /* Materials.mat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,12 +299,12 @@
 				6D2800CF13760D3E00BD8D0D /* VinezorsDelegate.mm in Sources */,
 				6D2800F913760E7C00BD8D0D /* PolycodeView.mm in Sources */,
 				5DFB5A1F178E752500B5CED6 /* Vinezors.mm in Sources */,
-				5DFB5A2E178E7A3200B5CED6 /* Pattern.mm in Sources */,
 				5DFB5A2F178E7A3200B5CED6 /* Player.mm in Sources */,
 				5DFB5A30178E7A3200B5CED6 /* Pod.mm in Sources */,
 				5DFB5A37178E7A3E00B5CED6 /* Tunnel.mm in Sources */,
 				5DFB5A38178E7A3E00B5CED6 /* Util.mm in Sources */,
 				5DFB5A39178E7A3E00B5CED6 /* Vine.mm in Sources */,
+				5DC23E1217A8C3C500FBFB5D /* TunnelSlice.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

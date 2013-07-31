@@ -12,12 +12,6 @@ using namespace Polycode;
 
 using namespace std;
 
-static const double TUNNEL_WIDTH = 5.0;
-static const double TUNNEL_DEPTH = 5.0;
-static const double LIGHT_INTENSITY = 5.0;
-static const double VINE_LENGTH = TUNNEL_WIDTH / 4;
-static const double VINE_RADIUS = 0.5;
-
 class Vinezors : public EventHandler {
 public:
     Vinezors(PolycodeView *view);
@@ -29,6 +23,8 @@ public:
 private:
     Core *core;
 
+    bool pause;
+    
 	Screen *screen;
 
 	ScreenLabel *label;
@@ -42,9 +38,11 @@ private:
 
 	Tunnel *tunnel;
 	
+    /*
 	ScenePrimitive *fog1;
 	ScenePrimitive *fog2;
 	ScenePrimitive *fog3;
+    */
     
     SceneEntity * speaker;
     vector<SceneSound *> podSounds;
