@@ -1,11 +1,12 @@
 #include "Poppy.h"
 
 Poppy::Poppy(Vector3 pos, Color baseColor, Color blinkColor, Number blinktime)
-	: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos)
+	: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
-	body = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 0.5, 0.5, 0.5);
+	body = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.25, 10, 10);
 	body->setPosition(pos);
     this->setColor(baseColor);
+    //body->setMaterialByName("PodBlueMat");
 }
 
 Poppy::~Poppy()
@@ -19,12 +20,14 @@ void Poppy::setId(int val)
 
 void Poppy::setColor(int r, int g, int b, int a)
 {
-	body->setColor(Color(r, g, b, a));
+    body->setColor(Color(r,g,b,a));
+	//body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
 }
 
 void Poppy::setColor(Color color)
 {
-	body->setColor(color);
+    body->setColor(color);
+	//body->setMaterialByName(getTextureNameByColor(color));
 }
 
 void Poppy::setPosition(Number x, Number y, Number z)
@@ -50,6 +53,11 @@ void Poppy::setMoving(bool val)
 void Poppy::setDest(Vector3 val)
 {
     dest = val;
+}
+
+void Poppy::setMoveSpeed(Number speed)
+{
+    moveSpeed = speed;
 }
 
 void Poppy::handleCollision(Number elapsed, CollisionScene *scene, Poppy* rhs)
@@ -116,6 +124,11 @@ void Poppy::deactivateJump()
     jumping = false;
 }
 
+void Poppy::deactivateJumpAtDest(bool stop)
+{
+    stopJumpAtDest = stop;
+}
+
 void Poppy::jump(Number elapsed)
 {
     const Number JUMP_HEIGHT = 0.5;
@@ -150,12 +163,17 @@ void Poppy::update(Number elapsed)
     
     // Update poppy to move towards destination if one exists
     if (moving) {
-        const Number MOVE_SPEED = 1.0;
         Vector3 dist = dest - body->getPosition();
         if (dist.length() > 0.1)
         {
             dist.Normalize();
-            body->Translate(dist * elapsed * MOVE_SPEED);
+            body->Translate(dist * elapsed * moveSpeed);
         }
+    }
+    
+    if (stopJumpAtDest){
+        Vector3 dist = dest - body->getPosition();
+        if (dist.length() < 0.1)
+            deactivateJump();
     }
 }

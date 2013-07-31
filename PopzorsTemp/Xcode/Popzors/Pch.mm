@@ -1,6 +1,9 @@
 #include "Pch.h"
 
+#include <string>
+#include <sstream>
 #include <cstdlib>
+
 
 int randRangeInt(int min, int max)
 {
@@ -29,5 +32,29 @@ String getSoundAccordingToColor(Color col)
     if (col == Cpot2) return Spot2;
     if (col == Cpot3) return Spot3;
     if (col == Cpot4) return Spot4;
+    return "";
+}
+
+std::string toStringInt(int value)
+{
+    std::stringstream ss;
+	ss << value;
+	return ss.str();
+}
+
+std::string toStringDouble(double value)
+{
+    std::stringstream ss;
+	ss << value;
+	return ss.str();
+}
+
+String getTextureNameByColor(Color col)
+{
+    if (col == Cpot1) return "PodPinkMat";
+    if (col == Cpot2) return "PodBlueMat";
+    if (col == Cpot3) return "PodGreenMat";
+    if (col == Cpot4) return "PodYellowMat";
+    if (col == BLAND_COLOR) return "PoppyBaseMat";
     return "";
 }

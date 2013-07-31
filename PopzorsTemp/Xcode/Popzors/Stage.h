@@ -8,7 +8,12 @@
 struct ClickedResult {
     Poppy * poppy;
     Pot * pot;
-    ClickedResult() : poppy(NULL), pot(NULL) {}
+    int eventCode;
+    RayTestResult ray;
+    
+    ClickedResult()
+    : poppy(NULL), pot(NULL), eventCode(-1), ray(RayTestResult())
+    {}
 };
 
 // Contains the interface for the environment and all entities.
@@ -20,14 +25,19 @@ public:
     //Ground
     Ground *ground;
     
+    //Lighting
+    vector<SceneLight *> lights;
+    
 	//Objects
 	vector<Poppy*> poppies;
 	vector<Pot*> pots;
+
     
     // Utility Functions
     void handlePoppyCollisions(Number elapsed);
     void handlePotCollisions(Number elapsed);
-    ClickedResult getClicked(Vector3 origin, Vector3 dest);
+    ClickedResult rayTest(Vector3 origin, Vector3 dest);
+    ClickedResult getClicked(InputEvent * inputEvent);
     
     // Cleanup entire scene
     void clear()
@@ -51,9 +61,16 @@ public:
             delete pots[i];
         }
         pots.clear();
+        
+        for (int i = 0; i < lights.size(); ++i)
+        {
+            scene->removeEntity(lights[i]);
+            delete lights[i];
+        }
+        lights.clear();
     }
     
-    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots()
+    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots(), lights()
     {}
     
     ~Stage() {}

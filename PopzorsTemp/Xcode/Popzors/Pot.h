@@ -2,6 +2,7 @@
 
 #include "Pch.h"
 #include "Selectable.h"
+#include "Poppy.h"
 
 class Pot : public Selectable {
 public: 
@@ -21,6 +22,7 @@ public:
     
     int getId() const { return potId; }
 	Vector3 getPosition() const { return body->getPosition(); }
+    Number getRadius() const { return radius; }
     
 	void addToCollisionScene(CollisionScene * scene);
     void removeFromCollisionScene(CollisionScene * scene);
@@ -29,8 +31,10 @@ public:
     
     virtual void reset();
     virtual void update(Number elapsed);
+    
 private:
     int potId;
+    Number radius;
     
 	Vector3 pos;
 	ScenePrimitive * body;

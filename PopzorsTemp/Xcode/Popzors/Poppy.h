@@ -18,6 +18,7 @@ public:
     void setPotIdRef(int val);
     void setMoving(bool val);
     void setDest(Vector3 val);
+    void setMoveSpeed(Number speed);
     void handleCollision(Number elapsed, CollisionScene *scene, Poppy* rhs);
     
 	virtual int getType() const { return Selectable::TYPE_POPPY; }
@@ -33,12 +34,15 @@ public:
     
     void activateJump();
     void deactivateJump();
+    void deactivateJumpAtDest(bool stop);
     void jump(Number elapsed);
     
     void update(Number elapsed);
 private:
     bool jumping;
     Number timeJumped;
+    
+    Number moveSpeed;
     
     int popId;
 	Vector3 pos; // Does not represent actual graphical pos, but initial/reset pos
@@ -47,6 +51,8 @@ private:
     
     bool moving;
     Vector3 dest;
+    
+    bool stopJumpAtDest;
     
 	ScenePrimitive * body;
 };

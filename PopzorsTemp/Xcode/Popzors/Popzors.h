@@ -3,6 +3,7 @@
 #include "Pch.h"
 #include "PoppyPattern.h"
 #include "PotPattern.h"
+#include "HerdPattern.h"
 
 #include <cstdlib>
 
@@ -22,6 +23,11 @@ private:
 	//Screen
 	Screen *screen;
 	CollisionScene *scene;
+    
+    SceneLight * light;
+    
+    //Label for Debug
+    ScreenLabel * label;
     
 	//Camera
 	Vector3 cameraPos;

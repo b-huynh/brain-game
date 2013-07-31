@@ -4,13 +4,6 @@
 #include <cstdlib>
 #include <time.h>
 
-int fibonacci(int k)
-{
-	if (k == 0) return 0;
-	if (k <= 2) return 1;
-	return fibonacci(k-1) + fibonacci(k-2);
-}
-
 Popzors::Popzors(PolycodeView *view)
 	: EventHandler() {
 	srand(time(0));
@@ -21,16 +14,23 @@ Popzors::Popzors(PolycodeView *view)
 	core = new CocoaCore(view, width, height, false, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
+        CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
         
 	//SCREEN
 	screen = new Screen();
+        
+    label = new ScreenLabel(">.<", 36);
+    label->setColor(1.0, 1.0, 0.0, 1.0);
+    screen->addChild(label);
 
 	//SCENE
 	scene = new CollisionScene();
 	cameraPos = Vector3(0,7,7);
 	origin = Vector3(0,0,0);
 	
-    pattern = new PotPattern(screen, scene);
+    //pattern = new PotPattern(screen, scene);
+    //pattern = new PoppyPattern(screen, scene);
+    pattern = new HerdPattern(screen, scene);
     pattern->setPattern();
     
 	scene->getDefaultCamera()->setPosition(cameraPos);
@@ -48,16 +48,14 @@ void Popzors::handleEvent(Event * e)
 		switch(e->getEventCode()) {
 			case InputEvent::EVENT_MOUSEDOWN:
 			{
-				//calculate ray start and end
-				Vector2 mousePos = inputEvent->mousePosition;
-				Vector3 dir = CoreServices::getInstance()->getRenderer()->projectRayFrom2DCoordinate(mousePos.x, mousePos.y);
-				ClickedResult res = pattern->stage.getClicked(scene->getDefaultCamera()->getPosition(), dir * 1000);
-				
+				ClickedResult res = pattern->stage.getClicked(inputEvent);
                 pattern->processSelect(res);
 			}
 			break;
 									
 			case InputEvent::EVENT_MOUSEUP:
+                ClickedResult res = pattern->stage.getClicked(inputEvent);
+                pattern->processSelect(res);
 			break;
 		}
 	}
@@ -73,6 +71,8 @@ bool Popzors::Update()
 	Number elapsed = core->getElapsed();
     
 	pattern->update(elapsed);
+    
+    label->setText( pattern->isFinished() ? "True" : "False" );
 
 	return core->updateAndRender();
 }

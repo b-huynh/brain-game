@@ -5,9 +5,10 @@ Ground::Ground(Vector3 pos, Color baseColor,
     : Blinkable(baseColor, blinkColor, blinktime), pos(pos)
 {
 	//Make Ground
-	body = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, 8, 8);
+	body = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, 15, 15);
 	body->setPosition(pos);
     this->setColor(baseColor);
+    //body->setMaterialByName("PodBlackMat");
 }
 
 Ground::~Ground()

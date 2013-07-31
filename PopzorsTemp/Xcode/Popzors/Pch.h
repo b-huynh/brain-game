@@ -16,9 +16,9 @@ const Color Cpot2 = Color(0,192,0,255);
 const Color Cpot3 = Color(0,0,192,255);
 const Color Cpot4 = Color(192,192,0,255);
 
-const Color GROUND_COLOR = Color(255,255,255,255);
-const Color FEEDBACK_COLOR_GOOD = Color(0,255,0,255);
-const Color FEEDBACK_COLOR_BAD = Color(255,0,0,255);
+const Color GROUND_COLOR = Color(255, 255, 255, 100);
+const Color FEEDBACK_COLOR_GOOD = Color(0,255,0,100);
+const Color FEEDBACK_COLOR_BAD = Color(255,0,0,100);
 
 const Number SIGNAL_START = 2.0;
 const Number SIGNAL_LENGTH = 0.5;
@@ -32,3 +32,8 @@ const String Spot1 = "resources/blip.wav";
 const String Spot2 = "resources/bloop.wav";
 const String Spot3 = "resources/blurp.wav";
 const String Spot4 = "resources/boing.wav";
+
+std::string toStringInt(int value);
+std::string toStringDouble(double value);
+
+String getTextureNameByColor(Color col);

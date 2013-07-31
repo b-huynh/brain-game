@@ -1,5 +1,7 @@
 #include "Stage.h"
 
+#include <iostream>
+
 // Simple inefficient algorithm that pushes poppies away from each other if they collide
 void Stage::handlePoppyCollisions(Number elapsed)
 {
@@ -20,7 +22,7 @@ void Stage::handlePotCollisions(Number elapsed)
 }
 
 // Returns input data for clicking
-ClickedResult Stage::getClicked(Vector3 origin, Vector3 dest)
+ClickedResult Stage::rayTest(Vector3 origin, Vector3 dest)
 {
 	ClickedResult res;
 	res.poppy = NULL;
@@ -36,5 +38,19 @@ ClickedResult Stage::getClicked(Vector3 origin, Vector3 dest)
 		if (pots[i]->hasEntity(ray.entity))
             res.pot = pots[i];
     
+    res.ray = ray;
+    
 	return res;
+}
+
+ClickedResult Stage::getClicked(InputEvent * inputEvent)
+{
+    Vector2 mousePos = inputEvent->mousePosition;
+    Vector3 dir = CoreServices::getInstance()->getRenderer()->projectRayFrom2DCoordinate(mousePos.x, mousePos.y);
+    
+    ClickedResult res = rayTest(scene->getDefaultCamera()->getPosition(), dir * 1000);
+    
+    res.eventCode = inputEvent->getEventCode();
+    
+    return res;
 }

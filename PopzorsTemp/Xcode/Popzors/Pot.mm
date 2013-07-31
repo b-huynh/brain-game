@@ -1,12 +1,13 @@
 #include "Pot.h"
 
 Pot::Pot(Vector3 pos, Number radius, Color baseColor, Color blinkColor, Number blinktime, const String & soundFile)
-	: Selectable(baseColor, blinkColor, blinktime), potId(-1), pos(pos), sound(NULL)
+	: Selectable(baseColor, blinkColor, blinktime), potId(-1), pos(pos), sound(NULL), radius(radius)
 {
 	body = new ScenePrimitive(ScenePrimitive::TYPE_UNCAPPED_CYLINDER, 0.3, radius, 100.0);
     body->setPosition(pos);
     body->backfaceCulled = false;
     this->setColor(baseColor);
+    //body->setMaterialByName(getTextureNameByColor(baseColor));
     
     if (soundFile != "")
         sound = new Sound(soundFile);
