@@ -31,3 +31,7 @@ Animate Vines->smooth arc
 
 
 Multivine!
+
+7/31
+->Different Signals, Different shaped lollipops, Player adaption for levels, Multiple directions and spatial memory task (memorizing maps and correct tunnels).
+->Forks in tunnels
