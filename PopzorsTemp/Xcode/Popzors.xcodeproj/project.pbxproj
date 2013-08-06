@@ -28,6 +28,7 @@
 		6DE4C7F913E24B92009A9862 /* libphysfs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F213E24B92009A9862 /* libphysfs.a */; };
 		6DE4C7FA13E24B92009A9862 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F313E24B92009A9862 /* libpng15.a */; };
 		6DE4C7FB13E24B92009A9862 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DE4C7F413E24B92009A9862 /* libz.a */; };
+		B644979917AAEB060063AC7A /* Player.mm in Sources */ = {isa = PBXBuildFile; fileRef = B644979717AAEB050063AC7A /* Player.mm */; };
 		B64C5723178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = B64C5722178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm */; };
 		B64C5725178E30B100C774FF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6515AE7178E1D2100908A06 /* InfoPlist.strings */; };
 		B64C5728178E348E00C774FF /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B64C5726178E348E00C774FF /* MainMenu.xib */; };
@@ -79,6 +80,8 @@
 		6DE4C7F213E24B92009A9862 /* libphysfs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libphysfs.a; path = ../../Core/Dependencies/lib/libphysfs.a; sourceTree = "<group>"; };
 		6DE4C7F313E24B92009A9862 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../Core/Dependencies/lib/libpng15.a; sourceTree = "<group>"; };
 		6DE4C7F413E24B92009A9862 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../Core/Dependencies/lib/libz.a; sourceTree = "<group>"; };
+		B644979717AAEB050063AC7A /* Player.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Player.mm; sourceTree = "<group>"; };
+		B644979817AAEB050063AC7A /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
 		B64C5721178E29FB00C774FF /* PolycodeTemplateAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolycodeTemplateAppDelegate.h; sourceTree = "<group>"; };
 		B64C5722178E29FB00C774FF /* PolycodeTemplateAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PolycodeTemplateAppDelegate.mm; sourceTree = "<group>"; };
 		B64C5727178E348E00C774FF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = Popzors/en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -163,6 +166,8 @@
 				B6515B17178E21EC00908A06 /* Selectable.mm */,
 				5D6165DC17949E380065CF18 /* Blinkable.h */,
 				5D6165DB17949E380065CF18 /* Blinkable.mm */,
+				B644979817AAEB050063AC7A /* Player.h */,
+				B644979717AAEB050063AC7A /* Player.mm */,
 			);
 			name = Entities;
 			sourceTree = "<group>";
@@ -349,6 +354,7 @@
 				5DEF5B6A1798920F00DCE2F1 /* Stage.mm in Sources */,
 				5DE427381799ED1F00AF5C76 /* PotPattern.mm in Sources */,
 				B6A3915F17A0786E00560149 /* HerdPattern.mm in Sources */,
+				B644979917AAEB060063AC7A /* Player.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
