@@ -19,8 +19,8 @@ void PotPattern::setup()
 	stage.ground->addToCollisionScene(stage.scene);
     
     const Number POT_RADIUS = 0.5;
-    playerTotalProblems = playerLevel;
-    numPots = playerLevel * 2;
+    player.totalProblems = player.level;
+    numPots = player.level * 2;
     
     for (int i = 0; i < numPots; ++i)
     {
@@ -32,6 +32,25 @@ void PotPattern::setup()
         stage.pots.push_back(pot);
     }
     sort(stage.pots.begin(), stage.pots.end(), comparePotX);
+    
+    SceneLight * light = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
+    light->setPosition(3, 3.5, 0);
+    stage.scene->addLight(light);
+    
+    SceneLight * light1 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
+    light1->setPosition(-3, 3.5, 0);
+    stage.scene->addLight(light1);
+    
+    SceneLight * light2 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
+    light2->setPosition(3, 3.5, 3);
+    stage.scene->addLight(light2);
+    
+    SceneLight * light3 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
+    light3->setPosition(-3, 3.5, 3);
+    stage.scene->addLight(light3);
+    
+    stage.scene->ambientColor = Color(0.2, 0.2, 0.2, 0.2);
+    
 }
 
 void PotPattern::reset()
@@ -60,7 +79,7 @@ void PotPattern::setPattern()
 
 bool PotPattern::isFinished() const
 {
-    return playerNumAnswers >= playerTotalProblems;
+    return playerNumAnswers >= player.totalProblems;
 }
 
 void PotPattern::processSelect(ClickedResult res)
@@ -101,7 +120,7 @@ void PotPattern::processSelect(ClickedResult res)
 
 void PotPattern::update(Number elapsed)
 {
-    if (ready && usefulPotIndex < playerTotalProblems)
+    if (ready && usefulPotIndex < player.totalProblems)
     {
         spawnPoppyTimer += elapsed;
         const Number SPAWN_RATE = 1.0;
@@ -139,15 +158,15 @@ void PotPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
 {
     if (pot->getBlinkColor() == poppy->getBlinkColor())
     {
-        playerNumCorrect++;
+        player.numCorrect++;
     }
     playerNumAnswers++;
     if (isFinished())
     {
-        if (playerNumCorrect >= playerTotalProblems)
+        if (player.numCorrect >= player.totalProblems)
         {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-            playerLevel++;
+            player.updateLevel(PLAYER_SUCCESS);
         }
         else
         {
@@ -167,6 +186,7 @@ void PotPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
                 stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
                                             Color(0, 198, 198, 0) * (1 - (value / range)));
             }
+            player.updateLevel(PLAYER_FAILURE);
         }
         stage.ground->activateBlink();
     }

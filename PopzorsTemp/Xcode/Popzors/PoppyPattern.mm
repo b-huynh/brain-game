@@ -34,10 +34,10 @@ void PoppyPattern::setup()
 	stage.pots.push_back(pot4);
     
 	//Make some poppies
-    numImportantPoppies = playerLevel;
-    numDistractingPoppies = playerLevel;
+    numImportantPoppies = player.level;
+    numDistractingPoppies = player.level;
     
-    playerTotalProblems = numImportantPoppies; // For base class Pattern
+    player.totalProblems = numImportantPoppies; // For base class Pattern
 	for (int i = 0; i < numImportantPoppies + numDistractingPoppies; ++i) {
 		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1.5, 1.5),0,randRangeDouble(-1.5, 1.5)),
                      BLAND_COLOR, BLAND_COLOR);
@@ -157,15 +157,15 @@ void PoppyPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
 {
     if (pot->getId() == poppy->getPotIdRef() && poppy->getId() == playerPoppyIndex)
     {
-        playerNumCorrect++;
+        player.numCorrect++;
     }
     playerPoppyIndex++;
     if (isFinished())
     {
-        if (playerNumCorrect >= playerTotalProblems)
+        if (player.numCorrect >= player.totalProblems)
         {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-            playerLevel++;
+            player.level++;
         }
         else
         {

@@ -6,8 +6,8 @@ Pot::Pot(Vector3 pos, Number radius, Color baseColor, Color blinkColor, Number b
 	body = new ScenePrimitive(ScenePrimitive::TYPE_UNCAPPED_CYLINDER, 0.3, radius, 100.0);
     body->setPosition(pos);
     body->backfaceCulled = false;
-    this->setColor(baseColor);
-    //body->setMaterialByName(getTextureNameByColor(baseColor));
+    //this->setColor(baseColor);
+    body->setMaterialByName(getTextureNameByColor(baseColor));
     
     if (soundFile != "")
         sound = new Sound(soundFile);
@@ -29,12 +29,14 @@ void Pot::setId(int val)
 
 void Pot::setColor(int r, int g, int b, int a)
 {
-	body->setColor(r,g,b,a);
+	//body->setColor(r,g,b,a);
+    body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
 }
 
 void Pot::setColor(Color color)
 {
-	body->setColor(color);
+	//body->setColor(color);
+    body->setMaterialByName(getTextureNameByColor(color));
 }
 
 void Pot::setPosition(Number x, Number y, Number z)

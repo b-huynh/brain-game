@@ -16,7 +16,8 @@ const Color Cpot2 = Color(0,192,0,255);
 const Color Cpot3 = Color(0,0,192,255);
 const Color Cpot4 = Color(192,192,0,255);
 
-const Color GROUND_COLOR = Color(255, 255, 255, 100);
+//const Color GROUND_COLOR = Color(255, 255, 255, 100);
+const Color GROUND_COLOR = Color(0, 0, 0, 100);
 const Color FEEDBACK_COLOR_GOOD = Color(0,255,0,100);
 const Color FEEDBACK_COLOR_BAD = Color(255,0,0,100);
 
@@ -37,3 +38,6 @@ std::string toStringInt(int value);
 std::string toStringDouble(double value);
 
 String getTextureNameByColor(Color col);
+
+//Save/Load File Directory (for debugging);
+std::string getSaveDir();

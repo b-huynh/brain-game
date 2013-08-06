@@ -12,9 +12,9 @@ void HerdPattern::setup()
 	stage.ground->addToCollisionScene(stage.scene);
     
     //Stage variables
-    numPoppies = playerLevel * 2;
+    numPoppies = player.level * 2;
     numDistractors = 20;
-    playerTotalProblems = numPoppies;
+    player.totalProblems = numPoppies;
     
 	//Make some pots
     const Number POT_RADIUS = 0.75;
@@ -198,17 +198,17 @@ void HerdPattern::updatePlayerChoice(Poppy * poppy, Pot * pot)
             ++numAnswered;
             
             if (pot->getBaseColor() == poppy->getBlinkColor())
-                ++playerNumCorrect;
+                ++player.numCorrect;
         }
     }
     
     if (isFinished() && !stage.ground->isBlinking()) {
-        if (playerNumCorrect >= playerTotalProblems) {
+        if (player.numCorrect >= player.totalProblems) {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-            ++playerLevel;
+            ++player.level;
         } else {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD);
-            if (playerLevel > 1) --playerLevel; 
+            if (player.level > 1) --player.level;
         }
         
         stage.ground->activateBlink();

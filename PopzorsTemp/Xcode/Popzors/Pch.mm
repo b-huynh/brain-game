@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <cstdlib>
+#include <sys/stat.h>
 
 
 int randRangeInt(int min, int max)
@@ -56,5 +57,18 @@ String getTextureNameByColor(Color col)
     if (col == Cpot3) return "PodGreenMat";
     if (col == Cpot4) return "PodYellowMat";
     if (col == BLAND_COLOR) return "PoppyBaseMat";
-    return "";
+    return "PoppyBaseMat";
+}
+
+std::string getSaveDir()
+{
+    char * dir = getenv("HOME");
+    std::string result = "";
+    if (dir)
+        result = std::string(dir) + "/.braingame/";
+    else
+        return "";
+    
+    mkdir(result.c_str(), 0777);
+    return result;
 }
