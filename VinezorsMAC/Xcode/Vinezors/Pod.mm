@@ -12,30 +12,34 @@ Pod::Pod()
 }
 
 Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Vector3 base, Vector3 tip, Number stemRadius, Number headRadius)
-    : type(type), stem(NULL), head(NULL), shell(NULL), pastFog(false)
+    : type(type), base(base), tip(tip), stemRadius(stemRadius), headRadius(headRadius), stem(NULL), head(NULL), shell(NULL), pastFog(false)
 {
 	Number stemLength = base.distance(tip);
-
-	stem = new ScenePrimitive(ScenePrimitive::TYPE_CYLINDER, stemLength, stemRadius, 10);
-	stem->setPosition((base + tip) / 2);
-	stem->loadTexture("resources/green_solid.png");
+    
+    stem = new ScenePrimitive(ScenePrimitive::TYPE_CYLINDER, stemLength, stemRadius, 10);
+    //stem->loadTexture("resources/green_solid.png");
+    stem->setColor(0.5, 1.0, 0.5, 1.0);
     double angle;
     Vector3 v = base - tip;
     v = (rot.Inverse()).applyTo(v); // Reverse to old coordinates to find x-y angle
     angle = (std::atan2(v.y, v.x) + PI / 2) * (180.0 / PI);
     Quaternion q;
-    q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
+    q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z,angle);
     q = q.Inverse();
     q = rot * q;
     stem->setRotationQuat(q.w, q.x, q.y, q.z);
     
 	head = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, headRadius, 10, 10);
-	head->setPosition(tip);
+    //head->enabled = false;
     
     shell = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, headRadius + 0.1, 10, 10);
     shell->setColor(1.0 ,0.0, 0.0, 0.1);
-    shell->setPosition(tip);
+    shell->enabled = false;
     
+    head->setMaterialByName("PodUnknownMat");
+    setToGrowth(0.0);
+    
+    /*
 	switch (type)
 	{
 	case POD_BLUE:
@@ -52,11 +56,15 @@ Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Ve
 		break;
 	case POD_BLACK:
 		head->loadTexture("resources/black_solid.png");
-		break;
+        break;
+    case POD_BROWN:
+        head->loadTexture("resources/brown_solid.png");
+        break;
 	default:
 		head->loadTexture("resources/black_solid.png");	
 		break;
 	}
+    */
     
     /*
     //Testing Pod Material and Lighting
@@ -86,21 +94,20 @@ Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Ve
 	addToCollisionScene(scene);
 }
 
-/*
-Quaternion Pod::getTunnelQuaternion(Vector3 center, Vector3 forward)
+void Pod::setToGrowth(double t)
 {
-    Quaternion rot;
-    Vector3 axis = forward.crossProduct(TUNNEL_REFERENCE_FORWARD);
-    if (axis == Vector3(0,0,0)) axis = TUNNEL_REFERENCE_FORWARD;
-    axis.Normalize();
-    Number angle = forward.angleBetween(TUNNEL_REFERENCE_FORWARD) * (180.0/ PI);
-    //if (axis.dot(Vector3(1,1,1)) >= 0) angle += 180;
-    rot.createFromAxisAngle(axis.x, axis.y, axis.z, angle);
-    //if (angle <= 180)
-        rot = rot.Inverse();
-    return rot;
+    Vector3 baseToTip = tip - base;
+    double totalLength = baseToTip.length();
+    baseToTip.Normalize();
+    
+    double stemLength = totalLength;
+    Vector3 nBase = base + baseToTip * (-stemLength * (1 - t));
+    Vector3 nTip = nBase + baseToTip * (stemLength);
+    
+    stem->setPosition((nBase + nTip) / 2);
+	head->setPosition(nTip);
+    shell->setPosition(nTip);
 }
- */
 
 PodType Pod::getType() const
 {
@@ -126,6 +133,38 @@ void Pod::move(Vector3 delta)
 void Pod::hidePod()
 {
 	head->enabled = false;
+}
+
+void Pod::showPod()
+{
+    head->enabled = true;
+    
+    switch (type)
+	{
+        case POD_BLUE:
+            head->setMaterialByName("PodBlueMat");
+            break;
+        case POD_GREEN:
+            head->setMaterialByName("PodGreenMat");
+            break;
+        case POD_PINK:
+            head->setMaterialByName("PodPinkMat");
+            break;
+        case POD_YELLOW:
+            head->setMaterialByName("PodYellowMat");
+            break;
+        case POD_BLACK:
+            head->setMaterialByName("PodBlackMat");
+            break;
+        default:
+            head->setMaterialByName("PodUnknownMat");
+            break;
+	}
+}
+
+void Pod::showShell()
+{
+    shell->enabled = true;
 }
 
 void Pod::addToCollisionScene(CollisionScene *scene)

@@ -66,6 +66,31 @@ Direction rightOf(Direction dir)
 	}
 }
 
+Direction oppositeOf(Direction dir)
+{
+	switch (dir)
+	{
+        case NORTHWEST:
+            return SOUTHEAST;
+        case NORTH:
+            return SOUTH;
+        case NORTHEAST:
+            return SOUTHWEST;
+        case EAST:
+            return WEST;
+        case SOUTHEAST:
+            return NORTHWEST;
+        case SOUTH:
+            return NORTH;
+        case SOUTHWEST:
+            return NORTHEAST;
+        case WEST:
+            return EAST;
+        default:
+            return NO_DIRECTION;
+	}
+}
+
 Direction randDirection()
 {
     vector<Direction> dirs(8);

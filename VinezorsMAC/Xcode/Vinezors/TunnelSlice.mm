@@ -5,36 +5,42 @@
 TunnelSlice::TunnelSlice()
 : center(), rot(), width(0), depth(0), type(NORMAL_BLANK),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods()
+pods(), t(0)
 {}
 
 TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Quaternion rot, Number width, Number depth)
 : center(center), rot(rot), width(width), depth(depth), type(type),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods()
+pods(), t(0)
 {
-	String filePathWallTexture;
-	if (type == NORMAL_WITH_PODS)
-		filePathWallTexture = "resources/metal.png";
-	else if (type == NORMAL_BLANK)
-		filePathWallTexture = "resources/yellow_solid.png";
-	else if (type == NORMAL_ELONGATED)
-		filePathWallTexture = "resources/yellow_solid_ellipse.png";
+	Number wallLength = width / (2 * cos(PI / 4) + 1);
+	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
     
+    initWalls();
+    
+	addToCollisionScene(scene);
+}
+
+TunnelType TunnelSlice::getType()
+{
+    return type;
+}
+
+void TunnelSlice::initWalls()
+{
+	String filePathWallTexture = "resources/metal.png";
 	Number wallLength = width / (2 * cos(PI / 4) + 1);
     
     double angle;
     Quaternion q;
     Vector3 move;
-    //cout << axis.x << "," << axis.y << "," << axis.z << endl;
-    //cout << angle << endl;
-    //cout << rot.w << "," << rot.x << "," << rot.y << "," << rot.z << endl;
-    
-    //move = Vector3((-width + wallLength) / 4, (width + wallLength) / 4, 0);
-    
-    //cout << move.x << "," << move.y << "," << move.z << endl;
-    //move = rot.applyTo(move);
-    //cout << move.x << "," << move.y << "," << move.z << endl;
     
     angle = 225;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -42,11 +48,10 @@ pods()
     q = rot * q;
     move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
     move = rot.applyTo(move);
-	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    topLeftWall->bBox.x = wallLength;
+    topLeftWall->bBox.z = depth;
 	topLeftWall->setPosition(center + move);
     topLeftWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	topLeftWall->setMaterialByName("WallMaterial");
-    //topLeftWall->loadTexture("resources/red_solid.png");
     
     angle = 180;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -54,11 +59,10 @@ pods()
     q = rot * q;
     move = Vector3(0, width / 2, 0);
     move = rot.applyTo(move);
-	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    topWall->bBox.x = wallLength;
+    topWall->bBox.z = depth;
 	topWall->setPosition(center + move);
     topWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	topWall->setMaterialByName("WallMaterial");
-	//topWall->loadTexture("resources/yellow_solid.png");
     
     angle = 135;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -66,10 +70,10 @@ pods()
     q = rot * q;
     move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
     move = rot.applyTo(move);
-	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    topRightWall->bBox.x = wallLength;
+    topRightWall->bBox.z = depth;
 	topRightWall->setPosition(center + move);
     topRightWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	topRightWall->setMaterialByName("WallMaterial");
     
     angle = 90;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -77,10 +81,10 @@ pods()
     q = rot * q;
     move = Vector3(width / 2, 0, 0);
     move = rot.applyTo(move);
-	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	rightWall->setPosition(center + move);
+    rightWall->bBox.x = wallLength;
+    rightWall->bBox.z = depth;
+    rightWall->setPosition(center + move);
     rightWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	rightWall->setMaterialByName("WallMaterial");
     
     angle = 45;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -88,10 +92,10 @@ pods()
     q = rot * q;
     move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
     move = rot.applyTo(move);
-	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    bottomRightWall->bBox.x = wallLength;
+    bottomRightWall->bBox.z = depth;
 	bottomRightWall->setPosition(center + move);
     bottomRightWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	bottomRightWall->setMaterialByName("WallMaterial");
     
     angle = 0;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -99,10 +103,10 @@ pods()
     q = rot * q;
     move = Vector3(0, -width / 2, 0);
     move = rot.applyTo(move);
-	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    bottomWall->bBox.x = wallLength;
+    bottomWall->bBox.z = depth;
 	bottomWall->setPosition(center + move);
     bottomWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	bottomWall->setMaterialByName("WallMaterial");
 	
     angle = 315;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -110,10 +114,10 @@ pods()
     q = rot * q;
     move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
     move = rot.applyTo(move);
-	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    bottomLeftWall->bBox.x = wallLength;
+    bottomLeftWall->bBox.z = depth;
 	bottomLeftWall->setPosition(center + move);
     bottomLeftWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	bottomLeftWall->setMaterialByName("WallMaterial");
     
     angle = 270;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -121,11 +125,30 @@ pods()
     q = rot * q;
     move = Vector3(-width / 2, 0, 0);
     move = rot.applyTo(move);
-	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+    leftWall->bBox.x = wallLength;
+    leftWall->bBox.z = depth;
 	leftWall->setPosition(center + move);
     leftWall->setRotationQuat(q.w, q.x, q.y, q.z);
-	leftWall->setMaterialByName("WallMaterial");
     
+    if (type != CHECKPOINT) {
+        topLeftWall->setMaterialByName("WallMaterial");
+        topWall->setMaterialByName("WallMaterial");
+        topRightWall->setMaterialByName("WallMaterial");
+        rightWall->setMaterialByName("WallMaterial");
+        bottomRightWall->setMaterialByName("WallMaterial");
+        bottomWall->setMaterialByName("WallMaterial");
+        bottomLeftWall->setMaterialByName("WallMaterial");
+        leftWall->setMaterialByName("WallMaterial");
+    } else {
+        topLeftWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        topWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        topRightWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        rightWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        bottomRightWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        bottomWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        bottomLeftWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        leftWall->setMaterialByName("CheckpointUnvisitedMaterial");
+    }
     /*
      topLeftWall->backfaceCulled = false;
      topWall->backfaceCulled = false;
@@ -136,8 +159,6 @@ pods()
      bottomLeftWall->backfaceCulled = false;
      leftWall->backfaceCulled = false;
      */
-    
-	addToCollisionScene(scene);
 }
 
 Quaternion TunnelSlice::getQuaternion()
@@ -219,7 +240,7 @@ vector<Pod *> TunnelSlice::findCollisions(CollisionScene *scene, SceneEntity *en
 Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
 {
 	Number wallLength = width / (2 * cos(PI / 4) + 1);
-	const Number STEM_LENGTH = wallLength / 3;
+	const Number WALL_OFFSET = wallLength / 3;
     
     Vector3 move;
     
@@ -232,7 +253,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(3 * PI / 4) * STEM_LENGTH, -sin(3 * PI / 4) * STEM_LENGTH, 0);
+            move = Vector3(-cos(3 * PI / 4) * WALL_OFFSET, -sin(3 * PI / 4) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -240,7 +261,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(0, width / 2, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(PI / 2) * STEM_LENGTH, -sin(PI / 2) * STEM_LENGTH, 0);
+            move = Vector3(-cos(PI / 2) * WALL_OFFSET, -sin(PI / 2) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -248,7 +269,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(PI / 4) * STEM_LENGTH, -sin(PI / 4) * STEM_LENGTH, 0);
+            move = Vector3(-cos(PI / 4) * WALL_OFFSET, -sin(PI / 4) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -256,7 +277,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(width / 2, 0, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(0.0) * STEM_LENGTH, -sin(0.0) * STEM_LENGTH, 0);
+            move = Vector3(-cos(0.0) * WALL_OFFSET, -sin(0.0) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -264,7 +285,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(-PI / 4) * STEM_LENGTH, -sin(-PI / 4) * STEM_LENGTH, 0);
+            move = Vector3(-cos(-PI / 4) * WALL_OFFSET, -sin(-PI / 4) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -272,7 +293,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(0, -width / 2, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(-PI / 2) * STEM_LENGTH, -sin(-PI / 2) * STEM_LENGTH, 0);
+            move = Vector3(-cos(-PI / 2) * WALL_OFFSET, -sin(-PI / 2) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -280,7 +301,7 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(-3 * PI / 4) * STEM_LENGTH, -sin(-3 * PI / 4) * STEM_LENGTH, 0);
+            move = Vector3(-cos(-3 * PI / 4) * WALL_OFFSET, -sin(-3 * PI / 4) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
@@ -288,11 +309,12 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
             move = Vector3(-width / 2, 0, 0);
             move = rot.applyTo(move);
             base = Vector3(cur + move);
-            move = Vector3(-cos(-PI) * STEM_LENGTH, -sin(-PI) * STEM_LENGTH, 0);
+            move = Vector3(-cos(-PI) * WALL_OFFSET, -sin(-PI) * WALL_OFFSET, 0);
             move = rot.applyTo(move);
             head = Vector3(base + move);
             break;
         default:
+            head = cur;
             // No Direction
             break;
 	}
@@ -319,15 +341,10 @@ void TunnelSlice::move(Vector3 delta)
 		pods[i]->move(delta);
 }
 
-void TunnelSlice::changeWallTexture()
+void TunnelSlice::changeWallTexture(String filename)
 {
-	String filePathWallTexture;
-	if (type == NORMAL_WITH_PODS)
-		filePathWallTexture = "resources/red_solid_circle.png";
-	else if (type == NORMAL_BLANK)
-		filePathWallTexture = "resources/red_solid.png";
-	else if (type == NORMAL_ELONGATED)
-		filePathWallTexture = "resources/red_solid_ellipse.png";
+	String filePathWallTexture = filename;
+    
 	topLeftWall->loadTexture(filePathWallTexture);
 	topWall->loadTexture(filePathWallTexture);
 	topRightWall->loadTexture(filePathWallTexture);
@@ -343,7 +360,7 @@ void TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)
 	Number wallLength = width / (2 * cos(PI / 4) + 1);;
 	const Number STEM_RADIUS = width / 100;
 	const Number HEAD_RADIUS = width / 25;
-	const Number STEM_LENGTH = wallLength / 3;
+	const Number STEM_LENGTH = wallLength / 2;
     
     Vector3 move;
     
@@ -417,6 +434,8 @@ void TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)
             break;
         default:
             // No Direction
+            base = center;
+            head = center;
             return;
 	}
     
@@ -565,8 +584,46 @@ void TunnelSlice::connect(CollisionScene* scene, TunnelSlice* next)
     left->addVertex(p4.x, p4.y, p4.z);
     intermediateSegment->getMesh()->addPolygon(left);
     
-    //intermediateSegment->setMaterialByName("WallMaterial");
+    //intermediateSegment->backfaceCulled = false;
+    intermediateSegment->setMaterialByName("WallMaterial");
     scene->addCollisionChild(intermediateSegment, CollisionSceneEntity::SHAPE_MESH);
+}
+
+void TunnelSlice::disconnect(CollisionScene* scene)
+{
+    if (!intermediateSegment)
+        return;
+    scene->removeEntity(intermediateSegment);
+    delete intermediateSegment; intermediateSegment = NULL;
+}
+
+void TunnelSlice::clearPods(CollisionScene* scene)
+{
+    for (int i = 0; i < pods.size(); ++i) {
+        pods[i]->removeFromCollisionScene(scene);
+        delete pods[i];
+    }
+    pods.clear();
+}
+
+void TunnelSlice::updateGrowth(double nt)
+{
+    t += nt;
+    if (t > 1) t = 1;
+    for (int i = 0; i < pods.size(); ++i)
+        pods[i]->setToGrowth(t);
+}
+
+void TunnelSlice::rejuvenate(CollisionScene *scene, TunnelType type, Vector3 center, Quaternion rot, Number width, Number depth)
+{
+    this->type = type;
+    this->center = center;
+    this->rot = rot;
+    this->width = width;
+    this->depth = depth;
+    clearPods(scene);
+    
+    initWalls();
 }
 
 void TunnelSlice::addToCollisionScene(CollisionScene *scene)
@@ -591,7 +648,7 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	scene->removeEntity(bottomWall);
 	scene->removeEntity(bottomLeftWall);
 	scene->removeEntity(leftWall);
-	if (intermediateSegment) scene->removeEntity(intermediateSegment);
+    disconnect(scene);
 	
 	for (int i = 0; i < pods.size(); ++i)
 		pods[i]->removeFromCollisionScene(scene);
