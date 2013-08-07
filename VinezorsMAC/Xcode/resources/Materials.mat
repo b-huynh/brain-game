@@ -50,5 +50,19 @@
                 </textures>
             </shader>
         </material>
+        <material name="CheckpointUnvisitedMaterial">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/yellow_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
+        <material name="CheckpointVisitedMaterial">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/red_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
     </materials>
 </polycode>

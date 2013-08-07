@@ -11,7 +11,8 @@ class Player
 {
 private:
 	string name;
-	int score;
+    double hp;
+	double score;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -26,8 +27,12 @@ private:
     Vector3 oldPos;
 	Vector3 camPos;
     Quaternion oldRot;
+    int oldRoll;
     Quaternion camRot;
+    int camRoll;
     Quaternion desireRot;
+    int desireRoll;
+    double camSpeed;
 	Number vineOffset; // offset to camPos in direction of forward
     
     SceneLight * light;
@@ -36,9 +41,10 @@ private:
     
 public:
 	Player();
-	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, Number offset);
+	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset);
 	
-	int getScore() const;
+    double getHP() const;
+	double getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -49,11 +55,16 @@ public:
 	Vector3 getOldPos() const;
 	Vector3 getCamPos() const;
 	Quaternion getOldRot() const;
+    int getOldRoll() const;
 	Quaternion getCamRot() const;
+	int getCamRoll() const;
 	Quaternion getDesireRot() const;
-	Vector3 getVineOffset() const;
+	int getDesireRoll() const;
+	double getCamSpeed() const;
+	Vector3 getVineOffset();
 
-	void setScore(int value);
+    void setHP(double value);
+	void setScore(double value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
@@ -65,11 +76,16 @@ public:
 	void setOldPos(Vector3 value);
 	void setCamPos(Vector3 value);
 	void setOldRot(Quaternion value);
+    void setOldRoll(int value);
 	void setCamRot(Quaternion value);
+    void setCamRoll(int value);
 	void setDesireRot(Quaternion value);
-	Vector3 getCamForward() const;
-	Vector3 getCamUpward() const;
-	Vector3 getCamRight() const;
+    void setDesireRoll(int value);
+    void setCamSpeed(double value);
+	Vector3 getCamForward();
+	Vector3 getCamUpward();
+	Vector3 getCamRight();
+    Quaternion getCombinedRotAndRoll();
 
 	void move(Vector3 delta);
 	void addVine(Vine *vine);

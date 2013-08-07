@@ -27,6 +27,7 @@ private:
     
 	Screen *screen;
 
+    ScreenShape *barHP;
 	ScreenLabel *label;
     ScreenLabel *label2;
 
