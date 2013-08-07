@@ -48,7 +48,7 @@ void Vine::move(Vector3 delta)
 
 void Vine::update(Number elapsed)
 {
-	const Number VINE_SPEED = 25.0;
+	const Number VINE_SPEED = 30.0;
 
 	Vector3 dist = dest - tip->getPosition();
     
