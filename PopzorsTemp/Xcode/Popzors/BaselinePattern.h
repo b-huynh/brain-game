@@ -3,10 +3,10 @@
 #include "Pch.h"
 #include "Pattern.h"
 
-class PotPattern : public PopzorsPattern
+class BaselinePattern : public PopzorsPattern
 {
 public:
-    PotPattern(Screen *screen, CollisionScene *scene);
+    BaselinePattern(Screen *screen, CollisionScene *scene);
     
     virtual void setup();
     virtual void reset();
@@ -17,25 +17,19 @@ public:
     
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
-    void updatePotBlinks(Number elapsed);
-    void addPoppy();
+    void updatePoppyBlinks(Number elapsed);
 private:
 	bool signaled;
 	Number signalStart;
     Number signalLength;
     Number timer;
     
-    int stages;
-    int potsPerStage;
-    int stageIndex;
-    vector<Pot*> potsLeft;
+    int numImportantPoppies;
+    int numDistractingPoppies;
     
-    int playerNumAnswers;
-    
-	int blinkPotIndex;
-    
-    Number spawnPoppyTimer;
-    int usefulPotIndex;
+    bool backwardsOrder;
+	int blinkPoppyIndex;
+    int playerPoppyIndex;
     
     Selectable* selected;
 };

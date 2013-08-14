@@ -11,7 +11,7 @@ class Player
 {
 private:
 	string name;
-    double hp;
+    int hp;
 	double score;
 	bool mouseLeft;
 	bool keyUp;
@@ -39,11 +39,23 @@ private:
     SceneLight * light2;
     SceneLight * light3;
     
+    struct Result {
+        int timestamp;
+        SectionInfo sectionInfo;
+        PodInfo podInfo;
+        bool playerTookPod;
+        int nback;
+        bool goodPod;
+    };
+    vector<Result> results;
+    
+    Number totalElapsed;
 public:
+    
 	Player();
 	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset);
 	
-    double getHP() const;
+    int getHP() const;
 	double getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
@@ -62,8 +74,9 @@ public:
 	int getDesireRoll() const;
 	double getCamSpeed() const;
 	Vector3 getVineOffset();
+	Number getTotalElapsed() const;
 
-    void setHP(double value);
+    void setHP(int value);
 	void setScore(double value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
@@ -82,6 +95,7 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(double value);
+    void updateRot(double t);
 	Vector3 getCamForward();
 	Vector3 getCamUpward();
 	Vector3 getCamRight();
@@ -92,4 +106,6 @@ public:
 	void checkCollisions(Tunnel *tunnel);
 
 	void update(Number elapsed, Tunnel *tunnel);
+    
+    bool saveProgress(std::string file);
 };

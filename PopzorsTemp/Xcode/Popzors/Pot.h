@@ -5,9 +5,9 @@
 #include "Poppy.h"
 
 class Pot : public Selectable {
-public: 
+public:
 	Pot(Vector3 pos = Vector3(0,0,0), Number radius = 0, Color baseColor = Color(0,0,0,0),
-        Color blinkColor = Color(0,0,0,0), Number blinktime = 0, const String & soundFile = "");
+        Color blinkColor = Color(0,0,0,0), Number blinktime = 0, const std::string & soundFile = "");
     ~Pot();
     
 	virtual int getType() const { return Selectable::TYPE_POT; }
@@ -18,6 +18,7 @@ public:
 	virtual void setColor(Color color);
 	void setPosition(Number x, Number y, Number z);
 	void setPosition(Vector3 vec);
+    void setSound(const std::string & soundFile);
     void handleCollision(Number elapsed, CollisionScene *scene, Pot* rhs);
     
     int getId() const { return potId; }

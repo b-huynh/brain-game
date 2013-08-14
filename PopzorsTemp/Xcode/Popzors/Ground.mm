@@ -18,11 +18,13 @@ Ground::~Ground()
 void Ground::setColor(int r, int g, int b, int a)
 {
 	body->setColor(r,g,b,a);
+    currentColor = Color(r, g, b, a);
 }
 
 void Ground::setColor(Color color)
 {
 	body->setColor(color);
+    currentColor = color;
 }
 
 void Ground::addToCollisionScene(CollisionScene * scene)

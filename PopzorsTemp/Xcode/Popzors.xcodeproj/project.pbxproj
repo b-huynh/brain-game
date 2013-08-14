@@ -41,6 +41,7 @@
 		B6515B19178E21EC00908A06 /* Popzors.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6515B13178E21EC00908A06 /* Popzors.mm */; };
 		B6515B1A178E21EC00908A06 /* Pot.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6515B15178E21EC00908A06 /* Pot.mm */; };
 		B6515B1B178E21EC00908A06 /* Selectable.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6515B17178E21EC00908A06 /* Selectable.mm */; };
+		B68326C017BABD44008E504B /* BaselinePattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68326BE17BABD44008E504B /* BaselinePattern.mm */; };
 		B6A3915F17A0786E00560149 /* HerdPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6A3915D17A0786E00560149 /* HerdPattern.mm */; };
 		B6D22AED178E28350042A666 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B6515AEA178E1D2100908A06 /* main.m */; };
 		B6DD92CD17A71F5700165ED9 /* Materials.mat in Resources */ = {isa = PBXBuildFile; fileRef = B6DD92CC17A71F5700165ED9 /* Materials.mat */; };
@@ -103,6 +104,8 @@
 		B6515B15178E21EC00908A06 /* Pot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pot.mm; path = Popzors/Pot.mm; sourceTree = SOURCE_ROOT; };
 		B6515B16178E21EC00908A06 /* Selectable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selectable.h; path = Popzors/Selectable.h; sourceTree = SOURCE_ROOT; };
 		B6515B17178E21EC00908A06 /* Selectable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Selectable.mm; path = Popzors/Selectable.mm; sourceTree = SOURCE_ROOT; };
+		B68326BE17BABD44008E504B /* BaselinePattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BaselinePattern.mm; sourceTree = "<group>"; };
+		B68326BF17BABD44008E504B /* BaselinePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaselinePattern.h; sourceTree = "<group>"; };
 		B6A3915D17A0786E00560149 /* HerdPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HerdPattern.mm; sourceTree = "<group>"; };
 		B6A3915E17A0786E00560149 /* HerdPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HerdPattern.h; sourceTree = "<group>"; };
 		B6DD92CC17A71F5700165ED9 /* Materials.mat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Materials.mat; path = resources/Materials.mat; sourceTree = SOURCE_ROOT; };
@@ -147,6 +150,8 @@
 				5DE427361799ED1F00AF5C76 /* PotPattern.mm */,
 				B6A3915E17A0786E00560149 /* HerdPattern.h */,
 				B6A3915D17A0786E00560149 /* HerdPattern.mm */,
+				B68326BF17BABD44008E504B /* BaselinePattern.h */,
+				B68326BE17BABD44008E504B /* BaselinePattern.mm */,
 			);
 			name = "Pattern Modes";
 			sourceTree = "<group>";
@@ -355,6 +360,7 @@
 				5DE427381799ED1F00AF5C76 /* PotPattern.mm in Sources */,
 				B6A3915F17A0786E00560149 /* HerdPattern.mm in Sources */,
 				B644979917AAEB060063AC7A /* Player.mm in Sources */,
+				B68326C017BABD44008E504B /* BaselinePattern.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

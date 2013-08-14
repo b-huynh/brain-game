@@ -45,28 +45,36 @@ Vinezors::Vinezors(PolycodeView *view)
     barHP->setColor(0.0, 1.0, 0.0, 1.0);
     screen->addChild(barHP);
     
-	label = new ScreenLabel("Score: " + toStringInt(player->getScore()), 36);
-    label->setPosition(0,400);
-	screen->addChild(label);
+    label1 = new ScreenLabel("Time: " + toStringDouble(player->getTotalElapsed()), 36);
+    label1->setPosition(0,425);
+    screen->addChild(label1);
     
-    label2 = new ScreenLabel("Nback: " + toStringInt(tunnel->getNBack()), 36);
-    label2->setPosition(450,400);
-    screen->addChild(label2);
+	label2 = new ScreenLabel("Score: " + toStringInt(player->getScore()), 36);
+    label2->setPosition(0,375);
+	screen->addChild(label2);
+    
+    label3 = new ScreenLabel("N-Back: " + toStringInt(tunnel->getNBack()), 36);
+    label3->setPosition(425,425);
+    screen->addChild(label3);
     
     //Sounds
     speaker = new SceneEntity();
     
-    string soundFiles [] = {"blip.wav", "gulp.wav", "pluck.wav", "womp.wav", "test.wav"};
+    string soundFiles [] = {"blip.wav", "gulp.wav", "pluck.wav", "test.wav", "womp.wav"};
     
     for (int i = 0; i < sizeof(soundFiles) / sizeof(soundFiles[0]); ++i) {
         SceneSound * sound = new SceneSound("Resources/" + soundFiles[i], 20, 50);
         speaker->addChild(sound);
         podSounds.push_back(sound);
     }
+    negativeFeedback = new SceneSound("Resources/chimedown.wav", 20, 50);
+    speaker->addChild(negativeFeedback);
+    positiveFeedback = new SceneSound("Resources/chimeup.wav", 20, 50);
+    speaker->addChild(positiveFeedback);
     
     SceneSoundListener * listener = new SceneSoundListener();
     scene->addEntity(listener);
-
+    
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYDOWN);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYUP);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEMOVE);
@@ -149,12 +157,14 @@ void Vinezors::handleEvent(Event *e)
                             player->setCamPos(player->getOldPos());
                             player->setCamRot(player->getOldRot());
                             player->setCamRoll(player->getOldRoll());
-                            player->setHP(STARTING_HP * 2 / 3);
                         } else {
                             player->setOldPos(player->getCamPos());
                             player->setOldRot(player->getCamRot());
                             player->setOldRoll(player->getCamRoll());
                         }   
+                        break;
+                    case KEY_s:
+                        player->saveProgress("vinezors.save");
                         break;
 				}
 				break;
@@ -189,9 +199,11 @@ void Vinezors::playPodSound(Pod * pod)
 bool Vinezors::Update()     
 {
 	Number elapsed = core->getElapsed();
-	
+    
     // Determine whether a stage has completed
-    if (!tunnel->isDone() && player->getScore() >= 200) {
+    if (!tunnel->isDone() &&
+        (player->getHP() >= HP_POSITIVE_LIMIT ||
+         player->getHP() <= HP_NEGATIVE_LIMIT)) {
         tunnel->setDone(true);
         
         for (int i = 0; i < INITIATION_SECTIONS; ++i) {
@@ -203,16 +215,18 @@ bool Vinezors::Update()
         }
     }
     
-    // Gameover
-    if (player->getHP() <= 0) {
-        pause = true;
-        player->setOldPos(player->getCamPos());
-        player->setOldRot(player->getCamRot());
-        player->setOldRoll(player->getCamRoll());
-    }
-    
     if (!pause) {
+        int currentHp = player->getHP();
         player->update(elapsed, tunnel);
+        player->checkCollisions(tunnel);
+        //Play Feedback Sound
+        if (currentHp < player->getHP()) {
+            positiveFeedback->getSound()->Play();
+        }
+        else if (currentHp > player->getHP()) {
+            negativeFeedback->getSound()->Play();
+        }
+        
         /*
         Quaternion rot = player->getCamRot();
         fog1->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
@@ -223,14 +237,24 @@ bool Vinezors::Update()
         fog3->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
         */
         
-        // Animate Pod Appearance
+        // Animate Pod Growing outwards or Growing inwards
+        const double GROWTH_SPEED = 5;
         TunnelSlice* nextSliceM = tunnel->getNext(POD_APPEARANCE);
-        if (nextSliceM)
-            nextSliceM->updateGrowth(5 * elapsed);
+        if (nextSliceM) {
+            if (!tunnel->isDone())
+                nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
+            else
+                nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
+        }
         nextSliceM = tunnel->getNext(POD_APPEARANCE + 1);
-        if (nextSliceM)
-            nextSliceM->updateGrowth(5 * elapsed);
+        if (nextSliceM) {
+            if (!tunnel->isDone())
+                nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
+            else
+                nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
+        }
         
+        // If player's current position is out of its current segment...
         if (tunnel->renewIfNecessary(player->getCamPos())) {
         
             // Set new camera slerp goal
@@ -243,20 +267,30 @@ bool Vinezors::Update()
                 player->setDesireRot(nextSlice1->getQuaternion());
             }
             else {
+                // Generate a new tunnel because we are at the end
                 Vector3 newOrigin = tunnel->getEnd();
                 TunnelSlice* current = tunnel->getCurrent();
                 Quaternion rot = current->getQuaternion();
                 Vector3 forward = current->getForward();
                 int nback = tunnel->getNBack();
                 delete tunnel;
+                
+                int newNback = nback;
+                if (player->getHP() > 0)
+                    newNback++;
+                else if (player->getHP() < 0)
+                    newNback--;
+                if (newNback < 0)
+                    newNback = 0;
+                
                 tunnel = new Tunnel(scene, newOrigin + forward * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH, TUNNEL_SEGMENTS_PER_SECTION, TUNNEL_SEGMENTS_PER_POD);
-                tunnel->constructTunnel(TUNNEL_SECTIONS, nback + 1, rot);
-                player->setScore(0.0);
+                tunnel->constructTunnel(TUNNEL_SECTIONS, newNback, rot);
+                player->setHP(STARTING_HP);
             }
             
             // Show Pod Color and Play Sound
             TunnelSlice* nextSliceN = tunnel->getNext(POD_APPEARANCE);
-            if (nextSliceN)
+            if (nextSliceN && !tunnel->isDone())
             {
                 for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
                     nextSliceN->getPods()[i]->showPod();
@@ -265,19 +299,6 @@ bool Vinezors::Update()
                 }
             }
         }
-
-        player->checkCollisions(tunnel);    
-        /*
-         //Play Gold Sound
-         int currentScore = player->getScore();
-         player->checkCollisions(tunnel);
-         if (currentScore < player->getScore()) podSounds[(int)POD_YELLOW]->getSound()->Play();
-         
-         //Play pod sounds as they come out of the fog
-         vector<Pod *> pods = tunnel->findPodCollisions(scene, fog3);
-         for (int i = 0; i < pods.size(); ++i)
-            playPodSound(pods[i]);
-        */
     } else {
         // Navigation Keys
         if (player->getKeyUp())
@@ -289,25 +310,29 @@ bool Vinezors::Update()
         if (player->getKeyRight())
         	player->move(Vector3(player->getCamRight() * CAM_SPEED * elapsed));
     }
-    if (player->getHP() < 0)
-        player->setHP(0.0);
-    if (player->getHP() > STARTING_HP)
-        player->setHP(STARTING_HP);
     
     Quaternion camRot = player->getCombinedRotAndRoll();
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
 	scene->getDefaultCamera()->setRotationQuat(camRot.w, camRot.x, camRot.y, camRot.z);
-
-    label->setText("Score: " + toStringInt(player->getScore()));
-    label2->setText("Nback: " + toStringInt(tunnel->getNBack()));
     
-    barHP->setScale(player->getHP() / STARTING_HP, 1.0);
-    if (player->getHP() <= STARTING_HP / 5)
-        barHP->setColor(1.0, 0.0, 0.0, 1.0);
-    else if (player->getHP() <= STARTING_HP / 2)
-        barHP->setColor(1.0, 1.0, 0.0, 1.0);
-    else
+    label1->setText("Time: " + toStringDouble(player->getTotalElapsed()));
+    label2->setText("Score: " + toStringInt(player->getScore()));
+    label3->setText("N-Back: " + toStringInt(tunnel->getNBack()));
+    
+    if (player->getHP() >= 0) {
+        barHP->setScale(player->getHP() / (double)(HP_POSITIVE_LIMIT), 1.0);
+        
         barHP->setColor(0.0, 1.0, 0.0, 1.0);
-    
+        if (player->getHP() >= HP_POSITIVE_LIMIT)
+            barHP->setColor(0.0, 0.0, 1.0, 1.0);
+            
+    } else {
+        barHP->setScale(player->getHP() / (double)(-HP_NEGATIVE_LIMIT), 1.0);
+        
+        barHP->setColor(1.0, 1.0, 0.0, 1.0);
+        if (player->getHP() <= HP_NEGATIVE_LIMIT)
+            barHP->setColor(1.0, 0.0, 0.0, 1.0);
+    }
+     
 	return core->updateAndRender();
 }
