@@ -4,8 +4,8 @@ Vine::Vine()
 	: tip(NULL), dest()
 {}
 
-Vine::Vine(CollisionScene *scene, Vector3 pos, Number radius)
-	: tip(NULL), dest()
+Vine::Vine(CollisionScene *scene, Vector3 pos, double radius)
+	: tip(NULL), dest(), radius(radius)
 {
 	tip = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, radius, 10, 10);
 	tip->setPitch(-90);
@@ -44,6 +44,11 @@ void Vine::setDest(Vector3 value)
 void Vine::move(Vector3 delta)
 {
 	tip->Translate(delta);
+}
+
+double Vine::getRadius() const
+{
+    return radius;
 }
 
 void Vine::update(Number elapsed)

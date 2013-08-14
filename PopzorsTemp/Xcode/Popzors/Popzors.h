@@ -4,6 +4,7 @@
 #include "PoppyPattern.h"
 #include "PotPattern.h"
 #include "HerdPattern.h"
+#include "BaselinePattern.h"
 
 #include <cstdlib>
 

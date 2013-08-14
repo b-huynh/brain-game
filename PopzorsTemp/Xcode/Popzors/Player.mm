@@ -68,7 +68,7 @@ bool Player::saveProgress(std::string file)
     return true;
 }
 
-//TODO: Fix Parsing
+//TODO: Fix Parsing. THIS FUNCTION DOES NOT WORK YET.
 //Returns false if failed to load from file, true otherwise
 bool Player::loadProgress(std::string file)
 {

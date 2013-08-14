@@ -13,15 +13,17 @@ struct Vine
 {
 	ScenePrimitive *tip;
 	Vector3 dest;
+    double radius;
 
 	Vine();
-	Vine(CollisionScene *scene, Vector3 pos, Number radius);
+	Vine(CollisionScene *scene, Vector3 pos, double radius);
 	
 	ScenePrimitive *getTip() const;
 	Vector3 getPos() const;
 	void setPos(Vector3 value);
 	Vector3 getDest() const;
 	void setDest(Vector3 value);
+    double getRadius() const;
 
 	void move(Vector3 delta);
 	

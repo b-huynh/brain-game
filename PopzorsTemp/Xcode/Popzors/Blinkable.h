@@ -5,6 +5,7 @@
 class Blinkable
 {
 protected:
+    Color currentColor;
 	Color baseColor;
 	Color blinkColor;
 	Number timeBlinkLength;

@@ -27,12 +27,13 @@ Color getRandomPotColor()
     return Color();
 }
 
-String getSoundAccordingToColor(Color col)
+std::string getSoundAccordingToColor(Color col)
 {
     if (col == Cpot1) return Spot1;
     if (col == Cpot2) return Spot2;
     if (col == Cpot3) return Spot3;
     if (col == Cpot4) return Spot4;
+    if (col == BLAND_COLOR) return SpotBland;
     return "";
 }
 
@@ -56,7 +57,8 @@ String getTextureNameByColor(Color col)
     if (col == Cpot2) return "PodBlueMat";
     if (col == Cpot3) return "PodGreenMat";
     if (col == Cpot4) return "PodYellowMat";
-    if (col == BLAND_COLOR) return "PoppyBaseMat";
+    if (col == BLAND_COLOR) return "PoppyBlandMat";
+    if (col == BASE_COLOR) return "PoppyBaseMat";
     return "PoppyBaseMat";
 }
 
