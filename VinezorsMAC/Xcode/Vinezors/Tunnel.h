@@ -12,27 +12,6 @@ using namespace Polycode;
 
 using namespace std;
 
-struct SectionInfo
-{
-    TunnelType tunnelType;
-    Direction tunnelDir;
-    Number tunnelDirAngle;
-    
-    SectionInfo(TunnelType tt, Direction td, Number tda)
-        : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda)
-    {}
-};
-
-struct PodInfo
-{
-    PodType podType;
-    Direction podLoc;
-    
-    PodInfo(PodType pt, Direction pl)
-        : podType(pt), podLoc(pl)
-    {}
-};
-
 // Stores the list of tunnel segments
 class Tunnel
 {
@@ -79,6 +58,8 @@ public:
 
 	Number getSegmentWidth() const;
 	Number getSegmentDepth() const;
+    vector<SectionInfo> getSectionInfo() const;
+    vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees);
     PodType getNBackTest(int section) const;
     int getNBack() const;

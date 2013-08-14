@@ -28,8 +28,9 @@ private:
 	Screen *screen;
 
     ScreenShape *barHP;
-	ScreenLabel *label;
+	ScreenLabel *label1;
     ScreenLabel *label2;
+    ScreenLabel *label3;
 
 	CollisionScene *scene;
 	
@@ -47,6 +48,9 @@ private:
     
     SceneEntity * speaker;
     vector<SceneSound *> podSounds;
+    
+    SceneSound* negativeFeedback;
+    SceneSound* positiveFeedback;
     
     void playPodSound(Pod *);
 };

@@ -6,7 +6,8 @@ Poppy::Poppy(Vector3 pos, Color baseColor, Color blinkColor, Number blinktime)
 	body = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.25, 10, 10);
 	body->setPosition(pos);
     //this->setColor(baseColor);
-    body->setMaterialByName("PodBlueMat");
+    
+    body->setMaterialByName(getTextureNameByColor(baseColor));
 }
 
 Poppy::~Poppy()
@@ -20,14 +21,16 @@ void Poppy::setId(int val)
 
 void Poppy::setColor(int r, int g, int b, int a)
 {
-    //body->setColor(Color(r,g,b,a));
-	body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
+    if (currentColor != Color(r, g, b, a))
+        body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
+	currentColor = Color(r,g,b,a);
 }
 
 void Poppy::setColor(Color color)
 {
-    //body->setColor(color);
-	body->setMaterialByName(getTextureNameByColor(color));
+    if (currentColor != color)
+        body->setMaterialByName(getTextureNameByColor(color));
+	currentColor = color;
 }
 
 void Poppy::setPosition(Number x, Number y, Number z)

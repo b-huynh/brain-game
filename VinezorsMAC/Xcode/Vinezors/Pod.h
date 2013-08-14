@@ -7,7 +7,7 @@ using namespace Polycode;
 
 #include "Util.h"
 
-enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_BLACK, POD_YELLOW, POD_NONE };
+enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
 #define NUM_POD_TYPES 5
 
 // These are objects which are attached to the walls and may act as hints, boosters, or penalties.

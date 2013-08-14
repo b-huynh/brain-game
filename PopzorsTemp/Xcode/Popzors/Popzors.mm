@@ -28,9 +28,7 @@ Popzors::Popzors(PolycodeView *view)
 	cameraPos = Vector3(0,7,7);
 	origin = Vector3(0,0,0);
 	
-    pattern = new PotPattern(screen, scene);
-    //pattern = new PoppyPattern(screen, scene);
-    //pattern = new HerdPattern(screen, scene);
+    pattern = new BaselinePattern(screen, scene);
     pattern->setPattern();
     
 	scene->getDefaultCamera()->setPosition(cameraPos);
@@ -59,9 +57,34 @@ void Popzors::handleEvent(Event * e)
                         break;
                     case KEY_l:
                         if (!pattern->load("popzors.save"))
-                            label->setText("Failed to load popzors.save");
+                            label->setText("Load feature is not yet available");
                         else
                             label->setText("Loaded popzors.save");
+                        break;
+                        
+                    case KEY_1:
+                        pattern->reset();
+                        delete pattern;
+                        pattern = new BaselinePattern(screen,scene);
+                        pattern->setPattern();
+                        break;
+                    case KEY_2:
+                        pattern->reset();
+                        delete pattern;
+                        pattern = new PoppyPattern(screen, scene);
+                        pattern->setPattern();
+                        break;
+                    case KEY_3:
+                        pattern->reset();
+                        delete pattern;
+                        pattern = new PotPattern(screen, scene);
+                        pattern->setPattern();
+                        break;
+                    case KEY_4:
+                        pattern->reset();
+                        delete pattern;
+                        pattern = new HerdPattern(screen, scene);
+                        pattern->setPattern();
                         break;
                 }
             }
@@ -92,8 +115,13 @@ void Popzors::handleEvent(Event * e)
                 pattern->processSelect(res);
             }
 			break;
-            
-
+                
+            case InputEvent::EVENT_MOUSEMOVE:
+            {
+                ClickedResult res = pattern->stage.getClicked(inputEvent);
+                pattern->processSelect(res);
+            }
+            break;
 		}
     }
 }

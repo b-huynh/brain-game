@@ -1,11 +1,13 @@
 #include "Player.h"
 
+#include <fstream>
+
 Player::Player()
-	: name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0)
+	: name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0)
 {}
 
 Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset)
-	: name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset)
+	: name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0)
 {
 	cursor = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.5, 5, 5);
 	cursor->renderWireframe = true;
@@ -26,7 +28,7 @@ Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quate
     scene->addLight(light3);
 }
 
-double Player::getHP() const
+int Player::getHP() const
 {
     return hp;
 }
@@ -157,7 +159,12 @@ Vector3 Player::getVineOffset()
 	return getCamForward() * vineOffset;
 }
 
-void Player::setHP(double value)
+Number Player::getTotalElapsed() const
+{
+    return totalElapsed;
+}
+
+void Player::setHP(int value)
 {
     hp = value;
 }
@@ -247,6 +254,11 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
+void Player::updateRot(double t)
+{
+    
+}
+
 void Player::move(Vector3 delta)
 {
 	camPos += delta;
@@ -278,32 +290,9 @@ void Player::checkCollisions(Tunnel *tunnel)
 		vector<Pod *> collided = closest->findCollisions(tunnel->getScene(), vines[i]->getTip());
 		for (int j = 0; j < collided.size() && collided[j]->getHead()->enabled; ++j)
 		{
-            PodType NBack = tunnel->getNBackTest(tunnel->getPodIndex());
-            switch (NBack)
-            {
-                case POD_PINK:
-                    hp += 250;
-                    break;
-                case POD_BLUE:
-                    hp += 250;
-                    break;
-                case POD_GREEN:
-                    hp += 250;
-                    break;
-                case POD_YELLOW:
-                    hp += 250;
-                    break;
-                case POD_BLACK:
-                    hp -= 250;
-                    break;
-                case POD_NONE:
-                    hp -= 250;
-                    // No NBack at the end
-                    break;
-            }
             for (int k = 0; k < closest->getPods().size(); ++k)
                 closest->getPods()[k]->getHead()->enabled = false;
-            //collided[j]->getHead()->enabled = false;
+            closest->setPodTaken(true);
             break;
 		}
 	}
@@ -311,12 +300,14 @@ void Player::checkCollisions(Tunnel *tunnel)
 
 void Player::update(Number elapsed, Tunnel *tunnel)
 {
+    totalElapsed += elapsed;
+    
     // Speed up, slow down keys
     double moveSpeed = camSpeed;
     
     if (!tunnel->isDone()) {
-        hp -= DRAIN_SPEED * moveSpeed * elapsed;
-        score += moveSpeed * elapsed;
+        //hp -= DRAIN_SPEED * moveSpeed * elapsed;
+        score += tunnel->getNBack() * moveSpeed * elapsed;
     }
     
     if (keyUp)
@@ -324,10 +315,10 @@ void Player::update(Number elapsed, Tunnel *tunnel)
     if (keyDown)
         moveSpeed /= 2;
     
-    // Determine which tunnel segment and corner each vine should be in
-    // This is done by calculating a t from 0 to 1
     for (int i = 0; i < vines.size(); ++i)
     {
+        // Determine which tunnel segment and corner each vine should be
+        // in. This is done by calculating a t from 0 to 1
         TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset);
         if (closest) {
             Number t = closest->getT(camPos) + vineOffset;
@@ -335,21 +326,49 @@ void Player::update(Number elapsed, Tunnel *tunnel)
             vines[i]->setDest(targetPos);
             cursor->setPosition(targetPos);
         }
+        
+        closest = tunnel->findSliceFromCurrent(vines[i]->getPos(), 0);
+        if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
+            Number t = closest->getT(vines[i]->getPos() - closest->getForward() * vines[i]->getRadius());
+            
+            if (t > 0.5) {
+                // This code block is to record data of the pods
+                Result result;
+                result.timestamp = (int)(totalElapsed * 1000);
+                result.sectionInfo = closest->getSectionInfo();
+                result.podInfo = closest->getPodInfo();
+                result.playerTookPod = closest->isPodTaken();
+                
+                PodType NBack = tunnel->getNBackTest(tunnel->getPodIndex());
+                result.nback = tunnel->getNBack();
+                result.goodPod = NBack != POD_NONE;
+                
+                results.push_back(result);
+                
+                // Determine whether the player got it right or not
+                if (result.goodPod && result.playerTookPod) {
+                    if (hp < 0)
+                        hp = 0;
+                    hp++;
+                    if (hp > HP_POSITIVE_LIMIT)
+                        hp = HP_POSITIVE_LIMIT;
+                }
+                else if ((result.goodPod && !result.playerTookPod) ||
+                         (!result.goodPod && result.playerTookPod)) {
+                    if (hp > 0)
+                        hp = 0;
+                    hp--;
+                    if (hp < HP_NEGATIVE_LIMIT)
+                        hp = HP_NEGATIVE_LIMIT;
+                }
+                
+                // Flag to trigger only once
+                closest->setInfoStored(true);
+            }
+        }
     }
-    
+
     // Linearly interpoloate the camera to get smooth transitions
-    /*
-    TunnelSlice* current = tunnel->getCurrent();
-    if (current)
-    {
-        Vector3 endOfSlice = current->getCenter() + current->getForward() * (tunnel->getSegmentDepth());
-        Vector3 dir = endOfSlice - camPos;
-        dir.Normalize();
-        Vector3 delta = dir * (CAM_SPEED * elapsed);
-        move(delta);
-        camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
-    }
-    */
     TunnelSlice* next = tunnel->getNext(1);
     if (next)
     {
@@ -360,6 +379,7 @@ void Player::update(Number elapsed, Tunnel *tunnel)
         move(delta);
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
+    // Animate camera rolls
     if (camRoll < desireRoll) {
         camRoll += max(5, (desireRoll - camRoll) / 2);
     }
@@ -369,4 +389,34 @@ void Player::update(Number elapsed, Tunnel *tunnel)
     
 	for (int i = 0; i < vines.size(); ++i)
 		vines[i]->update(elapsed);
+}
+
+//Returns false if failed to save to file, true otherwise
+bool Player::saveProgress(std::string file)
+{
+    file = getSaveDir() + file;
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    
+    if (out.good()) {
+        out << "% size" << endl;
+        out << "% PodLocation PodType Level NBack PlayerTookPod Timestamp" << endl;
+        out << results.size() << endl;
+        
+        for (int i = 0; i < results.size(); ++i) {
+            out << results[i].podInfo.podLoc << " "
+                << results[i].podInfo.podType << " "
+                << results[i].nback << " "
+                << results[i].goodPod << " "
+                << results[i].playerTookPod << " "
+                << results[i].timestamp << endl;
+        }
+        out.close();
+    }
+    else {
+        out.close();
+        return false;
+    }
+    
+    return true;
 }

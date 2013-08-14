@@ -9,7 +9,7 @@ bool comparePotX(Pot* lhs, Pot* rhs)
 }
 
 PotPattern::PotPattern(Screen *screen, CollisionScene *scene)
-: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numPots(0), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
+: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), stages(0), stageIndex(0), potsPerStage(0), potsLeft(), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
 {
 }
 
@@ -19,19 +19,18 @@ void PotPattern::setup()
 	stage.ground->addToCollisionScene(stage.scene);
     
     const Number POT_RADIUS = 0.5;
-    player.totalProblems = player.level;
-    numPots = player.level * 2;
+    stages = 3;
+    potsPerStage = player.level + 2;
+    player.totalProblems = stages * potsPerStage;
     
-    for (int i = 0; i < numPots; ++i)
+    for (int i = 0; i < stages * potsPerStage; ++i)
     {
-        Color col = getRandomPotColor();
         Pot* pot = new Pot(Vector3(randRangeDouble(-2, 2), 0.0, randRangeDouble(-2, 2)), POT_RADIUS,
-                BLAND_COLOR, col, 1, getSoundAccordingToColor(col));
+                           BASE_COLOR, BLAND_COLOR, 1, getSoundAccordingToColor(BLAND_COLOR));
         pot->addToCollisionScene(stage.scene);
         pot->setId(i);
         stage.pots.push_back(pot);
     }
-    sort(stage.pots.begin(), stage.pots.end(), comparePotX);
     
     SceneLight * light = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
     light->setPosition(3, 3.5, 0);
@@ -50,7 +49,6 @@ void PotPattern::setup()
     stage.scene->addLight(light3);
     
     stage.scene->ambientColor = Color(0.2, 0.2, 0.2, 0.2);
-    
 }
 
 void PotPattern::reset()
@@ -59,22 +57,44 @@ void PotPattern::reset()
     signaled = false;
     signalStart = SIGNAL_START;
     signalLength = SIGNAL_LENGTH;
+    stages = 0;
+    stageIndex = 0;
     timer = 0;
-    numPots = 0;
+    potsLeft.clear();
     playerNumAnswers = 0;
     blinkPotIndex = 0;
     spawnPoppyTimer = 0;
     usefulPotIndex = 0;
     selected = NULL;
+    
 }
 
 void PotPattern::setPattern()
 {
-    reset();
-    setup();
-
-    for (int i = 0; i < stage.pots.size(); ++i)
-        stage.pots[i]->setTimeBlinkLength(signalLength * (numPots - i));
+    if (stageIndex <= 0) {
+        reset();
+        setup();
+    }
+    for (int i = stageIndex * potsPerStage; i < stageIndex * potsPerStage + potsPerStage; ++i) {
+        if (stage.pots[i]->getBlinkColor() == BLAND_COLOR) {
+            Color col = getRandomPotColor();
+            stage.pots[i]->setBlinkColor(col);
+            stage.pots[i]->setSound(getSoundAccordingToColor(col));
+        }
+    }
+    
+    vector<Pot*> temp;
+    for (int i = stageIndex * potsPerStage; i < stage.pots.size(); ++i)
+        temp.push_back(stage.pots[i]);
+    while (temp.size() > 0)
+    {
+        int r = rand() % temp.size();
+        potsLeft.push_back(temp[r]);
+        temp[r] = temp[temp.size() - 1];
+        temp.pop_back();
+    }
+    for (int i = 0; i < potsLeft.size(); ++i)
+        potsLeft[i]->setTimeBlinkLength(signalLength * (stage.pots.size() - i));
 }
 
 bool PotPattern::isFinished() const
@@ -84,7 +104,7 @@ bool PotPattern::isFinished() const
 
 void PotPattern::processSelect(ClickedResult res)
 {
-    if (res.poppy) {
+    if (res.poppy && res.eventCode == InputEvent::EVENT_MOUSEDOWN) {
         
         if (res.poppy->isSelectable())
         {
@@ -96,7 +116,7 @@ void PotPattern::processSelect(ClickedResult res)
         }
     }
     
-    if (res.pot) {
+    if (res.pot && res.eventCode == InputEvent::EVENT_MOUSEDOWN) {
         
         if (res.pot->isSelectable())
         {
@@ -120,7 +140,7 @@ void PotPattern::processSelect(ClickedResult res)
 
 void PotPattern::update(Number elapsed)
 {
-    if (ready && usefulPotIndex < player.totalProblems)
+    if (ready && usefulPotIndex < potsPerStage && stageIndex < stages)
     {
         spawnPoppyTimer += elapsed;
         const Number SPAWN_RATE = 1.0;
@@ -151,44 +171,80 @@ void PotPattern::update(Number elapsed)
     stage.handlePotCollisions(elapsed);
     
     if (isFinished() && !stage.ground->isBlinking())
+    {
+        // Done with all stages, reset to new level
+        stageIndex = 0;
         setPattern();
+    }
 }
 
 void PotPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
 {
-    if (pot->getBlinkColor() == poppy->getBlinkColor())
+    if (pot->getBlinkColor() != BLAND_COLOR && pot->getBlinkColor() == poppy->getBlinkColor())
     {
         player.numCorrect++;
     }
+    printf("%d %d\n", player.numCorrect, player.totalProblems);
     playerNumAnswers++;
-    if (isFinished())
+    if (playerNumAnswers % potsPerStage == 0)
     {
-        if (player.numCorrect >= player.totalProblems)
+        // Reorganize the pots in the right order to refer to the next problem set
+        vector<Pot*> temp;
+        for (int i = 0; i < stage.pots.size(); ++i)
+            if (!stage.pots[i]->isSelectable()) {
+                stage.pots[i]->setBaseColor(stage.pots[i]->getBlinkColor());
+                temp.push_back(stage.pots[i]);
+            }
+        for (int i = 0; i < stage.pots.size(); ++i)
+            if (stage.pots[i]->isSelectable() && stage.pots[i]->getBlinkColor() != BLAND_COLOR)
+                temp.push_back(stage.pots[i]);
+        for (int i = 0; i < stage.pots.size(); ++i)
+            if (stage.pots[i]->isSelectable() && stage.pots[i]->getBlinkColor() == BLAND_COLOR)
+                temp.push_back(stage.pots[i]);
+        stage.pots = temp;
+        
+        if (isFinished())
         {
-            stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-            player.updateLevel(PLAYER_SUCCESS);
-        }
-        else
-        {
-            const double PASSING_CHECK = 0.75;
-            double correctness = getPlayerCorrectness();
-            if (correctness > PASSING_CHECK)
+            if (player.numCorrect >= player.totalProblems)
             {
-                double range = 1 - PASSING_CHECK;
-                double value = correctness - PASSING_CHECK;
-                stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
-                                            Color(198, 0, 198, 0) * (1 - (value / range)));
+                stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
+                player.updateLevel(PLAYER_SUCCESS);
             }
             else
             {
-                double range = PASSING_CHECK;
-                double value = PASSING_CHECK - correctness;
-                stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
-                                            Color(0, 198, 198, 0) * (1 - (value / range)));
+                const double PASSING_CHECK = 0.75;
+                double correctness = getPlayerCorrectness();
+                if (correctness > PASSING_CHECK)
+                {
+                    double range = 1 - PASSING_CHECK;
+                    double value = correctness - PASSING_CHECK;
+                    stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
+                                                Color(198, 0, 198, 0) * (1 - (value / range)));
+                }
+                else
+                {
+                    double range = PASSING_CHECK;
+                    double value = PASSING_CHECK - correctness;
+                    stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
+                                                Color(0, 198, 198, 0) * (1 - (value / range)));
+                }
+                
+                player.updateLevel(PLAYER_FAILURE);
             }
-            player.updateLevel(PLAYER_FAILURE);
+            stage.ground->activateBlink();
         }
-        stage.ground->activateBlink();
+        else
+        {
+            ready = false;
+            signaled = false;
+            timer = 0;
+            potsLeft.clear();
+            blinkPotIndex = 0;
+            spawnPoppyTimer = 0;
+            ++stageIndex;
+            usefulPotIndex = 0;
+            setPattern();
+        }
     }
 }
 
@@ -198,17 +254,17 @@ void PotPattern::updatePotBlinks(Number elapsed)
 	if (!signaled && timer > signalStart)
     {
         signaled = true;
-        stage.pots[blinkPotIndex]->activateBlink();
-        stage.pots[blinkPotIndex]->playSound();
+        potsLeft[blinkPotIndex]->activateBlink();
+        potsLeft[blinkPotIndex]->playSound();
         timer = 0;
     }
-	if (signaled && blinkPotIndex >= 0 && blinkPotIndex < numPots && timer >= signalLength) {
+	if (signaled && blinkPotIndex >= 0 && blinkPotIndex < potsLeft.size() && timer >= signalLength) {
         blinkPotIndex++;
         
-        if (blinkPotIndex >= 0 && blinkPotIndex < numPots)
+        if (blinkPotIndex >= 0 && blinkPotIndex < potsLeft.size())
         {
-            stage.pots[blinkPotIndex]->activateBlink();
-            stage.pots[blinkPotIndex]->playSound();
+            potsLeft[blinkPotIndex]->activateBlink();
+            potsLeft[blinkPotIndex]->playSound();
         }
         else ready = true;
         timer = 0;
@@ -219,16 +275,16 @@ void PotPattern::addPoppy()
 {
     int r = rand() % (unsigned)(usefulPotIndex + 2);
     Color potColor = getRandomPotColor();
-    if (r <= usefulPotIndex)
-    {
-        potColor = stage.pots[usefulPotIndex]->getBlinkColor();
+    
+    if (r <= usefulPotIndex) {
+        potColor = stage.pots[stageIndex * potsPerStage + usefulPotIndex]->getBlinkColor();
         ++usefulPotIndex;
     }
-        
-    Poppy* poppy = new Poppy(Vector3(randRangeDouble(-6, 6),0,randRangeDouble(4, 6)), potColor, potColor);
+    
+    Poppy* poppy = new Poppy(Vector3(randRangeDouble(-6, 6),0,randRangeDouble(4, 4)), potColor, potColor);
     poppy->setId(stage.poppies.size());
     poppy->setMoving(true);
-    poppy->setDest(Vector3(randRangeDouble(-2, 2),0,randRangeDouble(3, 4)));
+    poppy->setDest(Vector3(randRangeDouble(-3, 3),0,randRangeDouble(3, 3)));
     poppy->addToCollisionScene(stage.scene);
     poppy->activateJump();
     stage.poppies.push_back(poppy);

@@ -23,9 +23,7 @@
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "76"
-         endingLineNumber = "76"
-         landmarkName = "PoppyPattern::setPattern()"
-         landmarkType = "5">
+         endingLineNumber = "76">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -113,45 +111,6 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "24"
          endingLineNumber = "24">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Popzors/PotPattern.mm"
-         timestampString = "396225385.946239"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "33"
-         endingLineNumber = "33"
-         landmarkName = "PotPattern::setup()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Popzors/PotPattern.mm"
-         timestampString = "396229310.357287"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "208"
-         endingLineNumber = "208"
-         landmarkName = "PotPattern::addPoppy()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Popzors/PotPattern.mm"
-         timestampString = "396226833.228707"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "86"
-         endingLineNumber = "86"
-         landmarkName = "PotPattern::processSelect(ClickedResult res)"
-         landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

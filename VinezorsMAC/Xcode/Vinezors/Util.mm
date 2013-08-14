@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdlib>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -120,4 +121,17 @@ string toStringDouble(double value)
 	stringstream ss;
 	ss << value;
 	return ss.str();
+}
+
+string getSaveDir()
+{
+    char * dir = getenv("HOME");
+    string result = "";
+    if (dir)
+        result = string(dir) + "/.braingame/";
+    else
+        return "";
+    
+    mkdir(result.c_str(), 0777);
+    return result;
 }

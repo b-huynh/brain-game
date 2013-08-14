@@ -112,6 +112,16 @@ Number Tunnel::getSegmentDepth() const
 	return segmentDepth;
 }
 
+vector<SectionInfo> Tunnel::getSectionInfo() const
+{
+    return sections;
+}
+
+vector<PodInfo> Tunnel::getPodInfo() const
+{
+    return types;
+}
+
 Quaternion Tunnel::getNewSegmentQuaternion(Direction dir, int degrees)
 {
     Quaternion rot = endRot;
@@ -259,15 +269,19 @@ SectionInfo Tunnel::getNextSectionInfo()
 
 PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo)
 {
-    PodType podType = (PodType)(rand() % NUM_POD_TYPES);
+    PodType podType = (PodType)(rand() % 4);
     Direction podLoc = randDirection();
     
-    if (types.size() - nback >= 0) {
+    /*
+    // Force an Nback to happen
+    if (types.size() > 0 && types.size() - nback >= 0) {
         int r = rand() % 100;
         if (r <= 5 * sinceLastnback)
             podType = types[types.size() - nback].podType;
     }
+    */
     
+    // The following deals with throwing special settings for certain NBacks
     PodType NBack = getNBackTest(types.size() - 1);
     switch (NBack)
     {
@@ -349,6 +363,8 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
         default:
             break;
     }
+    nsegment->setSectionInfo(SectionInfo(segmentType, segmentTurn, turnDegrees));
+    nsegment->setPodInfo(PodInfo(podType, podLoc));
 
 	end = stepend;
     if (segments.size() <= 0) // Init TunnelSlice iterator
@@ -412,6 +428,8 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
         default:
             break;
     }
+    nsegment->setSectionInfo(SectionInfo(segmentType, segmentTurn, turnDegrees));
+    nsegment->setPodInfo(PodInfo(podType, podLoc));
     
     end = stepend;
     if (segments.size() > 1)

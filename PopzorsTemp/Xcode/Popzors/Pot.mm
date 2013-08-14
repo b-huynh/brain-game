@@ -1,7 +1,7 @@
 #include "Pot.h"
 
-Pot::Pot(Vector3 pos, Number radius, Color baseColor, Color blinkColor, Number blinktime, const String & soundFile)
-	: Selectable(baseColor, blinkColor, blinktime), potId(-1), pos(pos), sound(NULL), radius(radius)
+Pot::Pot(Vector3 pos, Number radius, Color baseColor, Color blinkColor, Number blinktime, const std::string & soundFile)
+: Selectable(baseColor, blinkColor, blinktime), potId(-1), pos(pos), sound(NULL), radius(radius)
 {
 	body = new ScenePrimitive(ScenePrimitive::TYPE_UNCAPPED_CYLINDER, 0.3, radius, 100.0);
     body->setPosition(pos);
@@ -29,14 +29,16 @@ void Pot::setId(int val)
 
 void Pot::setColor(int r, int g, int b, int a)
 {
-	//body->setColor(r,g,b,a);
-    body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
+    if (currentColor != Color(r, g, b, a))
+        body->setMaterialByName(getTextureNameByColor(Color(r,g,b,a)));
+	currentColor = Color(r,g,b,a);
 }
 
 void Pot::setColor(Color color)
 {
-	//body->setColor(color);
-    body->setMaterialByName(getTextureNameByColor(color));
+    if (currentColor != color)
+        body->setMaterialByName(getTextureNameByColor(color));
+	currentColor = color;
 }
 
 void Pot::setPosition(Number x, Number y, Number z)
@@ -47,6 +49,15 @@ void Pot::setPosition(Number x, Number y, Number z)
 void Pot::setPosition(Vector3 vec)
 {
 	body->setPosition(vec);
+}
+
+void Pot::setSound(const std::string & soundFile)
+{
+    if (sound)
+        delete sound;
+    sound = NULL;
+    if (soundFile != "")
+        sound = new Sound(soundFile);
 }
 
 void Pot::handleCollision(Number elapsed, CollisionScene *scene, Pot* rhs)
@@ -90,9 +101,10 @@ void Pot::removeFromCollisionScene(CollisionScene * scene)
 
 void Pot::playSound()
 {
-    sound->Play(false);
+    if (sound)
+        sound->Play(false);
 }
-               
+
 void Pot::reset()
 {
     Blinkable::reset();

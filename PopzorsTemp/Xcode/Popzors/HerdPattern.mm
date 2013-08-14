@@ -13,18 +13,18 @@ void HerdPattern::setup()
     
     //Stage variables
     numPoppies = player.level * 2;
-    numDistractors = 20;
+    numDistractors = 3;
     player.totalProblems = numPoppies;
     
 	//Make some pots
     const Number POT_RADIUS = 0.75;
-	Pot* pot1 = new Pot(Vector3(randRangeDouble(-3, 3), 0.0, randRangeDouble(-3, -1)), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
+	Pot* pot1 = new Pot(Vector3(randRangeDouble(-3, -3), 0.0, randRangeDouble(-1, -1)), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
     pot1->setId(0);
-    Pot* pot2 = new Pot(Vector3(randRangeDouble(-3, 3), 0.0, randRangeDouble(-3, -1)), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
+    Pot* pot2 = new Pot(Vector3(randRangeDouble(3, 3), 0.0, randRangeDouble(-3, -3)), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
     pot2->setId(1);
-    Pot* pot3 = new Pot(Vector3(randRangeDouble(-3, 3), 0.0, randRangeDouble(-3, -1)), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
+    Pot* pot3 = new Pot(Vector3(randRangeDouble(3, 3), 0.0, randRangeDouble(-1, -1)), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
     pot3->setId(2);
-    Pot* pot4 = new Pot(Vector3(randRangeDouble(-3, 3), 0.0, randRangeDouble(-3, -1)), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
+    Pot* pot4 = new Pot(Vector3(randRangeDouble(-3, -3), 0.0, randRangeDouble(-3, -3)), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
     pot4->setId(3);
     
 	pot1->addToCollisionScene(stage.scene);
@@ -42,7 +42,10 @@ void HerdPattern::setup()
                                  BLAND_COLOR, BLAND_COLOR);
         poppy->setId(i);
 		poppy->addToCollisionScene(stage.scene);
-        poppy->deactivateJumpAtDest(true);
+        poppy->setMoving(true);
+        poppy->setMoveSpeed(2);
+        poppy->activateJump();
+        poppy->setDest(Vector3(poppy->getPosition().x, poppy->getPosition().y,-7));
         
         if (stage.pots.size() > 0 && stage.poppies.size() < numPoppies)
         {
@@ -124,22 +127,27 @@ Vector3 findDragTraversal(Poppy * poppy, ClickedResult res)
 
 void HerdPattern::processSelect(ClickedResult res)
 {
-    if (selected && res.eventCode == InputEvent::EVENT_MOUSEUP
-                 && selected->getType() == Selectable::TYPE_POPPY)
+    if (selected && res.eventCode == InputEvent::EVENT_MOUSEMOVE)
     {
-        Poppy * toMove = (Poppy*)selected;
-        toMove->setDest(findDragTraversal(toMove, res));
-        toMove->setMoving(true);
-        toMove->activateJump();
-        selected = NULL;
+        if (selected->getType() == Selectable::TYPE_POPPY) {
+            Poppy * toMove = (Poppy*)selected;
+            toMove->setPosition(Vector3(res.ray.position.x, 0,res.ray.position.z));
+        }
+        else if (selected->getType() == Selectable::TYPE_POT) {
+            Pot * toMove = (Pot*)selected;
+            toMove->setPosition(Vector3(res.ray.position.x, 0,res.ray.position.z));
+        }
     }
     
     if (res.eventCode == InputEvent::EVENT_MOUSEDOWN) {
-        if (res.poppy) {
-            if ( (selected != res.poppy) && (selected != NULL) )
-                selected = NULL;
+        if (selected) 
+            selected = NULL;
+        else if (res.poppy) {
             res.poppy->setColor(SELECT_COLOR);
             selected = res.poppy;
+        }
+        else if (res.pot) {
+            selected = res.pot;
         }
     }
 }
@@ -149,19 +157,21 @@ void HerdPattern::update(Number elapsed)
     updatePoppiesBlink(elapsed);
     updatePoppiesHerdState();
     
-    for (int i = numPoppies; i < stage.poppies.size(); ++i) {
-        stage.poppies[i]->setMoving(true);
-        stage.poppies[i]->deactivateJump();
-        Vector3 off = stage.poppies[i]->getPosition() - stage.poppies[i]->getDest();
-        if (off.length() <= 0.1)
-            stage.poppies[i]->setDest(stage.poppies[i]->getPosition() + Vector3(randRangeDouble(-1,1), 0, randRangeDouble(-1,1)));
-    }
-    
-    for (int i = 0; i < stage.poppies.size(); ++i)
+    for (int i = 0; i < stage.poppies.size(); ++i) {
+        Vector3 dest = stage.poppies[i]->getDest();
+        Vector3 dist = stage.poppies[i]->getPosition() - dest;
+        if (dist.length() <= 0.2)
+            stage.poppies[i]->setPosition(dest.x,dest.y,7);
         stage.poppies[i]->update(elapsed);
+    }
     stage.ground->update(elapsed);
     
-    stage.handlePoppyCollisions(elapsed);
+    //poppies handle collision code with exception for selected poppy
+    for (int i = 0; i < stage.poppies.size(); ++i)
+        for (int j = i + 1; j < stage.poppies.size(); ++j)
+            //if (selected != stage.poppies[i])
+                stage.poppies[i]->handleCollision(elapsed, stage.scene, stage.poppies[j]);
+    
     stage.handlePotCollisions(elapsed);
     
     if (isFinished() && !stage.ground->isBlinking()) {
@@ -172,43 +182,44 @@ void HerdPattern::update(Number elapsed)
 void HerdPattern::updatePoppiesBlink(Number elapsed)
 {
     timeSinceLastBlink += elapsed;
-    if (timeSinceLastBlink >= blinkInterval) {
+    if (timeSinceLastBlink >= blinkInterval && timeSinceLastBlink <= blinkInterval + blinkLength) {
         for (int i = 0; i < stage.poppies.size(); ++i)
             stage.poppies[i]->activateBlink();
-        timeSinceLastBlink = 0;
     }
 }
 
 void HerdPattern::updatePoppiesHerdState()
 {
     for (int i = 0; i < stage.pots.size(); ++i) 
-        for (int j = 0; j < stage.poppies.size(); ++j) {
+        for (int j = 0; j < stage.poppies.size(); ++j)
                 updatePlayerChoice(stage.poppies[j], stage.pots[i]);
-        }
 }
 
 void HerdPattern::updatePlayerChoice(Poppy * poppy, Pot * pot)
 {
-    if (poppy->getMoving()) {
+    if (selected != poppy) {
         Vector3 dist = pot->getPosition() - poppy->getPosition();
         if (dist.length() <= pot->getRadius()) {
+            if (poppy->getMoving()) {
+                ++numAnswered;
+                if (pot->getBaseColor() == poppy->getBlinkColor()) {
+                    ++player.numCorrect;
+                }
+            }
+            
+            poppy->setMoving(false);
             poppy->setPosition(pot->getPosition());
             poppy->deactivateJump();
-            poppy->setMoving(false);
-            ++numAnswered;
-            
-            if (pot->getBaseColor() == poppy->getBlinkColor())
-                ++player.numCorrect;
         }
     }
     
     if (isFinished() && !stage.ground->isBlinking()) {
         if (player.numCorrect >= player.totalProblems) {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-            ++player.level;
+            player.updateLevel(PLAYER_SUCCESS);
         } else {
             stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD);
-            if (player.level > 1) --player.level;
+            player.updateLevel(PLAYER_FAILURE);
         }
         
         stage.ground->activateBlink();

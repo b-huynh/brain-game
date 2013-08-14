@@ -8,6 +8,13 @@
                 </textures>
             </shader>
         </material>
+        <material name="PoppyBlandMat">
+            <shader name="DefaultShader">
+                <textures>
+                    <texture name="diffuse">resources/bland_solid.png</texture>
+                </textures>
+            </shader>
+        </material>
         <material name="PodBlueMat">
             <shader name="DefaultShader">
                 <textures>

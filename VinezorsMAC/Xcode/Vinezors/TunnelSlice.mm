@@ -5,13 +5,13 @@
 TunnelSlice::TunnelSlice()
 : center(), rot(), width(0), depth(0), type(NORMAL_BLANK),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods(), t(0)
+pods(), t(0), podTaken(false), infoStored(false)
 {}
 
 TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Quaternion rot, Number width, Number depth)
 : center(center), rot(rot), width(width), depth(depth), type(type),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods(), t(0)
+pods(), t(0), podTaken(false), infoStored(false)
 {
 	Number wallLength = width / (2 * cos(PI / 4) + 1);
 	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
@@ -226,6 +226,25 @@ vector<Pod *> TunnelSlice::getPods()
     return pods;
 }
 
+SectionInfo TunnelSlice::getSectionInfo()
+{
+    return sectionInfo;
+}
+
+PodInfo TunnelSlice::getPodInfo()
+{
+    return podInfo;
+}
+
+bool TunnelSlice::isPodTaken() {
+    return podTaken;
+}
+
+bool TunnelSlice::isInfoStored()
+{
+    return infoStored;
+}
+
 vector<Pod *> TunnelSlice::findCollisions(CollisionScene *scene, SceneEntity *ent) const
 {
 	vector<Pod *> ret;
@@ -320,6 +339,26 @@ Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
 	}
     ret = head;
     return ret;
+}
+
+void TunnelSlice::setSectionInfo(const SectionInfo & value)
+{
+    sectionInfo = value;
+}
+
+void TunnelSlice::setPodInfo(const PodInfo & value)
+{
+    podInfo = value;
+}
+
+void TunnelSlice::setPodTaken(bool value)
+{
+    podTaken = value;
+}
+
+void TunnelSlice::setInfoStored(bool value)
+{
+    infoStored = value;
 }
 
 void TunnelSlice::move(Vector3 delta)
@@ -610,6 +649,7 @@ void TunnelSlice::updateGrowth(double nt)
 {
     t += nt;
     if (t > 1) t = 1;
+    if (t < 0) t = 0;
     for (int i = 0; i < pods.size(); ++i)
         pods[i]->setToGrowth(t);
 }
