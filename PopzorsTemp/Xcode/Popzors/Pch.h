@@ -36,6 +36,7 @@ int randRangeInt(int min, int max);
 double randRangeDouble(double min, double max);
 Color getRandomPotColor();
 std::string getSoundAccordingToColor(Color col);
+int getColorId(Color color);
 
 const std::string Spot1 = "resources/blip.wav";
 const std::string Spot2 = "resources/bloop.wav";

@@ -2,6 +2,8 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <sstream>
+#include <fstream>
 
 BaselinePattern::BaselinePattern(Screen *screen, CollisionScene *scene)
 : PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0),
@@ -63,8 +65,18 @@ void BaselinePattern::setup()
             assignCount[r]++;;
         }
 		stage.poppies.push_back(poppy);
-	}
         
+        poppyData data;
+        data.playerLevel = player.level;
+        data.stageId = (int)player.progression.size();
+        data.poppyID = poppy->getId();
+        data.poppyType = getColorId(poppy->getBlinkColor());
+        data.poppyFlashTime = -999; // Instantiate with bad data
+        data.binPlaceIn = -999;
+        data.binPlaceTime = -999;
+        pData.push_back(data);
+	}
+    
         
     for (int i = 0; i < numDistractingPoppies; ++i) {
 		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1.5, 1.5),0,randRangeDouble(-1.5, 1.5)),
@@ -122,6 +134,8 @@ void BaselinePattern::reset()
     blinkPoppyIndex = 0;
     playerPoppyIndex = 0;
     selected = NULL;
+    pData.clear();
+    pData.resize(0);
 }
 
 void BaselinePattern::setPattern()
@@ -215,8 +229,10 @@ void BaselinePattern::update(Number elapsed)
     
     stage.handlePoppyCollisions(elapsed);
     
-    if (isFinished() && !stage.ground->isBlinking())
+    if (isFinished() && !stage.ground->isBlinking()) {
+        saveData.push_back(getFinishedStageData());
         setPattern();
+    }
 
     stage.label1->setText("Time: " + toStringInt(totalElapsed));
     stage.label2->setText("Score: " + toStringInt(score));
@@ -224,6 +240,14 @@ void BaselinePattern::update(Number elapsed)
 
 void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
 {
+    //Store bin and place time
+    int id = poppy->getId();
+    for (int i = 0; i < pData.size(); ++i)
+        if (pData[i].poppyID == id) {
+            pData[i].binPlaceIn = getColorId(pot->getBlinkColor());
+            pData[i].binPlaceTime = totalElapsed;
+        }
+    
     if (pot->getId() == poppy->getPotIdRef())
     {
         player.numCorrect++;
@@ -273,6 +297,13 @@ void BaselinePattern::updatePoppyBlinks(Number elapsed)
     {
         signaled = true;
         stage.poppies[blinkPoppyIndex]->activateBlink();
+        
+        //Store flash time
+        int id = stage.poppies[blinkPoppyIndex]->getId();
+        for (int i = 0; i < pData.size(); ++i)
+            if (pData[i].poppyID == id)
+                pData[i].poppyFlashTime = totalElapsed;
+        
         stage.poppies[blinkPoppyIndex]->activateJump();
         stage.pots[stage.poppies[blinkPoppyIndex]->getPotIdRef()]->playSound();
         timer = 0;
@@ -286,10 +317,54 @@ void BaselinePattern::updatePoppyBlinks(Number elapsed)
         if (blinkPoppyIndex >= 0 && blinkPoppyIndex < numImportantPoppies)
         {
             stage.poppies[blinkPoppyIndex]->activateBlink();
+            
+            //Store flash time
+            int id = stage.poppies[blinkPoppyIndex]->getId();
+            for (int i = 0; i < pData.size(); ++i)
+                if (pData[i].poppyID == id)
+                    pData[i].poppyFlashTime = totalElapsed;
+            
             stage.poppies[blinkPoppyIndex]->activateJump();
             stage.pots[stage.poppies[blinkPoppyIndex]->getPotIdRef()]->playSound();
+
         }
         else ready = true;
         timer = 0;
 	}
+}
+
+std::string BaselinePattern::getFinishedStageData()
+{
+    std::ostringstream ss;
+    
+    //Outputs times in milliseconds
+    for (int i = 0; i < pData.size(); ++i) {
+        ss << pData[i].playerLevel << " " << pData[i].stageId << " ";
+        ss << pData[i].poppyID << " " << pData[i].poppyType << " " << pData[i].binPlaceIn << " ";
+        ss << pData[i].poppyFlashTime * 1000 << " " << pData[i].binPlaceTime * 1000 << std::endl;
+    }
+    
+    return ss.str();
+}
+
+bool BaselinePattern::save(std::string file)
+{
+    file = getSaveDir() + file;
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    
+    if (out.good()) {
+        out << "% " << "PlayerLevel, StageID, PoppyID, PoppyType, BinPlaceIn, PoppyFlashTime, BinPlaceTime" << std::endl;
+        
+        for (int i = 0; i < saveData.size(); ++i)
+            out << saveData[i];
+        
+        out.close();
+    }
+    else {
+        out.close();
+        return false;
+    }
+    
+    return true;
 }

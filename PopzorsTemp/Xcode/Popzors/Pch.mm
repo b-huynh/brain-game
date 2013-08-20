@@ -27,6 +27,15 @@ Color getRandomPotColor()
     return Color();
 }
 
+int getColorId(Color color)
+{
+    if (color == Cpot1) return 1;
+    if (color == Cpot2) return 2;
+    if (color == Cpot3) return 3;
+    if (color == Cpot4) return 4;
+    return -999;
+}
+
 std::string getSoundAccordingToColor(Color col)
 {
     if (col == Cpot1) return Spot1;

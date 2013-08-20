@@ -19,6 +19,23 @@ public:
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(Number elapsed);
     
+    //Utilities for Saving
+    std::string getFinishedStageData();
+    bool save(std::string file);
+    
+    //Poppy Save Data
+    struct poppyData {
+        int playerLevel;
+        int stageId;
+        int poppyID;
+        
+        int poppyType;
+        Number poppyFlashTime;
+        
+        int binPlaceIn;
+        Number binPlaceTime;
+    };
+    
     ~BaselinePattern() {}
 private:
 	bool signaled;
@@ -34,8 +51,11 @@ private:
 	int blinkPoppyIndex;
     int playerPoppyIndex;
     
-    double totalElapsed;
+    Number totalElapsed;
     int score;
     
     Selectable* selected;
+    
+    //Poppy Data
+    vector<poppyData> pData;
 };

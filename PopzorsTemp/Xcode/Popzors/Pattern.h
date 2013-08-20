@@ -13,6 +13,8 @@ protected:
     Player player;
     
     bool ready;
+    
+    vector<std::string> saveData;
 public:
     PopzorsPattern(Screen *screen, CollisionScene *scene) : stage(screen, scene)
     {}
@@ -40,9 +42,9 @@ public:
         return static_cast<double>(player.numCorrect) / player.totalProblems;
     }
     
-    bool save(std::string file)
+    virtual bool save(std::string file)
     {
-        return player.saveProgress(file);
+        return false;
     }
     
     bool load(std::string file)
