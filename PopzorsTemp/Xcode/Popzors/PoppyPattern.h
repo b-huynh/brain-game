@@ -18,6 +18,8 @@ public:
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(Number elapsed);
+    
+    ~PoppyPattern() {}
 private:
 	bool signaled;
 	Number signalStart;

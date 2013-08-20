@@ -18,6 +18,8 @@ public:
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(Number elapsed);
+    
+    ~BaselinePattern() {}
 private:
 	bool signaled;
 	Number signalStart;
@@ -26,10 +28,14 @@ private:
     
     int numImportantPoppies;
     int numDistractingPoppies;
+    double poppyRadius;
     
     bool backwardsOrder;
 	int blinkPoppyIndex;
     int playerPoppyIndex;
+    
+    double totalElapsed;
+    int score;
     
     Selectable* selected;
 };

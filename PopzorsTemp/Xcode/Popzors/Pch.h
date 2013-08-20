@@ -25,6 +25,13 @@ const Color FEEDBACK_COLOR_BAD = Color(255,0,0,100);
 const Number SIGNAL_START = 2.0;
 const Number SIGNAL_LENGTH = 0.5;
 
+const double BAR_XPOS = 20;
+const double BAR_YPOS = 20;
+const double BAR_WIDTH = 600;
+const double BAR_HEIGHT = 25;
+
+const double POPPY_RADIUS = 0.40;
+
 int randRangeInt(int min, int max);
 double randRangeDouble(double min, double max);
 Color getRandomPotColor();
@@ -35,6 +42,8 @@ const std::string Spot2 = "resources/bloop.wav";
 const std::string Spot3 = "resources/blurp.wav";
 const std::string Spot4 = "resources/boing.wav";
 const std::string SpotBland = "resources/womp.wav";
+const std::string SOUNDFILE_NEGATIVE_FEEDBACK = "resources/chimedown.wav";
+const std::string SOUNDFILE_POSITIVE_FEEDBACK = "resources/chimeup.wav";
 
 std::string toStringInt(int value);
 std::string toStringDouble(double value);

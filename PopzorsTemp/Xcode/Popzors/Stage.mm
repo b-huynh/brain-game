@@ -22,6 +22,7 @@ void Stage::handlePotCollisions(Number elapsed)
 }
 
 // Returns input data for clicking
+/*
 ClickedResult Stage::rayTest(Vector3 origin, Vector3 dest)
 {
 	ClickedResult res;
@@ -31,6 +32,27 @@ ClickedResult Stage::rayTest(Vector3 origin, Vector3 dest)
 	for (int i = 0; i < poppies.size(); ++i) {
 		if (poppies[i]->hasEntity(ray.entity)) {
             res.poppy = poppies[i];
+		}
+	}
+    
+	for (int i = 0; i < pots.size(); ++i)
+		if (pots[i]->hasEntity(ray.entity))
+            res.pot = pots[i];
+    
+    res.ray = ray;
+    
+	return res;
+}
+*/
+ClickedResult Stage::rayTest(Vector3 origin, Vector3 dest)
+{
+	ClickedResult res;
+	res.poppy = NULL;
+    res.pot = NULL;
+	RayTestResult ray = scene->getFirstEntityInRay(origin, dest);
+	for (int i = 0; i < poppies.size(); ++i) {
+		if (poppies[i]->hasEntity(ray.entity)) {
+                res.poppy = poppies[i];
 		}
 	}
     

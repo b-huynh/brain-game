@@ -19,6 +19,8 @@ public:
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePotBlinks(Number elapsed);
     void addPoppy();
+    
+    ~PotPattern() {}
 private:
 	bool signaled;
 	Number signalStart;

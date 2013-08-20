@@ -18,6 +18,8 @@ public:
         PlayerResult() {}
     };
     
+    static const int levelUpCeiling = 3;
+    
     //Player stats
     int numCorrect;
     int totalProblems;
@@ -26,7 +28,7 @@ public:
     int numConsecutiveSuccess;
     
     vector<PlayerResult> progression;
-
+    
     Player();
     
     void reset();

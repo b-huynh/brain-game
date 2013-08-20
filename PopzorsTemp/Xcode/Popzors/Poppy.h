@@ -5,7 +5,7 @@
 
 class Poppy : public Selectable {
 public:
-	Poppy(Vector3 pos = Vector3(0,0,0), Color baseColor = Color(0,0,0,0), Color blinkColor = Color(0,0,0,0), Number blinktime = 0);
+	Poppy(Vector3 pos = Vector3(0,0,0), Color baseColor = Color(0,0,0,0), Color blinkColor = Color(0,0,0,0), Number blinktime = 0, double radius = POPPY_RADIUS);
 	~Poppy();
     
 	void addToCollisionScene(CollisionScene * scene);

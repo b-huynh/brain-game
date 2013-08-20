@@ -31,7 +31,13 @@ public:
 	//Objects
 	vector<Poppy*> poppies;
 	vector<Pot*> pots;
+    
+	ScreenLabel *label1;
+    ScreenLabel *label2;
 
+    ScreenShape *progressBar;
+    Sound* negativeFeedback;
+    Sound* positiveFeedback;
     
     // Utility Functions
     void handlePoppyCollisions(Number elapsed);
@@ -68,9 +74,25 @@ public:
             delete lights[i];
         }
         lights.clear();
+        
+        if (progressBar) {
+            screen->removeChild(progressBar);
+            delete progressBar;
+        }
+        
+        if (label1) {
+            screen->removeChild(label1);
+            delete label1;
+        }
+        if (label2) {
+            screen->removeChild(label2);
+            delete label2;
+        }
+        if (negativeFeedback) delete negativeFeedback;
+        if (positiveFeedback) delete positiveFeedback;
     }
     
-    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots(), lights()
+    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots(), lights(), progressBar(NULL), label1(NULL), label2(NULL), negativeFeedback(NULL), positiveFeedback(NULL)
     {}
     
     ~Stage() {}

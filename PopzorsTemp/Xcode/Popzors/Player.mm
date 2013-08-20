@@ -33,7 +33,6 @@ void Player::updateLevel(Number accuracy)
         if (level > 1) --level;
     }
     
-    int levelUpCeiling = 3;
     if (numConsecutiveSuccess >= levelUpCeiling) {
         numConsecutiveSuccess = 0;
         ++level;

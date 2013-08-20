@@ -22,6 +22,7 @@ public:
     void updatePoppiesHerdState();
     void updatePlayerChoice(Poppy * poppy, Pot * pot);
     
+    ~HerdPattern() {}
 private:
     
     int numPoppies;

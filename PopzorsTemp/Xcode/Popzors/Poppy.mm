@@ -1,9 +1,9 @@
 #include "Poppy.h"
 
-Poppy::Poppy(Vector3 pos, Color baseColor, Color blinkColor, Number blinktime)
+Poppy::Poppy(Vector3 pos, Color baseColor, Color blinkColor, Number blinktime, double radius)
 	: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
-	body = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.25, 10, 10);
+	body = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, radius, 25, 25);
 	body->setPosition(pos);
     //this->setColor(baseColor);
     
@@ -120,6 +120,7 @@ void Poppy::reset()
 void Poppy::activateJump()
 {
     jumping = true;
+    timeJumped = 0;
 }
 
 void Poppy::deactivateJump()
