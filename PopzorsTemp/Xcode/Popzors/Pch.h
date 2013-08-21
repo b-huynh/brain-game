@@ -18,9 +18,9 @@ const Color Cpot3 = Color(0,0,192,255);
 const Color Cpot4 = Color(192,192,0,255);
 
 //const Color GROUND_COLOR = Color(255, 255, 255, 100);
-const Color GROUND_COLOR = Color(128, 128, 128, 100);
-const Color FEEDBACK_COLOR_GOOD = Color(0,255,0,100);
-const Color FEEDBACK_COLOR_BAD = Color(255,0,0,100);
+const Color GROUND_COLOR = Color(225, 225, 225, 100);
+const Color FEEDBACK_COLOR_GOOD = Color(64,255,64,100);
+const Color FEEDBACK_COLOR_BAD = Color(255,64,64,100);
 
 const Number SIGNAL_START = 2.0;
 const Number SIGNAL_LENGTH = 0.5;

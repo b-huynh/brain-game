@@ -101,7 +101,7 @@ void BaselinePattern::setup()
     light3->setPosition(-3, 3.5, 3);
     stage.scene->addLight(light3);
     
-    stage.scene->ambientColor = Color(0.2, 0.2, 0.2, 0.2);
+    stage.scene->ambientColor = Color(0.5, 0.5, 0.5, 0.5);
     
     stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH, BAR_HEIGHT);
     stage.progressBar->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
@@ -269,6 +269,8 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
         {
             const double PASSING_CHECK = 0.75;
             double correctness = getPlayerCorrectness();
+            stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD);
+            /*
             if (correctness > PASSING_CHECK)
             {
                 double range = 1 - PASSING_CHECK;
@@ -283,6 +285,7 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
                 stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
                                             Color(0, 198, 198, 0) * (1 - (value / range)));
             }
+             */
             
             stage.progressBar->setScale(1.0, 1.0);
             stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);

@@ -16,15 +16,15 @@ Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quate
     cursor->enabled = false;
     
     light = new SceneLight(SceneLight::AREA_LIGHT, scene, 5);
-    light->setPosition( camPos + getCamForward() * 3 );
+    light->setPosition( camPos + getCamForward() * 5 );
     scene->addLight(light);
     
     light2 = new SceneLight(SceneLight::AREA_LIGHT, scene, 3);
-    light2->setPosition( camPos + getCamForward() * 5 );
+    light2->setPosition( camPos + getCamForward() * 10 );
     scene->addLight(light2);
     
-    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 1);
-    light3->setPosition( camPos + getCamForward() * 10 );
+    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 2);
+    light3->setPosition( camPos + getCamForward() * 15 );
     scene->addLight(light3);
 }
 
@@ -398,9 +398,7 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     
     if (out.good()) {
-        out << "% size" << endl;
         out << "% PodLocation PodType Level NBack PlayerTookPod Timestamp" << endl;
-        out << results.size() << endl;
         
         for (int i = 0; i < results.size(); ++i) {
             out << results[i].podInfo.podLoc << " "

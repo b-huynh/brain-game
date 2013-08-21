@@ -14,7 +14,7 @@ Vinezors::Vinezors(PolycodeView *view)
 	screen = new Screen();  
 
 	scene = new CollisionScene();
-    scene->ambientColor = Color(0.5, 0.5, 0.5, 0.2);
+    scene->ambientColor = Color(0.5, 0.5, 0.5, 0.5);
     scene->enableLighting(true);
     
 	origin = Vector3(0, 0, 0);
