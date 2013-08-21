@@ -105,8 +105,16 @@ void BaselinePattern::setup()
     
     stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH, BAR_HEIGHT);
     stage.progressBar->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
-    stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
-    stage.progressBar->setScale(player.numConsecutiveSuccess / (double)(Player::levelUpCeiling - 1), 1.0);
+    
+    if (player.numConsecutiveSuccess > 0) {
+        stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess) / Player::levelUpCeiling, 1.0);
+        stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
+        if (player.numConsecutiveSuccess >= Player::levelUpCeiling)
+            stage.progressBar->setColor(0.0, 0.0, 1.0, 1.0);
+    } else {
+        stage.progressBar->setScale(0.0, 0.0);
+        stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
+    }
     stage.screen->addChild(stage.progressBar);
     
     stage.label1 = new ScreenLabel("Time: " + toStringInt(totalElapsed), 36);
@@ -177,21 +185,6 @@ void BaselinePattern::processSelect(ClickedResult res)
             res.poppy->setColor(SELECT_COLOR);
             selected = res.poppy;
         }
-        
-        /*
-        //deselect
-        if ( (selected != res.poppy) && (selected != NULL) ) {
-            selected->setSelectable(true);
-            //((Poppy*)selected)->jump(2.0);
-            //((Poppy*)selected)->activateJump();
-            selected = NULL;
-        }
-        res.poppy->setColor(SELECT_COLOR);
-        //res.poppy->deactivateJump();
-        selected = res.poppy;
-        selected->getType();
-        selected->setSelectable(false);
-         */
     }
     
     if (res.pot && res.eventCode == InputEvent::EVENT_MOUSEDOWN) {
@@ -261,8 +254,16 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             score += player.level;
             
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
+            
+            stage.progressBar->setScale(1.0, 1.0);
+            stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess + 1) / Player::levelUpCeiling, 1.0);
+            stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
+            if (player.numConsecutiveSuccess + 1 >= Player::levelUpCeiling)
+                stage.progressBar->setColor(0.0, 0.0, 1.0, 1.0);
+            
             player.updateLevel(PLAYER_SUCCESS);
             stage.positiveFeedback->Play();
+            
         }
         else
         {
@@ -282,10 +283,13 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
                 stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
                                             Color(0, 198, 198, 0) * (1 - (value / range)));
             }
+            
+            stage.progressBar->setScale(1.0, 1.0);
+            stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
+            
             player.updateLevel(PLAYER_FAILURE);
             stage.negativeFeedback->Play();
         }
-        stage.progressBar->setScale(player.numConsecutiveSuccess / (double)(Player::levelUpCeiling - 1), 1.0);
         stage.ground->activateBlink();
     }
 }

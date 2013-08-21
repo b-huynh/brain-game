@@ -254,11 +254,6 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
-void Player::updateRot(double t)
-{
-    
-}
-
 void Player::move(Vector3 delta)
 {
 	camPos += delta;
@@ -309,11 +304,15 @@ void Player::update(Number elapsed, Tunnel *tunnel)
         //hp -= DRAIN_SPEED * moveSpeed * elapsed;
         score += tunnel->getNBack() * moveSpeed * elapsed;
     }
-    
+   
+    if (tunnel->isDone())
+        moveSpeed *= 2.5;
+    /*
     if (keyUp)
         moveSpeed *= 2;
     if (keyDown)
         moveSpeed /= 2;
+    */
     
     for (int i = 0; i < vines.size(); ++i)
     {

@@ -2,7 +2,9 @@
 
 Vinezors::Vinezors(PolycodeView *view)
 {
-	core = new POLYCODE_CORE(view, 640, 480, false, false, 0, 0, 60);
+    srand(time(0));
+    
+	core = new POLYCODE_CORE(view, 640, 480, true, false, 0, 0, 60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
@@ -25,25 +27,29 @@ Vinezors::Vinezors(PolycodeView *view)
 	tunnel = new Tunnel(scene, origin + TUNNEL_REFERENCE_FORWARD * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH, TUNNEL_SEGMENTS_PER_SECTION, TUNNEL_SEGMENTS_PER_POD);
     tunnel->constructTunnel(TUNNEL_SECTIONS, NBACK);
 	
-    /*
-	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 2.5 * TUNNEL_DEPTH);
-	fog1->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 10 * TUNNEL_DEPTH);
+	fog1->setPosition(origin.x, origin.y, origin.z - FOG_OFFSET * TUNNEL_DEPTH);
 	fog1->setColor(0.5, 0.5, 0.5, 1.0);
-	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 4.0 * TUNNEL_DEPTH);
-	fog2->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+    /*
+	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 17.5 * TUNNEL_DEPTH);
+	fog2->setPosition(origin.x, origin.y, origin.z - 25 * TUNNEL_DEPTH);
 	fog2->setColor(0.8, 0.8, 0.8, 0.8);
-	fog3 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 5.0 * TUNNEL_DEPTH);
-	fog3->setPosition(origin.x, origin.y, origin.z - 5 * TUNNEL_DEPTH);
+	fog3 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 20.0 * TUNNEL_DEPTH);
+	fog3->setPosition(origin.x, origin.y, origin.z - 25 * TUNNEL_DEPTH);
 	fog3->setColor(1.0, 1.0, 1.0, 0.5);
-	scene->addChild(fog1);
-	scene->addChild(fog2);
-	scene->addChild(fog3);
      */
-
+	scene->addChild(fog1);
+	//scene->addChild(fog2);
+	//scene->addChild(fog3);
+    
     barHP = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH, BAR_HEIGHT);
     barHP->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
     barHP->setColor(0.0, 1.0, 0.0, 1.0);
     screen->addChild(barHP);
+    
+    label = new ScreenLabel("", 36);
+    label->setColor(1.0, 1.0, 0.0, 1.0);
+    screen->addChild(label);
     
     label1 = new ScreenLabel("Time: " + toStringDouble(player->getTotalElapsed()), 36);
     label1->setPosition(0,425);
@@ -77,9 +83,9 @@ Vinezors::Vinezors(PolycodeView *view)
     
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYDOWN);
 	core->getInput()->addEventListener(this, InputEvent::EVENT_KEYUP);
-	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEMOVE);
-	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEDOWN);
-	core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEUP);
+	//core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEMOVE);
+	//core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEDOWN);
+	//core->getInput()->addEventListener(this, InputEvent::EVENT_MOUSEUP);
 }
 
 Vinezors::~Vinezors() 
@@ -109,6 +115,7 @@ void Vinezors::handleEvent(Event *e)
                     Quaternion curRot = player->getCamRot();
                     curRot = pitchRot * yawRot * curRot;
                     player->setCamRot(curRot);
+                    curRot = player->getCombinedRotAndRoll();
                     scene->getDefaultCamera()->setRotationQuat(curRot.w, curRot.x, curRot.y, curRot.z);
                     
 					player->setMousePos(inputEvent->getMousePosition());
@@ -127,7 +134,7 @@ void Vinezors::handleEvent(Event *e)
 					player->setMouseLeft(false);
 					player->setMousePos(inputEvent->getMousePosition());
 				}
-				break;		
+				break;
 			case InputEvent::EVENT_KEYDOWN:
 				switch (inputEvent->keyCode()) 
 				{
@@ -151,20 +158,24 @@ void Vinezors::handleEvent(Event *e)
                             player->setDesireRoll(player->getDesireRoll() - 45);
                         }
 						break;
-                    case KEY_p:
+                    case KEY_s:
                         pause = !pause;
                         if (!pause) {
                             player->setCamPos(player->getOldPos());
                             player->setCamRot(player->getOldRot());
                             player->setCamRoll(player->getOldRoll());
+                            fog1->enabled = true;
                         } else {
+                            player->saveProgress("vinezors.save");
+                            label->setText("Saved");
                             player->setOldPos(player->getCamPos());
                             player->setOldRot(player->getCamRot());
                             player->setOldRoll(player->getCamRoll());
+                            fog1->enabled = false;
                         }   
                         break;
-                    case KEY_s:
-                        player->saveProgress("vinezors.save");
+                    case KEY_ESCAPE:
+                        exit(0);
                         break;
 				}
 				break;
@@ -182,7 +193,10 @@ void Vinezors::handleEvent(Event *e)
 						break;
 					case KEY_RIGHT:
 						player->setKeyRight(false);			
-						break;				
+						break;
+                    case KEY_s:
+                        label->setText("");
+                        break;
 				}
 				break;			
 		}
@@ -226,16 +240,6 @@ bool Vinezors::Update()
         else if (currentHp > player->getHP()) {
             negativeFeedback->getSound()->Play();
         }
-        
-        /*
-        Quaternion rot = player->getCamRot();
-        fog1->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
-        fog2->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
-        fog3->setPosition(player->getCamPos() + player->getCamForward() * (5 * TUNNEL_DEPTH));
-        fog1->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
-        fog2->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
-        fog3->setRotationQuat(rot.w, rot.x, rot.y, rot.z);
-        */
         
         // Animate Pod Growing outwards or Growing inwards
         const double GROWTH_SPEED = 5;
@@ -300,7 +304,8 @@ bool Vinezors::Update()
             }
         }
     } else {
-        // Navigation Keys
+        /*
+        // Navigation Debug Keys
         if (player->getKeyUp())
             player->move(Vector3(player->getCamForward() * CAM_SPEED * elapsed));
         if (player->getKeyDown())
@@ -309,11 +314,15 @@ bool Vinezors::Update()
         	player->move(Vector3(player->getCamRight() * -CAM_SPEED * elapsed));
         if (player->getKeyRight())
         	player->move(Vector3(player->getCamRight() * CAM_SPEED * elapsed));
+         */
     }
     
     Quaternion camRot = player->getCombinedRotAndRoll();
 	scene->getDefaultCamera()->setPosition(player->getCamPos());
 	scene->getDefaultCamera()->setRotationQuat(camRot.w, camRot.x, camRot.y, camRot.z);
+    
+    fog1->setPosition(player->getCamPos() + player->getCamForward() * (FOG_OFFSET * TUNNEL_DEPTH));
+    fog1->setRotationQuat(camRot.w, camRot.x, camRot.y, camRot.z);
     
     label1->setText("Time: " + toStringDouble(player->getTotalElapsed()));
     label2->setText("Score: " + toStringInt(player->getScore()));

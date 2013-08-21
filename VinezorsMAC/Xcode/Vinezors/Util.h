@@ -36,9 +36,10 @@ static const double VINE_T_OFFSET = 1.5;
 static const double VINE_RADIUS = 0.5;
 static const int POD_APPEARANCE = 3;
 
-static const int TUNNEL_SECTIONS = 4;
+static const int TUNNEL_SECTIONS = 3;
 static const int NBACK = 2;
 
+static const double FOG_OFFSET = 15;
 static const double BAR_XPOS = 20;
 static const double BAR_YPOS = 20;
 static const double BAR_WIDTH = 600;

@@ -10,8 +10,7 @@ Popzors::Popzors(PolycodeView *view)
     
 	int width = 640;
 	int height = 480;
-
-	core = new CocoaCore(view, width, height, false, false, 0, 0,60);
+	core = new CocoaCore(view, width, height, true, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
         CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
@@ -61,7 +60,7 @@ void Popzors::handleEvent(Event * e)
                         else
                             label->setText("Loaded popzors.save");
                         break;
-                        
+                        /*
                     case KEY_1:
                         pattern->reset();
                         delete pattern;
@@ -86,6 +85,9 @@ void Popzors::handleEvent(Event * e)
                         pattern = new HerdPattern(screen, scene);
                         pattern->setPattern();
                         break;
+                         */
+                    case KEY_ESCAPE:
+                        exit(0);
                 }
             }
             break;

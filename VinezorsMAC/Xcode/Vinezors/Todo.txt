@@ -27,9 +27,6 @@ Frequency of pods
 Animate Vines->smooth arc
 
 
-######## SAVE THE SPEED ######
-
-
 
 
 

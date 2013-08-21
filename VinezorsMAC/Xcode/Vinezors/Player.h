@@ -95,7 +95,6 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(double value);
-    void updateRot(double t);
 	Vector3 getCamForward();
 	Vector3 getCamUpward();
 	Vector3 getCamRight();
