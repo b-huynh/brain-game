@@ -8,8 +8,8 @@ bool comparePotX(Pot* lhs, Pot* rhs)
     return lhs->getPosition().x < rhs->getPosition().x;
 }
 
-PotPattern::PotPattern(Screen *screen, CollisionScene *scene)
-: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), stages(0), stageIndex(0), potsPerStage(0), potsLeft(), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
+PotPattern::PotPattern(Screen *screen, CollisionScene *scene, unsigned seed)
+: PopzorsPattern(screen, scene, seed), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), stages(0), stageIndex(0), potsPerStage(0), potsLeft(), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
 {
 }
 

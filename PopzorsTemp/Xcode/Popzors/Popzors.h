@@ -19,6 +19,9 @@ public:
 	void handleEvent(Event *e);
     bool Update();
 private:
+    unsigned seed;
+    bool pause;
+    
     Core *core;
     
 	//Screen

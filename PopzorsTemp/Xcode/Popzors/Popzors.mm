@@ -6,20 +6,35 @@
 
 Popzors::Popzors(PolycodeView *view)
 	: EventHandler() {
-	srand(time(0));
+    seed = time(0);
+	srand(seed);
     
-	int width = 640;
-	int height = 480;
-	core = new CocoaCore(view, width, height, true, false, 0, 0,60);
+	core = new CocoaCore(view, SCREEN_WIDTH, SCREEN_HEIGHT, false, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
-        CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
+    CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
+        
+    SCREEN_WIDTH = core->getXRes();
+    SCREEN_HEIGHT = core->getYRes();
+    BAR_XPOS = 20;
+    BAR_YPOS = 20;
+    BAR_WIDTH = SCREEN_WIDTH - BAR_XPOS * 2;
+    BAR_HEIGHT = SCREEN_HEIGHT / 20;
+    LABEL1_POSX = 0;
+    LABEL1_POSY = SCREEN_HEIGHT - 55;
+    LABEL2_POSX = 0;
+    LABEL2_POSY = SCREEN_HEIGHT - 105;
+    LABEL3_POSX = SCREEN_WIDTH - 255;
+    LABEL3_POSY = SCREEN_HEIGHT - 55;
+    
+    pause = true;
         
 	//SCREEN
 	screen = new Screen();
         
-    label = new ScreenLabel("", 36);
+    label = new ScreenLabel("\tPaused", 36);
     label->setColor(1.0, 1.0, 0.0, 1.0);
+    label->setPosition(0, BAR_HEIGHT + 20);
     screen->addChild(label);
 
 	//SCENE
@@ -27,7 +42,7 @@ Popzors::Popzors(PolycodeView *view)
 	cameraPos = Vector3(0,7,7);
 	origin = Vector3(0,0,0);
 	
-    pattern = new BaselinePattern(screen, scene);
+    pattern = new BaselinePattern(screen, scene, seed, core->getXRes(), core->getYRes());
     pattern->setPattern();
     
 	scene->getDefaultCamera()->setPosition(cameraPos);
@@ -48,8 +63,9 @@ void Popzors::handleEvent(Event * e)
             case InputEvent::EVENT_KEYDOWN:
             {
                 switch(inputEvent->keyCode()) {
+                        /*
                     case KEY_s:
-                        if (!pattern->save("popzors.save"))
+                        if (!pattern->save("popzors" + toStringInt(seed) + ".csv"))
                             label->setText("Failed to save");
                         else
                             label->setText("Saved");
@@ -60,7 +76,6 @@ void Popzors::handleEvent(Event * e)
                         else
                             label->setText("Loaded popzors.save");
                         break;
-                        /*
                     case KEY_1:
                         pattern->reset();
                         delete pattern;
@@ -86,12 +101,24 @@ void Popzors::handleEvent(Event * e)
                         pattern->setPattern();
                         break;
                          */
+                    case KEY_SPACE:
+                        label->setText("");
+                        pause = false;
+                        break;
                     case KEY_ESCAPE:
+                        //pattern->save("popzors" + toStringInt(seed) + ".csv");
+                        label->setText("Saved");
+                        delete pattern;
+                        exit(0);
+                    case KEY_q:
+                        //pattern->save("popzors" + toStringInt(seed) + ".csv");
+                        label->setText("Saved");
+                        delete pattern;
                         exit(0);
                 }
             }
             break;
-                
+                /*
             case InputEvent::EVENT_KEYUP:
             {
                 switch(inputEvent->key) {
@@ -103,25 +130,31 @@ void Popzors::handleEvent(Event * e)
                         break;
                 }
             }
-                
+                */
 			case InputEvent::EVENT_MOUSEDOWN:
 			{
-				ClickedResult res = pattern->stage.getClicked(inputEvent);
-                pattern->processSelect(res);
+                if (!pause) {
+                    ClickedResult res = pattern->stage.getClicked(inputEvent);
+                    pattern->processSelect(res);
+                }
 			}
 			break;
 									
 			case InputEvent::EVENT_MOUSEUP:
             {
-                ClickedResult res = pattern->stage.getClicked(inputEvent);
-                pattern->processSelect(res);
+                if (!pause) {
+                    ClickedResult res = pattern->stage.getClicked(inputEvent);
+                    pattern->processSelect(res);
+                }
             }
 			break;
                 
             case InputEvent::EVENT_MOUSEMOVE:
             {
-                ClickedResult res = pattern->stage.getClicked(inputEvent);
-                pattern->processSelect(res);
+                if (!pause) {
+                    ClickedResult res = pattern->stage.getClicked(inputEvent);
+                    pattern->processSelect(res);
+                }
             }
             break;
 		}
@@ -137,7 +170,8 @@ bool Popzors::Update()
 {
 	Number elapsed = core->getElapsed();
     
-	pattern->update(elapsed);
+    if (!pause)
+        pattern->update(elapsed);
     
 	return core->updateAndRender();
 }

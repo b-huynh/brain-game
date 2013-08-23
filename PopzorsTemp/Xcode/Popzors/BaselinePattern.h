@@ -6,7 +6,7 @@
 class BaselinePattern : public PopzorsPattern
 {
 public:
-    BaselinePattern(Screen *screen, CollisionScene *scene);
+    BaselinePattern(Screen *screen, CollisionScene *scene, unsigned seed, int width, int height);
     
     virtual void setup();
     virtual void reset();
@@ -38,6 +38,9 @@ public:
     
     ~BaselinePattern() {}
 private:
+    int screenWidth;
+    int screenHeight;
+    
 	bool signaled;
 	Number signalStart;
     Number signalLength;

@@ -21,9 +21,11 @@ public:
     bool Update();
     
 private:
+    unsigned seed;
+    bool pause;
+    
     Core *core;
 
-    bool pause;
     
 	Screen *screen;
 

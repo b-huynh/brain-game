@@ -32,7 +32,7 @@ static const double TUNNEL_SEGMENT_BUFFER = 1;
 static const int TUNNEL_SEGMENTS_PER_SECTION = 5;
 static const int TUNNEL_SEGMENTS_PER_POD = 3;
 static const int INITIATION_SECTIONS = 1;
-static const double VINE_T_OFFSET = 1.5;
+static const double VINE_T_OFFSET = 1.0;
 static const double VINE_RADIUS = 0.5;
 static const int POD_APPEARANCE = 3;
 
@@ -40,12 +40,21 @@ static const int TUNNEL_SECTIONS = 3;
 static const int NBACK = 2;
 
 static const double FOG_OFFSET = 15;
-static const double BAR_XPOS = 20;
-static const double BAR_YPOS = 20;
-static const double BAR_WIDTH = 600;
-static const double BAR_HEIGHT = 25;
+
+static int SCREEN_WIDTH = 1024;
+static int SCREEN_HEIGHT = 800;
+static double BAR_XPOS = 20;
+static double BAR_YPOS = 20;
+static double BAR_WIDTH = SCREEN_WIDTH - BAR_XPOS * 2;
+static double BAR_HEIGHT = SCREEN_HEIGHT / 20;
+static int LABEL1_POSX = 0;
+static int LABEL1_POSY = SCREEN_HEIGHT - 55;
+static int LABEL2_POSX = 0;
+static int LABEL2_POSY = SCREEN_HEIGHT - 105;
+static int LABEL3_POSX = SCREEN_WIDTH - 155;
+static int LABEL3_POSY = SCREEN_HEIGHT - 55;
 static const int STARTING_HP = 0;
-static const int HP_NEGATIVE_LIMIT = -2;
-static const int HP_POSITIVE_LIMIT = 5;
+static const int HP_NEGATIVE_LIMIT = -3;
+static const int HP_POSITIVE_LIMIT = 6;
 static const double DRAIN_SPEED = 2;
 static const double CAM_SPEED = 10;

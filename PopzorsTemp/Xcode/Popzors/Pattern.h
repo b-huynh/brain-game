@@ -4,20 +4,33 @@
 #include "Stage.h"
 #include "Player.h"
 
+#include <fstream>
+
 // The base class of a particular Pattern.
 class PopzorsPattern
 {
 public:
     Stage stage;
 protected:
+    std::ofstream outfile;
     Player player;
     
     bool ready;
     
     vector<std::string> saveData;
 public:
-    PopzorsPattern(Screen *screen, CollisionScene *scene) : stage(screen, scene)
-    {}
+    PopzorsPattern(Screen *screen, CollisionScene *scene, unsigned seed) : stage(screen, scene)
+    {
+        player.seed = seed;
+        
+        outfile.open((getSaveDir() + "popzors" + toStringInt(seed) + ".csv").c_str(), std::ofstream::out | std::ofstream::trunc);
+        
+        if (outfile.good()) {
+            outfile << "% debug seed: " << player.seed << std::endl;
+            outfile << "% " << std::endl;
+            outfile << "% " << "PlayerLevel, StageID, PoppyID, PoppyType, BinPlaceIn, PoppyFlashTime, BinPlaceTime" << std::endl;
+        }
+    }
     
     virtual void setup() = 0; // Deals with allocating the stage screen and scene
     
@@ -60,5 +73,8 @@ public:
          */
     }
     
-    ~PopzorsPattern() {}
+    ~PopzorsPattern() {
+        reset();
+        outfile.close();
+    }
 };

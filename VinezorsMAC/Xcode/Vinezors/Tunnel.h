@@ -50,7 +50,7 @@ public:
 	list<TunnelSlice*>::iterator getCurrentIterator();
 	list<TunnelSlice*>::iterator getBeginIterator();
 	list<TunnelSlice*>::iterator getEndIterator();
-    TunnelSlice* findSliceFromCurrent(Vector3 pos, Number tOffset) const;
+    TunnelSlice* findSliceFromCurrent(Vector3 pos, Number tOffset, Number & tLeft) const;
 	TunnelSlice* getCurrent() const;
 	TunnelSlice* getNext(int i) const;
 	int getSectionIndex() const;

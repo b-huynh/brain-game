@@ -52,7 +52,7 @@ list<TunnelSlice*>::iterator Tunnel::getEndIterator()
 }
 
 // An estimate of which Segment contains the position with a certain linear interpolated offset
-TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset) const
+TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset, Number & tLeft) const
 {
     list<TunnelSlice*>::iterator it = current;
     
@@ -63,6 +63,7 @@ TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset) const
         t = (*it)->getT(pos) + tOffset;
         if (t <= 1)
         {
+            tLeft = t;
             return *it;
         }
         ++it;
@@ -271,6 +272,13 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo)
 {
     PodType podType = (PodType)(rand() % 4);
     Direction podLoc = randDirection();
+    // Do a reroll if pod is the same type as last one
+    if (nback != 1 && types.size() > 0 && types[types.size() - 1].podType == podType)
+        podType = (PodType)(rand() % 4);
+    else if (nback == 1 && types.size() > 1 &&
+             types[types.size() - 1].podType == podType && types[types.size() - 2].podType == podType)
+        podType = (PodType)(rand() % 4);
+             
     
     /*
     // Force an Nback to happen
@@ -510,7 +518,7 @@ bool Tunnel::renewIfNecessary(Vector3 checkPos)
 	if (current == segments.end())
 		return false;
     TunnelSlice* currentSlice = *current;
-    Vector3 endOfSlice = currentSlice->getCenter() + (currentSlice->getForward() * segmentDepth / 2);
+    Vector3 endOfSlice = currentSlice->getCenter() + (currentSlice->getForward() * (segmentDepth) / 2);
     if ((checkPos - endOfSlice).dot(currentSlice->getForward()) >= 0)
 	{
         // Update the pod type index if we have just passed a segment with a po

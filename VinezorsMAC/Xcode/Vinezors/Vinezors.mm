@@ -2,14 +2,28 @@
 
 Vinezors::Vinezors(PolycodeView *view)
 {
-    srand(time(0));
+    seed = time(0);
+    srand(seed);
     
-	core = new POLYCODE_CORE(view, 640, 480, true, false, 0, 0, 60);
+	core = new POLYCODE_CORE(view, SCREEN_WIDTH, SCREEN_HEIGHT, true, false, 0, 0, 60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
-
-    pause = false;
+    
+    SCREEN_WIDTH = core->getXRes();
+    SCREEN_HEIGHT = core->getYRes();
+    BAR_XPOS = 20;
+    BAR_YPOS = 20;
+    BAR_WIDTH = SCREEN_WIDTH - BAR_XPOS * 2;
+    BAR_HEIGHT = SCREEN_HEIGHT / 20;
+    LABEL1_POSX = 0;
+    LABEL1_POSY = SCREEN_HEIGHT - 55;
+    LABEL2_POSX = 0;
+    LABEL2_POSY = SCREEN_HEIGHT - 105;
+    LABEL3_POSX = SCREEN_WIDTH - 255;
+    LABEL3_POSY = SCREEN_HEIGHT - 55;
+    
+    pause = true;
 	
 	screen = new Screen();  
 
@@ -21,15 +35,17 @@ Vinezors::Vinezors(PolycodeView *view)
 
 	scene->getDefaultCamera()->setPosition(Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2));
 	scene->getDefaultCamera()->lookAt(origin);
-	player = new Player(scene, "The Player", scene->getDefaultCamera()->getPosition(), scene->getDefaultCamera()->getRotationQuat(), CAM_SPEED, VINE_T_OFFSET);
+	player = new Player(scene, "The Player", scene->getDefaultCamera()->getPosition(), scene->getDefaultCamera()->getRotationQuat(), CAM_SPEED, VINE_T_OFFSET, seed, "vinezors" + toStringInt(seed) + ".csv");
 	player->addVine(new Vine(scene, player->getCamPos(), VINE_RADIUS));
 
 	tunnel = new Tunnel(scene, origin + TUNNEL_REFERENCE_FORWARD * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH, TUNNEL_SEGMENTS_PER_SECTION, TUNNEL_SEGMENTS_PER_POD);
     tunnel->constructTunnel(TUNNEL_SECTIONS, NBACK);
+    
+    player->newTunnel(tunnel);
 	
 	fog1 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 10 * TUNNEL_DEPTH);
 	fog1->setPosition(origin.x, origin.y, origin.z - FOG_OFFSET * TUNNEL_DEPTH);
-	fog1->setColor(0.5, 0.5, 0.5, 1.0);
+	fog1->setColor(0.7, 0.7, 0.7, 1.0);
     /*
 	fog2 = new ScenePrimitive(ScenePrimitive::TYPE_BOX, 100 * TUNNEL_WIDTH, 100 * TUNNEL_WIDTH, 17.5 * TUNNEL_DEPTH);
 	fog2->setPosition(origin.x, origin.y, origin.z - 25 * TUNNEL_DEPTH);
@@ -38,6 +54,7 @@ Vinezors::Vinezors(PolycodeView *view)
 	fog3->setPosition(origin.x, origin.y, origin.z - 25 * TUNNEL_DEPTH);
 	fog3->setColor(1.0, 1.0, 1.0, 0.5);
      */
+    
 	scene->addChild(fog1);
 	//scene->addChild(fog2);
 	//scene->addChild(fog3);
@@ -47,20 +64,21 @@ Vinezors::Vinezors(PolycodeView *view)
     barHP->setColor(0.0, 1.0, 0.0, 1.0);
     screen->addChild(barHP);
     
-    label = new ScreenLabel("", 36);
+    label = new ScreenLabel("\tPaused", 36);
     label->setColor(1.0, 1.0, 0.0, 1.0);
+    label->setPosition(0, BAR_HEIGHT + 20);
     screen->addChild(label);
     
     label1 = new ScreenLabel("Time: " + toStringDouble(player->getTotalElapsed()), 36);
-    label1->setPosition(0,425);
+    label1->setPosition(LABEL1_POSX, LABEL1_POSY);
     screen->addChild(label1);
     
 	label2 = new ScreenLabel("Score: " + toStringInt(player->getScore()), 36);
-    label2->setPosition(0,375);
+    label2->setPosition(LABEL2_POSX, LABEL2_POSY);
 	screen->addChild(label2);
     
     label3 = new ScreenLabel("N-Back: " + toStringInt(tunnel->getNBack()), 36);
-    label3->setPosition(425,425);
+    label3->setPosition(LABEL3_POSX, LABEL3_POSY);
     screen->addChild(label3);
     
     //Sounds
@@ -158,7 +176,10 @@ void Vinezors::handleEvent(Event *e)
                             player->setDesireRoll(player->getDesireRoll() - 45);
                         }
 						break;
-                    case KEY_s:
+                    case KEY_SPACE:
+                        pause = false;
+                        label->setText("");
+                        /*
                         pause = !pause;
                         if (!pause) {
                             player->setCamPos(player->getOldPos());
@@ -166,15 +187,23 @@ void Vinezors::handleEvent(Event *e)
                             player->setCamRoll(player->getOldRoll());
                             fog1->enabled = true;
                         } else {
-                            player->saveProgress("vinezors.save");
-                            label->setText("Saved");
                             player->setOldPos(player->getCamPos());
                             player->setOldRot(player->getCamRot());
                             player->setOldRoll(player->getCamRoll());
                             fog1->enabled = false;
                         }   
+                         */
                         break;
                     case KEY_ESCAPE:
+                        //player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
+                        label->setText("Saved");
+                        delete player;
+                        exit(0);
+                        break;
+                    case KEY_q:
+                        //player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
+                        label->setText("Saved");
+                        delete player;
                         exit(0);
                         break;
 				}
@@ -194,8 +223,10 @@ void Vinezors::handleEvent(Event *e)
 					case KEY_RIGHT:
 						player->setKeyRight(false);			
 						break;
+                        /*
                     case KEY_s:
                         label->setText("");
+                         */
                         break;
 				}
 				break;			
@@ -260,7 +291,7 @@ bool Vinezors::Update()
         
         // If player's current position is out of its current segment...
         if (tunnel->renewIfNecessary(player->getCamPos())) {
-        
+            
             // Set new camera slerp goal
             player->setOldPos(player->getCamPos());
             player->setOldRot(player->getCamRot());
@@ -289,7 +320,7 @@ bool Vinezors::Update()
                 
                 tunnel = new Tunnel(scene, newOrigin + forward * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH, TUNNEL_SEGMENTS_PER_SECTION, TUNNEL_SEGMENTS_PER_POD);
                 tunnel->constructTunnel(TUNNEL_SECTIONS, newNback, rot);
-                player->setHP(STARTING_HP);
+                player->newTunnel(tunnel);
             }
             
             // Show Pod Color and Play Sound

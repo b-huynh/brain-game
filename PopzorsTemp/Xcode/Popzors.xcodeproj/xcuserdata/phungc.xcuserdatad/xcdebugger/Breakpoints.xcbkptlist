@@ -80,11 +80,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Popzors/Pattern.h"
-         timestampString = "395880293.996703"
+         timestampString = "398988693.875875"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "10"
-         endingLineNumber = "10"
+         startingLineNumber = "12"
+         endingLineNumber = "12"
          landmarkName = "class PopzorsPattern"
          landmarkType = "3">
       </FileBreakpoint>

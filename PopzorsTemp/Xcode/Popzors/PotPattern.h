@@ -6,7 +6,7 @@
 class PotPattern : public PopzorsPattern
 {
 public:
-    PotPattern(Screen *screen, CollisionScene *scene);
+    PotPattern(Screen *screen, CollisionScene *scene, unsigned seed);
     
     virtual void setup();
     virtual void reset();

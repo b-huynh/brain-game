@@ -20,6 +20,8 @@ public:
     
     static const int levelUpCeiling = 3;
     
+    unsigned seed;
+    
     //Player stats
     int numCorrect;
     int totalProblems;

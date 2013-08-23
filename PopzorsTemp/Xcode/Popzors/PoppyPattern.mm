@@ -2,8 +2,8 @@
 
 #include <cstdlib>
 
-PoppyPattern::PoppyPattern(Screen *screen, CollisionScene *scene)
-: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0), selected(NULL)
+PoppyPattern::PoppyPattern(Screen *screen, CollisionScene *scene, unsigned seed)
+: PopzorsPattern(screen, scene, seed), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0), selected(NULL)
 {
 }
 

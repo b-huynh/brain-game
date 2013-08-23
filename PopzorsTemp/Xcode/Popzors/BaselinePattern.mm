@@ -5,8 +5,8 @@
 #include <sstream>
 #include <fstream>
 
-BaselinePattern::BaselinePattern(Screen *screen, CollisionScene *scene)
-: PopzorsPattern(screen, scene), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0),
+BaselinePattern::BaselinePattern(Screen *screen, CollisionScene *scene, unsigned seed, int width, int height)
+: PopzorsPattern(screen, scene, seed), screenWidth(width), screenHeight(height), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0),
     poppyRadius(POPPY_RADIUS), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0), selected(NULL)
 {
     totalElapsed = 0.0;
@@ -14,6 +14,19 @@ BaselinePattern::BaselinePattern(Screen *screen, CollisionScene *scene)
 }
 void BaselinePattern::setup()
 {
+    SCREEN_WIDTH = screenWidth;
+    SCREEN_HEIGHT = screenHeight;
+    BAR_XPOS = 20;
+    BAR_YPOS = 20;
+    BAR_WIDTH = screenWidth - BAR_XPOS * 2;
+    BAR_HEIGHT = screenHeight / 20;
+    LABEL1_POSX = 0;
+    LABEL1_POSY = screenHeight - 55;
+    LABEL2_POSX = 0;
+    LABEL2_POSY = screenHeight - 105;
+    LABEL3_POSX = screenWidth - 255;
+    LABEL3_POSY = screenHeight - 55;
+    
     stage.ground = new Ground(Vector3(0, -0.5, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
 	stage.ground->addToCollisionScene(stage.scene);
     
@@ -103,7 +116,7 @@ void BaselinePattern::setup()
     
     stage.scene->ambientColor = Color(0.5, 0.5, 0.5, 0.5);
     
-    stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH, BAR_HEIGHT);
+    stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH + 400, BAR_HEIGHT);
     stage.progressBar->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
     
     if (player.numConsecutiveSuccess > 0) {
@@ -115,14 +128,15 @@ void BaselinePattern::setup()
         stage.progressBar->setScale(0.0, 0.0);
         stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
     }
+    
     stage.screen->addChild(stage.progressBar);
     
     stage.label1 = new ScreenLabel("Time: " + toStringInt(totalElapsed), 36);
-    stage.label1->setPosition(0,425);
+    stage.label1->setPosition(LABEL1_POSX, LABEL1_POSY);
     stage.screen->addChild(stage.label1);
     
 	stage.label2 = new ScreenLabel("Score: " + toStringInt(score), 36);
-    stage.label2->setPosition(0,375);
+    stage.label2->setPosition(LABEL2_POSX, LABEL2_POSY);
 	stage.screen->addChild(stage.label2);
     
     stage.negativeFeedback = new Sound(SOUNDFILE_NEGATIVE_FEEDBACK);
@@ -249,21 +263,25 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
     
     if (isFinished())
     {
+        for (int i = 0; i < stage.poppies.size(); ++i)
+            stage.poppies[i]->setBaseColor(stage.poppies[i]->getBlinkColor());
+//            stage.poppies[i]->setBaseColor(stage.pots[stage.poppies[i]->getPotIdRef()]->getBaseColor());
         if (player.numCorrect >= player.totalProblems)
         {
             score += player.level;
             
             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
             
-            stage.progressBar->setScale(1.0, 1.0);
-            stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess + 1) / Player::levelUpCeiling, 1.0);
-            stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
-            if (player.numConsecutiveSuccess + 1 >= Player::levelUpCeiling)
+            if (player.numConsecutiveSuccess + 1 == Player::levelUpCeiling) {
                 stage.progressBar->setColor(0.0, 0.0, 1.0, 1.0);
-            
+            }
+            else
+            {
+                stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess + 1) / Player::levelUpCeiling, 1.0);
+                stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
+            }
             player.updateLevel(PLAYER_SUCCESS);
             stage.positiveFeedback->Play();
-            
         }
         else
         {
@@ -349,6 +367,10 @@ std::string BaselinePattern::getFinishedStageData()
         ss << pData[i].playerLevel << " " << pData[i].stageId << " ";
         ss << pData[i].poppyID << " " << pData[i].poppyType << " " << pData[i].binPlaceIn << " ";
         ss << pData[i].poppyFlashTime * 1000 << " " << pData[i].binPlaceTime * 1000 << std::endl;
+        
+        outfile << pData[i].playerLevel << " " << pData[i].stageId << " ";
+        outfile << pData[i].poppyID << " " << pData[i].poppyType << " " << pData[i].binPlaceIn << " ";
+        outfile << pData[i].poppyFlashTime * 1000 << " " << pData[i].binPlaceTime * 1000 << std::endl;
     }
     
     return ss.str();
@@ -361,6 +383,8 @@ bool BaselinePattern::save(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     
     if (out.good()) {
+        out << "% debug seed: " << player.seed << std::endl;
+        out << "% " << std::endl;
         out << "% " << "PlayerLevel, StageID, PoppyID, PoppyType, BinPlaceIn, PoppyFlashTime, BinPlaceTime" << std::endl;
         
         for (int i = 0; i < saveData.size(); ++i)

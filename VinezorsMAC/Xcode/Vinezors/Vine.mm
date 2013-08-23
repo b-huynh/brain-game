@@ -1,11 +1,11 @@
 #include "Vine.h"
 
 Vine::Vine()
-	: tip(NULL), dest()
+    : tip(NULL), dest(), radius(0.0), speed(0.0)
 {}
 
 Vine::Vine(CollisionScene *scene, Vector3 pos, double radius)
-	: tip(NULL), dest(), radius(radius)
+	: tip(NULL), dest(), radius(radius), speed(0.0)
 {
 	tip = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, radius, 10, 10);
 	tip->setPitch(-90);
@@ -53,17 +53,11 @@ double Vine::getRadius() const
 
 void Vine::update(Number elapsed)
 {
-	const Number VINE_SPEED = 30.0;
-
 	Vector3 dist = dest - tip->getPosition();
-    
-	if (dist.length() < 0.1)
-	{
-		dist = Vector3(0,0,0);
-	}
 	Vector3 norm = dist;
 	norm.Normalize();
-	Vector3 delta = norm * VINE_SPEED * elapsed;
+	Vector3 delta = norm * speed * elapsed;
+	//Vector3 delta = norm * speed;
 	if (delta.length() > dist.length())
 		delta = dist;
     
