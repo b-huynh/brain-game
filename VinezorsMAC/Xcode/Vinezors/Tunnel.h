@@ -71,8 +71,8 @@ public:
     
     SectionInfo getNextSectionInfo();
     PodInfo getNextPodInfo(SectionInfo & sectionInfo);
-    void addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc);
-	void renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc);
+    void addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood);
+	void renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood);
     void addSection(SectionInfo newSection);
     void renewSection(SectionInfo newSection);
     

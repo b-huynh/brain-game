@@ -9,7 +9,7 @@ Popzors::Popzors(PolycodeView *view)
     seed = time(0);
 	srand(seed);
     
-	core = new CocoaCore(view, SCREEN_WIDTH, SCREEN_HEIGHT, false, false, 0, 0,60);
+	core = new CocoaCore(view, SCREEN_WIDTH, SCREEN_HEIGHT, true, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
     CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
@@ -106,14 +106,12 @@ void Popzors::handleEvent(Event * e)
                         pause = false;
                         break;
                     case KEY_ESCAPE:
-                        //pattern->save("popzors" + toStringInt(seed) + ".csv");
+                        pattern->save("popzors" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
-                        delete pattern;
                         exit(0);
                     case KEY_q:
-                        //pattern->save("popzors" + toStringInt(seed) + ".csv");
+                        pattern->save("popzors" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
-                        delete pattern;
                         exit(0);
                 }
             }

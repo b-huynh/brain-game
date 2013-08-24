@@ -55,8 +55,6 @@ private:
     Number totalElapsed;
     TunnelSlice* vineSlice;
     Number vineT;
-    
-    ofstream outfile;
 public:
     
 	Player();

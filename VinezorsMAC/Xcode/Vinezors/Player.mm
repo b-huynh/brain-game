@@ -3,11 +3,11 @@
 #include <cmath>
 
 Player::Player()
-: seed(0), name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), outfile()
+: seed(0), name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {}
 
 Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset, unsigned seed, const string & filename)
-	: seed(seed), name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), outfile()
+	: seed(seed), name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {
 	cursor = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.5, 5, 5);
 	cursor->renderWireframe = true;
@@ -26,19 +26,6 @@ Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quate
     light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 2);
     light3->setPosition( camPos + getCamForward() * 15 );
     scene->addLight(light3);
-    
-    outfile.open((getSaveDir() + filename).c_str(), std::ofstream::out | std::ofstream::trunc);
-    if (outfile.good()) {
-        outfile << "% debug seed: " << seed << endl;
-        outfile << "%" << endl;
-        outfile << "% PodLocation { NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST" << endl;
-        outfile << "% PodType { BLUE, GREEN, PINK, YELLOW }" << endl;
-        outfile << "% Level {-inf, inf}" << endl;
-        outfile << "% NBack {no, yes}" << endl;
-        outfile << "% PlayerTookPod {no, yes}" << endl;
-        outfile << "%" << endl;
-        outfile << "% PodLocation PodType Level NBack PlayerTookPod Timestamp" << endl;
-    }
 }
 
 unsigned Player::getSeed() const
@@ -389,17 +376,8 @@ void Player::update(Number elapsed, Tunnel *tunnel)
                 
                 PodType NBack = tunnel->getNBackTest(tunnel->getPodIndex());
                 result.nback = tunnel->getNBack();
-                result.goodPod = NBack != POD_NONE;
-                
-                if (outfile.good())
-                {
-                    outfile << result.podInfo.podLoc << " "
-                            << result.podInfo.podType << " "
-                            << result.nback << " "
-                            << result.goodPod << " "
-                            << result.playerTookPod << " "
-                            << result.timestamp << endl;
-                }
+                //result.goodPod = NBack != POD_NONE;
+                result.goodPod = result.podInfo.good;
                 
                 results.push_back(result);
                 
@@ -490,5 +468,4 @@ bool Player::saveProgress(std::string file)
 
 Player::~Player()
 {
-    outfile.close();
 }

@@ -195,15 +195,13 @@ void Vinezors::handleEvent(Event *e)
                          */
                         break;
                     case KEY_ESCAPE:
-                        //player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
+                        player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
-                        delete player;
                         exit(0);
                         break;
                     case KEY_q:
-                        //player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
+                        player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
-                        delete player;
                         exit(0);
                         break;
 				}

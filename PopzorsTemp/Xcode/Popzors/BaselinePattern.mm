@@ -367,10 +367,6 @@ std::string BaselinePattern::getFinishedStageData()
         ss << pData[i].playerLevel << " " << pData[i].stageId << " ";
         ss << pData[i].poppyID << " " << pData[i].poppyType << " " << pData[i].binPlaceIn << " ";
         ss << pData[i].poppyFlashTime * 1000 << " " << pData[i].binPlaceTime * 1000 << std::endl;
-        
-        outfile << pData[i].playerLevel << " " << pData[i].stageId << " ";
-        outfile << pData[i].poppyID << " " << pData[i].poppyType << " " << pData[i].binPlaceIn << " ";
-        outfile << pData[i].poppyFlashTime * 1000 << " " << pData[i].binPlaceTime * 1000 << std::endl;
     }
     
     return ss.str();
