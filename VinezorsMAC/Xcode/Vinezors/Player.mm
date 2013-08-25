@@ -33,6 +33,11 @@ unsigned Player::getSeed() const
     return seed;
 }
 
+string Player::getName() const
+{
+    return name;
+}
+
 int Player::getHP() const
 {
     return hp;
@@ -172,6 +177,11 @@ Number Player::getTotalElapsed() const
 void Player::setSeed(unsigned value)
 {
     seed = value;
+}
+
+void Player::setName(const string & value)
+{
+    name = value;
 }
 
 void Player::setHP(int value)

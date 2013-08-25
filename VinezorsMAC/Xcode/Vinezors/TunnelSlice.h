@@ -49,6 +49,7 @@ private:
 	double depth;
 	
 	TunnelType type;
+    std::string materialFile;
 	ScenePrimitive *topLeftWall;
 	ScenePrimitive *topWall;
 	ScenePrimitive *topRightWall;

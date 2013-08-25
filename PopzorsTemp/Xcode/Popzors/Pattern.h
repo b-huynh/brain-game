@@ -41,6 +41,16 @@ public:
         return ready;
     }
     
+    std::string getName() const
+    {
+        return player.name;
+    }
+    
+    void setName(const std::string & value)
+    {
+        player.name = value;
+    }
+    
     double getPlayerCorrectness() const
     {
         return static_cast<double>(player.numCorrect) / player.totalProblems;

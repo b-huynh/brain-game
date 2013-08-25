@@ -9,7 +9,7 @@ Popzors::Popzors(PolycodeView *view)
     seed = time(0);
 	srand(seed);
     
-	core = new CocoaCore(view, SCREEN_WIDTH, SCREEN_HEIGHT, true, false, 0, 0,60);
+	core = new CocoaCore(view, SCREEN_WIDTH, SCREEN_HEIGHT, false, false, 0, 0,60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
     CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
@@ -32,9 +32,9 @@ Popzors::Popzors(PolycodeView *view)
 	//SCREEN
 	screen = new Screen();
         
-    label = new ScreenLabel("\tPaused", 36);
+    label = new ScreenLabel("Enter Name: ", 36);
     label->setColor(1.0, 1.0, 0.0, 1.0);
-    label->setPosition(0, BAR_HEIGHT + 20);
+    label->setPosition(20, BAR_HEIGHT + 20);
     screen->addChild(label);
 
 	//SCENE
@@ -100,19 +100,38 @@ void Popzors::handleEvent(Event * e)
                         pattern = new HerdPattern(screen, scene);
                         pattern->setPattern();
                         break;
-                         */
                     case KEY_SPACE:
                         label->setText("");
                         pause = false;
-                        break;
+                         break;
+                         */
                     case KEY_ESCAPE:
-                        pattern->save("popzors" + toStringInt(seed) + ".csv");
+                        if (!pause)
+                            pattern->save(pattern->getName() + "_popzors_" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
                         exit(0);
-                    case KEY_q:
-                        pattern->save("popzors" + toStringInt(seed) + ".csv");
-                        label->setText("Saved");
-                        exit(0);
+                }
+                if (pause)
+                {
+                    std::string temp = pattern->getName();
+                    if (inputEvent->keyCode() == KEY_RETURN && temp.length() > 0)
+                        pause = false;
+                    else if (inputEvent->keyCode() == KEY_BACKSPACE && temp.length() > 0)
+                        temp = temp.substr(0, temp.length() - 1);
+                    else if (inputEvent->keyCode() >= 0 && inputEvent->keyCode() < 256 &&
+                             temp.length() < 20)
+                    {
+                        char c = inputEvent->charCode;
+                        if (c >= '0' && c <= '9')
+                            temp += c;
+                        else if (c >= 'a' && c <= 'z')
+                            temp += c;
+                        else if (c >= 'A' && c <= 'Z')
+                            temp += c;
+                        else if (c == '_')
+                            temp += c;
+                    }
+                    pattern->setName(temp);
                 }
             }
             break;
@@ -168,8 +187,12 @@ bool Popzors::Update()
 {
 	Number elapsed = core->getElapsed();
     
-    if (!pause)
+    if (!pause) {
         pattern->update(elapsed);
+        label->setText("");
+    } else {
+        label->setText("Enter Name: " + pattern->getName());
+    }
     
 	return core->updateAndRender();
 }

@@ -22,6 +22,7 @@ public:
     
 private:
     unsigned seed;
+    
     bool pause;
     
     Core *core;

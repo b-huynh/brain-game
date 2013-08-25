@@ -305,7 +305,7 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             }
              */
             
-            stage.progressBar->setScale(1.0, 1.0);
+            stage.progressBar->setScale(0.667, 1.0);
             stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
             
             player.updateLevel(PLAYER_FAILURE);

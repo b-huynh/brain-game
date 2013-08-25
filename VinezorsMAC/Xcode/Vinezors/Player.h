@@ -61,6 +61,7 @@ public:
 	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset, unsigned seed, const string & filename);
 	
     unsigned getSeed() const;
+    string getName() const;
     int getHP() const;
 	double getScore() const;
 	bool getMouseLeft() const;
@@ -83,6 +84,7 @@ public:
 	Number getTotalElapsed() const;
     
     void setSeed(unsigned value);
+    void setName(const string & name);
     void setHP(int value);
 	void setScore(double value);
 	void setMouseLeft(bool value);

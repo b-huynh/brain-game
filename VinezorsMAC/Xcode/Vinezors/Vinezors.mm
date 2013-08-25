@@ -5,7 +5,7 @@ Vinezors::Vinezors(PolycodeView *view)
     seed = time(0);
     srand(seed);
     
-	core = new POLYCODE_CORE(view, SCREEN_WIDTH, SCREEN_HEIGHT, true, false, 0, 0, 60);
+	core = new POLYCODE_CORE(view, SCREEN_WIDTH, SCREEN_HEIGHT, false, false, 0, 0, 60);
 	CoreServices::getInstance()->getResourceManager()->addArchive("default.pak");
 	CoreServices::getInstance()->getResourceManager()->addDirResource("default", false);
 	CoreServices::getInstance()->getResourceManager()->addDirResource("resources", false);
@@ -35,7 +35,7 @@ Vinezors::Vinezors(PolycodeView *view)
 
 	scene->getDefaultCamera()->setPosition(Vector3(origin.x, origin.y, origin.z + TUNNEL_DEPTH / 2));
 	scene->getDefaultCamera()->lookAt(origin);
-	player = new Player(scene, "The Player", scene->getDefaultCamera()->getPosition(), scene->getDefaultCamera()->getRotationQuat(), CAM_SPEED, VINE_T_OFFSET, seed, "vinezors" + toStringInt(seed) + ".csv");
+	player = new Player(scene, "", scene->getDefaultCamera()->getPosition(), scene->getDefaultCamera()->getRotationQuat(), CAM_SPEED, VINE_T_OFFSET, seed, "vinezors" + toStringInt(seed) + ".csv");
 	player->addVine(new Vine(scene, player->getCamPos(), VINE_RADIUS));
 
 	tunnel = new Tunnel(scene, origin + TUNNEL_REFERENCE_FORWARD * (TUNNEL_WIDTH / 2), TUNNEL_WIDTH, TUNNEL_DEPTH, TUNNEL_SEGMENTS_PER_SECTION, TUNNEL_SEGMENTS_PER_POD);
@@ -64,9 +64,9 @@ Vinezors::Vinezors(PolycodeView *view)
     barHP->setColor(0.0, 1.0, 0.0, 1.0);
     screen->addChild(barHP);
     
-    label = new ScreenLabel("\tPaused", 36);
+    label = new ScreenLabel("Enter Name: ", 36);
     label->setColor(1.0, 1.0, 0.0, 1.0);
-    label->setPosition(0, BAR_HEIGHT + 20);
+    label->setPosition(20, BAR_HEIGHT + 20);
     screen->addChild(label);
     
     label1 = new ScreenLabel("Time: " + toStringDouble(player->getTotalElapsed()), 36);
@@ -154,7 +154,8 @@ void Vinezors::handleEvent(Event *e)
 				}
 				break;
 			case InputEvent::EVENT_KEYDOWN:
-				switch (inputEvent->keyCode()) 
+            {
+				switch (inputEvent->keyCode())
 				{
 					case KEY_UP:
 						player->setKeyUp(true);
@@ -176,10 +177,14 @@ void Vinezors::handleEvent(Event *e)
                             player->setDesireRoll(player->getDesireRoll() - 45);
                         }
 						break;
+                        /*
                     case KEY_SPACE:
                         pause = false;
                         label->setText("");
+                        break;
+                         */
                         /*
+                    case KEY_SPACE:
                         pause = !pause;
                         if (!pause) {
                             player->setCamPos(player->getOldPos());
@@ -191,23 +196,42 @@ void Vinezors::handleEvent(Event *e)
                             player->setOldRot(player->getCamRot());
                             player->setOldRoll(player->getCamRoll());
                             fog1->enabled = false;
-                        }   
+                        }
+                         break;
                          */
-                        break;
                     case KEY_ESCAPE:
-                        player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
-                        label->setText("Saved");
-                        exit(0);
-                        break;
-                    case KEY_q:
-                        player->saveProgress("vinezors" + toStringInt(seed) + ".csv");
+                        if (!pause)
+                            player->saveProgress(player->getName() + "_vinezors_" + toStringInt(seed) + ".csv");
                         label->setText("Saved");
                         exit(0);
                         break;
 				}
+                if (pause)
+                {
+                    string temp = player->getName();
+                    if (inputEvent->keyCode() == KEY_RETURN && temp.length() > 0)
+                        pause = false;
+                    else if (inputEvent->keyCode() == KEY_BACKSPACE && temp.length() > 0)
+                        temp = temp.substr(0, temp.length() - 1);
+                    else if (inputEvent->keyCode() >= 0 && inputEvent->keyCode() < 256 &&
+                             temp.length() < 20)
+                    {
+                        char c = inputEvent->charCode;
+                        if (c >= '0' && c <= '9')
+                            temp += c;
+                        else if (c >= 'a' && c <= 'z')
+                            temp += c;
+                        else if (c >= 'A' && c <= 'Z')
+                            temp += c;
+                        else if (c == '_')
+                            temp += c;
+                    }
+                    player->setName(temp);
+                }
 				break;
+            }
 			case InputEvent::EVENT_KEYUP:
-				switch (inputEvent->key) 
+				switch (inputEvent->key)
 				{
 					case KEY_UP:
 						player->setKeyUp(false);
@@ -226,8 +250,8 @@ void Vinezors::handleEvent(Event *e)
                         label->setText("");
                          */
                         break;
-				}
-				break;			
+                }
+				break;
 		}
 		
 	}
@@ -254,7 +278,7 @@ bool Vinezors::Update()
             if (i == INITIATION_SECTIONS - 1) {
                 info.tunnelType = CHECKPOINT;
             }
-            tunnel->renewSection(info);
+            tunnel->addSection(info);
         }
     }
     
@@ -353,6 +377,10 @@ bool Vinezors::Update()
     fog1->setPosition(player->getCamPos() + player->getCamForward() * (FOG_OFFSET * TUNNEL_DEPTH));
     fog1->setRotationQuat(camRot.w, camRot.x, camRot.y, camRot.z);
     
+    if (pause)
+        label->setText("Enter Name: " + player->getName());
+    else
+        label->setText("");
     label1->setText("Time: " + toStringDouble(player->getTotalElapsed()));
     label2->setText("Score: " + toStringInt(player->getScore()));
     label3->setText("N-Back: " + toStringInt(tunnel->getNBack()));

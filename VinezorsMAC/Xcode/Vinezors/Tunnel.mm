@@ -503,14 +503,14 @@ void Tunnel::renewSection(SectionInfo newSection)
         if (renewalPodCounter >= podSegmentSize)
         {
             PodInfo newPod = getNextPodInfo(newSection);
-            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
+            renewSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
             renewalPodCounter = 0;
             
             types.push_back(newPod);
         }
         else
         {
-            addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
+            renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         }
     }
     sections.push_back(newSection);
