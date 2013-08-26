@@ -14,6 +14,7 @@ struct Vine
 	ScenePrimitive *tip;
 	Vector3 dest;
     double radius;
+    double speed;
 
 	Vine();
 	Vine(CollisionScene *scene, Vector3 pos, double radius);

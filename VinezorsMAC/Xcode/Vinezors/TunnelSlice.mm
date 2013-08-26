@@ -3,28 +3,17 @@
 #include <cstdlib>
 
 TunnelSlice::TunnelSlice()
-: center(), rot(), width(0), depth(0), type(NORMAL_BLANK),
+: center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialFile(""),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
 pods(), t(0), podTaken(false), infoStored(false)
 {}
 
 TunnelSlice::TunnelSlice(CollisionScene *scene, TunnelType type, Vector3 center, Quaternion rot, Number width, Number depth)
-: center(center), rot(rot), width(width), depth(depth), type(type),
+: center(center), rot(rot), width(width), depth(depth), type(type), materialFile(""),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
 pods(), t(0), podTaken(false), infoStored(false)
 {
-	Number wallLength = width / (2 * cos(PI / 4) + 1);
-	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
-    
     initWalls();
-    
 	addToCollisionScene(scene);
 }
 
@@ -41,6 +30,16 @@ void TunnelSlice::initWalls()
     double angle;
     Quaternion q;
     Vector3 move;
+
+    materialFile = "";
+	topLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	topWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	topRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	rightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomRightWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	bottomLeftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
+	leftWall = new ScenePrimitive(ScenePrimitive::TYPE_PLANE, wallLength, depth);
     
     angle = 225;
     q.createFromAxisAngle(TUNNEL_REFERENCE_FORWARD.x, TUNNEL_REFERENCE_FORWARD.y, TUNNEL_REFERENCE_FORWARD.z, angle);
@@ -131,24 +130,32 @@ void TunnelSlice::initWalls()
     leftWall->setRotationQuat(q.w, q.x, q.y, q.z);
     
     if (type != CHECKPOINT) {
-        topLeftWall->setMaterialByName("WallMaterial");
-        topWall->setMaterialByName("WallMaterial");
-        topRightWall->setMaterialByName("WallMaterial");
-        rightWall->setMaterialByName("WallMaterial");
-        bottomRightWall->setMaterialByName("WallMaterial");
-        bottomWall->setMaterialByName("WallMaterial");
-        bottomLeftWall->setMaterialByName("WallMaterial");
-        leftWall->setMaterialByName("WallMaterial");
+        if (materialFile != "WallMaterial")
+        {
+            materialFile = "WallMaterial";
+            topLeftWall->setMaterialByName(materialFile);
+            topWall->setMaterialByName(materialFile);
+            topRightWall->setMaterialByName(materialFile);
+            rightWall->setMaterialByName(materialFile);
+            bottomRightWall->setMaterialByName(materialFile);
+            bottomWall->setMaterialByName(materialFile);
+            bottomLeftWall->setMaterialByName(materialFile);
+            leftWall->setMaterialByName(materialFile);
+        }
     } else {
-        topLeftWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        topWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        topRightWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        rightWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        bottomRightWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        bottomWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        bottomLeftWall->setMaterialByName("CheckpointUnvisitedMaterial");
-        leftWall->setMaterialByName("CheckpointUnvisitedMaterial");
+        if (materialFile != "CheckPointUnvisitedMaterial") {
+            materialFile = "CheckpointUnvisitedMaterial";
+            topLeftWall->setMaterialByName(materialFile);
+            topWall->setMaterialByName(materialFile);
+            topRightWall->setMaterialByName(materialFile);
+            rightWall->setMaterialByName(materialFile);
+            bottomRightWall->setMaterialByName(materialFile);
+            bottomWall->setMaterialByName(materialFile);
+            bottomLeftWall->setMaterialByName(materialFile);
+            leftWall->setMaterialByName(materialFile);
+        }
     }
+    
     /*
      topLeftWall->backfaceCulled = false;
      topWall->backfaceCulled = false;
@@ -661,9 +668,14 @@ void TunnelSlice::rejuvenate(CollisionScene *scene, TunnelType type, Vector3 cen
     this->rot = rot;
     this->width = width;
     this->depth = depth;
-    clearPods(scene);
+    //clearPods(scene);
+    t = 0;
+    podTaken = false;
+    infoStored = false;
     
+    removeFromCollisionScene(scene);
     initWalls();
+    addToCollisionScene(scene);
 }
 
 void TunnelSlice::addToCollisionScene(CollisionScene *scene)
@@ -692,6 +704,7 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	
 	for (int i = 0; i < pods.size(); ++i)
 		pods[i]->removeFromCollisionScene(scene);
+    
 	delete topLeftWall; topLeftWall = NULL;
 	delete topWall; topWall = NULL;
 	delete topRightWall; topRightWall = NULL;
@@ -701,6 +714,7 @@ void TunnelSlice::removeFromCollisionScene(CollisionScene * scene)
 	delete bottomLeftWall; bottomLeftWall = NULL;
 	delete leftWall; leftWall = NULL;
     delete intermediateSegment; intermediateSegment = NULL;
-    
+	for (int i = 0; i < pods.size(); ++i)
+        delete pods[i];
 	pods.clear();
 }

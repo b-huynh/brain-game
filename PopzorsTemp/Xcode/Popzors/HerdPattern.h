@@ -6,7 +6,7 @@
 class HerdPattern : public PopzorsPattern
 {
 public:
-    HerdPattern(Screen *screen, CollisionScene *scene);
+    HerdPattern(Screen *screen, CollisionScene *scene, unsigned seed);
     
     //Inherited
     virtual void setup();

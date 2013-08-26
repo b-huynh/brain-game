@@ -18,17 +18,25 @@ const Color Cpot3 = Color(0,0,192,255);
 const Color Cpot4 = Color(192,192,0,255);
 
 //const Color GROUND_COLOR = Color(255, 255, 255, 100);
-const Color GROUND_COLOR = Color(128, 128, 128, 100);
-const Color FEEDBACK_COLOR_GOOD = Color(0,255,0,100);
-const Color FEEDBACK_COLOR_BAD = Color(255,0,0,100);
+const Color GROUND_COLOR = Color(225, 225, 225, 100);
+const Color FEEDBACK_COLOR_GOOD = Color(64,255,64,100);
+const Color FEEDBACK_COLOR_BAD = Color(255,64,64,100);
 
 const Number SIGNAL_START = 2.0;
 const Number SIGNAL_LENGTH = 0.5;
 
-const double BAR_XPOS = 20;
-const double BAR_YPOS = 20;
-const double BAR_WIDTH = 600;
-const double BAR_HEIGHT = 25;
+static int SCREEN_WIDTH = 1024;
+static int SCREEN_HEIGHT = 800;
+static double BAR_XPOS = 20;
+static double BAR_YPOS = 20;
+static double BAR_WIDTH = SCREEN_WIDTH - BAR_XPOS * 2;
+static int BAR_HEIGHT = SCREEN_HEIGHT / 20;
+static int LABEL1_POSX = 0;
+static int LABEL1_POSY = SCREEN_HEIGHT - 55;
+static int LABEL2_POSX = 0;
+static int LABEL2_POSY = SCREEN_HEIGHT - 105;
+static int LABEL3_POSX = SCREEN_WIDTH - 55;
+static int LABEL3_POSY = SCREEN_HEIGHT - 55;
 
 const double POPPY_RADIUS = 0.40;
 

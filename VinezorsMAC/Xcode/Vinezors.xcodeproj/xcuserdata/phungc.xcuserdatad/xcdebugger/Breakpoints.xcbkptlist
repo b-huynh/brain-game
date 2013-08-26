@@ -21,11 +21,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "398123219.628296"
+         timestampString = "399098321.85822"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "466"
-         endingLineNumber = "466"
+         startingLineNumber = "473"
+         endingLineNumber = "473"
          landmarkName = "TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "398123219.628296"
+         timestampString = "399098321.85822"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "464"
-         endingLineNumber = "464"
+         startingLineNumber = "471"
+         endingLineNumber = "471"
          landmarkName = "TunnelSlice::addPod(CollisionScene *scene, Direction loc, PodType type)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -47,11 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "398123219.628296"
+         timestampString = "399098321.85822"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "596"
-         endingLineNumber = "596"
+         startingLineNumber = "603"
+         endingLineNumber = "603"
          landmarkName = "TunnelSlice::connect(CollisionScene* scene, TunnelSlice* next)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -60,11 +60,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "398123219.628296"
+         timestampString = "399098321.85822"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "595"
-         endingLineNumber = "595"
+         startingLineNumber = "602"
+         endingLineNumber = "602"
          landmarkName = "TunnelSlice::connect(CollisionScene* scene, TunnelSlice* next)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -73,11 +73,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "398123219.628296"
+         timestampString = "399098321.85822"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "596"
-         endingLineNumber = "596"
+         startingLineNumber = "603"
+         endingLineNumber = "603"
          landmarkName = "TunnelSlice::connect(CollisionScene* scene, TunnelSlice* next)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -86,11 +86,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Vinezors.mm"
-         timestampString = "398141797.697657"
+         timestampString = "399107626.72542"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "195"
-         endingLineNumber = "195"
+         startingLineNumber = "262"
+         endingLineNumber = "262"
          landmarkName = "Vinezors::playPodSound(Pod * pod)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -99,7 +99,20 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Tunnel.mm"
-         timestampString = "397086418.825466"
+         timestampString = "398904884.934467"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "85"
+         endingLineNumber = "85"
+         landmarkName = "Tunnel::getNext(int i)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Vinezors/Tunnel.mm"
+         timestampString = "398904884.934467"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "84"
@@ -111,8 +124,21 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
+         filePath = "Vinezors/TunnelSlice.mm"
+         timestampString = "399098321.85822"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "207"
+         endingLineNumber = "207"
+         landmarkName = "TunnelSlice::getT(Vector3 pos)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
          filePath = "Vinezors/Tunnel.mm"
-         timestampString = "397086420.093482"
+         timestampString = "398904884.934467"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "83"
@@ -124,13 +150,13 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "Vinezors/TunnelSlice.mm"
-         timestampString = "397560127.50652"
+         filePath = "Vinezors/Tunnel.mm"
+         timestampString = "398991460.687998"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "200"
-         endingLineNumber = "200"
-         landmarkName = "TunnelSlice::getT(Vector3 pos)"
+         startingLineNumber = "443"
+         endingLineNumber = "443"
+         landmarkName = "Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -138,60 +164,36 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Tunnel.mm"
-         timestampString = "397086776.244298"
+         timestampString = "398904884.934467"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "82"
-         endingLineNumber = "82"
-         landmarkName = "Tunnel::getNext(int i)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Vinezors/Tunnel.mm"
-         timestampString = "398138047.117063"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "430"
-         endingLineNumber = "430"
-         landmarkName = "Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Vinezors/Tunnel.mm"
-         timestampString = "398121775.38739"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "231"
-         endingLineNumber = "231">
+         startingLineNumber = "232"
+         endingLineNumber = "232">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Player.mm"
-         timestampString = "398141797.697657"
+         timestampString = "399100129.183253"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "270"
-         endingLineNumber = "270">
+         startingLineNumber = "307"
+         endingLineNumber = "307"
+         landmarkName = "Player::getCombinedRotAndRoll()"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Player.mm"
-         timestampString = "398141797.697657"
+         timestampString = "399100129.183253"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "269"
-         endingLineNumber = "269"
-         landmarkName = "Player::move(Vector3 delta)"
+         startingLineNumber = "306"
+         endingLineNumber = "306"
+         landmarkName = "Player::getCombinedRotAndRoll()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -212,11 +214,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Vinezors/Player.mm"
-         timestampString = "398142684.906092"
+         timestampString = "399100129.183253"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "368"
-         endingLineNumber = "368"
+         startingLineNumber = "419"
+         endingLineNumber = "419"
          landmarkName = "Player::update(Number elapsed, Tunnel *tunnel)"
          landmarkType = "5">
       </FileBreakpoint>

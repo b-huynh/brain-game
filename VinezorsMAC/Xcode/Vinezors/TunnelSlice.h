@@ -28,13 +28,14 @@ struct PodInfo
 {
     PodType podType;
     Direction podLoc;
+    bool good;
     
     PodInfo()
-        : podType(POD_NONE), podLoc(NO_DIRECTION)
+        : podType(POD_NONE), podLoc(NO_DIRECTION), good(false)
     {}
     
-    PodInfo(PodType pt, Direction pl)
-        : podType(pt), podLoc(pl)
+    PodInfo(PodType pt, Direction pl, bool g)
+        : podType(pt), podLoc(pl), good(g)
     {}
 };
 
@@ -48,6 +49,7 @@ private:
 	double depth;
 	
 	TunnelType type;
+    std::string materialFile;
 	ScenePrimitive *topLeftWall;
 	ScenePrimitive *topWall;
 	ScenePrimitive *topRightWall;

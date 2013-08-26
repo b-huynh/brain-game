@@ -21,13 +21,20 @@ public:
     bool Update();
     
 private:
+    unsigned seed;
+    
+    bool pause;
+    
     Core *core;
 
-    bool pause;
     
 	Screen *screen;
 
     ScreenShape *barHP;
+    
+    //Label for Debug
+    ScreenLabel * label;
+
 	ScreenLabel *label1;
     ScreenLabel *label2;
     ScreenLabel *label3;
@@ -40,11 +47,9 @@ private:
 
 	Tunnel *tunnel;
 	
-    /*
 	ScenePrimitive *fog1;
 	ScenePrimitive *fog2;
 	ScenePrimitive *fog3;
-    */
     
     SceneEntity * speaker;
     vector<SceneSound *> podSounds;

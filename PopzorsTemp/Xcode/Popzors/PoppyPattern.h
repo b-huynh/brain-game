@@ -6,7 +6,7 @@
 class PoppyPattern : public PopzorsPattern
 {
 public:
-    PoppyPattern(Screen *screen, CollisionScene *scene);
+    PoppyPattern(Screen *screen, CollisionScene *scene, unsigned seed);
     
     virtual void setup();
     virtual void reset();

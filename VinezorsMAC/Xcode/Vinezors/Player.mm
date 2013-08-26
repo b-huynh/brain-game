@@ -1,13 +1,13 @@
 #include "Player.h"
 
-#include <fstream>
+#include <cmath>
 
 Player::Player()
-	: name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0)
+: seed(0), name(""), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {}
 
-Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset)
-	: name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0)
+Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset, unsigned seed, const string & filename)
+	: seed(seed), name(name), hp(STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), cursor(NULL), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {
 	cursor = new ScenePrimitive(ScenePrimitive::TYPE_SPHERE, 0.5, 5, 5);
 	cursor->renderWireframe = true;
@@ -16,16 +16,26 @@ Player::Player(CollisionScene *scene, const string & name, Vector3 camPos, Quate
     cursor->enabled = false;
     
     light = new SceneLight(SceneLight::AREA_LIGHT, scene, 5);
-    light->setPosition( camPos + getCamForward() * 3 );
+    light->setPosition( camPos + getCamForward() * 5 );
     scene->addLight(light);
     
     light2 = new SceneLight(SceneLight::AREA_LIGHT, scene, 3);
-    light2->setPosition( camPos + getCamForward() * 5 );
+    light2->setPosition( camPos + getCamForward() * 10 );
     scene->addLight(light2);
     
-    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 1);
-    light3->setPosition( camPos + getCamForward() * 10 );
+    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 2);
+    light3->setPosition( camPos + getCamForward() * 15 );
     scene->addLight(light3);
+}
+
+unsigned Player::getSeed() const
+{
+    return seed;
+}
+
+string Player::getName() const
+{
+    return name;
 }
 
 int Player::getHP() const
@@ -164,6 +174,16 @@ Number Player::getTotalElapsed() const
     return totalElapsed;
 }
 
+void Player::setSeed(unsigned value)
+{
+    seed = value;
+}
+
+void Player::setName(const string & value)
+{
+    name = value;
+}
+
 void Player::setHP(int value)
 {
     hp = value;
@@ -254,9 +274,21 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
-void Player::updateRot(double t)
+void Player::newTunnel(Tunnel* tunnel)
 {
-    
+    hp = STARTING_HP;
+    vineSlice = NULL;
+    vineT = 0.0;
+    Number tLeft;
+    for (int i = 0; i < vines.size(); ++i)
+    {
+        TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
+        if (closest) {
+            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), dir);
+            vines[i]->setDest(targetPos);
+            vines[i]->setPos(targetPos);
+        }
+    }
 }
 
 void Player::move(Vector3 delta)
@@ -282,7 +314,8 @@ void Player::addVine(Vine *vine)
 
 void Player::checkCollisions(Tunnel *tunnel)	
 {
-    TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset);
+    Number tLeft;
+    TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
 	if (closest == NULL)
 		return;
 	for (int i = 0; i < vines.size(); ++i)
@@ -304,30 +337,42 @@ void Player::update(Number elapsed, Tunnel *tunnel)
     
     // Speed up, slow down keys
     double moveSpeed = camSpeed;
+   
+    if (tunnel->isDone())
+        moveSpeed *= 2.5;
+    else
+    {
+        if (keyUp)
+            moveSpeed *= 2;
+        if (keyDown)
+            moveSpeed /= 2;
+    }
     
     if (!tunnel->isDone()) {
         //hp -= DRAIN_SPEED * moveSpeed * elapsed;
         score += tunnel->getNBack() * moveSpeed * elapsed;
     }
     
-    if (keyUp)
-        moveSpeed *= 2;
-    if (keyDown)
-        moveSpeed /= 2;
-    
     for (int i = 0; i < vines.size(); ++i)
     {
         // Determine which tunnel segment and corner each vine should be
         // in. This is done by calculating a t from 0 to 1
-        TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset);
+        Number tLeft;
+        TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
         if (closest) {
-            Number t = closest->getT(camPos) + vineOffset;
-            Vector3 targetPos = closest->requestPosition(closest->getCenter(t), dir);
+            if (closest != vineSlice)
+            {
+                vineT = tLeft;
+                vineSlice = closest;
+            }
+            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), dir);
             vines[i]->setDest(targetPos);
-            cursor->setPosition(targetPos);
+            if ((vines[i]->getPos() - camPos).dot(getCamForward()) < 0)
+                vines[i]->setPos(targetPos);
+            //cursor->setPosition(targetPos);
         }
         
-        closest = tunnel->findSliceFromCurrent(vines[i]->getPos(), 0);
+        closest = tunnel->findSliceFromCurrent(vines[i]->getPos(), 0, tLeft);
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
             Number t = closest->getT(vines[i]->getPos() - closest->getForward() * vines[i]->getRadius());
             
@@ -341,7 +386,8 @@ void Player::update(Number elapsed, Tunnel *tunnel)
                 
                 PodType NBack = tunnel->getNBackTest(tunnel->getPodIndex());
                 result.nback = tunnel->getNBack();
-                result.goodPod = NBack != POD_NONE;
+                //result.goodPod = NBack != POD_NONE;
+                result.goodPod = result.podInfo.good;
                 
                 results.push_back(result);
                 
@@ -388,7 +434,10 @@ void Player::update(Number elapsed, Tunnel *tunnel)
     }
     
 	for (int i = 0; i < vines.size(); ++i)
+    {
+        vines[i]->speed = 30;
 		vines[i]->update(elapsed);
+    }
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -399,9 +448,15 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     
     if (out.good()) {
-        out << "% size" << endl;
+        out << "% debug seed: " << seed << endl;
+        out << "%" << endl;
+        out << "% PodLocation { NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST" << endl;
+        out << "% PodType { BLUE, GREEN, PINK, YELLOW }" << endl;
+        out << "% Level {-inf, inf}" << endl;
+        out << "% NBack {no, yes}" << endl;
+        out << "% PlayerTookPod {no, yes}" << endl;
+        out << "%" << endl;
         out << "% PodLocation PodType Level NBack PlayerTookPod Timestamp" << endl;
-        out << results.size() << endl;
         
         for (int i = 0; i < results.size(); ++i) {
             out << results[i].podInfo.podLoc << " "
@@ -419,4 +474,8 @@ bool Player::saveProgress(std::string file)
     }
     
     return true;
+}
+
+Player::~Player()
+{
 }

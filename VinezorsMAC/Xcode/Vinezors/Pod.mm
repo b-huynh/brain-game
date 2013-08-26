@@ -18,7 +18,8 @@ Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Ve
     
     stem = new ScenePrimitive(ScenePrimitive::TYPE_CYLINDER, stemLength, stemRadius, 10);
     //stem->loadTexture("resources/green_solid.png");
-    stem->setColor(0.5, 1.0, 0.5, 1.0);
+    //stem->setMaterialByName("PodUnknownMat");
+    stem->setColor(0.5, 0.5, 0.5, 1.0);
     double angle;
     Vector3 v = base - tip;
     v = (rot.Inverse()).applyTo(v); // Reverse to old coordinates to find x-y angle
@@ -36,7 +37,9 @@ Pod::Pod(CollisionScene *scene, Vector3 center, Quaternion rot, PodType type, Ve
     shell->setColor(1.0 ,0.0, 0.0, 0.1);
     shell->enabled = false;
     
-    head->setMaterialByName("PodUnknownMat");
+    //head->loadTexture("resources/black_solid.png");
+    head->setColor(0.0, 0.0, 0.0, 1.0);
+    //head->setMaterialByName("PodUnknownMat");
     setToGrowth(0.0);
     
     /*
@@ -138,7 +141,34 @@ void Pod::hidePod()
 void Pod::showPod()
 {
     head->enabled = true;
-    
+	switch (type)
+	{
+        case POD_BLUE:
+            //head->loadTexture("resources/blue_fixed.png");
+            head->setColor(0.0, 0.0, 1.0, 1.0);
+            break;
+        case POD_GREEN:
+            //head->loadTexture("resources/green_fixed.png");
+            head->setColor(0.0, 1.0, 0.0, 1.0);
+            break;
+        case POD_PINK:
+            //head->loadTexture("resources/red_fixed.png");
+            head->setColor(1.0, 0.0, 0.0, 1.0);
+            break;
+        case POD_YELLOW:
+            //head->loadTexture("resources/yellow_fixed.png");
+            head->setColor(1.0, 1.0, 0.0, 1.0);
+            break;
+        case POD_BLACK:
+            //head->loadTexture("resources/black_solid.png");
+            head->setColor(0.0, 0.0, 0.0, 1.0);
+            break;
+        default:
+            //head->loadTexture("resources/black_solid.png");
+            head->setColor(0.0, 0.0, 0.0, 1.0);
+            break;
+	}
+    /*
     switch (type)
 	{
         case POD_BLUE:
@@ -160,6 +190,7 @@ void Pod::showPod()
             head->setMaterialByName("PodUnknownMat");
             break;
 	}
+    */
 }
 
 void Pod::showShell()

@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-HerdPattern::HerdPattern(Screen * screen, CollisionScene * scene)
-:PopzorsPattern(screen, scene), selected(NULL)
+HerdPattern::HerdPattern(Screen * screen, CollisionScene * scene, unsigned seed)
+:PopzorsPattern(screen, scene, seed), selected(NULL)
 {}
 
 void HerdPattern::setup()
