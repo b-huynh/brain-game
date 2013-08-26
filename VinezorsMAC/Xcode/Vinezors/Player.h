@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 #include "Util.h"
 #include "Vine.h"
 #include "Tunnel.h"
@@ -10,6 +11,8 @@ using namespace std;
 class Player
 {
 private:
+    unsigned seed;
+    
 	string name;
     int hp;
 	double score;
@@ -50,11 +53,15 @@ private:
     vector<Result> results;
     
     Number totalElapsed;
+    TunnelSlice* vineSlice;
+    Number vineT;
 public:
     
 	Player();
-	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset);
+	Player(CollisionScene *scene, const string & name, Vector3 camPos, Quaternion camRot, double camSpeed, Number offset, unsigned seed, const string & filename);
 	
+    unsigned getSeed() const;
+    string getName() const;
     int getHP() const;
 	double getScore() const;
 	bool getMouseLeft() const;
@@ -75,7 +82,9 @@ public:
 	double getCamSpeed() const;
 	Vector3 getVineOffset();
 	Number getTotalElapsed() const;
-
+    
+    void setSeed(unsigned value);
+    void setName(const string & name);
     void setHP(int value);
 	void setScore(double value);
 	void setMouseLeft(bool value);
@@ -95,17 +104,21 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(double value);
-    void updateRot(double t);
 	Vector3 getCamForward();
 	Vector3 getCamUpward();
 	Vector3 getCamRight();
     Quaternion getCombinedRotAndRoll();
 
+    void newTunnel(Tunnel* tunnel);
+    
 	void move(Vector3 delta);
 	void addVine(Vine *vine);
 	void checkCollisions(Tunnel *tunnel);
 
 	void update(Number elapsed, Tunnel *tunnel);
     
+    void reportResult() const;
     bool saveProgress(std::string file);
+    
+    ~Player();
 };

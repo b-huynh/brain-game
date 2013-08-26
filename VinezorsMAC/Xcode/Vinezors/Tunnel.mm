@@ -52,7 +52,7 @@ list<TunnelSlice*>::iterator Tunnel::getEndIterator()
 }
 
 // An estimate of which Segment contains the position with a certain linear interpolated offset
-TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset) const
+TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset, Number & tLeft) const
 {
     list<TunnelSlice*>::iterator it = current;
     
@@ -63,6 +63,7 @@ TunnelSlice* Tunnel::findSliceFromCurrent(Vector3 pos, Number tOffset) const
         t = (*it)->getT(pos) + tOffset;
         if (t <= 1)
         {
+            tLeft = t;
             return *it;
         }
         ++it;
@@ -271,6 +272,13 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo)
 {
     PodType podType = (PodType)(rand() % 4);
     Direction podLoc = randDirection();
+    // Do a reroll if pod is the same type as last one
+    if (nback != 1 && types.size() > 0 && types[types.size() - 1].podType == podType)
+        podType = (PodType)(rand() % 4);
+    else if (nback == 1 && types.size() > 1 &&
+             types[types.size() - 1].podType == podType && types[types.size() - 2].podType == podType)
+        podType = (PodType)(rand() % 4);
+             
     
     /*
     // Force an Nback to happen
@@ -317,10 +325,15 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo)
     else
         sinceLastnback = 0;
     
-    return PodInfo(podType, podLoc);
+    bool good = false;
+    if (types.size() > 0 && types.size() >= nback && types[types.size() - nback].podType == podType)
+        good = true;
+    if (nback <= 0)
+        good = true;
+    return PodInfo(podType, podLoc, good);
 }
 
-void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc)
+void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood)
 {
     Quaternion rot;
     Vector3 forward;
@@ -364,7 +377,7 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
             break;
     }
     nsegment->setSectionInfo(SectionInfo(segmentType, segmentTurn, turnDegrees));
-    nsegment->setPodInfo(PodInfo(podType, podLoc));
+    nsegment->setPodInfo(PodInfo(podType, podLoc, podGood));
 
 	end = stepend;
     if (segments.size() <= 0) // Init TunnelSlice iterator
@@ -381,7 +394,7 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
 
 // Moves a segment in front to the back of the list.
 // The infinite segment is maintained to be the last element.
-void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc)
+void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood)
 {
     if (segments.size() <= 0)
         return;
@@ -429,7 +442,7 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
             break;
     }
     nsegment->setSectionInfo(SectionInfo(segmentType, segmentTurn, turnDegrees));
-    nsegment->setPodInfo(PodInfo(podType, podLoc));
+    nsegment->setPodInfo(PodInfo(podType, podLoc, podGood));
     
     end = stepend;
     if (segments.size() > 1)
@@ -447,9 +460,9 @@ void Tunnel::addSection(SectionInfo newSection)
         
         for (int i = 0; i < sectionSize; ++i)
             if (i == sectionSize - 1)
-                addSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+                addSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
             else
-                addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+                addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         return;
     }
     for (int i = 0; i < sectionSize; ++i)
@@ -459,14 +472,14 @@ void Tunnel::addSection(SectionInfo newSection)
         if (renewalPodCounter >= podSegmentSize)
         {
             PodInfo newPod = getNextPodInfo(newSection);
-            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc);
+            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
             renewalPodCounter = 0;
             
             types.push_back(newPod);
         }
         else
         {
-            addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+            addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         }
     }
     sections.push_back(newSection);
@@ -478,9 +491,9 @@ void Tunnel::renewSection(SectionInfo newSection)
         
         for (int i = 0; i < sectionSize; ++i)
             if (i == sectionSize - 1)
-                renewSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+                renewSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
             else
-                renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+                renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         return;
     }
     for (int i = 0; i < sectionSize; ++i)
@@ -490,14 +503,14 @@ void Tunnel::renewSection(SectionInfo newSection)
         if (renewalPodCounter >= podSegmentSize)
         {
             PodInfo newPod = getNextPodInfo(newSection);
-            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc);
+            renewSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
             renewalPodCounter = 0;
             
             types.push_back(newPod);
         }
         else
         {
-            addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION);
+            renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         }
     }
     sections.push_back(newSection);
@@ -510,7 +523,7 @@ bool Tunnel::renewIfNecessary(Vector3 checkPos)
 	if (current == segments.end())
 		return false;
     TunnelSlice* currentSlice = *current;
-    Vector3 endOfSlice = currentSlice->getCenter() + (currentSlice->getForward() * segmentDepth / 2);
+    Vector3 endOfSlice = currentSlice->getCenter() + (currentSlice->getForward() * (segmentDepth) / 2);
     if ((checkPos - endOfSlice).dot(currentSlice->getForward()) >= 0)
 	{
         // Update the pod type index if we have just passed a segment with a po

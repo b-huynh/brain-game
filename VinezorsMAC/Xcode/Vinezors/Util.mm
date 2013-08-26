@@ -128,7 +128,7 @@ string getSaveDir()
     char * dir = getenv("HOME");
     string result = "";
     if (dir)
-        result = string(dir) + "/.braingame/";
+        result = string(dir) + "/braingame/";
     else
         return "";
     

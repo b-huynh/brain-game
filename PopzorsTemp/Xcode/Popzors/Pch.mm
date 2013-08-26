@@ -76,10 +76,11 @@ std::string getSaveDir()
     char * dir = getenv("HOME");
     std::string result = "";
     if (dir)
-        result = std::string(dir) + "/.braingame/";
+        result = std::string(dir) + "/braingame/";
     else
         return "";
     
     mkdir(result.c_str(), 0777);
+    
     return result;
 }

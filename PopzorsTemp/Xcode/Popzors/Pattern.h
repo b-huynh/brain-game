@@ -4,6 +4,8 @@
 #include "Stage.h"
 #include "Player.h"
 
+#include <fstream>
+
 // The base class of a particular Pattern.
 class PopzorsPattern
 {
@@ -16,8 +18,10 @@ protected:
     
     vector<std::string> saveData;
 public:
-    PopzorsPattern(Screen *screen, CollisionScene *scene) : stage(screen, scene)
-    {}
+    PopzorsPattern(Screen *screen, CollisionScene *scene, unsigned seed) : stage(screen, scene)
+    {
+        player.seed = seed;
+    }
     
     virtual void setup() = 0; // Deals with allocating the stage screen and scene
     
@@ -35,6 +39,16 @@ public:
     
     bool isReady() const {
         return ready;
+    }
+    
+    std::string getName() const
+    {
+        return player.name;
+    }
+    
+    void setName(const std::string & value)
+    {
+        player.name = value;
     }
     
     double getPlayerCorrectness() const
@@ -60,5 +74,7 @@ public:
          */
     }
     
-    ~PopzorsPattern() {}
+    ~PopzorsPattern() {
+        reset();
+    }
 };
