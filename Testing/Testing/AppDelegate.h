@@ -120,6 +120,7 @@ static id mAppDelegate;
 			OgreFramework::getSingletonPtr()->m_pKeyboard->capture();
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
+            demo.update(mLastFrameTime);
 			OgreFramework::getSingletonPtr()->updateOgre(mLastFrameTime);
 			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             

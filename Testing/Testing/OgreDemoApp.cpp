@@ -155,7 +155,7 @@ void DemoApp::startDemo()
 
 void DemoApp::setupDemoScene()
 {
-	//OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
+	OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
     
     /*
 	m_pCubeEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Cube", "ogrehead.mesh");
@@ -164,23 +164,51 @@ void DemoApp::setupDemoScene()
      */
     
     Util::generateMaterials();
+    
     Util::createSphere("sphereMesh", 10, 64, 64);
     
-    Entity* sphereEntity1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("mySphereEntity1", "sphereMesh");
-    SceneNode* sphereNode1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode1");
-    sphereEntity1->setMaterialName("SunMaterial");
-    sphereNode1->attachObject(sphereEntity1);
+    Entity* earthEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("earthEntity", "sphereMesh");
+    earthNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode1");
+    earthEntity->setMaterialName("EarthMaterial");
+    earthNode->attachObject(earthEntity);
+    earthNode->setPosition(50, 0, 10);
+    earthNode->scale(4, 4, 4);
     
-    Light* light = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light");
-    //light->setDiffuseColour(1.0, 1.0, 1.0);
-    //light->setSpecularColour(1.0, 1.0, 1.0);
-    light->setPosition(70, 70, 70);
+    Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
+    light1->setDiffuseColour(1.0, 1.0, 1.0);
+    light1->setSpecularColour(1.0, 1.0, 1.0);
+    light1->setAttenuation(50000, 0.51, 0.0000001, 0.0);
+    ParticleSystem* sunParticle =
+        OgreFramework::getSingletonPtr()->m_pSceneMgr->createParticleSystem("Sun", "Space/Sun");
+    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ParticleNode1");
+    sunNode->attachObject(sunParticle);
+    sunNode->attachObject(light1);  
+    sunNode->scale(3.0, 3.0, 3.0);
+    sunNode->setPosition(-500, 350, -1000);
     
-    Entity* sphereEntity2 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("mySphereEntity2", "sphereMesh");
-    SceneNode* sphereNode2 = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode2");
-    sphereEntity2->setMaterialName("EarthMaterial");
-    sphereNode2->attachObject(sphereEntity2);
-    sphereNode2->setPosition(25, 25, 25);
+    Entity* moonEntity1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntity1", "sphereMesh");
+    moonNode = earthNode->createChildSceneNode("moonNode1");
+    moonEntity1->setMaterialName("GeneralMaterial2");
+    moonEntity1->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.5, 0.5);
+    moonNode->attachObject(moonEntity1);
+    
+    Entity* moonEntityA = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityA", "sphereMesh");
+    moonNodeA = moonNode->createChildSceneNode("moonNodeA");
+    moonEntityA->setMaterialName("GeneralMaterial3");
+    moonEntityA->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.0, 0.0);
+    moonNodeA->attachObject(moonEntityA);
+    moonNodeA->scale(0.5, 0.5, 0.5);
+    
+    Entity* moonEntityB = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityB", "sphereMesh");
+    moonNodeB = moonNode->createChildSceneNode("moonNodeB");
+    moonEntityB->setMaterialName("GeneralMaterial4");
+    moonEntityB->getSubEntity(0)->getMaterial()->setAmbient(0.0, 0.5, 0.0);
+    moonNodeB->attachObject(moonEntityB);
+    moonNodeB->scale(0.5, 0.5, 0.5);
+    
+    theta = Math::PI;
+    thetaA = 0.0;
+    thetaB = Math::PI;
     
     /*
     // create ManualObject
@@ -222,8 +250,9 @@ void DemoApp::setupDemoScene()
     TextAreaOverlayElement* textArea = static_cast<TextAreaOverlayElement*>(
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaName"));
     textArea->setMetricsMode(GMM_PIXELS);
-    textArea->setPosition(0, 0);
     textArea->setDimensions(300, 120);
+    textArea->setPosition(OgreFramework::getSingletonPtr()->m_pRenderWnd->getWidth() / 2 - 150,
+                          OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() / 2 - 60);
     textArea->setCharHeight(26);
     // set the font name to the font resource that you just created.
     textArea->setFontName("Arial");
@@ -235,6 +264,17 @@ void DemoApp::setupDemoScene()
     overlay->add2D(panel);
     panel->addChild(textArea);
     overlay->show();
+}
+
+void DemoApp::update(double elapsed)
+{
+    theta += Math::PI / 256 * (elapsed);
+    thetaA -= Math::PI / 64 * (elapsed);
+    thetaB -= Math::PI / 64 * (elapsed);
+    
+    moonNode->setPosition(cos(theta) * 100, 0, sin(theta) * 100);
+    moonNodeA->setPosition(cos(thetaA) * 30, 0, sin(thetaA) * 30);
+    moonNodeB->setPosition(cos(thetaB) * 30, 0, sin(thetaB) * 30);
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

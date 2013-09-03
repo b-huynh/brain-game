@@ -85,6 +85,7 @@ public:
 	~DemoApp();
     
 	void startDemo();
+    void update(double elapsed);
 	
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
@@ -94,9 +95,18 @@ private:
 	void runDemo();
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
-
+    
 	SceneNode*			m_pCubeNode;
 	Entity*				m_pCubeEntity;
+    
+    SceneNode*          earthNode;
+    SceneNode*          sunNode;
+    SceneNode*          moonNode;
+    SceneNode*          moonNodeA;
+    SceneNode*          moonNodeB;
+    double theta;
+    double thetaA;
+    double thetaB;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

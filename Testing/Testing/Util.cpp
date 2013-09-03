@@ -8,6 +8,33 @@
 
 #include "Util.h"
 
+#include <cstdlib>
+#include <sstream>
+
+int Util::randRangeInt(int min, int max)
+{
+    return min + rand () % (max - min + 1);
+}
+
+double Util::randRangeDouble(double min, double max)
+{
+    return min + static_cast<double>(rand()) / RAND_MAX * (max - min);
+}
+
+std::string Util::toStringInt(int value)
+{
+    std::stringstream ss;
+	ss << value;
+	return ss.str();
+}
+
+std::string Util::toStringDouble(double value)
+{
+    std::stringstream ss;
+	ss << value;
+	return ss.str();
+}
+
 // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=manualspheremeshes
 void Util::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)
 {
@@ -56,29 +83,36 @@ void Util::createSphere(const std::string& strName, const float r, const int nRi
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
-    
 }
 
 void Util::generateMaterials()
 {
+    MaterialPtr mat0 =
+    MaterialManager::getSingleton().create("GeneralMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+    mat0->setLightingEnabled(true);
+    mat0->load();
+    
     MaterialPtr mat1 =
-        MaterialManager::getSingleton().create("SunMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);;
+    MaterialManager::getSingleton().create("EarthMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
     mat1->setLightingEnabled(true);
-    mat1->setAmbient(1.0, 1.0, 0.0);
+    mat1->setAmbient(0.0, 0.0, 1.0);
+    mat1->setDiffuse(0.0, 1.0, 0.0, 1.0);
     mat1->load();
     
     MaterialPtr mat2 =
-    MaterialManager::getSingleton().create("MoonMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);;
+    MaterialManager::getSingleton().create("GeneralMaterial1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
     mat2->setLightingEnabled(true);
-    mat2->setAmbient(1.0, 1.0, 1.0);
     mat2->load();
     
     MaterialPtr mat3 =
-    MaterialManager::getSingleton().create("EarthMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);;
+    MaterialManager::getSingleton().create("GeneralMaterial2", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
     mat3->setLightingEnabled(true);
-    mat3->setAmbient(0.0, 0.0, 1.0);
-    mat3->setDiffuse(0.0, 1.0, 0.0, 1.0);
     mat3->load();
+    
+    MaterialPtr mat4 =
+    MaterialManager::getSingleton().create("GeneralMaterial3", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+    mat4->setLightingEnabled(true);
+    mat4->load();
     
     /*
      Technique *technique = m->createTechnique();

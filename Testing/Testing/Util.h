@@ -19,6 +19,11 @@
 
 namespace Util
 {
+    int randRangeInt(int min, int max);
+    double randRangeDouble(double min, double max);
+    std::string toStringInt(int value);
+    std::string toStringDouble(double value);
+    
     void createSphere(const std::string& strName, const float r, const int nRings = 16, const int nSegments = 16);
 
     void generateMaterials();

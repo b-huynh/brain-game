@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D141FA617CFEAA400BFF4BD /* General.material in Resources */ = {isa = PBXBuildFile; fileRef = 5D141FA517CFEAA400BFF4BD /* General.material */; };
+		5D141FA817CFEDF200BFF4BD /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D141FA717CFEDF200BFF4BD /* star.png */; };
 		5D7EF1EA17B876C7002F31A4 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D7EF1E917B876C7002F31A4 /* Carbon.framework */; };
 		5D7EF1EC17B876C7002F31A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D7EF1EB17B876C7002F31A4 /* Cocoa.framework */; };
 		5D7EF1EE17B876C7002F31A4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D7EF1ED17B876C7002F31A4 /* IOKit.framework */; };
@@ -23,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D141FA317CFDAEF00BFF4BD /* Space.particle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Space.particle; sourceTree = "<group>"; };
+		5D141FA517CFEAA400BFF4BD /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
+		5D141FA717CFEDF200BFF4BD /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		5D7EF1E617B876C7002F31A4 /* Testing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Testing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D7EF1E917B876C7002F31A4 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		5D7EF1EB17B876C7002F31A4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -170,6 +175,8 @@
 			children = (
 				5D7EF20817B876C7002F31A4 /* Examples.material */,
 				5D7EF20917B876C7002F31A4 /* Ogre.material */,
+				5D141FA317CFDAEF00BFF4BD /* Space.particle */,
+				5D141FA517CFEAA400BFF4BD /* General.material */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -177,6 +184,7 @@
 		5D7EF20A17B876C7002F31A4 /* textures */ = {
 			isa = PBXGroup;
 			children = (
+				5D141FA717CFEDF200BFF4BD /* star.png */,
 				5D7EF20B17B876C7002F31A4 /* GreenSkin.jpg */,
 				5D7EF20C17B876C7002F31A4 /* spheremap.png */,
 				5D7EF20D17B876C7002F31A4 /* tusk.jpg */,
@@ -258,6 +266,8 @@
 				5D7EF21617B876C7002F31A4 /* ogre.cfg in Resources */,
 				5D7EF21817B876C7002F31A4 /* plugins.cfg in Resources */,
 				5D7EF21A17B876C7002F31A4 /* resources.cfg in Resources */,
+				5D141FA617CFEAA400BFF4BD /* General.material in Resources */,
+				5D141FA817CFEDF200BFF4BD /* star.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +285,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# This shell script simply copies resources into their respective locations\nmkdir -p \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Frameworks\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Plugins\"\nditto \"$OGRE_SDK_ROOT/lib/release/Ogre.framework\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Frameworks/Ogre.framework\"\nditto \"$OGRE_SDK_ROOT/lib/RenderSystem_GL.dylib\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Plugins/\"\nditto \"$PROJECT_DIR/$PROJECT_NAME/media/\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Resources/media/\"\nditto $PROJECT_DIR/$PROJECT_NAME/*.cfg \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Resources/\"\n";
+			shellScript = "# This shell script simply copies resources into their respective locations\nmkdir -p \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Frameworks\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Plugins\"\nditto \"$OGRE_SDK_ROOT/lib/release/Ogre.framework\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Frameworks/Ogre.framework\"\nditto \"$OGRE_SDK_ROOT/lib/RenderSystem_GL.dylib\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Plugins/\"\nditto \"$OGRE_SDK_ROOT/lib/Plugin_ParticleFX.dylib\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Plugins/\"\nditto \"$PROJECT_DIR/$PROJECT_NAME/media/\" \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Resources/media/\"\nditto $PROJECT_DIR/$PROJECT_NAME/*.cfg \"$BUILT_PRODUCTS_DIR/Testing.app/Contents/Resources/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

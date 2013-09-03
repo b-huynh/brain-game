@@ -1,12 +1,12 @@
 #include "OgreFramework.h"
 #include "macUtils.h"
 
-using namespace Ogre; 
-
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
 };
+
+using namespace Ogre;
 
 OgreFramework::OgreFramework()
 {
@@ -76,15 +76,15 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
         return false;
     
 	m_pSceneMgr = m_pRoot->createSceneManager(ST_GENERIC, "SceneManager");
-	m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.7f, 0.7f, 0.7f));
+	m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     
 	m_pCamera = m_pSceneMgr->createCamera("Camera");
-	m_pCamera->setPosition(Vector3(0, 70, 70));
+	m_pCamera->setPosition(Vector3(0, 0, 50));
 	m_pCamera->lookAt(Vector3(0, 0, 0));
 	m_pCamera->setNearClipDistance(1);
     
 	m_pViewport = m_pRenderWnd->addViewport(m_pCamera);
-	m_pViewport->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+	//m_pViewport->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
     
 	m_pCamera->setAspectRatio(Real(m_pViewport->getActualWidth()) / Real(m_pViewport->getActualHeight()));
 	
