@@ -155,7 +155,7 @@ void DemoApp::startDemo()
 
 void DemoApp::setupDemoScene()
 {
-	OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
+	//OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
     
     /*
 	m_pCubeEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Cube", "ogrehead.mesh");
@@ -165,11 +165,13 @@ void DemoApp::setupDemoScene()
     
     Util::generateMaterials();
     
-    Util::createSphere("sphereMesh", 10, 64, 64);
+    Util::createSphere("sphereMesh", Util::POD_HEAD_RADIUS, 16, 16);
+    Util::createSphere("sphereMesh2", 10, 32, 32);
+    Util::createCylinder("cylinderMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
     
-    Entity* earthEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("earthEntity", "sphereMesh");
+    Entity* earthEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("earthEntity", "sphereMesh2");
     earthNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode1");
-    earthEntity->setMaterialName("EarthMaterial");
+    earthEntity->setMaterialName("General/PodBlue");
     earthNode->attachObject(earthEntity);
     earthNode->setPosition(50, 0, 10);
     earthNode->scale(4, 4, 4);
@@ -177,32 +179,32 @@ void DemoApp::setupDemoScene()
     Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
     light1->setDiffuseColour(1.0, 1.0, 1.0);
     light1->setSpecularColour(1.0, 1.0, 1.0);
-    light1->setAttenuation(50000, 0.51, 0.0000001, 0.0);
+//    light1->setAttenuation(3250, 0.51, 0.0000001, 0.0);
     ParticleSystem* sunParticle =
         OgreFramework::getSingletonPtr()->m_pSceneMgr->createParticleSystem("Sun", "Space/Sun");
     sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ParticleNode1");
     sunNode->attachObject(sunParticle);
-    sunNode->attachObject(light1);  
+    sunNode->attachObject(light1);
     sunNode->scale(3.0, 3.0, 3.0);
-    sunNode->setPosition(-500, 350, -1000);
+    sunNode->setPosition(-125, 100, -250);
     
-    Entity* moonEntity1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntity1", "sphereMesh");
+    Entity* moonEntity1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntity1", "sphereMesh2");
     moonNode = earthNode->createChildSceneNode("moonNode1");
-    moonEntity1->setMaterialName("GeneralMaterial2");
-    moonEntity1->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.5, 0.5);
+    moonEntity1->setMaterialName("General/PodUnknown");
+   // moonEntity1->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.5, 0.5);
     moonNode->attachObject(moonEntity1);
     
-    Entity* moonEntityA = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityA", "sphereMesh");
+    Entity* moonEntityA = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityA", "sphereMesh2");
     moonNodeA = moonNode->createChildSceneNode("moonNodeA");
-    moonEntityA->setMaterialName("GeneralMaterial3");
-    moonEntityA->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.0, 0.0);
+    moonEntityA->setMaterialName("General/PodRed");
+   // moonEntityA->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.0, 0.0);
     moonNodeA->attachObject(moonEntityA);
     moonNodeA->scale(0.5, 0.5, 0.5);
     
-    Entity* moonEntityB = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityB", "sphereMesh");
+    Entity* moonEntityB = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityB", "sphereMesh2");
     moonNodeB = moonNode->createChildSceneNode("moonNodeB");
-    moonEntityB->setMaterialName("GeneralMaterial4");
-    moonEntityB->getSubEntity(0)->getMaterial()->setAmbient(0.0, 0.5, 0.0);
+    moonEntityB->setMaterialName("General/PodGreen");
+   // moonEntityB->getSubEntity(0)->getMaterial()->setAmbient(0.0, 0.5, 0.0);
     moonNodeB->attachObject(moonEntityB);
     moonNodeB->scale(0.5, 0.5, 0.5);
     
@@ -210,27 +212,10 @@ void DemoApp::setupDemoScene()
     thetaA = 0.0;
     thetaB = Math::PI;
     
-    /*
-    // create ManualObject
-    ManualObject* manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject("manual");
-
-    // specify the material (by name) and rendering type
-    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
-    
-    // define start and end point
-    manual->position(-100, -100, 100);
-    manual->position(100, -100, 100);
-    manual->position(100, -100, -100);
-    manual->position(-100, -100, -100);
-    manual->triangle(0, 1, 2);
-    manual->triangle(0, 2, 3);
-    
-    // tell Ogre, your definition has finished
-    manual->end();
-    
-    // add ManualObject to the RootSceneNode (so it will be visible)
-    OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->attachObject(manual);
-    */
+    Quaternion rot;
+    rot.FromAngleAxis(Radian(0), Vector3(0, 1, 0));
+    pod = new Pod(Vector3(0, 0, 0), Vector3(0, Util::POD_STEM_LENGTH, 0), POD_YELLOW, Util::POD_STEM_RADIUS, Util::POD_HEAD_RADIUS);
+    pod->revealPod();
     
     // create a font resource
     ResourcePtr resource = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

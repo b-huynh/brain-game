@@ -78,6 +78,8 @@ protected:
 };
 #endif
 
+#include "Pod.h"
+
 class DemoApp : public OIS::KeyListener
 {
 public:
@@ -107,6 +109,8 @@ private:
     double theta;
     double thetaA;
     double thetaB;
+    
+    Pod* pod;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM
