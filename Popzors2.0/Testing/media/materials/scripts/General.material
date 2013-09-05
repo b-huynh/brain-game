@@ -1,0 +1,126 @@
+material General/Sun
+{
+    technique
+	{
+        pass
+		{
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
+}
+
+material General/PodUnknown
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.2 0.2 0.2 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.2 0.2 0.2 1
+        }
+    }
+}
+
+material General/PodRed
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.4 0.1 0.1 1
+            diffuse 1.0 0.1 0.1 1
+            emissive 0.4 0.1 0.1 1
+        }
+    }
+}
+
+material General/PodGreen
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.4 0.1 1
+            diffuse 0.1 1.0 0.1 1
+            emissive 0.1 0.4 0.1 1
+        }
+    }
+}
+
+material General/PodBlue
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.1 0.4 1
+            diffuse 0.1 0.1 1.0 1
+            emissive 0.1 0.1 0.4 1
+        }
+    }
+}
+
+material General/PodYellow
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.4 0.4 0.1 1
+            diffuse 1.0 1.0 0.1 1
+            emissive 0.4 0.4 0.1 1
+        }
+    }
+}
+
+material General/PodStem
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.4 0.1 1
+            diffuse 0.1 1.0 0.1 1
+            emissive 0.1 0.4 0.1 1
+        }
+    }
+}
+
+material General/PodShell
+{
+    technique
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            depth_write off
+ 
+            texture_unit
+            {
+                colour_op_ex source1 src_manual src_current 1 0 0
+                alpha_op_ex source1 src_manual src_current 0.5
+            }
+        }
+    }
+}
