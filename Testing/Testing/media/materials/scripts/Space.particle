@@ -2,8 +2,8 @@
 particle_system Space/Sun
 {
   material General/Sun
-  particle_width    500
-  particle_height   500
+  particle_width    250
+  particle_height   250
   cull_each false
   quota 100
   billboard_type    point

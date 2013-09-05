@@ -10,7 +10,7 @@ using namespace Ogre;
 
 OgreFramework::OgreFramework()
 {
-	m_MoveSpeed			= 0.1f;
+	m_MoveSpeed			= 10.0f;
 	m_RotateSpeed       = 0.3f;
     
 	m_bShutDownOgre     = false;
@@ -63,7 +63,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     pluginsPath = m_ResourcePath + "plugins.cfg";
 #endif
     
-    printf("%s\n\n\n", Ogre::macBundlePath().c_str());
     m_pRoot = new Ogre::Root(pluginsPath, Ogre::macBundlePath() + "/ogre.cfg");
     
 #ifdef OGRE_STATIC_LIB

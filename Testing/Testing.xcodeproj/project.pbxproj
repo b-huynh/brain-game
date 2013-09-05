@@ -21,6 +21,7 @@
 		5D7EF21617B876C7002F31A4 /* ogre.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EF21517B876C7002F31A4 /* ogre.cfg */; };
 		5D7EF21817B876C7002F31A4 /* plugins.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EF21717B876C7002F31A4 /* plugins.cfg */; };
 		5D7EF21A17B876C7002F31A4 /* resources.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5D7EF21917B876C7002F31A4 /* resources.cfg */; };
+		5D9D1A0E17D68045000D4CB8 /* Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9D1A0C17D68045000D4CB8 /* Pod.cpp */; };
 		5DCCA02D17CD5C370002BB52 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCCA02B17CD5C370002BB52 /* Util.cpp */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,8 @@
 		5D7EF21517B876C7002F31A4 /* ogre.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = ogre.cfg; sourceTree = "<group>"; };
 		5D7EF21717B876C7002F31A4 /* plugins.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = plugins.cfg; sourceTree = "<group>"; };
 		5D7EF21917B876C7002F31A4 /* resources.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = resources.cfg; sourceTree = "<group>"; };
+		5D9D1A0C17D68045000D4CB8 /* Pod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pod.cpp; sourceTree = "<group>"; };
+		5D9D1A0D17D68045000D4CB8 /* Pod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pod.h; sourceTree = "<group>"; };
 		5DCCA02B17CD5C370002BB52 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
 		5DCCA02C17CD5C370002BB52 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -136,6 +139,8 @@
 				5D7EF20317B876C7002F31A4 /* OgreFramework.h */,
 				5DCCA02B17CD5C370002BB52 /* Util.cpp */,
 				5DCCA02C17CD5C370002BB52 /* Util.h */,
+				5D9D1A0C17D68045000D4CB8 /* Pod.cpp */,
+				5D9D1A0D17D68045000D4CB8 /* Pod.h */,
 			);
 			name = "Basic Ogre Framework";
 			sourceTree = "<group>";
@@ -298,6 +303,7 @@
 				5D7EF1FF17B876C7002F31A4 /* OgreDemoApp.cpp in Sources */,
 				5D7EF20217B876C7002F31A4 /* OgreFramework.cpp in Sources */,
 				5DCCA02D17CD5C370002BB52 /* Util.cpp in Sources */,
+				5D9D1A0E17D68045000D4CB8 /* Pod.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
