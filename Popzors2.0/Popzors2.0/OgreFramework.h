@@ -106,6 +106,11 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id); 
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
+    
+#ifdef OGRE_IS_IOS
+#else
+    Ogre::Ray getCursorRay();
+#endif
 	
 	Ogre::Root*                 m_pRoot;
 	Ogre::SceneManager*			m_pSceneMgr;
@@ -127,6 +132,9 @@ public:
 	Ogre::OverlayManager*		m_pOverlayMgr;
 	Ogre::FontManager*          m_pFontMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
+    
+    //Mesh Manager
+    Ogre::MeshManager*          m_pMeshMgr;
 
 protected:
    // Added for Mac compatibility

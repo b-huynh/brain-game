@@ -33,6 +33,8 @@ OgreFramework::OgreFramework()
     m_pFontMgr          = 0;
     m_pMaterialMgr      = 0;
     
+    m_pMeshMgr          = 0;
+    
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = macBundlePath() + "/Contents/Resources/";
@@ -151,6 +153,8 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pFontMgr = Ogre::FontManager::getSingletonPtr();
     
     m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
+    
+    m_pMeshMgr = Ogre::MeshManager::getSingletonPtr();
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -298,19 +302,22 @@ bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
 #else
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
 {
-	m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
-	m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
+    if (m_pTrayMgr->injectMouseMove(evt)) return true;
+	//m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
+	//m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
 	
 	return true;
 }
 
 bool OgreFramework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
+    if (m_pTrayMgr->injectMouseDown(evt, id)) return true;
 	return true;
 }
 
 bool OgreFramework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
+    if (m_pTrayMgr->injectMouseUp(evt, id)) return true;
 	return true;
 }
 #endif
@@ -358,4 +365,9 @@ void OgreFramework::getInput()
 	if(m_pKeyboard->isKeyDown(OIS::KC_S))
 		m_TranslateVector.z = m_MoveScale;
 #endif
+}
+
+Ogre::Ray OgreFramework::getCursorRay()
+{
+    return m_pTrayMgr->getCursorRay(m_pCamera);
 }

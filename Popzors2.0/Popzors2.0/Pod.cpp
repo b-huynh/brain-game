@@ -42,7 +42,7 @@ Pod::Pod(Vector3 base, Vector3 tip, PodType type, double stemRadius, double head
     // Quaternion rot and q is used to find the orientation of the stem segment
     angle = Math::ATan2(v.y, v.x) + (Radian)(Math::PI / 2);
     Quaternion q;
-    q.FromAngleAxis(angle, Util::TUNNEL_REFERENCE_FORWARD);
+    //q.FromAngleAxis(angle, Util::TUNNEL_REFERENCE_FORWARD);
     stem->setOrientation(q);
     
     head = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("headNode");
@@ -84,7 +84,7 @@ Pod::Pod(Vector3 base, Vector3 tip, Quaternion rot, PodType type, double stemRad
     v = rot.Inverse() * v; // Reverse to old coordinates to find x-y angle
     angle = Math::ATan2(v.y, v.x) + (Radian)(Math::PI / 2);
     Quaternion q;
-    q.FromAngleAxis(angle, Util::TUNNEL_REFERENCE_FORWARD);
+    //q.FromAngleAxis(angle, Util::TUNNEL_REFERENCE_FORWARD);
     q = q.Inverse();
     q = rot * q;
     stem->setOrientation(q);

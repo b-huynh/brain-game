@@ -150,6 +150,71 @@ void Util::createCylinder(const std::string& strName, const float r, const float
     }
 }
 
+void Util::createUncappedCylinder(const std::string& strName, const float r, const float h, const int nSegments)
+{
+    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(strName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    float fDeltaSegAngle = (2 * Math::PI / nSegments);
+    
+    float x0 = 0;
+    float y0 = -h / 2;
+    float y1 = h / 2;
+    float z0 = 0;
+    
+    manual->position(x0, y0, z0);
+    manual->normal(Vector3(x0, y0, z0).normalisedCopy());
+    manual->textureCoord(0.0, 0.0);
+    manual->position(x0, y1, z0);
+    manual->normal(Vector3(x0, y1, z0).normalisedCopy());
+    manual->textureCoord(0.0, 1.0);
+    
+    unsigned short botVerticeIndex = 0;
+    unsigned short topVerticeIndex = 1;
+    unsigned short iVerticeIndex = 2;
+    unsigned short wVerticeIndex = iVerticeIndex;
+    
+    for (int seg = 0; seg <= nSegments; ++seg)
+    {
+        x0 = r * sinf(seg * fDeltaSegAngle);
+        z0 = r * cosf(seg * fDeltaSegAngle);
+        
+        manual->position(x0, y0, z0);
+        manual->normal(Vector3(x0, 0, z0).normalisedCopy());
+        manual->textureCoord((float) seg / (float) nSegments, 0.5);
+        manual->position(x0, y1, z0);
+        manual->normal(Vector3(x0, 0, z0).normalisedCopy());
+        manual->textureCoord((float) seg / (float) nSegments, 0.5);
+        
+        if (seg > 1)
+        {
+            //manual->triangle(botVerticeIndex, wVerticeIndex + 2, wVerticeIndex);
+            //manual->triangle(topVerticeIndex, wVerticeIndex + 1, wVerticeIndex + 3);
+            manual->triangle(wVerticeIndex, wVerticeIndex + 2, wVerticeIndex + 1);
+            manual->triangle(wVerticeIndex + 2, wVerticeIndex + 3, wVerticeIndex + 1);
+            
+            wVerticeIndex += 2;
+        }
+    }
+    //manual->triangle(botVerticeIndex, iVerticeIndex, wVerticeIndex); // last triangles
+    //manual->triangle(topVerticeIndex, wVerticeIndex + 1, iVerticeIndex + 1);
+    manual->triangle(wVerticeIndex, iVerticeIndex, wVerticeIndex + 1);
+    manual->triangle(iVerticeIndex, iVerticeIndex + 1, wVerticeIndex + 1);
+    manual->end();
+    
+    MeshPtr mesh = manual->convertToMesh(strName);
+    Vector3 bl = Vector3(-r, -h / 2, -r);
+    Vector3 tr = Vector3(r, h / 2, r);
+    mesh->_setBounds( AxisAlignedBox( Vector3(-r, -h / 2, -r), Vector3(r, h / 2, r) ), false );
+    
+    mesh->_setBoundingSphereRadius((tr - bl).length());
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+}
+
 void Util::generateMaterials()
 {
     /*

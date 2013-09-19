@@ -6,6 +6,11 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #include "OgreFramework.h"
+#include "Pch.h"
+#include "Ground.h"
+#include "Poppy.h"
+#include "Pot.h"
+#include <vector>
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -80,7 +85,7 @@ protected:
 
 #include "Pod.h"
 
-class DemoApp : public OIS::KeyListener
+class DemoApp : public OIS::KeyListener, OIS::MouseListener
 {
 public:
 	DemoApp();
@@ -91,6 +96,10 @@ public:
 	
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
+    
+    bool mouseMoved(const OIS::MouseEvent &evt);
+	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
     
 private:
     void setupDemoScene();
@@ -111,6 +120,12 @@ private:
     double thetaB;
     
     Pod* pod;
+    
+    Ground* ground;
+    std::vector<Poppy*> poppies;
+    std::vector<Pot*> pots;
+    
+    Selectable* selected;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

@@ -46,6 +46,12 @@
 		B66E71FB17DE6B9F0098046E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71FA17DE6B9F0098046E /* IOKit.framework */; };
 		B66E71FD17DE6B9F0098046E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71FC17DE6B9F0098046E /* OpenGL.framework */; };
 		B66E71FF17DE6B9F0098046E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71FE17DE6B9F0098046E /* QuartzCore.framework */; };
+		B675CFB917E1BF910076BC73 /* Pch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFB817E1BF910076BC73 /* Pch.cpp */; };
+		B675CFBE17E1C6600076BC73 /* Ground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFBD17E1C6600076BC73 /* Ground.cpp */; };
+		B675CFC317E1C6A40076BC73 /* Blinkable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFC017E1C6A40076BC73 /* Blinkable.cpp */; };
+		B675CFC417E1C6A40076BC73 /* Selectable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFC217E1C6A40076BC73 /* Selectable.cpp */; };
+		B68EF29917E26AF3001E5950 /* Poppy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B68EF29817E26AF3001E5950 /* Poppy.cpp */; };
+		B6E0947117E50B87003F63BE /* Pot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6E0947017E50B87003F63BE /* Pot.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -157,6 +163,18 @@
 		B66E71FA17DE6B9F0098046E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		B66E71FC17DE6B9F0098046E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B66E71FE17DE6B9F0098046E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B675CFB717E1BF910076BC73 /* Pch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pch.h; path = Popzors2.0/Pch.h; sourceTree = "<group>"; };
+		B675CFB817E1BF910076BC73 /* Pch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pch.cpp; path = Popzors2.0/Pch.cpp; sourceTree = "<group>"; };
+		B675CFBC17E1C6600076BC73 /* Ground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ground.h; path = Popzors2.0/Ground.h; sourceTree = "<group>"; };
+		B675CFBD17E1C6600076BC73 /* Ground.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ground.cpp; path = Popzors2.0/Ground.cpp; sourceTree = "<group>"; };
+		B675CFBF17E1C6A40076BC73 /* Blinkable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Blinkable.h; path = Popzors2.0/Blinkable.h; sourceTree = "<group>"; };
+		B675CFC017E1C6A40076BC73 /* Blinkable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Blinkable.cpp; path = Popzors2.0/Blinkable.cpp; sourceTree = "<group>"; };
+		B675CFC117E1C6A40076BC73 /* Selectable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selectable.h; path = Popzors2.0/Selectable.h; sourceTree = "<group>"; };
+		B675CFC217E1C6A40076BC73 /* Selectable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Selectable.cpp; path = Popzors2.0/Selectable.cpp; sourceTree = "<group>"; };
+		B68EF29717E26AF3001E5950 /* Poppy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poppy.h; path = Popzors2.0/Poppy.h; sourceTree = "<group>"; };
+		B68EF29817E26AF3001E5950 /* Poppy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poppy.cpp; path = Popzors2.0/Poppy.cpp; sourceTree = "<group>"; };
+		B6E0946F17E50B87003F63BE /* Pot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pot.h; path = Popzors2.0/Pot.h; sourceTree = "<group>"; };
+		B6E0947017E50B87003F63BE /* Pot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pot.cpp; path = Popzors2.0/Pot.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,23 +208,20 @@
 			isa = PBXGroup;
 			children = (
 				B63D375E17DE8616001A7191 /* AppDelegate.h */,
+				B675CFBB17E1C5E50076BC73 /* resources */,
 				B63D375F17DE8616001A7191 /* en.lproj */,
 				B63D376217DE8616001A7191 /* lib */,
-				B63D376F17DE8616001A7191 /* main.mm */,
 				B63D377017DE8616001A7191 /* media */,
-				B63D379717DE8616001A7191 /* ogre.cfg */,
+				B675CFBA17E1C5BD0076BC73 /* Entities */,
+				B63D376F17DE8616001A7191 /* main.mm */,
 				B63D379817DE8616001A7191 /* OgreDemoApp.cpp */,
 				B63D379917DE8616001A7191 /* OgreDemoApp.h */,
 				B63D379A17DE8616001A7191 /* OgreFramework.cpp */,
 				B63D379B17DE8616001A7191 /* OgreFramework.h */,
-				B63D379C17DE8616001A7191 /* plugins.cfg */,
-				B63D379D17DE8616001A7191 /* Pod.cpp */,
-				B63D379E17DE8616001A7191 /* Pod.h */,
-				B63D379F17DE8616001A7191 /* Popzors2.0-Info.plist */,
-				B63D37A017DE8616001A7191 /* Popzors2.0-Prefix.pch */,
-				B63D37A117DE8616001A7191 /* resources.cfg */,
 				B63D37A217DE8616001A7191 /* Util.cpp */,
 				B63D37A317DE8616001A7191 /* Util.h */,
+				B675CFB817E1BF910076BC73 /* Pch.cpp */,
+				B675CFB717E1BF910076BC73 /* Pch.h */,
 			);
 			name = Popzors2.0;
 			sourceTree = "<group>";
@@ -357,6 +372,37 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B675CFBA17E1C5BD0076BC73 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				B6E0947017E50B87003F63BE /* Pot.cpp */,
+				B6E0946F17E50B87003F63BE /* Pot.h */,
+				B68EF29817E26AF3001E5950 /* Poppy.cpp */,
+				B68EF29717E26AF3001E5950 /* Poppy.h */,
+				B675CFC017E1C6A40076BC73 /* Blinkable.cpp */,
+				B675CFBF17E1C6A40076BC73 /* Blinkable.h */,
+				B675CFC217E1C6A40076BC73 /* Selectable.cpp */,
+				B675CFC117E1C6A40076BC73 /* Selectable.h */,
+				B675CFBD17E1C6600076BC73 /* Ground.cpp */,
+				B675CFBC17E1C6600076BC73 /* Ground.h */,
+				B63D379D17DE8616001A7191 /* Pod.cpp */,
+				B63D379E17DE8616001A7191 /* Pod.h */,
+			);
+			name = Entities;
+			sourceTree = "<group>";
+		};
+		B675CFBB17E1C5E50076BC73 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				B63D379F17DE8616001A7191 /* Popzors2.0-Info.plist */,
+				B63D37A017DE8616001A7191 /* Popzors2.0-Prefix.pch */,
+				B63D379717DE8616001A7191 /* ogre.cfg */,
+				B63D379C17DE8616001A7191 /* plugins.cfg */,
+				B63D37A117DE8616001A7191 /* resources.cfg */,
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -448,6 +494,12 @@
 				B63D37D417DE8616001A7191 /* OgreFramework.cpp in Sources */,
 				B63D37D617DE8616001A7191 /* Pod.cpp in Sources */,
 				B63D37D917DE8616001A7191 /* Util.cpp in Sources */,
+				B675CFB917E1BF910076BC73 /* Pch.cpp in Sources */,
+				B675CFBE17E1C6600076BC73 /* Ground.cpp in Sources */,
+				B675CFC317E1C6A40076BC73 /* Blinkable.cpp in Sources */,
+				B675CFC417E1C6A40076BC73 /* Selectable.cpp in Sources */,
+				B68EF29917E26AF3001E5950 /* Poppy.cpp in Sources */,
+				B6E0947117E50B87003F63BE /* Pot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

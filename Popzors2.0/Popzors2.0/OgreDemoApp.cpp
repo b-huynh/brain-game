@@ -107,7 +107,7 @@ void DemoApp::finalizeRTShaderSystem()
 void DemoApp::startDemo()
 {
 	new OgreFramework();
-	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, 0))
+	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this))
 		return;
     
 	m_bShutdown = false;
@@ -165,10 +165,15 @@ void DemoApp::setupDemoScene()
     
     Util::generateMaterials();
     
+    Util::createSphere("poppyMesh",1,100,100);
+    Util::createUncappedCylinder("potMesh", 1, 1, 100);
+    
+    /*
     Util::createSphere("sphereMesh", Util::POD_HEAD_RADIUS, 16, 16);
     Util::createSphere("sphereMesh2", 10, 32, 32);
-    Util::createCylinder("cylinderMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
-    
+    */
+     
+    /*
     Entity* earthEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("earthEntity", "sphereMesh2");
     earthNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode1");
     earthEntity->setMaterialName("General/PodBlue");
@@ -211,12 +216,40 @@ void DemoApp::setupDemoScene()
     theta = Math::PI;
     thetaA = 0.0;
     thetaB = Math::PI;
+
     
     Quaternion rot;
     rot.FromAngleAxis(Radian(0), Vector3(0, 1, 0));
     pod = new Pod(Vector3(0, 0, 0), Vector3(0, Util::POD_STEM_LENGTH, 0), POD_YELLOW, Util::POD_STEM_RADIUS, Util::POD_HEAD_RADIUS);
     pod->revealPod();
+     */
     
+    Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
+    light1->setDiffuseColour(1.0, 1.0, 1.0);
+    light1->setSpecularColour(1.0, 1.0, 1.0);
+    light1->setAttenuation(600, 1.0, 0.007, 0.0002);
+    ParticleSystem* sunParticle = OgreFramework::getSingletonPtr()->m_pSceneMgr->createParticleSystem("Sun", "Space/Sun");
+    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ParticleNode1");
+    sunNode->attachObject(sunParticle);
+    sunNode->attachObject(light1);
+    sunNode->scale(3.0, 3.0, 3.0);
+    sunNode->setPosition(0, 100, 0);
+    
+    selected = NULL;
+    
+    ground = new Ground();
+    OgreFramework::getSingletonPtr()->m_pCamera->setPosition(0, 5, 5);
+    OgreFramework::getSingletonPtr()->m_pCamera->lookAt(0,0,0);
+    
+    for (int i = 0; i < 5; ++i) {
+        Poppy * poppy = new Poppy(Vector3(0,POPPY_RADIUS,0), Cpot1, Cpot2);
+        poppy->setPosition(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)));
+        poppies.push_back(poppy);
+    }
+    
+    Pot* pot = new Pot(Vector3(-1,POT_HEIGHT,-1.5), 0.5, Cpot2, Cpot1);
+    pots.push_back(pot);
+
     // create a font resource
     ResourcePtr resource = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     resource->setParameter("type","truetype");
@@ -242,7 +275,7 @@ void DemoApp::setupDemoScene()
     // set the font name to the font resource that you just created.
     textArea->setFontName("Arial");
     // say something
-    textArea->setCaption("Hello, World!");
+    textArea->setCaption("");
     
     // Create an overlay, and add the panel
     Overlay* overlay = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayName");
@@ -253,13 +286,22 @@ void DemoApp::setupDemoScene()
 
 void DemoApp::update(double elapsed)
 {
+    //std::cout << "TIME ELAPSED ********" << std::endl;
+    //std::cout << double(elapsed) << std::endl;
     theta += Math::PI / 256 * (elapsed);
     thetaA -= Math::PI / 64 * (elapsed);
     thetaB -= Math::PI / 64 * (elapsed);
     
+    ground->update(elapsed);
+    for (int i = 0; i < poppies.size(); ++i) {
+        poppies[i]->update(elapsed);
+    }
+    
+    /*
     moonNode->setPosition(cos(theta) * 100, 0, sin(theta) * 100);
     moonNodeA->setPosition(cos(thetaA) * 30, 0, sin(thetaA) * 30);
     moonNodeB->setPosition(cos(thetaB) * 30, 0, sin(thetaB) * 30);
+     */
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -333,9 +375,81 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 {
 #if !defined(OGRE_IS_IOS)
 	OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
-#endif
 
+#endif
 	return true;
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
+
+bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
+{
+#if !defined(OGRE_IS_IOS)
+    OgreFramework::getSingletonPtr()->mouseMoved(evt);
+    
+    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
+    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
+    
+    query->setSortByDistance(true);
+    Ogre::RaySceneQueryResult result = query->execute();
+    
+    if (selected && selected->getType() == Selectable::TYPE_POPPY)
+        for (int i = 0; i < result.size(); ++i)
+            if (ground->hasEntity( (Entity*)result[i].movable )) {
+                Poppy* toMove = (Poppy*)selected;
+                Vector3 hoverPos = ray * result[i].distance;
+                hoverPos.y = POPPY_RADIUS;
+                toMove->setPosition(hoverPos);
+            }
+#endif
+    return true;
+}
+
+bool DemoApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+{
+#if !defined(OGRE_IS_IOS)
+    OgreFramework::getSingletonPtr()->mousePressed(evt, id);
+        
+    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
+    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
+    
+    query->setSortByDistance(true);
+    Ogre::RaySceneQueryResult result = query->execute();
+    
+    //Handle Selection
+    if (selected == NULL) {
+        if (result.size() > 0 && result[0].movable != NULL) {
+            for (int i = 0; i < poppies.size(); ++i)
+                    if ( poppies[i]->hasEntity( (Ogre::Entity*)result[0].movable ) ) {
+                        poppies[i]->setColor(getRandomPotColor());
+                        selected = poppies[i];
+                    }
+            
+            for (int i = 0; i < pots.size(); ++i)
+                    if (pots[i]->hasEntity( (Ogre::Entity*)result[0].movable) )
+                        pots[i]->setColor(getRandomPotColor());
+        }
+    }
+    else {
+        if (selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+            Poppy* old = (Poppy*)selected;
+            selected = NULL;
+            Vector3 placeDest = ray * result[0].distance;
+            placeDest.y = POPPY_RADIUS;
+            old->setPosition(placeDest);
+        }
+    
+    }
+
+#endif
+    return true;
+}
+
+bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+{
+#if !defined(OGRE_IS_IOS)
+    OgreFramework::getSingletonPtr()->mouseReleased(evt, id);
+
+#endif
+    return true;
+}
