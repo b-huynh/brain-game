@@ -68,6 +68,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif
+    m_pRoot->loadPlugin("../Components/libOgreOggSound");
     
 	if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
@@ -151,6 +152,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pFontMgr = Ogre::FontManager::getSingletonPtr();
     
     m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
+    
+    m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
+    m_pSoundMgr->init();
+    
+    m_pBillboardSet = m_pSceneMgr->createBillboardSet("TheBillboardSet");
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -268,8 +274,8 @@ bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
             break;
     }
 #endif
-	m_pCamera->yaw(Degree(state.X.rel * -0.1));
-	m_pCamera->pitch(Degree(state.Y.rel * -0.1));
+	//m_pCamera->yaw(Degree(state.X.rel * -0.1));
+	//m_pCamera->pitch(Degree(state.Y.rel * -0.1));
 	
 	return true;
 }
@@ -298,8 +304,8 @@ bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
 #else
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
 {
-	m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
-	m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
+	//m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
+	//m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
 	
 	return true;
 }
@@ -346,6 +352,7 @@ void OgreFramework::moveCamera()
 void OgreFramework::getInput()
 {
 #if !defined(OGRE_IS_IOS)
+    /*
 	if(m_pKeyboard->isKeyDown(OIS::KC_A))
 		m_TranslateVector.x = -m_MoveScale;
 	
@@ -357,5 +364,6 @@ void OgreFramework::getInput()
 	
 	if(m_pKeyboard->isKeyDown(OIS::KC_S))
 		m_TranslateVector.z = m_MoveScale;
+     */
 #endif
 }

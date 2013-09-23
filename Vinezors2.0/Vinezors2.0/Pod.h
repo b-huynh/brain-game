@@ -25,14 +25,16 @@ private:
 	PodType type;
     double stemRadius;
     double headRadius;
+    SceneNode* entirePod;
 	SceneNode* stem;
 	SceneNode* head;
     SceneNode* shell;
     
+    bool podTaken;
+    
 public:
 	Pod();
 	Pod(Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
-	Pod(Vector3 base, Vector3 tip, Quaternion rot, PodType type, double stemRadius, double headRadius);
 	
     Vector3 getBase() const;
     Vector3 getTip() const;
@@ -40,12 +42,13 @@ public:
 	SceneNode* getStem() const;
 	SceneNode* getHead() const;
     
+    bool isPodTaken() const;
+    
 	void move(Vector3 delta);
 	
     void setToGrowth(double t);
-	void hidePod();
+	void takePod();
     void revealPod();
-    void showShell();
     
 	void removeFromScene();
     

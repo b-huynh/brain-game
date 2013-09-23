@@ -31,16 +31,16 @@
     DemoApp demo;
     
     NSDate *mDate;
-    double mLastFrameTime;
-    double mStartTime;
+    double mFrameInterval;
+    double mDeltaTime;
 }
 
 - (void)go;
 - (void)renderOneFrame:(id)sender;
 
 @property (retain) NSTimer *mTimer;
-@property (nonatomic) double mLastFrameTime;
-@property (nonatomic) double mStartTime;
+@property (nonatomic) double mFrameInterval;
+@property (nonatomic) double mDeltaTime;
 
 @end
 
@@ -51,15 +51,15 @@ static id mAppDelegate;
 @implementation AppDelegate
 
 @synthesize mTimer;
-@dynamic mLastFrameTime;
-@dynamic mStartTime;
+@dynamic mFrameInterval;
+@dynamic mDeltaTime;
 
-- (double)mLastFrameTime
+- (double)mFrameInterval
 {
-    return mLastFrameTime;
+    return mFrameInterval;
 }
 
-- (void)setLastFrameTime:(double)frameInterval
+- (void)setTimeDelta:(double)frameInterval
 {
     // Frame interval defines how many display frames must pass between each time the
     // display link fires. The display link will only fire 30 times a second when the
@@ -69,15 +69,15 @@ static id mAppDelegate;
     // behavior.
     if (frameInterval >= 1)
     {
-        mLastFrameTime = frameInterval;
+        mFrameInterval = frameInterval;
     }
 }
 
 - (void)go {
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    mLastFrameTime = 1;
-    mStartTime = 0;
+    mFrameInterval = 1;
+    mDeltaTime = 1.0f / 60.0f;
     mTimer = nil;
     
     try {
@@ -92,7 +92,7 @@ static id mAppDelegate;
         e.getFullDescription().c_str() << std::endl;
     }
     
-    mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1.0f / 60.0f) * mLastFrameTime
+    mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(mDeltaTime) * mFrameInterval
                                               target:self
                                             selector:@selector(renderOneFrame:)
                                             userInfo:nil
@@ -101,8 +101,8 @@ static id mAppDelegate;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)application {
-    mLastFrameTime = 1;
-    mStartTime = 0;
+    mFrameInterval = 1;
+    mDeltaTime = 1.0f / 60.0f;
     mTimer = nil;
     
     [self go];
@@ -115,16 +115,24 @@ static id mAppDelegate;
     {
 		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
 		{
-			mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+//			mTimeCurrent = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+//			mTimeDelta = mTimeCurrent - mTimePrevious;
             
 			OgreFramework::getSingletonPtr()->m_pKeyboard->capture();
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
-            demo.update(mLastFrameTime);
-			OgreFramework::getSingletonPtr()->updateOgre(mLastFrameTime);
-			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
+//            if (mTimeDelta > 0)
+//            {
+//                demo.update(mTimeDelta);
+//                OgreFramework::getSingletonPtr()->updateOgre(mTimeDelta);
+                
+                demo.update(mDeltaTime);
+                OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
+                
+                OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
+//            }
             
-			mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
+//            mTimePrevious = mTimeCurrent;
 		}
     }
     else
