@@ -303,9 +303,8 @@ void DemoApp::setupDemoScene()
 void DemoApp::update(double elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
-    //elapsed /= 100;
     
-    if (false && !soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
+    if (!soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
         soundMusic->play();
     
     // Determine whether a stage has completed

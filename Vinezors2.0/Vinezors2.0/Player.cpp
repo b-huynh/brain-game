@@ -392,27 +392,13 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     targetPos = closest->getCenter(tLeft) + closest->requestMove(dir);
                 }
             }
-            printf("%f (%f, %f, %f)\n", tLeft, (targetPos - test).x, (targetPos - test).y, (targetPos - test).z);            
+//            printf("%f (%f, %f, %f)\n", tLeft, (targetPos - test).x, (targetPos - test).y, (targetPos - test).z);
 //            printf("%f (%f, %f, %f)\n", tLeft, targetPos.x, targetPos.y, targetPos.z);
 
             test = targetPos;
             vines[i]->setDest(targetPos);
-            vines[i]->setPos(targetPos);
+            //vines[i]->setPos(targetPos);
             vines[i]->setForward(closest->getForward());
-            /*
-            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), dir);
-            vines[i]->setDest(targetPos);
-            vines[i]->setForward(closest->getForward());
-            Vector3 walloffset = closest->requestMove(dir);
-            double bounded_tLeft = tLeft;
-            if (bounded_tLeft < 0)
-                bounded_tLeft = 0;
-            if (bounded_tLeft > 1)
-                bounded_tLeft = 1;
-            
-            //Vector3 modifiedCenter = closest->getCenter(tLeft) * (1 - bounded_tLeft) + closestneighbor->getCenter(tLeft2 - 1) * (bounded_tLeft);
-            //vines[i]->setPos(modifiedCenter + walloffset);
-             */
         }
         
         closest = tunnel->findSliceFromCurrent(vines[i]->getPos(), 0, tLeft);
@@ -478,8 +464,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
     
 	for (int i = 0; i < vines.size(); ++i)
     {
-        //vines[i]->speed = moveSpeed / 4;
-		//vines[i]->update(elapsed);
+        vines[i]->speed = moveSpeed / 2;
+		vines[i]->update(elapsed);
     }
     
 }
