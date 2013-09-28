@@ -51,6 +51,10 @@
 		B675CFC317E1C6A40076BC73 /* Blinkable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFC017E1C6A40076BC73 /* Blinkable.cpp */; };
 		B675CFC417E1C6A40076BC73 /* Selectable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B675CFC217E1C6A40076BC73 /* Selectable.cpp */; };
 		B68EF29917E26AF3001E5950 /* Poppy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B68EF29817E26AF3001E5950 /* Poppy.cpp */; };
+		B6DBD06417F4B54500CFDB08 /* Stage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DBD06317F4B54500CFDB08 /* Stage.cpp */; };
+		B6DBD06717F4BE5300CFDB08 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DBD06617F4BE5300CFDB08 /* Player.cpp */; };
+		B6DBD06B17F4BFBC00CFDB08 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DBD06A17F4BFBC00CFDB08 /* Pattern.cpp */; };
+		B6DBD06E17F4C08500CFDB08 /* BaselinePattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DBD06D17F4C08500CFDB08 /* BaselinePattern.cpp */; };
 		B6E0947117E50B87003F63BE /* Pot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6E0947017E50B87003F63BE /* Pot.cpp */; };
 /* End PBXBuildFile section */
 
@@ -173,6 +177,14 @@
 		B675CFC217E1C6A40076BC73 /* Selectable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Selectable.cpp; path = Popzors2.0/Selectable.cpp; sourceTree = "<group>"; };
 		B68EF29717E26AF3001E5950 /* Poppy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poppy.h; path = Popzors2.0/Poppy.h; sourceTree = "<group>"; };
 		B68EF29817E26AF3001E5950 /* Poppy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poppy.cpp; path = Popzors2.0/Poppy.cpp; sourceTree = "<group>"; };
+		B6DBD06217F4B54500CFDB08 /* Stage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stage.h; path = Popzors2.0/Stage.h; sourceTree = "<group>"; };
+		B6DBD06317F4B54500CFDB08 /* Stage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stage.cpp; path = Popzors2.0/Stage.cpp; sourceTree = "<group>"; };
+		B6DBD06517F4BE5300CFDB08 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Player.h; path = Popzors2.0/Player.h; sourceTree = "<group>"; };
+		B6DBD06617F4BE5300CFDB08 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Player.cpp; path = Popzors2.0/Player.cpp; sourceTree = "<group>"; };
+		B6DBD06917F4BFBC00CFDB08 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pattern.h; path = Popzors2.0/Pattern.h; sourceTree = "<group>"; };
+		B6DBD06A17F4BFBC00CFDB08 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pattern.cpp; path = Popzors2.0/Pattern.cpp; sourceTree = "<group>"; };
+		B6DBD06C17F4C08500CFDB08 /* BaselinePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaselinePattern.h; path = Popzors2.0/BaselinePattern.h; sourceTree = "<group>"; };
+		B6DBD06D17F4C08500CFDB08 /* BaselinePattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaselinePattern.cpp; path = Popzors2.0/BaselinePattern.cpp; sourceTree = "<group>"; };
 		B6E0946F17E50B87003F63BE /* Pot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pot.h; path = Popzors2.0/Pot.h; sourceTree = "<group>"; };
 		B6E0947017E50B87003F63BE /* Pot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Pot.cpp; path = Popzors2.0/Pot.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -212,6 +224,7 @@
 				B63D375F17DE8616001A7191 /* en.lproj */,
 				B63D376217DE8616001A7191 /* lib */,
 				B63D377017DE8616001A7191 /* media */,
+				B6DBD06817F4BF9500CFDB08 /* Variants */,
 				B675CFBA17E1C5BD0076BC73 /* Entities */,
 				B63D376F17DE8616001A7191 /* main.mm */,
 				B63D379817DE8616001A7191 /* OgreDemoApp.cpp */,
@@ -375,6 +388,10 @@
 		B675CFBA17E1C5BD0076BC73 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				B6DBD06617F4BE5300CFDB08 /* Player.cpp */,
+				B6DBD06517F4BE5300CFDB08 /* Player.h */,
+				B6DBD06317F4B54500CFDB08 /* Stage.cpp */,
+				B6DBD06217F4B54500CFDB08 /* Stage.h */,
 				B6E0947017E50B87003F63BE /* Pot.cpp */,
 				B6E0946F17E50B87003F63BE /* Pot.h */,
 				B68EF29817E26AF3001E5950 /* Poppy.cpp */,
@@ -401,6 +418,17 @@
 				B63D37A117DE8616001A7191 /* resources.cfg */,
 			);
 			name = resources;
+			sourceTree = "<group>";
+		};
+		B6DBD06817F4BF9500CFDB08 /* Variants */ = {
+			isa = PBXGroup;
+			children = (
+				B6DBD06D17F4C08500CFDB08 /* BaselinePattern.cpp */,
+				B6DBD06C17F4C08500CFDB08 /* BaselinePattern.h */,
+				B6DBD06A17F4BFBC00CFDB08 /* Pattern.cpp */,
+				B6DBD06917F4BFBC00CFDB08 /* Pattern.h */,
+			);
+			name = Variants;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,6 +528,10 @@
 				B675CFC417E1C6A40076BC73 /* Selectable.cpp in Sources */,
 				B68EF29917E26AF3001E5950 /* Poppy.cpp in Sources */,
 				B6E0947117E50B87003F63BE /* Pot.cpp in Sources */,
+				B6DBD06417F4B54500CFDB08 /* Stage.cpp in Sources */,
+				B6DBD06717F4BE5300CFDB08 /* Player.cpp in Sources */,
+				B6DBD06B17F4BFBC00CFDB08 /* Pattern.cpp in Sources */,
+				B6DBD06E17F4C08500CFDB08 /* BaselinePattern.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
