@@ -157,72 +157,10 @@ void DemoApp::setupDemoScene()
 {
 	//OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
     
-    /*
-	m_pCubeEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Cube", "ogrehead.mesh");
-	m_pCubeNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("CubeNode");
-	m_pCubeNode->attachObject(m_pCubeEntity);
-     */
-    
     Util::generateMaterials();
     
     Util::createSphere("poppyMesh",1,100,100);
     Util::createUncappedCylinder("potMesh", 1, 1, 100);
-    
-    /*
-    Util::createSphere("sphereMesh", Util::POD_HEAD_RADIUS, 16, 16);
-    Util::createSphere("sphereMesh2", 10, 32, 32);
-    */
-     
-    /*
-    Entity* earthEntity = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("earthEntity", "sphereMesh2");
-    earthNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("SphereNode1");
-    earthEntity->setMaterialName("General/PodBlue");
-    earthNode->attachObject(earthEntity);
-    earthNode->setPosition(50, 0, 10);
-    earthNode->scale(4, 4, 4);
-    
-    Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
-    light1->setDiffuseColour(1.0, 1.0, 1.0);
-    light1->setSpecularColour(1.0, 1.0, 1.0);
-//    light1->setAttenuation(3250, 0.51, 0.0000001, 0.0);
-    ParticleSystem* sunParticle =
-        OgreFramework::getSingletonPtr()->m_pSceneMgr->createParticleSystem("Sun", "Space/Sun");
-    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ParticleNode1");
-    sunNode->attachObject(sunParticle);
-    sunNode->attachObject(light1);
-    sunNode->scale(3.0, 3.0, 3.0);
-    sunNode->setPosition(-125, 100, -250);
-    
-    Entity* moonEntity1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntity1", "sphereMesh2");
-    moonNode = earthNode->createChildSceneNode("moonNode1");
-    moonEntity1->setMaterialName("General/PodUnknown");
-   // moonEntity1->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.5, 0.5);
-    moonNode->attachObject(moonEntity1);
-    
-    Entity* moonEntityA = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityA", "sphereMesh2");
-    moonNodeA = moonNode->createChildSceneNode("moonNodeA");
-    moonEntityA->setMaterialName("General/PodRed");
-   // moonEntityA->getSubEntity(0)->getMaterial()->setAmbient(0.5, 0.0, 0.0);
-    moonNodeA->attachObject(moonEntityA);
-    moonNodeA->scale(0.5, 0.5, 0.5);
-    
-    Entity* moonEntityB = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("moonEntityB", "sphereMesh2");
-    moonNodeB = moonNode->createChildSceneNode("moonNodeB");
-    moonEntityB->setMaterialName("General/PodGreen");
-   // moonEntityB->getSubEntity(0)->getMaterial()->setAmbient(0.0, 0.5, 0.0);
-    moonNodeB->attachObject(moonEntityB);
-    moonNodeB->scale(0.5, 0.5, 0.5);
-    
-    theta = Math::PI;
-    thetaA = 0.0;
-    thetaB = Math::PI;
-
-    
-    Quaternion rot;
-    rot.FromAngleAxis(Radian(0), Vector3(0, 1, 0));
-    pod = new Pod(Vector3(0, 0, 0), Vector3(0, Util::POD_STEM_LENGTH, 0), POD_YELLOW, Util::POD_STEM_RADIUS, Util::POD_HEAD_RADIUS);
-    pod->revealPod();
-     */
     
     Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
     light1->setDiffuseColour(1.0, 1.0, 1.0);
@@ -237,6 +175,8 @@ void DemoApp::setupDemoScene()
     
     selected = NULL;
     
+    totalElapsed = 0.0;
+    
     ground = new Ground();
     OgreFramework::getSingletonPtr()->m_pCamera->setPosition(0, 5, 5);
     OgreFramework::getSingletonPtr()->m_pCamera->lookAt(0,0,0);
@@ -244,6 +184,8 @@ void DemoApp::setupDemoScene()
     for (int i = 0; i < 5; ++i) {
         Poppy * poppy = new Poppy(Vector3(0,POPPY_RADIUS,0), Cpot1, Cpot2);
         poppy->setPosition(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)));
+        poppy->setTimeBlinkLength(2);
+        //poppy->activateBlink();
         poppies.push_back(poppy);
     }
     
@@ -286,22 +228,19 @@ void DemoApp::setupDemoScene()
 
 void DemoApp::update(double elapsed)
 {
-    //std::cout << "TIME ELAPSED ********" << std::endl;
-    //std::cout << double(elapsed) << std::endl;
-    theta += Math::PI / 256 * (elapsed);
-    thetaA -= Math::PI / 64 * (elapsed);
-    thetaB -= Math::PI / 64 * (elapsed);
+    std::cout << "TIME ELAPSED -----------------------" << std::endl;
+    std::cout << double(elapsed) << std::endl;
     
+    totalElapsed += elapsed;
+    
+    if (totalElapsed > 2.0 && totalElapsed < 2.5)
+        for (int i = 0; i < poppies.size(); ++i)
+            poppies[i]->activateBlink();
+
     ground->update(elapsed);
     for (int i = 0; i < poppies.size(); ++i) {
         poppies[i]->update(elapsed);
     }
-    
-    /*
-    moonNode->setPosition(cos(theta) * 100, 0, sin(theta) * 100);
-    moonNodeA->setPosition(cos(thetaA) * 30, 0, sin(thetaA) * 30);
-    moonNodeB->setPosition(cos(thetaB) * 30, 0, sin(thetaB) * 30);
-     */
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

@@ -1,7 +1,7 @@
 #include "Poppy.h"
 
 Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkColor, double blinktime, double radius)
-	: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
+: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
     this->addToScene();
@@ -21,8 +21,10 @@ void Poppy::setId(int val)
 
 void Poppy::setColor(Ogre::ColourValue color)
 {
-    body->setMaterialName(getTextureNameByColor(color));
-	currentColor = color;
+    //if (currentColor != color)
+        body->setMaterialName(getTextureNameByColor(color));
+	
+    currentColor = color;
 }
 
 void Poppy::setColor(int r, int g, int b, int a)

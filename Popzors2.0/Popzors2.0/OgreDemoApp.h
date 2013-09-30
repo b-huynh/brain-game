@@ -119,6 +119,8 @@ private:
     double thetaA;
     double thetaB;
     
+    double totalElapsed;
+    
     Pod* pod;
     
     Ground* ground;
