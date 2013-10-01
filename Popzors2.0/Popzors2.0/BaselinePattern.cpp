@@ -15,17 +15,16 @@ BaselinePattern::BaselinePattern(Stage* stage, Player* player)
 
 void BaselinePattern::setup()
 {
-    stage->ground = new Ground(Vector3(0, -0.5, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
+    stage->ground = new Ground(Vector3(0, 0, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
     
 	//Make some pots
-    const double POT_RADIUS = 1.0;
-	Pot* pot1 = new Pot(Vector3(2.5, 0.0, 1.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
+	Pot* pot1 = new Pot(Vector3(1.5, POT_HEIGHT / 2, 1.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
     pot1->setId(0);
-    Pot* pot2 = new Pot(Vector3(2.5, 0.0, -3.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
+    Pot* pot2 = new Pot(Vector3(1.5, POT_HEIGHT / 2, -1.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
     pot2->setId(1);
-    Pot* pot3 = new Pot(Vector3(-2.5, 0.0, 1.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
+    Pot* pot3 = new Pot(Vector3(-1.5, POT_HEIGHT / 2, 1.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
     pot3->setId(2);
-    Pot* pot4 = new Pot(Vector3(-2.5, 0.0, -3.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
+    Pot* pot4 = new Pot(Vector3(-1.5, POT_HEIGHT / 2, -1.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
     pot4->setId(3);
 	
 	stage->pots.push_back(pot1);

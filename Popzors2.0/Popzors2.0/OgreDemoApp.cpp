@@ -166,11 +166,8 @@ void DemoApp::setupDemoScene()
     light1->setDiffuseColour(1.0, 1.0, 1.0);
     light1->setSpecularColour(1.0, 1.0, 1.0);
     light1->setAttenuation(600, 1.0, 0.007, 0.0002);
-    ParticleSystem* sunParticle = OgreFramework::getSingletonPtr()->m_pSceneMgr->createParticleSystem("Sun", "Space/Sun");
-    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ParticleNode1");
-    sunNode->attachObject(sunParticle);
+    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("sunNode");
     sunNode->attachObject(light1);
-    sunNode->scale(3.0, 3.0, 3.0);
     sunNode->setPosition(0, 100, 0);
     
     totalElapsed = 0.0;

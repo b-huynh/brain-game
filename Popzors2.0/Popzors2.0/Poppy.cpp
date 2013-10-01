@@ -161,9 +161,11 @@ void Poppy::jump(double elapsed)
     const double JUMP_HEIGHT = 0.5;
     const double JUMP_TIME = 0.35;
     
+    if (!jumping && timeJumped <= 0)
+        return;
+    
     double previousTime = timeJumped;
-    if (jumping || timeJumped > 0)
-        timeJumped += elapsed;
+    timeJumped += elapsed;
     if (timeJumped > JUMP_TIME)
     {
         timeJumped = 0;
