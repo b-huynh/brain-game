@@ -23,14 +23,8 @@ struct ClickedResult {
 // Contains the interface for the environment and all entities.
 class Stage {
 public:
-    //Screen* screen;
-    //CollisionScene* scene;
-    
-    Ogre::OverlayManager* screen;
-    Ogre::SceneManager* scene;
-    
     //Ground
-    Ground *ground;
+    Ground* ground;
     
     //Lighting
     std::vector<Light*> lights;
@@ -39,12 +33,14 @@ public:
     std::vector<Poppy*> poppies;
     std::vector<Pot*> pots;
     
-	//ScreenLabel *label1;
-    //ScreenLabel *label2;
+	//ScreenLabel* label1;
+    //ScreenLabel* label2;
 
-    //ScreenShape *progressBar;
+    //ScreenShape* progressBar;
     //Sound* negativeFeedback;
     //Sound* positiveFeedback;
+    
+    Selectable* selected;
     
     // Utility Functions
     void handlePoppyCollisions(double elapsed);
@@ -97,15 +93,23 @@ public:
 //        }
 //        if (negativeFeedback) delete negativeFeedback;
 //        if (positiveFeedback) delete positiveFeedback;
+        
+        selected = NULL;
     }
     
 //    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots(), lights(), progressBar(NULL), label1(NULL), label2(NULL), negativeFeedback(NULL), positiveFeedback(NULL)
 //    {}
 
-    Stage() : ground(NULL), poppies(), pots(), lights()
+    Stage() : ground(NULL), poppies(), pots(), lights(), selected(NULL)
     {
-        screen = OgreFramework::getSingletonPtr()->m_pOverlayMgr;
-        scene = OgreFramework::getSingletonPtr()->m_pSceneMgr;
+    }
+    
+    void update(double elapsed) {
+        ground->update(elapsed);
+        for (int i = 0; i < poppies.size(); ++i)
+            poppies[i]->update(elapsed);
+        for (int i = 0; i < pots.size(); ++i)
+            pots[i]->update(elapsed);
     }
     
     ~Stage() {}

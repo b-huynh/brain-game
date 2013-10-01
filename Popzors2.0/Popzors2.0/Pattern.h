@@ -10,26 +10,24 @@
 class PopzorsPattern
 {
 public:
-    Stage stage;
-protected:
-    Player player;
+    Stage* stage;
+    Player* player;
     
     bool ready;
     
     std::vector<std::string> saveData;
 public:
-    PopzorsPattern(unsigned seed) : stage()
+    PopzorsPattern(Stage* stage, Player* player) : stage(stage), player(player), ready(false)
     {
-        player.seed = seed;
     }
     
     virtual void setup() = 0; // Deals with allocating the stage screen and scene
     
     virtual void reset() // Deals with reseting variables associated to the pattern
     {
-        player.reset();
+        player->reset();
         ready = false;
-        stage.clear();
+        stage->clear();
     }
     
     virtual void setPattern() = 0; // Initializes the pattern
@@ -43,17 +41,17 @@ public:
     
     std::string getName() const
     {
-        return player.name;
+        return player->name;
     }
     
     void setName(const std::string & value)
     {
-        player.name = value;
+        player->name = value;
     }
     
     double getPlayerCorrectness() const
     {
-        return static_cast<double>(player.numCorrect) / player.totalProblems;
+        return static_cast<double>(player->numCorrect) / player->totalProblems;
     }
     
     virtual bool save(std::string file)

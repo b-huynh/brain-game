@@ -6,6 +6,7 @@ Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkCo
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
     this->addToScene();
     this->setColor(baseColor);
+    body->setMaterialName(getTextureNameByColor(baseColor));
     poppyNode->setPosition(pos);
     poppyNode->scale(radius,radius,radius);
 }
@@ -21,9 +22,8 @@ void Poppy::setId(int val)
 
 void Poppy::setColor(Ogre::ColourValue color)
 {
-    //if (currentColor != color)
+    if (currentColor != color)
         body->setMaterialName(getTextureNameByColor(color));
-	
     currentColor = color;
 }
 
@@ -162,7 +162,8 @@ void Poppy::jump(double elapsed)
     const double JUMP_TIME = 0.35;
     
     double previousTime = timeJumped;
-    timeJumped += elapsed;
+    if (jumping || timeJumped > 0)
+        timeJumped += elapsed;
     if (timeJumped > JUMP_TIME)
     {
         timeJumped = 0;
@@ -199,8 +200,8 @@ void Poppy::update(double elapsed)
 {
     Blinkable::update(elapsed);
     Selectable::update(elapsed);
-    if (jumping)
-        jump(elapsed);
+    
+    jump(elapsed);
     
     // Update poppy to move towards destination if one exists
     if (moving) {

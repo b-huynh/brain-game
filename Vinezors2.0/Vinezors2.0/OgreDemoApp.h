@@ -79,8 +79,11 @@ protected:
 #endif
 
 #include "Pod.h"
+#include "TunnelSlice.h"
+#include "Tunnel.h"
+#include "Player.h"
 
-class DemoApp : public OIS::KeyListener
+class DemoApp : public OIS::KeyListener, public OIS::MouseListener
 {
 public:
 	DemoApp();
@@ -88,7 +91,11 @@ public:
     
 	void startDemo();
     void update(double elapsed);
-	
+
+    bool mouseMoved(const OIS::MouseEvent &evt);
+	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
     
@@ -98,19 +105,22 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-	SceneNode*			m_pCubeNode;
-	Entity*				m_pCubeEntity;
+    unsigned seed;
+    bool pause;
+    Vector3 origin;
+    SceneNode* lightNode;
+    Tunnel* tunnel;
+	Player* player;
     
-    SceneNode*          earthNode;
-    SceneNode*          sunNode;
-    SceneNode*          moonNode;
-    SceneNode*          moonNodeA;
-    SceneNode*          moonNodeB;
-    double theta;
-    double thetaA;
-    double thetaB;
+    PanelOverlayElement* barHP;
+    TextAreaOverlayElement* label1;
+    TextAreaOverlayElement* label2;
+    TextAreaOverlayElement* label3;
+    TextAreaOverlayElement* label4;
     
-    Pod* pod;
+    OgreOggISound* soundMusic;
+    OgreOggISound* soundFeedbackGood;
+    
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

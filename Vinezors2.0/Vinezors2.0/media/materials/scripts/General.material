@@ -1,3 +1,78 @@
+material General/BaseBlack
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture black_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseRed
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture red_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseBlue
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture blue_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseGreen
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture green_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseYellow
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture yellow_fixed.png
+        }
+      } 
+    }
+}
+
 material General/Sun
 {
     technique
@@ -17,6 +92,56 @@ material General/Sun
 	}
 }
 
+material General/WallGlass
+{
+    technique
+	{
+        pass
+		{
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+            cull_hardware none
+
+            texture_unit
+			{
+				texture glass.png
+			}
+		}
+	}
+}
+
+material General/WallMetal
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.3 0.3 0.3 1
+            diffuse 0.7 0.7 0.7 1
+            emissive 0.3 0.3 0.3 1
+        }
+    }
+}
+
+material General/WallCheckpoint
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.3 0.3 0.3 1
+            diffuse 0.7 0.7 0.0 1
+            emissive 0.3 0.3 0.3 1
+        }
+    }
+}
+
 material General/PodUnknown
 {
     technique
@@ -25,9 +150,9 @@ material General/PodUnknown
         {
             lighting on
  
-            ambient 0.2 0.2 0.2 1
-            diffuse 0.5 0.5 0.5 1
-            emissive 0.2 0.2 0.2 1
+            ambient 0.3 0.3 0.3 1
+            diffuse 0.7 0.7 0.7 1
+            emissive 0.3 0.3 0.3 1
         }
     }
 }
@@ -121,6 +246,21 @@ material General/PodShell
                 colour_op_ex source1 src_manual src_current 1 0 0
                 alpha_op_ex source1 src_manual src_current 0.5
             }
+        }
+    }
+}
+
+material General/VineTip
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.4 0.1 1
+            diffuse 0.1 0.7 0.1 1
+            emissive 0.1 0.4 0.1 1
         }
     }
 }

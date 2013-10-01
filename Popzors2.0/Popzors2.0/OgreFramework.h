@@ -23,6 +23,10 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
+#include "OgreOggSound.h"
+
+using namespace OgreOggSound;
+
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
 #  if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
@@ -133,9 +137,11 @@ public:
 	Ogre::FontManager*          m_pFontMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
     
+    OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
+    
     //Mesh Manager
     Ogre::MeshManager*          m_pMeshMgr;
-
+    
 protected:
    // Added for Mac compatibility
    Ogre::String                 m_ResourcePath;
