@@ -155,7 +155,7 @@ void DemoApp::startDemo()
 
 void DemoApp::setupDemoScene()
 {
-	//OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
+    OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
     
     Util::generateMaterials();
     
@@ -173,25 +173,21 @@ void DemoApp::setupDemoScene()
     sunNode->scale(3.0, 3.0, 3.0);
     sunNode->setPosition(0, 100, 0);
     
-    selected = NULL;
-    
     totalElapsed = 0.0;
     
-    ground = new Ground();
     OgreFramework::getSingletonPtr()->m_pCamera->setPosition(0, 5, 5);
     OgreFramework::getSingletonPtr()->m_pCamera->lookAt(0,0,0);
-    
-    for (int i = 0; i < 5; ++i) {
-        Poppy * poppy = new Poppy(Vector3(0,POPPY_RADIUS,0), Cpot1, Cpot2);
-        poppy->setPosition(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)));
-        poppy->setTimeBlinkLength(2);
-        //poppy->activateBlink();
-        poppies.push_back(poppy);
-    }
-    
-    Pot* pot = new Pot(Vector3(-1,POT_HEIGHT,-1.5), 0.5, Cpot2, Cpot1);
-    pots.push_back(pot);
 
+    int seed = time(0);
+    player = new Player();
+    player->seed = seed;
+    stage = new Stage();
+    
+    pattern = new BaselinePattern(stage, player);
+    pattern->setPattern();
+    
+    soundPickUp = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPickUp", "floop.wav", false, false, true);
+    
     // create a font resource
     ResourcePtr resource = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     resource->setParameter("type","truetype");
@@ -228,19 +224,8 @@ void DemoApp::setupDemoScene()
 
 void DemoApp::update(double elapsed)
 {
-    std::cout << "TIME ELAPSED -----------------------" << std::endl;
-    std::cout << double(elapsed) << std::endl;
-    
     totalElapsed += elapsed;
-    
-    if (totalElapsed > 2.0 && totalElapsed < 2.5)
-        for (int i = 0; i < poppies.size(); ++i)
-            poppies[i]->activateBlink();
-
-    ground->update(elapsed);
-    for (int i = 0; i < poppies.size(); ++i) {
-        poppies[i]->update(elapsed);
-    }
+    pattern->update(elapsed);
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -332,10 +317,10 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
     query->setSortByDistance(true);
     Ogre::RaySceneQueryResult result = query->execute();
     
-    if (selected && selected->getType() == Selectable::TYPE_POPPY)
+    if (stage->selected && stage->selected->getType() == Selectable::TYPE_POPPY)
         for (int i = 0; i < result.size(); ++i)
-            if (ground->hasEntity( (Entity*)result[i].movable )) {
-                Poppy* toMove = (Poppy*)selected;
+            if (stage->ground->hasEntity( (Entity*)result[i].movable )) {
+                Poppy* toMove = (Poppy*)stage->selected;
                 Vector3 hoverPos = ray * result[i].distance;
                 hoverPos.y = POPPY_RADIUS;
                 toMove->setPosition(hoverPos);
@@ -356,23 +341,25 @@ bool DemoApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     Ogre::RaySceneQueryResult result = query->execute();
     
     //Handle Selection
-    if (selected == NULL) {
+    if (stage->selected == NULL) {
         if (result.size() > 0 && result[0].movable != NULL) {
-            for (int i = 0; i < poppies.size(); ++i)
-                    if ( poppies[i]->hasEntity( (Ogre::Entity*)result[0].movable ) ) {
-                        poppies[i]->setColor(getRandomPotColor());
-                        selected = poppies[i];
+            for (int i = 0; i < stage->poppies.size(); ++i)
+                    if ( stage->poppies[i]->hasEntity( (Ogre::Entity*)result[0].movable ) ) {
+                        stage->poppies[i]->setColor(getRandomPotColor());
+                        stage->selected = stage->poppies[i];
+                        stage->poppies[i]->deactivateJump();
+                        soundPickUp->play();
                     }
             
-            for (int i = 0; i < pots.size(); ++i)
-                    if (pots[i]->hasEntity( (Ogre::Entity*)result[0].movable) )
-                        pots[i]->setColor(getRandomPotColor());
+            for (int i = 0; i < stage->pots.size(); ++i)
+                    if (stage->pots[i]->hasEntity( (Ogre::Entity*)result[0].movable) )
+                        stage->pots[i]->setColor(getRandomPotColor());
         }
     }
     else {
-        if (selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
-            Poppy* old = (Poppy*)selected;
-            selected = NULL;
+        if (stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+            Poppy* old = (Poppy*)stage->selected;
+            stage->selected = NULL;
             Vector3 placeDest = ray * result[0].distance;
             placeDest.y = POPPY_RADIUS;
             old->setPosition(placeDest);

@@ -10,6 +10,9 @@
 #include "Ground.h"
 #include "Poppy.h"
 #include "Pot.h"
+#include "Stage.h"
+#include "Player.h"
+#include "BaselinePattern.h"
 #include <vector>
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -83,8 +86,6 @@ protected:
 };
 #endif
 
-#include "Pod.h"
-
 class DemoApp : public OIS::KeyListener, OIS::MouseListener
 {
 public:
@@ -120,14 +121,12 @@ private:
     double thetaB;
     
     double totalElapsed;
+
+    Stage* stage;
+    Player* player;
+    PopzorsPattern* pattern;
     
-    Pod* pod;
-    
-    Ground* ground;
-    std::vector<Poppy*> poppies;
-    std::vector<Pot*> pots;
-    
-    Selectable* selected;
+    OgreOggISound* soundPickUp;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

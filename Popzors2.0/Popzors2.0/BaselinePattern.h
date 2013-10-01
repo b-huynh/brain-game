@@ -6,7 +6,7 @@
 class BaselinePattern : public PopzorsPattern
 {
 public:
-    BaselinePattern(unsigned seed, int width, int height);
+    BaselinePattern(Stage* stage, Player* player);
     
     virtual void setup();
     virtual void reset();
@@ -38,9 +38,6 @@ public:
     
     ~BaselinePattern() {}
 private:
-    int screenWidth;
-    int screenHeight;
-    
 	bool signaled;
 	double signalStart;
     double signalLength;
@@ -56,8 +53,6 @@ private:
     
     double totalElapsed;
     int score;
-    
-    Selectable* selected;
     
     //Poppy Data
     std::vector<poppyData> pData;

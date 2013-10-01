@@ -33,6 +33,7 @@ OgreFramework::OgreFramework()
     m_pFontMgr          = 0;
     m_pMaterialMgr      = 0;
     
+    m_pSoundMgr         = 0;
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = macBundlePath() + "/Contents/Resources/";

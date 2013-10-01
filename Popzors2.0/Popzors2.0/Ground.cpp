@@ -7,10 +7,10 @@ Ground::Ground(Vector3 pos, Ogre::ColourValue baseColor,
     Plane plane (Vector3::UNIT_Y, 0);
     OgreFramework::getSingletonPtr()->m_pMeshMgr->createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                                                               plane, 5, 5, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
-    
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("GroundEntity_" + toStringInt(sceneID), "ground");
-    this->setColor(baseColor);
     this->addToScene();
+    this->setColor(baseColor);
+    body->setMaterialName("General/PodYellow");
     groundNode->setPosition(pos);
 }
 
@@ -20,6 +20,8 @@ Ground::~Ground()
 
 void Ground::setColor(Ogre::ColourValue color)
 {
+    if (currentColor == color)
+        return;
     if (color == FEEDBACK_COLOR_BAD) {
         currentColor = color;
         body->setMaterialName("General/PodRed");
@@ -29,7 +31,7 @@ void Ground::setColor(Ogre::ColourValue color)
         body->setMaterialName("General/PodGreen");
     }
     else {
-        currentColor = GROUND_COLOR;
+        currentColor = color;
         body->setMaterialName("General/PodYellow");
     }
 }

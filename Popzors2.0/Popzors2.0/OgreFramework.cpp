@@ -33,6 +33,8 @@ OgreFramework::OgreFramework()
     m_pFontMgr          = 0;
     m_pMaterialMgr      = 0;
     
+    m_pSoundMgr         = 0;
+    
     m_pMeshMgr          = 0;
     
     
@@ -70,6 +72,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif
+    m_pRoot->loadPlugin("../Components/libOgreOggSound");
     
 	if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
@@ -153,6 +156,9 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pFontMgr = Ogre::FontManager::getSingletonPtr();
     
     m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
+    
+    m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
+    m_pSoundMgr->init();
     
     m_pMeshMgr = Ogre::MeshManager::getSingletonPtr();
     

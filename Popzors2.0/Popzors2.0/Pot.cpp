@@ -7,6 +7,7 @@ Pot::Pot(Vector3 pos, double radius, Ogre::ColourValue baseColor, Ogre::ColourVa
     this->addToScene();
     this->setPosition(pos);
     this->setColor(baseColor);
+    body->setMaterialName(getTextureNameByColor(baseColor));
     potNode->scale(radius,POT_HEIGHT,radius);
     
     //if (soundFile != "")
@@ -29,7 +30,8 @@ void Pot::setId(int val)
 
 void Pot::setColor(Ogre::ColourValue color)
 {
-    body->setMaterialName(getTextureNameByColor(color));
+    if (currentColor != color)
+        body->setMaterialName(getTextureNameByColor(color));
 	currentColor = color;
 }
 
