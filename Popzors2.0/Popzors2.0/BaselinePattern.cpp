@@ -33,7 +33,7 @@ void BaselinePattern::setup()
 	stage->pots.push_back(pot4);
     
 	//Make some poppies
-    numImportantPoppies = player->level * 5;
+    numImportantPoppies = player->level;
     numDistractingPoppies = 0;
     poppyRadius = POPPY_RADIUS * pow(0.95, numImportantPoppies - 1);
     
@@ -43,7 +43,6 @@ void BaselinePattern::setup()
     
     player->totalProblems = numImportantPoppies; // For base class Pattern
     
-    std::cout << numImportantPoppies << std::endl;
 	for (int i = 0; i < numImportantPoppies; ++i) {
 		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)), BLAND_COLOR, BLAND_COLOR, 0, (POPPY_RADIUS * pow(0.95, numImportantPoppies - 1)));
         poppy->setId(i);
@@ -79,24 +78,6 @@ void BaselinePattern::setup()
         poppy->setId(i);
         stage->poppies.push_back(poppy);
 	}
-    
-//    SceneLight* light = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
-//    light->setPosition(3, 3.5, 0);
-//    stage.scene->addLight(light);
-//    
-//    SceneLight* light1 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
-//    light1->setPosition(-3, 3.5, 0);
-//    stage.scene->addLight(light1);
-//    
-//    SceneLight* light2 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
-//    light2->setPosition(3, 3.5, 3);
-//    stage.scene->addLight(light2);
-//    
-//    SceneLight* light3 = new SceneLight(SceneLight::AREA_LIGHT, stage.scene, 5);
-//    light3->setPosition(-3, 3.5, 3);
-//    stage.scene->addLight(light3);
-    
-    //stage.scene->ambientColor = Color(0.5, 0.5, 0.5, 0.5);
     
     //stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH + 400, BAR_HEIGHT);
     //stage.progressBar->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
@@ -208,41 +189,33 @@ void BaselinePattern::update(double elapsed)
 {
     totalElapsed += elapsed;
     
-    updatePoppyBlinks(elapsed);
-    
-    stage->update(elapsed);
-    stage->handlePoppyCollisions(elapsed);
-    
     if (isFinished() && !stage->ground->isBlinking()) {
         saveData.push_back(getFinishedStageData());
         setPattern();
     }
+    
+    for (int i = 0; i < stage->poppies.size(); ++i)
+        for (int j = 0; j < stage->pots.size(); ++j)
+            updatePlayerChoice(stage->poppies[i], stage->pots[j]);
+    
+    updateScoreAndFeedback();
+    
+    updatePoppyBlinks(elapsed);
+    
+    stage->update(elapsed);
+    stage->handlePoppyCollisions(elapsed);
 
     //stage.label1->setText("Time: " + toStringInt(totalElapsed));
     //stage.label2->setText("Score: " + toStringInt(score));
 }
 
-void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
+void BaselinePattern::updateScoreAndFeedback()
 {
-    //Store bin and place time
-    int id = poppy->getId();
-    for (int i = 0; i < pData.size(); ++i)
-        if (pData[i].poppyID == id) {
-            pData[i].binPlaceIn = getColorId(pot->getBlinkColor());
-            pData[i].binPlaceTime = totalElapsed;
-        }
-    
-    if (pot->getId() == poppy->getPotIdRef())
-    {
-        player->numCorrect++;
-    }
-    playerPoppyIndex++;
-    
-    if (isFinished())
+    if (isFinished() && !stage->ground->isBlinking())
     {
         for (int i = 0; i < stage->poppies.size(); ++i)
             stage->poppies[i]->setBaseColor(stage->poppies[i]->getBlinkColor());
-//            stage.poppies[i]->setBaseColor(stage.pots[stage.poppies[i]->getPotIdRef()]->getBaseColor());
+        //          stage.poppies[i]->setBaseColor(stage.pots[stage.poppies[i]->getPotIdRef()]->getBaseColor());
         if (player->numCorrect >= player->totalProblems)
         {
             score += player->level;
@@ -266,20 +239,20 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             double correctness = getPlayerCorrectness();
             stage->ground->setBlinkColor(FEEDBACK_COLOR_BAD);
             /*
-            if (correctness > PASSING_CHECK)
-            {
-                double range = 1 - PASSING_CHECK;
-                double value = correctness - PASSING_CHECK;
-                stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
-                                            Color(198, 0, 198, 0) * (1 - (value / range)));
-            }
-            else
-            {
-                double range = PASSING_CHECK;
-                double value = PASSING_CHECK - correctness;
-                stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
-                                            Color(0, 198, 198, 0) * (1 - (value / range)));
-            }
+             if (correctness > PASSING_CHECK)
+             {
+             double range = 1 - PASSING_CHECK;
+             double value = correctness - PASSING_CHECK;
+             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
+             Color(198, 0, 198, 0) * (1 - (value / range)));
+             }
+             else
+             {
+             double range = PASSING_CHECK;
+             double value = PASSING_CHECK - correctness;
+             stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
+             Color(0, 198, 198, 0) * (1 - (value / range)));
+             }
              */
             
             //stage.progressBar->setScale(0.667, 1.0);
@@ -288,7 +261,36 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             player->updateLevel(PLAYER_FAILURE);
             //stage.negativeFeedback->Play();
         }
+        std::cout << "Is activating blink" << std::endl;
         stage->ground->activateBlink();
+        
+    }
+}
+
+void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
+{
+    /********* TODO:
+     * FIX COLLECTED DATA FOR BIN AND PLACE TIME. THIS TIME IS WRONG
+     *********/
+    //Store bin and place time
+    int id = poppy->getId();
+    for (int i = 0; i < pData.size(); ++i)
+        if (pData[i].poppyID == id) {
+            pData[i].binPlaceIn = getColorId(pot->getBlinkColor());
+            pData[i].binPlaceTime = totalElapsed;
+        }
+    
+
+    if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS-POPPY_RADIUS + 0.05)) && (poppy != stage->selected))
+    {
+        if (poppy->isActive()) {
+            playerPoppyIndex++;
+            poppy->setActive(false);
+            if (pot->getId() == poppy->getPotIdRef())
+            {
+                player->numCorrect++;
+            }
+        }
     }
 }
 
@@ -378,6 +380,70 @@ bool BaselinePattern::save(std::string file)
     else {
         out.close();
         return false;
+    }
+    
+    return true;
+}
+
+bool BaselinePattern::mouseMoved(const OIS::MouseEvent &evt)
+{
+    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
+    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
+    
+    query->setSortByDistance(true);
+    Ogre::RaySceneQueryResult result = query->execute();
+    
+    if (stage->selected && stage->selected->getType() == Selectable::TYPE_POPPY)
+        for (int i = 0; i < result.size(); ++i)
+            if (stage->ground->hasEntity( (Entity*)result[i].movable )) {
+                Poppy* toMove = (Poppy*)stage->selected;
+                Vector3 hoverPos = ray * result[i].distance;
+                hoverPos.y = POPPY_RADIUS;
+                toMove->setPosition(hoverPos);
+            }
+    return true;
+}
+bool BaselinePattern::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+{
+    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
+    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
+    
+    query->setSortByDistance(true);
+    Ogre::RaySceneQueryResult result = query->execute();
+    
+    //Handle Selection
+    if (stage->selected == NULL) {
+        if (result.size() > 0 && result[0].movable != NULL) {
+            for (int i = 0; i < stage->poppies.size(); ++i)
+                if ( stage->poppies[i]->hasEntity( (Ogre::Entity*)result[0].movable ) ) {
+                    stage->poppies[i]->setColor(getRandomPotColor());
+                    stage->selected = stage->poppies[i];
+                    stage->poppies[i]->deactivateJump();
+                    //soundPickUp->play();
+                }
+            
+            for (int i = 0; i < stage->pots.size(); ++i)
+                if (stage->pots[i]->hasEntity( (Ogre::Entity*)result[0].movable) )
+                    stage->pots[i]->setColor(getRandomPotColor());
+        }
+    }
+    
+    return true;
+}
+bool BaselinePattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+{
+    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
+    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
+    
+    query->setSortByDistance(true);
+    Ogre::RaySceneQueryResult result = query->execute();
+    
+    if (stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+        Poppy* old = (Poppy*)stage->selected;
+        stage->selected = NULL;
+        Vector3 placeDest = ray * result[0].distance;
+        placeDest.y = POPPY_RADIUS;
+        old->setPosition(placeDest);
     }
     
     return true;

@@ -18,10 +18,16 @@ public:
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(double elapsed);
+    void updateScoreAndFeedback();
     
     //Utilities for Saving
     std::string getFinishedStageData();
     bool save(std::string file);
+    
+    //Input event functions
+    virtual bool mouseMoved(const OIS::MouseEvent &evt);
+	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
     
     //Poppy Save Data
     struct poppyData {

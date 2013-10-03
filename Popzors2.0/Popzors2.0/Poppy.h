@@ -33,6 +33,8 @@ public:
     Vector3 getDest() const { return dest; }
     Vector3 getPosition() const { return poppyNode->getPosition(); }
 	int getPotIdRef() const { return potIdRef; }
+    bool isActive () { return active; }
+    void setActive (bool active) { this->active = active; }
 
     virtual void reset();
     
@@ -52,6 +54,8 @@ private:
 	Vector3 pos; // Does not represent actual graphical pos, but initial/reset pos
     
     int potIdRef;
+    
+    bool active;
     
     bool moving;
     Vector3 dest;

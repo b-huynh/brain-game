@@ -9,6 +9,8 @@ Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkCo
     body->setMaterialName(getTextureNameByColor(baseColor));
     poppyNode->setPosition(pos);
     poppyNode->scale(radius,radius,radius);
+    
+    active = true;
 }
 
 Poppy::~Poppy()
@@ -186,6 +188,8 @@ void Poppy::jump(double elapsed)
     //printf("%f: %f\n", timeJumped, diff);
     
     poppyNode->translate(0, diff, 0);
+    
+    /* DEBUG
     std::cout << "elapsed: " << elapsed << std::endl;
     std::cout << "timeJumped: " << timeJumped << std::endl;
     std::cout << "previousTime: " << previousTime << std::endl;
@@ -196,6 +200,7 @@ void Poppy::jump(double elapsed)
     std::cout << "D: " << D << std::endl;
     std::cout << "Term1: " << term1 << std::endl;
     std::cout << "Term2: " << term2 << std::endl;
+     */
 }
 
 void Poppy::update(double elapsed)

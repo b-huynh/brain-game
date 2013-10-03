@@ -183,7 +183,7 @@ void DemoApp::setupDemoScene()
     pattern = new BaselinePattern(stage, player);
     pattern->setPattern();
     
-    soundPickUp = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPickUp", "floop.wav", false, false, true);
+    //soundPickUp = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPickUp", "floop.wav", false, false, true);
     
     // create a font resource
     ResourcePtr resource = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -307,21 +307,8 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
 {
 #if !defined(OGRE_IS_IOS)
     OgreFramework::getSingletonPtr()->mouseMoved(evt);
+    pattern->mouseMoved(evt);
     
-    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
-    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
-    
-    query->setSortByDistance(true);
-    Ogre::RaySceneQueryResult result = query->execute();
-    
-    if (stage->selected && stage->selected->getType() == Selectable::TYPE_POPPY)
-        for (int i = 0; i < result.size(); ++i)
-            if (stage->ground->hasEntity( (Entity*)result[i].movable )) {
-                Poppy* toMove = (Poppy*)stage->selected;
-                Vector3 hoverPos = ray * result[i].distance;
-                hoverPos.y = POPPY_RADIUS;
-                toMove->setPosition(hoverPos);
-            }
 #endif
     return true;
 }
@@ -330,39 +317,7 @@ bool DemoApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
 #if !defined(OGRE_IS_IOS)
     OgreFramework::getSingletonPtr()->mousePressed(evt, id);
-        
-    Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
-    Ogre::RaySceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createRayQuery(ray);
-    
-    query->setSortByDistance(true);
-    Ogre::RaySceneQueryResult result = query->execute();
-    
-    //Handle Selection
-    if (stage->selected == NULL) {
-        if (result.size() > 0 && result[0].movable != NULL) {
-            for (int i = 0; i < stage->poppies.size(); ++i)
-                    if ( stage->poppies[i]->hasEntity( (Ogre::Entity*)result[0].movable ) ) {
-                        stage->poppies[i]->setColor(getRandomPotColor());
-                        stage->selected = stage->poppies[i];
-                        stage->poppies[i]->deactivateJump();
-                        soundPickUp->play();
-                    }
-            
-            for (int i = 0; i < stage->pots.size(); ++i)
-                    if (stage->pots[i]->hasEntity( (Ogre::Entity*)result[0].movable) )
-                        stage->pots[i]->setColor(getRandomPotColor());
-        }
-    }
-    else {
-        if (stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
-            Poppy* old = (Poppy*)stage->selected;
-            stage->selected = NULL;
-            Vector3 placeDest = ray * result[0].distance;
-            placeDest.y = POPPY_RADIUS;
-            old->setPosition(placeDest);
-        }
-    
-    }
+    pattern->mousePressed(evt,id);
 
 #endif
     return true;
@@ -372,6 +327,7 @@ bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
 #if !defined(OGRE_IS_IOS)
     OgreFramework::getSingletonPtr()->mouseReleased(evt, id);
+    pattern->mouseReleased(evt,id);
 
 #endif
     return true;

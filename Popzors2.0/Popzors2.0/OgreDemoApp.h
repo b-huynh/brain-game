@@ -126,7 +126,7 @@ private:
     Player* player;
     PopzorsPattern* pattern;
     
-    OgreOggISound* soundPickUp;
+    //OgreOggISound* soundPickUp;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

@@ -137,7 +137,7 @@ public:
 	Ogre::FontManager*          m_pFontMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
     
-    OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
+    //OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
     //Mesh Manager
     Ogre::MeshManager*          m_pMeshMgr;

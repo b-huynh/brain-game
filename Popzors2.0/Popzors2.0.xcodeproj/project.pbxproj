@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5DBCC46117F9E87C00DC9022 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DBCC45F17F9E86C00DC9022 /* libOgreOggSound.dylib */; };
+		5DBCC46117F9E87C00DC9022 /* libOgreOggSound.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DBCC45F17F9E86C00DC9022 /* libOgreOggSound.dylib */; };
 		5DBCC46717FA24BC00DC9022 /* floop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DBCC46617FA24BC00DC9022 /* floop.wav */; };
 		B63D37A417DE8616001A7191 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B63D376017DE8616001A7191 /* InfoPlist.strings */; };
 		B63D37B117DE8616001A7191 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = B63D376F17DE8616001A7191 /* main.mm */; };
@@ -25,10 +25,10 @@
 		B63D38AF17DE8969001A7191 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389D17DE895F001A7191 /* Plugin_ParticleFX.dylib */; };
 		B63D38B017DE8969001A7191 /* Plugin_PCZSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389E17DE895F001A7191 /* Plugin_PCZSceneManager.dylib */; };
 		B63D38B117DE8969001A7191 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389F17DE895F001A7191 /* RenderSystem_GL.dylib */; };
-		B63D38B317DE8995001A7191 /* libOgrePaging.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389517DE895F001A7191 /* libOgrePaging.dylib */; };
-		B63D38B417DE8995001A7191 /* libOgreProperty.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389617DE895F001A7191 /* libOgreProperty.dylib */; };
-		B63D38B517DE8995001A7191 /* libOgreRTShaderSystem.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389717DE895F001A7191 /* libOgreRTShaderSystem.dylib */; };
-		B63D38B617DE8995001A7191 /* libOgreTerrain.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B63D389817DE895F001A7191 /* libOgreTerrain.dylib */; };
+		B63D38B317DE8995001A7191 /* libOgrePaging.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = B63D389517DE895F001A7191 /* libOgrePaging.dylib */; };
+		B63D38B417DE8995001A7191 /* libOgreProperty.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = B63D389617DE895F001A7191 /* libOgreProperty.dylib */; };
+		B63D38B517DE8995001A7191 /* libOgreRTShaderSystem.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = B63D389717DE895F001A7191 /* libOgreRTShaderSystem.dylib */; };
+		B63D38B617DE8995001A7191 /* libOgreTerrain.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = B63D389817DE895F001A7191 /* libOgreTerrain.dylib */; };
 		B66E71F717DE6B9F0098046E /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71F617DE6B9F0098046E /* Carbon.framework */; };
 		B66E71F917DE6B9F0098046E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71F817DE6B9F0098046E /* Cocoa.framework */; };
 		B66E71FB17DE6B9F0098046E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66E71FA17DE6B9F0098046E /* IOKit.framework */; };
@@ -47,18 +47,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B63D38B217DE8989001A7191 /* CopyFiles */ = {
+		B63D38B217DE8989001A7191 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = ../Components;
 			dstSubfolderSpec = 10;
 			files = (
-				5DBCC46117F9E87C00DC9022 /* libOgreOggSound.dylib in CopyFiles */,
-				B63D38B317DE8995001A7191 /* libOgrePaging.dylib in CopyFiles */,
-				B63D38B417DE8995001A7191 /* libOgreProperty.dylib in CopyFiles */,
-				B63D38B517DE8995001A7191 /* libOgreRTShaderSystem.dylib in CopyFiles */,
-				B63D38B617DE8995001A7191 /* libOgreTerrain.dylib in CopyFiles */,
+				5DBCC46117F9E87C00DC9022 /* libOgreOggSound.dylib in Copy Files */,
+				B63D38B317DE8995001A7191 /* libOgrePaging.dylib in Copy Files */,
+				B63D38B417DE8995001A7191 /* libOgreProperty.dylib in Copy Files */,
+				B63D38B517DE8995001A7191 /* libOgreRTShaderSystem.dylib in Copy Files */,
+				B63D38B617DE8995001A7191 /* libOgreTerrain.dylib in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B649C79717DE71DB00908625 /* CopyFiles */ = {
@@ -430,7 +431,7 @@
 				B66E71F117DE6B9F0098046E /* ShellScript */,
 				B649C79717DE71DB00908625 /* CopyFiles */,
 				B649C79817DE71DE00908625 /* CopyFiles */,
-				B63D38B217DE8989001A7191 /* CopyFiles */,
+				B63D38B217DE8989001A7191 /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -629,6 +630,11 @@
 					"\"$(SRCROOT)/../../OgreSDKOSX/lib\"",
 					"\"$(SRCROOT)/../../ogreoggsound/build/Release\"",
 				);
+				OTHER_LDFLAGS = (
+					"-lOIS",
+					"-framework",
+					Ogre,
+				);
 			};
 			name = Debug;
 		};
@@ -646,6 +652,11 @@
 					"\"$(SRCROOT)/Popzors2.0/lib\"",
 					"\"$(SRCROOT)/../../OgreSDKOSX/lib\"",
 					"\"$(SRCROOT)/../../ogreoggsound/build/Release\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lOIS",
+					"-framework",
+					Ogre,
 				);
 			};
 			name = Release;
