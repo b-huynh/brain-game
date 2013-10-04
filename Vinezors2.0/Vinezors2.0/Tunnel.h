@@ -14,6 +14,8 @@
 #include "Util.h"
 #include "TunnelSlice.h"
 
+
+
 // Stores the list of tunnel segments
 class Tunnel
 {
@@ -35,12 +37,14 @@ public:
     int renewalSectionCounter;
     int renewalPodCounter;
     
+    // Stage attributes
     int nback;
+    bool sidesUsed[NUM_DIRECTIONS];
     
     bool done;
 public:
 	Tunnel();
-	Tunnel(Vector3 start, double segmentWidth, double segmentDepth, int sectionSize, int podSegmentSize);
+	Tunnel(Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize);
 	
 	Vector3 getStart() const;
 	Vector3 getEnd() const;
@@ -61,6 +65,7 @@ public:
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees);
     PodType getNBackTest(int section) const;
     int getNBack() const;
+    bool hasAvailableSide(Direction side) const;
     
     bool isDone() const;
     void setDone(bool value);
@@ -78,7 +83,7 @@ public:
     
     std::vector<Pod *> findPodCollisions(SceneNode* ent);
     
-    void constructTunnel(int size, int nback, Quaternion q = Quaternion(1, 0, 0, 0));
+    void constructTunnel(int size, Quaternion q = Quaternion(1, 0, 0, 0));
     
 	~Tunnel();
 };

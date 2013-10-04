@@ -19,11 +19,11 @@
 		5DF9416317F4D5370082C239 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
 		5DF9416417F4D5370082C239 /* Plugin_PCZSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414F17F4D4E70082C239 /* Plugin_PCZSceneManager.dylib */; };
 		5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415017F4D4E70082C239 /* RenderSystem_GL.dylib */; };
-		5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414617F4D4E70082C239 /* libOgrePaging.dylib */; };
-		5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414717F4D4E70082C239 /* libOgreProperty.dylib */; };
-		5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414817F4D4E70082C239 /* libOgreRTShaderSystem.dylib */; };
-		5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414917F4D4E70082C239 /* libOgreTerrain.dylib */; };
-		5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
+		5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414617F4D4E70082C239 /* libOgrePaging.dylib */; };
+		5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414717F4D4E70082C239 /* libOgreProperty.dylib */; };
+		5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414817F4D4E70082C239 /* libOgreRTShaderSystem.dylib */; };
+		5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414917F4D4E70082C239 /* libOgreTerrain.dylib */; };
+		5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		B63D37F617DE87EB001A7191 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F517DE87EB001A7191 /* Carbon.framework */; };
 		B63D37F817DE87EB001A7191 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F717DE87EB001A7191 /* Cocoa.framework */; };
 		B63D37FA17DE87EB001A7191 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F917DE87EB001A7191 /* IOKit.framework */; };
@@ -67,18 +67,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B6C64C4E17DE8C760092CA8E /* CopyFiles */ = {
+		B6C64C4E17DE8C760092CA8E /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = ../Components;
 			dstSubfolderSpec = 10;
 			files = (
-				5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in CopyFiles */,
-				5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in CopyFiles */,
-				5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in CopyFiles */,
-				5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in CopyFiles */,
-				5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in CopyFiles */,
+				5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in Copy Files */,
+				5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in Copy Files */,
+				5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */,
+				5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */,
+				5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -394,7 +395,7 @@
 				B63D37F017DE87EB001A7191 /* ShellScript */,
 				B6C64C4C17DE8C740092CA8E /* CopyFiles */,
 				B6C64C4D17DE8C750092CA8E /* CopyFiles */,
-				B6C64C4E17DE8C760092CA8E /* CopyFiles */,
+				B6C64C4E17DE8C760092CA8E /* Copy Files */,
 			);
 			buildRules = (
 			);
