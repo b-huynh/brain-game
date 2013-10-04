@@ -15,15 +15,17 @@ using namespace std;
 const double infinityDepth = 1024;
 
 Tunnel::Tunnel()
-: start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(1), done(false)
+: start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(1), sidesUsed(), done(false)
 {
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = true;
 }
 
-Tunnel::Tunnel(Vector3 start, double segmentWidth, double segmentDepth, int sectionSize, int podSegmentSize)
-: start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(1)
-, done(false)
+Tunnel::Tunnel(Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
+: start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(nback), sidesUsed(), done(false)
 {
 	current = segments.end();
+    Util::setSides(sidesUsed, control, sloc);
 }
 
 Vector3 Tunnel::getStart() const
@@ -196,6 +198,13 @@ int Tunnel::getNBack() const
     return nback;
 }
 
+bool Tunnel::hasAvailableSide(Direction side) const
+{
+    if (side == NO_DIRECTION)
+        return false;
+    return sidesUsed[side];
+}
+
 bool Tunnel::isDone() const
 {
     return done;
@@ -225,8 +234,8 @@ SectionInfo Tunnel::getNextSectionInfo() const
 PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
 {
     PodType podType = (PodType)(rand() % 4);
-    Direction podLoc = WEST;
-    //Direction podLoc = randDirection();
+    Direction podLoc = Util::randDirection(sidesUsed);
+    
     // Do a reroll if pod is the same type as last one
     if (nback != 1 && types.size() > 0 && types[types.size() - 1].podType == podType)
         podType = (PodType)(rand() % 4);
@@ -282,7 +291,7 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
     Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
-	TunnelSlice* nsegment = new TunnelSlice(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth);
+	TunnelSlice* nsegment = new TunnelSlice(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
     
     switch (segmentType)
     {
@@ -403,7 +412,7 @@ void Tunnel::addSection(SectionInfo newSection)
         if (renewalPodCounter >= podSegmentSize)
         {
             PodInfo newPod = getNextPodInfo(newSection);
-            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
+            addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.goodPod);
             renewalPodCounter = 0;
             
             types.push_back(newPod);
@@ -434,7 +443,7 @@ void Tunnel::renewSection(SectionInfo newSection)
         if (renewalPodCounter >= podSegmentSize)
         {
             PodInfo newPod = getNextPodInfo(newSection);
-            renewSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.good);
+            renewSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, newPod.podType, newPod.podLoc, newPod.goodPod);
             renewalPodCounter = 0;
             
             types.push_back(newPod);
@@ -485,10 +494,9 @@ bool Tunnel::renewIfNecessary(Vector3 checkPos)
     return false;
 }
 
-void Tunnel::constructTunnel(int size, int nback, Quaternion q)
+void Tunnel::constructTunnel(int size, Quaternion q)
 {
     this->endRot = q;
-    this->nback = nback;
     
     for (int i = 0; i < Util::INITIATION_SECTIONS; ++i) {
         SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);

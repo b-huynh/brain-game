@@ -105,6 +105,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     
 	m_pMouse->getMouseState().height = m_pRenderWnd->getHeight();
 	m_pMouse->getMouseState().width	 = m_pRenderWnd->getWidth();
+    
 #else
 	m_pMouse = static_cast<OIS::MultiTouch*>(m_pInputMgr->createInputObject(OIS::OISMultiTouch, true));
 #endif
@@ -304,10 +305,7 @@ bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
 }
 #else
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
-{
-	//m_pCamera->yaw(Degree(evt.state.X.rel * -0.1f));
-	//m_pCamera->pitch(Degree(evt.state.Y.rel * -0.1f));
-	
+{	
 	return true;
 }
 

@@ -3,6 +3,7 @@
 #include "OgreFramework.h"
 
 #include "Pch.h"
+#include "Util.h"
 #include "Ground.h"
 #include "Poppy.h"
 #include "Pot.h"
@@ -33,10 +34,12 @@ public:
     std::vector<Poppy*> poppies;
     std::vector<Pot*> pots;
     
-	//ScreenLabel* label1;
-    //ScreenLabel* label2;
+    PanelOverlayElement* barHP;
+    TextAreaOverlayElement* label1;
+    TextAreaOverlayElement* label2;
+    TextAreaOverlayElement* label3;
+    TextAreaOverlayElement* label4;
 
-    //ScreenShape* progressBar;
     //Sound* negativeFeedback;
     //Sound* positiveFeedback;
     
@@ -78,30 +81,15 @@ public:
         }
         lights.clear();
         
-//        if (progressBar) {
-//            screen->removeChild(progressBar);
-//            delete progressBar;
-//        }
-//        
-//        if (label1) {
-//            screen->removeChild(label1);
-//            delete label1;
-//        }
-//        if (label2) {
-//            screen->removeChild(label2);
-//            delete label2;
-//        }
-//        if (negativeFeedback) delete negativeFeedback;
-//        if (positiveFeedback) delete positiveFeedback;
-        
         selected = NULL;
     }
     
 //    Stage(Screen *screen, CollisionScene *scene) : screen(screen), scene(scene), ground(NULL), poppies(), pots(), lights(), progressBar(NULL), label1(NULL), label2(NULL), negativeFeedback(NULL), positiveFeedback(NULL)
 //    {}
 
-    Stage() : ground(NULL), poppies(), pots(), lights(), selected(NULL)
+    Stage() : ground(NULL), poppies(), pots(), lights(), selected(NULL), barHP(NULL), label1(NULL), label2(NULL), label3(NULL), label4(NULL)
     {
+        setupHUD();
     }
     
     void update(double elapsed) {
@@ -110,6 +98,65 @@ public:
             poppies[i]->update(elapsed);
         for (int i = 0; i < pots.size(); ++i)
             pots[i]->update(elapsed);
+    }
+    
+    void setupHUD()
+    {
+        // The code snippet below is used to output text
+        // create a font resource
+        ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        resourceText->setParameter("type","truetype");
+        resourceText->setParameter("source","C64_User_Mono_v1.0-STYLE.ttf");
+        resourceText->setParameter("size","16");
+        resourceText->setParameter("resolution","96");
+        resourceText->load();
+        
+        // Create a panel
+        OverlayContainer* panel = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
+        panel->setMetricsMode(GMM_PIXELS);
+        panel->setPosition(10, 10);
+        panel->setDimensions(10, 10);
+        
+        BorderPanelOverlayElement* healthArea = static_cast<BorderPanelOverlayElement*>(
+                                                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("BorderPanel", "HealthAreaBorder"));
+        healthArea->setMetricsMode(GMM_RELATIVE);
+        healthArea->setPosition(Util::HP_BAR_XREF - 0.01, Util::HP_BAR_YREF - 0.01);
+        healthArea->setDimensions(Util::HP_BAR_WIDTH + 0.02, Util::HP_BAR_HEIGHT + 0.02);
+        healthArea->setMaterialName("BaseWhite");
+        
+        barHP = static_cast<PanelOverlayElement*>(
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HealthBar"));
+        barHP->setMetricsMode(GMM_RELATIVE);
+        barHP->setPosition(Util::HP_BAR_XREF, Util::HP_BAR_YREF);
+        barHP->setDimensions(0.0, 0.0);
+        barHP->setMaterialName("General/BaseRed");
+        
+        // Create text area
+        label1= static_cast<TextAreaOverlayElement*>(
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
+        label1->setMetricsMode(GMM_PIXELS);
+        label1->setPosition(Util::LABEL1_POSX, Util::LABEL1_POSY);
+        label1->setCharHeight(26);
+        label1->setFontName("Arial");
+        label1->setColour(ColourValue::White);
+        
+        // Create text area
+        label2= static_cast<TextAreaOverlayElement*>(
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
+        label2->setMetricsMode(GMM_PIXELS);
+        label2->setPosition(Util::LABEL2_POSX, Util::LABEL2_POSY);
+        label2->setCharHeight(26);
+        label2->setColour(ColourValue::White);
+        label2->setFontName("Arial");
+        
+        // Create an overlay, and add the panel
+        Overlay* overlay = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayHelloWorld");
+        overlay->add2D(panel);
+        panel->addChild(label1);
+        panel->addChild(label2);
+        panel->addChild(healthArea);
+        panel->addChild(barHP);
+        overlay->show();
     }
     
     ~Stage() {}

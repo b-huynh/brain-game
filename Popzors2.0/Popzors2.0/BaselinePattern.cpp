@@ -10,7 +10,6 @@ BaselinePattern::BaselinePattern(Stage* stage, Player* player)
     poppyRadius(POPPY_RADIUS), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0)
 {
     totalElapsed = 0.0;
-    score = 0;
 }
 
 void BaselinePattern::setup()
@@ -78,29 +77,6 @@ void BaselinePattern::setup()
         poppy->setId(i);
         stage->poppies.push_back(poppy);
 	}
-    
-    //stage.progressBar = new ScreenShape(ScreenShape::SHAPE_RECT, BAR_WIDTH + 400, BAR_HEIGHT);
-    //stage.progressBar->setPosition((Vector2(BAR_XPOS, BAR_YPOS) + Vector2(BAR_XPOS + BAR_WIDTH, BAR_YPOS + BAR_HEIGHT)) / 2);
-    
-    if (player->numConsecutiveSuccess > 0) {
-        //stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess) / Player::levelUpCeiling, 1.0);
-        //stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
-        if (player->numConsecutiveSuccess >= Player::levelUpCeiling);
-            //stage.progressBar->setColor(0.0, 0.0, 1.0, 1.0);
-    } else {
-        //stage.progressBar->setScale(0.0, 0.0);
-        //stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
-    }
-    
-    //stage.screen->addChild(stage.progressBar);
-    
-//    stage.label1 = new ScreenLabel("Time: " + toStringInt(totalElapsed), 36);
-//    stage.label1->setPosition(LABEL1_POSX, LABEL1_POSY);
-//    stage.screen->addChild(stage.label1);
-//    
-//	stage.label2 = new ScreenLabel("Score: " + toStringInt(score), 36);
-//    stage.label2->setPosition(LABEL2_POSX, LABEL2_POSY);
-//	stage.screen->addChild(stage.label2);
     
     //stage.negativeFeedback = new Sound(SOUNDFILE_NEGATIVE_FEEDBACK);
     //stage.positiveFeedback = new Sound(SOUNDFILE_POSITIVE_FEEDBACK);
@@ -190,6 +166,7 @@ void BaselinePattern::update(double elapsed)
     totalElapsed += elapsed;
     
     if (isFinished() && !stage->ground->isBlinking()) {
+        updateScore();
         saveData.push_back(getFinishedStageData());
         setPattern();
     }
@@ -198,72 +175,67 @@ void BaselinePattern::update(double elapsed)
         for (int j = 0; j < stage->pots.size(); ++j)
             updatePlayerChoice(stage->poppies[i], stage->pots[j]);
     
-    updateScoreAndFeedback();
+    updateFeedback();
     
     updatePoppyBlinks(elapsed);
     
     stage->update(elapsed);
     stage->handlePoppyCollisions(elapsed);
-
-    //stage.label1->setText("Time: " + toStringInt(totalElapsed));
-    //stage.label2->setText("Score: " + toStringInt(score));
+    
+    stage->label1->setCaption("Time: " + toStringInt(totalElapsed));
 }
 
-void BaselinePattern::updateScoreAndFeedback()
+void BaselinePattern::updateScore()
+{
+    if (player->numCorrect >= player->totalProblems)
+    {
+        player->score += player->level;
+        player->updateLevel(PLAYER_SUCCESS);
+    }
+    else
+    {
+        player->updateLevel(PLAYER_FAILURE);
+    }
+}
+
+void BaselinePattern::updateFeedback()
 {
     if (isFinished() && !stage->ground->isBlinking())
     {
         for (int i = 0; i < stage->poppies.size(); ++i)
             stage->poppies[i]->setBaseColor(stage->poppies[i]->getBlinkColor());
-        //          stage.poppies[i]->setBaseColor(stage.pots[stage.poppies[i]->getPotIdRef()]->getBaseColor());
         if (player->numCorrect >= player->totalProblems)
         {
-            score += player->level;
-            
+            player->updateSuccess(PLAYER_SUCCESS);
             stage->ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
             
-            if (player->numConsecutiveSuccess + 1 == Player::levelUpCeiling) {
-                //stage.progressBar->setColor(0.0, 0.0, 1.0, 1.0);
-            }
-            else
-            {
-                //stage.progressBar->setScale(static_cast<double>(player.numConsecutiveSuccess + 1) / Player::levelUpCeiling, 1.0);
-                //stage.progressBar->setColor(0.0, 1.0, 0.0, 1.0);
-            }
-            player->updateLevel(PLAYER_SUCCESS);
             //stage.positiveFeedback->Play();
         }
         else
         {
-            const double PASSING_CHECK = 0.75;
             double correctness = getPlayerCorrectness();
+            player->updateSuccess(PLAYER_FAILURE);
             stage->ground->setBlinkColor(FEEDBACK_COLOR_BAD);
-            /*
-             if (correctness > PASSING_CHECK)
-             {
-             double range = 1 - PASSING_CHECK;
-             double value = correctness - PASSING_CHECK;
-             stage.ground->setBlinkColor(FEEDBACK_COLOR_GOOD +
-             Color(198, 0, 198, 0) * (1 - (value / range)));
-             }
-             else
-             {
-             double range = PASSING_CHECK;
-             double value = PASSING_CHECK - correctness;
-             stage.ground->setBlinkColor(FEEDBACK_COLOR_BAD +
-             Color(0, 198, 198, 0) * (1 - (value / range)));
-             }
-             */
             
-            //stage.progressBar->setScale(0.667, 1.0);
-            //stage.progressBar->setColor(1.0, 0.0, 0.0, 1.0);
-            
-            player->updateLevel(PLAYER_FAILURE);
             //stage.negativeFeedback->Play();
         }
         std::cout << "Is activating blink" << std::endl;
         stage->ground->activateBlink();
         
+        double barWidth = Util::HP_BAR_WIDTH;
+        if (player->numConsecutiveSuccess > 0) {
+            barWidth *= player->numConsecutiveSuccess / (double)(player->levelUpCeiling);
+            
+            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+            if (player->numConsecutiveSuccess >= Player::levelUpCeiling)
+                stage->barHP->setMaterialName("General/BaseBlue");
+            else
+                stage->barHP->setMaterialName("General/BaseGreen");
+        } else {
+            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+            stage->barHP->setMaterialName("General/BaseRed");
+        }
+        stage->label2->setCaption("Score: " + toStringInt(player->score));
     }
 }
 

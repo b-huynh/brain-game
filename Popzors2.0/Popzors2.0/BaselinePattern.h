@@ -18,7 +18,8 @@ public:
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(double elapsed);
-    void updateScoreAndFeedback();
+    void updateScore();
+    void updateFeedback();
     
     //Utilities for Saving
     std::string getFinishedStageData();
@@ -58,7 +59,6 @@ private:
     int playerPoppyIndex;
     
     double totalElapsed;
-    int score;
     
     //Poppy Data
     std::vector<poppyData> pData;

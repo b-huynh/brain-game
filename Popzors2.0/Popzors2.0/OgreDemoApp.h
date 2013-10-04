@@ -108,19 +108,9 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-	SceneNode*			m_pCubeNode;
-	Entity*				m_pCubeEntity;
-    
-    SceneNode*          earthNode;
-    SceneNode*          sunNode;
-    SceneNode*          moonNode;
-    SceneNode*          moonNodeA;
-    SceneNode*          moonNodeB;
-    double theta;
-    double thetaA;
-    double thetaB;
-    
     double totalElapsed;
+    
+    SceneNode*          lightNode;
 
     Stage* stage;
     Player* player;

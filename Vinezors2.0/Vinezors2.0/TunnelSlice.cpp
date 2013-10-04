@@ -17,15 +17,20 @@ static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
 : center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL), 
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods(), growthT(0), prerangeT(0), podTaken(false), infoStored(false)
-{}
-
-TunnelSlice::TunnelSlice(TunnelType type, Vector3 center, Quaternion rot, double width, double depth)
-: center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL), 
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), intermediateSegment(NULL),
-pods(), growthT(0), prerangeT(0), podTaken(false), infoStored(false)
+topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
+pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = false;
+}
+
+TunnelSlice::TunnelSlice(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
+: center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL), 
+topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
+pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
+{
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = sides[i];
     initWalls();
 }
 
@@ -39,72 +44,91 @@ void TunnelSlice::initWalls()
     
     entireWall = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
-    materialName = "";
-	topLeftWall = entireWall->createChildSceneNode("topLeftWallNode" + Util::toStringInt(wallID));
-	topWall = entireWall->createChildSceneNode("topWallNode" + Util::toStringInt(wallID));
-	topRightWall = entireWall->createChildSceneNode("topRightWallNode" + Util::toStringInt(wallID));
-	rightWall = entireWall->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
-	bottomRightWall = entireWall->createChildSceneNode("bottomRightWallNode" + Util::toStringInt(wallID));
-	bottomWall = entireWall->createChildSceneNode("bottomWallNode" + Util::toStringInt(wallID));
-	bottomLeftWall = entireWall->createChildSceneNode("bottomLeftWallNode" + Util::toStringInt(wallID));
-	leftWall = entireWall->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
-    
-    Entity* topLeftWallEntity = topLeftWall->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    topLeftWall->attachObject(topLeftWallEntity);
-    Entity* topWallEntity = topWall->getCreator()->createEntity("topWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    topWall->attachObject(topWallEntity);
-    Entity* topRightWallEntity = topRightWall->getCreator()->createEntity("topRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    topRightWall->attachObject(topRightWallEntity);
-    Entity* rightWallEntity = rightWall->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    rightWall->attachObject(rightWallEntity);
-    Entity* bottomRightWallEntity = bottomRightWall->getCreator()->createEntity("bottomRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    bottomRightWall->attachObject(bottomRightWallEntity);
-    Entity* bottomWallEntity = bottomWall->getCreator()->createEntity("bottomWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    bottomWall->attachObject(bottomWallEntity);
-    Entity* bottomLeftWallEntity = bottomLeftWall->getCreator()->createEntity("bottomLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    bottomLeftWall->attachObject(bottomLeftWallEntity);
-    Entity* leftWallEntity = leftWall->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
-    leftWall->attachObject(leftWallEntity);
-    
-    move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
-    topLeftWall->translate(move);
-    move = Vector3(0, width / 2, 0);
-    topWall->translate(move);
-    move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
-    topRightWall->translate(move);
-    move = Vector3(width / 2, 0, 0);
-    rightWall->translate(move);
-    move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
-    bottomRightWall->translate(move);
-    move = Vector3(0, -width / 2, 0);
-    bottomWall->translate(move);
-    move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
-    bottomLeftWall->translate(move);
-    move = Vector3(-width / 2, 0, 0);
-    leftWall->translate(move);
-    
-    bottomWall->roll(Degree(0));
-    bottomRightWall->roll(Degree(45));
-    rightWall->roll(Degree(90));
-    topRightWall->roll(Degree(135));
-    topWall->roll(Degree(180));
-    topLeftWall->roll(Degree(225));
-    leftWall->roll(Degree(270));
-    bottomLeftWall->roll(Degree(315));
-    
     if (type != CHECKPOINT)
         materialName = "General/WallMetal";
     else
         materialName = "General/WallCheckpoint";
-    topLeftWallEntity->setMaterialName(materialName);
-    topWallEntity->setMaterialName(materialName);
-    topRightWallEntity->setMaterialName(materialName);
-    rightWallEntity->setMaterialName(materialName);
-    bottomRightWallEntity->setMaterialName(materialName);
-    bottomWallEntity->setMaterialName(materialName);
-    bottomLeftWallEntity->setMaterialName(materialName);
-    leftWallEntity->setMaterialName(materialName);
-
+    
+    if (sidesUsed[NORTHWEST]) {
+        topLeftWall = entireWall->createChildSceneNode("topLeftWallNode" + Util::toStringInt(wallID));
+        Entity* topLeftWallEntity = topLeftWall->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        topLeftWall->attachObject(topLeftWallEntity);
+        move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
+        topLeftWall->translate(move);
+        topLeftWall->roll(Degree(225));
+        topLeftWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[NORTH]) {
+        topWall = entireWall->createChildSceneNode("topWallNode" + Util::toStringInt(wallID));
+        Entity* topWallEntity = topWall->getCreator()->createEntity("topWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        topWall->attachObject(topWallEntity);
+        move = Vector3(0, width / 2, 0);
+        topWall->translate(move);
+        topWall->roll(Degree(180));
+        topWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[NORTHEAST]) {
+        topRightWall = entireWall->createChildSceneNode("topRightWallNode" + Util::toStringInt(wallID));
+        Entity* topRightWallEntity = topRightWall->getCreator()->createEntity("topRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        topRightWall->attachObject(topRightWallEntity);
+        move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
+        topRightWall->translate(move);
+        topRightWall->roll(Degree(135));
+        topRightWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[EAST]) {
+        rightWall = entireWall->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
+        Entity* rightWallEntity = rightWall->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        rightWall->attachObject(rightWallEntity);
+        move = Vector3(width / 2, 0, 0);
+        rightWall->translate(move);
+        rightWall->roll(Degree(90));
+        rightWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[SOUTHEAST]) {
+        bottomRightWall = entireWall->createChildSceneNode("bottomRightWallNode" + Util::toStringInt(wallID));
+        Entity* bottomRightWallEntity = bottomRightWall->getCreator()->createEntity("bottomRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        bottomRightWall->attachObject(bottomRightWallEntity);
+        move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
+        bottomRightWall->translate(move);
+        bottomRightWall->roll(Degree(45));
+        bottomRightWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[SOUTH]) {
+        bottomWall = entireWall->createChildSceneNode("bottomWallNode" + Util::toStringInt(wallID));
+        Entity* bottomWallEntity = bottomWall->getCreator()->createEntity("bottomWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        bottomWall->attachObject(bottomWallEntity);
+        move = Vector3(0, -width / 2, 0);
+        bottomWall->translate(move);
+        bottomWall->roll(Degree(0));
+        bottomWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[SOUTHWEST]) {
+        bottomLeftWall = entireWall->createChildSceneNode("bottomLeftWallNode" + Util::toStringInt(wallID));
+        Entity* bottomLeftWallEntity = bottomLeftWall->getCreator()->createEntity("bottomLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        bottomLeftWall->attachObject(bottomLeftWallEntity);
+        move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
+        bottomLeftWall->translate(move);
+        bottomLeftWall->roll(Degree(315));
+        bottomLeftWallEntity->setMaterialName(materialName);
+    }
+    
+    if (sidesUsed[WEST]) {
+        leftWall = entireWall->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
+        Entity* leftWallEntity = leftWall->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        leftWall->attachObject(leftWallEntity);
+        move = Vector3(-width / 2, 0, 0);
+        leftWall->translate(move);
+        leftWall->roll(Degree(270));
+        leftWallEntity->setMaterialName(materialName);
+    }
+    
     entireWall->setPosition(center);
     entireWall->setOrientation(rot);
 
@@ -197,14 +221,16 @@ PodInfo TunnelSlice::getPodInfo() const
     return podInfo;
 }
 
-bool TunnelSlice::isPodTaken() const
-{
-    return podTaken;
-}
-
 bool TunnelSlice::isInfoStored() const
 {
     return infoStored;
+}
+
+bool TunnelSlice::hasAvailableSide(Direction side) const
+{
+    if (side == NO_DIRECTION)
+        return false;
+    return sidesUsed[side];
 }
 
 std::vector<Pod*> TunnelSlice::findCollisions(SceneNode* ent) const
@@ -284,11 +310,6 @@ void TunnelSlice::setPodInfo(const PodInfo & value)
     podInfo = value;
 }
 
-void TunnelSlice::setPodTaken(bool value)
-{
-    podTaken = value;
-}
-
 void TunnelSlice::setInfoStored(bool value)
 {
     infoStored = value;
@@ -314,6 +335,8 @@ void TunnelSlice::move(Vector3 delta)
 	//bottomWall->translate(delta);
 	//bottomLeftWall->translate(delta);
 	//leftWall->translate(delta);
+    if (entireIntermediate)
+        entireIntermediate->translate(delta);
     
 	for (int i = 0; i < pods.size(); ++i)
 		pods[i]->move(delta);
@@ -336,15 +359,96 @@ void TunnelSlice::addPod(Direction loc, PodType type)
 	pods.push_back(new Pod(base, head, type, STEM_RADIUS, HEAD_RADIUS));
 }
 
+void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+{
+    std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
+    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(meshName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    Vector3 n = (p2 - p1).crossProduct(p4 - p1).normalisedCopy();
+    
+    manual->position(p1);
+    manual->normal(n);
+    manual->textureCoord(1, 1);
+    manual->position(p2);
+    manual->normal(n);
+    manual->textureCoord(1, 0);
+    manual->position(p3);
+    manual->normal(n);
+    manual->textureCoord(0, 0);
+    manual->position(p4);
+    manual->normal(n);
+    manual->textureCoord(0, 1);
+    manual->quad(0, 1, 2, 3);
+    
+    manual->end();
+    MeshPtr mesh = manual->convertToMesh(meshName);
+    
+    Vector3 bl = p1;
+    Vector3 tr = p1;
+    bl = Vector3(min(bl.x, p2.x), min(bl.y, p2.y), min(bl.z, p2.z));
+    bl = Vector3(min(bl.x, p3.x), min(bl.y, p3.y), min(bl.z, p3.z));
+    bl = Vector3(min(bl.x, p4.x), min(bl.y, p4.y), min(bl.z, p4.z));
+    tr = Vector3(max(tr.x, p2.x), max(tr.y, p2.y), max(tr.z, p2.z));
+    tr = Vector3(max(tr.x, p3.x), max(tr.y, p3.y), max(tr.z, p3.z));
+    tr = Vector3(max(tr.x, p4.x), max(tr.y, p4.y), max(tr.z, p4.z));
+    mesh->_setBounds( AxisAlignedBox( bl, tr ), true );
+    
+    double l1 = (p3 - p1).length();// / 2;
+    double l2 = (p4 - p2).length();// / 2;
+    mesh->_setBoundingSphereRadius(l1 > l2 ? l1 : l2);
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+    
+    SceneNode* target = entire->createChildSceneNode("intermediateSegmentSubNode" + Util::toStringInt(intermediateMeshID));
+    
+    Entity* intermediateSegmentEntity = entireIntermediate->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
+    intermediateSegmentEntity->setMaterialName("General/WallMetal");
+    
+    switch (dir)
+    {
+        case NORTHWEST:
+            topLeftIntermediate = target;
+            break;
+        case NORTH:
+            topIntermediate = target;
+            break;
+        case NORTHEAST:
+            topRightIntermediate = target;
+            break;
+        case EAST:
+            rightIntermediate = target;
+            break;
+        case SOUTHEAST:
+            bottomRightIntermediate = target;
+            break;
+        case SOUTH:
+            bottomIntermediate = target;
+            break;
+        case SOUTHWEST:
+            bottomLeftIntermediate = target;
+            break;
+        case WEST:
+            leftIntermediate = target;
+            break;
+        default:
+            break;
+    }
+    
+    target->attachObject(intermediateSegmentEntity);
+    
+    intermediateMeshID++;
+}
+
 void TunnelSlice::connect(TunnelSlice* next)
 {
 	double wallLength1 = getWallLength();
 	double wallLength2 = next->getWallLength();
     
-    std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
-    
-    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(meshName);
-    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    entireIntermediate = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
     
     Quaternion q1 = getQuaternion();
     Quaternion q2 = next->getQuaternion();
@@ -357,7 +461,6 @@ void TunnelSlice::connect(TunnelSlice* next)
     Vector3 p2;
     Vector3 p3;
     Vector3 p4;
-    Vector3 n;
     
     move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, 0);
     move = q1 * move;
@@ -371,20 +474,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 / 2, wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(0, 1, 2, 3);
+    if (sidesUsed[NORTHWEST])
+        setIntermediateWall(entireIntermediate, NORTHWEST, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -394,20 +485,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 / 2, wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(4, 5, 6, 7);
+    if (sidesUsed[NORTH])
+        setIntermediateWall(entireIntermediate, NORTH, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -417,20 +496,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(8, 9, 10, 11);
+    if (sidesUsed[NORTHEAST])
+        setIntermediateWall(entireIntermediate, NORTHEAST, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -440,20 +507,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(12, 13, 14, 15);
+    if (sidesUsed[EAST])
+        setIntermediateWall(entireIntermediate, EAST, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -463,20 +518,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 / 2, -wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(16, 17, 18, 19);
+    if (sidesUsed[SOUTHEAST])
+        setIntermediateWall(entireIntermediate, SOUTHEAST, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -486,20 +529,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 / 2, -wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(20, 21, 22, 23);
+    if (sidesUsed[SOUTH])
+        setIntermediateWall(entireIntermediate, SOUTH, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -509,20 +540,8 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(24, 25, 26, 27);
+    if (sidesUsed[SOUTHWEST])
+        setIntermediateWall(entireIntermediate, SOUTHWEST, p1, p2, p3, p4);
     
     p1 = p4;
     p2 = p3;
@@ -532,54 +551,42 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength2 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    n = (p2 - p1).crossProduct(p3 - p1).normalisedCopy();
-    manual->position(p1);
-    manual->normal(n);
-    manual->textureCoord(0, 0);
-    manual->position(p2);
-    manual->normal(n);
-    manual->textureCoord(0, 1);
-    manual->position(p3);
-    manual->normal(n);
-    manual->textureCoord(1, 1);
-    manual->position(p4);
-    manual->normal(n);
-    manual->textureCoord(1, 0);
-    manual->quad(28, 29, 30, 31);
-    
-    manual->end();
-    
-    MeshPtr mesh = manual->convertToMesh(meshName);
-    /*
-    Vector3 bl = Vector3(-length / 2, 0, -depth / 2);
-    Vector3 tr = Vector3(length / 2, 0, depth / 2);
-    mesh->_setBounds( AxisAlignedBox( bl, tr ), true );
-    
-    mesh->_setBoundingSphereRadius(length > depth ? length : depth);
-    */
-    unsigned short src, dest;
-    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
-    {
-        mesh->buildTangentVectors(VES_TANGENT, src, dest);
-    }
-    
-    intermediateSegment = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
-    
-    Entity* intermediateSegmentEntity = intermediateSegment->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
-    intermediateSegmentEntity->setMaterialName("General/WallGlass");
-    intermediateSegment->attachObject(intermediateSegmentEntity);
-    
-    intermediateMeshID++;
+    if (sidesUsed[WEST])
+        setIntermediateWall(entireIntermediate, WEST, p1, p2, p3, p4);    
 }
 
 void TunnelSlice::disconnect()
 {
-    if (!intermediateSegment)
+    if (!entireIntermediate)
         return;
-    intermediateSegment->getCreator()->destroyMovableObject(intermediateSegment->getAttachedObject(0)); // Assuming only one entity
-    intermediateSegment->removeAndDestroyAllChildren();
-    intermediateSegment->getCreator()->destroySceneNode(intermediateSegment);
-    intermediateSegment = NULL;
+    
+    if (topLeftIntermediate)
+        topLeftIntermediate->getCreator()->destroyMovableObject(topLeftIntermediate->getAttachedObject(0)); // Assuming only one entity
+    if (topIntermediate)
+        topIntermediate->getCreator()->destroyMovableObject(topIntermediate->getAttachedObject(0));
+    if (topRightIntermediate)
+        topRightIntermediate->getCreator()->destroyMovableObject(topRightIntermediate->getAttachedObject(0));
+    if (rightIntermediate)
+        rightIntermediate->getCreator()->destroyMovableObject(rightIntermediate->getAttachedObject(0));
+    if (bottomRightIntermediate)
+        bottomRightIntermediate->getCreator()->destroyMovableObject(bottomRightIntermediate->getAttachedObject(0));
+    if (bottomIntermediate)
+        bottomIntermediate->getCreator()->destroyMovableObject(bottomIntermediate->getAttachedObject(0));
+    if (bottomLeftIntermediate)
+        bottomLeftIntermediate->getCreator()->destroyMovableObject(bottomLeftIntermediate->getAttachedObject(0));
+    if (leftIntermediate)
+        leftIntermediate->getCreator()->destroyMovableObject(leftIntermediate->getAttachedObject(0));
+    entireIntermediate->removeAndDestroyAllChildren();
+    entireIntermediate->getCreator()->destroySceneNode(entireIntermediate);
+    entireIntermediate = NULL;
+    topLeftIntermediate = NULL;
+    topIntermediate = NULL;
+    topRightIntermediate = NULL;
+    rightIntermediate = NULL;
+    bottomRightIntermediate = NULL;
+    bottomIntermediate = NULL;
+    bottomLeftIntermediate = NULL;
+    leftIntermediate = NULL;
 }
 
 void TunnelSlice::clearPods()
@@ -607,26 +614,32 @@ void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, do
     this->rot = rot;
     this->width = width;
     this->depth = depth;
-    //clearPods(scene);
     growthT = 0;
     prerangeT = 0;
-    podTaken = false;
     infoStored = false;
     
-    removeFromScene();
+    removeFromScene(); //also clears pods and disconnects
     initWalls();
 }
 
 void TunnelSlice::removeFromScene()
 {
-    topLeftWall->getCreator()->destroyMovableObject(topLeftWall->getAttachedObject(0)); // Assuming only one entity
-    topWall->getCreator()->destroyMovableObject(topWall->getAttachedObject(0));
-    topRightWall->getCreator()->destroyMovableObject(topRightWall->getAttachedObject(0));
-    rightWall->getCreator()->destroyMovableObject(rightWall->getAttachedObject(0));
-    bottomRightWall->getCreator()->destroyMovableObject(bottomRightWall->getAttachedObject(0));
-    bottomWall->getCreator()->destroyMovableObject(bottomWall->getAttachedObject(0));
-    bottomLeftWall->getCreator()->destroyMovableObject(bottomLeftWall->getAttachedObject(0));
-    leftWall->getCreator()->destroyMovableObject(leftWall->getAttachedObject(0));
+    if (topLeftWall)
+        topLeftWall->getCreator()->destroyMovableObject(topLeftWall->getAttachedObject(0)); // Assuming only one entity
+    if (topWall)
+        topWall->getCreator()->destroyMovableObject(topWall->getAttachedObject(0));
+    if (topRightWall)
+        topRightWall->getCreator()->destroyMovableObject(topRightWall->getAttachedObject(0));
+    if (rightWall)
+        rightWall->getCreator()->destroyMovableObject(rightWall->getAttachedObject(0));
+    if (bottomRightWall)
+        bottomRightWall->getCreator()->destroyMovableObject(bottomRightWall->getAttachedObject(0));
+    if (bottomWall)
+        bottomWall->getCreator()->destroyMovableObject(bottomWall->getAttachedObject(0));
+    if (bottomLeftWall)
+        bottomLeftWall->getCreator()->destroyMovableObject(bottomLeftWall->getAttachedObject(0));
+    if (leftWall)
+        leftWall->getCreator()->destroyMovableObject(leftWall->getAttachedObject(0));
     
     entireWall->removeAndDestroyAllChildren();
     entireWall->getCreator()->destroySceneNode(entireWall);
@@ -645,7 +658,6 @@ void TunnelSlice::removeFromScene()
 	bottomLeftWall = NULL;
 	leftWall = NULL;
     entireWall = NULL;
-    intermediateSegment = NULL;
 	for (int i = 0; i < pods.size(); ++i)
         delete pods[i];
 	pods.clear();
