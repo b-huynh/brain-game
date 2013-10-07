@@ -1,6 +1,5 @@
 //
 //  Player.cpp
-//  Testing
 //
 //  Created by Calvin Phung on 9/13/13.
 //
@@ -13,25 +12,12 @@
 using namespace std;
 
 Player::Player()
-: seed(0), name(""), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), dir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+: seed(0), name(""), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {}
 
-Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), dir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, unsigned seed, const std::string & filename)
+: seed(seed), name(name), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {
-    /*
-    light = new SceneLight(SceneLight::AREA_LIGHT, scene, 5);
-    light->setPosition( camPos + getCamForward() * 5 );
-    scene->addLight(light);
-    
-    light2 = new SceneLight(SceneLight::AREA_LIGHT, scene, 3);
-    light2->setPosition( camPos + getCamForward() * 10 );
-    scene->addLight(light2);
-    
-    light3 = new SceneLight(SceneLight::AREA_LIGHT, scene, 2);
-    light3->setPosition( camPos + getCamForward() * 15 );
-    scene->addLight(light3);
-     */
 }
 
 unsigned Player::getSeed() const
@@ -54,9 +40,14 @@ double Player::getScore() const
 	return score;
 }
 
-Direction Player::getDir() const
+Direction Player::getCamDir() const
 {
-	return dir;
+	return camDir;
+}
+
+Direction Player::getVineDir() const
+{
+	return vineDir;
 }
 
 bool Player::getMouseLeft() const
@@ -129,11 +120,11 @@ int Player::getDesireRoll() const
     return desireRoll;
 }
 
-//http://nic-gamedev.blogspot.com/2011/11/quaternion-math-getting-local-axis.html
-//link is the second method and is supposedly faster.
-Vector3 Player::getCamForward() const
+// http://nic-gamedev.blogspot.com/2011/11/quaternion-math-getting-local-axis.html
+// link is the second method and is supposedly faster.
+Vector3 Player::getCamForward(bool combined) const
 {
-    Quaternion rot = getCombinedRotAndRoll();
+    Quaternion rot = combined ? getCombinedRotAndRoll() : camRot;
     Quaternion forward = Quaternion(0, 0, 0, -1);
     forward = rot * forward * rot.Inverse();
     return Vector3(forward.x, forward.y, forward.z);
@@ -141,9 +132,9 @@ Vector3 Player::getCamForward() const
     //               -2 * (camRot.y * camRot.x - camRot.w * camRot.x),
     //               -1 + 2 * (camRot.x * camRot.x + camRot.y * camRot.y));
 }
-Vector3 Player::getCamUpward() const
+Vector3 Player::getCamUpward(bool combined) const
 {
-    Quaternion rot = getCombinedRotAndRoll();
+    Quaternion rot = combined ? getCombinedRotAndRoll() : camRot;
     Quaternion upward = Quaternion(0, 0, 1, 0);
     upward = rot * upward * rot.Inverse();
     return Vector3(upward.x, upward.y, upward.z);
@@ -151,9 +142,9 @@ Vector3 Player::getCamUpward() const
     //               1 - 2 * (camRot.x * camRot.x + camRot.z * camRot.z),
     //               2 * (camRot.y * camRot.z + camRot.w * camRot.x));
 }
-Vector3 Player::getCamRight() const
+Vector3 Player::getCamRight(bool combined) const
 {
-    Quaternion rot = getCombinedRotAndRoll();
+    Quaternion rot = combined ? getCombinedRotAndRoll() : camRot;
     Quaternion right = Quaternion(0, 1, 0, 0);
     right = rot * right * rot.Inverse();
     return Vector3(right.x, right.y, right.z);
@@ -167,9 +158,14 @@ int Player::getCamSpeed() const
     return camSpeed;
 }
 
-Vector3 Player::getVineOffset()
+Vector3 Player::getVineOffset() const
 {
 	return getCamForward() * vineOffset;
+}
+
+PlayerLevel Player::getLevel() const
+{
+    return level;
 }
 
 double Player::getTotalElapsed() const
@@ -222,9 +218,20 @@ void Player::setKeyRight(bool value)
 	keyRight = value;
 }
 
-void Player::setDir(Direction value)
+void Player::setCamDir(Direction value)
 {
-	dir = value;
+	vineDir = value;
+}
+
+void Player::setVineDir(Direction value)
+{
+	vineDir = value;
+}
+
+void Player::setVineDirRequest(Direction value, Tunnel* tunnel)
+{
+    if (tunnel->hasAvailableSide(value))
+        vineDir = value;
 }
 
 void Player::setMousePos(Vector2 value)
@@ -283,11 +290,13 @@ void Player::newTunnel(Tunnel* tunnel)
     vineSlice = NULL;
     vineT = 0.0;
     double tLeft;
+    
+    
     for (int i = 0; i < vines.size(); ++i)
     {
         TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
         if (closest) {
-            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), dir);
+            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), vineDir);
             vines[i]->setDest(targetPos);
             vines[i]->setPos(targetPos);
         }
@@ -297,11 +306,6 @@ void Player::newTunnel(Tunnel* tunnel)
 void Player::move(Vector3 delta)
 {
 	camPos += delta;
-    /*
-    light->setPosition( camPos + getCamForward() * 3 );
-    light2->setPosition( camPos + getCamForward() * 5 );
-    light3->setPosition( camPos + getCamForward() * 10 );
-     */
     // vines move independently and have their own destination
 }
 
@@ -329,12 +333,15 @@ void Player::checkCollisions(Tunnel *tunnel)
 		for (int j = 0; j < collided.size() && !collided[j]->isPodTaken(); ++j)
 		{
             collided[j]->takePod();
-            closest->setPodTaken(true);
+            
+            PodInfo info = closest->getPodInfo();
+            info.podTaken = true;
+            closest->setPodInfo(info);
             break;
 		}
 	}
 }
-static Vector3 test;
+
 void Player::update(double elapsed, Tunnel *tunnel)
 {
     totalElapsed += elapsed;
@@ -344,30 +351,18 @@ void Player::update(double elapsed, Tunnel *tunnel)
     
     if (tunnel->isDone())
         moveSpeed = Util::MAX_CAM_SPEED * 2;
-    /*
-     if (tunnel->isDone())
-     moveSpeed *= 2.5;
-     else
-     {
-     if (keyUp)
-     moveSpeed *= 2;
-     if (keyDown)
-     moveSpeed /= 2;
-     }
-     */
-    
-    if (!tunnel->isDone()) {
+    else {
         //hp -= DRAIN_SPEED * moveSpeed * elapsed;
         score += tunnel->getNBack() * moveSpeed * elapsed;
     }
     
     for (int i = 0; i < vines.size(); ++i)
     {
-        // Hardcode the vine where to go
-        if (keyLeft)
-            setDir(WEST);
-        else
-            setDir(SOUTH);
+        //// Hardcode the vine where to go
+        //if (keyLeft)
+        //    setDir(WEST);
+        //else
+        //    setDir(SOUTH);
         
         // Determine which tunnel segment and corner each vine should be
         // in. This is done by calculating a t from 0 to 1
@@ -377,25 +372,21 @@ void Player::update(double elapsed, Tunnel *tunnel)
             Vector3 targetPos;
             if (tLeft >= 0.0) {
                 vineSlice = closest;
-                targetPos = closest->getCenter(tLeft) + closest->requestMove(dir);
+                targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir);
             } else {
                 if (vineSlice) {
                     if (closest->getPrerangeT() == 0.0)
                         closest->setPrerangeT(tLeft);
-                    Vector3 p1 = vineSlice->getEnd() + vineSlice->requestMove(dir);
-                    Vector3 p2 = closest->getStart() + closest->requestMove(dir);
+                    Vector3 p1 = vineSlice->getEnd() + vineSlice->requestMove(vineDir);
+                    Vector3 p2 = closest->getStart() + closest->requestMove(vineDir);
                     
-                    targetPos = p1 + (p2 - p1) * (1 + tLeft);
-//                    targetPos = p1 + (p2 - p1) * ((closest->getPrerangeT() - tLeft) / closest->getPrerangeT());
+                    targetPos = p1 + (p2 - p1) * (1.0 + tLeft);
+                    //targetPos = p1 + (p2 - p1) * ((closest->getPrerangeT() - tLeft) / closest->getPrerangeT());
                     
                 } else {
-                    targetPos = closest->getCenter(tLeft) + closest->requestMove(dir);
+                    targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir);
                 }
             }
-//            printf("%f (%f, %f, %f)\n", tLeft, (targetPos - test).x, (targetPos - test).y, (targetPos - test).z);
-//            printf("%f (%f, %f, %f)\n", tLeft, targetPos.x, targetPos.y, targetPos.z);
-
-            test = targetPos;
             vines[i]->setDest(targetPos);
             //vines[i]->setPos(targetPos);
             vines[i]->setForward(closest->getForward());
@@ -405,31 +396,26 @@ void Player::update(double elapsed, Tunnel *tunnel)
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
             double t = closest->getT(vines[i]->getPos() - closest->getForward() * vines[i]->getRadius());
             
+            // If player vine is halfway through a segment with a pod, we can get results
             if (t > 0.5) {
                 // This code block is to record data of the pods
                 Result result;
                 result.timestamp = (int)(totalElapsed * 1000);
                 result.sectionInfo = closest->getSectionInfo();
                 result.podInfo = closest->getPodInfo();
-                result.playerTookPod = closest->isPodTaken();
-                
-                //PodType NBack = tunnel->getNBackTest(tunnel->getPodIndex());
                 result.nback = tunnel->getNBack();
-                //result.goodPod = NBack != POD_NONE;
-                result.goodPod = result.podInfo.good;
-                
                 results.push_back(result);
                 
                 // Determine whether the player got it right or not
-                if (result.goodPod && result.playerTookPod) {
+                if (result.podInfo.goodPod && result.podInfo.podTaken) {
                     if (hp < 0)
                         hp = 0;
                     hp++;
                     if (hp > Util::HP_POSITIVE_LIMIT)
                         hp = Util::HP_POSITIVE_LIMIT;
                 }
-                else if ((result.goodPod && !result.playerTookPod) ||
-                         (!result.goodPod && result.playerTookPod)) {
+                else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
+                         (!result.podInfo.goodPod && result.podInfo.podTaken)) {
                     if (hp > 0)
                         hp = 0;
                     hp--;
@@ -448,8 +434,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
     if (next)
     {
         Vector3 endOfSlice = next->getEnd();
-        Vector3 dir = endOfSlice - camPos;
-        dir.normalise();
+        Vector3 dir = (endOfSlice - camPos).normalisedCopy();
         Vector3 delta = dir * (moveSpeed * elapsed);
         move(delta);
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
@@ -468,6 +453,30 @@ void Player::update(double elapsed, Tunnel *tunnel)
 		vines[i]->update(elapsed);
     }
     
+}
+
+void Player::evaluatePlayerLevel(bool pass)
+{
+    if (pass) {
+        ++level.control;
+        if (level.control > 4)
+        {
+            level.control = 1;
+            ++level.nback;
+        }
+    } else {
+        --level.control;
+        if (level.control <= 0)
+        {
+            if (level.nback != 0)
+                level.control = 4;
+            else
+                level.control = 1;
+            
+            if (level.nback > 0)
+                --level.nback;
+        }
+    }
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -493,8 +502,8 @@ bool Player::saveProgress(std::string file)
             out << SOUTH << " "
             << results[i].podInfo.podType << " "
             << results[i].nback << " "
-            << results[i].goodPod << " "
-            << results[i].playerTookPod << " "
+            << results[i].podInfo.goodPod << " "
+            << results[i].podInfo.podTaken << " "
             << results[i].timestamp << endl;
         }
         out.close();

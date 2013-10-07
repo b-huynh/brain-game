@@ -102,7 +102,7 @@ static id mAppDelegate;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)application {
     mFrameInterval = 1;
-    mDeltaTime = 1.0f / 60.0f;
+    mDeltaTime = 1.0f / 30.0f;
     mTimer = nil;
     
     [self go];

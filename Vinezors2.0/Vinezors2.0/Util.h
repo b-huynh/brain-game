@@ -18,6 +18,7 @@
 #include <string>
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
+#define NUM_DIRECTIONS 8
 
 namespace Util
 {
@@ -57,11 +58,24 @@ namespace Util
     static const double HP_BAR_WIDTH = 0.9;
     static const double HP_BAR_HEIGHT = 0.05;
     
+    static const int SCREEN_WIDTH = 800;
+    static const int SCREEN_HEIGHT = 578;
+    static const int LABEL1_POSX = 10;
+    static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
+    static const int LABEL2_POSX = 10;
+    static const int LABEL2_POSY = SCREEN_HEIGHT - 100;
+    static const int LABEL3_POSX = SCREEN_WIDTH - 275;
+    static const int LABEL3_POSY = SCREEN_HEIGHT - 50;
+    static const int LABEL4_POSX = SCREEN_WIDTH - 275;
+    static const int LABEL4_POSY = SCREEN_HEIGHT - 100;
     
+    int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
     Direction oppositeOf(Direction dir);
+    void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
     Direction randDirection();
+    Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     
     int randRangeInt(int min, int max);
     double randRangeDouble(double min, double max);

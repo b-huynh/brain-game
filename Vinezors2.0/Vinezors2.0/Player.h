@@ -17,6 +17,14 @@
 #include "Vine.h"
 #include "Tunnel.h"
 
+struct PlayerLevel
+{
+    int nback;
+    int control;
+    
+    PlayerLevel() : nback(Util::NBACK), control(1) {}
+};
+
 class Player
 {
 private:
@@ -33,7 +41,8 @@ private:
 	
     std::vector<Vine*> vines;
     
-	Direction dir; // offset  on tunnel for vine
+	Direction camDir; // direction offset on tunnel for player camera
+	Direction vineDir; // direction offset on tunnel for vine
 	Vector2 mousePos;
     Vector3 oldPos;
 	Vector3 camPos;
@@ -46,17 +55,12 @@ private:
     int camSpeed;
 	double vineOffset; // offset to camPos in direction of forward
     
-    SceneNode* light;
-    SceneNode* light2;
-    SceneNode* light3;
-    
+    PlayerLevel level;
     struct Result {
         int timestamp;
         SectionInfo sectionInfo;
         PodInfo podInfo;
-        bool playerTookPod;
         int nback;
-        bool goodPod;
     };
     std::vector<Result> results;
     
@@ -66,7 +70,7 @@ private:
 public:
     
 	Player();
-	Player(const std::string & name, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, unsigned seed, const std::string & filename);
+	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -77,7 +81,8 @@ public:
 	bool getKeyDown() const;
 	bool getKeyLeft() const;
 	bool getKeyRight() const;
-	Direction getDir() const;
+	Direction getCamDir() const;
+	Direction getVineDir() const;
 	Vector2 getMousePos() const;
 	Vector3 getOldPos() const;
 	Vector3 getCamPos() const;
@@ -88,7 +93,8 @@ public:
 	Quaternion getDesireRot() const;
 	int getDesireRoll() const;
 	int getCamSpeed() const;
-	Vector3 getVineOffset();
+	Vector3 getVineOffset() const;
+    PlayerLevel getLevel() const;
 	double getTotalElapsed() const;
     
     void setSeed(unsigned value);
@@ -101,7 +107,9 @@ public:
 	void setKeyLeft(bool value);
 	void setKeyRight(bool value);
 	
-	void setDir(Direction value);
+	void setCamDir(Direction value);
+	void setVineDir(Direction value);
+	void setVineDirRequest(Direction value, Tunnel* tunnel);
 	void setMousePos(Vector2 value);
 	void setOldPos(Vector3 value);
 	void setCamPos(Vector3 value);
@@ -112,9 +120,9 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(int value);
-	Vector3 getCamForward() const;
-	Vector3 getCamUpward() const;
-	Vector3 getCamRight() const;
+	Vector3 getCamForward(bool combined = true) const;
+	Vector3 getCamUpward(bool combined = true) const;
+	Vector3 getCamRight(bool combined = true) const;
     Quaternion getCombinedRotAndRoll() const;
     
     void newTunnel(Tunnel* tunnel);
@@ -125,7 +133,7 @@ public:
     
 	void update(double elapsed, Tunnel* tunnel);
     
-    void reportResult() const;
+    void evaluatePlayerLevel(bool pass);
     bool saveProgress(std::string file);
     
     ~Player();

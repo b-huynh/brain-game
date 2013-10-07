@@ -13,6 +13,32 @@
 #include <sstream>
 #include <iomanip>
 
+// Returns the degrees from 0-359 for a direction where SOUTH is 0
+int Util::getDegrees(Direction dir)
+{
+	switch (dir)
+	{
+        case NORTHWEST:
+            return 225;
+        case NORTH:
+            return 180;
+        case NORTHEAST:
+            return 135;
+        case EAST:
+            return 90;
+        case SOUTHEAST:
+            return 45;
+        case SOUTH:
+            return 0;
+        case SOUTHWEST:
+            return 270;
+        case WEST:
+            return 315;
+        default:
+            return 0;
+	}
+}
+
 Direction Util::leftOf(Direction dir)
 {
 	switch (dir)
@@ -88,17 +114,71 @@ Direction Util::oppositeOf(Direction dir)
 	}
 }
 
+void Util::setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir)
+{
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sides[i] = false;
+    switch (level)
+    {
+        case 1:
+            sides[leftOf(dir)] = true;
+            sides[dir] = true;
+            sides[rightOf(dir)] = true;
+            break;
+        case 2:
+            sides[leftOf(leftOf(dir))] = true;
+            sides[leftOf(dir)] = true;
+            sides[dir] = true;
+            sides[rightOf(dir)] = true;
+            sides[rightOf(rightOf(dir))] = true;
+            break;
+        case 3:
+            sides[leftOf(leftOf(leftOf(dir)))] = true;
+            sides[leftOf(leftOf(dir))] = true;
+            sides[leftOf(dir)] = true;
+            sides[dir] = true;
+            sides[rightOf(dir)] = true;
+            sides[rightOf(rightOf(dir))] = true;
+            sides[rightOf(rightOf(rightOf(dir)))] = true;
+            break;
+        default:
+            sides[NORTHWEST] = true;
+            sides[WEST] = true;
+            sides[SOUTHWEST] = true;
+            sides[SOUTH] = true;
+            sides[SOUTHEAST] = true;
+            sides[EAST] = true;
+            sides[NORTHEAST] = true;
+            sides[NORTH] = true;
+            break;
+    }
+    
+}
+
 Direction Util::randDirection()
 {
-    std::vector<Direction> dirs(8);
-	dirs[0] = NORTHWEST;
-	dirs[1] = NORTH;
-	dirs[2] = NORTHEAST;
-	dirs[3] = EAST;
-	dirs[4] = SOUTHEAST;
-	dirs[5] = SOUTH;
-	dirs[6] = SOUTHWEST;
-	dirs[7] = WEST;
+    return (Direction)(rand() % NUM_DIRECTIONS);
+}
+
+Direction Util::randDirection(const bool sides[NUM_DIRECTIONS])
+{
+    std::vector<Direction> dirs;
+    if (sides[NORTHWEST])
+        dirs.push_back(NORTHWEST);
+    if (sides[NORTH])
+        dirs.push_back(NORTH);
+    if (sides[NORTHEAST])
+        dirs.push_back(NORTHEAST);
+    if (sides[EAST])
+        dirs.push_back(EAST);
+    if (sides[SOUTHEAST])
+        dirs.push_back(SOUTHEAST);
+    if (sides[SOUTH])
+        dirs.push_back(SOUTH);
+    if (sides[SOUTHWEST])
+        dirs.push_back(SOUTHWEST);
+    if (sides[WEST])
+        dirs.push_back(WEST);
     
     int randDirIndex = rand() % dirs.size();
     
@@ -308,26 +388,30 @@ void Util::createPlane(const std::string& strName, const float length, const flo
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
     manual->position(-length / 2, 0, -depth / 2);
-    manual->normal(0, 0, 1);
+    manual->normal(0, 1, 0);
     manual->textureCoord(0, 0);
     manual->position(length / 2, 0, -depth / 2);
-    manual->normal(0, 0, 1);
+    manual->normal(0, 1, 0);
     manual->textureCoord(1, 0);
     manual->position(length / 2, 0, depth / 2);
-    manual->normal(0, 0, 1);
+    manual->normal(0, 1, 0);
     manual->textureCoord(1, 1);
     manual->position(-length / 2, 0, depth / 2);
-    manual->normal(0, 0, 1);
+    manual->normal(0, 1, 0);
     manual->textureCoord(0, 1);
     manual->quad(3, 2, 1, 0);
     manual->end();
     
     MeshPtr mesh = manual->convertToMesh(strName);
-    Vector3 bl = Vector3(-length / 2, 0, -depth / 2);
-    Vector3 tr = Vector3(length / 2, 0, depth / 2);
+    double len = length / 2;
+    double dep = depth / 2;
+    double diag1 = (Vector3(length, 0, depth) - Vector3(-length, 0, -depth)).length() / 2;
+    double diag2 = (Vector3(length, 0, -depth) - Vector3(-length, 0, depth)).length() / 2;
+    Vector3 bl = Vector3(-len, 0, -dep);
+    Vector3 tr = Vector3(len, 0, dep);
     mesh->_setBounds( AxisAlignedBox( bl, tr ), true );
     
-    mesh->_setBoundingSphereRadius(length > depth ? length : depth);
+    mesh->_setBoundingSphereRadius(diag1 > diag2 ? diag1 : diag2);
     unsigned short src, dest;
     if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
     {

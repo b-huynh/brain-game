@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 Player::Player()
-: seed(), name(""), numCorrect(0), totalProblems(0), level(1), numConsecutiveSuccess(0)
+: seed(), name(""), score(0), numCorrect(0), totalProblems(0), level(1), numConsecutiveSuccess(0)
 {}
 
 void Player::reset() {
@@ -17,6 +17,14 @@ void Player::resetLevel() {
     level = 1;
 }
 
+void Player::updateSuccess(double accuracy)
+{
+    if (accuracy == PLAYER_SUCCESS)
+        ++numConsecutiveSuccess;
+    else
+        numConsecutiveSuccess = 0;
+}
+
 void Player::updateLevel(double accuracy)
 {
     PlayerResult levelResults;
@@ -26,16 +34,14 @@ void Player::updateLevel(double accuracy)
     levelResults.accuracy = accuracy;
     progression.push_back(levelResults);
 
-    if (accuracy == PLAYER_SUCCESS)
-        ++numConsecutiveSuccess;
-    else if (accuracy == PLAYER_FAILURE) {
-        numConsecutiveSuccess = 0;
+    if (accuracy == PLAYER_FAILURE) {
         if (level > 1) --level;
     }
-    
-    if (numConsecutiveSuccess >= levelUpCeiling) {
-        numConsecutiveSuccess = 0;
-        ++level;
+    else {
+        if (numConsecutiveSuccess >= levelUpCeiling) {
+            numConsecutiveSuccess = 0;
+            ++level;
+        }
     }
 }
 

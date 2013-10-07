@@ -115,14 +115,30 @@ material General/WallGlass
 material General/WallMetal
 {
     technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture craze.png
+			}
+		}
+	}
+}
+
+material General/WallMetal2
+{
+    technique
     {
         pass
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.9 0.9 0.9 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }
@@ -150,9 +166,9 @@ material General/PodUnknown
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }
@@ -225,9 +241,9 @@ material General/PodStem
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 1.0 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }
@@ -258,9 +274,9 @@ material General/VineTip
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 0.7 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.3 0.3 0.3 1
+            diffuse 0.7 0.7 0.7 1
+            emissive 0.3 0.3 0.3 1
         }
     }
 }

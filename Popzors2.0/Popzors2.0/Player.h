@@ -27,6 +27,7 @@ public:
     int numCorrect;
     int totalProblems;
     
+    int score; 
     int level;
     int numConsecutiveSuccess;
     
@@ -37,7 +38,8 @@ public:
     void reset();
     void resetLevel();
     
-    //Update players level based on accu racy
+    //Update players level based on accuracy
+    void updateSuccess(double accuracy);
     void updateLevel(double accuracy);
     
     //Save/load progress from file

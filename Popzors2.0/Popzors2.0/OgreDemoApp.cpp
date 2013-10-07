@@ -4,8 +4,6 @@
 
 DemoApp::DemoApp()
 {
-	m_pCubeNode		= 0;
-	m_pCubeEntity   = 0;
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -166,9 +164,9 @@ void DemoApp::setupDemoScene()
     light1->setDiffuseColour(1.0, 1.0, 1.0);
     light1->setSpecularColour(1.0, 1.0, 1.0);
     light1->setAttenuation(600, 1.0, 0.007, 0.0002);
-    sunNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("sunNode");
-    sunNode->attachObject(light1);
-    sunNode->setPosition(0, 100, 0);
+    lightNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("lightNode");
+    lightNode->attachObject(light1);
+    lightNode->setPosition(0, 100, 0);
     
     totalElapsed = 0.0;
     
@@ -184,39 +182,6 @@ void DemoApp::setupDemoScene()
     pattern->setPattern();
     
     //soundPickUp = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPickUp", "floop.wav", false, false, true);
-    
-    // create a font resource
-    ResourcePtr resource = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    resource->setParameter("type","truetype");
-    resource->setParameter("source","C64_User_Mono_v1.0-STYLE.ttf");
-    resource->setParameter("size","16");
-    resource->setParameter("resolution","96");
-    resource->load();
-    
-    // Create a panel
-    OverlayContainer* panel = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "PanelName"));
-    panel->setMetricsMode(GMM_PIXELS);
-    panel->setPosition(10, 10);
-    panel->setDimensions(300, 120);
-    
-    // Create text area
-    TextAreaOverlayElement* textArea = static_cast<TextAreaOverlayElement*>(
-            OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaName"));
-    textArea->setMetricsMode(GMM_PIXELS);
-    textArea->setDimensions(300, 120);
-    textArea->setPosition(OgreFramework::getSingletonPtr()->m_pRenderWnd->getWidth() / 2 - 150,
-                          OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() / 2 - 60);
-    textArea->setCharHeight(26);
-    // set the font name to the font resource that you just created.
-    textArea->setFontName("Arial");
-    // say something
-    textArea->setCaption("");
-    
-    // Create an overlay, and add the panel
-    Overlay* overlay = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayName");
-    overlay->add2D(panel);
-    panel->addChild(textArea);
-    overlay->show();
 }
 
 void DemoApp::update(double elapsed)
