@@ -20,6 +20,7 @@ public:
     
 	static const int TYPE_POPPY = 0;
 	static const int TYPE_POT = 1;
+	static const int TYPE_GROUND = 2;
 
 	virtual int getType() const = 0;
 	virtual bool hasEntity(Entity* entity) = 0;

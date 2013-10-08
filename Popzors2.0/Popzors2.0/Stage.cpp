@@ -6,11 +6,23 @@
 // Simple inefficient algorithm that pushes poppies away from each other if they collide
 void Stage::handlePoppyCollisions(double elapsed)
 {
-    for (int i = 0; i < poppies.size(); ++i)
-        for (int j = i + 1; j < poppies.size(); ++j)
+    Ogre::IntersectionSceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createIntersectionQuery();
+    Ogre::IntersectionSceneQueryResult result = query->execute();
+    
+    Ogre::SceneQueryMovableIntersectionList::iterator it = result.movables2movables.begin();
+    for ( ; it != result.movables2movables.end(); ++it)
+    {
+        
+        Selectable* obj1 = any_cast<Selectable*>(it->first->getUserAny());
+        Selectable* obj2 = any_cast<Selectable*>(it->second->getUserAny());
+        
+        if (obj1->getType() == Selectable::TYPE_POPPY && obj2->getType() == Selectable::TYPE_POPPY)
         {
-            //poppies[i]->handleCollision(elapsed, scene, poppies[j]);
+            std::cout << "COLLISION" << std::endl;
+            static_cast<Poppy*>(obj1)->handleCollision(elapsed, static_cast<Poppy*>(obj2));
         }
+         
+    }
 }
 
 void Stage::handlePotCollisions(double elapsed)
