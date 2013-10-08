@@ -2,12 +2,13 @@
 
 Ground::Ground(Vector3 pos, Ogre::ColourValue baseColor,
                Ogre::ColourValue blinkColor, double blinktime)
-    : Blinkable(baseColor, blinkColor, blinktime), pos(pos)
+    : Selectable(baseColor, blinkColor, blinktime), pos(pos)
 {
     Plane plane (Vector3::UNIT_Y, 0);
     OgreFramework::getSingletonPtr()->m_pMeshMgr->createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                                                              plane, 5, 5, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+                                                              plane, 12, 12, 20, 20, true, 1, 12, 12, Ogre::Vector3::UNIT_Z);
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("GroundEntity_" + toStringInt(sceneID), "ground");
+    body->setUserAny(Any((Selectable*)(this)));
     this->addToScene();
     this->setColor(baseColor);
     body->setMaterialName("General/PodYellow");

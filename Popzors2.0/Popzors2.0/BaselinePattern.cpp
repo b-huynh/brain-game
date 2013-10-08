@@ -17,13 +17,13 @@ void BaselinePattern::setup()
     stage->ground = new Ground(Vector3(0, 0, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
     
 	//Make some pots
-	Pot* pot1 = new Pot(Vector3(1.5, POT_HEIGHT / 2, 1.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
+	Pot* pot1 = new Pot(Vector3(2.5, POT_HEIGHT / 2, 2.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
     pot1->setId(0);
-    Pot* pot2 = new Pot(Vector3(1.5, POT_HEIGHT / 2, -1.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
+    Pot* pot2 = new Pot(Vector3(2.5, POT_HEIGHT / 2, -2.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
     pot2->setId(1);
-    Pot* pot3 = new Pot(Vector3(-1.5, POT_HEIGHT / 2, 1.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
+    Pot* pot3 = new Pot(Vector3(-2.5, POT_HEIGHT / 2, 2.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
     pot3->setId(2);
-    Pot* pot4 = new Pot(Vector3(-1.5, POT_HEIGHT / 2, -1.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
+    Pot* pot4 = new Pot(Vector3(-2.5, POT_HEIGHT / 2, -2.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
     pot4->setId(3);
 	
 	stage->pots.push_back(pot1);
@@ -221,22 +221,25 @@ void BaselinePattern::updateFeedback()
         }
         std::cout << "Is activating blink" << std::endl;
         stage->ground->activateBlink();
-        
-        double barWidth = Util::HP_BAR_WIDTH;
-        if (player->numConsecutiveSuccess > 0) {
-            barWidth *= player->numConsecutiveSuccess / (double)(player->levelUpCeiling);
-            
-            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
-            if (player->numConsecutiveSuccess >= Player::levelUpCeiling)
-                stage->barHP->setMaterialName("General/BaseBlue");
-            else
-                stage->barHP->setMaterialName("General/BaseGreen");
-        } else {
-            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
-            stage->barHP->setMaterialName("General/BaseRed");
-        }
-        stage->label2->setCaption("Score: " + toStringInt(player->score));
     }
+    
+    double barWidth = Util::HP_BAR_WIDTH;
+    if (player->numConsecutiveSuccess > 0) {
+        barWidth *= player->numConsecutiveSuccess / (double)(player->levelUpCeiling);
+        
+        stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        if (player->numConsecutiveSuccess >= Player::levelUpCeiling)
+            stage->barHP->setMaterialName("General/BaseBlue");
+        else
+            stage->barHP->setMaterialName("General/BaseGreen");
+    } else {
+        if (stage->ground->getBlinkColor() == FEEDBACK_COLOR_BAD)
+            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        else
+            stage->barHP->setDimensions(0.0, Util::HP_BAR_HEIGHT);
+        stage->barHP->setMaterialName("General/BaseRed");
+    }
+    stage->label2->setCaption("Score: " + toStringInt(player->score));
 }
 
 void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
@@ -375,6 +378,7 @@ bool BaselinePattern::mouseMoved(const OIS::MouseEvent &evt)
             }
     return true;
 }
+
 bool BaselinePattern::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();
@@ -402,6 +406,7 @@ bool BaselinePattern::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonI
     
     return true;
 }
+
 bool BaselinePattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     Ogre::Ray ray = OgreFramework::getSingletonPtr()->getCursorRay();

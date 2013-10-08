@@ -153,12 +153,12 @@ void DemoApp::startDemo()
 
 void DemoApp::setupDemoScene()
 {
-    OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox", 2000, true);
+    OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/EarlyMorningSkyBox", 2000, true);
     
     Util::generateMaterials();
     
-    Util::createSphere("poppyMesh",1,100,100);
-    Util::createUncappedCylinder("potMesh", 1, 1, 100);
+    Util::createSphere("poppyMesh",1,128,128);
+    Util::createUncappedCylinder("potMesh", 1, 1, 128);
     
     Light* light1 = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
     light1->setDiffuseColour(1.0, 1.0, 1.0);
@@ -170,7 +170,7 @@ void DemoApp::setupDemoScene()
     
     totalElapsed = 0.0;
     
-    OgreFramework::getSingletonPtr()->m_pCamera->setPosition(0, 5, 5);
+    OgreFramework::getSingletonPtr()->m_pCamera->setPosition(0, 7, 7);
     OgreFramework::getSingletonPtr()->m_pCamera->lookAt(0,0,0);
 
     int seed = time(0);
