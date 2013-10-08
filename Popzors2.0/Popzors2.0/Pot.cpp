@@ -4,6 +4,7 @@ Pot::Pot(Vector3 pos, double radius, Ogre::ColourValue baseColor, Ogre::ColourVa
 : Selectable(baseColor, blinkColor, blinktime), potId(-1), pos(pos), radius(radius) //, sound(NULL)
 {
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("PotEntity_" + toStringInt(sceneID), "potMesh");
+    body->setUserAny(Any((Selectable*)(this)));
     this->addToScene();
     this->setPosition(pos);
     this->setColor(baseColor);

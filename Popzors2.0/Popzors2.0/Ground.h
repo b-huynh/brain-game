@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Pch.h"
-#include "Blinkable.h"
+#include "Selectable.h"
 
-class Ground : public Blinkable
+class Ground : public Selectable
 {
 public:
     Ground(Vector3 pos = Vector3(0,0,0), Ogre::ColourValue baseColor = Ogre::ColourValue(0,0,0,0),
@@ -16,7 +16,8 @@ public:
     void addToScene();
     void removeFromScene();
     
-    bool hasEntity(Entity* entity);
+	virtual int getType() const { return Selectable::TYPE_GROUND; }
+    virtual bool hasEntity(Entity* entity);
     
     virtual void reset();
     virtual void update(double elapsed);

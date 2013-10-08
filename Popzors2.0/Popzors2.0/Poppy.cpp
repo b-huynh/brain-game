@@ -4,6 +4,7 @@ Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkCo
 : Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
+    body->setUserAny(Any((Selectable*)(this)));
     this->addToScene();
     this->setColor(baseColor);
     body->setMaterialName(getTextureNameByColor(baseColor));
@@ -81,22 +82,11 @@ void Poppy::handleCollision(double elapsed, Poppy* rhs)
     
     const double RESOLUTION_SPEED = randRangeDouble(9.9, 10.1);
     
-    Ogre::IntersectionSceneQuery* query = OgreFramework::getSingletonPtr()->m_pSceneMgr->createIntersectionQuery();
-    Ogre::IntersectionSceneQueryResult result = query->execute();
-    
-    Ogre::SceneQueryMovableIntersectionList::iterator it = result.movables2movables.begin();
-    
-    for ( ; it != result.movables2movables.end(); ++it)
-    {
-        //This Code Unfinished
-        if ( (it->first == body && it->second == rhs->body) || (it->first == rhs->body && it->second == body) ) {
-            std::cout << "THERE IS INDEED A COLLISION" << std::endl;
-            double colDist = POPPY_RADIUS + POPPY_RADIUS - this->getPosition().distance(rhs->getPosition());
-            Vector3 colVector = this->getPosition() - rhs->getPosition();
-            
-        }
-        
-    }
+    double colDist = POPPY_RADIUS + POPPY_RADIUS - this->getPosition().distance(rhs->getPosition());
+    Vector3 colVector = this->getPosition() - rhs->getPosition();
+    colVector = colVector * colDist;
+    move(colVector / 2);
+    rhs->move(-colVector / 2);
 }
 
 //void Poppy::handleCollision(double elapsed, CollisionScene *scene, Poppy* rhs)
@@ -140,6 +130,11 @@ void Poppy::reset()
     potIdRef = -1;
     jumping = false;
     timeJumped = 0;
+}
+
+void Poppy::move(const Vector3 & dValue)
+{
+    poppyNode->translate(dValue);
 }
 
 void Poppy::activateJump()
