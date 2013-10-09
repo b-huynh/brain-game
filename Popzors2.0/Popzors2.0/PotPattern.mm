@@ -320,7 +320,7 @@ bool PotPattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id
         for (int i = 0; i < stage->pots.size(); ++i)
         {
             if (stage->pots[i]->isSelectable() &&
-                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS-POPPY_RADIUS + 0.05)
+                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS)
             {
                 old->setSelectable(false);
                 old->deactivateJump();
