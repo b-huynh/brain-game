@@ -48,6 +48,7 @@ public:
     // Utility Functions
     void handlePoppyCollisions(double elapsed);
     void handlePotCollisions(double elapsed);
+    void handleBothCollisions(double elapsed);
     //ClickedResult rayTest(Vector3 origin, Vector3 dest);
     //ClickedResult getClicked(InputEvent * inputEvent);
     

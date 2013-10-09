@@ -54,6 +54,11 @@ void Ground::removeFromScene()
     OgreFramework::getSingletonPtr()->m_pSceneMgr->destroySceneNode("GroundNode_" + toStringInt(sceneID));
 }
 
+void Ground::move(const Vector3 & dValue)
+{
+    groundNode->translate(dValue);
+}
+
 bool Ground::hasEntity(Entity* entity)
 {
     return body == entity;

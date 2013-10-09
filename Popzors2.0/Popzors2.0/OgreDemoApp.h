@@ -13,6 +13,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include "BaselinePattern.h"
+#include "PotPattern.h"
 #include <vector>
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

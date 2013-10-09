@@ -207,7 +207,10 @@ void Util::createUncappedCylinder(const std::string& strName, const float r, con
     Vector3 tr = Vector3(r, h / 2, r);
     mesh->_setBounds( AxisAlignedBox( Vector3(-r, -h / 2, -r), Vector3(r, h / 2, r) ), false );
     
-    mesh->_setBoundingSphereRadius((tr - bl).length());
+    // NOTE: THE FOLLOWING IS THE MORE ACCURATE BOUNDING SPHERE, HOWEVER FOR OUR COLLISION HANDLER,
+    // WE IGNORE THE Y-AXIS FOR CLEANER COLLISIONS
+    //mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
+    mesh->_setBoundingSphereRadius(r);
     unsigned short src, dest;
     if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
     {

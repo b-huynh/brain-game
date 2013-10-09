@@ -82,40 +82,24 @@ void Poppy::handleCollision(double elapsed, Poppy* rhs)
 {
     if (this == rhs) return;
     
-    const double RESOLUTION_SPEED = randRangeDouble(9.9, 10.1);
+    const double RESOLUTION_SPEED = randRangeDouble(9.9, 10.0);
+    const double EPSILON = 0.001;
     
-    double colDist = POPPY_RADIUS + POPPY_RADIUS - this->getPosition().distance(rhs->getPosition());
-    Vector3 colVector = this->getPosition() - rhs->getPosition();
-    colVector = colVector * colDist;
-    move(colVector / 2);
-    rhs->move(-colVector / 2);
+    double colDist = POPPY_RADIUS + POPPY_RADIUS - this->getPosition().distance(rhs->getPosition()) + EPSILON;
+    Vector3 colVector = (this->getPosition() - rhs->getPosition()).normalisedCopy();
+    Vector3 dmove = colVector * RESOLUTION_SPEED * elapsed / 2;
+    colVector = colVector * colDist / 2;
+    if (dmove.squaredLength() > colVector.squaredLength()) // maximum distance to move should not be exceeded
+        dmove = colVector;
+    dmove = Vector3(dmove.x, 0, dmove.z); // zero out the y-axis
+    move(dmove);
+    rhs->move(-dmove);
 }
 
-//void Poppy::handleCollision(double elapsed, CollisionScene *scene, Poppy* rhs)
-//{
-//    const double RESOLUTION_SPEED = randRangeDouble(9.9, 10.1);
-//    
-//    CollisionResult res = scene->testCollision(body, rhs->body);
-//    if (res.collided)
-//    {
-//        Vector3 lhsPos = body->getPosition();
-//        Vector3 rhsPos = rhs->body->getPosition();
-//        
-//        Vector3 dmove = res.colNormal * RESOLUTION_SPEED * elapsed * res.colDist / 2;
-//        if (dmove.length() < 0.1)
-//            dmove = res.colNormal * res.colDist / 2;
-//        if ((rhsPos - lhsPos).dot(res.colNormal) >= 0)
-//        {
-//            body->Translate(dmove);
-//            rhs->body->Translate(dmove * -1);
-//        }
-//        else
-//        {
-//            body->Translate(dmove * -1);
-//            rhs->body->Translate(dmove);
-//        }
-//    }
-//}
+void Poppy::move(const Vector3 & dValue)
+{
+    poppyNode->translate(dValue);
+}
 
 bool Poppy::hasEntity(Entity* entity)
 {
@@ -132,11 +116,6 @@ void Poppy::reset()
     potIdRef = -1;
     jumping = false;
     timeJumped = 0;
-}
-
-void Poppy::move(const Vector3 & dValue)
-{
-    poppyNode->translate(dValue);
 }
 
 void Poppy::activateJump()
@@ -213,6 +192,7 @@ void Poppy::update(double elapsed)
         if (dist.length() > 0.1)
         {
             dist.normalise();
+            dist.y = 0; // Zero out the y movement (let jumping deal with that)
             poppyNode->translate(dist * elapsed * moveSpeed);
         }
     }
