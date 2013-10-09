@@ -256,7 +256,11 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
         }
     
 
+<<<<<<< HEAD
     if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS-poppyRadius + 0.05)) && (poppy != stage->selected))
+=======
+    if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS)) && (poppy != stage->selected))
+>>>>>>> 55e9f1257ae164687e6f04a52cca5aa40c57b0e9
     {
         if (poppy->isActive()) {
             playerPoppyIndex++;
@@ -415,7 +419,11 @@ bool BaselinePattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButton
     query->setSortByDistance(true);
     Ogre::RaySceneQueryResult result = query->execute();
     
+<<<<<<< HEAD
     if (stage->selected && stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+=======
+    if (stage->selected != NULL && stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+>>>>>>> 55e9f1257ae164687e6f04a52cca5aa40c57b0e9
         Poppy* old = (Poppy*)stage->selected;
         stage->selected = NULL;
         Vector3 placeDest = ray * result[0].distance;

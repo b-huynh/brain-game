@@ -3,13 +3,15 @@
 Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkColor, double blinktime, double radius)
 : Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
-    body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
+    //body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
+    body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "ogrehead.mesh");
     body->setUserAny(Any((Selectable*)(this)));
     this->addToScene();
     this->setColor(baseColor);
     body->setMaterialName(getTextureNameByColor(baseColor));
     poppyNode->setPosition(pos);
-    poppyNode->scale(radius,radius,radius);
+    //poppyNode->scale(radius,radius,radius);
+    poppyNode->scale(0.015,0.015,0.015);
     
     active = true;
 }
