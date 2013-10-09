@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5DBCC46117F9E87C00DC9022 /* libOgreOggSound.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DBCC45F17F9E86C00DC9022 /* libOgreOggSound.dylib */; };
 		5DBCC46717FA24BC00DC9022 /* floop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DBCC46617FA24BC00DC9022 /* floop.wav */; };
+		5DE84B0B18048ADF003E31B8 /* PotPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DE84B0A18048ADF003E31B8 /* PotPattern.mm */; };
 		B63D37A417DE8616001A7191 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B63D376017DE8616001A7191 /* InfoPlist.strings */; };
 		B63D37B117DE8616001A7191 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = B63D376F17DE8616001A7191 /* main.mm */; };
 		B63D37D217DE8616001A7191 /* ogre.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B63D379717DE8616001A7191 /* ogre.cfg */; };
@@ -93,6 +94,8 @@
 /* Begin PBXFileReference section */
 		5DBCC45F17F9E86C00DC9022 /* libOgreOggSound.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOgreOggSound.dylib; path = ../../../../ogreoggsound/build/Release/libOgreOggSound.dylib; sourceTree = "<group>"; };
 		5DBCC46617FA24BC00DC9022 /* floop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = floop.wav; sourceTree = "<group>"; };
+		5DE84B0918048ADF003E31B8 /* PotPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PotPattern.h; path = Popzors2.0/PotPattern.h; sourceTree = "<group>"; };
+		5DE84B0A18048ADF003E31B8 /* PotPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PotPattern.mm; path = Popzors2.0/PotPattern.mm; sourceTree = "<group>"; };
 		B63D375E17DE8616001A7191 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Popzors2.0/AppDelegate.h; sourceTree = "<group>"; };
 		B63D376117DE8616001A7191 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		B63D376F17DE8616001A7191 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = Popzors2.0/main.mm; sourceTree = "<group>"; };
@@ -410,6 +413,8 @@
 		B6DBD06817F4BF9500CFDB08 /* Variants */ = {
 			isa = PBXGroup;
 			children = (
+				5DE84B0A18048ADF003E31B8 /* PotPattern.mm */,
+				5DE84B0918048ADF003E31B8 /* PotPattern.h */,
 				B6DBD06D17F4C08500CFDB08 /* BaselinePattern.cpp */,
 				B6DBD06C17F4C08500CFDB08 /* BaselinePattern.h */,
 				B6DBD06A17F4BFBC00CFDB08 /* Pattern.cpp */,
@@ -517,6 +522,7 @@
 				B6DBD06717F4BE5300CFDB08 /* Player.cpp in Sources */,
 				B6DBD06B17F4BFBC00CFDB08 /* Pattern.cpp in Sources */,
 				B6DBD06E17F4C08500CFDB08 /* BaselinePattern.cpp in Sources */,
+				5DE84B0B18048ADF003E31B8 /* PotPattern.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
