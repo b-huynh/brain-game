@@ -22,9 +22,10 @@ public:
     void setMoveSpeed(double speed);
     
     void handleCollision(double elapsed, Poppy * rhs);
-    //void handleCollision(double elapsed, CollisionScene *scene, Poppy* rhs);
-    
+
+    virtual void move(const Vector3 & dValue);
 	virtual int getType() const { return Selectable::TYPE_POPPY; }
+    virtual Entity* getBody() const { return body; }
     virtual bool hasEntity(Entity* entity);
     
 	int getId() const { return popId; }
@@ -32,13 +33,11 @@ public:
     Vector3 getDest() const { return dest; }
     Vector3 getPosition() const { return poppyNode->getPosition(); }
 	int getPotIdRef() const { return potIdRef; }
-    Entity* getBody() const { return body; }
     bool isActive () { return active; }
     void setActive (bool active) { this->active = active; }
 
     virtual void reset();
     
-    void move(const Vector3 & dValue);
     void activateJump();
     void deactivateJump();
     void deactivateJumpAtDest(bool stop);

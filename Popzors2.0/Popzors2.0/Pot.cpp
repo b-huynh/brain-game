@@ -19,11 +19,6 @@ Pot::~Pot()
 {
 }
 
-bool Pot::hasEntity(Entity * entity)
-{
-	return body == entity;
-}
-
 void Pot::setId(int val)
 {
     this->potId = val;
@@ -60,32 +55,31 @@ void Pot::setSound(const std::string & soundFile)
 //        sound = new Sound(soundFile);
 }
 
-//void Pot::handleCollision(double elapsed, CollisionScene *scene, Pot* rhs)
-//{
-//    const double RESOLUTION_SPEED = randRangeDouble(0.9, 1.1);;
-//    
-//    CollisionResult res = scene->testCollision(body, rhs->body);
-//    if (res.collided)
-//    {
-//        Vector3 lhsPos = body->getPosition();
-//        Vector3 rhsPos = rhs->body->getPosition();
-//        Vector3 dmove = res.colNormal * RESOLUTION_SPEED * res.colDist / 2;
-//        dmove.x += dmove.y / 2;
-//        dmove.z += dmove.y / 2;
-//        dmove.y = 0;
-//        
-//        if ((rhsPos - lhsPos).dot(res.colNormal) >= 0)
-//        {
-//            body->Translate(dmove);
-//            rhs->body->Translate(dmove * -1);
-//        }
-//        else
-//        {
-//            body->Translate(dmove * -1);
-//            rhs->body->Translate(dmove);
-//        }
-//    }
-//}
+void Pot::handleCollision(double elapsed, Pot* rhs)
+{
+    if (this == rhs)
+        return;
+    
+    // Use the collision algorithm for spheres while zeroing out the y-axis since it is sufficient for our needs
+    const double RESOLUTION_SPEED = randRangeDouble(2.9, 3.0);
+    const double EPSILON = 0.001;
+    
+    double colDist = POT_RADIUS + POT_RADIUS - this->getPosition().distance(rhs->getPosition()) + EPSILON;
+    Vector3 colVector = (this->getPosition() - rhs->getPosition()).normalisedCopy();
+    Vector3 dmove = colVector * RESOLUTION_SPEED * elapsed / 2;
+    colVector = colVector * colDist / 2;
+    if (dmove.squaredLength() > colVector.squaredLength()) // maximum distance to move should not be exceeded
+        dmove = colVector;
+    dmove = Vector3(dmove.x, 0, dmove.z); // zero out the y-axis
+    move(dmove);
+    rhs->move(-dmove);
+}
+
+void Pot::playSound() const
+{
+    //if (sound)
+    //    sound->Play(false);
+}
 
 void Pot::addToScene()
 {
@@ -98,10 +92,14 @@ void Pot::removeFromScene()
     OgreFramework::getSingletonPtr()->m_pSceneMgr->destroySceneNode("PotNode_" + toStringInt(sceneID));
 }
 
-void Pot::playSound()
+void Pot::move(const Vector3 & dValue)
 {
-    //if (sound)
-    //    sound->Play(false);
+    potNode->translate(dValue);
+}
+
+bool Pot::hasEntity(Entity * entity)
+{
+	return body == entity;
 }
 
 void Pot::reset()

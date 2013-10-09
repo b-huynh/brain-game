@@ -16,7 +16,9 @@ public:
     void addToScene();
     void removeFromScene();
     
+    virtual void move(const Vector3 & dValue);
 	virtual int getType() const { return Selectable::TYPE_GROUND; }
+    virtual Entity* getBody() const { return body; }
     virtual bool hasEntity(Entity* entity);
     
     virtual void reset();

@@ -232,7 +232,7 @@ static id mAppDelegate;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mFrameInterval = 1;
-    mDeltaTime = 1.0f / 60.0f;
+    mDeltaTime = 1.0f / 30.0f;
     mTimer = nil;
     
     try {

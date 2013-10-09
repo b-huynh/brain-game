@@ -21,8 +21,10 @@ public:
 	static const int TYPE_POPPY = 0;
 	static const int TYPE_POT = 1;
 	static const int TYPE_GROUND = 2;
-
+    
+    virtual void move(const Vector3 & dValue) = 0;
 	virtual int getType() const = 0;
+    virtual Entity* getBody() const = 0;
 	virtual bool hasEntity(Entity* entity) = 0;
     
     virtual void reset();

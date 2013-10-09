@@ -17,13 +17,13 @@ void BaselinePattern::setup()
     stage->ground = new Ground(Vector3(0, 0, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
     
 	//Make some pots
-	Pot* pot1 = new Pot(Vector3(2.5, POT_HEIGHT / 2, 2.5), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
+	Pot* pot1 = new Pot(Vector3(3, POT_HEIGHT / 2, 3), POT_RADIUS, Cpot1, Cpot1, 1, Spot1);
     pot1->setId(0);
-    Pot* pot2 = new Pot(Vector3(2.5, POT_HEIGHT / 2, -2.5), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
+    Pot* pot2 = new Pot(Vector3(3, POT_HEIGHT / 2, -3), POT_RADIUS, Cpot2, Cpot2, 1, Spot2);
     pot2->setId(1);
-    Pot* pot3 = new Pot(Vector3(-2.5, POT_HEIGHT / 2, 2.5), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
+    Pot* pot3 = new Pot(Vector3(-3, POT_HEIGHT / 2, 3), POT_RADIUS, Cpot3, Cpot3, 1, Spot3);
     pot3->setId(2);
-    Pot* pot4 = new Pot(Vector3(-2.5, POT_HEIGHT / 2, -2.5), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
+    Pot* pot4 = new Pot(Vector3(-3, POT_HEIGHT / 2, -3), POT_RADIUS, Cpot4, Cpot4, 1, Spot4);
     pot4->setId(3);
 	
 	stage->pots.push_back(pot1);
@@ -32,7 +32,7 @@ void BaselinePattern::setup()
 	stage->pots.push_back(pot4);
     
 	//Make some poppies
-    numImportantPoppies = player->level;
+    numImportantPoppies = player->level + 2;
     numDistractingPoppies = 0;
     poppyRadius = POPPY_RADIUS * pow(0.95, numImportantPoppies - 1);
     
@@ -43,7 +43,7 @@ void BaselinePattern::setup()
     player->totalProblems = numImportantPoppies; // For base class Pattern
     
 	for (int i = 0; i < numImportantPoppies; ++i) {
-		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)), BLAND_COLOR, BLAND_COLOR, 0, (POPPY_RADIUS * pow(0.95, numImportantPoppies - 1)));
+		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),poppyRadius,randRangeDouble(-1,1)), BLAND_COLOR, BLAND_COLOR, 0, poppyRadius);
         poppy->setId(i);
         
         if (stage->pots.size() > 0)
@@ -72,8 +72,8 @@ void BaselinePattern::setup()
     
         
     for (int i = 0; i < numDistractingPoppies; ++i) {
-		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),POPPY_RADIUS,randRangeDouble(-1,1)),
-                                 BLAND_COLOR, BLAND_COLOR, 0, (POPPY_RADIUS * pow(0.95, numImportantPoppies - 1)));
+		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),poppyRadius,randRangeDouble(-1,1)),
+                                 BLAND_COLOR, BLAND_COLOR, 0, poppyRadius);
         poppy->setId(i);
         stage->poppies.push_back(poppy);
 	}
@@ -256,7 +256,7 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
         }
     
 
-    if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS-POPPY_RADIUS + 0.05)) && (poppy != stage->selected))
+    if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS-poppyRadius + 0.05)) && (poppy != stage->selected))
     {
         if (poppy->isActive()) {
             playerPoppyIndex++;
@@ -317,8 +317,8 @@ void BaselinePattern::updatePoppyBlinks(double elapsed)
 	}
     
     if (blinkPoppyIndex >= numImportantPoppies) {
-        for (int i = 0; i < stage->poppies.size(); ++i)
-            stage->poppies[i]->deactivateJump();
+        //for (int i = 0; i < stage->poppies.size(); ++i)
+        //    stage->poppies[i]->deactivateJump();
     }
 }
 
@@ -373,7 +373,7 @@ bool BaselinePattern::mouseMoved(const OIS::MouseEvent &evt)
             if (stage->ground->hasEntity( (Entity*)result[i].movable )) {
                 Poppy* toMove = (Poppy*)stage->selected;
                 Vector3 hoverPos = ray * result[i].distance;
-                hoverPos.y = POPPY_RADIUS;
+                hoverPos.y = poppyRadius;
                 toMove->setPosition(hoverPos);
             }
     return true;
@@ -415,12 +415,13 @@ bool BaselinePattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButton
     query->setSortByDistance(true);
     Ogre::RaySceneQueryResult result = query->execute();
     
-    if (stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
+    if (stage->selected && stage->selected->getType() == Selectable::TYPE_POPPY && result.size() > 0) {
         Poppy* old = (Poppy*)stage->selected;
         stage->selected = NULL;
         Vector3 placeDest = ray * result[0].distance;
-        placeDest.y = POPPY_RADIUS;
+        placeDest.y = poppyRadius;
         old->setPosition(placeDest);
+        old->activateJump();
     }
     
     return true;

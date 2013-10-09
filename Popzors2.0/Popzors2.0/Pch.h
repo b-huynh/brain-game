@@ -35,8 +35,8 @@ static int LABEL2_POSY = SCREEN_HEIGHT - 105;
 static int LABEL3_POSX = SCREEN_WIDTH - 55;
 static int LABEL3_POSY = SCREEN_HEIGHT - 55;
 
-const double POPPY_RADIUS = 0.5;
-const double POT_RADIUS = 1.5;
+const double POPPY_RADIUS = 0.3;
+const double POT_RADIUS = 1.0;
 const double POT_HEIGHT = 0.5;
 
 int randRangeInt(int min, int max);
