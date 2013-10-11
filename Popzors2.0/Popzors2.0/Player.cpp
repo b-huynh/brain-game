@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 Player::Player()
-: seed(), name(""), score(0), numCorrect(0), totalProblems(0), level(1), numConsecutiveSuccess(0)
+: seed(), name(""), totalElapsed(0.0), score(0), numCorrect(0), totalProblems(0), level(1), numConsecutiveSuccess(0)
 {}
 
 void Player::reset() {

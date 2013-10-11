@@ -9,7 +9,6 @@ BaselinePattern::BaselinePattern(Stage* stage, Player* player)
 : PopzorsPattern(stage, player), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), numImportantPoppies(0), numDistractingPoppies(0),
     poppyRadius(POPPY_RADIUS), backwardsOrder(false), blinkPoppyIndex(0), playerPoppyIndex(0)
 {
-    totalElapsed = 0.0;
 }
 
 void BaselinePattern::setup()
@@ -163,10 +162,10 @@ void BaselinePattern::processSelect(ClickedResult res)
 
 void BaselinePattern::update(double elapsed)
 {
-    totalElapsed += elapsed;
+    player->totalElapsed += elapsed;
     
     if (isFinished() && !stage->ground->isBlinking()) {
-        updateScore();
+        updateLevel();
         saveData.push_back(getFinishedStageData());
         setPattern();
     }
@@ -182,14 +181,13 @@ void BaselinePattern::update(double elapsed)
     stage->update(elapsed);
     stage->handlePoppyCollisions(elapsed);
     
-    stage->label1->setCaption("Time: " + toStringInt(totalElapsed));
+    stage->label1->setCaption("Time: " + toStringInt(player->totalElapsed));
 }
 
-void BaselinePattern::updateScore()
+void BaselinePattern::updateLevel()
 {
     if (player->numCorrect >= player->totalProblems)
     {
-        player->score += player->level;
         player->updateLevel(PLAYER_SUCCESS);
     }
     else
@@ -207,6 +205,7 @@ void BaselinePattern::updateFeedback()
         if (player->numCorrect >= player->totalProblems)
         {
             player->updateSuccess(PLAYER_SUCCESS);
+            player->score += player->level;
             stage->ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
             
             //stage.positiveFeedback->Play();
@@ -252,7 +251,7 @@ void BaselinePattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
     for (int i = 0; i < pData.size(); ++i)
         if (pData[i].poppyID == id) {
             pData[i].binPlaceIn = getColorId(pot->getBlinkColor());
-            pData[i].binPlaceTime = totalElapsed;
+            pData[i].binPlaceTime = player->totalElapsed;
         }
     
     if ( ((pot->getPosition() - poppy->getPosition()).length() <= (POT_RADIUS)) && (poppy != stage->selected))
@@ -280,7 +279,7 @@ void BaselinePattern::updatePoppyBlinks(double elapsed)
         int id = stage->poppies[blinkPoppyIndex]->getId();
         for (int i = 0; i < pData.size(); ++i)
             if (pData[i].poppyID == id)
-                pData[i].poppyFlashTime = totalElapsed;
+                pData[i].poppyFlashTime = player->totalElapsed;
         
         if (stage->poppies[blinkPoppyIndex] != stage->selected) {
             stage->poppies[blinkPoppyIndex]->activateJump();
@@ -302,7 +301,7 @@ void BaselinePattern::updatePoppyBlinks(double elapsed)
             int id = stage->poppies[blinkPoppyIndex]->getId();
             for (int i = 0; i < pData.size(); ++i)
                 if (pData[i].poppyID == id)
-                    pData[i].poppyFlashTime = totalElapsed;
+                    pData[i].poppyFlashTime = player->totalElapsed;
             
             
             if (stage->poppies[blinkPoppyIndex] != stage->selected) {

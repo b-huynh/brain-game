@@ -17,13 +17,13 @@ void PotPattern::setup()
 {
     stage->ground = new Ground(Vector3(0, 0, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
     
-    stages = 3;
+    stages = 1;
     potsPerStage = player->level + 2;
     player->totalProblems = stages * potsPerStage;
     
     for (int i = 0; i < stages * potsPerStage; ++i)
     {
-        Pot* pot = new Pot(Vector3(randRangeDouble(-3, 3), POT_HEIGHT / 2, randRangeDouble(-3, 3)), POT_RADIUS / 2,
+        Pot* pot = new Pot(Vector3(randRangeDouble(-4, 4), POT_HEIGHT / 2, randRangeDouble(-4, 0)), POT_RADIUS / 2,
                            BASE_COLOR, BLAND_COLOR, 1, getSoundAccordingToColor(BLAND_COLOR));
         pot->setId(i);
         stage->pots.push_back(pot);
@@ -62,18 +62,11 @@ void PotPattern::setPattern()
         }
     }
     
-    std::vector<Pot*> temp;
+    potsLeft.clear();
     for (int i = stageIndex * potsPerStage; i < stage->pots.size(); ++i)
-        temp.push_back(stage->pots[i]);
-    while (temp.size() > 0)
-    {
-        int r = rand() % temp.size();
-        potsLeft.push_back(temp[r]);
-        temp[r] = temp[temp.size() - 1];
-        temp.pop_back();
-    }
+        potsLeft.push_back(stage->pots[i]);
     for (int i = 0; i < potsLeft.size(); ++i)
-        potsLeft[i]->setTimeBlinkLength(signalLength * (stage->pots.size() - i));
+        potsLeft[i]->setTimeBlinkLength(signalLength * (potsLeft.size() - i + 1));
 }
 
 bool PotPattern::isFinished() const
@@ -121,6 +114,8 @@ void PotPattern::processSelect(ClickedResult res)
 
 void PotPattern::update(double elapsed)
 {
+    player->totalElapsed += elapsed;
+    
     if (ready && usefulPotIndex < potsPerStage && stageIndex < stages)
     {
         spawnPoppyTimer += elapsed;
@@ -150,7 +145,39 @@ void PotPattern::update(double elapsed)
     {
         // Done with all stages, reset to new level
         stageIndex = 0;
+        updateLevel();
         setPattern();
+    }
+    
+    double barWidth = Util::HP_BAR_WIDTH;
+    if (player->numConsecutiveSuccess > 0) {
+        barWidth *= player->numConsecutiveSuccess / (double)(player->levelUpCeiling);
+        
+        stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        if (player->numConsecutiveSuccess >= Player::levelUpCeiling)
+            stage->barHP->setMaterialName("General/BaseBlue");
+        else
+            stage->barHP->setMaterialName("General/BaseGreen");
+    } else {
+        if (stage->ground->getBlinkColor() == FEEDBACK_COLOR_BAD)
+            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        else
+            stage->barHP->setDimensions(0.0, Util::HP_BAR_HEIGHT);
+        stage->barHP->setMaterialName("General/BaseRed");
+    }
+    stage->label1->setCaption("Time: " + toStringInt(player->totalElapsed));
+    stage->label2->setCaption("Score: " + toStringInt(player->score));
+}
+
+void PotPattern::updateLevel()
+{
+    if (player->numCorrect >= player->totalProblems)
+    {
+        player->updateLevel(PLAYER_SUCCESS);
+    }
+    else
+    {
+        player->updateLevel(PLAYER_FAILURE);
     }
 }
 
@@ -184,12 +211,14 @@ void PotPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             if (player->numCorrect >= player->totalProblems)
             {
                 stage->ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-                player->updateLevel(PLAYER_SUCCESS);
+                player->updateSuccess(PLAYER_SUCCESS);
+                player->score += player->level;
+                std::cout << player->numConsecutiveSuccess << std::endl;
             }
             else
             {
                 stage->ground->setBlinkColor(FEEDBACK_COLOR_BAD);
-                player->updateLevel(PLAYER_FAILURE);
+                player->updateSuccess(PLAYER_FAILURE);
             }
             stage->ground->activateBlink();
         }
@@ -320,7 +349,7 @@ bool PotPattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id
         for (int i = 0; i < stage->pots.size(); ++i)
         {
             if (stage->pots[i]->isSelectable() &&
-                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS)
+                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS / 1.5)
             {
                 old->setSelectable(false);
                 old->deactivateJump();
