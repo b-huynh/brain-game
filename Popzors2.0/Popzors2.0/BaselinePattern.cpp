@@ -43,7 +43,7 @@ void BaselinePattern::setup()
     player->totalProblems = numImportantPoppies; // For base class Pattern
     
 	for (int i = 0; i < numImportantPoppies; ++i) {
-		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-1,1),poppyRadius,randRangeDouble(-1,1)), BLAND_COLOR, BLAND_COLOR, 0, poppyRadius);
+		Poppy* poppy = new Poppy(Vector3(randRangeDouble(-2,2),poppyRadius,randRangeDouble(-2,2)), BLAND_COLOR, BLAND_COLOR, 0, poppyRadius);
         poppy->setId(i);
         
         if (stage->pots.size() > 0)

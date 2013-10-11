@@ -23,7 +23,7 @@ void PotPattern::setup()
     
     for (int i = 0; i < stages * potsPerStage; ++i)
     {
-        Pot* pot = new Pot(Vector3(randRangeDouble(-3, 3), POT_HEIGHT / 2, randRangeDouble(-3, 3)), POT_RADIUS,
+        Pot* pot = new Pot(Vector3(randRangeDouble(-3, 3), POT_HEIGHT / 2, randRangeDouble(-3, 3)), POT_RADIUS / 2,
                            BASE_COLOR, BLAND_COLOR, 1, getSoundAccordingToColor(BLAND_COLOR));
         pot->setId(i);
         stage->pots.push_back(pot);
@@ -245,7 +245,7 @@ void PotPattern::addPoppy()
     Poppy* poppy = new Poppy(Vector3(randRangeDouble(-6, 6),POPPY_RADIUS,randRangeDouble(4, 4)), potColor, potColor, 1.0, POPPY_RADIUS);
     poppy->setId(stage->poppies.size());
     poppy->setMoving(true);
-    poppy->setDest(Vector3(randRangeDouble(-3, 3),POPPY_RADIUS,randRangeDouble(3, 3)));
+    poppy->setDest(Vector3(randRangeDouble(-3, 3),POPPY_RADIUS,randRangeDouble(1, 3)));
     poppy->activateJump();
     stage->poppies.push_back(poppy);
 }

@@ -16,7 +16,7 @@ void Stage::handlePoppyCollisions(double elapsed)
         Selectable* obj1 = any_cast<Selectable*>(it->first->getUserAny());
         Selectable* obj2 = any_cast<Selectable*>(it->second->getUserAny());
         
-        if (obj1->getType() == Selectable::TYPE_POPPY && obj2->getType() == Selectable::TYPE_POPPY)
+        if (obj1->getType() == Object::TYPE_POPPY && obj2->getType() == Object::TYPE_POPPY)
         {
             static_cast<Poppy*>(obj1)->handleCollision(elapsed, static_cast<Poppy*>(obj2));
         }
@@ -35,7 +35,7 @@ void Stage::handlePotCollisions(double elapsed)
         Selectable* obj1 = any_cast<Selectable*>(it->first->getUserAny());
         Selectable* obj2 = any_cast<Selectable*>(it->second->getUserAny());
         
-        if (obj1->getType() == Selectable::TYPE_POT && obj2->getType() == Selectable::TYPE_POT)
+        if (obj1->getType() == Object::TYPE_POT && obj2->getType() == Object::TYPE_POT)
         {
             static_cast<Pot*>(obj1)->handleCollision(elapsed, static_cast<Pot*>(obj2));
         }
@@ -54,9 +54,9 @@ void Stage::handleBothCollisions(double elapsed)
         Selectable* obj2 = any_cast<Selectable*>(it->second->getUserAny());
      
         // Special conditions to ignore collisions
-        if (obj1->getType() == Selectable::TYPE_GROUND || obj2->getType() == Selectable::TYPE_GROUND ||
-            (obj1->getType() == Selectable::TYPE_POPPY && !obj1->isSelectable()) ||
-            (obj2->getType() == Selectable::TYPE_POPPY && !obj2->isSelectable()) ||
+        if (obj1->getType() == Object::TYPE_GROUND || obj2->getType() == Object::TYPE_GROUND ||
+            (obj1->getType() == Object::TYPE_POPPY && !obj1->isSelectable()) ||
+            (obj2->getType() == Object::TYPE_POPPY && !obj2->isSelectable()) ||
             selected == obj1 || selected == obj2)
             continue;
         

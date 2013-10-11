@@ -1,17 +1,17 @@
 #include "Poppy.h"
 
 Poppy::Poppy(Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkColor, double blinktime, double radius)
-: Selectable(baseColor, blinkColor, blinktime), popId(-1), pos(pos), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
+: Selectable(TYPE_POPPY, pos, baseColor, blinkColor, blinktime), popId(-1), potIdRef(-1), jumping(false), timeJumped(0), moving(false), dest(pos), stopJumpAtDest(false), moveSpeed(1)
 {
     //body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "poppyMesh");
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("Poppy_" + toStringInt(sceneID), "ogrehead.mesh");
     body->setUserAny(Any((Selectable*)(this)));
-    this->addToScene();
-    this->setColor(baseColor);
+    addToScene();
+    setColor(baseColor);
     body->setMaterialName(getTextureNameByColor(baseColor));
-    poppyNode->setPosition(pos);
-    //poppyNode->scale(radius,radius,radius);
-    poppyNode->scale(0.015,0.015,0.015);
+    //mainNode->scale(radius,radius,radius);
+    mainNode->scale(0.015,0.015,0.015);
+    setPosition(pos);
     
     active = true;
 }
@@ -23,28 +23,6 @@ Poppy::~Poppy()
 void Poppy::setId(int val)
 {
     this->popId = val;
-}
-
-void Poppy::setColor(Ogre::ColourValue color)
-{
-    if (currentColor != color)
-        body->setMaterialName(getTextureNameByColor(color));
-    currentColor = color;
-}
-
-void Poppy::setColor(int r, int g, int b, int a)
-{
-    this->setColor(intToFloatColor(r,g,b,a));
-}
-
-void Poppy::setPosition(double x, double y, double z)
-{
-	poppyNode->setPosition(x, y, z);
-}
-    
-void Poppy::setPosition(Vector3 vec)
-{
-	poppyNode->setPosition(vec);
 }
 
 void Poppy::setPotIdRef(int val)
@@ -67,17 +45,6 @@ void Poppy::setMoveSpeed(double speed)
     moveSpeed = speed;
 }
 
-void Poppy::addToScene()
-{
-    poppyNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("PoppyNode_" + toStringInt(sceneID));
-    poppyNode->attachObject(body);
-}
-
-void Poppy::removeFromScene()
-{
-    OgreFramework::getSingletonPtr()->m_pSceneMgr->destroySceneNode("PoppyNode_" + toStringInt(sceneID));
-}
-
 void Poppy::handleCollision(double elapsed, Poppy* rhs)
 {
     if (this == rhs) return;
@@ -85,8 +52,8 @@ void Poppy::handleCollision(double elapsed, Poppy* rhs)
     const double RESOLUTION_SPEED = randRangeDouble(9.9, 10.0);
     const double EPSILON = 0.001;
     
-    double colDist = POPPY_RADIUS + POPPY_RADIUS - this->getPosition().distance(rhs->getPosition()) + EPSILON;
-    Vector3 colVector = (this->getPosition() - rhs->getPosition()).normalisedCopy();
+    double colDist = POPPY_RADIUS + POPPY_RADIUS - getPosition().distance(rhs->getPosition()) + EPSILON;
+    Vector3 colVector = (getPosition() - rhs->getPosition()).normalisedCopy();
     Vector3 dmove = colVector * RESOLUTION_SPEED * elapsed / 2;
     colVector = colVector * colDist / 2;
     if (dmove.squaredLength() > colVector.squaredLength()) // maximum distance to move should not be exceeded
@@ -94,28 +61,6 @@ void Poppy::handleCollision(double elapsed, Poppy* rhs)
     dmove = Vector3(dmove.x, 0, dmove.z); // zero out the y-axis
     move(dmove);
     rhs->move(-dmove);
-}
-
-void Poppy::move(const Vector3 & dValue)
-{
-    poppyNode->translate(dValue);
-}
-
-bool Poppy::hasEntity(Entity* entity)
-{
-	if (body == entity) return true;
-	return false;
-}
-
-void Poppy::reset()
-{
-    Blinkable::reset();
-    Selectable::reset();
-    poppyNode->setPosition(pos);
-    selectable = true;
-    potIdRef = -1;
-    jumping = false;
-    timeJumped = 0;
 }
 
 void Poppy::activateJump()
@@ -163,7 +108,7 @@ void Poppy::jump(double elapsed)
     //Number diff = -pow(JUMP_TIME * timeJumped - JUMP_HEIGHT_SQRT, 2) + pow(JUMP_TIME * previousTime - JUMP_HEIGHT_SQRT, 2);
     //printf("%f: %f\n", timeJumped, diff);
     
-    poppyNode->translate(0, diff, 0);
+    move(Vector3(0, diff, 0));
     
     /* DEBUG
     std::cout << "elapsed: " << elapsed << std::endl;
@@ -179,26 +124,52 @@ void Poppy::jump(double elapsed)
      */
 }
 
+void Poppy::setMaterialByColor(Ogre::ColourValue color)
+{
+    if (currentColor != color)
+        body->setMaterialName(getTextureNameByColor(color));
+    setColor(color);
+}
+
+void Poppy::addToScene()
+{
+    mainNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("PoppyNode_" + toStringInt(sceneID));
+    mainNode->attachObject(body);
+}
+
+void Poppy::removeFromScene()
+{
+    OgreFramework::getSingletonPtr()->m_pSceneMgr->destroySceneNode("PoppyNode_" + toStringInt(sceneID));
+}
+
+void Poppy::reset()
+{
+    Selectable::reset();
+    selectable = true;
+    potIdRef = -1;
+    jumping = false;
+    timeJumped = 0;
+}
+
 void Poppy::update(double elapsed)
 {
-    Blinkable::update(elapsed);
     Selectable::update(elapsed);
     
     jump(elapsed);
     
     // Update poppy to move towards destination if one exists
     if (moving) {
-        Vector3 dist = dest - poppyNode->getPosition();
+        Vector3 dist = dest - getPosition();
         if (dist.length() > 0.1)
         {
             dist.normalise();
             dist.y = 0; // Zero out the y movement (let jumping deal with that)
-            poppyNode->translate(dist * elapsed * moveSpeed);
+            move(dist * elapsed * moveSpeed);
         }
     }
     
     if (stopJumpAtDest){
-        Vector3 dist = dest - poppyNode->getPosition();
+        Vector3 dist = dest - getPosition();
         if (dist.length() < 0.1)
             deactivateJump();
     }

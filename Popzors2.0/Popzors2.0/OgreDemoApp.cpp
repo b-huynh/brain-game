@@ -178,7 +178,7 @@ void DemoApp::setupDemoScene()
     player->seed = seed;
     stage = new Stage();
     
-    pattern = new PotPattern(stage, player);
+    pattern = new BaselinePattern(stage, player);
     pattern->setPattern();
     
     //soundPickUp = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPickUp", "floop.wav", false, false, true);
