@@ -317,6 +317,7 @@ bool PotPattern::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
                     stage->poppies[i]->setColor(getRandomPotColor());
                     stage->selected = stage->poppies[i];
                     stage->poppies[i]->setMoving(false);
+                    stage->poppies[i]->setVelocity(Vector3::ZERO);
                     stage->poppies[i]->deactivateJump();
                     //soundPickUp->play();
                 }
