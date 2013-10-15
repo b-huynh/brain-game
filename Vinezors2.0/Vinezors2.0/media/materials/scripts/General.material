@@ -128,6 +128,22 @@ material General/WallMetal
 	}
 }
 
+material General/Smiley
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture smiley.png
+			}
+		}
+	}
+}
+
 material General/WallMetal2
 {
     technique

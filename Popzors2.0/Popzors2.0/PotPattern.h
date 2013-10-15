@@ -16,6 +16,7 @@ public:
     virtual void update(double elapsed);
     
     // Helper Functions
+    void updateLevel();
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePotBlinks(double elapsed);
     void addPoppy();
@@ -36,6 +37,7 @@ private:
     int potsPerStage;
     int stageIndex;
     std::vector<Pot*> potsLeft;
+    std::vector<ColourValue> poppyAssignmentList;
     
     int playerNumAnswers;
     

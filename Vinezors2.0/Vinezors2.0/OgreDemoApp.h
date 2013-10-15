@@ -83,7 +83,7 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
-class DemoApp : public OIS::KeyListener, public OIS::MouseListener
+class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
 {
 public:
 	DemoApp();
@@ -99,6 +99,9 @@ public:
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
     
+    virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
+    virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
+    
 private:
     void setupDemoScene();
 	void runDemo();
@@ -108,9 +111,12 @@ private:
     unsigned seed;
     bool pause;
     Vector3 origin;
-    SceneNode* lightNode;
+    SceneNode* lightNodeMain;
+    SceneNode* lightNodeSide;
     Tunnel* tunnel;
 	Player* player;
+    
+    std::vector<Ogre::Overlay*> overlays;
     
     PanelOverlayElement* barHP;
     TextAreaOverlayElement* label1;
@@ -120,7 +126,6 @@ private:
     
     OgreOggISound* soundMusic;
     OgreOggISound* soundFeedbackGood;
-    
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

@@ -9,7 +9,7 @@ bool comparePotX(Pot* lhs, Pot* rhs)
 }
 
 PotPattern::PotPattern(Stage* stage, Player* player)
-: PopzorsPattern(stage, player), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), stages(0), stageIndex(0), potsPerStage(0), potsLeft(), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
+: PopzorsPattern(stage, player), signaled(false), signalStart(SIGNAL_START), signalLength(SIGNAL_LENGTH), timer(0), stages(0), stageIndex(0), potsPerStage(0), potsLeft(), poppyAssignmentList(), playerNumAnswers(0), blinkPotIndex(0), spawnPoppyTimer(0), usefulPotIndex(0), selected(NULL)
 {
 }
 
@@ -17,17 +17,27 @@ void PotPattern::setup()
 {
     stage->ground = new Ground(Vector3(0, 0, 0), GROUND_COLOR, GROUND_COLOR, SIGNAL_LENGTH);
     
-    stages = 3;
+    stages = 1;
     potsPerStage = player->level + 2;
+    int numDistractors = player->level;
     player->totalProblems = stages * potsPerStage;
     
-    for (int i = 0; i < stages * potsPerStage; ++i)
+    for (int i = 0; i < potsPerStage * stages; ++i)
     {
-        Pot* pot = new Pot(Vector3(randRangeDouble(-3, 3), POT_HEIGHT / 2, randRangeDouble(-3, 3)), POT_RADIUS,
+        Pot* pot = new Pot(Vector3(randRangeDouble(-4, 4), POT_HEIGHT / 2, randRangeDouble(-2, 0)), POT_RADIUS / 2,
                            BASE_COLOR, BLAND_COLOR, 1, getSoundAccordingToColor(BLAND_COLOR));
         pot->setId(i);
         stage->pots.push_back(pot);
+        ColourValue col = getRandomPotColor();
+        stage->pots[i]->setBlinkColor(col);
+        stage->pots[i]->setSound(getSoundAccordingToColor(col));
     }
+    
+    poppyAssignmentList;
+    for (int i = 0; i < stage->pots.size(); ++i)
+        poppyAssignmentList.push_back(stage->pots[i]->getBlinkColor());
+    for (int i = 0; i < numDistractors; ++i)
+        poppyAssignmentList.push_back(getRandomPotColor());
 }
 
 void PotPattern::reset()
@@ -54,26 +64,12 @@ void PotPattern::setPattern()
         reset();
         setup();
     }
-    for (int i = stageIndex * potsPerStage; i < stageIndex * potsPerStage + potsPerStage; ++i) {
-        if (stage->pots[i]->getBlinkColor() == BLAND_COLOR) {
-            ColourValue col = getRandomPotColor();
-            stage->pots[i]->setBlinkColor(col);
-            stage->pots[i]->setSound(getSoundAccordingToColor(col));
-        }
-    }
     
-    std::vector<Pot*> temp;
+    potsLeft.clear();
     for (int i = stageIndex * potsPerStage; i < stage->pots.size(); ++i)
-        temp.push_back(stage->pots[i]);
-    while (temp.size() > 0)
-    {
-        int r = rand() % temp.size();
-        potsLeft.push_back(temp[r]);
-        temp[r] = temp[temp.size() - 1];
-        temp.pop_back();
-    }
+        potsLeft.push_back(stage->pots[i]);
     for (int i = 0; i < potsLeft.size(); ++i)
-        potsLeft[i]->setTimeBlinkLength(signalLength * (stage->pots.size() - i));
+        potsLeft[i]->setTimeBlinkLength(signalLength * (potsLeft.size() - i + 1));
 }
 
 bool PotPattern::isFinished() const
@@ -121,7 +117,8 @@ void PotPattern::processSelect(ClickedResult res)
 
 void PotPattern::update(double elapsed)
 {
-    if (ready && usefulPotIndex < potsPerStage && stageIndex < stages)
+    player->totalElapsed += elapsed;
+    if (ready && poppyAssignmentList.size() > 0)
     {
         spawnPoppyTimer += elapsed;
         const double SPAWN_RATE = 1.0;
@@ -150,7 +147,39 @@ void PotPattern::update(double elapsed)
     {
         // Done with all stages, reset to new level
         stageIndex = 0;
+        updateLevel();
         setPattern();
+    }
+    
+    double barWidth = Util::HP_BAR_WIDTH;
+    if (player->numConsecutiveSuccess > 0) {
+        barWidth *= player->numConsecutiveSuccess / (double)(player->levelUpCeiling);
+        
+        stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        if (player->numConsecutiveSuccess >= Player::levelUpCeiling)
+            stage->barHP->setMaterialName("General/BaseBlue");
+        else
+            stage->barHP->setMaterialName("General/BaseGreen");
+    } else {
+        if (stage->ground->getBlinkColor() == FEEDBACK_COLOR_BAD)
+            stage->barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        else
+            stage->barHP->setDimensions(0.0, Util::HP_BAR_HEIGHT);
+        stage->barHP->setMaterialName("General/BaseRed");
+    }
+    stage->label1->setCaption("Time: " + toStringInt(player->totalElapsed));
+    stage->label2->setCaption("Score: " + toStringInt(player->score));
+}
+
+void PotPattern::updateLevel()
+{
+    if (player->numCorrect >= player->totalProblems)
+    {
+        player->updateLevel(PLAYER_SUCCESS);
+    }
+    else
+    {
+        player->updateLevel(PLAYER_FAILURE);
     }
 }
 
@@ -184,12 +213,13 @@ void PotPattern::updatePlayerChoice(Poppy* poppy, Pot* pot)
             if (player->numCorrect >= player->totalProblems)
             {
                 stage->ground->setBlinkColor(FEEDBACK_COLOR_GOOD);
-                player->updateLevel(PLAYER_SUCCESS);
+                player->updateSuccess(PLAYER_SUCCESS);
+                player->score += player->level;
             }
             else
             {
                 stage->ground->setBlinkColor(FEEDBACK_COLOR_BAD);
-                player->updateLevel(PLAYER_FAILURE);
+                player->updateSuccess(PLAYER_FAILURE);
             }
             stage->ground->activateBlink();
         }
@@ -234,18 +264,19 @@ void PotPattern::updatePotBlinks(double elapsed)
 
 void PotPattern::addPoppy()
 {
-    int r = rand() % (unsigned)(usefulPotIndex + 2);
-    ColourValue potColor = getRandomPotColor();
+    if (poppyAssignmentList.size() <= 0)
+        return;
     
-    if (r <= usefulPotIndex) {
-        potColor = stage->pots[stageIndex * potsPerStage + usefulPotIndex]->getBlinkColor();
-        ++usefulPotIndex;
-    }
+    ColourValue potColor;
+    int r = rand() % poppyAssignmentList.size();
+    potColor = poppyAssignmentList[r];
+    poppyAssignmentList[r] = poppyAssignmentList[poppyAssignmentList.size() - 1];
+    poppyAssignmentList.pop_back();
     
     Poppy* poppy = new Poppy(Vector3(randRangeDouble(-6, 6),POPPY_RADIUS,randRangeDouble(4, 4)), potColor, potColor, 1.0, POPPY_RADIUS);
     poppy->setId(stage->poppies.size());
     poppy->setMoving(true);
-    poppy->setDest(Vector3(randRangeDouble(-3, 3),POPPY_RADIUS,randRangeDouble(3, 3)));
+    poppy->setDest(Vector3(randRangeDouble(-3, 3),POPPY_RADIUS,randRangeDouble(1, 3)));
     poppy->activateJump();
     stage->poppies.push_back(poppy);
 }
@@ -320,11 +351,12 @@ bool PotPattern::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id
         for (int i = 0; i < stage->pots.size(); ++i)
         {
             if (stage->pots[i]->isSelectable() &&
-                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS)
+                (stage->pots[i]->getPosition() - old->getPosition()).length() <= POT_RADIUS / 1.5)
             {
                 old->setSelectable(false);
                 old->deactivateJump();
                 old->setMoving(false);
+                old->setVelocity(Vector3::ZERO);
                 old->setPosition(stage->pots[i]->getPosition());
                 stage->pots[i]->setSelectable(false);
                 updatePlayerChoice(old, stage->pots[i]);

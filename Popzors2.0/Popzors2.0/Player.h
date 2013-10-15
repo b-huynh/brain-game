@@ -22,6 +22,7 @@ public:
     
     unsigned seed;
     std::string name;
+    double totalElapsed;
     
     //Player stats
     int numCorrect;

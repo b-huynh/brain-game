@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
 		5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122D917F0DC6700E49916 /* Player.cpp */; };
 		5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DB17F0DC6700E49916 /* Tunnel.cpp */; };
 		5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DF17F0DC7B00E49916 /* TunnelSlice.cpp */; };
@@ -85,6 +86,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5DBB9F50180BE8A300C7F23F /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
+		5DBB9F51180BE8A300C7F23F /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		5DE1228117F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.eot"; sourceTree = "<group>"; };
 		5DE1228217F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
 		5DE1228317F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.woff"; sourceTree = "<group>"; };
@@ -310,6 +313,8 @@
 				5DE122E217F0DC7B00E49916 /* Vine.h */,
 				5DE122D917F0DC6700E49916 /* Player.cpp */,
 				5DE122DA17F0DC6700E49916 /* Player.h */,
+				5DBB9F50180BE8A300C7F23F /* History.cpp */,
+				5DBB9F51180BE8A300C7F23F /* History.h */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -475,6 +480,7 @@
 				5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */,
 				5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */,
 				5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */,
+				5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

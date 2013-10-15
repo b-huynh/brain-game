@@ -18,7 +18,7 @@ public:
     // Helper Functions
     void updatePlayerChoice(Poppy* poppy, Pot* pot);
     void updatePoppyBlinks(double elapsed);
-    void updateScore();
+    void updateLevel();
     void updateFeedback();
     
     //Utilities for Saving
@@ -57,8 +57,6 @@ private:
     bool backwardsOrder;
 	int blinkPoppyIndex;
     int playerPoppyIndex;
-    
-    double totalElapsed;
     
     //Poppy Data
     std::vector<poppyData> pData;

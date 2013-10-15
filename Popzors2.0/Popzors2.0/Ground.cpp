@@ -2,24 +2,24 @@
 
 Ground::Ground(Vector3 pos, Ogre::ColourValue baseColor,
                Ogre::ColourValue blinkColor, double blinktime)
-    : Selectable(baseColor, blinkColor, blinktime), pos(pos)
+    : Selectable(TYPE_GROUND, pos, baseColor, blinkColor, blinktime)
 {
     Plane plane (Vector3::UNIT_Y, 0);
     OgreFramework::getSingletonPtr()->m_pMeshMgr->createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                                                               plane, 12, 12, 20, 20, true, 1, 12, 12, Ogre::Vector3::UNIT_Z);
     body = OgreFramework::getSingletonPtr()->m_pSceneMgr->createEntity("GroundEntity_" + toStringInt(sceneID), "ground");
     body->setUserAny(Any((Selectable*)(this)));
-    this->addToScene();
-    this->setColor(baseColor);
-    body->setMaterialName("General/PodYellow");
-    groundNode->setPosition(pos);
+    addToScene();
+    setColor(baseColor);
+    body->setMaterialName("General/PodUnknown");
+    setPosition(pos);
 }
 
 Ground::~Ground()
 {
 }
 
-void Ground::setColor(Ogre::ColourValue color)
+void Ground::setMaterialByColor(Ogre::ColourValue color)
 {
     if (currentColor == color)
         return;
@@ -33,45 +33,19 @@ void Ground::setColor(Ogre::ColourValue color)
     }
     else {
         currentColor = color;
-        body->setMaterialName("General/PodYellow");
+        body->setMaterialName("General/PodUnknown");
     }
-}
-
-void Ground::setColor(int r, int g, int b, int a)
-{
-    Ogre::ColourValue color = intToFloatColor(r,g,b,a);
-    this->setColor(color);
+    setColor(color);
 }
 
 void Ground::addToScene()
 {
-    groundNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("GroundNode_" + toStringInt(sceneID));
-    groundNode->attachObject(body);
+    mainNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("GroundNode_" + toStringInt(sceneID));
+    mainNode->attachObject(body);
 }
 
 void Ground::removeFromScene()
 {
     OgreFramework::getSingletonPtr()->m_pSceneMgr->destroySceneNode("GroundNode_" + toStringInt(sceneID));
-}
-
-void Ground::move(const Vector3 & dValue)
-{
-    groundNode->translate(dValue);
-}
-
-bool Ground::hasEntity(Entity* entity)
-{
-    return body == entity;
-}
-
-void Ground::reset()
-{
-    Blinkable::reset();
-    groundNode->setPosition(pos);
-}
-
-void Ground::update(double elapsed)
-{
-    Blinkable::update(elapsed);
 }
 
