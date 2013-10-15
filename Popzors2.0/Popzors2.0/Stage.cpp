@@ -77,11 +77,21 @@ void Stage::handleBothCollisions(double elapsed)
         
         if (obj1->getType() < obj2->getType()) {
             obj1->move(dmove);
+            dmove.normalise();
+            obj1->setVelocity(dmove * obj1->getVelocity().length());
         } else if (obj1->getType() > obj2->getType()) {
             obj2->move(-dmove);
+            dmove.normalise();
+            obj2->setVelocity(dmove * -obj2->getVelocity().length());
         } else {
             obj1->move(dmove / 2);
             obj2->move(-dmove / 2);
+            if (obj1->getType() == Object::TYPE_POPPY)
+            {
+                dmove.normalise();
+                obj1->setVelocity(dmove * obj1->getVelocity().length() / 2);
+                obj2->setVelocity(dmove * -obj2->getVelocity().length() / 2);
+            }
         }
     }
 }

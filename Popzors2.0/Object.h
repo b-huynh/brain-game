@@ -17,6 +17,7 @@ protected:
     Entity* body;
     
 	Vector3 pos; // Does not represent actual graphical pos, but initial/reset pos
+    Vector3 vel;
     Ogre::ColourValue currentColor;
 	Ogre::ColourValue baseColor;
 	Ogre::ColourValue blinkColor;
@@ -45,12 +46,15 @@ public:
     SceneNode* getNode() const;
     Entity* getBody() const;
     Vector3 getPosition() const;
+    Vector3 getVelocity() const;
     
     void move(const Vector3 & dValue);
     bool hasEntity(Entity* entity);
     
     void setPosition(double x, double y, double z);
     void setPosition(Vector3 vec);
+    void setVelocity(double x, double y, double z);
+    void setVelocity(Vector3 vec);
 	void setColor(int r, int g, int b, int a);
     void setColor(Ogre::ColourValue color);
 	void setBaseColor(int r, int g, int b, int a);

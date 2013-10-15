@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__TunnelSlice__
-#define __Testing__TunnelSlice__
+#ifndef __Vinezors2_0__TunnelSlice__
+#define __Vinezors2_0__TunnelSlice__
 
 #include "OgreFramework.h"
 #include "Util.h"
@@ -52,6 +52,8 @@ struct PodInfo
 class TunnelSlice
 {
 private:
+    Ogre::SceneManager* sceneMgr;
+    
 	Vector3 center;
     Quaternion rot;
 	double width;
@@ -93,7 +95,7 @@ private:
     bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneManager* sceneMgr, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     

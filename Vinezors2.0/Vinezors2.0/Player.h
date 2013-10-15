@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__Player__
-#define __Testing__Player__
+#ifndef __Vinezors2_0__Player__
+#define __Vinezors2_0__Player__
 
 #pragma once
 
@@ -109,7 +109,7 @@ public:
 	
 	void setCamDir(Direction value);
 	void setVineDir(Direction value);
-	void setVineDirRequest(Direction value, Tunnel* tunnel);
+	bool setVineDirRequest(Direction value, Tunnel* tunnel);
 	void setMousePos(Vector2 value);
 	void setOldPos(Vector3 value);
 	void setCamPos(Vector3 value);

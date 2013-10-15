@@ -37,6 +37,7 @@ private:
     int potsPerStage;
     int stageIndex;
     std::vector<Pot*> potsLeft;
+    std::vector<ColourValue> poppyAssignmentList;
     
     int playerNumAnswers;
     

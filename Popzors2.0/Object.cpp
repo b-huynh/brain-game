@@ -10,12 +10,12 @@
 
 int Object::BlinkableObjCount = 0;
 
-Object::Object() : type(TYPE_NONE), pos(), mainNode(NULL), body(NULL), currentColor(), baseColor(), blinkColor(), timeBlinkLength(0), timeBlinked(0), ontime(0), offtime(0), toggle(false), timeToggle(0), sceneID(BlinkableObjCount++)
+Object::Object() : type(TYPE_NONE), pos(Ogre::Vector3::ZERO), vel(Ogre::Vector3::ZERO), mainNode(NULL), body(NULL), currentColor(), baseColor(), blinkColor(), timeBlinkLength(0), timeBlinked(0), ontime(0), offtime(0), toggle(false), timeToggle(0), sceneID(BlinkableObjCount++)
 {
 }
 
 Object::Object(int type, Vector3 pos, Ogre::ColourValue baseColor, Ogre::ColourValue blinkColor, double blinktime)
-    : type(type), pos(pos), mainNode(mainNode), body(body), currentColor(baseColor), baseColor(baseColor), blinkColor(blinkColor), timeBlinkLength(blinktime), timeBlinked(0), ontime(blinktime), offtime(0), toggle(false), timeToggle(0), sceneID(BlinkableObjCount++)
+    : type(type), pos(pos), vel(Ogre::Vector3::ZERO), mainNode(mainNode), body(body), currentColor(baseColor), baseColor(baseColor), blinkColor(blinkColor), timeBlinkLength(blinktime), timeBlinked(0), ontime(blinktime), offtime(0), toggle(false), timeToggle(0), sceneID(BlinkableObjCount++)
 {
 }
 
@@ -44,6 +44,11 @@ Vector3 Object::getPosition() const
     return mainNode->getPosition();
 }
 
+Vector3 Object::getVelocity() const
+{
+    return vel;
+}
+
 void Object::move(const Vector3 & dValue)
 {
     mainNode->translate(dValue);
@@ -63,6 +68,16 @@ void Object::setPosition(double x, double y, double z)
 void Object::setPosition(Vector3 vec)
 {
     mainNode->setPosition(vec);
+}
+
+void Object::setVelocity(double x, double y, double z)
+{
+    vel = Vector3(x, y, z);
+}
+
+void Object::setVelocity(Vector3 vec)
+{
+    vel = vec;
 }
 
 void Object::setColor(Ogre::ColourValue color)
@@ -155,6 +170,8 @@ void Object::update(double elapsed)
     }
     else
         this->setMaterialByColor(baseColor);
+    
+    move(vel * elapsed);
 }
 
 Object::~Object()

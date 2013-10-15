@@ -159,13 +159,20 @@ void Poppy::update(double elapsed)
     
     // Update poppy to move towards destination if one exists
     if (moving) {
+        const double ACCELERATION = 1.0;
+        
         Vector3 dist = dest - getPosition();
         if (dist.length() > 0.1)
         {
-            dist.normalise();
             dist.y = 0; // Zero out the y movement (let jumping deal with that)
-            move(dist * elapsed * moveSpeed);
+            dist.normalise();
+            vel += dist;
+            vel.normalise();
+            
+            //move(dist * elapsed * moveSpeed);
         }
+        else
+            vel = Ogre::Vector3::ZERO;
     }
     
     if (stopJumpAtDest){

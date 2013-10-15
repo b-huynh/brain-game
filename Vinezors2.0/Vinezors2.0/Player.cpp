@@ -228,10 +228,14 @@ void Player::setVineDir(Direction value)
 	vineDir = value;
 }
 
-void Player::setVineDirRequest(Direction value, Tunnel* tunnel)
+bool Player::setVineDirRequest(Direction value, Tunnel* tunnel)
 {
     if (tunnel->hasAvailableSide(value))
+    {
         vineDir = value;
+        return true;
+    }
+    return false;
 }
 
 void Player::setMousePos(Vector2 value)
@@ -439,6 +443,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
         move(delta);
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
+    /*
     // Animate camera rolls
     if (camRoll < desireRoll) {
         camRoll += max(5, (desireRoll - camRoll) / 2);
@@ -446,7 +451,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
     if (camRoll > desireRoll) {
         camRoll -= max(5, (camRoll - desireRoll) / 2);
     }
-    
+    */
 	for (int i = 0; i < vines.size(); ++i)
     {
         vines[i]->speed = moveSpeed / 2;

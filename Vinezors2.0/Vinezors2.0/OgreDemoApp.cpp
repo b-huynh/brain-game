@@ -106,7 +106,7 @@ void DemoApp::finalizeRTShaderSystem()
 void DemoApp::startDemo()
 {
 	new OgreFramework();
-	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this))
+	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this, this))
 		return;
     
 	m_bShutdown = false;
@@ -159,32 +159,36 @@ void DemoApp::setupDemoScene()
     
     pause = false;
     
-	OgreFramework::getSingletonPtr()->m_pSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox", 1500, true);
+	OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/SpaceSkyBox", 1500, true);
     
     Util::generateMaterials();
     
-    Util::createSphere("podMesh", Util::POD_HEAD_RADIUS, 16, 16);
-    Util::createSphere("vineMesh", Util::VINE_RADIUS, 32, 32);
-    Util::createCylinder("stemMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
-    Util::createPlane("wallTileMesh", Util::TUNNEL_WALL_LENGTH, Util::TUNNEL_DEPTH);
+    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "podMesh", Util::POD_HEAD_RADIUS, 16, 16);
+    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "podMesh", Util::POD_HEAD_RADIUS, 16, 16);
+    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineMesh", Util::VINE_RADIUS, 32, 32);
+    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "stemMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
+    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", Util::TUNNEL_WALL_LENGTH, Util::TUNNEL_DEPTH);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", Util::SEAT_LENGTH, Util::SEAT_LENGTH);
     
 	origin = Vector3(0, 0, 0);
     
-	OgreFramework::getSingletonPtr()->m_pCamera->setPosition(Vector3(origin.x, origin.y, origin.z + Util::TUNNEL_DEPTH / 2));
-	OgreFramework::getSingletonPtr()->m_pCamera->lookAt(origin);
+	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(origin.x, origin.y, origin.z + Util::TUNNEL_DEPTH / 2));
+	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
 	player = new Player(
         "",
         PlayerLevel(),
-        OgreFramework::getSingletonPtr()->m_pCamera->getPosition(),
-        OgreFramework::getSingletonPtr()->m_pCamera->getOrientation(),
+        OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition(),
+        OgreFramework::getSingletonPtr()->m_pCameraMain->getOrientation(),
         Util::CAM_SPEED,
         Util::VINE_T_OFFSET,
         seed,
         "vinezors" + Util::toStringInt(seed) + ".csv");
-	player->addVine(new Vine(player->getCamPos(), Util::VINE_RADIUS));
+	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, player->getCamPos(), Util::VINE_RADIUS));
     
     tunnel = new Tunnel(
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain,
         Vector3(0, 0, 0) + Util::TUNNEL_REFERENCE_FORWARD * (Util::TUNNEL_WIDTH / 2),
         Util::TUNNEL_WIDTH, Util::TUNNEL_DEPTH,
         player->getLevel().nback,
@@ -194,12 +198,20 @@ void DemoApp::setupDemoScene()
         Util::TUNNEL_SEGMENTS_PER_POD);
     tunnel->constructTunnel(Util::TUNNEL_SECTIONS);
     
-    Light* light = OgreFramework::getSingletonPtr()->m_pSceneMgr->createLight("Light1");
-    light->setDiffuseColour(1.0, 1.0, 1.0);
-    light->setSpecularColour(1.0, 1.0, 1.0);
-//    light->setAttenuation(300, 1.0, 0.01, 0.0);
-    lightNode = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("lightNode");
-    lightNode->attachObject(light);
+    Light* lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("Light");
+    lightMain->setDiffuseColour(1.0, 1.0, 1.0);
+    lightMain->setSpecularColour(1.0, 1.0, 1.0);
+    lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
+    lightNodeMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
+    lightNodeMain->attachObject(lightMain);
+    lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+    
+    Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
+    lightSide->setDiffuseColour(1.0, 1.0, 1.0);
+    lightSide->setSpecularColour(1.0, 1.0, 1.0);
+    lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
+    lightNodeSide->attachObject(lightSide);
+    lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
     
     /*
     // if barHP is a ManualObject ptr
@@ -230,11 +242,16 @@ void DemoApp::setupDemoScene()
     resourceText->setParameter("resolution","96");
     resourceText->load();
     
-    // Create a panel
-    OverlayContainer* panel = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
-    panel->setMetricsMode(GMM_PIXELS);
-    panel->setPosition(10, 10);
-    panel->setDimensions(10, 10);
+    // Create panels
+    OverlayContainer* panel1 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
+    panel1->setMetricsMode(GMM_PIXELS);
+    panel1->setPosition(10, 10);
+    panel1->setDimensions(10, 10);
+    
+    OverlayContainer* panel2 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SideInterface"));
+    panel2->setMetricsMode(GMM_PIXELS);
+    panel2->setPosition(10, 10);
+    panel2->setDimensions(10, 10);
     
     BorderPanelOverlayElement* healthArea = static_cast<BorderPanelOverlayElement*>(
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("BorderPanel", "HealthAreaBorder"));
@@ -255,7 +272,7 @@ void DemoApp::setupDemoScene()
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
     label1->setMetricsMode(GMM_PIXELS);
     label1->setPosition(Util::LABEL1_POSX, Util::LABEL1_POSY);
-    label1->setCharHeight(26);
+    label1->setCharHeight(18);
     label1->setFontName("Arial");
     label1->setColour(ColourValue::Black);
     label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
@@ -265,7 +282,7 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
     label2->setMetricsMode(GMM_PIXELS);
     label2->setPosition(Util::LABEL2_POSX, Util::LABEL2_POSY);
-    label2->setCharHeight(26);
+    label2->setCharHeight(18);
     label2->setColour(ColourValue::Black);
     label2->setFontName("Arial");
     label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
@@ -275,7 +292,7 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
     label3->setMetricsMode(GMM_PIXELS);
     label3->setPosition(Util::LABEL3_POSX, Util::LABEL3_POSY);
-    label3->setCharHeight(26);
+    label3->setCharHeight(18);
     label3->setColour(ColourValue::Black);
     label3->setFontName("Arial");
     label3->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
@@ -285,29 +302,33 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
     label4->setMetricsMode(GMM_PIXELS);
     label4->setPosition(Util::LABEL4_POSX, Util::LABEL4_POSY);
-    label4->setCharHeight(26);
+    label4->setCharHeight(18);
     label4->setColour(ColourValue::Black);
     label4->setFontName("Arial");
     label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     
     // Create an overlay, and add the panel
-    Overlay* overlay = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayHelloWorld");
-    overlay->add2D(panel);
-    panel->addChild(label1);
-    panel->addChild(label2);
-    panel->addChild(label3);
-    panel->addChild(label4);
-    panel->addChild(healthArea);
-    panel->addChild(barHP);
-    overlay->show();
+    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayMain");
+    Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlaySide");
+    overlay1->add2D(panel1);
+    overlay2->add2D(panel2);
+    panel1->addChild(healthArea);
+    panel1->addChild(barHP);
+    panel2->addChild(label1);
+    panel2->addChild(label2);
+    panel2->addChild(label3);
+    panel2->addChild(label4);
+    
+    overlays.push_back(overlay1);
+    overlays.push_back(overlay2);
 }
 
 void DemoApp::update(double elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
-    //if (!soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
-    //    soundMusic->play();
+    if (!soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
+            soundMusic->play();
     
     // Determine whether a stage has completed
     if (!tunnel->isDone() &&
@@ -360,7 +381,6 @@ void DemoApp::update(double elapsed)
         
         // If player's current position is out of its current segment...
         if (tunnel->renewIfNecessary(player->getCamPos())) {
-            
             // Set new camera slerp goal
             player->setOldPos(player->getCamPos());
             player->setOldRot(player->getCamRot());
@@ -385,6 +405,7 @@ void DemoApp::update(double elapsed)
                 player->evaluatePlayerLevel(pass);
                 
                 tunnel = new Tunnel(
+                    OgreFramework::getSingletonPtr()->m_pSceneMgrMain,
                     newOrigin + forward * (Util::TUNNEL_WIDTH / 2),
                     Util::TUNNEL_WIDTH,
                     Util::TUNNEL_DEPTH,
@@ -395,6 +416,7 @@ void DemoApp::update(double elapsed)
                     Util::TUNNEL_SEGMENTS_PER_POD);
                 tunnel->constructTunnel(Util::TUNNEL_SECTIONS, rot);
                 player->newTunnel(tunnel);
+                player->setCamRoll(player->getDesireRoll());
             }
             
             // Show Pod Color and Play Sound
@@ -402,11 +424,15 @@ void DemoApp::update(double elapsed)
             if (nextSliceN && !tunnel->isDone())
             {
                 for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
+                    History* history = tunnel->getHistory();
+                    history->addPod(nextSliceN->getPodInfo());
+                    
                     nextSliceN->getPods()[i]->revealPod();
                     //playPodSound(nextSliceN->getPods()[i]);
                 }
             }
         }
+        tunnel->update(elapsed);
         
     } else {
          // Navigation Debug Keys
@@ -420,11 +446,11 @@ void DemoApp::update(double elapsed)
              player->move(Vector3(player->getCamRight() * Util::CAM_SPEED * elapsed));
     }
     
-    lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCamera->getPosition());
+    lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
     Quaternion camRot = player->getCombinedRotAndRoll();
-    OgreFramework::getSingletonPtr()->m_pCamera->setPosition(player->getCamPos());
-    OgreFramework::getSingletonPtr()->m_pCamera->setOrientation(camRot);
+    OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+    OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
     
     //if (pause)
     //    label->setText("Enter Name: " + player->getName());
@@ -527,7 +553,7 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
         curRot = pitchRot * yawRot * curRot;
         player->setCamRot(curRot);
         curRot = player->getCombinedRotAndRoll();
-        OgreFramework::getSingletonPtr()->m_pCamera->setOrientation(curRot);
+        OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(curRot);
         
         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
     }
@@ -572,17 +598,21 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_LEFT:
         {
             player->setKeyLeft(true);
-            //double val = player->getDesireRoll();
-            //player->setDesireRoll(val + 45);
-            player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel);
+            if (player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+            {
+                double val = player->getDesireRoll();
+                player->setDesireRoll(val + 45);
+            }
             break;
         }
         case OIS::KC_RIGHT:
         {
             player->setKeyRight(true);
-            //double val = player->getDesireRoll();
-            //player->setDesireRoll(val - 45);
-            player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel);
+            if (player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+            {
+                double val = player->getDesireRoll();
+                player->setDesireRoll(val - 45);
+            }
             break;
         }
         case OIS::KC_UP:
@@ -662,3 +692,26 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
+
+
+void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
+{
+    if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportMain)
+    {
+        for(int i = 0; i < overlays.size(); ++i)
+            if (overlays[i]->getName() != "OverlayMain")
+                overlays[i]->hide();
+    }
+    else if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
+    {
+        for(int i = 0; i < overlays.size(); ++i)
+            if (overlays[i]->getName() != "OverlaySide")
+                overlays[i]->hide();
+    }
+}
+
+void DemoApp::postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
+{
+    for(int i = 0; i < overlays.size(); ++i)
+        overlays[i]->show();
+}
