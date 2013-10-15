@@ -159,14 +159,14 @@ void Poppy::update(double elapsed)
     
     // Update poppy to move towards destination if one exists
     if (moving) {
-        const double ACCELERATION = 1.0;
+        const double WEIGHT = 0.1;
         
         Vector3 dist = dest - getPosition();
         if (dist.length() > 0.1)
         {
             dist.y = 0; // Zero out the y movement (let jumping deal with that)
             dist.normalise();
-            vel += dist;
+            vel += dist * WEIGHT;
             vel.normalise();
             
             //move(dist * elapsed * moveSpeed);
