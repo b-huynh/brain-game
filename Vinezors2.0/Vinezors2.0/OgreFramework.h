@@ -87,9 +87,9 @@ public:
 	~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MultiTouchListener *pMouseListener = 0);
+    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MultiTouchListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #else
-	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
+	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
 	void updateOgre(double timeSinceLastFrame);
 	void moveCamera();
@@ -112,10 +112,13 @@ public:
 #endif
 	
 	Ogre::Root*                 m_pRoot;
-	Ogre::SceneManager*			m_pSceneMgr;
 	Ogre::RenderWindow*			m_pRenderWnd;
-	Ogre::Camera*				m_pCamera;
-	Ogre::Viewport*				m_pViewport;
+	Ogre::SceneManager*			m_pSceneMgrMain;
+	Ogre::SceneManager*			m_pSceneMgrSide;
+	Ogre::Camera*				m_pCameraMain;
+	Ogre::Viewport*				m_pViewportMain;
+	Ogre::Camera*				m_pCameraSide;
+	Ogre::Viewport*				m_pViewportSide;
 	Ogre::Log*                  m_pLog;
 	Ogre::Timer*				m_pTimer;
 	

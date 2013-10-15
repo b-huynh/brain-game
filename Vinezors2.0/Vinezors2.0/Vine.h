@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__Vine__
-#define __Testing__Vine__
+#ifndef __Vinezors2_0__Vine__
+#define __Vinezors2_0__Vine__
 
 #include <list>
 #include "Util.h"
@@ -15,6 +15,8 @@
 // Represents the character (as a vine), currently incomplete.
 struct Vine
 {
+    Ogre::SceneManager* sceneMgr;
+    
 	SceneNode *tip;
 	Vector3 dest;
     Vector3 forward;
@@ -22,7 +24,7 @@ struct Vine
     double speed;
     
 	Vine();
-	Vine(Vector3 pos, double radius);
+	Vine(Ogre::SceneManager* sceneMgr, Vector3 pos, double radius);
 	
 	SceneNode *getTip() const;
 	Vector3 getPos() const;

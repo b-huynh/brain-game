@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Popzors2.0/BaselinePattern.cpp"
-         timestampString = "402612354.403773"
+         timestampString = "403210716.893593"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "204"
-         endingLineNumber = "204"
+         startingLineNumber = "202"
+         endingLineNumber = "202"
          landmarkName = "BaselinePattern::updateFeedback()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -21,25 +21,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Popzors2.0/PotPattern.mm"
-         timestampString = "402975967.426539"
+         timestampString = "403228497.456693"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "127"
-         endingLineNumber = "127"
+         startingLineNumber = "124"
+         endingLineNumber = "124"
          landmarkName = "PotPattern::update(double elapsed)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Popzors2.0/PotPattern.mm"
-         timestampString = "402982705.056062"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "237"
-         endingLineNumber = "237"
-         landmarkName = "PotPattern::addPoppy()"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

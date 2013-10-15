@@ -268,9 +268,9 @@ void Util::drawRect(ManualObject* obj, double x, double y, double width, double 
 }
 
 // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=manualspheremeshes
-void Util::createSphere(const std::string& strName, const float r, const int nRings, const int nSegments)
+void Util::createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings, int nSegments)
 {
-    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(strName);
+    ManualObject * manual = sceneMgr->createManualObject(strName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
     float fDeltaRingAngle = (Math::PI / nRings);
@@ -317,9 +317,9 @@ void Util::createSphere(const std::string& strName, const float r, const int nRi
     }
 }
 
-void Util::createCylinder(const std::string& strName, const float r, const float h, const int nSegments)
+void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, float h, int nSegments)
 {
-    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(strName);
+    ManualObject * manual = sceneMgr->createManualObject(strName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
     float fDeltaSegAngle = (2 * Math::PI / nSegments);
@@ -374,7 +374,7 @@ void Util::createCylinder(const std::string& strName, const float r, const float
     Vector3 tr = Vector3(r, h / 2, r);
     mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
     
-    mesh->_setBoundingSphereRadius((tr - bl).length());
+    mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
     unsigned short src, dest;
     if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
     {
@@ -382,10 +382,13 @@ void Util::createCylinder(const std::string& strName, const float r, const float
     }
 }
 
-void Util::createPlane(const std::string& strName, const float length, const float depth)
+void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth)
 {
-    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(strName);
+    ManualObject * manual = sceneMgr->createManualObject(strName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    length += EPSILON;
+    depth += EPSILON;
     
     manual->position(-length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);

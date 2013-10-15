@@ -16,7 +16,7 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL), 
+: sceneMgr(NULL), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
@@ -24,8 +24,8 @@ pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
         sidesUsed[i] = false;
 }
 
-TunnelSlice::TunnelSlice(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
-: center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL), 
+TunnelSlice::TunnelSlice(Ogre::SceneManager* sceneMgr, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
+: sceneMgr(sceneMgr), center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
@@ -42,7 +42,7 @@ void TunnelSlice::initWalls()
     Quaternion q;
     Vector3 move;
     
-    entireWall = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
+    entireWall = sceneMgr->getRootSceneNode()->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
     if (type != CHECKPOINT)
         materialName = "General/WallMetal";
@@ -356,27 +356,30 @@ void TunnelSlice::addPod(Direction loc, PodType type)
     move = move * ((move.length() - STEM_LENGTH) / move.length());
     head = center + move;
     
-	pods.push_back(new Pod(base, head, type, STEM_RADIUS, HEAD_RADIUS));
+	pods.push_back(new Pod(sceneMgr, base, head, type, STEM_RADIUS, HEAD_RADIUS));
 }
 
 void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
 {
     std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
-    ManualObject * manual = OgreFramework::getSingletonPtr()->m_pSceneMgr->createManualObject(meshName);
+    ManualObject * manual = sceneMgr->createManualObject(meshName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
     Vector3 n = (p2 - p1).crossProduct(p4 - p1).normalisedCopy();
     
-    manual->position(p1);
+    Vector3 d1 = (p1 - p3).normalisedCopy();
+    Vector3 d2 = (p2 - p4).normalisedCopy();
+    
+    manual->position(p1 + d1 * Util::EPSILON);
     manual->normal(n);
     manual->textureCoord(1, 1);
-    manual->position(p2);
+    manual->position(p2 + d2 * Util::EPSILON);
     manual->normal(n);
     manual->textureCoord(1, 0);
-    manual->position(p3);
+    manual->position(p3 + d1 * -Util::EPSILON);
     manual->normal(n);
     manual->textureCoord(0, 0);
-    manual->position(p4);
+    manual->position(p4 + d2 * -Util::EPSILON);
     manual->normal(n);
     manual->textureCoord(0, 1);
     manual->quad(0, 1, 2, 3);
@@ -448,7 +451,7 @@ void TunnelSlice::connect(TunnelSlice* next)
 	double wallLength1 = getWallLength();
 	double wallLength2 = next->getWallLength();
     
-    entireIntermediate = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
+    entireIntermediate = sceneMgr->getRootSceneNode()->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
     
     Quaternion q1 = getQuaternion();
     Quaternion q2 = next->getQuaternion();

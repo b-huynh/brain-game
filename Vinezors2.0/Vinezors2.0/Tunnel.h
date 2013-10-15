@@ -6,20 +6,21 @@
 //
 //
 
-#ifndef __Testing__Tunnel__
-#define __Testing__Tunnel__
+#ifndef __Vinezors2_0__Tunnel__
+#define __Vinezors2_0__Tunnel__
 
 #include <list>
 #include <vector>
 #include "Util.h"
 #include "TunnelSlice.h"
-
-
+#include "History.h"
 
 // Stores the list of tunnel segments
 class Tunnel
 {
 public:
+    Ogre::SceneManager* sceneMgr;
+
 	Vector3 start;
 	Vector3 end;
     std::list<TunnelSlice*> segments;
@@ -39,12 +40,13 @@ public:
     
     // Stage attributes
     int nback;
+    History* history;
     bool sidesUsed[NUM_DIRECTIONS];
     
     bool done;
 public:
 	Tunnel();
-	Tunnel(Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize);
+	Tunnel(Ogre::SceneManager* sceneMgr, Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize);
 	
 	Vector3 getStart() const;
 	Vector3 getEnd() const;
@@ -57,6 +59,7 @@ public:
 	TunnelSlice* getNext(int i) const;
 	int getSectionIndex() const;
 	int getPodIndex() const;
+    History* getHistory() const;
     
 	double getSegmentWidth() const;
 	double getSegmentDepth() const;
@@ -84,6 +87,8 @@ public:
     std::vector<Pod *> findPodCollisions(SceneNode* ent);
     
     void constructTunnel(int size, Quaternion q = Quaternion(1, 0, 0, 0));
+    
+    void update(double elapsed);
     
 	~Tunnel();
 };

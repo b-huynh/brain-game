@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__Util__
-#define __Testing__Util__
+#ifndef __Vinezors2_0__Util__
+#define __Vinezors2_0__Util__
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -41,6 +41,7 @@ namespace Util
     static const double POD_HEAD_RADIUS = TUNNEL_WIDTH / 25;
     static const double POD_STEM_RADIUS = TUNNEL_WIDTH / 100;
     static const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
+    static const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
     static const int TUNNEL_SECTIONS = 5;
     static const int NBACK = 2;
@@ -58,8 +59,13 @@ namespace Util
     static const double HP_BAR_WIDTH = 0.9;
     static const double HP_BAR_HEIGHT = 0.05;
     
-    static const int SCREEN_WIDTH = 800;
-    static const int SCREEN_HEIGHT = 578;
+    static const int SCREEN_WIDTH = 1024;
+    static const int SCREEN_HEIGHT = 800;
+    static const int VIEWPORT_MAIN_WIDTH = 800;
+    static const int VIEWPORT_MAIN_HEIGHT = 800;
+    static const int VIEWPORT_SIDE_WIDTH = 224;
+    static const int VIEWPORT_SIDE_HEIGHT = 800;
+    /*
     static const int LABEL1_POSX = 10;
     static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
     static const int LABEL2_POSX = 10;
@@ -68,6 +74,17 @@ namespace Util
     static const int LABEL3_POSY = SCREEN_HEIGHT - 50;
     static const int LABEL4_POSX = SCREEN_WIDTH - 275;
     static const int LABEL4_POSY = SCREEN_HEIGHT - 100;
+     */
+    static const int LABEL1_POSX = 10;
+    static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
+    static const int LABEL2_POSX = 10;
+    static const int LABEL2_POSY = SCREEN_HEIGHT - 100;
+    static const int LABEL3_POSX = 10;
+    static const int LABEL3_POSY = SCREEN_HEIGHT - 150;
+    static const int LABEL4_POSX = 10;
+    static const int LABEL4_POSY = SCREEN_HEIGHT - 200;
+    
+    static const double EPSILON = 0.001;
     
     int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
@@ -85,9 +102,9 @@ namespace Util
     
     void drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
     
-    void createSphere(const std::string& strName, const float r, const int nRings = 16, const int nSegments = 16);
-    void createCylinder(const std::string& strName, const float r, const float h, const int nSegments = 16);
-    void createPlane(const std::string& strName, const float length, const float depth);
+    void createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings = 16, int nSegments = 16);
+    void createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r,  float h, int nSegments = 16);
+    void createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth);
 
     void generateMaterials();
 };

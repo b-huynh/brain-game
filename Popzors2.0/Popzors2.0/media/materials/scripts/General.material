@@ -67,7 +67,7 @@ material General/BaseYellow
         lighting off
         texture_unit
         {
-            texture yellow_fixed.png
+            texture craze.png
         }
       } 
     }

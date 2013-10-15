@@ -26,7 +26,7 @@ public:
     Blinkable(Ogre::ColourValue baseColor, Ogre::ColourValue blinkColor, double blinktime, double ontime, double offtime);
     
     void activateBlink();
-	virtual void setColor(int r, int g, int b, int a) = 0;
+    virtual void setColor(int r, int g, int b, int a) = 0;
 	virtual void setColor(Ogre::ColourValue color) = 0;
 	void setTimeBlinkLength(double blinktime);
 	void setTimeBlinkLength(double blinktime, double ontime, double offtime);
