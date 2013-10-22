@@ -73,7 +73,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif
-    m_pRoot->loadPlugin("../Components/libOgreOggSound");
     
 	if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
@@ -94,7 +93,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
 	m_pCameraMain->setNearClipDistance(1);
-	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1, 0.0, 0.0, double(Util::VIEWPORT_MAIN_WIDTH) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_MAIN_HEIGHT) / Util::SCREEN_HEIGHT);
+	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1, 0.0, 0.0, double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_MAIN_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
@@ -103,9 +102,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraSide->setPosition(Vector3(0, 0, 30));
 	m_pCameraSide->lookAt(Vector3(0, 0, 0));
 	m_pCameraSide->setNearClipDistance(1);
-	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0, double(Util::VIEWPORT_MAIN_WIDTH) / Util::SCREEN_WIDTH, 0.0, double(Util::VIEWPORT_SIDE_WIDTH) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_SIDE_HEIGHT) / Util::SCREEN_HEIGHT);
-	m_pViewportSide->setBackgroundColour(ColourValue(1.0f, 1.0f, 1.0f, 1.0f));
-	m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth() / 2) / Real(m_pViewportSide->getActualHeight() / 2));
+    m_pCameraSide->setOrthoWindow(10.0, 25.0);
+    m_pCameraSide->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
+	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0, double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, 0.0, double(Util::VIEWPORT_SIDE_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_SIDE_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+	m_pViewportSide->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+	m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
 	m_pViewportSide->setCamera(m_pCameraSide);
     m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
     
@@ -187,7 +188,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
     //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    //m_pTrayMgr->hideCursor();
+    m_pTrayMgr->hideCursor();
     
 	m_pRenderWnd->setActive(true);
     

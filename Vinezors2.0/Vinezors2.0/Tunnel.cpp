@@ -85,6 +85,14 @@ TunnelSlice* Tunnel::getCurrent() const
 		return NULL;
 	return *current;
 }
+TunnelSlice* Tunnel::getFront() const
+{
+    return segments.front();
+}
+TunnelSlice* Tunnel::getBack() const
+{
+    return segments.back();
+}
 
 // Get the ith segment from current. Returns NULL if no ith segment exists
 TunnelSlice* Tunnel::getNext(int i) const
@@ -239,14 +247,34 @@ SectionInfo Tunnel::getNextSectionInfo() const
 
 PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
 {
-    PodType podType = (PodType)(rand() % 4);
     Direction podLoc = Util::randDirection(sidesUsed);
     
+    /*
+    PodType podType = (PodType)(rand() % 4);
     // Do a reroll if pod is the same type as last one
     if (nback != 1 && types.size() > 0 && types[types.size() - 1].podType == podType)
         podType = (PodType)(rand() % 4);
-    else if (nback == 1 && types.size() > 1 &&
+    else if (nback == 1 && types.size() > 1 && // Nback == 1 has a different case
              types[types.size() - 1].podType == podType && types[types.size() - 2].podType == podType)
+        podType = (PodType)(rand() % 4);
+    */
+    
+    // Next pod has a 1/3 chance to be a good pod
+    PodType podType;
+    if (types.size() >= nback && nback > 0)
+    {
+        podType = types[types.size() - nback].podType;
+        int r = rand() % 3;
+        if (r > 0)
+        {
+            std::vector<PodType> candidates;
+            for (int i = 0; i < 4; ++i)
+                if (i != podType)
+                    candidates.push_back((PodType)i);
+            podType = candidates[rand() % candidates.size()];
+        }
+    }
+    else
         podType = (PodType)(rand() % 4);
     
     // The following deals with throwing special settings for certain NBacks occuring before this one
@@ -264,11 +292,11 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
             break;
         case POD_YELLOW:
             //sectionInfo.tunnelType = NORMAL_WITH_ONE_POD;
-            /*
-             // Guarantee an nback if a yellow nback appears
-             podType = types[types.size() - nback].podType;
-             podLoc = types[types.size() - 1].podLoc;
-             */
+            
+            // Guarantee an nback if a yellow nback appears
+            //podType = types[types.size() - nback].podType;
+            //podLoc = types[types.size() - 1].podLoc;
+            
             break;
         case POD_BLACK:
             //sectionInfo.tunnelType = NORMAL_WITH_MANY_PODS;
@@ -282,9 +310,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     
     // Determine NBack of next pod is good
     bool good = false;
-    if (types.size() > 0 && types.size() >= nback && types[types.size() - nback].podType == podType)
-        good = true;
-    if (nback <= 0)
+    if (nback <= 0 || (types.size() >= nback && types[types.size() - nback].podType == podType))
         good = true;
     return PodInfo(podType, podLoc, good);
 }

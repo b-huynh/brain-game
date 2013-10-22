@@ -48,7 +48,7 @@ namespace Util
     
     static const int STARTING_HP = 0;
     static const int HP_NEGATIVE_LIMIT = -3;
-    static const int HP_POSITIVE_LIMIT = 6;
+    static const int HP_POSITIVE_LIMIT = 3;
     static const double DRAIN_SPEED = 2;    
     static const int CAM_SPEED = 50; //100;
     static const int MIN_CAM_SPEED = 25;
@@ -61,10 +61,22 @@ namespace Util
     
     static const int SCREEN_WIDTH = 1024;
     static const int SCREEN_HEIGHT = 800;
-    static const int VIEWPORT_MAIN_WIDTH = 800;
-    static const int VIEWPORT_MAIN_HEIGHT = 800;
-    static const int VIEWPORT_SIDE_WIDTH = 224;
-    static const int VIEWPORT_SIDE_HEIGHT = 800;
+    
+    static const int VIEWPORT_MAIN_WIDTH_MODERIGHT = 800;
+    static const int VIEWPORT_MAIN_HEIGHT_MODERIGHT = 800;
+    static const int VIEWPORT_SIDE_WIDTH_MODERIGHT = 224;
+    static const int VIEWPORT_SIDE_HEIGHT_MODERIGHT = 800;
+    
+    static const int VIEWPORT_MAIN_WIDTH_MODEBOTTOM = 1024;
+    static const int VIEWPORT_MAIN_HEIGHT_MODEBOTTOM = 700;
+    static const int VIEWPORT_SIDE_WIDTH_MODEBOTTOM = 1024;
+    static const int VIEWPORT_SIDE_HEIGHT_MODEBOTTOM = 100;
+    
+    static const int VIEWPORT_MAIN_WIDTH_MODENONE = 1024;
+    static const int VIEWPORT_MAIN_HEIGHT_MODENONE = 800;
+    static const int VIEWPORT_SIDE_WIDTH_MODENONE = 0;
+    static const int VIEWPORT_SIDE_HEIGHT_MODENONE = 0;
+
     /*
     static const int LABEL1_POSX = 10;
     static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
@@ -76,13 +88,13 @@ namespace Util
     static const int LABEL4_POSY = SCREEN_HEIGHT - 100;
      */
     static const int LABEL1_POSX = 10;
-    static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
+    static const int LABEL1_POSY = SCREEN_HEIGHT - 70;
     static const int LABEL2_POSX = 10;
-    static const int LABEL2_POSY = SCREEN_HEIGHT - 100;
+    static const int LABEL2_POSY = SCREEN_HEIGHT - 110;
     static const int LABEL3_POSX = 10;
     static const int LABEL3_POSY = SCREEN_HEIGHT - 150;
     static const int LABEL4_POSX = 10;
-    static const int LABEL4_POSY = SCREEN_HEIGHT - 200;
+    static const int LABEL4_POSY = SCREEN_HEIGHT - 190;
     
     static const double EPSILON = 0.001;
     

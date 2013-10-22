@@ -169,7 +169,7 @@ void DemoApp::setupDemoScene()
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "stemMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", Util::POD_STEM_RADIUS, Util::POD_STEM_LENGTH, 16);
     Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", Util::TUNNEL_WALL_LENGTH, Util::TUNNEL_DEPTH);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", Util::SEAT_LENGTH, Util::SEAT_LENGTH);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
     
 	origin = Vector3(0, 0, 0);
     
@@ -201,7 +201,7 @@ void DemoApp::setupDemoScene()
     Light* lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("Light");
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
     lightMain->setSpecularColour(1.0, 1.0, 1.0);
-    lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
+//    lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
     lightNodeMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
@@ -272,7 +272,7 @@ void DemoApp::setupDemoScene()
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
     label1->setMetricsMode(GMM_PIXELS);
     label1->setPosition(Util::LABEL1_POSX, Util::LABEL1_POSY);
-    label1->setCharHeight(18);
+    label1->setCharHeight(16);
     label1->setFontName("Arial");
     label1->setColour(ColourValue::Black);
     label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
@@ -282,7 +282,7 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
     label2->setMetricsMode(GMM_PIXELS);
     label2->setPosition(Util::LABEL2_POSX, Util::LABEL2_POSY);
-    label2->setCharHeight(18);
+    label2->setCharHeight(16);
     label2->setColour(ColourValue::Black);
     label2->setFontName("Arial");
     label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
@@ -292,7 +292,7 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
     label3->setMetricsMode(GMM_PIXELS);
     label3->setPosition(Util::LABEL3_POSX, Util::LABEL3_POSY);
-    label3->setCharHeight(18);
+    label3->setCharHeight(16);
     label3->setColour(ColourValue::Black);
     label3->setFontName("Arial");
     label3->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
@@ -302,7 +302,7 @@ void DemoApp::setupDemoScene()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
     label4->setMetricsMode(GMM_PIXELS);
     label4->setPosition(Util::LABEL4_POSX, Util::LABEL4_POSY);
-    label4->setCharHeight(18);
+    label4->setCharHeight(16);
     label4->setColour(ColourValue::Black);
     label4->setFontName("Arial");
     label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
@@ -321,6 +321,73 @@ void DemoApp::setupDemoScene()
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
+    
+    sidebarMode = SIDEBAR_RIGHT;
+}
+
+void DemoApp::setSidebar()
+{
+    Camera* m_pCameraMain = OgreFramework::getSingletonPtr()->m_pCameraMain;
+    Camera* m_pCameraSide = OgreFramework::getSingletonPtr()->m_pCameraSide;
+    
+    Viewport* m_pViewportMain = OgreFramework::getSingletonPtr()->m_pViewportMain;
+    Viewport* m_pViewportSide = OgreFramework::getSingletonPtr()->m_pViewportSide;
+    
+    switch (sidebarMode)
+    {
+        case SIDEBAR_NONE:
+            m_pViewportMain->setDimensions(0.0,
+                                           0.0,
+                                           double(Util::VIEWPORT_MAIN_WIDTH_MODENONE) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_MAIN_HEIGHT_MODENONE) / Util::SCREEN_HEIGHT);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setOrthoWindow(0.0, 0.0);
+            m_pViewportSide->setDimensions(
+                                           double(Util::VIEWPORT_MAIN_WIDTH_MODENONE) / Util::SCREEN_WIDTH,
+                                           0.0,
+                                           double(Util::VIEWPORT_SIDE_WIDTH_MODENONE) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_SIDE_HEIGHT_MODENONE) / Util::SCREEN_HEIGHT);
+            m_pCameraSide->setAspectRatio(Real(0.0));
+            break;
+        case SIDEBAR_RIGHT:
+            m_pViewportMain->setDimensions(0.0,
+                                           0.0,
+                                           double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_MAIN_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setPosition(Vector3(0, 0, 30));
+            m_pCameraSide->lookAt(Vector3(0, 0, 0));
+            m_pCameraSide->setNearClipDistance(1);
+            m_pCameraSide->setOrthoWindow(10.0, 25.0);
+            m_pViewportSide->setDimensions(
+                                           double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH,
+                                           0.0,
+                                           double(Util::VIEWPORT_SIDE_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_SIDE_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+            break;
+        case SIDEBAR_BOTTOM:
+            m_pViewportMain->setDimensions(0.0,
+                                           0.0,
+                                           double(Util::VIEWPORT_MAIN_WIDTH_MODEBOTTOM) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_MAIN_HEIGHT_MODEBOTTOM) / Util::SCREEN_HEIGHT);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setPosition(Vector3(0, 0, 30));
+            m_pCameraSide->lookAt(Vector3(0, 0, 0));
+            m_pCameraSide->setNearClipDistance(1);
+            m_pCameraSide->roll(Degree(-90));
+            m_pCameraSide->setOrthoWindow(5, 2.5);
+            m_pViewportSide->setDimensions(
+                                           0.0,
+                                           double(Util::VIEWPORT_MAIN_HEIGHT_MODEBOTTOM) / Util::SCREEN_HEIGHT,
+                                           double(Util::VIEWPORT_SIDE_WIDTH_MODEBOTTOM) / Util::SCREEN_WIDTH,
+                                           double(Util::VIEWPORT_SIDE_HEIGHT_MODEBOTTOM) / Util::SCREEN_HEIGHT);
+            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+            break;
+    }
 }
 
 void DemoApp::update(double elapsed)
@@ -328,7 +395,7 @@ void DemoApp::update(double elapsed)
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
     if (!soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
-            soundMusic->play();
+        soundMusic->play();
     
     // Determine whether a stage has completed
     if (!tunnel->isDone() &&
@@ -355,11 +422,9 @@ void DemoApp::update(double elapsed)
         //Play Feedback Sound
         if (currentHp < player->getHP()) {
             soundFeedbackGood->play();
-            printf("good\n");
         }
         else if (currentHp > player->getHP()) {
             //negativeFeedback->getSound()->Play();
-            printf("bad\n");
         }
         
         // Animate Pod Growing outwards or Growing inwards
@@ -392,31 +457,7 @@ void DemoApp::update(double elapsed)
             }
             else {
                 // Generate a new tunnel because we are at the end
-                Vector3 newOrigin = tunnel->getEnd();
-                TunnelSlice* current = tunnel->getCurrent();
-                Quaternion rot = current->getQuaternion();
-                Vector3 forward = current->getForward();
-                int nback = tunnel->getNBack();
-                delete tunnel;
-                
-                bool pass = false;
-                if (player->getHP() > 0)
-                    pass = true;
-                player->evaluatePlayerLevel(pass);
-                
-                tunnel = new Tunnel(
-                    OgreFramework::getSingletonPtr()->m_pSceneMgrMain,
-                    newOrigin + forward * (Util::TUNNEL_WIDTH / 2),
-                    Util::TUNNEL_WIDTH,
-                    Util::TUNNEL_DEPTH,
-                    player->getLevel().nback,
-                    player->getLevel().control,
-                    player->getVineDir(),
-                    Util::TUNNEL_SEGMENTS_PER_SECTION,
-                    Util::TUNNEL_SEGMENTS_PER_POD);
-                tunnel->constructTunnel(Util::TUNNEL_SECTIONS, rot);
-                player->newTunnel(tunnel);
-                player->setCamRoll(player->getDesireRoll());
+                setLevel(-1);
             }
             
             // Show Pod Color and Play Sound
@@ -424,11 +465,8 @@ void DemoApp::update(double elapsed)
             if (nextSliceN && !tunnel->isDone())
             {
                 for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
-                    History* history = tunnel->getHistory();
-                    history->addPod(nextSliceN->getPodInfo());
-                    
                     nextSliceN->getPods()[i]->revealPod();
-                    //playPodSound(nextSliceN->getPods()[i]);
+//                    playPodSound(nextSliceN->getPods()[i]);
                 }
             }
         }
@@ -468,7 +506,7 @@ void DemoApp::update(double elapsed)
         barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
   
         if (player->getHP() >= Util::HP_POSITIVE_LIMIT)
-            barHP->setMaterialName("General/BaseBlue");
+            barHP->setMaterialName("General/BaseGreen");
         else
             barHP->setMaterialName("General/BaseGreen");
     } else {
@@ -479,8 +517,60 @@ void DemoApp::update(double elapsed)
         if (player->getHP() <= Util::HP_NEGATIVE_LIMIT)
             barHP->setMaterialName("General/BaseRed");
         else
-            barHP->setMaterialName("General/BaseYellow");
+            barHP->setMaterialName("General/BaseRed");
     }
+}
+
+void DemoApp::setLevel(int n)
+{
+    
+    Vector3 newOrigin = tunnel->getEnd();
+    TunnelSlice* current = tunnel->getCurrent();
+    Quaternion rot = tunnel->getBack()->getQuaternion();
+    Vector3 forward = tunnel->getBack()->getForward();
+    int nback = tunnel->getNBack();
+    delete tunnel;
+    
+    if (n >= 0)
+    {
+        tunnel = new Tunnel(
+                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain,
+                            newOrigin + forward * (Util::TUNNEL_WIDTH / 2),
+                            Util::TUNNEL_WIDTH,
+                            Util::TUNNEL_DEPTH,
+                            n,
+                            player->getLevel().control,
+                            player->getVineDir(),
+                            Util::TUNNEL_SEGMENTS_PER_SECTION,
+                            Util::TUNNEL_SEGMENTS_PER_POD);
+        tunnel->constructTunnel(Util::TUNNEL_SECTIONS, rot);
+    }
+    else
+    {
+        bool pass = false;
+        if (player->getHP() > 0)
+            pass = true;
+        player->evaluatePlayerLevel(pass);
+        
+        tunnel = new Tunnel(
+                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain,
+                            newOrigin + forward * (Util::TUNNEL_WIDTH / 2),
+                            Util::TUNNEL_WIDTH,
+                            Util::TUNNEL_DEPTH,
+                            player->getLevel().nback,
+                            player->getLevel().control,
+                            player->getVineDir(),
+                            Util::TUNNEL_SEGMENTS_PER_SECTION,
+                            Util::TUNNEL_SEGMENTS_PER_POD);
+        tunnel->constructTunnel(Util::TUNNEL_SECTIONS, rot);
+    }
+    
+    player->setCamPos(newOrigin);
+    player->setCamRot(rot);
+    player->setDesireRot(rot);
+    player->setCamRoll(player->getDesireRoll());
+    
+    player->newTunnel(tunnel);
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -542,8 +632,8 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
     if (pause) {
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
         
-        Vector3 right = player->getCamRight(false);
-        Vector3 up = player->getCamUpward(false);
+        Vector3 right = player->getCamRight(true);
+        Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;
         Quaternion pitchRot;
         yawRot.FromAngleAxis(Degree(-dmove.x), up);
@@ -645,6 +735,64 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
                 player->setOldRot(player->getCamRot());
                 player->setOldRoll(player->getCamRoll());
             }
+            break;
+        }
+        case OIS::KC_1:
+        {
+            setLevel(1);
+            break;
+        }
+        case OIS::KC_2:
+        {
+            setLevel(2);
+            break;
+        }
+        case OIS::KC_3:
+        {
+            setLevel(3);
+            break;
+        }
+        case OIS::KC_4:
+        {
+            setLevel(4);
+            break;
+        }
+        case OIS::KC_5:
+        {
+            setLevel(5);
+            break;
+        }
+        case OIS::KC_6:
+        {
+            setLevel(6);
+            break;
+        }
+        case OIS::KC_7:
+        {
+            setLevel(7);
+            break;
+        }
+        case OIS::KC_8:
+        {
+            setLevel(8);
+            break;
+        }
+        case OIS::KC_9:
+        {
+            setLevel(9);
+            break;
+        }
+        case OIS::KC_0:
+        {
+            setLevel(10);
+            break;
+        }
+        case OIS::KC_Z:
+        {
+            sidebarMode++;
+            if (sidebarMode > 2)
+                sidebarMode = (SidebarLocation)0;
+            setSidebar();
             break;
         }
         default:

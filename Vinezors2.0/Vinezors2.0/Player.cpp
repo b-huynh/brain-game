@@ -402,6 +402,9 @@ void Player::update(double elapsed, Tunnel *tunnel)
             
             // If player vine is halfway through a segment with a pod, we can get results
             if (t > 0.5) {
+                History* history = tunnel->getHistory();
+                history->addPod(closest->getPodInfo());
+                
                 // This code block is to record data of the pods
                 Result result;
                 result.timestamp = (int)(totalElapsed * 1000);
@@ -417,6 +420,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     hp++;
                     if (hp > Util::HP_POSITIVE_LIMIT)
                         hp = Util::HP_POSITIVE_LIMIT;
+                    
+                    history->determineCoverLoc(true);
                 }
                 else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
                          (!result.podInfo.goodPod && result.podInfo.podTaken)) {
@@ -425,6 +430,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     hp--;
                     if (hp < Util::HP_NEGATIVE_LIMIT)
                         hp = Util::HP_NEGATIVE_LIMIT;
+                    
+                    history->determineCoverLoc(false);
                 }
                 
                 // Flag to trigger only once
@@ -443,15 +450,15 @@ void Player::update(double elapsed, Tunnel *tunnel)
         move(delta);
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
-    /*
+    
     // Animate camera rolls
     if (camRoll < desireRoll) {
-        camRoll += max(5, (desireRoll - camRoll) / 2);
+        camRoll += max(5, (desireRoll - camRoll) / 4);
     }
     if (camRoll > desireRoll) {
-        camRoll -= max(5, (camRoll - desireRoll) / 2);
+        camRoll -= max(5, (camRoll - desireRoll) / 4);
     }
-    */
+    
 	for (int i = 0; i < vines.size(); ++i)
     {
         vines[i]->speed = moveSpeed / 2;
