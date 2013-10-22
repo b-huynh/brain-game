@@ -56,6 +56,8 @@ public:
     std::list<TunnelSlice*>::const_iterator getEndIterator() const;
     TunnelSlice* findSliceFromCurrent(Vector3 pos, double tOffset, double & tLeft) const;
 	TunnelSlice* getCurrent() const;
+	TunnelSlice* getFront() const;
+	TunnelSlice* getBack() const;
 	TunnelSlice* getNext(int i) const;
 	int getSectionIndex() const;
 	int getPodIndex() const;

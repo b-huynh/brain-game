@@ -83,6 +83,8 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
+enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM };
+
 class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
 {
 public:
@@ -90,14 +92,16 @@ public:
 	~DemoApp();
     
 	void startDemo();
+    void setSidebar();
     void update(double elapsed);
+    void setLevel(int n);
 
-    bool mouseMoved(const OIS::MouseEvent &evt);
-	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    virtual bool mouseMoved(const OIS::MouseEvent &evt);
+	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 
-	bool keyPressed(const OIS::KeyEvent &keyEventRef);
-	bool keyReleased(const OIS::KeyEvent &keyEventRef);
+    virtual bool keyPressed(const OIS::KeyEvent &keyEventRef);
+	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef);
     
     virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
     virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
@@ -126,6 +130,8 @@ private:
     
     OgreOggISound* soundMusic;
     OgreOggISound* soundFeedbackGood;
+    
+    SidebarLocation sidebarMode;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

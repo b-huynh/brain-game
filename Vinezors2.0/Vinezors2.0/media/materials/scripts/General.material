@@ -13,6 +13,21 @@ material General/BaseBlack
     }
 }
 
+material General/BaseWhite
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture white_fixed.png
+        }
+      } 
+    }
+}
+
 material General/BaseRed
 {
     technique
@@ -112,22 +127,6 @@ material General/WallGlass
 	}
 }
 
-material General/WallMetal
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture craze.png
-			}
-		}
-	}
-}
-
 material General/Smiley
 {
     technique
@@ -139,6 +138,22 @@ material General/Smiley
             texture_unit
 			{
 				texture smiley.png
+			}
+		}
+	}
+}
+
+material General/WallMetal
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture craze.png
 			}
 		}
 	}
@@ -189,6 +204,21 @@ material General/PodUnknown
     }
 }
 
+material General/PodBlack
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.0 0.0 0.0 1
+            diffuse 0.1 0.1 0.1 1
+            emissive 0.0 0.0 0.0 1
+        }
+    }
+}
+
 material General/PodRed
 {
     technique
@@ -197,9 +227,9 @@ material General/PodRed
         {
             lighting on
  
-            ambient 0.4 0.1 0.1 1
-            diffuse 1.0 0.1 0.1 1
-            emissive 0.4 0.1 0.1 1
+            ambient 0.3 0.1 0.1 1
+            diffuse 0.8 0.1 0.1 1
+            emissive 0.3 0.1 0.1 1
         }
     }
 }
@@ -212,9 +242,9 @@ material General/PodGreen
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 1.0 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.1 0.3 0.1 1
+            diffuse 0.1 0.8 0.1 1
+            emissive 0.1 0.3 0.1 1
         }
     }
 }
@@ -227,9 +257,9 @@ material General/PodBlue
         {
             lighting on
  
-            ambient 0.1 0.1 0.4 1
-            diffuse 0.1 0.1 1.0 1
-            emissive 0.1 0.1 0.4 1
+            ambient 0.1 0.1 0.3 1
+            diffuse 0.1 0.1 0.8 1
+            emissive 0.1 0.1 0.3 1
         }
     }
 }
@@ -242,9 +272,9 @@ material General/PodYellow
         {
             lighting on
  
-            ambient 0.4 0.4 0.1 1
-            diffuse 1.0 1.0 0.1 1
-            emissive 0.4 0.4 0.1 1
+            ambient 0.3 0.3 0.1 1
+            diffuse 0.8 0.8 0.1 1
+            emissive 0.3 0.3 0.1 1
         }
     }
 }

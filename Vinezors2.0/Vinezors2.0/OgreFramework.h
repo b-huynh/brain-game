@@ -23,8 +23,7 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-#include "OgreOggSound.h"
-
+#include "OgreOggSoundPlugin.h"
 using namespace OgreOggSound;
 
 #ifdef OGRE_STATIC_LIB

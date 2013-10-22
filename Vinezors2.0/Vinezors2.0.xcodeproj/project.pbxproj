@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
 		5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122D917F0DC6700E49916 /* Player.cpp */; };
 		5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DB17F0DC6700E49916 /* Tunnel.cpp */; };
@@ -24,7 +25,6 @@
 		5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414717F4D4E70082C239 /* libOgreProperty.dylib */; };
 		5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414817F4D4E70082C239 /* libOgreRTShaderSystem.dylib */; };
 		5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414917F4D4E70082C239 /* libOgreTerrain.dylib */; };
-		5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		B63D37F617DE87EB001A7191 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F517DE87EB001A7191 /* Carbon.framework */; };
 		B63D37F817DE87EB001A7191 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F717DE87EB001A7191 /* Cocoa.framework */; };
 		B63D37FA17DE87EB001A7191 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F917DE87EB001A7191 /* IOKit.framework */; };
@@ -58,6 +58,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */,
 				5DF9415F17F4D5370082C239 /* Plugin_BSPSceneManager.dylib in CopyFiles */,
 				5DF9416017F4D5370082C239 /* Plugin_CgProgramManager.dylib in CopyFiles */,
 				5DF9416117F4D5370082C239 /* Plugin_OctreeSceneManager.dylib in CopyFiles */,
@@ -74,7 +75,6 @@
 			dstPath = ../Components;
 			dstSubfolderSpec = 10;
 			files = (
-				5DF9416D17F4D5C50082C239 /* libOgreOggSound.dylib in Copy Files */,
 				5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in Copy Files */,
 				5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */,
 				5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */,
@@ -518,6 +518,7 @@
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "Vinezors2.0/Vinezors2.0-Info.plist";
+				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/lib/release\"",
 					"\"$(OGRE_SDK_ROOT)/lib\"",
@@ -560,6 +561,7 @@
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "Vinezors2.0/Vinezors2.0-Info.plist";
+				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/lib/release\"",
 					"\"$(OGRE_SDK_ROOT)/lib\"",
