@@ -22,7 +22,7 @@ struct PlayerLevel
     int nback;
     int control;
     
-    PlayerLevel() : nback(Util::NBACK), control(1) {}
+    PlayerLevel() : nback(Util::NBACK), control(Util::CONTROL) {}
 };
 
 class Player

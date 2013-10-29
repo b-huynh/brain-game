@@ -1,6 +1,7 @@
 #include "OgreDemoApp.h"
 
 #include "Util.h"
+#include <fstream>
 
 DemoApp::DemoApp()
 {
@@ -152,8 +153,30 @@ void DemoApp::startDemo()
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
+void DemoApp::loadConfig(std::string filepath)
+{
+    std::ifstream in (filepath.c_str());
+    std::string check, paramName, colon;
+    double paramVal;
+    
+    in >> check;
+    if (check != "{") return;
+    
+    in >> paramName;
+    while (paramName != "}") {
+        in >> colon >> paramVal;
+        std::cout << "Loading " << paramName << " = " << paramVal << std::endl;
+        Util::setConfigValue(paramName, paramVal);
+        in >> paramName;
+    }
+}
+
 void DemoApp::setupDemoScene()
 {
+    // Grab config file
+    
+    loadConfig(Util::getSaveDir() + "vinezors.conf");
+    
     seed = 0;
     srand(seed);
     

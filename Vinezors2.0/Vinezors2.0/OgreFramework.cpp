@@ -74,7 +74,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_StaticPluginLoader.load();
 #endif
     
-	if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
+        if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
     else
         return false;

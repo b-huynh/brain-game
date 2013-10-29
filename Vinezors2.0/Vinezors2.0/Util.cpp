@@ -422,6 +422,26 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     }
 }
 
+void Util::setConfigValue (std::string param, double paramVal)
+{
+    if (param == "segmentWidth")
+        TUNNEL_SEGMENT_WIDTH = paramVal;
+    else if (param == "segmentDepth")
+        TUNNEL_SEGMENT_DEPTH = paramVal;
+    else if (param == "minAngleTurn")
+        TUNNEL_MIN_ANGLE_TURN = (int)paramVal;
+    else if (param == "maxAngleTurn")
+        TUNNEL_MAX_ANGLE_TURN = (int)paramVal;
+    else if (param == "nback")
+        NBACK = (int)paramVal;
+    else if (param == "control")
+        CONTROL = (int)paramVal;
+    else if (param == "historyMode")
+        HISTORY_MODE = (int)paramVal;
+    else;
+    std::cout << "NBACK IS " << NBACK << std::endl;
+}
+
 void Util::generateMaterials()
 {
     /*
