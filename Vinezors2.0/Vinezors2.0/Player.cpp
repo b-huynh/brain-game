@@ -12,11 +12,11 @@
 using namespace std;
 
 Player::Player()
-: seed(0), name(""), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+: seed(0), name(""), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {}
 
 Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+: seed(seed), name(name), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
 {
 }
 
@@ -313,11 +313,29 @@ void Player::move(Vector3 delta)
     // vines move independently and have their own destination
 }
 
-Quaternion Player::getCombinedRotAndRoll() const
+void Player::changeMovementMode()
+{
+    if (movementMode == MOVEMENT_STATIC)
+        movementMode = MOVEMENT_ROTATING;
+    else
+        movementMode = MOVEMENT_STATIC;
+}
+
+Quaternion Player::getRot() const
+{
+    return camRot;
+}
+
+Quaternion Player::getRoll() const
 {
     Quaternion q;
     q.FromAngleAxis(Degree(camRoll), Util::TUNNEL_REFERENCE_FORWARD);
-    return camRot * q;
+    return q;
+}
+
+Quaternion Player::getCombinedRotAndRoll() const
+{
+    return camRot * getRoll();
 }
 
 void Player::addVine(Vine *vine)
@@ -451,12 +469,16 @@ void Player::update(double elapsed, Tunnel *tunnel)
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
     
-    // Animate camera rolls
-    if (camRoll < desireRoll) {
-        camRoll += max(5, (desireRoll - camRoll) / 4);
-    }
-    if (camRoll > desireRoll) {
-        camRoll -= max(5, (camRoll - desireRoll) / 4);
+    if (movementMode == MOVEMENT_ROTATING)
+    {
+        // Animate camera rolls
+        if (camRoll < desireRoll) {
+            camRoll += max(5, (desireRoll - camRoll) / 2);
+        }
+        if (camRoll > desireRoll) {
+            camRoll -= max(5, (camRoll - desireRoll) / 2);
+        }
+        
     }
     
 	for (int i = 0; i < vines.size(); ++i)

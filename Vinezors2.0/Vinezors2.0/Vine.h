@@ -15,7 +15,7 @@
 // Represents the character (as a vine), currently incomplete.
 struct Vine
 {
-    Ogre::SceneManager* sceneMgr;
+    Ogre::SceneNode* parentNode;
     
 	SceneNode *tip;
 	Vector3 dest;
@@ -24,9 +24,9 @@ struct Vine
     double speed;
     
 	Vine();
-	Vine(Ogre::SceneManager* sceneMgr, Vector3 pos, double radius);
+	Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius);
 	
-	SceneNode *getTip() const;
+	SceneNode* getTip() const;
 	Vector3 getPos() const;
 	void setPos(Vector3 value);
 	Vector3 getDest() const;

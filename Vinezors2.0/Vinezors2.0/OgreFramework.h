@@ -138,8 +138,8 @@ public:
     
     BillboardSet*               m_pBillboardSet;
 protected:
-   // Added for Mac compatibility
-   Ogre::String                 m_ResourcePath;
+    // Added for Mac compatibility
+    Ogre::String                 m_ResourcePath;
     
 private:
 	OgreFramework(const OgreFramework&);

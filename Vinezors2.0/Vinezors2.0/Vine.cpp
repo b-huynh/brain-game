@@ -10,13 +10,13 @@
 static int vineTipID = 0;
 
 Vine::Vine()
-: sceneMgr(NULL), tip(NULL), dest(), radius(0.0), speed(0.0)
+: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0)
 {}
 
-Vine::Vine(Ogre::SceneManager* sceneMgr, Vector3 pos, double radius)
-: sceneMgr(sceneMgr), tip(NULL), dest(), forward(), radius(radius), speed(0.0)
+Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
+: parentNode(parentNode), tip(NULL), dest(), forward(), radius(radius), speed(0.0)
 {
-    tip = sceneMgr->getRootSceneNode()->createChildSceneNode("vineTipNode" + Util::toStringInt(vineTipID));
+    tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineTipID));
     
     Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineTipID), "vineMesh");
     tipEntity->setMaterialName("General/VineTip");

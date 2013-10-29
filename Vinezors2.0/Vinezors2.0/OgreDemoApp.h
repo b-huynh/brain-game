@@ -83,7 +83,7 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
-enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM };
+enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 
 class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
 {

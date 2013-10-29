@@ -44,7 +44,7 @@ void History::initSeats(int nback)
         Entity* nodeEntity = node->getCreator()->createEntity("seatEntity" + Util::toStringInt(seatID), "seatMesh");
         
         if (i == nback - 1)
-            nodeEntity->setMaterialName("General/Smiley");
+            nodeEntity->setMaterialName("General/PodYellow");
         else
             nodeEntity->setMaterialName("General/PodUnknown");
         node->attachObject(nodeEntity);
@@ -79,7 +79,7 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr, Vector3(loc.x, loc.y + Util::POD_STEM_LENGTH, 0), Vector3(Util::POD_STEM_LENGTH, loc.y, Util::POD_STEM_LENGTH), podInfo.podType, Util::POD_HEAD_RADIUS, Util::POD_STEM_LENGTH);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(Util::POD_STEM_LENGTH, loc.y, Util::POD_STEM_LENGTH), podInfo.podType, Util::POD_HEAD_RADIUS, Util::POD_STEM_LENGTH);
     cpy->revealPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
@@ -100,7 +100,7 @@ void History::addPod(const PodInfo & podInfo)
         if (i < seats.size())
             list[i]->setDest(Vector3(seats[i]->getPosition().x, seats[i]->getPosition().y, list[i]->getPosition().z));
         else
-            list[i]->setDest(Vector3(list[i]->getPosition().x, list[i]->getPosition().y - Util::POD_STEM_LENGTH, list[i]->getPosition().z));
+            list[i]->setDest(Vector3(list[i]->getPosition().x, list[i]->getPosition().y - reservedHeight, list[i]->getPosition().z));
     }
 }
 
@@ -119,7 +119,7 @@ void History::update(double elapsed)
     Vector3 move;
     
     double distlen2 = dist.squaredLength();
-    move = dist * 2 * elapsed;
+    move = dist * 1.5 * elapsed;
     
     if (move.squaredLength() >= distlen2)
         coverNode->setPosition(coverDest);

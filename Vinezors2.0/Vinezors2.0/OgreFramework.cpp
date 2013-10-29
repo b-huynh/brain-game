@@ -93,7 +93,9 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
 	m_pCameraMain->setNearClipDistance(1);
+//    m_pCameraMain->setFarClipDistance(500.0);
 	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1, 0.0, 0.0, double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_MAIN_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+	m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
