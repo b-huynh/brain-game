@@ -25,21 +25,21 @@ namespace Util
     static const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     static const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
     static const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
-    static const int TUNNEL_MIN_ANGLE_TURN = 3;
+    static const int TUNNEL_MIN_ANGLE_TURN = 0;
     static const int TUNNEL_MAX_ANGLE_TURN = 3;
-    static const double TUNNEL_WIDTH = 25.0;
-    static const double TUNNEL_DEPTH = 25.0;
+    static const double TUNNEL_SEGMENT_WIDTH = 25.0;
+    static const double TUNNEL_SEGMENT_DEPTH = 25.0;
     static const double TUNNEL_SEGMENT_BUFFER = 25;
-    static const double TUNNEL_WALL_LENGTH = TUNNEL_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
+    static const double TUNNEL_WALL_LENGTH = TUNNEL_SEGMENT_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
     static const int TUNNEL_SEGMENTS_PER_SECTION = 5;
     static const int TUNNEL_SEGMENTS_PER_POD = 3;
     static const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
     static const int INITIATION_SECTIONS = 1;
-    static const double VINE_T_OFFSET = 1.0;
+    static const double VINE_T_OFFSET = 1.5;
     static const double VINE_RADIUS = 2.5;
     static const int POD_APPEARANCE = 2;
-    static const double POD_HEAD_RADIUS = TUNNEL_WIDTH / 25;
-    static const double POD_STEM_RADIUS = TUNNEL_WIDTH / 100;
+    static const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
+    static const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
     static const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
     static const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
@@ -77,16 +77,6 @@ namespace Util
     static const int VIEWPORT_SIDE_WIDTH_MODENONE = 0;
     static const int VIEWPORT_SIDE_HEIGHT_MODENONE = 0;
 
-    /*
-    static const int LABEL1_POSX = 10;
-    static const int LABEL1_POSY = SCREEN_HEIGHT - 50;
-    static const int LABEL2_POSX = 10;
-    static const int LABEL2_POSY = SCREEN_HEIGHT - 100;
-    static const int LABEL3_POSX = SCREEN_WIDTH - 275;
-    static const int LABEL3_POSY = SCREEN_HEIGHT - 50;
-    static const int LABEL4_POSX = SCREEN_WIDTH - 275;
-    static const int LABEL4_POSY = SCREEN_HEIGHT - 100;
-     */
     static const int LABEL1_POSX = 10;
     static const int LABEL1_POSY = SCREEN_HEIGHT - 70;
     static const int LABEL2_POSX = 10;

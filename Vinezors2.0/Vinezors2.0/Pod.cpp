@@ -13,16 +13,16 @@
 static int podID = 0;
 
 Pod::Pod()
-: sceneMgr(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
 {
 }
 
-Pod::Pod(Ogre::SceneManager* sceneMgr, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius)
-    : sceneMgr(sceneMgr), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), podTaken(false), dest()
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius)
+: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), podTaken(false), dest()
 {
 	double stemLength = base.distance(tip);
     
-    entirePod = sceneMgr->getRootSceneNode()->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     
     shell = entirePod->createChildSceneNode("ShellNode" + Util::toStringInt(podID));
     

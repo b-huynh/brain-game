@@ -15,18 +15,23 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
+enum GameMode { GAME_TIMED, GAME_NORMAL };
+
 // Stores the list of tunnel segments
 class Tunnel
 {
 public:
-    Ogre::SceneManager* sceneMgr;
+    SceneNode* parentNode;
 
+    SceneNode* mainTunnelNode;
 	Vector3 start;
 	Vector3 end;
     std::list<TunnelSlice*> segments;
     std::list<TunnelSlice*>::iterator current;
 	double segmentWidth;
 	double segmentDepth;
+	int segmentMinAngleTurn;
+	int segmentMaxAngleTurn;
     Quaternion endRot;
     
     std::vector<SectionInfo> sections;
@@ -39,6 +44,8 @@ public:
     int renewalPodCounter;
     
     // Stage attributes
+    GameMode mode;
+    double totalElapsed;
     int nback;
     History* history;
     bool sidesUsed[NUM_DIRECTIONS];
@@ -46,8 +53,10 @@ public:
     bool done;
 public:
 	Tunnel();
-	Tunnel(Ogre::SceneManager* sceneMgr, Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize);
+    
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize);
 	
+    SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
 	Vector3 getEnd() const;
 	Vector3 getCenter() const;
@@ -61,6 +70,8 @@ public:
 	TunnelSlice* getNext(int i) const;
 	int getSectionIndex() const;
 	int getPodIndex() const;
+    Quaternion getQuaternion() const;
+    Quaternion getCombinedQuaternion(TunnelSlice* slice) const;
     History* getHistory() const;
     
 	double getSegmentWidth() const;
@@ -69,6 +80,8 @@ public:
     std::vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees);
     PodType getNBackTest(int section) const;
+    GameMode getMode() const;
+    double getTotalElapsed() const;
     int getNBack() const;
     bool hasAvailableSide(Direction side) const;
     

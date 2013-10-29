@@ -20,7 +20,7 @@ enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
 class Pod
 {
 private:
-    Ogre::SceneManager* sceneMgr;
+    Ogre::SceneNode* parentNode;
     
     Vector3 base;
     Vector3 tip;
@@ -38,7 +38,8 @@ private:
     
 public:
 	Pod();
-	Pod(Ogre::SceneManager* sceneMgr, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
+    
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
 	
     Vector3 getBase() const;
     Vector3 getTip() const;

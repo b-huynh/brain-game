@@ -52,7 +52,7 @@ struct PodInfo
 class TunnelSlice
 {
 private:
-    Ogre::SceneManager* sceneMgr;
+    SceneNode* parentNode;
     
 	Vector3 center;
     Quaternion rot;
@@ -95,7 +95,7 @@ private:
     bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneManager* sceneMgr, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     

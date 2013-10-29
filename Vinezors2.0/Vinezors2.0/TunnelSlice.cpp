@@ -16,7 +16,7 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: sceneMgr(NULL), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
+: parentNode(NULL), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
@@ -24,8 +24,8 @@ pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
         sidesUsed[i] = false;
 }
 
-TunnelSlice::TunnelSlice(Ogre::SceneManager* sceneMgr, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
-: sceneMgr(sceneMgr), center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL),
+TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
+: parentNode(parentNode), center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
@@ -42,7 +42,7 @@ void TunnelSlice::initWalls()
     Quaternion q;
     Vector3 move;
     
-    entireWall = sceneMgr->getRootSceneNode()->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
+    entireWall = parentNode->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
     if (type != CHECKPOINT)
         materialName = "General/WallMetal";
@@ -167,8 +167,8 @@ Vector3 TunnelSlice::getCenter() const
 
 Vector3 TunnelSlice::getCenter(double t) const
 {
-    Vector3 start = center - getForward() * (depth / 2);
-    Vector3 end = center + getForward() * (depth / 2);
+    Vector3 start = getStart();
+    Vector3 end = getEnd();
     
     return start + (end - start) * t;
 }
@@ -176,8 +176,8 @@ Vector3 TunnelSlice::getCenter(double t) const
 // Since slices have an axis for its center, we project pos onto the axis
 double TunnelSlice::getT(Vector3 pos) const
 {
-    Vector3 start = center - getForward() * (depth / 2);
-    Vector3 end = center + getForward() * (depth / 2);
+    Vector3 start = getStart();
+    Vector3 end = getEnd();
     return getForward().dotProduct(pos - start) / (end - start).length();
 }
 
@@ -281,7 +281,7 @@ Vector3 TunnelSlice::requestWallDistance(Direction dir) const
             // No Direction
             break;
 	}
-    return rot * move;
+    return move;
 }
 
 Vector3 TunnelSlice::requestMove(Direction dir) const
@@ -289,7 +289,7 @@ Vector3 TunnelSlice::requestMove(Direction dir) const
 	double wallLength = getWallLength();
 	const double WALL_OFFSET = wallLength / 3;
     
-    Vector3 move = requestWallDistance(dir);
+    Vector3 move = rot * requestWallDistance(dir);
     move = move * ((move.length() - WALL_OFFSET) / move.length());
     
     return move;
@@ -352,17 +352,20 @@ void TunnelSlice::addPod(Direction loc, PodType type)
     Vector3 base;
     Vector3 head;
     Vector3 move = requestWallDistance(loc);
-    base = center + move;
+    //base = center + move;
+    //move = move * ((move.length() - STEM_LENGTH) / move.length());
+    //head = center + move;
+    base = move;
     move = move * ((move.length() - STEM_LENGTH) / move.length());
-    head = center + move;
+    head = move;
     
-	pods.push_back(new Pod(sceneMgr, base, head, type, STEM_RADIUS, HEAD_RADIUS));
+	pods.push_back(new Pod(entireWall, base, head, type, STEM_RADIUS, HEAD_RADIUS));
 }
 
 void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
 {
     std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
-    ManualObject * manual = sceneMgr->createManualObject(meshName);
+    ManualObject * manual = parentNode->getCreator()->createManualObject(meshName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
     Vector3 n = (p2 - p1).crossProduct(p4 - p1).normalisedCopy();
@@ -451,7 +454,7 @@ void TunnelSlice::connect(TunnelSlice* next)
 	double wallLength1 = getWallLength();
 	double wallLength2 = next->getWallLength();
     
-    entireIntermediate = sceneMgr->getRootSceneNode()->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
+    entireIntermediate = parentNode->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
     
     Quaternion q1 = getQuaternion();
     Quaternion q2 = next->getQuaternion();
@@ -627,6 +630,9 @@ void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, do
 
 void TunnelSlice::removeFromScene()
 {
+	for (int i = 0; i < pods.size(); ++i)
+		pods[i]->removeFromScene();
+    
     if (topLeftWall)
         topLeftWall->getCreator()->destroyMovableObject(topLeftWall->getAttachedObject(0)); // Assuming only one entity
     if (topWall)
@@ -650,8 +656,7 @@ void TunnelSlice::removeFromScene()
     disconnect();
 	
 	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->removeFromScene();
-    
+        delete pods[i];
 	topLeftWall = NULL;
 	topWall = NULL;
 	topRightWall = NULL;
@@ -661,7 +666,5 @@ void TunnelSlice::removeFromScene()
 	bottomLeftWall = NULL;
 	leftWall = NULL;
     entireWall = NULL;
-	for (int i = 0; i < pods.size(); ++i)
-        delete pods[i];
 	pods.clear();
 }

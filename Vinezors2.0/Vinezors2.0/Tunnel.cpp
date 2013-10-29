@@ -14,19 +14,27 @@ using namespace std;
 
 const double infinityDepth = 1024;
 
+static int tunnelID = 0;
+
 Tunnel::Tunnel()
-: sceneMgr(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(1), history(NULL), sidesUsed(), done(false)
+: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), history(NULL), sidesUsed(), done(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
-Tunnel::Tunnel(Ogre::SceneManager* sceneMgr, Vector3 start, double segmentWidth, double segmentDepth, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
-: sceneMgr(sceneMgr), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), nback(nback), history(NULL), sidesUsed(), done(false)
+Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
+: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), history(NULL), sidesUsed(), done(false)
 {
+    mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     Util::setSides(sidesUsed, control, sloc);
+}
+
+SceneNode* Tunnel::getMainTunnelNode() const
+{
+    return mainTunnelNode;
 }
 
 Vector3 Tunnel::getStart() const
@@ -119,6 +127,16 @@ int Tunnel::getPodIndex() const
     return podIndex;
 }
 
+Quaternion Tunnel::getQuaternion() const
+{
+    return mainTunnelNode->getOrientation();
+}
+
+Quaternion Tunnel::getCombinedQuaternion(TunnelSlice* slice) const
+{
+    return mainTunnelNode->getOrientation() * slice->getQuaternion();
+}
+
 History* Tunnel::getHistory() const
 {
     return history;
@@ -207,6 +225,16 @@ PodType Tunnel::getNBackTest(int ind) const
         return POD_NONE;
 }
 
+GameMode Tunnel::getMode() const
+{
+    return mode;
+}
+
+double Tunnel::getTotalElapsed() const
+{
+    return totalElapsed;
+}
+
 int Tunnel::getNBack() const
 {
     return nback;
@@ -240,7 +268,7 @@ SectionInfo Tunnel::getNextSectionInfo() const
 {
     TunnelType segmentType = NORMAL_WITH_ONE_POD;
     Direction segmentDir = Util::randDirection();
-    int segmentTurnAngle = Util::randRangeInt(Util::TUNNEL_MIN_ANGLE_TURN, Util::TUNNEL_MAX_ANGLE_TURN);
+    int segmentTurnAngle = Util::randRangeInt(segmentMinAngleTurn, segmentMaxAngleTurn);
     
     return SectionInfo(segmentType, segmentDir, segmentTurnAngle);
 }
@@ -323,7 +351,7 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
     Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
-	TunnelSlice* nsegment = new TunnelSlice(sceneMgr, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
+	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
     
     switch (segmentType)
     {
@@ -565,6 +593,7 @@ std::vector<Pod *> Tunnel::findPodCollisions(SceneNode *ent)
 
 void Tunnel::update(double elapsed)
 {
+    totalElapsed += elapsed;
     history->update(elapsed);
 }
 
@@ -576,5 +605,10 @@ Tunnel::~Tunnel()
         delete segments.front();
 		segments.pop_front();
 	}
+    
+    mainTunnelNode->removeAndDestroyAllChildren();
+    mainTunnelNode->getCreator()->destroySceneNode(mainTunnelNode);
+    mainTunnelNode = NULL;
+    
     delete history;
 }

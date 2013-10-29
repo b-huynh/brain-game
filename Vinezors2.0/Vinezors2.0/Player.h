@@ -28,6 +28,8 @@ struct PlayerLevel
 class Player
 {
 private:
+    enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
+    
     unsigned seed;
     
     std::string name;
@@ -41,6 +43,7 @@ private:
 	
     std::vector<Vine*> vines;
     
+    MovementMode movementMode;
 	Direction camDir; // direction offset on tunnel for player camera
 	Direction vineDir; // direction offset on tunnel for vine
 	Vector2 mousePos;
@@ -123,11 +126,14 @@ public:
 	Vector3 getCamForward(bool combined = true) const;
 	Vector3 getCamUpward(bool combined = true) const;
 	Vector3 getCamRight(bool combined = true) const;
+    Quaternion getRot() const;
+    Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     
     void newTunnel(Tunnel* tunnel);
     
 	void move(Vector3 delta);
+    void changeMovementMode();
 	void addVine(Vine* vine);
 	void checkCollisions(Tunnel* tunnel);
     
