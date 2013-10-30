@@ -25,10 +25,10 @@ namespace Util
     static const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     static const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
     static const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
-    static const int TUNNEL_MIN_ANGLE_TURN = 0;
-    static const int TUNNEL_MAX_ANGLE_TURN = 3;
-    static const double TUNNEL_SEGMENT_WIDTH = 25.0;
-    static const double TUNNEL_SEGMENT_DEPTH = 25.0;
+    static int TUNNEL_MIN_ANGLE_TURN = 0; //Configurable
+    static int TUNNEL_MAX_ANGLE_TURN = 3; //Configurable
+    static double TUNNEL_SEGMENT_WIDTH = 25.0; //Configurable
+    static double TUNNEL_SEGMENT_DEPTH = 25.0; //Configurable
     static const double TUNNEL_SEGMENT_BUFFER = 25;
     static const double TUNNEL_WALL_LENGTH = TUNNEL_SEGMENT_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
     static const int TUNNEL_SEGMENTS_PER_SECTION = 5;
@@ -44,7 +44,11 @@ namespace Util
     static const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
     static const int TUNNEL_SECTIONS = 5;
-    static const int NBACK = 2;
+    static int NBACK = 2; //Configurable
+    static int CONTROL = 1; //Configurable
+    static int HISTORY_MODE = -1; //Confiugrable
+    
+    
     
     static const int STARTING_HP = 0;
     static const int HP_NEGATIVE_LIMIT = -6;
@@ -102,6 +106,9 @@ namespace Util
     std::string toStringInt(int value);
     std::string toStringDouble(double value);
     std::string getSaveDir();
+    
+    //Config Values
+    void setConfigValue (std::string param, double paramVal);
     
     void drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
     

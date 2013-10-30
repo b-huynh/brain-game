@@ -95,6 +95,7 @@ public:
     void setSidebar();
     void update(double elapsed);
     void setLevel(int n);
+    void loadConfig(std::string filepath);
 
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
