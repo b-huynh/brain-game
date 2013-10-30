@@ -47,12 +47,13 @@ namespace Util
     static const int NBACK = 2;
     
     static const int STARTING_HP = 0;
-    static const int HP_NEGATIVE_LIMIT = -3;
-    static const int HP_POSITIVE_LIMIT = 3;
+    static const int HP_NEGATIVE_LIMIT = -6;
+    static const int HP_POSITIVE_LIMIT = 6;
     static const double DRAIN_SPEED = 2;    
-    static const int CAM_SPEED = 50; //100;
-    static const int MIN_CAM_SPEED = 25;
-    static const int MAX_CAM_SPEED = 125;
+    static const int INIT_CAM_SPEED = 10;
+    static const int MODIFIER_CAM_SPEED = 5;
+    static const int MIN_CAM_SPEED = 5;
+    static const int MAX_CAM_SPEED = 25;
     
     static const double HP_BAR_XREF = 0.05;
     static const double HP_BAR_YREF = 0.05;

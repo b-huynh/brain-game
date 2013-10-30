@@ -12,12 +12,14 @@
 using namespace std;
 
 Player::Player()
-: seed(0), name(""), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+: seed(0), name(""), hp(Util::STARTING_HP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
 {}
 
 Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(Util::STARTING_HP), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0)
+: seed(seed), name(name), hp(Util::STARTING_HP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
 {
+    soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
+    soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
 }
 
 unsigned Player::getSeed() const
@@ -33,6 +35,16 @@ std::string Player::getName() const
 int Player::getHP() const
 {
     return hp;
+}
+
+int Player::getNumCorrect() const
+{
+    return numCorrect;
+}
+
+int Player::getNumWrong() const
+{
+    return numWrong;
 }
 
 double Player::getScore() const
@@ -188,6 +200,16 @@ void Player::setHP(int value)
     hp = value;
 }
 
+void Player::setNumCorrect(int value)
+{
+    numCorrect = value;
+}
+
+void Player::setNumWrong(int value)
+{
+    numWrong = value;
+}
+
 void Player::setScore(double value)
 {
 	score = value;
@@ -230,7 +252,17 @@ void Player::setVineDir(Direction value)
 
 bool Player::setVineDirRequest(Direction value, Tunnel* tunnel)
 {
-    if (tunnel->hasAvailableSide(value))
+    double tLeft;
+    TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
+    if (closest)
+    {
+        if (closest->hasAvailableSide(value))
+        {
+            vineDir = value;
+            return true;
+        }
+    }
+    else if (tunnel->hasAvailableSide(value))
     {
         vineDir = value;
         return true;
@@ -291,10 +323,11 @@ void Player::setCamSpeed(int value)
 void Player::newTunnel(Tunnel* tunnel)
 {
     hp = Util::STARTING_HP;
+    numCorrect = 0;
+    numWrong = 0;
     vineSlice = NULL;
     vineT = 0.0;
     double tLeft;
-    
     
     for (int i = 0; i < vines.size(); ++i)
     {
@@ -368,13 +401,15 @@ void Player::update(double elapsed, Tunnel *tunnel)
 {
     totalElapsed += elapsed;
     
+    if (!soundMusic->isPlaying() && getTotalElapsed() > 1.5)
+        soundMusic->play();
+    
     // Speed up, slow down keys
-    double moveSpeed = camSpeed;
+    double moveSpeed = Util::MODIFIER_CAM_SPEED * camSpeed;
     
     if (tunnel->isDone())
-        moveSpeed = Util::MAX_CAM_SPEED * 2;
+        moveSpeed = Util::MODIFIER_CAM_SPEED * Util::MAX_CAM_SPEED * 2;
     else {
-        //hp -= DRAIN_SPEED * moveSpeed * elapsed;
         score += tunnel->getNBack() * moveSpeed * elapsed;
     }
     
@@ -433,21 +468,24 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 
                 // Determine whether the player got it right or not
                 if (result.podInfo.goodPod && result.podInfo.podTaken) {
+                    soundFeedbackGood->play();
                     if (hp < 0)
-                        hp = 0;
+                        hp++;
                     hp++;
                     if (hp > Util::HP_POSITIVE_LIMIT)
                         hp = Util::HP_POSITIVE_LIMIT;
+                    ++numCorrect;
                     
                     history->determineCoverLoc(true);
                 }
                 else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
                          (!result.podInfo.goodPod && result.podInfo.podTaken)) {
                     if (hp > 0)
-                        hp = 0;
+                        hp--;
                     hp--;
                     if (hp < Util::HP_NEGATIVE_LIMIT)
                         hp = Util::HP_NEGATIVE_LIMIT;
+                    ++numWrong;
                     
                     history->determineCoverLoc(false);
                 }
@@ -487,6 +525,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
 		vines[i]->update(elapsed);
     }
     
+    checkCollisions(tunnel);
 }
 
 void Player::evaluatePlayerLevel(bool pass)

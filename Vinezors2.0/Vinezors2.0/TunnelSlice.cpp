@@ -26,8 +26,7 @@ pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 
 TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
 : parentNode(parentNode), center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL),
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
-pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
+topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = sides[i];
@@ -613,13 +612,15 @@ void TunnelSlice::updateGrowth(double nt)
         pods[i]->setToGrowth(growthT);
 }
 
-void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth)
+void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
 {
     this->type = type;
     this->center = center;
     this->rot = rot;
     this->width = width;
     this->depth = depth;
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = sides[i];
     growthT = 0;
     prerangeT = 0;
     infoStored = false;

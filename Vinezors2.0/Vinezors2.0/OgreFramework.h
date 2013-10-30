@@ -23,9 +23,6 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-#include "OgreOggSoundPlugin.h"
-using namespace OgreOggSound;
-
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
 #  if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
@@ -71,7 +68,9 @@ using namespace OgreOggSound;
 
 #include <SdkTrays.h>
 
+#include "OgreOggSoundPlugin.h"
 using namespace Ogre;
+using namespace OgreOggSound;
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 

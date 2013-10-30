@@ -34,6 +34,8 @@ private:
     
     std::string name;
     int hp;
+    int numCorrect;
+    int numWrong;
 	double score;
 	bool mouseLeft;
 	bool keyUp;
@@ -68,8 +70,11 @@ private:
     std::vector<Result> results;
     
     double totalElapsed;
-    TunnelSlice* vineSlice;
+    TunnelSlice* vineSlice; // Used for vine movement
     double vineT;
+    
+    OgreOggISound* soundMusic;
+    OgreOggISound* soundFeedbackGood;
 public:
     
 	Player();
@@ -78,6 +83,8 @@ public:
     unsigned getSeed() const;
     std::string getName() const;
     int getHP() const;
+    int getNumCorrect() const;
+    int getNumWrong() const;
 	double getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
@@ -103,6 +110,8 @@ public:
     void setSeed(unsigned value);
     void setName(const std::string & name);
     void setHP(int value);
+    void setNumCorrect(int value);
+    void setNumWrong(int value);
 	void setScore(double value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);

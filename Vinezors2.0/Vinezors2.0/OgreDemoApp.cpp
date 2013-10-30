@@ -181,7 +181,7 @@ void DemoApp::setupDemoScene()
         PlayerLevel(),
         OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition(),
         OgreFramework::getSingletonPtr()->m_pCameraMain->getOrientation(),
-        Util::CAM_SPEED,
+        Util::INIT_CAM_SPEED,
         Util::VINE_T_OFFSET,
         seed,
         "vinezors" + Util::toStringInt(seed) + ".csv");
@@ -231,9 +231,6 @@ void DemoApp::setupDemoScene()
     barHP->setBoundingBox(AxisAlignedBox::BOX_INFINITE);
     OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->attachObject(barHP);
     */
-    
-    soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
-    soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
 
     // The code snippet below is used to output text
     // create a font resource
@@ -415,9 +412,6 @@ void DemoApp::update(double elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
-    if (!soundMusic->isPlaying() && player->getTotalElapsed() > 1.5)
-        soundMusic->play();
-    
     // Determine whether a stage has completed
     if (!tunnel->isDone())
     {
@@ -448,17 +442,7 @@ void DemoApp::update(double elapsed)
     
     // Update the game state
     if (!pause) {
-        int currentHp = player->getHP();
         player->update(elapsed, tunnel);
-        player->checkCollisions(tunnel);
-        
-        //Play Feedback Sound
-        if (currentHp < player->getHP()) {
-            soundFeedbackGood->play();
-        }
-        else if (currentHp > player->getHP()) {
-            //negativeFeedback->getSound()->Play();
-        }
         
         // Animate Pod Growing outwards or Growing inwards
         const double GROWTH_SPEED = 1;
@@ -487,7 +471,6 @@ void DemoApp::update(double elapsed)
             if (nextSlice1)
             {
                 player->setDesireRot(nextSlice1->getQuaternion());
-                //player->setDesireRot(tunnel->getCombinedQuaternion(nextSlice1));
             }
             else {
                 // Generate a new tunnel because we are at the end
@@ -509,13 +492,13 @@ void DemoApp::update(double elapsed)
     } else {
          // Navigation Debug Keys
          if (player->getKeyUp())
-             player->move(Vector3(player->getCamForward() * Util::CAM_SPEED * elapsed));
+             player->move(Vector3(player->getCamForward() * Util::INIT_CAM_SPEED * elapsed));
          if (player->getKeyDown())
-             player->move(Vector3(player->getCamForward() * -Util::CAM_SPEED * elapsed));
+             player->move(Vector3(player->getCamForward() * -Util::INIT_CAM_SPEED * elapsed));
          if (player->getKeyLeft())
-             player->move(Vector3(player->getCamRight() * -Util::CAM_SPEED * elapsed));
+             player->move(Vector3(player->getCamRight() * -Util::INIT_CAM_SPEED * elapsed));
          if (player->getKeyRight())
-             player->move(Vector3(player->getCamRight() * Util::CAM_SPEED * elapsed));
+             player->move(Vector3(player->getCamRight() * Util::INIT_CAM_SPEED * elapsed));
     }
     
     // Graphical view changes
@@ -536,13 +519,25 @@ void DemoApp::update(double elapsed)
     label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     
     double barWidth = Util::HP_BAR_WIDTH;
-    int hpRange = Util::HP_POSITIVE_LIMIT - Util::HP_NEGATIVE_LIMIT;
-    barWidth *= (player->getHP() - Util::HP_NEGATIVE_LIMIT) / (double)(hpRange);
-    barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
-    if (player->getHP() >= 0) {
+    if (tunnel->getMode() == GAME_NORMAL)
+    {
+        int hpRange = Util::HP_POSITIVE_LIMIT - Util::HP_NEGATIVE_LIMIT;
+        barWidth *= (player->getHP() - Util::HP_NEGATIVE_LIMIT) / (double)(hpRange);
+        barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
+        if (player->getHP() >= 0) {
+            barHP->setMaterialName("General/BaseGreen");
+        } else {
+            barHP->setMaterialName("General/BaseRed");
+        }
+    }
+    else
+    {
+        double ratio = player->getNumCorrect() / static_cast<double>(player->getNumCorrect() + player->getNumWrong() + 10);
+        if (ratio < 0.0)
+            ratio = 0.0;
+        barWidth *= ratio;
+        barHP->setDimensions(barWidth, Util::HP_BAR_HEIGHT);
         barHP->setMaterialName("General/BaseGreen");
-    } else {
-        barHP->setMaterialName("General/BaseRed");
     }
 }
 
@@ -658,15 +653,14 @@ void DemoApp::runDemo()
 bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     if (pause) {
-        /*
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
         
         Vector3 right = player->getCamRight(true);
         Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;
         Quaternion pitchRot;
-        yawRot.FromAngleAxis(Degree(-dmove.x), up);
-        pitchRot.FromAngleAxis(Degree(-dmove.y), right);
+        yawRot.FromAngleAxis(Degree(-dmove.x) / 2, up);
+        pitchRot.FromAngleAxis(Degree(-dmove.y) / 2, right);
         
         Quaternion curRot = player->getCamRot();
         curRot = pitchRot * yawRot * curRot;
@@ -675,7 +669,6 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
         OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(curRot);
         
         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
-         */
     }
     return true;
 }

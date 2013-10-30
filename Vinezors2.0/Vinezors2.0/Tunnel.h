@@ -47,7 +47,9 @@ public:
     GameMode mode;
     double totalElapsed;
     int nback;
+    int control;
     History* history;
+    Direction basis;
     bool sidesUsed[NUM_DIRECTIONS];
     
     bool done;
@@ -83,6 +85,8 @@ public:
     GameMode getMode() const;
     double getTotalElapsed() const;
     int getNBack() const;
+    int getControl() const;
+    Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
     
     bool isDone() const;
