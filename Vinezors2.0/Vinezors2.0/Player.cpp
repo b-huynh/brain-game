@@ -11,12 +11,20 @@
 
 using namespace std;
 
+extern Util::ConfigGlobal globals;
+
+PlayerLevel::PlayerLevel()
+    : nback(globals.nback), control(globals.control)
+{
+    
+}
+
 Player::Player()
-: seed(0), name(""), hp(Util::STARTING_HP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
+: seed(0), name(""), hp(globals.startingHP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), speedControl(SPEED_CONTROL_FLEXIBLE), level(), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
 {}
 
-Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(Util::STARTING_HP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
+Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
+: seed(seed), name(name), hp(globals.startingHP), numCorrect(0), numWrong(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), speedControl(speedControl), level(level), results(), totalElapsed(0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL)
 {
     soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
     soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
@@ -175,6 +183,11 @@ Vector3 Player::getVineOffset() const
 	return getCamForward() * vineOffset;
 }
 
+SpeedControlMode Player::getSpeedControl() const
+{
+    return speedControl;
+}
+
 PlayerLevel Player::getLevel() const
 {
     return level;
@@ -322,7 +335,8 @@ void Player::setCamSpeed(int value)
 
 void Player::newTunnel(Tunnel* tunnel)
 {
-    hp = Util::STARTING_HP;
+    hp = globals.startingHP;
+    camSpeed = globals.initCamSpeed;
     numCorrect = 0;
     numWrong = 0;
     vineSlice = NULL;
@@ -362,7 +376,7 @@ Quaternion Player::getRot() const
 Quaternion Player::getRoll() const
 {
     Quaternion q;
-    q.FromAngleAxis(Degree(camRoll), Util::TUNNEL_REFERENCE_FORWARD);
+    q.FromAngleAxis(Degree(camRoll), globals.tunnelReferenceForward);
     return q;
 }
 
@@ -405,11 +419,18 @@ void Player::update(double elapsed, Tunnel *tunnel)
         soundMusic->play();
     
     // Speed up, slow down keys
-    double moveSpeed = Util::MODIFIER_CAM_SPEED * camSpeed;
+    double moveSpeed = globals.modifierCamSpeed * camSpeed;
     
     if (tunnel->isDone())
-        moveSpeed = Util::MODIFIER_CAM_SPEED * Util::MAX_CAM_SPEED * 2;
+        moveSpeed = globals.modifierCamSpeed * globals.maxCamSpeed * 2;
     else {
+        if (speedControl == SPEED_CONTROL_AUTO)
+        {
+            if (keyUp)
+                moveSpeed *= 2;
+            if (keyDown)
+                moveSpeed /= 2;
+        }
         score += tunnel->getNBack() * moveSpeed * elapsed;
     }
     
@@ -472,9 +493,13 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     if (hp < 0)
                         hp++;
                     hp++;
-                    if (hp > Util::HP_POSITIVE_LIMIT)
-                        hp = Util::HP_POSITIVE_LIMIT;
+                    if (hp > globals.HPPositiveLimit)
+                        hp = globals.HPPositiveLimit;
                     ++numCorrect;
+                    if (speedControl == SPEED_CONTROL_AUTO)
+                        camSpeed += 2;
+                    if (camSpeed > globals.maxCamSpeed)
+                        camSpeed = globals.maxCamSpeed;
                     
                     history->determineCoverLoc(true);
                 }
@@ -483,9 +508,13 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     if (hp > 0)
                         hp--;
                     hp--;
-                    if (hp < Util::HP_NEGATIVE_LIMIT)
-                        hp = Util::HP_NEGATIVE_LIMIT;
+                    if (hp < globals.HPNegativeLimit)
+                        hp = globals.HPNegativeLimit;
                     ++numWrong;
+                    if (speedControl == SPEED_CONTROL_AUTO)
+                        camSpeed -= 5;
+                    if (camSpeed < globals.minCamSpeed)
+                        camSpeed = globals.minCamSpeed;
                     
                     history->determineCoverLoc(false);
                 }

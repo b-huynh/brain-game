@@ -12,6 +12,8 @@
 
 using namespace std;
 
+extern Util::ConfigGlobal globals;
+
 const double infinityDepth = 1024;
 
 static int tunnelID = 0;
@@ -172,40 +174,40 @@ Quaternion Tunnel::getNewSegmentQuaternion(Direction dir, int degrees)
     switch (dir)
     {
         case NORTH:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             break;
         case SOUTH:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             break;
         case WEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
             rot = rot * rot1;
             break;
         case EAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
             rot = rot * rot1;
             break;
         case NORTHWEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             rot = rot * rot1 * rot2;
             break;
         case NORTHEAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         case SOUTHWEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         case SOUTHEAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         default:
@@ -270,7 +272,7 @@ void Tunnel::setDone(bool value)
 
 void Tunnel::removeSegment()
 {
-	start += segments.front()->getForward() * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+	start += segments.front()->getForward() * (segmentDepth + globals.tunnelSegmentBuffer);
 	segments.front()->removeFromScene();
 	segments.pop_front();
 }
@@ -360,8 +362,8 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     rot = getNewSegmentQuaternion(segmentTurn, turnDegrees);
     
-    Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
-    Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+    Vector3 forward = rot * globals.tunnelReferenceForward;
+    Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
 	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
     
     switch (segmentType)
@@ -418,8 +420,8 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Quaternion rot;
     rot = getNewSegmentQuaternion(segmentTurn, turnDegrees);
     
-    Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
-    Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+    Vector3 forward = rot * globals.tunnelReferenceForward;
+    Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
     nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
@@ -548,12 +550,12 @@ bool Tunnel::renewIfNecessary(Vector3 checkPos)
         {
             // Update the section index and recycle sections
             ++renewalSectionCounter;
-            if (renewalSectionCounter >= Util::TUNNEL_SEGMENTS_BEFORE_REFRESH)
+            if (renewalSectionCounter >= globals.tunnelSegmentsBeforeRefresh)
             {
                 SectionInfo info = getNextSectionInfo();
                 renewSection(info);
                 ++sectionIndex;
-                renewalSectionCounter -= Util::TUNNEL_SEGMENTS_PER_SECTION;
+                renewalSectionCounter -= globals.tunnelSegmentsPerSection;
             }
         }
         
@@ -569,12 +571,12 @@ void Tunnel::constructTunnel(int size, Quaternion q)
 {
     this->endRot = q;
     
-    for (int i = 0; i < Util::INITIATION_SECTIONS; ++i) {
+    for (int i = 0; i < globals.initiationSections; ++i) {
         SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);
         addSection(info);
     }
     
-    for (int i = 0; i < size - Util::INITIATION_SECTIONS; ++i) {
+    for (int i = 0; i < size - globals.initiationSections; ++i) {
         SectionInfo info = getNextSectionInfo();
         addSection(info);
     }

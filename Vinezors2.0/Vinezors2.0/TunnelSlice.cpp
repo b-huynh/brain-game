@@ -12,6 +12,8 @@
 
 using namespace std;
 
+extern Util::ConfigGlobal globals;
+
 static int wallID = 0;
 static int intermediateMeshID = 0;
 
@@ -344,9 +346,9 @@ void TunnelSlice::move(Vector3 delta)
 void TunnelSlice::addPod(Direction loc, PodType type)
 {
 	double wallLength = getWallLength();
-	const double STEM_RADIUS = Util::POD_STEM_RADIUS;
-	const double HEAD_RADIUS = Util::POD_HEAD_RADIUS;
-	const double STEM_LENGTH = Util::POD_STEM_LENGTH;
+	const double STEM_RADIUS = globals.podStemRadius;
+	const double HEAD_RADIUS = globals.podHeadRadius;
+	const double STEM_LENGTH = globals.podStemLength;
     
     Vector3 base;
     Vector3 head;

@@ -9,6 +9,8 @@ namespace Ogre
 
 using namespace Ogre;
 
+extern Util::ConfigGlobal globals;
+
 OgreFramework::OgreFramework()
 {
 	m_MoveSpeed			= 10.0f;
@@ -78,7 +80,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
     else
         return false;
-    m_pRenderWnd->resize(Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT);
+    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
     /*
     Ogre::NameValuePairList paramsWnd;
     paramsWnd["border"] = "fixed";
@@ -94,7 +96,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
 	m_pCameraMain->setNearClipDistance(1);
 //    m_pCameraMain->setFarClipDistance(500.0);
-	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1, 0.0, 0.0, double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_MAIN_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
+        0.0,
+        0.0,
+        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+        double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
 	m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
@@ -106,7 +112,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraSide->setNearClipDistance(1);
     m_pCameraSide->setOrthoWindow(10.0, 25.0);
     m_pCameraSide->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0, double(Util::VIEWPORT_MAIN_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, 0.0, double(Util::VIEWPORT_SIDE_WIDTH_MODERIGHT) / Util::SCREEN_WIDTH, double(Util::VIEWPORT_SIDE_HEIGHT_MODERIGHT) / Util::SCREEN_HEIGHT);
+	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0,
+        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+        0.0,
+        double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
+        double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
 	m_pViewportSide->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
 	m_pViewportSide->setCamera(m_pCameraSide);

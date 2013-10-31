@@ -152,6 +152,7 @@ material General/WallMetal
             lighting on
             scene_blend alpha_blend
             depth_write off
+            hardware_culling none
 
             texture_unit
 			{

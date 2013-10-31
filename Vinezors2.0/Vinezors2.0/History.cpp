@@ -8,6 +8,8 @@
 
 #include "History.h"
 
+extern Util::ConfigGlobal globals;
+
 static int seatID = 0;
 static int coverID = 0;
 
@@ -50,7 +52,7 @@ void History::initSeats(int nback)
         node->attachObject(nodeEntity);
         node->setPosition(Vector3(midx, midy, 0));
         node->pitch(Degree(90));
-        node->scale(Util::SEAT_LENGTH, Util::SEAT_LENGTH, Util::SEAT_LENGTH);
+        node->scale(globals.seatLength, globals.seatLength, globals.seatLength);
         
         x += 0;
         y -= reservedHeight;
@@ -79,7 +81,7 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(Util::POD_STEM_LENGTH, loc.y, Util::POD_STEM_LENGTH), podInfo.podType, Util::POD_HEAD_RADIUS, Util::POD_STEM_LENGTH);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength);
     cpy->revealPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
@@ -132,10 +134,10 @@ void History::setCoverDest(int seatInd)
     if (seatInd >= seats.size())
     {
         seatInd = seats.size();
-        coverDest = seats[seatInd - 1]->getPosition() + Vector3(0.0, coverOffsetY - reservedHeight, Util::POD_HEAD_RADIUS + Util::EPSILON);
+        coverDest = seats[seatInd - 1]->getPosition() + Vector3(0.0, coverOffsetY - reservedHeight, globals.podHeadRadius + Util::EPSILON);
     }
     else
-        coverDest = seats[seatInd]->getPosition() + Vector3(0.0, coverOffsetY, Util::POD_HEAD_RADIUS + Util::EPSILON);
+        coverDest = seats[seatInd]->getPosition() + Vector3(0.0, coverOffsetY, globals.podHeadRadius + Util::EPSILON);
 }
 
 void History::determineCoverLoc(bool success)

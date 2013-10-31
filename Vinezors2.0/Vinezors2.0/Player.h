@@ -22,8 +22,10 @@ struct PlayerLevel
     int nback;
     int control;
     
-    PlayerLevel() : nback(Util::NBACK), control(Util::CONTROL) {}
+    PlayerLevel();
 };
+
+enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 
 class Player
 {
@@ -60,6 +62,8 @@ private:
     int camSpeed;
 	double vineOffset; // offset to camPos in direction of forward
     
+    SpeedControlMode speedControl;
+    
     PlayerLevel level;
     struct Result {
         int timestamp;
@@ -78,7 +82,7 @@ private:
 public:
     
 	Player();
-	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, unsigned seed, const std::string & filename);
+	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -104,6 +108,7 @@ public:
 	int getDesireRoll() const;
 	int getCamSpeed() const;
 	Vector3 getVineOffset() const;
+    SpeedControlMode getSpeedControl() const;
     PlayerLevel getLevel() const;
 	double getTotalElapsed() const;
     
