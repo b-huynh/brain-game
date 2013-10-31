@@ -10,6 +10,8 @@
 
 #include <cstdlib>
 
+extern Util::ConfigGlobal globals;
+
 static int podID = 0;
 
 Pod::Pod()
@@ -39,7 +41,7 @@ Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, d
     stem->attachObject(stemEntity);
     
     Vector3 v = tip - base;
-    stem->setOrientation(Util::TUNNEL_REFERENCE_UPWARD.getRotationTo(v));
+    stem->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     
     stem->translate(v / -2);
     

@@ -22,8 +22,10 @@ struct PlayerLevel
     int nback;
     int control;
     
-    PlayerLevel() : nback(Util::NBACK), control(Util::CONTROL) {}
+    PlayerLevel();
 };
+
+enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 
 class Player
 {
@@ -34,6 +36,8 @@ private:
     
     std::string name;
     int hp;
+    int numCorrect;
+    int numWrong;
 	double score;
 	bool mouseLeft;
 	bool keyUp;
@@ -58,6 +62,8 @@ private:
     int camSpeed;
 	double vineOffset; // offset to camPos in direction of forward
     
+    SpeedControlMode speedControl;
+    
     PlayerLevel level;
     struct Result {
         int timestamp;
@@ -68,16 +74,21 @@ private:
     std::vector<Result> results;
     
     double totalElapsed;
-    TunnelSlice* vineSlice;
+    TunnelSlice* vineSlice; // Used for vine movement
     double vineT;
+    
+    OgreOggISound* soundMusic;
+    OgreOggISound* soundFeedbackGood;
 public:
     
 	Player();
-	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, unsigned seed, const std::string & filename);
+	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, int camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
     int getHP() const;
+    int getNumCorrect() const;
+    int getNumWrong() const;
 	double getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
@@ -97,12 +108,15 @@ public:
 	int getDesireRoll() const;
 	int getCamSpeed() const;
 	Vector3 getVineOffset() const;
+    SpeedControlMode getSpeedControl() const;
     PlayerLevel getLevel() const;
 	double getTotalElapsed() const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
     void setHP(int value);
+    void setNumCorrect(int value);
+    void setNumWrong(int value);
 	void setScore(double value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);

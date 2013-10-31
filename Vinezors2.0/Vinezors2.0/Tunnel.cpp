@@ -12,24 +12,27 @@
 
 using namespace std;
 
+extern Util::ConfigGlobal globals;
+
 const double infinityDepth = 1024;
 
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), history(NULL), sidesUsed(), done(false)
+: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
-: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), history(NULL), sidesUsed(), done(false)
+: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
-    Util::setSides(sidesUsed, control, sloc);
+    
+    Util::setSides(sidesUsed, control, basis);
 }
 
 SceneNode* Tunnel::getMainTunnelNode() const
@@ -171,40 +174,40 @@ Quaternion Tunnel::getNewSegmentQuaternion(Direction dir, int degrees)
     switch (dir)
     {
         case NORTH:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             break;
         case SOUTH:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             break;
         case WEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
             rot = rot * rot1;
             break;
         case EAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
             rot = rot * rot1;
             break;
         case NORTHWEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1;
             rot = rot * rot1 * rot2;
             break;
         case NORTHEAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         case SOUTHWEST:
-            rot1.FromAngleAxis(Degree(degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         case SOUTHEAST:
-            rot1.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_UPWARD);
-            rot2.FromAngleAxis(Degree(-degrees), Util::TUNNEL_REFERENCE_RIGHT);
+            rot1.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceUpward);
+            rot2.FromAngleAxis(Degree(-degrees), globals.tunnelReferenceRight);
             rot = rot * rot1 * rot2;
             break;
         default:
@@ -240,6 +243,16 @@ int Tunnel::getNBack() const
     return nback;
 }
 
+int Tunnel::getControl() const
+{
+    return control;
+}
+
+Direction Tunnel::getBasis() const
+{
+    return basis;
+}
+
 bool Tunnel::hasAvailableSide(Direction side) const
 {
     if (side == NO_DIRECTION)
@@ -259,7 +272,7 @@ void Tunnel::setDone(bool value)
 
 void Tunnel::removeSegment()
 {
-	start += segments.front()->getForward() * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+	start += segments.front()->getForward() * (segmentDepth + globals.tunnelSegmentBuffer);
 	segments.front()->removeFromScene();
 	segments.pop_front();
 }
@@ -349,8 +362,8 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     rot = getNewSegmentQuaternion(segmentTurn, turnDegrees);
     
-    Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
-    Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+    Vector3 forward = rot * globals.tunnelReferenceForward;
+    Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
 	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
     
     switch (segmentType)
@@ -407,11 +420,11 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Quaternion rot;
     rot = getNewSegmentQuaternion(segmentTurn, turnDegrees);
     
-    Vector3 forward = rot * Util::TUNNEL_REFERENCE_FORWARD;
-    Vector3 stepend = end + forward * (segmentDepth + Util::TUNNEL_SEGMENT_BUFFER);
+    Vector3 forward = rot * globals.tunnelReferenceForward;
+    Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
-    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth);
+    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
     
     switch (segmentType)
     {
@@ -537,12 +550,12 @@ bool Tunnel::renewIfNecessary(Vector3 checkPos)
         {
             // Update the section index and recycle sections
             ++renewalSectionCounter;
-            if (renewalSectionCounter >= Util::TUNNEL_SEGMENTS_BEFORE_REFRESH)
+            if (renewalSectionCounter >= globals.tunnelSegmentsBeforeRefresh)
             {
                 SectionInfo info = getNextSectionInfo();
                 renewSection(info);
                 ++sectionIndex;
-                renewalSectionCounter -= Util::TUNNEL_SEGMENTS_PER_SECTION;
+                renewalSectionCounter -= globals.tunnelSegmentsPerSection;
             }
         }
         
@@ -558,12 +571,12 @@ void Tunnel::constructTunnel(int size, Quaternion q)
 {
     this->endRot = q;
     
-    for (int i = 0; i < Util::INITIATION_SECTIONS; ++i) {
+    for (int i = 0; i < globals.initiationSections; ++i) {
         SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);
         addSection(info);
     }
     
-    for (int i = 0; i < size - Util::INITIATION_SECTIONS; ++i) {
+    for (int i = 0; i < size - globals.initiationSections; ++i) {
         SectionInfo info = getNextSectionInfo();
         addSection(info);
     }
@@ -595,6 +608,25 @@ void Tunnel::update(double elapsed)
 {
     totalElapsed += elapsed;
     history->update(elapsed);
+    if (mode == GAME_TIMED)
+    {
+        if (control == 1 && totalElapsed >= 30.0)
+        {
+            control++;
+            Util::setSides(sidesUsed, control, basis);
+        }
+        else if (control == 2 && totalElapsed >= 60.0)
+        {
+            control++;
+            Util::setSides(sidesUsed, control, basis);
+        }
+        else if (control == 3 && totalElapsed >= 90.0)
+        {
+            control++;
+            Util::setSides(sidesUsed, control, basis);
+        }
+    
+    }
 }
 
 Tunnel::~Tunnel()

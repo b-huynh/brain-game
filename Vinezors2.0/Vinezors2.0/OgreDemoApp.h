@@ -129,9 +129,6 @@ private:
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
     
-    OgreOggISound* soundMusic;
-    OgreOggISound* soundFeedbackGood;
-    
     SidebarLocation sidebarMode;
     
 	bool					m_bShutdown;

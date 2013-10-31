@@ -89,7 +89,6 @@ void Vine::update(double elapsed)
     double missingDist = delta.dotProduct(forwardLim) / forwardLim.length();
     delta += forward * missingDist;
     
-    //	if (delta.length() > dist.length())
     if (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z >
         dist.x * dist.x + dist.y * dist.y + dist.z * dist.z)
 		delta = dist;

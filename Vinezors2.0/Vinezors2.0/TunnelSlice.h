@@ -134,7 +134,7 @@ public:
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth);
+    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

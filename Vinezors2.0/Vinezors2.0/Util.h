@@ -21,76 +21,73 @@ enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST,
 #define NUM_DIRECTIONS 8
 
 namespace Util
-{
-    static const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
-    static const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
-    static const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
-    static int TUNNEL_MIN_ANGLE_TURN = 0; //Configurable
-    static int TUNNEL_MAX_ANGLE_TURN = 3; //Configurable
-    static double TUNNEL_SEGMENT_WIDTH = 25.0; //Configurable
-    static double TUNNEL_SEGMENT_DEPTH = 25.0; //Configurable
-    static const double TUNNEL_SEGMENT_BUFFER = 25;
-    static const double TUNNEL_WALL_LENGTH = TUNNEL_SEGMENT_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
-    static const int TUNNEL_SEGMENTS_PER_SECTION = 5;
-    static const int TUNNEL_SEGMENTS_PER_POD = 3;
-    static const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
-    static const int INITIATION_SECTIONS = 1;
-    static const double VINE_T_OFFSET = 1.5;
-    static const double VINE_RADIUS = 2.5;
-    static const int POD_APPEARANCE = 2;
-    static const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
-    static const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
-    static const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
-    static const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
-    
-    static const int TUNNEL_SECTIONS = 5;
-    static int NBACK = 2; //Configurable
-    static int CONTROL = 1; //Configurable
-    static int HISTORY_MODE = -1; //Confiugrable
-    
-    
-    
-    static const int STARTING_HP = 0;
-    static const int HP_NEGATIVE_LIMIT = -3;
-    static const int HP_POSITIVE_LIMIT = 3;
-    static const double DRAIN_SPEED = 2;    
-    static const int CAM_SPEED = 50; //100;
-    static const int MIN_CAM_SPEED = 25;
-    static const int MAX_CAM_SPEED = 125;
-    
-    static const double HP_BAR_XREF = 0.05;
-    static const double HP_BAR_YREF = 0.05;
-    static const double HP_BAR_WIDTH = 0.9;
-    static const double HP_BAR_HEIGHT = 0.05;
-    
-    static const int SCREEN_WIDTH = 1024;
-    static const int SCREEN_HEIGHT = 800;
-    
-    static const int VIEWPORT_MAIN_WIDTH_MODERIGHT = 800;
-    static const int VIEWPORT_MAIN_HEIGHT_MODERIGHT = 800;
-    static const int VIEWPORT_SIDE_WIDTH_MODERIGHT = 224;
-    static const int VIEWPORT_SIDE_HEIGHT_MODERIGHT = 800;
-    
-    static const int VIEWPORT_MAIN_WIDTH_MODEBOTTOM = 1024;
-    static const int VIEWPORT_MAIN_HEIGHT_MODEBOTTOM = 700;
-    static const int VIEWPORT_SIDE_WIDTH_MODEBOTTOM = 1024;
-    static const int VIEWPORT_SIDE_HEIGHT_MODEBOTTOM = 100;
-    
-    static const int VIEWPORT_MAIN_WIDTH_MODENONE = 1024;
-    static const int VIEWPORT_MAIN_HEIGHT_MODENONE = 800;
-    static const int VIEWPORT_SIDE_WIDTH_MODENONE = 0;
-    static const int VIEWPORT_SIDE_HEIGHT_MODENONE = 0;
-
-    static const int LABEL1_POSX = 10;
-    static const int LABEL1_POSY = SCREEN_HEIGHT - 70;
-    static const int LABEL2_POSX = 10;
-    static const int LABEL2_POSY = SCREEN_HEIGHT - 110;
-    static const int LABEL3_POSX = 10;
-    static const int LABEL3_POSY = SCREEN_HEIGHT - 150;
-    static const int LABEL4_POSX = 10;
-    static const int LABEL4_POSY = SCREEN_HEIGHT - 190;
-    
+{    
     static const double EPSILON = 0.001;
+    
+    struct ConfigGlobal
+    {
+        Vector3 tunnelReferenceForward;
+        Vector3 tunnelReferenceUpward;
+        Vector3 tunnelReferenceRight;
+        int tunnelMinAngleTurn;
+        int tunnelMaxAngleTurn;
+        double tunnelSegmentWidth;
+        double tunnelSegmentDepth;
+        double tunnelSegmentBuffer;
+        double tunnelWallLength;
+        int tunnelSegmentsPerSection;
+        int tunnelSegmentsPerPod;
+        int tunnelSegmentsBeforeRefresh;
+        int initiationSections;
+        double vineTOffset;
+        double vineRadius;
+        int podAppearance;
+        double podHeadRadius;
+        double podStemRadius;
+        double podStemLength;
+        double seatLength;
+        int tunnelSections;
+        int nback;
+        int control;
+        int historyMode;
+        int startingHP;
+        int HPNegativeLimit;
+        int HPPositiveLimit;
+        double drainSpeed;
+        int initCamSpeed;
+        int modifierCamSpeed;
+        int minCamSpeed;
+        int maxCamSpeed;
+        double HPBarXRef;
+        double HPBarYRef;
+        double HPBarWidth;
+        double HPBarHeight;
+        int screenWidth;
+        int screenHeight;
+        int viewportMainWidth_modeRight;
+        int viewportMainHeight_modeRight;
+        int viewportSideWidth_modeRight;
+        int viewportSideHeight_modeRight;
+        int viewportMainWidth_modeBottom;
+        int viewportMainHeight_modeBottom;
+        int viewportSideWidth_modeBottom;
+        int viewportSideHeight_modeBottom;
+        int viewportMainWidth_modeNone;
+        int viewportMainHeight_modeNone;
+        int viewportSideWidth_modeNone;
+        int viewportSideHeight_modeNone;
+        int label1_posX;
+        int label1_posY;
+        int label2_posX;
+        int label2_posY;
+        int label3_posX;
+        int label3_posY;
+        int label4_posX;
+        int label4_posY;
+        
+        ConfigGlobal();
+        void set();
+    };
     
     int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
