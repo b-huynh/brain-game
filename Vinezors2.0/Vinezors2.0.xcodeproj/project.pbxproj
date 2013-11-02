@@ -11,25 +11,25 @@
 		5D11B18318170E730052AF40 /* smiley.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D11B17F18170E730052AF40 /* smiley.png */; };
 		5D11B18418170E730052AF40 /* TunnelTile_pipes_R.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D11B18018170E730052AF40 /* TunnelTile_pipes_R.png */; };
 		5D11B18518170E730052AF40 /* white_fixed.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D11B18118170E730052AF40 /* white_fixed.png */; };
+		5D15DF471825B36D00DF0F99 /* TunnelTile_FluidPipes.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF431825B36D00DF0F99 /* TunnelTile_FluidPipes.png */; };
+		5D15DF481825B36D00DF0F99 /* TunnelTile_FluidPipes2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */; };
+		5D15DF491825B36D00DF0F99 /* TunnelTile_pipes_D.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */; };
+		5D15DF4A1825B36D00DF0F99 /* TunnelTile_Wires.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */; };
 		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5D77CC59181B06A2001D4461 /* TunnelTile_SpaceStation.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */; };
 		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
+		5DC4DAA21822D4690019691C /* VinezorsDecelerate.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DC4DA9E1822D4690019691C /* VinezorsDecelerate.wav */; };
+		5DC4DAA31822D4690019691C /* VinezorsNegativeBeep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DC4DA9F1822D4690019691C /* VinezorsNegativeBeep.wav */; };
+		5DC4DAA41822D4690019691C /* VinezorsAccelerate.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DC4DAA01822D4690019691C /* VinezorsAccelerate.wav */; };
+		5DC4DAA51822D4690019691C /* VinezorsSpaceBlip.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DC4DAA11822D4690019691C /* VinezorsSpaceBlip.wav */; };
+		5DC4DAA71822DDF80019691C /* chimedown.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DC4DAA61822DDF70019691C /* chimedown.wav */; };
 		5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122D917F0DC6700E49916 /* Player.cpp */; };
 		5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DB17F0DC6700E49916 /* Tunnel.cpp */; };
 		5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DF17F0DC7B00E49916 /* TunnelSlice.cpp */; };
 		5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122E117F0DC7B00E49916 /* Vine.cpp */; };
 		5DF9415E17F4D52E0082C239 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415C17F4D4FC0082C239 /* Ogre.framework */; };
-		5DF9415F17F4D5370082C239 /* Plugin_BSPSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414A17F4D4E70082C239 /* Plugin_BSPSceneManager.dylib */; };
 		5DF9416017F4D5370082C239 /* Plugin_CgProgramManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414B17F4D4E70082C239 /* Plugin_CgProgramManager.dylib */; };
-		5DF9416117F4D5370082C239 /* Plugin_OctreeSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414C17F4D4E70082C239 /* Plugin_OctreeSceneManager.dylib */; };
-		5DF9416217F4D5370082C239 /* Plugin_OctreeZone.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414D17F4D4E70082C239 /* Plugin_OctreeZone.dylib */; };
-		5DF9416317F4D5370082C239 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
-		5DF9416417F4D5370082C239 /* Plugin_PCZSceneManager.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414F17F4D4E70082C239 /* Plugin_PCZSceneManager.dylib */; };
 		5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415017F4D4E70082C239 /* RenderSystem_GL.dylib */; };
-		5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414617F4D4E70082C239 /* libOgrePaging.dylib */; };
-		5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414717F4D4E70082C239 /* libOgreProperty.dylib */; };
-		5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414817F4D4E70082C239 /* libOgreRTShaderSystem.dylib */; };
-		5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 5DF9414917F4D4E70082C239 /* libOgreTerrain.dylib */; };
 		B63D37F617DE87EB001A7191 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F517DE87EB001A7191 /* Carbon.framework */; };
 		B63D37F817DE87EB001A7191 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F717DE87EB001A7191 /* Cocoa.framework */; };
 		B63D37FA17DE87EB001A7191 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F917DE87EB001A7191 /* IOKit.framework */; };
@@ -64,12 +64,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */,
-				5DF9415F17F4D5370082C239 /* Plugin_BSPSceneManager.dylib in CopyFiles */,
 				5DF9416017F4D5370082C239 /* Plugin_CgProgramManager.dylib in CopyFiles */,
-				5DF9416117F4D5370082C239 /* Plugin_OctreeSceneManager.dylib in CopyFiles */,
-				5DF9416217F4D5370082C239 /* Plugin_OctreeZone.dylib in CopyFiles */,
-				5DF9416317F4D5370082C239 /* Plugin_ParticleFX.dylib in CopyFiles */,
-				5DF9416417F4D5370082C239 /* Plugin_PCZSceneManager.dylib in CopyFiles */,
 				5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -80,10 +75,6 @@
 			dstPath = ../Components;
 			dstSubfolderSpec = 10;
 			files = (
-				5DF9416617F4D53F0082C239 /* libOgrePaging.dylib in Copy Files */,
-				5DF9416717F4D53F0082C239 /* libOgreProperty.dylib in Copy Files */,
-				5DF9416817F4D53F0082C239 /* libOgreRTShaderSystem.dylib in Copy Files */,
-				5DF9416917F4D53F0082C239 /* libOgreTerrain.dylib in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,9 +86,18 @@
 		5D11B17F18170E730052AF40 /* smiley.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiley.png; sourceTree = "<group>"; };
 		5D11B18018170E730052AF40 /* TunnelTile_pipes_R.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_pipes_R.png; sourceTree = "<group>"; };
 		5D11B18118170E730052AF40 /* white_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = white_fixed.png; sourceTree = "<group>"; };
+		5D15DF431825B36D00DF0F99 /* TunnelTile_FluidPipes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_FluidPipes.png; sourceTree = "<group>"; };
+		5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_FluidPipes2.png; sourceTree = "<group>"; };
+		5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_pipes_D.png; sourceTree = "<group>"; };
+		5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_Wires.png; sourceTree = "<group>"; };
 		5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_SpaceStation.png; sourceTree = "<group>"; };
 		5DBB9F50180BE8A300C7F23F /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		5DBB9F51180BE8A300C7F23F /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		5DC4DA9E1822D4690019691C /* VinezorsDecelerate.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = VinezorsDecelerate.wav; sourceTree = "<group>"; };
+		5DC4DA9F1822D4690019691C /* VinezorsNegativeBeep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = VinezorsNegativeBeep.wav; sourceTree = "<group>"; };
+		5DC4DAA01822D4690019691C /* VinezorsAccelerate.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = VinezorsAccelerate.wav; sourceTree = "<group>"; };
+		5DC4DAA11822D4690019691C /* VinezorsSpaceBlip.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = VinezorsSpaceBlip.wav; sourceTree = "<group>"; };
+		5DC4DAA61822DDF70019691C /* chimedown.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = chimedown.wav; sourceTree = "<group>"; };
 		5DE1228117F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.eot"; sourceTree = "<group>"; };
 		5DE1228217F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
 		5DE1228317F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.woff"; sourceTree = "<group>"; };
@@ -119,7 +119,6 @@
 		5DE1229517F0DA8200E49916 /* Examples.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examples.material; sourceTree = "<group>"; };
 		5DE1229617F0DA8200E49916 /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
 		5DE1229717F0DA8200E49916 /* Ogre.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ogre.material; sourceTree = "<group>"; };
-		5DE1229817F0DA8200E49916 /* Space.particle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Space.particle; sourceTree = "<group>"; };
 		5DE1229A17F0DA8200E49916 /* black_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black_fixed.png; sourceTree = "<group>"; };
 		5DE1229B17F0DA8200E49916 /* blue_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_fixed.png; sourceTree = "<group>"; };
 		5DE1229C17F0DA8200E49916 /* glass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glass.png; sourceTree = "<group>"; };
@@ -252,7 +251,6 @@
 				5DE1229517F0DA8200E49916 /* Examples.material */,
 				5DE1229617F0DA8200E49916 /* General.material */,
 				5DE1229717F0DA8200E49916 /* Ogre.material */,
-				5DE1229817F0DA8200E49916 /* Space.particle */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -260,6 +258,10 @@
 		5DE1229917F0DA8200E49916 /* textures */ = {
 			isa = PBXGroup;
 			children = (
+				5D15DF431825B36D00DF0F99 /* TunnelTile_FluidPipes.png */,
+				5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */,
+				5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */,
+				5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */,
 				5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */,
 				5D11B17E18170E730052AF40 /* craze.png */,
 				5D11B17F18170E730052AF40 /* smiley.png */,
@@ -303,6 +305,11 @@
 		5DE122AD17F0DA8200E49916 /* sounds */ = {
 			isa = PBXGroup;
 			children = (
+				5DC4DA9E1822D4690019691C /* VinezorsDecelerate.wav */,
+				5DC4DA9F1822D4690019691C /* VinezorsNegativeBeep.wav */,
+				5DC4DAA01822D4690019691C /* VinezorsAccelerate.wav */,
+				5DC4DAA11822D4690019691C /* VinezorsSpaceBlip.wav */,
+				5DC4DAA61822DDF70019691C /* chimedown.wav */,
 				5DE122AE17F0DA8200E49916 /* chimeup.wav */,
 				5DE122AF17F0DA8200E49916 /* FrozenHillside.ogg */,
 			);
@@ -465,6 +472,15 @@
 				5D11B18418170E730052AF40 /* TunnelTile_pipes_R.png in Resources */,
 				5D11B18518170E730052AF40 /* white_fixed.png in Resources */,
 				5D77CC59181B06A2001D4461 /* TunnelTile_SpaceStation.png in Resources */,
+				5DC4DAA21822D4690019691C /* VinezorsDecelerate.wav in Resources */,
+				5DC4DAA31822D4690019691C /* VinezorsNegativeBeep.wav in Resources */,
+				5DC4DAA41822D4690019691C /* VinezorsAccelerate.wav in Resources */,
+				5DC4DAA51822D4690019691C /* VinezorsSpaceBlip.wav in Resources */,
+				5DC4DAA71822DDF80019691C /* chimedown.wav in Resources */,
+				5D15DF471825B36D00DF0F99 /* TunnelTile_FluidPipes.png in Resources */,
+				5D15DF481825B36D00DF0F99 /* TunnelTile_FluidPipes2.png in Resources */,
+				5D15DF491825B36D00DF0F99 /* TunnelTile_pipes_D.png in Resources */,
+				5D15DF4A1825B36D00DF0F99 /* TunnelTile_Wires.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

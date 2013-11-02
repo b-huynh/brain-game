@@ -15,7 +15,7 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
-enum GameMode { GAME_TIMED, GAME_NORMAL };
+enum GameMode { GAME_TIMED, GAME_NORMAL, GAME_NORMAL_SOUNDLESS };
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -88,10 +88,12 @@ public:
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
+    std::string determineMaterial() const;
     
     bool isDone() const;
     void setDone(bool value);
     
+    void setNewControl(int control);
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;

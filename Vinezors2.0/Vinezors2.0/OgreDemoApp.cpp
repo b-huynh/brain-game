@@ -211,6 +211,7 @@ void DemoApp::setupDemoScene()
         seed,
         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
+    player->setSounds(SOUND_ALL);
     
     tunnel = new Tunnel(
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
@@ -224,6 +225,7 @@ void DemoApp::setupDemoScene()
         globals.tunnelSegmentsPerSection,
         globals.tunnelSegmentsPerPod);
     tunnel->constructTunnel(globals.tunnelSections);
+    player->newTunnel(tunnel);
     
     Light* lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("Light");
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
@@ -260,76 +262,38 @@ void DemoApp::setupDemoScene()
     // The code snippet below is used to output text
     // create a font resource
     ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    resourceText->setParameter("type","truetype");
-    resourceText->setParameter("source","C64_User_Mono_v1.0-STYLE.ttf");
-    resourceText->setParameter("size","16");
-    resourceText->setParameter("resolution","96");
+    resourceText->setParameter("type", "truetype");
+    resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
+    resourceText->setParameter("size", "16");
+    resourceText->setParameter("resolution", "96");
     resourceText->load();
     
     // Create panels
-    OverlayContainer* panel1 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
+    panel1 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
     panel1->setMetricsMode(GMM_PIXELS);
     panel1->setPosition(10, 10);
     panel1->setDimensions(10, 10);
     
-    OverlayContainer* panel2 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SideInterface"));
+    panel2 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SideInterface"));
     panel2->setMetricsMode(GMM_PIXELS);
     panel2->setPosition(10, 10);
     panel2->setDimensions(10, 10);
     
-    BorderPanelOverlayElement* healthArea = static_cast<BorderPanelOverlayElement*>(
+    healthArea = static_cast<BorderPanelOverlayElement*>(
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("BorderPanel", "HealthAreaBorder"));
-    healthArea->setMetricsMode(GMM_RELATIVE);
-    healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
-    healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
-    healthArea->setMaterialName("BaseWhite");
     
     barHP = static_cast<PanelOverlayElement*>(
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HealthBar"));
-    barHP->setMetricsMode(GMM_RELATIVE);
-    barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
-    barHP->setDimensions(0.0, 0.0);
-    barHP->setMaterialName("General/BaseRed");
     
     // Create text area
     label1= static_cast<TextAreaOverlayElement*>(
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
-    label1->setMetricsMode(GMM_PIXELS);
-    label1->setPosition(globals.label1_posX, globals.label1_posY);
-    label1->setCharHeight(16);
-    label1->setFontName("Arial");
-    label1->setColour(ColourValue::Black);
-    label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
-    
-    // Create text area
     label2= static_cast<TextAreaOverlayElement*>(
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
-    label2->setMetricsMode(GMM_PIXELS);
-    label2->setPosition(globals.label2_posX, globals.label2_posY);
-    label2->setCharHeight(16);
-    label2->setColour(ColourValue::Black);
-    label2->setFontName("Arial");
-    label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    
-    // Create text area
     label3= static_cast<TextAreaOverlayElement*>(
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
-    label3->setMetricsMode(GMM_PIXELS);
-    label3->setPosition(globals.label3_posX, globals.label3_posY);
-    label3->setCharHeight(16);
-    label3->setColour(ColourValue::Black);
-    label3->setFontName("Arial");
-    label3->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
-    
-    // Create text area
     label4= static_cast<TextAreaOverlayElement*>(
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
-    label4->setMetricsMode(GMM_PIXELS);
-    label4->setPosition(globals.label4_posX, globals.label4_posY);
-    label4->setCharHeight(16);
-    label4->setColour(ColourValue::Black);
-    label4->setFontName("Arial");
-    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayMain");
@@ -346,7 +310,111 @@ void DemoApp::setupDemoScene()
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
     
-    sidebarMode = SIDEBAR_RIGHT;
+    sidebarMode = SIDEBAR_NONE;
+    setSidebar();
+    setOverlay();
+}
+
+void DemoApp::setOverlay()
+{
+    if (tunnel->getMode() == GAME_NORMAL)
+    {
+        panel1->setMetricsMode(GMM_PIXELS);
+        panel1->setPosition(10, 10);
+        panel1->setDimensions(10, 10);
+        
+        panel2->setMetricsMode(GMM_PIXELS);
+        panel2->setPosition(10, 10);
+        panel2->setDimensions(10, 10);
+        
+        healthArea->setMetricsMode(GMM_RELATIVE);
+        healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
+        healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
+        healthArea->setMaterialName("BaseWhite");
+        
+        barHP->setMetricsMode(GMM_RELATIVE);
+        barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
+        barHP->setDimensions(0.0, 0.0);
+        barHP->setMaterialName("General/BaseRed");
+        
+        label1->setMetricsMode(GMM_PIXELS);
+        label1->setPosition(globals.label1_posX, globals.label1_posY);
+        label1->setCharHeight(16);
+        label1->setFontName("Arial");
+        label1->setColour(ColourValue::Black);
+        label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
+        
+        label2->setMetricsMode(GMM_PIXELS);
+        label2->setPosition(globals.label2_posX, globals.label2_posY);
+        label2->setCharHeight(16);
+        label2->setColour(ColourValue::Black);
+        label2->setFontName("Arial");
+        label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
+        
+        label3->setMetricsMode(GMM_PIXELS);
+        label3->setPosition(globals.label3_posX, globals.label3_posY);
+        label3->setCharHeight(16);
+        label3->setColour(ColourValue::Black);
+        label3->setFontName("Arial");
+        label3->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
+        
+        label4->setMetricsMode(GMM_PIXELS);
+        label4->setPosition(globals.label4_posX, globals.label4_posY);
+        label4->setCharHeight(16);
+        label4->setColour(ColourValue::Black);
+        label4->setFontName("Arial");
+        label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
+    }
+    else
+    {
+        panel1->setMetricsMode(GMM_PIXELS);
+        panel1->setPosition(10, 10);
+        panel1->setDimensions(10, 10);
+        
+        panel2->setMetricsMode(GMM_PIXELS);
+        panel2->setPosition(10, 10);
+        panel2->setDimensions(10, 10);
+        
+        healthArea->setMetricsMode(GMM_RELATIVE);
+        healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
+        healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
+        healthArea->setMaterialName("BaseWhite");
+        healthArea->hide();
+        
+        barHP->setMetricsMode(GMM_RELATIVE);
+        barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
+        barHP->setDimensions(0.0, 0.0);
+        barHP->setMaterialName("General/BaseRed");
+        barHP->hide();
+        
+        label1->setMetricsMode(GMM_PIXELS);
+        label1->setPosition(globals.label1_posX, globals.label1_posY);
+        label1->setCharHeight(16);
+        label1->setFontName("Arial");
+        label1->setColour(ColourValue::White);
+        label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
+        
+        label2->setMetricsMode(GMM_PIXELS);
+        label2->setPosition(globals.label2_posX, globals.label2_posY);
+        label2->setCharHeight(16);
+        label2->setColour(ColourValue::White);
+        label2->setFontName("Arial");
+        label2->setCaption("Score: " + Util::toStringInt(player->getTotalDistanceTraveled()));
+        
+        label3->setMetricsMode(GMM_PIXELS);
+        label3->setPosition(globals.label3_posX, globals.label3_posY);
+        label3->setCharHeight(16);
+        label3->setColour(ColourValue::White);
+        label3->setFontName("Arial");
+        label3->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
+        
+        label4->setMetricsMode(GMM_PIXELS);
+        label4->setPosition(globals.label4_posX, globals.label4_posY);
+        label4->setCharHeight(16);
+        label4->setColour(ColourValue::White);
+        label4->setFontName("Arial");
+        label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
+    }
 }
 
 void DemoApp::setSidebar()
@@ -503,7 +571,7 @@ void DemoApp::update(double elapsed)
             }
             else {
                 // Generate a new tunnel because we are at the end
-                setLevel(-1);
+                setLevel(-1, -1);
             }
             
             // Show Pod Color and Play Sound
@@ -512,7 +580,7 @@ void DemoApp::update(double elapsed)
             {
                 for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
                     nextSliceN->getPods()[i]->revealPod();
-//                    playPodSound(nextSliceN->getPods()[i]);
+                    player->playPodSound(nextSliceN->getPods()[i]->getType());
                 }
             }
         }
@@ -561,7 +629,7 @@ void DemoApp::update(double elapsed)
     }
     else
     {
-        double ratio = player->getNumCorrect() / static_cast<double>(player->getNumCorrect() + player->getNumWrong() + 10);
+        double ratio = player->getNumCorrectTotal() / static_cast<double>(player->getNumCorrectTotal() + player->getNumWrongTotal() + 10);
         if (ratio < 0.0)
             ratio = 0.0;
         barWidth *= ratio;
@@ -570,7 +638,7 @@ void DemoApp::update(double elapsed)
     }
 }
 
-void DemoApp::setLevel(int n)
+void DemoApp::setLevel(int n, int c)
 {
     Vector3 newOrigin = tunnel->getEnd();
     TunnelSlice* current = tunnel->getCurrent();
@@ -579,7 +647,7 @@ void DemoApp::setLevel(int n)
     int nback = tunnel->getNBack();
     delete tunnel;
     
-    if (n >= 0)
+    if (n >= 0) // For Debugging keys
     {
         tunnel = new Tunnel(
                             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
@@ -590,13 +658,13 @@ void DemoApp::setLevel(int n)
                             globals.tunnelMaxAngleTurn,
                             GAME_NORMAL,
                             n,
-                            player->getLevel().control,
+                            c,
                             player->getVineDir(),
                             globals.tunnelSegmentsPerSection,
                             globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections, rot);
     }
-    else
+    else // Automatically determine
     {
         bool pass = false;
         if (player->getHP() > 0)
@@ -610,7 +678,7 @@ void DemoApp::setLevel(int n)
                             globals.tunnelSegmentDepth,
                             globals.tunnelMinAngleTurn,
                             globals.tunnelMaxAngleTurn,
-                            GAME_NORMAL,
+                            tunnel->getMode(),
                             player->getLevel().nback,
                             player->getLevel().control,
                             player->getVineDir(),
@@ -621,10 +689,15 @@ void DemoApp::setLevel(int n)
     
     player->setCamPos(newOrigin);
     player->setCamRot(rot);
-    player->setDesireRot(rot);
     player->setCamRoll(player->getDesireRoll());
+    player->setOldPos(player->getCamPos());
+    player->setOldRot(player->getCamRot());
+    player->setOldRoll(player->getCamRoll());
+    player->setDesireRot(rot);
     
     player->newTunnel(tunnel);
+    
+    setOverlay();
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -677,11 +750,30 @@ void DemoApp::runDemo()
 #endif
 }
 
-//|||||||||||||||||||||||||||||||||||||||||||||||
-
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
+{
+    return true;
+}
+bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
+{
+    player->setKeyLeft(true);
+    return true;
+}
+bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
+{
+    player->setKeyLeft(false);
+    return true;
+}
+bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
+{
+    return true;
+}
+#else
 bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     if (pause) {
+        /*
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
         
         Vector3 right = player->getCamRight(true);
@@ -698,6 +790,7 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
         OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(curRot);
         
         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
+         */
     }
     return true;
 }
@@ -727,6 +820,7 @@ bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     }
     return true;
 }
+#endif
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -797,52 +891,72 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_1:
         {
-            setLevel(1);
+            setLevel(1, player->getLevel().control);
             break;
         }
         case OIS::KC_2:
         {
-            setLevel(2);
+            setLevel(2, player->getLevel().control);
             break;
         }
         case OIS::KC_3:
         {
-            setLevel(3);
+            setLevel(3, player->getLevel().control);
             break;
         }
         case OIS::KC_4:
         {
-            setLevel(4);
+            setLevel(4, player->getLevel().control);
             break;
         }
         case OIS::KC_5:
         {
-            setLevel(5);
+            setLevel(5, player->getLevel().control);
             break;
         }
         case OIS::KC_6:
         {
-            setLevel(6);
+            setLevel(6, player->getLevel().control);
             break;
         }
         case OIS::KC_7:
         {
-            setLevel(7);
+            setLevel(7, player->getLevel().control);
             break;
         }
         case OIS::KC_8:
         {
-            setLevel(8);
+            setLevel(8, player->getLevel().control);
             break;
         }
         case OIS::KC_9:
         {
-            setLevel(9);
+            setLevel(9, player->getLevel().control);
             break;
         }
         case OIS::KC_0:
         {
-            setLevel(10);
+            setLevel(10, player->getLevel().control);
+            break;
+        }
+        case OIS::KC_Q:
+        {
+            setLevel(player->getLevel().nback, 1);
+            break;
+        }
+        case OIS::KC_W:
+        {
+            setLevel(player->getLevel().nback, 2);
+            break;
+        }
+        case OIS::KC_E:
+        {
+            setLevel(player->getLevel().nback, 3);
+            break;
+        }
+        case OIS::KC_R:
+        {
+            setLevel(player->getLevel().nback, 4);
             break;
         }
         case OIS::KC_Z:
@@ -910,13 +1024,13 @@ void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
     if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportMain)
     {
         for(int i = 0; i < overlays.size(); ++i)
-            if (overlays[i]->getName() != "OverlayMain")
+            if (sidebarMode != SIDEBAR_NONE && overlays[i]->getName() != "OverlayMain")
                 overlays[i]->hide();
     }
     else if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
     {
         for(int i = 0; i < overlays.size(); ++i)
-            if (overlays[i]->getName() != "OverlaySide")
+            if (sidebarMode == SIDEBAR_NONE || overlays[i]->getName() != "OverlaySide")
                 overlays[i]->hide();
     }
 }

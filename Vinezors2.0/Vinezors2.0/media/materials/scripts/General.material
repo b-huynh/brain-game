@@ -143,7 +143,91 @@ material General/Smiley
 	}
 }
 
-material General/WallMetal
+material General/Wall0
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            hardware_culling none
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.9 0.9 0.9 1
+            emissive 0.1 0.1 0.1 1
+        }
+    }
+}
+
+material General/Wall1
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            hardware_culling none
+
+            texture_unit
+			{
+				texture metal.png
+			}
+        }
+    }
+}
+
+material General/Wall2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            hardware_culling none
+
+            texture_unit
+			{
+				texture TunnelTile_SpaceStation.png
+			}
+		}
+	}
+}
+
+material General/Wall3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            hardware_culling none
+
+            texture_unit
+			{
+				texture TunnelTile_Wires.png
+			}
+		}
+	}
+}
+
+material General/Wall4
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            hardware_culling none
+
+            texture_unit
+			{
+				texture TunnelTile_FluidPipes2.png
+			}
+		}
+	}
+}
+
+material General/Wall5
 {
     technique
 	{
@@ -162,19 +246,42 @@ material General/WallMetal
 	}
 }
 
-material General/WallMetal2
+material General/Wall6
 {
     technique
-    {
+	{
         pass
-        {
+		{
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.9 0.9 0.9 1
-            emissive 0.1 0.1 0.1 1
-        }
-    }
+            scene_blend alpha_blend
+            depth_write off
+            hardware_culling none
+
+            texture_unit
+			{
+				texture star.png
+			}
+		}
+	}
+}
+
+material General/Wall7
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+            hardware_culling none
+
+            texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
 }
 
 material General/WallCheckpoint

@@ -85,7 +85,11 @@ protected:
 
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener, public Ogre::RenderTargetListener
+#else
 class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
+#endif
 {
 public:
 	DemoApp();
@@ -93,20 +97,27 @@ public:
     
 	void startDemo();
     void setSidebar();
+    void setOverlay();
     void update(double elapsed);
-    void setLevel(int n);
+    void setLevel(int n, int c);
     void loadConfig(std::string filepath);
-
+    
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
+	virtual bool touchPressed(const OIS::MultiTouchEvent &evt);
+	virtual bool touchReleased(const OIS::MultiTouchEvent &evt);
+	virtual bool touchCancelled(const OIS::MultiTouchEvent &evt);
+#else
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
-
+#endif
+    
     virtual bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef);
-    
     virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
     virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
-    
+
 private:
     void setupDemoScene();
 	void runDemo();
@@ -123,6 +134,9 @@ private:
     
     std::vector<Ogre::Overlay*> overlays;
     
+    OverlayContainer* panel1;
+    OverlayContainer* panel2;
+    BorderPanelOverlayElement* healthArea;
     PanelOverlayElement* barHP;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;

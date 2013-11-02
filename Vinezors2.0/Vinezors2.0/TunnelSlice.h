@@ -92,10 +92,11 @@ private:
     
     SectionInfo sectionInfo;
     PodInfo podInfo;
+    bool podHistory; // Used to avoid saving data multiple times
     bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     
@@ -114,6 +115,7 @@ public:
     std::vector<Pod *> getPods() const;
     SectionInfo getSectionInfo() const;
     PodInfo getPodInfo() const;
+    bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
     
@@ -124,6 +126,7 @@ public:
     
     void setSectionInfo(const SectionInfo & value);
     void setPodInfo(const PodInfo & value);
+    void setPodHistory(bool value);
     void setInfoStored(bool value);
     void setPrerangeT(double value);
 	void move(Vector3 delta);
@@ -134,7 +137,7 @@ public:
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS]);
+    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

@@ -18,10 +18,10 @@ Util::ConfigGlobal::ConfigGlobal()
     const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
     const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
-    int TUNNEL_MIN_ANGLE_TURN = 0; //Configurable
-    int TUNNEL_MAX_ANGLE_TURN = 3; //Configurable
-    double TUNNEL_SEGMENT_WIDTH = 25.0; //Configurable
-    double TUNNEL_SEGMENT_DEPTH = 25.0; //Configurable
+    const int TUNNEL_MIN_ANGLE_TURN = 0; //Configurable
+    const int TUNNEL_MAX_ANGLE_TURN = 3; //Configurable
+    const double TUNNEL_SEGMENT_WIDTH = 25.0; //Configurable
+    const double TUNNEL_SEGMENT_DEPTH = 25.0; //Configurable
     const double TUNNEL_SEGMENT_BUFFER = 25;
     const double TUNNEL_WALL_LENGTH = TUNNEL_SEGMENT_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
     const int TUNNEL_SEGMENTS_PER_SECTION = 5;
@@ -33,22 +33,28 @@ Util::ConfigGlobal::ConfigGlobal()
     const int POD_APPEARANCE = 2;
     const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
     const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
-    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
+    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2.5;
     const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
     const int TUNNEL_SECTIONS = 5;
-    int NBACK = 2; //Configurable
-    int CONTROL = 1; //Configurable
-    int HISTORY_MODE = -1; //Confiugrable
+    const int NBACK = 2; //Configurable
+    const int CONTROL = 1; //Configurable
+    const int HISTORY_MODE = -1; //Confiugrable
     
     const int STARTING_HP = 0;
     const int HP_NEGATIVE_LIMIT = -6;
     const int HP_POSITIVE_LIMIT = 6;
     const double DRAIN_SPEED = 2;
-    const int INIT_CAM_SPEED = 10;
-    const int MODIFIER_CAM_SPEED = 5;
-    const int MIN_CAM_SPEED = 5;
-    const int MAX_CAM_SPEED = 25;
+    const double INIT_CAM_SPEED = 15.0;
+    const double MODIFIER_CAM_SPEED = 5.0;
+    const double MIN_CAM_SPEED = 5.0;
+    const double MAX_CAM_SPEED = 25.0;
+    const double NLEVEL_SPEED_MODIFIER = 0.8;
+
+    const int NUM_TO_SPEED_UP = 3;
+    const int NUM_TO_SPEED_DOWN = 1;
+    const double STEPSIZE_SPEED_UP = 3.0;
+    const double STEPSIZE_SPEED_DOWN = -3.0;
     
     const double HP_BAR_XREF = 0.05;
     const double HP_BAR_YREF = 0.05;
@@ -58,18 +64,18 @@ Util::ConfigGlobal::ConfigGlobal()
     const int SCREEN_WIDTH = 1024;
     const int SCREEN_HEIGHT = 800;
     
-    const int VIEWPORT_MAIN_WIDTH_MODERIGHT = 800;
-    const int VIEWPORT_MAIN_HEIGHT_MODERIGHT = 800;
+    const int VIEWPORT_MAIN_WIDTH_MODERIGHT = SCREEN_WIDTH - 224;
+    const int VIEWPORT_MAIN_HEIGHT_MODERIGHT = SCREEN_HEIGHT;
     const int VIEWPORT_SIDE_WIDTH_MODERIGHT = 224;
-    const int VIEWPORT_SIDE_HEIGHT_MODERIGHT = 800;
+    const int VIEWPORT_SIDE_HEIGHT_MODERIGHT = SCREEN_HEIGHT;
     
-    const int VIEWPORT_MAIN_WIDTH_MODEBOTTOM = 1024;
-    const int VIEWPORT_MAIN_HEIGHT_MODEBOTTOM = 700;
-    const int VIEWPORT_SIDE_WIDTH_MODEBOTTOM = 1024;
+    const int VIEWPORT_MAIN_WIDTH_MODEBOTTOM = SCREEN_WIDTH;
+    const int VIEWPORT_MAIN_HEIGHT_MODEBOTTOM = SCREEN_HEIGHT - 100;
+    const int VIEWPORT_SIDE_WIDTH_MODEBOTTOM = SCREEN_WIDTH;
     const int VIEWPORT_SIDE_HEIGHT_MODEBOTTOM = 100;
     
-    const int VIEWPORT_MAIN_WIDTH_MODENONE = 1024;
-    const int VIEWPORT_MAIN_HEIGHT_MODENONE = 800;
+    const int VIEWPORT_MAIN_WIDTH_MODENONE = SCREEN_WIDTH;
+    const int VIEWPORT_MAIN_HEIGHT_MODENONE = SCREEN_HEIGHT;
     const int VIEWPORT_SIDE_WIDTH_MODENONE = 0;
     const int VIEWPORT_SIDE_HEIGHT_MODENONE = 0;
     
@@ -114,6 +120,11 @@ Util::ConfigGlobal::ConfigGlobal()
     modifierCamSpeed = MODIFIER_CAM_SPEED;
     minCamSpeed = MIN_CAM_SPEED;
     maxCamSpeed = MAX_CAM_SPEED;
+    nlevelSpeedModifier = NLEVEL_SPEED_MODIFIER;
+    numToSpeedUp = NUM_TO_SPEED_UP;
+    numToSpeedDown = NUM_TO_SPEED_DOWN;
+    stepsizeSpeedUp = STEPSIZE_SPEED_UP;
+    stepsizeSpeedDown = STEPSIZE_SPEED_DOWN;
     HPBarXRef = HP_BAR_XREF;
     HPBarYRef = HP_BAR_YREF;
     HPBarWidth = HP_BAR_WIDTH;
@@ -142,9 +153,24 @@ Util::ConfigGlobal::ConfigGlobal()
     label4_posY = LABEL4_POSY;
 }
 
-// Updates variables that depend on other globals
+// Updates variables that depend on other globals, should call this if a global has changed
 void Util::ConfigGlobal::set()
 {
+    viewportMainWidth_modeRight = screenWidth - 224;
+    viewportMainHeight_modeRight = screenHeight;
+    viewportSideWidth_modeRight = 224;
+    viewportSideHeight_modeRight = screenHeight;
+    
+    viewportMainWidth_modeBottom = screenWidth;
+    viewportMainHeight_modeBottom = screenHeight - 100;
+    viewportSideWidth_modeBottom = screenWidth;
+    viewportSideHeight_modeBottom = 100;
+    
+    viewportMainWidth_modeNone = screenWidth;
+    viewportMainHeight_modeNone = screenHeight;
+    viewportSideWidth_modeNone = 0;
+    viewportSideHeight_modeNone = 0;
+    
     label1_posX = 10;
     label1_posY = screenHeight - 70;
     label2_posX = 10;

@@ -20,15 +20,15 @@ static int intermediateMeshID = 0;
 TunnelSlice::TunnelSlice()
 : parentNode(NULL), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
-pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
+pods(), growthT(0), prerangeT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = false;
 }
 
-TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
-: parentNode(parentNode), center(center), rot(rot), width(width), depth(depth), type(type), materialName(""), entireWall(NULL),
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), prerangeT(0), sidesUsed(), infoStored(false)
+TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
+: parentNode(parentNode), center(center), rot(rot), width(width), depth(depth), type(type), materialName(material), entireWall(NULL),
+topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), prerangeT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = sides[i];
@@ -45,9 +45,7 @@ void TunnelSlice::initWalls()
     
     entireWall = parentNode->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
-    if (type != CHECKPOINT)
-        materialName = "General/WallMetal";
-    else
+    if (type == CHECKPOINT)
         materialName = "General/WallCheckpoint";
     
     if (sidesUsed[NORTHWEST]) {
@@ -222,6 +220,11 @@ PodInfo TunnelSlice::getPodInfo() const
     return podInfo;
 }
 
+bool TunnelSlice::isPodHistory() const
+{
+    return podHistory;
+}
+
 bool TunnelSlice::isInfoStored() const
 {
     return infoStored;
@@ -309,6 +312,11 @@ void TunnelSlice::setSectionInfo(const SectionInfo & value)
 void TunnelSlice::setPodInfo(const PodInfo & value)
 {
     podInfo = value;
+}
+
+void TunnelSlice::setPodHistory(bool value)
+{
+    podHistory = value;
 }
 
 void TunnelSlice::setInfoStored(bool value)
@@ -413,7 +421,7 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 
     SceneNode* target = entire->createChildSceneNode("intermediateSegmentSubNode" + Util::toStringInt(intermediateMeshID));
     
     Entity* intermediateSegmentEntity = entireIntermediate->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
-    intermediateSegmentEntity->setMaterialName("General/WallMetal");
+    intermediateSegmentEntity->setMaterialName(materialName);
     
     switch (dir)
     {
@@ -614,13 +622,14 @@ void TunnelSlice::updateGrowth(double nt)
         pods[i]->setToGrowth(growthT);
 }
 
-void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const bool sides[NUM_DIRECTIONS])
+void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
 {
     this->type = type;
     this->center = center;
     this->rot = rot;
     this->width = width;
     this->depth = depth;
+    this->materialName = material;
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = sides[i];
     growthT = 0;
