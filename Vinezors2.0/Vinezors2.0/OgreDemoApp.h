@@ -100,7 +100,7 @@ public:
     void setOverlay();
     void update(double elapsed);
     void setLevel(int n, int c);
-    void loadConfig(std::string filepath);
+    bool loadConfig(std::string filepath, int stageID);
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
@@ -144,6 +144,9 @@ private:
     TextAreaOverlayElement* label4;
     
     SidebarLocation sidebarMode;
+    
+    int currStageID;
+    std::string configPath;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

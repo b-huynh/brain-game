@@ -154,29 +154,59 @@ void DemoApp::startDemo()
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-void DemoApp::loadConfig(std::string filepath)
+void setConfigValue(std::string paramName, double paramVal)
+{
+    if (paramName == "stageID")
+        globals.stageID = (int)paramVal;
+    else if (paramName == "nback")
+        globals.nback = (int)paramVal;
+    else if (paramName == "control")
+        globals.control = (int)paramVal;
+    else if (paramName == "gameMode")
+        globals.gameMode = (int)paramVal;
+    else;
+}
+
+bool DemoApp::loadConfig(std::string filepath, int stageID)
 {
     std::ifstream in (filepath.c_str());
     std::string check, paramName, colon;
     double paramVal;
     
-    in >> check;
-    if (check != "{") return;
+    if (!in.good()) return false;
     
-    in >> paramName;
-    while (paramName != "}") {
-        in >> colon >> paramVal;
-        std::cout << "Loading " << paramName << " = " << paramVal << std::endl;
-        Util::setConfigValue(paramName, paramVal);
+    do {
+        in >> check;
+        if (check != "{") return;
+        
         in >> paramName;
+        while (paramName != "}") {
+            in >> colon >> paramVal;
+            setConfigValue(paramName, paramVal);
+            in >> paramName;
+        }
+    } while (globals.stageID != stageID && !in.eof());
+    
+    in.close();
+    
+    if (globals.stageID == stageID) {
+        std::cout << "Loaded stageID " << globals.stageID << std::endl;
+        return true;
+    } else {
+        std::cout << "Failed to load stageID " << stageID << std::endl;
+        return false;
     }
+
+    return false;
 }
 
 void DemoApp::setupDemoScene()
 {
     // Grab config file
     
-    loadConfig(Util::getSaveDir() + "vinezors.conf");
+    currStageID = 1;
+    configPath = Util::getSaveDir() + "vinezors.conf";
+    loadConfig(configPath, currStageID);
     
     seed = 0;
     srand(seed);
@@ -212,13 +242,14 @@ void DemoApp::setupDemoScene()
         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds(SOUND_ALL);
+    player->setConfigValues();
     
     tunnel = new Tunnel(
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
         Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2),
         globals.tunnelSegmentWidth, globals.tunnelSegmentDepth,
         globals.tunnelMinAngleTurn, globals.tunnelMaxAngleTurn,
-        GAME_TIMED,
+        (GameMode)globals.gameMode,
         player->getLevel().nback,
         player->getLevel().control,
         player->getVineDir(),
@@ -656,7 +687,7 @@ void DemoApp::setLevel(int n, int c)
                             globals.tunnelSegmentDepth,
                             globals.tunnelMinAngleTurn,
                             globals.tunnelMaxAngleTurn,
-                            GAME_NORMAL,
+                            (GameMode)globals.gameMode,
                             n,
                             c,
                             player->getVineDir(),
@@ -669,7 +700,17 @@ void DemoApp::setLevel(int n, int c)
         bool pass = false;
         if (player->getHP() > 0)
             pass = true;
-        player->evaluatePlayerLevel(pass);
+        //player->evaluatePlayerLevel(pass);
+        
+        if (pass)
+            currStageID++;
+        else
+            currStageID--;
+        
+        if (loadConfig(configPath,currStageID))
+            player->setConfigValues();
+        else
+            player->evaluatePlayerLevel(pass);
         
         tunnel = new Tunnel(
                             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),

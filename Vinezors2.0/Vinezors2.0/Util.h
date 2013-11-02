@@ -26,6 +26,9 @@ namespace Util
     
     struct ConfigGlobal
     {
+        int stageID;
+        int soundMode;
+        int gameMode;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;

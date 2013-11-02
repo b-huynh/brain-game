@@ -170,6 +170,7 @@ public:
     
     void evaluatePlayerLevel(bool pass);
     bool saveProgress(std::string file);
+    void setConfigValues();
     
     ~Player();
 };

@@ -709,6 +709,13 @@ bool Player::saveProgress(std::string file)
     return true;
 }
 
+void Player::setConfigValues()
+{
+    level.nback = globals.nback;
+    level.control = globals.control;
+    setSounds( (SoundMode)globals.soundMode );
+}
+
 Player::~Player()
 {
 }
