@@ -32,7 +32,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, 
     history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     
-    Util::setSides(sidesUsed, control, basis);
+    setNewControl(control);
 }
 
 SceneNode* Tunnel::getMainTunnelNode() const
@@ -260,6 +260,30 @@ bool Tunnel::hasAvailableSide(Direction side) const
     return sidesUsed[side];
 }
 
+std::string Tunnel::determineMaterial() const
+{
+    switch (nback)
+    {
+        case 2:
+            return "General/Wall1";
+        case 3:
+            return "General/Wall2";
+        case 4:
+            return "General/Wall3";
+        case 5:
+            return "General/Wall4";
+        case 6:
+            return "General/Wall5";
+        case 7:
+            return "General/Wall6";
+        case 8:
+            return "General/Wall7";
+        default:
+            return "General/Wall0";
+    }
+}
+
+
 bool Tunnel::isDone() const
 {
     return done;
@@ -268,6 +292,12 @@ bool Tunnel::isDone() const
 void Tunnel::setDone(bool value)
 {
     done = value;
+}
+
+void Tunnel::setNewControl(int control)
+{
+    this->control = control;
+    Util::setSides(sidesUsed, control, basis);
 }
 
 void Tunnel::removeSegment()
@@ -364,7 +394,7 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     Vector3 forward = rot * globals.tunnelReferenceForward;
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
-	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
+	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
     
     switch (segmentType)
     {
@@ -424,7 +454,7 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
-    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, sidesUsed);
+    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
     
     switch (segmentType)
     {
@@ -608,25 +638,6 @@ void Tunnel::update(double elapsed)
 {
     totalElapsed += elapsed;
     history->update(elapsed);
-    if (mode == GAME_TIMED)
-    {
-        if (control == 1 && totalElapsed >= 30.0)
-        {
-            control++;
-            Util::setSides(sidesUsed, control, basis);
-        }
-        else if (control == 2 && totalElapsed >= 60.0)
-        {
-            control++;
-            Util::setSides(sidesUsed, control, basis);
-        }
-        else if (control == 3 && totalElapsed >= 90.0)
-        {
-            control++;
-            Util::setSides(sidesUsed, control, basis);
-        }
-    
-    }
 }
 
 Tunnel::~Tunnel()

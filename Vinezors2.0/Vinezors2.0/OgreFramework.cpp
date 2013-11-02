@@ -80,7 +80,12 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
     else
         return false;
-    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
+//    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
+//    m_pRenderWnd->setFullscreen(true, 1024, 800);
+    globals.screenWidth = m_pRenderWnd->getWidth();
+    globals.screenHeight = m_pRenderWnd->getHeight();
+    globals.set();
+    
     /*
     Ogre::NameValuePairList paramsWnd;
     paramsWnd["border"] = "fixed";
@@ -188,6 +193,14 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
+    m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
+    m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound3", "VinezorsNegativeBeep.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBlip.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceBeep.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceChime.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound7", "VinezorsSpaceTone.wav", false, false, true);
     
     m_pBillboardSet = m_pSceneMgrMain->createBillboardSet("TheBillboardSet");
     
