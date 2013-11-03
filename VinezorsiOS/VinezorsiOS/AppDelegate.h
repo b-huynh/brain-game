@@ -101,7 +101,7 @@
     }
     else
     {
-        mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1.0f / 60.0f) * mLastFrameTime
+        mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1.0f / 30.0f) * mLastFrameTime
                                                   target:self
                                                 selector:@selector(renderOneFrame:)
                                                 userInfo:nil
@@ -174,7 +174,7 @@
             
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
-            demo.update(1.0f / 60.0f);
+            demo.update(1.0f / 30.0f);
 			OgreFramework::getSingletonPtr()->updateOgre(mLastFrameTime);
 			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             

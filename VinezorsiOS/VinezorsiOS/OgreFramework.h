@@ -23,8 +23,11 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-#define OGRE_STATIC_ParticleFX 1
+//#ifdef OGRE_IS_IOS
 #define OGRE_STATIC_OgreOggSound 1
+//#else
+//#include "OgreOggSoundPlugin.h"
+//#endif
 
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
@@ -72,6 +75,7 @@
 #include <SdkTrays.h>
 
 using namespace Ogre;
+using namespace OgreOggSound;
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -86,9 +90,9 @@ public:
 	~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MultiTouchListener *pMouseListener = 0);
+    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MultiTouchListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #else
-	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
+	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
 	void updateOgre(double timeSinceLastFrame);
 	void moveCamera();
@@ -101,20 +105,23 @@ public:
     
 #ifdef OGRE_IS_IOS
 	bool touchMoved(const OIS::MultiTouchEvent &evt);
-	bool touchPressed(const OIS::MultiTouchEvent &evt); 
+	bool touchPressed(const OIS::MultiTouchEvent &evt);
 	bool touchReleased(const OIS::MultiTouchEvent &evt);
 	bool touchCancelled(const OIS::MultiTouchEvent &evt);
 #else
 	bool mouseMoved(const OIS::MouseEvent &evt);
-	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id); 
+	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
 	
 	Ogre::Root*                 m_pRoot;
-	Ogre::SceneManager*			m_pSceneMgr;
 	Ogre::RenderWindow*			m_pRenderWnd;
-	Ogre::Camera*				m_pCamera;
-	Ogre::Viewport*				m_pViewport;
+	Ogre::SceneManager*			m_pSceneMgrMain;
+	Ogre::SceneManager*			m_pSceneMgrSide;
+	Ogre::Camera*				m_pCameraMain;
+	Ogre::Viewport*				m_pViewportMain;
+	Ogre::Camera*				m_pCameraSide;
+	Ogre::Viewport*				m_pViewportSide;
 	Ogre::Log*                  m_pLog;
 	Ogre::Timer*				m_pTimer;
 	
@@ -135,8 +142,8 @@ public:
     
     BillboardSet*               m_pBillboardSet;
 protected:
-   // Added for Mac compatibility
-   Ogre::String                 m_ResourcePath;
+    // Added for Mac compatibility
+    Ogre::String                 m_ResourcePath;
     
 private:
 	OgreFramework(const OgreFramework&);
@@ -149,9 +156,9 @@ private:
 	bool                        m_bShutDownOgre;
 	
 	Ogre::Vector3				m_TranslateVector;
-	Ogre::Real                  m_MoveSpeed; 
-	Ogre::Degree				m_RotateSpeed; 
-	float                       m_MoveScale; 
+	Ogre::Real                  m_MoveSpeed;
+	Ogre::Degree				m_RotateSpeed;
+	float                       m_MoveScale;
 	Ogre::Degree				m_RotScale;
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;
@@ -160,6 +167,6 @@ private:
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#endif 
+#endif
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

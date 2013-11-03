@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__Util__
-#define __Testing__Util__
+#ifndef __Vinezors2_0__Util__
+#define __Vinezors2_0__Util__
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -18,50 +18,92 @@
 #include <string>
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
+#define NUM_DIRECTIONS 8
 
 namespace Util
-{
-    static const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
-    static const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
-    static const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
-    static const int TUNNEL_MIN_ANGLE_TURN = 3;
-    static const int TUNNEL_MAX_ANGLE_TURN = 3;
-    static const double TUNNEL_WIDTH = 25.0;
-    static const double TUNNEL_DEPTH = 25.0;
-    static const double TUNNEL_SEGMENT_BUFFER = 25;
-    static const double TUNNEL_WALL_LENGTH = TUNNEL_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
-    static const int TUNNEL_SEGMENTS_PER_SECTION = 5;
-    static const int TUNNEL_SEGMENTS_PER_POD = 3;
-    static const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
-    static const int INITIATION_SECTIONS = 1;
-    static const double VINE_T_OFFSET = 1.0;
-    static const double VINE_RADIUS = 2.5;
-    static const int POD_APPEARANCE = 2;
-    static const double POD_HEAD_RADIUS = TUNNEL_WIDTH / 25;
-    static const double POD_STEM_RADIUS = TUNNEL_WIDTH / 100;
-    static const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
+{    
+    static const double EPSILON = 0.001;
     
-    static const int TUNNEL_SECTIONS = 5;
-    static const int NBACK = 2;
+    struct ConfigGlobal
+    {
+        int stageID;
+        int soundMode;
+        int gameMode;
+        Vector3 tunnelReferenceForward;
+        Vector3 tunnelReferenceUpward;
+        Vector3 tunnelReferenceRight;
+        int tunnelMinAngleTurn;
+        int tunnelMaxAngleTurn;
+        double tunnelSegmentWidth;
+        double tunnelSegmentDepth;
+        double tunnelSegmentBuffer;
+        double tunnelWallLength;
+        int tunnelSegmentsPerSection;
+        int tunnelSegmentsPerPod;
+        int tunnelSegmentsBeforeRefresh;
+        int initiationSections;
+        double vineTOffset;
+        double vineRadius;
+        int podAppearance;
+        double podHeadRadius;
+        double podStemRadius;
+        double podStemLength;
+        double seatLength;
+        int tunnelSections;
+        int nback;
+        int control;
+        int historyMode;
+        int startingHP;
+        int HPNegativeLimit;
+        int HPPositiveLimit;
+        double drainSpeed;
+        double initCamSpeed;
+        double modifierCamSpeed;
+        double minCamSpeed;
+        double maxCamSpeed;
+        double nlevelSpeedModifier;
+        int numToSpeedUp;
+        int numToSpeedDown;
+        double stepsizeSpeedUp;
+        double stepsizeSpeedDown;
+        double HPBarXRef;
+        double HPBarYRef;
+        double HPBarWidth;
+        double HPBarHeight;
+        int screenWidth;
+        int screenHeight;
+        int viewportMainWidth_modeRight;
+        int viewportMainHeight_modeRight;
+        int viewportSideWidth_modeRight;
+        int viewportSideHeight_modeRight;
+        int viewportMainWidth_modeBottom;
+        int viewportMainHeight_modeBottom;
+        int viewportSideWidth_modeBottom;
+        int viewportSideHeight_modeBottom;
+        int viewportMainWidth_modeNone;
+        int viewportMainHeight_modeNone;
+        int viewportSideWidth_modeNone;
+        int viewportSideHeight_modeNone;
+        int label1_posX;
+        int label1_posY;
+        int label2_posX;
+        int label2_posY;
+        int label3_posX;
+        int label3_posY;
+        int label4_posX;
+        int label4_posY;
+        
+        ConfigGlobal();
+        void set();
+    };
     
-    static const int STARTING_HP = 0;
-    static const int HP_NEGATIVE_LIMIT = -3;
-    static const int HP_POSITIVE_LIMIT = 6;
-    static const double DRAIN_SPEED = 2;    
-    static const int CAM_SPEED = 50; //100;
-    static const int MIN_CAM_SPEED = 25;
-    static const int MAX_CAM_SPEED = 125;
-    
-    static const double HP_BAR_XREF = 0.05;
-    static const double HP_BAR_YREF = 0.05;
-    static const double HP_BAR_WIDTH = 0.9;
-    static const double HP_BAR_HEIGHT = 0.05;
-    
-    
+    int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
     Direction oppositeOf(Direction dir);
+    void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
     Direction randDirection();
+    Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     
     int randRangeInt(int min, int max);
     double randRangeDouble(double min, double max);
@@ -69,11 +111,14 @@ namespace Util
     std::string toStringDouble(double value);
     std::string getSaveDir();
     
+    //Config Values
+    void setConfigValue (std::string param, double paramVal);
+    
     void drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
     
-    void createSphere(const std::string& strName, const float r, const int nRings = 16, const int nSegments = 16);
-    void createCylinder(const std::string& strName, const float r, const float h, const int nSegments = 16);
-    void createPlane(const std::string& strName, const float length, const float depth);
+    void createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings = 16, int nSegments = 16);
+    void createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r,  float h, int nSegments = 16);
+    void createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth);
 
     void generateMaterials();
 };

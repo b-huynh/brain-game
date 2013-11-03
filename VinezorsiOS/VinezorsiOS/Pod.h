@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__Pod__
-#define __Testing__Pod__
+#ifndef __Vinezors2_0__Pod__
+#define __Vinezors2_0__Pod__
 
 #include "OgreFramework.h"
 #include "Util.h"
@@ -20,6 +20,8 @@ enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
 class Pod
 {
 private:
+    Ogre::SceneNode* parentNode;
+    
     Vector3 base;
     Vector3 tip;
 	PodType type;
@@ -32,15 +34,20 @@ private:
     
     bool podTaken;
     
+    Vector3 dest;
+    
 public:
 	Pod();
-	Pod(Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
+    
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
 	
     Vector3 getBase() const;
     Vector3 getTip() const;
 	PodType getType() const;
 	SceneNode* getStem() const;
 	SceneNode* getHead() const;
+	Vector3 getDest() const;
+	Vector3 getPosition() const;
     
     bool isPodTaken() const;
     
@@ -48,11 +55,17 @@ public:
 	
     void setToGrowth(double t);
 	void takePod();
+    void hidePod();
     void revealPod();
+	void setDest(Vector3 value);
     
 	void removeFromScene();
     
-    PodType getPodType();
+	void update(double elapsed);
+    
+    PodType getPodType() const;
+    
+    ~Pod();
 };
 
 #endif /* defined(__Testing__Pod__) */

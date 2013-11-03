@@ -83,10 +83,12 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
+enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener
+class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener, public Ogre::RenderTargetListener
 #else
-class DemoApp : public OIS::KeyListener
+class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
 #endif
 {
 public:
@@ -94,22 +96,28 @@ public:
 	~DemoApp();
     
 	void startDemo();
+    void setSidebar();
+    void setOverlay();
     void update(double elapsed);
-
+    void setLevel(int n, int c);
+    bool loadConfig(std::string filepath, int stageID);
+    
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-	bool touchMoved(const OIS::MultiTouchEvent &evt);
-	bool touchPressed(const OIS::MultiTouchEvent &evt);
-	bool touchReleased(const OIS::MultiTouchEvent &evt);
-	bool touchCancelled(const OIS::MultiTouchEvent &evt);
+	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
+	virtual bool touchPressed(const OIS::MultiTouchEvent &evt);
+	virtual bool touchReleased(const OIS::MultiTouchEvent &evt);
+	virtual bool touchCancelled(const OIS::MultiTouchEvent &evt);
+#else
+    virtual bool mouseMoved(const OIS::MouseEvent &evt);
+	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
     
-//  bool mouseMoved(const OIS::MouseEvent &evt);
-//	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
-//	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    virtual bool keyPressed(const OIS::KeyEvent &keyEventRef);
+	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef);
+    virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
+    virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
 
-	bool keyPressed(const OIS::KeyEvent &keyEventRef);
-	bool keyReleased(const OIS::KeyEvent &keyEventRef);
-    
 private:
     void setupDemoScene();
 	void runDemo();
@@ -119,19 +127,26 @@ private:
     unsigned seed;
     bool pause;
     Vector3 origin;
-    SceneNode* lightNode;
+    SceneNode* lightNodeMain;
+    SceneNode* lightNodeSide;
     Tunnel* tunnel;
 	Player* player;
     
+    std::vector<Ogre::Overlay*> overlays;
+    
+    OverlayContainer* panel1;
+    OverlayContainer* panel2;
+    BorderPanelOverlayElement* healthArea;
     PanelOverlayElement* barHP;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
     
-    OgreOggISound* soundMusic;
-    OgreOggISound* soundFeedbackGood;
+    SidebarLocation sidebarMode;
     
+    int currStageID;
+    std::string configPath;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

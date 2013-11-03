@@ -424,20 +424,33 @@ void Player::playPodSound(int index) const
         soundPods[index]->play();
 }
 
-void Player::setSounds(SoundMode mode)
+void Player::setSounds(GameMode mode)
 {
     //soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-    if (mode != SOUND_NONE)
+    switch (mode)
     {
-        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
-    }
-    if (mode == SOUND_ALL)
-    {
-        soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
-        soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
-        soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
-        soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
+        case GAME_NORMAL_SOUNDLESS:
+            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
+            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+            for (int i = 0; i < NUM_POD_TYPES; ++i)
+                soundPods[i] = NULL;
+            break;
+        case GAME_NORMAL:
+            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
+            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+            soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
+            soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
+            soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
+            soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
+            break;
+        case GAME_TIMED:
+            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
+            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+            soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
+            soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
+            soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
+            soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
+            break;
     }
 }
 
@@ -713,7 +726,7 @@ void Player::setConfigValues()
 {
     level.nback = globals.nback;
     level.control = globals.control;
-    setSounds( (SoundMode)globals.soundMode );
+    setSounds( (GameMode)globals.gameMode );
 }
 
 Player::~Player()
