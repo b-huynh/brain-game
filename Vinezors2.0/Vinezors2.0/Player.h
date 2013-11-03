@@ -25,7 +25,6 @@ struct PlayerLevel
     PlayerLevel();
 };
 
-enum SoundMode { SOUND_ALL, SOUND_FEEDBACK, SOUND_NONE };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 
 class Player
@@ -158,7 +157,7 @@ public:
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
     
-    void setSounds(SoundMode mode);
+    void setSounds(GameMode mode);
     void newTunnel(Tunnel* tunnel);
     
 	void move(Vector3 delta);

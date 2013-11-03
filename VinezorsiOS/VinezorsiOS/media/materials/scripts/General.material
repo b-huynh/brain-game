@@ -13,6 +13,21 @@ material General/BaseBlack
     }
 }
 
+material General/BaseWhite
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture white_fixed.png
+        }
+      } 
+    }
+}
+
 material General/BaseRed
 {
     technique
@@ -102,7 +117,6 @@ material General/WallGlass
             scene_blend add
             depth_write off
             diffuse vertexcolour
-            cull_hardware none
 
             texture_unit
 			{
@@ -112,7 +126,23 @@ material General/WallGlass
 	}
 }
 
-material General/WallMetal
+material General/Smiley
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture smiley.png
+			}
+		}
+	}
+}
+
+material General/Wall0
 {
     technique
     {
@@ -120,11 +150,129 @@ material General/WallMetal
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.9 0.9 0.9 1
+            emissive 0.1 0.1 0.1 1
         }
     }
+}
+
+material General/Wall1
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            texture_unit
+			{
+				texture metal.png
+			}
+        }
+    }
+}
+
+material General/Wall2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_SpaceStation.png
+			}
+		}
+	}
+}
+
+material General/Wall3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_Wires.png
+			}
+		}
+	}
+}
+
+material General/Wall4
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_FluidPipes2.png
+			}
+		}
+	}
+}
+
+material General/Wall5
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture TunnelTile_pipes_D.png
+			}
+		}
+	}
+}
+
+material General/Wall6
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture star.png
+			}
+		}
+	}
+}
+
+material General/Wall7
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
 }
 
 material General/WallCheckpoint
@@ -150,9 +298,24 @@ material General/PodUnknown
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.1 0.1 0.1 1
+        }
+    }
+}
+
+material General/PodBlack
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.0 0.0 0.0 1
+            diffuse 0.1 0.1 0.1 1
+            emissive 0.0 0.0 0.0 1
         }
     }
 }
@@ -165,9 +328,9 @@ material General/PodRed
         {
             lighting on
  
-            ambient 0.4 0.1 0.1 1
-            diffuse 1.0 0.1 0.1 1
-            emissive 0.4 0.1 0.1 1
+            ambient 0.3 0.1 0.1 1
+            diffuse 0.8 0.1 0.1 1
+            emissive 0.3 0.1 0.1 1
         }
     }
 }
@@ -180,9 +343,9 @@ material General/PodGreen
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 1.0 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.1 0.3 0.1 1
+            diffuse 0.1 0.8 0.1 1
+            emissive 0.1 0.3 0.1 1
         }
     }
 }
@@ -195,9 +358,9 @@ material General/PodBlue
         {
             lighting on
  
-            ambient 0.1 0.1 0.4 1
-            diffuse 0.1 0.1 1.0 1
-            emissive 0.1 0.1 0.4 1
+            ambient 0.1 0.1 0.3 1
+            diffuse 0.1 0.1 0.8 1
+            emissive 0.1 0.1 0.3 1
         }
     }
 }
@@ -210,9 +373,9 @@ material General/PodYellow
         {
             lighting on
  
-            ambient 0.4 0.4 0.1 1
-            diffuse 1.0 1.0 0.1 1
-            emissive 0.4 0.4 0.1 1
+            ambient 0.3 0.3 0.1 1
+            diffuse 0.8 0.8 0.1 1
+            emissive 0.3 0.3 0.1 1
         }
     }
 }
@@ -225,9 +388,9 @@ material General/PodStem
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 1.0 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }
@@ -258,9 +421,9 @@ material General/VineTip
         {
             lighting on
  
-            ambient 0.1 0.4 0.1 1
-            diffuse 0.1 0.7 0.1 1
-            emissive 0.1 0.4 0.1 1
+            ambient 0.3 0.3 0.3 1
+            diffuse 0.7 0.7 0.7 1
+            emissive 0.3 0.3 0.3 1
         }
     }
 }

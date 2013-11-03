@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef __Testing__TunnelSlice__
-#define __Testing__TunnelSlice__
+#ifndef __Vinezors2_0__TunnelSlice__
+#define __Vinezors2_0__TunnelSlice__
 
 #include "OgreFramework.h"
 #include "Util.h"
@@ -20,8 +20,8 @@ enum TunnelType { NORMAL_WITH_ONE_POD, NORMAL_WITH_THREE_PODS, NORMAL_WITH_FIVE_
 struct SectionInfo
 {
     TunnelType tunnelType;
-    Direction tunnelDir;
-    int tunnelDirAngle;
+    Direction tunnelDir; // The direction each segment is turning
+    int tunnelDirAngle; // The amount of turning degrees for each segment
     
     SectionInfo()
     : tunnelType(NORMAL_BLANK), tunnelDir(NO_DIRECTION), tunnelDirAngle(0)
@@ -35,15 +35,16 @@ struct SectionInfo
 struct PodInfo
 {
     PodType podType;
-    Direction podLoc;
-    bool good;
+    Direction podLoc; 
+    bool goodPod; // is the pod good to take?
+    bool podTaken; // is the pod gone?
     
     PodInfo()
-    : podType(POD_NONE), podLoc(NO_DIRECTION), good(false)
+    : podType(POD_NONE), podLoc(NO_DIRECTION), goodPod(false)
     {}
     
     PodInfo(PodType pt, Direction pl, bool g)
-    : podType(pt), podLoc(pl), good(g)
+    : podType(pt), podLoc(pl), goodPod(g), podTaken(false)
     {}
 };
 
@@ -51,6 +52,8 @@ struct PodInfo
 class TunnelSlice
 {
 private:
+    SceneNode* parentNode;
+    
 	Vector3 center;
     Quaternion rot;
 	double width;
@@ -58,6 +61,8 @@ private:
 	
 	TunnelType type;
     std::string materialName;
+    
+    // This segment's mesh
     SceneNode* entireWall;
 	SceneNode* topLeftWall;
 	SceneNode* topWall;
@@ -67,19 +72,31 @@ private:
 	SceneNode* bottomWall;
 	SceneNode* bottomLeftWall;
 	SceneNode* leftWall;
-    SceneNode* intermediateSegment;
+    
+    // Mesh connecting to another segment if any
+    SceneNode* entireIntermediate;
+	SceneNode* topLeftIntermediate;
+	SceneNode* topIntermediate;
+	SceneNode* topRightIntermediate;
+	SceneNode* rightIntermediate;
+	SceneNode* bottomRightIntermediate;
+	SceneNode* bottomIntermediate;
+	SceneNode* bottomLeftIntermediate;
+	SceneNode* leftIntermediate;
     
     std::vector<Pod*> pods;
-    double growthT;
-    double prerangeT;
+    double growthT; // Pod Growth Timing animation
+    double prerangeT; // Used to reduce bounce of player
+    
+    bool sidesUsed[NUM_DIRECTIONS];
     
     SectionInfo sectionInfo;
     PodInfo podInfo;
-    bool podTaken;
-    bool infoStored;
+    bool podHistory; // Used to avoid saving data multiple times
+    bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(TunnelType type, Vector3 center, Quaternion rot, double width, double depth);
+	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     
@@ -98,8 +115,9 @@ public:
     std::vector<Pod *> getPods() const;
     SectionInfo getSectionInfo() const;
     PodInfo getPodInfo() const;
-    bool isPodTaken() const;
+    bool isPodHistory() const;
     bool isInfoStored() const;
+    bool hasAvailableSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     Vector3 requestWallDistance(Direction dir) const;
@@ -108,17 +126,18 @@ public:
     
     void setSectionInfo(const SectionInfo & value);
     void setPodInfo(const PodInfo & value);
-    void setPodTaken(bool value);
+    void setPodHistory(bool value);
     void setInfoStored(bool value);
     void setPrerangeT(double value);
 	void move(Vector3 delta);
 	void addPod(Direction loc, PodType type);
+    void setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4);
     void connect(TunnelSlice* next);
     void disconnect();
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth);
+    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

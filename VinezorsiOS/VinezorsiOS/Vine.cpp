@@ -10,13 +10,13 @@
 static int vineTipID = 0;
 
 Vine::Vine()
-: tip(NULL), dest(), radius(0.0), speed(0.0)
+: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0)
 {}
 
-Vine::Vine(Vector3 pos, double radius)
-: tip(NULL), dest(), forward(), radius(radius), speed(0.0)
+Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
+: parentNode(parentNode), tip(NULL), dest(), forward(), radius(radius), speed(0.0)
 {
-    tip = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("vineTipNode" + Util::toStringInt(vineTipID));
+    tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineTipID));
     
     Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineTipID), "vineMesh");
     tipEntity->setMaterialName("General/VineTip");
@@ -89,7 +89,6 @@ void Vine::update(double elapsed)
     double missingDist = delta.dotProduct(forwardLim) / forwardLim.length();
     delta += forward * missingDist;
     
-    //	if (delta.length() > dist.length())
     if (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z >
         dist.x * dist.x + dist.y * dist.y + dist.z * dist.z)
 		delta = dist;

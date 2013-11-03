@@ -10,19 +10,21 @@
 
 #include <cstdlib>
 
+extern Util::ConfigGlobal globals;
+
 static int podID = 0;
 
 Pod::Pod()
-: entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
 {
 }
 
-Pod::Pod(Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius)
-    : base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), podTaken(false)
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius)
+: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), podTaken(false), dest()
 {
 	double stemLength = base.distance(tip);
     
-    entirePod = OgreFramework::getSingletonPtr()->m_pSceneMgr->getRootSceneNode()->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     
     shell = entirePod->createChildSceneNode("ShellNode" + Util::toStringInt(podID));
     
@@ -39,7 +41,7 @@ Pod::Pod(Vector3 base, Vector3 tip, PodType type, double stemRadius, double head
     stem->attachObject(stemEntity);
     
     Vector3 v = tip - base;
-    stem->setOrientation(Util::TUNNEL_REFERENCE_UPWARD.getRotationTo(v));
+    stem->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     
     stem->translate(v / -2);
     
@@ -88,6 +90,16 @@ SceneNode* Pod::getHead() const
 	return head;
 }
 
+Vector3 Pod::getDest() const
+{
+	return dest;
+}
+
+Vector3 Pod::getPosition() const
+{
+	return entirePod->getPosition();
+}
+
 bool Pod::isPodTaken() const
 {
     return podTaken;
@@ -95,14 +107,18 @@ bool Pod::isPodTaken() const
 
 void Pod::move(Vector3 delta)
 {
-	stem->translate(delta);
-	head->translate(delta);
+    entirePod->translate(delta);
 }
 
 void Pod::takePod()
 {
     podTaken = true;
     head->setVisible(false);
+}
+
+void Pod::hidePod()
+{
+    static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
 }
 
 void Pod::revealPod()
@@ -131,6 +147,11 @@ void Pod::revealPod()
      }
 }
 
+void Pod::setDest(Vector3 value)
+{
+    dest = value;
+}
+
 void Pod::removeFromScene()
 {
     stem->getCreator()->destroyMovableObject(stem->getAttachedObject(0)); // Assuming only one entity
@@ -146,7 +167,30 @@ void Pod::removeFromScene()
     shell = NULL;
 }
 
-PodType Pod::getPodType()
+PodType Pod::getPodType() const
 {
     return type;
+}
+
+void Pod::update(double elapsed)
+{
+    double moveSpeed = 5.0;
+    
+	Vector3 dist = dest - entirePod->getPosition();
+    
+	Vector3 norm = dist;
+	norm.normalise();
+	Vector3 delta = dist * moveSpeed * elapsed;
+    
+    //	if (delta.length() > dist.length())
+    if (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z >
+        dist.x * dist.x + dist.y * dist.y + dist.z * dist.z)
+		delta = dist;
+    
+	move(delta);
+}
+
+Pod::~Pod()
+{
+    
 }

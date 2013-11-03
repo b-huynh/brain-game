@@ -68,9 +68,13 @@
 
 #include <SdkTrays.h>
 
+#ifdef OGRE_IS_IOS
+#define OGRE_STATIC_OgreOggSound 1
+#else
 #include "OgreOggSoundPlugin.h"
 using namespace Ogre;
 using namespace OgreOggSound;
+#endif
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 

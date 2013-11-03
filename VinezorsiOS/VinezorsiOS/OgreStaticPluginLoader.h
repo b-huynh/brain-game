@@ -59,7 +59,6 @@ Description: Utility class to load plugins statically
 #endif
 #ifdef OGRE_STATIC_OgreOggSound
 #  include "OgreOggSoundPlugin.h"
-using namespace OgreOggSound;
 #endif
 
 namespace Ogre
@@ -110,7 +109,7 @@ namespace Ogre
 		D3D10Plugin* mD3D10Plugin;
 #endif
 #ifdef OGRE_STATIC_OgreOggSound
-        OgreOggSoundPlugin* mOgreOggSoundPlugin;
+        OgreOggSound::OgreOggSoundPlugin* mOgreOggSoundPlugin;
 #endif
 	public:
 		StaticPluginLoader() {}
@@ -164,7 +163,7 @@ namespace Ogre
 			root.installPlugin(mOctreeZonePlugin);
 #endif
 #ifdef OGRE_STATIC_OgreOggSound
-            mOgreOggSoundPlugin = OGRE_NEW OgreOggSoundPlugin();
+            mOgreOggSoundPlugin = OGRE_NEW OgreOggSound::OgreOggSoundPlugin();
             root.installPlugin(mOgreOggSoundPlugin);
 #endif
 		}

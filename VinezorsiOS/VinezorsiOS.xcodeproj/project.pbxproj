@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
 		5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407617F4AF360082C239 /* CoreGraphics.framework */; };
 		5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407817F4AF360082C239 /* Foundation.framework */; };
 		5DF9407B17F4AF360082C239 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407A17F4AF360082C239 /* OpenGLES.framework */; };
@@ -26,10 +27,11 @@
 		5DF940F217F4B1500082C239 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EA17F4B14F0082C239 /* Util.cpp */; };
 		5DF940F317F4B1500082C239 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EC17F4B1500082C239 /* Vine.cpp */; };
 		5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF940F417F4B4A40082C239 /* OpenAL.framework */; };
-		5DF940FC17F4C7AF0082C239 /* Space.particle in Resources */ = {isa = PBXBuildFile; fileRef = 5DF940FB17F4C7AF0082C239 /* Space.particle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
+		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		5DF9407317F4AF360082C239 /* VinezorsiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VinezorsiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,7 +125,6 @@
 		5DF940ED17F4B1500082C239 /* Vine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vine.h; sourceTree = "<group>"; };
 		5DF940F417F4B4A40082C239 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5DF940F717F4B5D20082C239 /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
-		5DF940FB17F4C7AF0082C239 /* Space.particle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Space.particle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +198,8 @@
 		5DF9408917F4AF360082C239 /* Basic Ogre Framework */ = {
 			isa = PBXGroup;
 			children = (
+				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
+				5D15DF4C1825CCFB00DF0F99 /* History.h */,
 				5DF940E217F4B14F0082C239 /* Player.cpp */,
 				5DF940E317F4B14F0082C239 /* Player.h */,
 				5DF940E417F4B14F0082C239 /* Pod.cpp */,
@@ -253,7 +256,6 @@
 		5DF9409517F4AF370082C239 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
-				5DF940FB17F4C7AF0082C239 /* Space.particle */,
 				5DF940F717F4B5D20082C239 /* General.material */,
 				5DF9409617F4AF370082C239 /* Examples.material */,
 				5DF9409717F4AF370082C239 /* Ogre.material */,
@@ -410,7 +412,6 @@
 				5DF940D817F4AF370082C239 /* ogre.cfg in Resources */,
 				5DF940DA17F4AF370082C239 /* plugins.cfg in Resources */,
 				5DF940DC17F4AF370082C239 /* resources.cfg in Resources */,
-				5DF940FC17F4C7AF0082C239 /* Space.particle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,6 +447,7 @@
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
 				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
+				5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,7 +564,6 @@
 					"-lFreeImage",
 					"-lzzip",
 					"-lz",
-					"-lPlugin_ParticleFXStatic",
 					"-lOgreOggSoundiOS",
 				);
 			};
@@ -588,7 +589,6 @@
 					"-lFreeImage",
 					"-lzzip",
 					"-lz",
-					"-lPlugin_ParticleFXStatic",
 					"-lOgreOggSoundiOS",
 				);
 			};
@@ -613,6 +613,7 @@
 				5DF940E117F4AF370082C239 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -14,7 +14,7 @@ DemoApp::DemoApp()
 DemoApp::~DemoApp()
 {
 #ifdef USE_RTSHADER_SYSTEM
-    mShaderGenerator->removeSceneManager(OgreFramework::getSingletonPtr()->m_pSceneMgr);
+    mShaderGenerator->removeSceneManager(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     
     finalizeRTShaderSystem();
 #endif
@@ -116,7 +116,7 @@ void DemoApp::startDemo()
 	OgreFramework::getSingletonPtr()->m_pLog->logMessage("Demo initialized!");
 	
 #ifdef USE_RTSHADER_SYSTEM
-    initializeRTShaderSystem(OgreFramework::getSingletonPtr()->m_pSceneMgr);
+    initializeRTShaderSystem(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     MaterialPtr baseWhite = MaterialManager::getSingleton().getByName("BaseWhite", ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);				
     baseWhite->setLightingEnabled(false);
     mShaderGenerator->createShaderBasedTechnique(
@@ -241,7 +241,7 @@ void DemoApp::setupDemoScene()
         seed,
         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
-    player->setSounds(SOUND_ALL);
+    player->setSounds((GameMode)globals.gameMode);
     player->setConfigValues();
     
     tunnel = new Tunnel(
@@ -998,6 +998,11 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_R:
         {
             setLevel(player->getLevel().nback, 4);
+            break;
+        }
+        case OIS::KC_T:
+        {
+            player->setHP(globals.HPPositiveLimit);
             break;
         }
         case OIS::KC_Z:
