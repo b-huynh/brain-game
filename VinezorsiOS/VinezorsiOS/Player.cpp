@@ -20,14 +20,14 @@ PlayerLevel::PlayerLevel()
 }
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), speedControl(SPEED_CONTROL_FLEXIBLE), level(), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), speedControl(SPEED_CONTROL_FLEXIBLE), level(), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
 }
 
 Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), speedControl(speedControl), level(level), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), speedControl(speedControl), level(level), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -656,8 +656,27 @@ void Player::update(double elapsed, Tunnel *tunnel)
         vines[i]->speed = moveSpeed;
 		vines[i]->update(elapsed);
     }
-    
-    
+    if (inputMoved)
+    {
+        if (inputTotalX > 0.0)
+        {
+            inputTotalX -= globals.screenWidth / 2.0 * elapsed;
+            if (inputTotalX <= 0.0)
+            {
+                inputTotalX = 0.0;
+                inputMoved = false;
+            }
+        }
+        else if (inputTotalX < 0.0)
+        {
+            inputTotalX += globals.screenWidth / 2.0 * elapsed;
+            if (inputTotalX >= 0.0)
+            {
+                inputTotalX = 0.0;
+                inputMoved = false;
+            }
+        }
+    }
     checkCollisions(tunnel);
 }
 

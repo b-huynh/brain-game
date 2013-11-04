@@ -160,6 +160,12 @@ private:
 	Ogre::Degree				m_RotateSpeed;
 	float                       m_MoveScale;
 	Ogre::Degree				m_RotScale;
+    
+    std::set<Ogre::String>      mCategories;
+    OgreBites::Slider*          mSlider;
+    OgreBites::Label*           mTitleLabel;
+    OgreBites::TextBox*         mDescBox;
+    
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;
 #endif

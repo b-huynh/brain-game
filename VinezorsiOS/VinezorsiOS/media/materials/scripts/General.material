@@ -275,6 +275,22 @@ material General/Wall7
 	}
 }
 
+material General/Wall8
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture grass.jpg
+			}
+		}
+	}
+}
+
 material General/WallCheckpoint
 {
     technique

@@ -70,6 +70,12 @@
 
 - (void)go {
     
+    UITextView* textView =
+    [[[UITextView alloc] initWithFrame:CGRectMake(0.0f, 216.0f, 216.0f, 216.0f)] autorelease];
+    //        [view addSubview:textView];
+    
+    [textView becomeFirstResponder];
+    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mLastFrameTime = 1;
     mStartTime = 0;

@@ -86,7 +86,10 @@ private:
     OgreOggSound::OgreOggISound* soundAccelerate;
     OgreOggSound::OgreOggISound* soundDecelerate;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
+    
 public:
+    double inputTotalX;
+    bool inputMoved;
     
 	Player();
 	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
