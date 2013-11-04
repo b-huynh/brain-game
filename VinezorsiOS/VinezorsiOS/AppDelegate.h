@@ -15,7 +15,7 @@
 // To use CADisplayLink for smoother animation on iPhone comment out
 // the following line or define it to 1.  Use with caution, it can
 // sometimes cause input lag.
-#define USE_CADISPLAYLINK 1
+#define USE_CADISPLAYLINK 0
 
 
 @interface AppDelegate : NSObject <UIApplicationDelegate>
@@ -32,6 +32,11 @@
     double mLastFrameTime;
     double mStartTime;
     BOOL mDisplayLinkSupported;
+    BOOL ready;
+    
+    UIWindow* window;
+    UIStoryboard *storyboard;
+    UIViewController *viewcontroller;
 }
 
 - (void)go;
@@ -40,6 +45,7 @@
 @property (retain) NSTimer *mTimer;
 @property (nonatomic) double mLastFrameTime;
 @property (nonatomic) double mStartTime;
+@property (strong, atomic) UIWindow *window;
 
 @end
 
@@ -68,13 +74,18 @@
     }
 }
 
-- (void)go {
+- (void)go:(NSString*)str
+{
+    ready = true;
     
-    UITextView* textView =
-    [[[UITextView alloc] initWithFrame:CGRectMake(0.0f, 216.0f, 216.0f, 216.0f)] autorelease];
-    //        [view addSubview:textView];
-    
-    [textView becomeFirstResponder];
+    // A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
+    // class is used as fallback when it isn't available.
+#if USE_CADISPLAYLINK
+    NSString *reqSysVer = @"3.1";
+    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+    if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
+        mDisplayLinkSupported = TRUE;
+#endif
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mLastFrameTime = 1;
@@ -82,7 +93,7 @@
     mTimer = nil;
     
     try {
-        demo.startDemo();
+        demo.startDemo([str UTF8String]);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         
@@ -121,26 +132,31 @@
     // Hide the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     
+    ready = FALSE;
     mDisplayLinkSupported = FALSE;
     mLastFrameTime = 1;
     mStartTime = 0;
     mTimer = nil;
     
-    // A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-    // class is used as fallback when it isn't available.
-#if USE_CADISPLAYLINK
-    NSString *reqSysVer = @"3.1";
-    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-    if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
-        mDisplayLinkSupported = TRUE;
-#endif
+    window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    window.backgroundColor = [UIColor greenColor];
+    self.window = window;
     
-    [self go];
+    storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+    viewcontroller = [storyboard instantiateViewControllerWithIdentifier:@"StoryboardViewController"];
+    self.window.rootViewController = viewcontroller;
+    [self.window makeKeyAndVisible];
+    
+    [window release];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    Ogre::Root::getSingleton().queueEndRendering();
+    if (ready)
+    {
+        OgreFramework::getSingletonPtr()->requestOgreShutdown();
+        Ogre::Root::getSingleton().queueEndRendering();
+    }
     
     if (mDisplayLinkSupported)
     {
@@ -160,17 +176,27 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    Ogre::Root::getSingleton().saveConfig();
+    if (ready)
+    {
+        //Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(false);
+        OgreFramework::getSingletonPtr()->requestOgreShutdown();
+        Ogre::Root::getSingleton().saveConfig();
+    }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    //if (ready)
+    //    Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(true);
 }
 
 - (void)renderOneFrame:(id)sender
 {
+    //if(!Ogre::Root::getSingleton().getAutoCreatedWindow()->isActive())
+    //    return;
+    
     if(!OgreFramework::getSingletonPtr()->isOgreToBeShutDown() &&
        Ogre::Root::getSingletonPtr() && Ogre::Root::getSingleton().isInitialised())
     {

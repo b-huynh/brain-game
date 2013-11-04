@@ -105,8 +105,10 @@ void DemoApp::finalizeRTShaderSystem()
 }
 #endif // USE_RTSHADER_SYSTEM
 
-void DemoApp::startDemo()
+void DemoApp::startDemo(const char* name)
 {
+    printf("%s\n", name);
+    
 	new OgreFramework();
 	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this, this))
 		return;
@@ -799,16 +801,16 @@ bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
         player->inputTotalX += evt.state.X.rel;
         if (!player->inputMoved)
         {
-            if (player->inputTotalX >= globals.screenWidth / 10.0 && player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
-            {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val + 45);
-                player->inputMoved = true;
-            }
-            else if (player->inputTotalX <= -globals.screenWidth / 10.0 && player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+            if (player->inputTotalX >= globals.screenWidth / 10.0 && player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
             {
                 double val = player->getDesireRoll();
                 player->setDesireRoll(val - 45);
+                player->inputMoved = true;
+            }
+            else if (player->inputTotalX <= -globals.screenWidth / 10.0 && player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+            {
+                double val = player->getDesireRoll();
+                player->setDesireRoll(val + 45);
                 player->inputMoved = true;
             }
         }

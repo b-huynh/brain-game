@@ -98,6 +98,7 @@ public:
 	void moveCamera();
 	void getInput();
     
+	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
+		5D39FA2F182741C0009C8A4C /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */; };
+		5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */; };
+		5D39FA341827528A009C8A4C /* SimpleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleViewController.m */; };
 		5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407617F4AF360082C239 /* CoreGraphics.framework */; };
 		5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407817F4AF360082C239 /* Foundation.framework */; };
 		5DF9407B17F4AF360082C239 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407A17F4AF360082C239 /* OpenGLES.framework */; };
@@ -32,6 +35,10 @@
 /* Begin PBXFileReference section */
 		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5D39FA321827528A009C8A4C /* SimpleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleViewController.h; sourceTree = "<group>"; };
+		5D39FA331827528A009C8A4C /* SimpleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleViewController.m; sourceTree = "<group>"; };
 		5DF9407317F4AF360082C239 /* VinezorsiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VinezorsiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -147,6 +154,7 @@
 		5DF9406917F4AF360082C239 = {
 			isa = PBXGroup;
 			children = (
+				5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */,
 				5DF9408017F4AF360082C239 /* VinezorsiOS */,
 				5DF9407517F4AF360082C239 /* Frameworks */,
 				5DF9407417F4AF360082C239 /* Products */,
@@ -218,6 +226,9 @@
 				5DF9408E17F4AF360082C239 /* OgreFramework.cpp */,
 				5DF9409017F4AF360082C239 /* OgreFramework.h */,
 				5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */,
+				5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */,
+				5D39FA321827528A009C8A4C /* SimpleViewController.h */,
+				5D39FA331827528A009C8A4C /* SimpleViewController.m */,
 			);
 			name = "Basic Ogre Framework";
 			sourceTree = "<group>";
@@ -412,6 +423,8 @@
 				5DF940D817F4AF370082C239 /* ogre.cfg in Resources */,
 				5DF940DA17F4AF370082C239 /* plugins.cfg in Resources */,
 				5DF940DC17F4AF370082C239 /* resources.cfg in Resources */,
+				5D39FA2F182741C0009C8A4C /* Storyboard.storyboard in Resources */,
+				5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +451,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D39FA341827528A009C8A4C /* SimpleViewController.m in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreDemoApp.cpp in Sources */,
 				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
