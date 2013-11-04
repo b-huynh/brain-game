@@ -95,7 +95,7 @@ public:
 	DemoApp();
 	~DemoApp();
     
-	void startDemo();
+	void startDemo(const char* name);
     void setSidebar();
     void setOverlay();
     void update(double elapsed);
