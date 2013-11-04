@@ -391,6 +391,19 @@ std::string Util::getSaveDir()
     return result;
 }
 
+std::string Util::getIOSDir()
+{
+    char * dir = getenv("HOME");
+    std::string result = "";
+    if (dir)
+        result = std::string(dir) + "/Documents/";
+    else
+        return "";
+    
+    mkdir(result.c_str(), 0777);
+    return result;
+}
+
 void Util::drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col, bool filled)
 {
     double left = x;

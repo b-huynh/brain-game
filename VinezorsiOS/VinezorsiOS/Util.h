@@ -110,6 +110,7 @@ namespace Util
     std::string toStringInt(int value);
     std::string toStringDouble(double value);
     std::string getSaveDir();
+    std::string getIOSDir();
     
     //Config Values
     void setConfigValue (std::string param, double paramVal);

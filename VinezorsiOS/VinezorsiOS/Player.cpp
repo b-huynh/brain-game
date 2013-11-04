@@ -707,7 +707,6 @@ void Player::evaluatePlayerLevel(bool pass)
 //Returns false if failed to save to file, true otherwise
 bool Player::saveProgress(std::string file)
 {
-    file = Util::getSaveDir() + file;
     std::ofstream out;
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     
@@ -716,15 +715,15 @@ bool Player::saveProgress(std::string file)
         out << "%" << endl;
         out << "% PodLocation { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST }" << endl;
         out << "% PodType { BLUE, GREEN, PINK, YELLOW }" << endl;
-        out << "% Level {-inf, inf}" << endl;
-        out << "% NBack {no, yes}" << endl;
+        out << "% Nback {-inf, inf}" << endl;
+        out << "% IsNBackPod {no, yes}" << endl;
         out << "% PlayerTookPod {no, yes}" << endl;
         out << "%" << endl;
-        out << "% PodLocation PodType Level NBack PlayerTookPod Timestamp" << endl;
+        out << "% PodLocation PodType Nback IsNBackPod PlayerTookPod Timestamp" << endl;
         
         for (int i = 0; i < results.size(); ++i) {
-            //            out << results[i].podInfo.podLoc << " "
-            out << SOUTH << " "
+            //out << SOUTH << " "
+            out << results[i].podInfo.podLoc << " "
             << results[i].podInfo.podType << " "
             << results[i].nback << " "
             << results[i].podInfo.goodPod << " "
@@ -739,6 +738,20 @@ bool Player::saveProgress(std::string file)
     }
     
     return true;
+}
+
+bool Player::saveStage(std::string file, int lastStageID)
+{
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    bool ret = false;
+    
+    if (out.good()) {
+        out << lastStageID;
+        ret = true;
+    }
+    out.close();
+    return ret;
 }
 
 void Player::setConfigValues()

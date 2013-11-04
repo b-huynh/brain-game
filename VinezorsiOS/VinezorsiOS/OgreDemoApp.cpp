@@ -2,6 +2,8 @@
 
 #include "Util.h"
 #include <fstream>
+#include <ctime>
+#include <cstdlib>
 
 Util::ConfigGlobal globals;
 
@@ -107,7 +109,7 @@ void DemoApp::finalizeRTShaderSystem()
 
 void DemoApp::startDemo(const char* name)
 {
-    printf("%s\n", name);
+    playerName = std::string(name);
     
 	new OgreFramework();
 	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this, this))
@@ -202,12 +204,40 @@ bool DemoApp::loadConfig(std::string filepath, int stageID)
     return false;
 }
 
+bool DemoApp::loadSaveFile(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    bool ret = false;
+
+    if (saveFile.good()) {
+        saveFile >> currStageID;
+        std::cout << "Starting from last session StageID " << currStageID << std::endl;
+        ret = true;
+    } else {
+        currStageID = 1;
+        std::cout << "Starting from StageID 1" << std::endl;
+        ret = false;
+    }
+    
+    saveFile.close();
+    return ret;
+}
+
 void DemoApp::setupDemoScene()
 {
-    // Grab config file
+    // Set save, log, config files
     
-    currStageID = 1;
-    configPath = Util::getSaveDir() + "vinezors.conf";
+    //Get Date
+    time_t raw = time(0);
+    struct tm * timeinfo = localtime( &raw );
+    char buffer [80];
+    strftime(buffer, 80, "%F", timeinfo);
+    
+    logPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + "-" + std::string(buffer) + ".log";
+    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
+    configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
+    
+    loadSaveFile(savePath);
     loadConfig(configPath, currStageID);
     
     seed = 0;
@@ -245,6 +275,7 @@ void DemoApp::setupDemoScene()
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds((GameMode)globals.gameMode);
     player->setConfigValues();
+    player->setName(playerName);
     
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
@@ -714,6 +745,9 @@ void DemoApp::setLevel(int n, int c)
         else
             player->evaluatePlayerLevel(pass);
         
+        player->saveProgress(logPath);
+        player->saveStage(savePath,currStageID);
+        
         tunnel = new Tunnel(
                             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
                             newOrigin + forward * (globals.tunnelSegmentWidth / 2),
@@ -819,7 +853,29 @@ bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 }
 bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 {
-    player->setKeyLeft(true);
+    //player->setKeyLeft(true);
+    
+    double axisY = evt.state.Y.abs;
+    double axisX = evt.state.X.abs;
+    
+    if (axisY <= 300 && axisX <= 300) {
+        player->setHP(globals.HPPositiveLimit);
+        setLevel(-1,-1);
+    }
+    else if (axisY <= 300 && axisX > 300) {
+        pause = !pause;
+        if (!pause) {
+            player->setCamPos(player->getOldPos());
+            player->setCamRot(player->getOldRot());
+            player->setCamRoll(player->getOldRoll());
+        } else {
+            player->setOldPos(player->getCamPos());
+            player->setOldRot(player->getCamRot());
+            player->setOldRoll(player->getCamRoll());
+        }
+    }
+    else
+        player->setKeyLeft(true);
     return true;
 }
 bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)

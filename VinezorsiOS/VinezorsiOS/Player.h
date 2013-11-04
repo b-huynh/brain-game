@@ -172,6 +172,7 @@ public:
     
     void evaluatePlayerLevel(bool pass);
     bool saveProgress(std::string file);
+    bool saveStage(std::string file, int lastStageID);
     void setConfigValues();
     
     ~Player();

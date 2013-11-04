@@ -100,6 +100,8 @@ public:
     void setOverlay();
     void update(double elapsed);
     void setLevel(int n, int c);
+    
+    bool loadSaveFile(std::string saveFile);
     bool loadConfig(std::string filepath, int stageID);
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
@@ -131,6 +133,7 @@ private:
     SceneNode* lightNodeSide;
     Tunnel* tunnel;
 	Player* player;
+    std::string playerName;
     
     std::vector<Ogre::Overlay*> overlays;
     
@@ -142,11 +145,15 @@ private:
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
+    //TextAreaOverlayElement* label5;
+    //TextAreaOverlayElement* label6;
     
     SidebarLocation sidebarMode;
     
     int currStageID;
     std::string configPath;
+    std::string logPath;
+    std::string savePath;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM
