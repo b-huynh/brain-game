@@ -368,6 +368,10 @@ void OgreFramework::updateOgre(double timeSinceLastFrame)
 {
 	m_MoveScale = m_MoveSpeed   * (float)timeSinceLastFrame;
 	m_RotScale  = m_RotateSpeed * (float)timeSinceLastFrame;
+//    mDescBox = m_pTrayMgr->createTextBox(TL_LEFT, "SampleInfo", "Sample Info", 120, 100);
+//    mCategoryMenu = m_pTrayMgr->createThickSelectMenu(TL_LEFT, "CategoryMenu", "Select Category", 120, 10);
+//    mSampleMenu = m_pTrayMgr->createThickSelectMenu(TL_LEFT, "SampleMenu", "Select Sample", 120, 10);
+//    mSlider = m_pTrayMgr->createThickSlider(TL_LEFT, "SampleSlider", "Slide Samples", 120, 42, 0, 0, 0);
 
 #if OGRE_VERSION >= 0x10800
     m_pSceneMgrMain->setSkyBoxEnabled(true);

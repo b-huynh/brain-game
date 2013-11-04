@@ -278,6 +278,8 @@ std::string Tunnel::determineMaterial() const
             return "General/Wall6";
         case 8:
             return "General/Wall7";
+        case 9:
+            return "General/Wall8";
         default:
             return "General/Wall0";
     }

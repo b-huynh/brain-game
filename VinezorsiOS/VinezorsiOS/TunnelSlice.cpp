@@ -55,6 +55,7 @@ void TunnelSlice::initWalls()
         move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
         topLeftWall->translate(move);
         topLeftWall->roll(Degree(225));
+        topLeftWall->scale(wallLength, 1.0, depth);
         topLeftWallEntity->setMaterialName(materialName);
     }
     
@@ -65,6 +66,7 @@ void TunnelSlice::initWalls()
         move = Vector3(0, width / 2, 0);
         topWall->translate(move);
         topWall->roll(Degree(180));
+        topWall->scale(wallLength, 1.0, depth);
         topWallEntity->setMaterialName(materialName);
     }
     
@@ -75,6 +77,7 @@ void TunnelSlice::initWalls()
         move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
         topRightWall->translate(move);
         topRightWall->roll(Degree(135));
+        topRightWall->scale(wallLength, 1.0, depth);
         topRightWallEntity->setMaterialName(materialName);
     }
     
@@ -85,6 +88,7 @@ void TunnelSlice::initWalls()
         move = Vector3(width / 2, 0, 0);
         rightWall->translate(move);
         rightWall->roll(Degree(90));
+        rightWall->scale(wallLength, 1.0, depth);
         rightWallEntity->setMaterialName(materialName);
     }
     
@@ -95,6 +99,7 @@ void TunnelSlice::initWalls()
         move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
         bottomRightWall->translate(move);
         bottomRightWall->roll(Degree(45));
+        bottomRightWall->scale(wallLength, 1.0, depth);
         bottomRightWallEntity->setMaterialName(materialName);
     }
     
@@ -105,6 +110,7 @@ void TunnelSlice::initWalls()
         move = Vector3(0, -width / 2, 0);
         bottomWall->translate(move);
         bottomWall->roll(Degree(0));
+        bottomWall->scale(wallLength, 1.0, depth);
         bottomWallEntity->setMaterialName(materialName);
     }
     
@@ -115,6 +121,7 @@ void TunnelSlice::initWalls()
         move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
         bottomLeftWall->translate(move);
         bottomLeftWall->roll(Degree(315));
+        bottomLeftWall->scale(wallLength, 1.0, depth);
         bottomLeftWallEntity->setMaterialName(materialName);
     }
     
@@ -125,6 +132,7 @@ void TunnelSlice::initWalls()
         move = Vector3(-width / 2, 0, 0);
         leftWall->translate(move);
         leftWall->roll(Degree(270));
+        leftWall->scale(wallLength, 1.0, depth);
         leftWallEntity->setMaterialName(materialName);
     }
     

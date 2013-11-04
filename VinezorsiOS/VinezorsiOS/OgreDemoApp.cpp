@@ -222,7 +222,7 @@ void DemoApp::setupDemoScene()
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineMesh", globals.vineRadius, 32, 32);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", globals.tunnelWallLength, globals.tunnelSegmentDepth);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", 1.0, 1.0);
     Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
     
 	origin = Vector3(0, 0, 0);
@@ -394,7 +394,7 @@ void DemoApp::setOverlay()
         label4->setCharHeight(16);
         label4->setColour(ColourValue::Black);
         label4->setFontName("Arial");
-        label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
+        label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
     }
     else
     {
@@ -644,7 +644,7 @@ void DemoApp::update(double elapsed)
     label1->setCaption("Time: " + Util::toStringDouble(player->getTotalElapsed()));
     label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
     label3->setCaption("N-Back: " + Util::toStringInt(tunnel->getNBack()));
-    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
+    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
     
     double barWidth = globals.HPBarWidth;
     if (tunnel->getMode() == GAME_NORMAL)
@@ -794,6 +794,25 @@ void DemoApp::runDemo()
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 {
+    if (player->getKeyLeft())
+    {
+        player->inputTotalX += evt.state.X.rel;
+        if (!player->inputMoved)
+        {
+            if (player->inputTotalX >= globals.screenWidth / 10.0 && player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+            {
+                double val = player->getDesireRoll();
+                player->setDesireRoll(val + 45);
+                player->inputMoved = true;
+            }
+            else if (player->inputTotalX <= -globals.screenWidth / 10.0 && player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+            {
+                double val = player->getDesireRoll();
+                player->setDesireRoll(val - 45);
+                player->inputMoved = true;
+            }
+        }
+    }
     return true;
 }
 bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
@@ -804,6 +823,8 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
 {
     player->setKeyLeft(false);
+    player->inputTotalX = 0.0;
+    player->inputMoved = false;
     return true;
 }
 bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
