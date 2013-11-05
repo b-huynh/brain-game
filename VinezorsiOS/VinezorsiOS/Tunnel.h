@@ -15,7 +15,7 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
-enum GameMode { GAME_TIMED, GAME_NORMAL, GAME_NORMAL_SOUNDLESS };
+enum GameMode { GAME_TIMED, GAME_NORMAL };
 
 // Stores the list of tunnel segments
 class Tunnel

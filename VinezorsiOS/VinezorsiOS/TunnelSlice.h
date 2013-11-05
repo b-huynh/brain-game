@@ -12,6 +12,7 @@
 #include "OgreFramework.h"
 #include "Util.h"
 #include "Pod.h"
+#include "Vine.h"
 
 #include <vector>
 
@@ -120,6 +121,7 @@ public:
     bool hasAvailableSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
+    std::vector<Pod*> findCollisions(Vine *vine) const;
     Vector3 requestWallDistance(Direction dir) const;
     Vector3 requestMove(Direction dir) const;
     Vector3 requestPosition(Vector3 cur, Direction dir) const;

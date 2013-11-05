@@ -69,7 +69,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 #ifndef OGRE_STATIC_LIB
     pluginsPath = m_ResourcePath + "plugins.cfg";
 #endif
-    
     m_pRoot = new Ogre::Root(pluginsPath, Ogre::macBundlePath() + "/ogre.cfg");
     
 #ifdef OGRE_STATIC_LIB
@@ -99,7 +98,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
-	m_pCameraMain->setNearClipDistance(1);
+	m_pCameraMain->setNearClipDistance(0.1);
 //    m_pCameraMain->setFarClipDistance(500.0);
 	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
         0.0,
@@ -195,7 +194,8 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pSoundMgr->init();
     m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
     m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
+    //m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound2", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("Sound3", "VinezorsNegativeBeep.wav", false, false, true);
     m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBlip.wav", false, false, true);
     m_pSoundMgr->createSound("Sound5", "VinezorsSpaceBeep.wav", false, false, true);
@@ -413,4 +413,10 @@ void OgreFramework::getInput()
 		m_TranslateVector.z = m_MoveScale;
      */
 #endif
+}
+
+
+Ogre::String OgreFramework::getMacBundlePath()
+{
+    return Ogre::macBundlePath();
 }

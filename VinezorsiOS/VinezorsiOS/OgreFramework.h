@@ -98,6 +98,7 @@ public:
 	void moveCamera();
 	void getInput();
     
+    Ogre::String getMacBundlePath();
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     

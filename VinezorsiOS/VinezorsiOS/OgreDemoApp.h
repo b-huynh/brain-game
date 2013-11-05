@@ -83,6 +83,7 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
+enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
@@ -99,7 +100,7 @@ public:
     void setSidebar();
     void setOverlay();
     void update(double elapsed);
-    void setLevel(int n, int c);
+    void setLevel(int n, int c, bool init = false);
     
     bool loadSaveFile(std::string saveFile);
     bool loadConfig(std::string filepath, int stageID);
@@ -126,6 +127,8 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
+    ProgressionMode mode;
+    
     unsigned seed;
     bool pause;
     Vector3 origin;
@@ -141,17 +144,17 @@ private:
     OverlayContainer* panel2;
     BorderPanelOverlayElement* healthArea;
     PanelOverlayElement* barHP;
+    PanelOverlayElement* indicator;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
-    //TextAreaOverlayElement* label5;
-    //TextAreaOverlayElement* label6;
     
     SidebarLocation sidebarMode;
     
     int currStageID;
     std::string configPath;
+    std::string configBackup;
     std::string logPath;
     std::string savePath;
     

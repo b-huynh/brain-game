@@ -72,6 +72,7 @@ private:
         SectionInfo sectionInfo;
         PodInfo podInfo;
         int nback;
+        GameMode gameMode;
     };
     std::vector<Result> results;
     
@@ -124,6 +125,7 @@ public:
     PlayerLevel getLevel() const;
 	double getTotalElapsed() const;
 	double getTotalDistanceTraveled() const;
+    double getAccuracy() const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -160,7 +162,7 @@ public:
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
     
-    void setSounds(GameMode mode);
+    void setSounds(bool mode);
     void newTunnel(Tunnel* tunnel);
     
 	void move(Vector3 delta);

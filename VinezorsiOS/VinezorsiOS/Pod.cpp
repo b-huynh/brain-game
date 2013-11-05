@@ -19,8 +19,8 @@ Pod::Pod()
 {
 }
 
-Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius)
-: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), podTaken(false), dest()
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius, Direction loc)
+: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), loc(loc), podTaken(false), dest()
 {
 	double stemLength = base.distance(tip);
     
@@ -98,6 +98,21 @@ Vector3 Pod::getDest() const
 Vector3 Pod::getPosition() const
 {
 	return entirePod->getPosition();
+}
+
+Direction Pod::getLoc() const
+{
+    return loc;
+}
+
+double Pod::getStemRadius() const
+{
+    return stemRadius;
+}
+
+double Pod::getHeadRadius() const
+{
+    return headRadius;
 }
 
 bool Pod::isPodTaken() const

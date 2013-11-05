@@ -259,6 +259,33 @@ std::vector<Pod*> TunnelSlice::findCollisions(SceneNode* ent) const
 	return ret;
 }
 
+std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine) const
+{
+    std::vector<Pod*> ret;
+    
+	for (int i = 0; i < pods.size(); ++i)
+	{
+        /*
+        if (vine->loc == pods[i]->getLoc())
+        {
+            std::cout << vine->aftert << " " << vine->previoust << std::endl;
+            if ((vine->aftert >= 0.49 && vine->aftert <= 0.51) ||
+                (vine->previoust < 0.49 && vine->aftert > 0.51))
+                ret.push_back(pods[i]);
+        }
+         */
+        double maxR = vine->getRadius() + pods[i]->getHeadRadius() * 1.5;
+
+        double dx = vine->getTip()->getPosition().x - pods[i]->getHead()->_getDerivedPosition().x;
+        double dy = vine->getTip()->getPosition().y - pods[i]->getHead()->_getDerivedPosition().y;
+        double dz = vine->getTip()->getPosition().z - pods[i]->getHead()->_getDerivedPosition().z;
+		if (dx * dx + dy * dy + dz * dz <= maxR * maxR)
+			ret.push_back(pods[i]);
+	}
+    
+	return ret;
+}
+
 Vector3 TunnelSlice::requestWallDistance(Direction dir) const
 {
 	double wallLength = getWallLength();
@@ -376,7 +403,7 @@ void TunnelSlice::addPod(Direction loc, PodType type)
     move = move * ((move.length() - STEM_LENGTH) / move.length());
     head = move;
     
-	pods.push_back(new Pod(entireWall, base, head, type, STEM_RADIUS, HEAD_RADIUS));
+	pods.push_back(new Pod(entireWall, base, head, type, STEM_RADIUS, HEAD_RADIUS, loc));
 }
 
 void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
