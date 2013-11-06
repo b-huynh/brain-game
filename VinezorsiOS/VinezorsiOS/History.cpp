@@ -81,7 +81,7 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength, NO_DIRECTION);
     cpy->revealPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
@@ -164,12 +164,10 @@ void History::determineCoverLoc(bool success)
                     setCoverDest(coverInd);
                     saveInd = coverInd;
                 }
-                std::cout << coverInd << " " << saveInd << std::endl;
             }
             else
             {
                 coverInd = nback - 1;
-                std::cout << coverInd << " " << saveInd << std::endl;
             }
             break;
         }

@@ -45,7 +45,7 @@
 @property (retain) NSTimer *mTimer;
 @property (nonatomic) double mLastFrameTime;
 @property (nonatomic) double mStartTime;
-@property (strong, atomic) UIWindow *window;
+@property (strong, nonatomic) UIWindow *window;
 
 @end
 
@@ -146,15 +146,12 @@
     viewcontroller = [storyboard instantiateViewControllerWithIdentifier:@"StoryboardViewController"];
     self.window.rootViewController = viewcontroller;
     [self.window makeKeyAndVisible];
-    
-    [window release];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     if (ready)
     {
-        OgreFramework::getSingletonPtr()->requestOgreShutdown();
         Ogre::Root::getSingleton().queueEndRendering();
     }
     
@@ -179,7 +176,6 @@
     if (ready)
     {
         //Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(false);
-        OgreFramework::getSingletonPtr()->requestOgreShutdown();
         Ogre::Root::getSingleton().saveConfig();
     }
     
@@ -202,7 +198,7 @@
     {
 		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
 		{
-			//mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+			mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
             
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
@@ -210,12 +206,11 @@
 			OgreFramework::getSingletonPtr()->updateOgre(mLastFrameTime);
 			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             
-			//mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
+			mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
 		}
     }
     else
     {
-		
 	    if (mDisplayLinkSupported)
 	    {
 	        [mDate release];

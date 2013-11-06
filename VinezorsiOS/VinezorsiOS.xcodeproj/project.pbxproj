@@ -395,7 +395,7 @@
 		5DF9406A17F4AF360082C239 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 5DF9406D17F4AF360082C239 /* Build configuration list for PBXProject "VinezorsiOS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -482,7 +482,6 @@
 		5DF940DD17F4AF370082C239 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = No;
@@ -511,6 +510,7 @@
 				);
 				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
 				OGRE_SDK_ROOT = "~/OgreSDKIOS";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -521,7 +521,6 @@
 		5DF940DE17F4AF370082C239 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

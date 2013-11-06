@@ -27,7 +27,6 @@ namespace Util
     struct ConfigGlobal
     {
         int stageID;
-        int soundMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
@@ -48,6 +47,7 @@ namespace Util
         double podHeadRadius;
         double podStemRadius;
         double podStemLength;
+        int podNBackChance;
         double seatLength;
         int tunnelSections;
         int nback;
@@ -56,6 +56,10 @@ namespace Util
         int startingHP;
         int HPNegativeLimit;
         int HPPositiveLimit;
+        int HPNegativeCorrectAnswer;
+        int HPNegativeWrongAnswer;
+        int HPPositiveCorrectAnswer;
+        int HPPositiveWrongAnswer;
         double drainSpeed;
         double initCamSpeed;
         double modifierCamSpeed;
@@ -70,6 +74,10 @@ namespace Util
         double HPBarYRef;
         double HPBarWidth;
         double HPBarHeight;
+        double timedRunTimer;
+        double timedRunControlUpDist1;
+        double timedRunControlUpDist2;
+        double timedRunControlUpDist3;
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;

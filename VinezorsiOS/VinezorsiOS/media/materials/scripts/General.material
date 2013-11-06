@@ -88,6 +88,21 @@ material General/BaseYellow
     }
 }
 
+material General/BarColors
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture barcolors.png
+        }
+      } 
+    }
+}
+
 material General/Sun
 {
     technique
@@ -429,7 +444,7 @@ material General/PodShell
     }
 }
 
-material General/VineTip
+material General/VineTop
 {
     technique
     {
@@ -437,9 +452,26 @@ material General/VineTip
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.0 0.3 0.3 1
+            diffuse 0.5 1.0 1.0 1
+            emissive 0.0 0.3 0.3 1
+        }
+    }
+}
+
+material General/VineBase
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }

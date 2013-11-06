@@ -216,6 +216,11 @@ double Player::getTotalDistanceTraveled() const
     return totalDistanceTraveled;
 }
 
+double Player::getAccuracy() const
+{
+    return static_cast<double>(numCorrectTotal) / (numCorrectTotal + numWrongTotal);
+}
+
 void Player::setSeed(unsigned value)
 {
     seed = value;
@@ -300,12 +305,14 @@ bool Player::setVineDirRequest(Direction value, Tunnel* tunnel)
         if (closest->hasAvailableSide(value))
         {
             vineDir = value;
+            vines[0]->loc = value;
             return true;
         }
     }
     else if (tunnel->hasAvailableSide(value))
     {
         vineDir = value;
+        vines[0]->loc = value;
         return true;
     }
     return false;
@@ -367,6 +374,8 @@ void Player::newTunnel(Tunnel* tunnel)
     camSpeed = globals.initCamSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
     if (camSpeed < globals.minCamSpeed)
         camSpeed = globals.minCamSpeed;
+    if (camSpeed > globals.maxCamSpeed)
+        camSpeed = globals.maxCamSpeed;
     totalDistanceTraveled = 0.0;
     numCorrectTotal = 0;
     numWrongTotal = 0;
@@ -424,33 +433,24 @@ void Player::playPodSound(int index) const
         soundPods[index]->play();
 }
 
-void Player::setSounds(GameMode mode)
+void Player::setSounds(bool mode)
 {
     //soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-    switch (mode)
+    if (mode) // true means all pod sounds
     {
-        case GAME_NORMAL_SOUNDLESS:
-            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
-            for (int i = 0; i < NUM_POD_TYPES; ++i)
-                soundPods[i] = NULL;
-            break;
-        case GAME_NORMAL:
-            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
-            soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
-            soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
-            soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
-            soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
-            break;
-        case GAME_TIMED:
-            soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-            soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
-            soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
-            soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
-            soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
-            soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
-            break;
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+        soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
+        soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
+        soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
+        soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound7");
+    }
+    else // false means no pod sounds
+    {
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+        for (int i = 0; i < NUM_POD_TYPES; ++i)
+            soundPods[i] = NULL;
     }
 }
 
@@ -467,7 +467,7 @@ void Player::checkCollisions(Tunnel *tunnel)
 		return;
 	for (int i = 0; i < vines.size(); ++i)
 	{
-        std::vector<Pod*> collided = closest->findCollisions(vines[i]->getTip());
+        std::vector<Pod*> collided = closest->findCollisions(vines[i]);
 		for (int j = 0; j < collided.size() && !collided[j]->isPodTaken(); ++j)
 		{
             collided[j]->takePod();
@@ -510,9 +510,9 @@ void Player::update(double elapsed, Tunnel *tunnel)
         if (tunnel->getMode() == GAME_TIMED)
         {
             int currentControlLevel = tunnel->getControl();
-            if ((currentControlLevel == 1 && totalDistanceTraveled >= 3000.0) ||
-                (currentControlLevel == 2 && totalDistanceTraveled >= 7500.0) ||
-                (currentControlLevel == 3 && totalDistanceTraveled >= 20000.0))
+            if ((currentControlLevel == 1 && totalDistanceTraveled >= globals.timedRunControlUpDist1) ||
+                (currentControlLevel == 2 && totalDistanceTraveled >= globals.timedRunControlUpDist2) ||
+                (currentControlLevel == 3 && totalDistanceTraveled >= globals.timedRunControlUpDist3))
             {
                 currentControlLevel++;
             }
@@ -570,9 +570,9 @@ void Player::update(double elapsed, Tunnel *tunnel)
         }
         
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
-            
             // If player vine is halfway through a segment with a pod, we can get results
             if (tLeft > 0.5) {
+                
                 History* history = tunnel->getHistory();
                 
                 // This code block is to record data of the pods
@@ -581,13 +581,16 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 result.sectionInfo = closest->getSectionInfo();
                 result.podInfo = closest->getPodInfo();
                 result.nback = tunnel->getNBack();
+                result.gameMode = tunnel->getMode();
                 results.push_back(result);
+                
+                printf("%d %d\n", result.podInfo.goodPod, result.podInfo.podTaken);
                 
                 // Determine whether the player got it right or not
                 if (result.podInfo.goodPod && result.podInfo.podTaken) {
                     if (soundFeedbackGood)
                         soundFeedbackGood->play();
-                    hp = hp < 0 ? hp + 2 : hp + 1;
+                    hp = hp < 0 ? hp + globals.HPNegativeCorrectAnswer : hp + globals.HPPositiveCorrectAnswer;
                     if (hp > globals.HPPositiveLimit)
                         hp = globals.HPPositiveLimit;
                     ++numCorrectTotal;
@@ -606,7 +609,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
                          (!result.podInfo.goodPod && result.podInfo.podTaken)) {
                     if (soundFeedbackBad)
                         soundFeedbackBad->play();
-                    hp = hp > 0 ? hp - 2 : hp - 1;
+                    hp = hp > 0 ? hp + globals.HPPositiveWrongAnswer : hp + globals.HPNegativeWrongAnswer;
                     if (hp < globals.HPNegativeLimit)
                         hp = globals.HPNegativeLimit;
                     ++numWrongTotal;
@@ -625,6 +628,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 // Flag to trigger only once
                 closest->setInfoStored(true);
             }
+            vines[i]->previoust = vines[i]->aftert;
+            vines[i]->aftert = tLeft;
         }
     }
     
@@ -654,6 +659,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
 	for (int i = 0; i < vines.size(); ++i)
     {
         vines[i]->speed = moveSpeed;
+        vines[i]->setQuaternion(getCombinedRotAndRoll());
 		vines[i]->update(elapsed);
     }
     if (inputMoved)
@@ -710,6 +716,8 @@ bool Player::saveProgress(std::string file)
     std::ofstream out;
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     
+    std::cout << "Saving tunnel log: " << file << std::endl;
+    
     if (out.good()) {
         out << "% debug seed: " << seed << endl;
         out << "%" << endl;
@@ -718,8 +726,10 @@ bool Player::saveProgress(std::string file)
         out << "% Nback {-inf, inf}" << endl;
         out << "% IsNBackPod {no, yes}" << endl;
         out << "% PlayerTookPod {no, yes}" << endl;
+        out << "% GameMode { TIMED, NORMAL }" << endl;
+        out << "% Timestamp (s)" << endl;
         out << "%" << endl;
-        out << "% PodLocation PodType Nback IsNBackPod PlayerTookPod Timestamp" << endl;
+        out << "% PodLocation PodType Nback IsNBackPod PlayerTookPod GameMode Timestamp" << endl;
         
         for (int i = 0; i < results.size(); ++i) {
             //out << SOUTH << " "
@@ -728,6 +738,7 @@ bool Player::saveProgress(std::string file)
             << results[i].nback << " "
             << results[i].podInfo.goodPod << " "
             << results[i].podInfo.podTaken << " "
+            << results[i].gameMode << " "
             << results[i].timestamp << endl;
         }
         out.close();
@@ -746,6 +757,7 @@ bool Player::saveStage(std::string file, int lastStageID)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = false;
     
+    std::cout << "Writing Stage ID: " << file << std::endl;
     if (out.good()) {
         out << lastStageID;
         ret = true;
@@ -758,7 +770,6 @@ void Player::setConfigValues()
 {
     level.nback = globals.nback;
     level.control = globals.control;
-    setSounds( (GameMode)globals.gameMode );
 }
 
 Player::~Player()

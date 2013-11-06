@@ -264,21 +264,21 @@ std::string Tunnel::determineMaterial() const
 {
     switch (nback)
     {
-        case 2:
+        case 1:
             return "General/Wall1";
-        case 3:
+        case 2:
             return "General/Wall2";
-        case 4:
+        case 3:
             return "General/Wall3";
-        case 5:
+        case 4:
             return "General/Wall4";
-        case 6:
+        case 5:
             return "General/Wall5";
-        case 7:
+        case 6:
             return "General/Wall6";
-        case 8:
+        case 7:
             return "General/Wall7";
-        case 9:
+        case 8:
             return "General/Wall8";
         default:
             return "General/Wall0";
@@ -337,8 +337,8 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     if (types.size() >= nback && nback > 0)
     {
         podType = types[types.size() - nback].podType;
-        int r = rand() % 3;
-        if (r > 0)
+        int r = rand() % 100 + 1;
+        if (r > globals.podNBackChance)
         {
             std::vector<PodType> candidates;
             for (int i = 0; i < 4; ++i)
