@@ -91,10 +91,10 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pRenderWnd = m_pRoot->createRenderWindow(wndTitle, Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT, false, &paramsWnd);
     */
 	m_pSceneMgrMain = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerMain");
-	m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
+	//m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
 	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-	m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    
+	//m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
@@ -103,13 +103,13 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
         0.0,
         0.0,
-        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
-        double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
+        double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+        double(globals.viewportMainHeight_modeNone) / globals.screenHeight);
 	m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
-    
+    /*
 	m_pCameraSide = m_pSceneMgrSide->createCamera("CameraSide");
 	m_pCameraSide->setPosition(Vector3(0, 0, 30));
 	m_pCameraSide->lookAt(Vector3(0, 0, 0));
@@ -117,15 +117,15 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pCameraSide->setOrthoWindow(10.0, 25.0);
     m_pCameraSide->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
 	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0,
-        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+        double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
         0.0,
-        double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
-        double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
+        double(globals.viewportSideWidth_modeNone) / globals.screenWidth,
+        double(globals.viewportSideHeight_modeNone) / globals.screenHeight);
 	m_pViewportSide->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
 	m_pViewportSide->setCamera(m_pCameraSide);
     m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
-    
+    */
 	unsigned long hWnd = 0;
     OIS::ParamList paramList;
     m_pRenderWnd->getCustomAttribute("WINDOW", &hWnd);

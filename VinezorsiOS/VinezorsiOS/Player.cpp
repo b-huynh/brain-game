@@ -368,10 +368,19 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
-void Player::newTunnel(Tunnel* tunnel)
+void Player::newTunnel(Tunnel* tunnel, bool fixspeed)
 {
     hp = globals.startingHP;
-    camSpeed = globals.initCamSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
+    if (!fixspeed)
+    {
+        if (tunnel->getMode() == GAME_TIMED)
+        {
+            camSpeed = globals.initCamSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
+            score = 0.0;
+        }
+        else
+            camSpeed = camSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
+    }
     if (camSpeed < globals.minCamSpeed)
         camSpeed = globals.minCamSpeed;
     if (camSpeed > globals.maxCamSpeed)
@@ -504,7 +513,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
         }
         */
         double distTraveled = moveSpeed * elapsed;
-        score += tunnel->getNBack() * distTraveled;
+        if (tunnel->getMode() == GAME_TIMED)
+            score += distTraveled / 10.0;
         totalDistanceTraveled += distTraveled;
         
         if (tunnel->getMode() == GAME_TIMED)
@@ -538,7 +548,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
             if (tLeft > 0.5)
             {
                 History* history = tunnel->getHistory();
-                history->addPod(closest->getPodInfo());
+                if (history) history->addPod(closest->getPodInfo());
                 
                 closest->setPodHistory(true);
             }
@@ -568,10 +578,15 @@ void Player::update(double elapsed, Tunnel *tunnel)
             //vines[i]->setPos(targetPos);
             vines[i]->setForward(closest->getForward());
         }
+        vines[i]->previoust = vines[i]->aftert;
+        vines[i]->aftert = tLeft;
+        vines[i]->speed = moveSpeed;
+        vines[i]->setQuaternion(getCombinedRotAndRoll());
+		vines[i]->update(elapsed);
         
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
             // If player vine is halfway through a segment with a pod, we can get results
-            if (tLeft > 0.5) {
+            if (vines[i]->previoust > 0.54 && vines[i]->aftert >= vines[i]->previoust) {
                 
                 History* history = tunnel->getHistory();
                 
@@ -584,7 +599,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 result.gameMode = tunnel->getMode();
                 results.push_back(result);
                 
-                printf("%d %d\n", result.podInfo.goodPod, result.podInfo.podTaken);
+                //printf("%d %d\n", result.podInfo.goodPod, result.podInfo.podTaken);
                 
                 // Determine whether the player got it right or not
                 if (result.podInfo.goodPod && result.podInfo.podTaken) {
@@ -596,6 +611,15 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     ++numCorrectTotal;
                     ++numCorrectCombo;
                     numWrongCombo = 0;
+                    
+                    if (tunnel->getMode() == GAME_NORMAL)
+                    {
+                        double plus = 1.0;
+                        for (int i = 0; i < numCorrectCombo - 1 && i < globals.numToSpeedUp; ++i)
+                            plus *= 2;
+                        score += plus;
+                    }
+                    
                     if (speedControl == SPEED_CONTROL_AUTO && numCorrectCombo >= globals.numToSpeedUp)
                     {
                         camSpeed += globals.stepsizeSpeedUp;
@@ -603,7 +627,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
                             camSpeed = globals.maxCamSpeed;
                     }
                     
-                    history->determineCoverLoc(true);
+                    if (history) history->determineCoverLoc(true);
                 }
                 else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
                          (!result.podInfo.goodPod && result.podInfo.podTaken)) {
@@ -622,14 +646,12 @@ void Player::update(double elapsed, Tunnel *tunnel)
                             camSpeed = globals.minCamSpeed;
                     }
                     
-                    history->determineCoverLoc(false);
+                    if (history) history->determineCoverLoc(false);
                 }
                 
                 // Flag to trigger only once
                 closest->setInfoStored(true);
             }
-            vines[i]->previoust = vines[i]->aftert;
-            vines[i]->aftert = tLeft;
         }
     }
     
@@ -656,12 +678,6 @@ void Player::update(double elapsed, Tunnel *tunnel)
         
     }
     
-	for (int i = 0; i < vines.size(); ++i)
-    {
-        vines[i]->speed = moveSpeed;
-        vines[i]->setQuaternion(getCombinedRotAndRoll());
-		vines[i]->update(elapsed);
-    }
     if (inputMoved)
     {
         if (inputTotalX > 0.0)

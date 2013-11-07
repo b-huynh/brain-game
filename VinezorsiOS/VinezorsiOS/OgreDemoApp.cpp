@@ -166,6 +166,8 @@ void setConfigValue(std::istream& in, std::string paramName)
         in >> globals.nback;
     else if (paramName == "control")
         in >> globals.control;
+    else if (paramName == "progressionMode")
+        in >> globals.progressionMode;
     else if (paramName == "gameMode")
         in >> globals.gameMode;
     else if (paramName == "tunnelMinAngleTurn")
@@ -176,6 +178,8 @@ void setConfigValue(std::istream& in, std::string paramName)
         in >> globals.tunnelSegmentsPerSection;
     else if (paramName == "tunnelSegmentsPerPod")
         in >> globals.tunnelSegmentsPerPod;
+    else if (paramName == "podAppearance")
+        in >> globals.podAppearance;
     else if (paramName == "podNBackChance")
         in >> globals.podNBackChance;
     else if (paramName == "HPNegativeLimit")
@@ -192,7 +196,7 @@ void setConfigValue(std::istream& in, std::string paramName)
         in >> globals.HPNegativeWrongAnswer;
     else if (paramName == "initCamSpeed")
         in >> globals.initCamSpeed;
-    else if (paramName == "modifierGameSpeed")
+    else if (paramName == "modifierCamSpeed")
         in >> globals.modifierCamSpeed;
     else if (paramName == "minCamSpeed")
         in >> globals.minCamSpeed;
@@ -216,6 +220,8 @@ void setConfigValue(std::istream& in, std::string paramName)
         in >> globals.timedRunControlUpDist2;
     else if (paramName == "timedRunControlUpDist3")
         in >> globals.timedRunControlUpDist3;
+    else
+        std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
 }
 
 bool DemoApp::loadConfig(std::string filepath, int stageID)
@@ -298,7 +304,7 @@ void DemoApp::setupDemoScene()
     loadSaveFile(savePath);
     loadConfig(configPath,currStageID);
     
-    mode = DISTRIBUTIVE_ADAPTIVE;
+    mode = (ProgressionMode)globals.progressionMode;
     
     seed = raw;
     srand(seed);
@@ -308,13 +314,13 @@ void DemoApp::setupDemoScene()
     Util::generateMaterials();
     
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "podMesh", globals.podHeadRadius, 16, 16);
-    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "podMesh", globals.podHeadRadius, 16, 16);
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineTopMesh", globals.vineRadius, 32, 32);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineDiskMesh", globals.vineRadius * 1.5, 1.0, 16);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
-    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
     Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", 1.0, 1.0);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
+    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "podMesh", globals.podHeadRadius, 16, 16);
+    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
+    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
     
 	origin = Vector3(0, 0, 0);
     
@@ -346,12 +352,14 @@ void DemoApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
+    /*
     Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
     lightSide->setDiffuseColour(1.0, 1.0, 1.0);
     lightSide->setSpecularColour(1.0, 1.0, 1.0);
     lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNodeSide->attachObject(lightSide);
     lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
+     */
     
     // The code snippet below is used to output text
     // create a font resource
@@ -459,7 +467,7 @@ void DemoApp::setOverlay()
     label3->setCharHeight(globals.screenHeight / 50);
     label3->setColour(ColourValue::White);
     label3->setFontName("Arial");
-    label3->setCaption("Score: " + Util::toStringInt(player->getScore() / 10));
+    label3->setCaption("Score: " + Util::toStringInt(player->getScore()));
     
     label4->setMetricsMode(GMM_PIXELS);
     label4->setPosition(globals.label4_posX, globals.label4_posY);
@@ -500,6 +508,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainHeight_modeNone) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
             
+            /*
             m_pCameraSide->setOrthoWindow(0.0, 0.0);
             m_pViewportSide->setDimensions(
                                            double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
@@ -507,6 +516,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportSideWidth_modeNone) / globals.screenWidth,
                                            double(globals.viewportSideHeight_modeNone) / globals.screenHeight);
             m_pCameraSide->setAspectRatio(Real(0.0));
+             */
             break;
         case SIDEBAR_RIGHT:
             m_pViewportMain->setDimensions(
@@ -675,10 +685,10 @@ void DemoApp::update(double elapsed)
         label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
     else
         label1->setCaption("");
-    label2->setCaption("Score: " + Util::toStringInt(player->getScore() / 10));
+    label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
     label3->setCaption("N-Back: " + Util::toStringInt(tunnel->getNBack()));
-    //label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
-    label4->setCaption("");
+    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    //label4->setCaption("");
     
     double indicatorRange = barHP->getWidth();
     double barWidth = globals.HPBarWidth;
@@ -755,13 +765,15 @@ void DemoApp::setLevel(int n, int c, bool init)
         int ncontrol;
         bool loadStage = true;
         bool checkGrade = true;
-        if (tunnel->getMode() == GAME_TIMED)
+        if (tunnel->getMode() == GAME_TIMED && mode == DISTRIBUTIVE_ADAPTIVE)
         {
             checkGrade = false;
             if (tunnel->getNBack() + 1 < player->getLevel().nback)
             {
                 loadStage = false;
                 nlevel = tunnel->getNBack() + 1;
+                ncontrol = 1;
+                nmode = GAME_TIMED;
             }
             else
                 loadStage = true;
@@ -825,7 +837,8 @@ void DemoApp::setLevel(int n, int c, bool init)
     player->setOldRoll(player->getCamRoll());
     player->setDesireRot(rot);
     
-    player->newTunnel(tunnel);
+    // If nback is same then panels are changing, keep speed same
+    player->newTunnel(tunnel, tunnel->getNBack() == nback);
     
     setOverlay();
 }

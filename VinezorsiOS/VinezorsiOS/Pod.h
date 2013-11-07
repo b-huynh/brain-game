@@ -30,7 +30,6 @@ private:
     SceneNode* entirePod;
 	SceneNode* stem;
 	SceneNode* head;
-    SceneNode* shell;
     
     Direction loc;
     bool podTaken;
