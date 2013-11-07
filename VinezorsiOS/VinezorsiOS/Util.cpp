@@ -33,7 +33,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const int POD_APPEARANCE = 2;
     const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
     const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
-    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2.5;
+    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
     const int POD_NBACK_CHANCE = 33;
     const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
@@ -74,6 +74,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
     const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
     
+    progressionMode = 2;
     gameMode = 1;
     tunnelReferenceForward = TUNNEL_REFERENCE_FORWARD;
     tunnelReferenceUpward = TUNNEL_REFERENCE_UPWARD;
@@ -154,7 +155,7 @@ void Util::ConfigGlobal::set()
     label3_posX = 11 * screenWidth / 15;
     label3_posY = 5 * screenHeight / 40;
     label4_posX = screenWidth / 80;
-    label4_posY = screenHeight - 200;
+    label4_posY = 7 * screenHeight / 40;
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0

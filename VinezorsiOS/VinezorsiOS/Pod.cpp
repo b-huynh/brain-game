@@ -15,24 +15,16 @@ extern Util::ConfigGlobal globals;
 static int podID = 0;
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL)
 {
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius, Direction loc)
-: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), loc(loc), podTaken(false), dest()
+: parentNode(parentNode), base(base), tip(tip), type(type), stemRadius(stemRadius), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), loc(loc), podTaken(false), dest()
 {
 	double stemLength = base.distance(tip);
     
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
-    
-    shell = entirePod->createChildSceneNode("ShellNode" + Util::toStringInt(podID));
-    
-    Entity* shellEntity = shell->getCreator()->createEntity("shellEntity" + Util::toStringInt(podID), "podMesh");
-    shellEntity->setMaterialName("General/PodShell");
-    shell->attachObject(shellEntity);
-    shell->scale(1.2, 1.2, 1.2);
-    shell->setVisible(false);
     
     stem = entirePod->createChildSceneNode("stemNode" + Util::toStringInt(podID));
     
@@ -138,7 +130,6 @@ void Pod::hidePod()
 
 void Pod::revealPod()
 {
-    //shell->setVisible(true);
      switch (type)
      {
          case POD_BLUE:
@@ -171,7 +162,6 @@ void Pod::removeFromScene()
 {
     stem->getCreator()->destroyMovableObject(stem->getAttachedObject(0)); // Assuming only one entity
     head->getCreator()->destroyMovableObject(head->getAttachedObject(0));
-    shell->getCreator()->destroyMovableObject(shell->getAttachedObject(0));
     
     entirePod->removeAndDestroyAllChildren();
     entirePod->getCreator()->destroySceneNode(entirePod);
@@ -179,7 +169,6 @@ void Pod::removeFromScene()
     entirePod = NULL;
 	stem = NULL;
 	head = NULL;
-    shell = NULL;
 }
 
 PodType Pod::getPodType() const

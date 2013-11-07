@@ -163,7 +163,7 @@ public:
     void playPodSound(int index) const;
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel);
+    void newTunnel(Tunnel* tunnel, bool fixspeed = false);
     
 	void move(Vector3 delta);
     void changeMovementMode();

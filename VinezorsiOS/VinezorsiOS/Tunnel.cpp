@@ -29,7 +29,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, 
 : parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
-    history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
+    //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     
     setNewControl(control);
@@ -342,7 +342,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
         {
             std::vector<PodType> candidates;
             for (int i = 0; i < 4; ++i)
-                if (i != podType)
+                if (i != podType && ((PodType)i != types[types.size() - 1].podType || types.size() <= 0))
                     candidates.push_back((PodType)i);
             podType = candidates[rand() % candidates.size()];
         }
@@ -639,7 +639,7 @@ std::vector<Pod *> Tunnel::findPodCollisions(SceneNode *ent)
 void Tunnel::update(double elapsed)
 {
     totalElapsed += elapsed;
-    history->update(elapsed);
+    if (history) history->update(elapsed);
 }
 
 Tunnel::~Tunnel()
@@ -655,5 +655,5 @@ Tunnel::~Tunnel()
     mainTunnelNode->getCreator()->destroySceneNode(mainTunnelNode);
     mainTunnelNode = NULL;
     
-    delete history;
+    if (history) delete history;
 }

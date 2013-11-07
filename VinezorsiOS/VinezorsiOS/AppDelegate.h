@@ -31,6 +31,7 @@
     NSDate *mDate;
     double mLastFrameTime;
     double mStartTime;
+    double mDeltaTime;
     BOOL mDisplayLinkSupported;
     BOOL ready;
     
@@ -45,6 +46,7 @@
 @property (retain) NSTimer *mTimer;
 @property (nonatomic) double mLastFrameTime;
 @property (nonatomic) double mStartTime;
+@property (nonatomic) double mDeltaTime;
 @property (strong, nonatomic) UIWindow *window;
 
 @end
@@ -89,6 +91,7 @@
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mLastFrameTime = 1;
+    mDeltaTime = 1.0f / 25.0f;
     mStartTime = 0;
     mTimer = nil;
     
@@ -118,7 +121,7 @@
     }
     else
     {
-        mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1.0f / 30.0f) * mLastFrameTime
+        mTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(mDeltaTime) * mLastFrameTime
                                                   target:self
                                                 selector:@selector(renderOneFrame:)
                                                 userInfo:nil
@@ -135,6 +138,7 @@
     ready = FALSE;
     mDisplayLinkSupported = FALSE;
     mLastFrameTime = 1;
+    mDeltaTime = 1.0 / 25.0;
     mStartTime = 0;
     mTimer = nil;
     
@@ -175,7 +179,7 @@
 {
     if (ready)
     {
-        //Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(false);
+        Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(false);
         Ogre::Root::getSingleton().saveConfig();
     }
     
@@ -184,29 +188,29 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    //if (ready)
-    //    Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(true);
+    if (ready)
+        Ogre::Root::getSingleton().getAutoCreatedWindow()->setActive(true);
 }
 
 - (void)renderOneFrame:(id)sender
 {
-    //if(!Ogre::Root::getSingleton().getAutoCreatedWindow()->isActive())
-    //    return;
+    if(!Ogre::Root::getSingleton().getAutoCreatedWindow()->isActive())
+        return;
     
     if(!OgreFramework::getSingletonPtr()->isOgreToBeShutDown() &&
        Ogre::Root::getSingletonPtr() && Ogre::Root::getSingleton().isInitialised())
     {
 		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
 		{
-			mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+			//mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
             
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
-            demo.update(1.0f / 30.0f);
-			OgreFramework::getSingletonPtr()->updateOgre(mLastFrameTime);
+            demo.update(mDeltaTime);
+			OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
 			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             
-			mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
+			//mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
 		}
     }
     else

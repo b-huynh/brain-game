@@ -27,6 +27,7 @@ namespace Util
     struct ConfigGlobal
     {
         int stageID;
+        int progressionMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;

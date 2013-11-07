@@ -265,15 +265,14 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine) const
     
 	for (int i = 0; i < pods.size(); ++i)
 	{
-        /*
         if (vine->loc == pods[i]->getLoc())
         {
-            std::cout << vine->aftert << " " << vine->previoust << std::endl;
-            if ((vine->aftert >= 0.49 && vine->aftert <= 0.51) ||
-                (vine->previoust < 0.49 && vine->aftert > 0.51))
+            //std::cout << vine->aftert << " " << vine->previoust << std::endl;
+            if ((vine->aftert >= 0.46 && vine->aftert <= 0.54) ||
+                (vine->previoust < 0.46 && vine->aftert > 0.54))
                 ret.push_back(pods[i]);
         }
-         */
+         /*
         double maxR = vine->getRadius() + pods[i]->getHeadRadius() * 1.5;
 
         double dx = vine->getTip()->getPosition().x - pods[i]->getHead()->_getDerivedPosition().x;
@@ -281,6 +280,7 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine) const
         double dz = vine->getTip()->getPosition().z - pods[i]->getHead()->_getDerivedPosition().z;
 		if (dx * dx + dy * dy + dz * dz <= maxR * maxR)
 			ret.push_back(pods[i]);
+         */
 	}
     
 	return ret;
@@ -326,7 +326,7 @@ Vector3 TunnelSlice::requestWallDistance(Direction dir) const
 Vector3 TunnelSlice::requestMove(Direction dir) const
 {
 	double wallLength = getWallLength();
-	const double WALL_OFFSET = wallLength / 3;
+	const double WALL_OFFSET = wallLength / 2;
     
     Vector3 move = rot * requestWallDistance(dir);
     move = move * ((move.length() - WALL_OFFSET) / move.length());
