@@ -45,8 +45,12 @@ void TunnelSlice::initWalls()
     
     entireWall = parentNode->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
-    if (type == CHECKPOINT)
-        materialName = "General/WallCheckpoint";
+    if (type == CHECKPOINT_PASS)
+        materialName = "General/WallCheckpointPass";
+    else if (type == CHECKPOINT_FAIL)
+        materialName = "General/WallCheckpointFail";
+    else if (type == CHECKPOINT_EVEN)
+        materialName = "General/WallCheckpointEven";
     
     if (sidesUsed[NORTHWEST]) {
         topLeftWall = entireWall->createChildSceneNode("topLeftWallNode" + Util::toStringInt(wallID));

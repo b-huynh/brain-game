@@ -83,6 +83,7 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
+enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 
@@ -96,7 +97,7 @@ public:
 	DemoApp();
 	~DemoApp();
     
-	void startDemo(const char* name);
+	void startDemo(const char* name, MusicMode musica);
     void setSidebar();
     void setOverlay();
     void update(double elapsed);
@@ -127,7 +128,8 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-    ProgressionMode mode;
+    ProgressionMode progressionMode;
+    MusicMode musicMode;
     
     unsigned seed;
     bool pause;

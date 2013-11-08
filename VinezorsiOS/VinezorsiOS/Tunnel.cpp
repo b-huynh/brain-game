@@ -342,13 +342,21 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
         {
             std::vector<PodType> candidates;
             for (int i = 0; i < 4; ++i)
-                if (i != podType && ((PodType)i != types[types.size() - 1].podType || types.size() <= 0))
+                if (i != podType && (types.size() <= 0 || (PodType)i != types[types.size() - 1].podType))
                     candidates.push_back((PodType)i);
             podType = candidates[rand() % candidates.size()];
         }
     }
     else
-        podType = (PodType)(rand() % 4);
+    {
+        std::vector<PodType> candidates;
+        for (int i = 0; i < 4; ++i)
+            if (types.size() <= 0 || (PodType)i != types[types.size() - 1].podType)
+                candidates.push_back((PodType)i);
+        podType = candidates[rand() % candidates.size()];
+        
+        //podType = (PodType)(rand() % 4);
+    }
     
     // The following deals with throwing special settings for certain NBacks occuring before this one
     PodType NBack = getNBackTest(types.size() - 1);
@@ -501,13 +509,13 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
 
 void Tunnel::addSection(SectionInfo newSection)
 {
-    if (newSection.tunnelType == CHECKPOINT) {
+    if (newSection.tunnelType >= CHECKPOINT_PASS) {
         
         for (int i = 0; i < sectionSize; ++i)
-            if (i == sectionSize - 1)
-                addSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
-            else
-                addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
+//            if (i == sectionSize - 1)
+                addSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
+//            else
+//                addSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         return;
     }
     for (int i = 0; i < sectionSize; ++i)
@@ -532,13 +540,13 @@ void Tunnel::addSection(SectionInfo newSection)
 
 void Tunnel::renewSection(SectionInfo newSection)
 {
-    if (newSection.tunnelType == CHECKPOINT) {
+    if (newSection.tunnelType >= CHECKPOINT_PASS) {
         
         for (int i = 0; i < sectionSize; ++i)
-            if (i == sectionSize - 1)
-                renewSegment(CHECKPOINT, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
-            else
-                renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
+//            if (i == sectionSize - 1)
+                renewSegment(newSection.tunnelType, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
+//            else
+//                renewSegment(NORMAL_BLANK, newSection.tunnelDir, newSection.tunnelDirAngle, POD_NONE, NO_DIRECTION, false);
         return;
     }
     for (int i = 0; i < sectionSize; ++i)

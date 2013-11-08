@@ -107,9 +107,10 @@ void DemoApp::finalizeRTShaderSystem()
 }
 #endif // USE_RTSHADER_SYSTEM
 
-void DemoApp::startDemo(const char* name)
+void DemoApp::startDemo(const char* name, MusicMode musica)
 {
     playerName = std::string(name);
+    musicMode = musica;
     
 	new OgreFramework();
 	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this, this))
@@ -167,7 +168,10 @@ void setConfigValue(std::istream& in, std::string paramName)
     else if (paramName == "control")
         in >> globals.control;
     else if (paramName == "progressionMode")
+    {
         in >> globals.progressionMode;
+        globals.progressionMode--;
+    }
     else if (paramName == "gameMode")
         in >> globals.gameMode;
     else if (paramName == "tunnelMinAngleTurn")
@@ -289,7 +293,7 @@ bool DemoApp::loadSaveFile(std::string savePath)
         std::cout << "Starting from last session StageID " << currStageID << std::endl;
         ret = true;
     } else {
-        currStageID = 1;
+        currStageID = 5;
         std::cout << "Starting from StageID 1" << std::endl;
         ret = false;
     }
@@ -321,7 +325,7 @@ void DemoApp::setupDemoScene()
     if (!configGood)
         std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
     
-    mode = (ProgressionMode)globals.progressionMode;
+    progressionMode = (ProgressionMode)globals.progressionMode;
     
     seed = raw;
     srand(seed);
@@ -355,7 +359,7 @@ void DemoApp::setupDemoScene()
                         seed,
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
-    player->setSounds(mode != SIMPLE_PROGRESSIVE);
+    player->setSounds(progressionMode != SIMPLE_PROGRESSIVE);
     player->setConfigValues();
     player->setName(playerName);
     
@@ -621,9 +625,15 @@ void DemoApp::update(double elapsed)
             // Generate a CHECKPOINT tunnel section
             for (int i = 0; i < globals.initiationSections; ++i) {
                 SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);
-                if (i == globals.initiationSections - 1) {
-                    info.tunnelType = CHECKPOINT;
-                }
+//                if (i == globals.initiationSections - 1) {
+                Evaluation eval = player->getEvaluation(tunnel->getMode());
+                if (eval == PASS)
+                    info.tunnelType = CHECKPOINT_PASS;
+                else if (eval == FAIL)
+                    info.tunnelType = CHECKPOINT_FAIL;
+                else
+                    info.tunnelType = CHECKPOINT_EVEN;
+//                }
                 tunnel->addSection(info);
             }
         }
@@ -725,7 +735,7 @@ void DemoApp::setLevel(int n, int c, bool init)
         GameMode game = (GameMode)globals.gameMode;
         int nlevel = player->getLevel().nback;
         int ncontrol = player->getLevel().control;
-        if (mode == DISTRIBUTIVE_ADAPTIVE)
+        if (progressionMode == DISTRIBUTIVE_ADAPTIVE)
         {
             if (player->getLevel().nback > 2)
             {
@@ -746,7 +756,7 @@ void DemoApp::setLevel(int n, int c, bool init)
                             globals.tunnelSegmentsPerSection,
                             globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections);
-        player->newTunnel(tunnel);
+        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED);
         return;
         
     }
@@ -756,6 +766,7 @@ void DemoApp::setLevel(int n, int c, bool init)
     Quaternion rot = tunnel->getBack()->getQuaternion();
     Vector3 forward = tunnel->getBack()->getForward();
     int nback = tunnel->getNBack();
+    GameMode omode = tunnel->getMode();
     delete tunnel;
     
     if (n >= 0) // For Debugging keys
@@ -782,7 +793,7 @@ void DemoApp::setLevel(int n, int c, bool init)
         int ncontrol;
         bool loadStage = true;
         bool checkGrade = true;
-        if (tunnel->getMode() == GAME_TIMED && mode == DISTRIBUTIVE_ADAPTIVE)
+        if (tunnel->getMode() == GAME_TIMED && progressionMode == DISTRIBUTIVE_ADAPTIVE)
         {
             checkGrade = false;
             if (tunnel->getNBack() + 1 < player->getLevel().nback)
@@ -800,8 +811,7 @@ void DemoApp::setLevel(int n, int c, bool init)
         player->saveProgress(logPath);
         if (checkGrade)
         {
-            if ((tunnel->getMode() == GAME_NORMAL && player->getHP() > 0) ||
-                (tunnel->getMode() == GAME_TIMED && player->getAccuracy() > 0.8))
+            if (player->getEvaluation(tunnel->getMode()) != FAIL)
                 pass = true;
             
             if (pass)
@@ -855,7 +865,8 @@ void DemoApp::setLevel(int n, int c, bool init)
     player->setDesireRot(rot);
     
     // If nback is same then panels are changing, keep speed same
-    player->newTunnel(tunnel, tunnel->getNBack() == nback);
+    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() == nback,
+                      tunnel->getMode() == GAME_TIMED || omode == GAME_TIMED);
     
     setOverlay();
 }

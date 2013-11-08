@@ -40,7 +40,7 @@
     UIViewController *viewcontroller;
 }
 
-- (void)go;
+- (void)go:(NSString*)str :(BOOL)isOn;
 - (void)renderOneFrame:(id)sender;
 
 @property (retain) NSTimer *mTimer;
@@ -76,7 +76,7 @@
     }
 }
 
-- (void)go:(NSString*)str
+- (void)go:(NSString*)str :(BOOL)isOn
 {
     ready = true;
     
@@ -96,7 +96,10 @@
     mTimer = nil;
     
     try {
-        demo.startDemo([str UTF8String]);
+        if (isOn)
+            demo.startDemo([str UTF8String], MUSIC_ENABLED);
+        else
+            demo.startDemo([str UTF8String], MUSIC_DISABLED);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         
