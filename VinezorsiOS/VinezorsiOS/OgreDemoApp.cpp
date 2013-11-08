@@ -293,7 +293,7 @@ bool DemoApp::loadSaveFile(std::string savePath)
         std::cout << "Starting from last session StageID " << currStageID << std::endl;
         ret = true;
     } else {
-        currStageID = 0;
+        currStageID = 5;
         std::cout << "Starting from StageID " << currStageID << std::endl;
         ret = false;
     }
