@@ -98,7 +98,7 @@ public:
 	void moveCamera();
 	void getInput();
     
-    Ogre::String getMacBundlePath();
+    Ogre::String getMacBundlePath() const;
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     
@@ -115,6 +115,7 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
+    void buttonHit(OgreBites::Button* button);
 	
 	Ogre::Root*                 m_pRoot;
 	Ogre::RenderWindow*			m_pRenderWnd;
@@ -142,7 +143,7 @@ public:
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
-    BillboardSet*               m_pBillboardSet;
+	OgreBites::SdkTrayManager*  m_pTrayMgr;
 protected:
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
@@ -151,7 +152,6 @@ private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator= (const OgreFramework&);
     
-	OgreBites::SdkTrayManager*  m_pTrayMgr;
     Ogre::FrameEvent            m_FrameEvent;
 	int                         m_iNumScreenShots;
     
@@ -163,10 +163,7 @@ private:
 	float                       m_MoveScale;
 	Ogre::Degree				m_RotScale;
     
-    std::set<Ogre::String>      mCategories;
-    OgreBites::Slider*          mSlider;
-    OgreBites::Label*           mTitleLabel;
-    OgreBites::TextBox*         mDescBox;
+    OgreBites::Button*          m_quitButton;
     
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;

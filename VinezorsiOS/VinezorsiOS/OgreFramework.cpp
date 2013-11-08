@@ -2,6 +2,8 @@
 #include "macUtils.h"
 #include "Util.h"
 
+#include "ExampleLoadingBar.h"
+
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
@@ -190,32 +192,37 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     
     m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
     
+    Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
+    
+	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
+    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+    m_pTrayMgr->hideCursor();
+    m_pTrayMgr->setListener(this);
+    m_pTrayMgr->setTrayPadding(10.0);
+    
+    Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
+    //  m_quitButton = OgreFramework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_BOTTOMLEFT, "sdkQuitButton", "QUIT", 250);
+    
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
     m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
     //m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
     m_pSoundMgr->createSound("Sound2", "wrongtriangle.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound3", "VinezorsNegativeBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBlip.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceChime.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound7", "VinezorsSpaceTone.wav", false, false, true);
-    
-    m_pBillboardSet = m_pSceneMgrMain->createBillboardSet("TheBillboardSet");
+    m_pSoundMgr->createSound("Sound3", "VinezorsSpaceBlip.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBeep.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceChime.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceTone.wav", false, false, true);
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     
 	m_pTimer = OGRE_NEW Ogre::Timer();
 	m_pTimer->reset();
-	
-	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    m_pTrayMgr->hideCursor();
     
 	m_pRenderWnd->setActive(true);
     
@@ -322,8 +329,6 @@ bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
             break;
     }
 #endif
-	//m_pCamera->yaw(Degree(state.X.rel * -0.1));
-	//m_pCamera->pitch(Degree(state.Y.rel * -0.1));
 	
 	return true;
 }
@@ -332,7 +337,9 @@ bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
 
 bool OgreFramework::touchPressed(const OIS:: MultiTouchEvent &evt)
 {
-#pragma unused(evt)
+    double axisY = evt.state.Y.abs;
+    double axisX = evt.state.X.abs;
+
 	return true;
 }
 
@@ -340,8 +347,7 @@ bool OgreFramework::touchPressed(const OIS:: MultiTouchEvent &evt)
 
 bool OgreFramework::touchReleased(const OIS:: MultiTouchEvent &evt)
 {
-#pragma unused(evt)
-	return true;
+    return true;
 }
 
 bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
@@ -351,7 +357,7 @@ bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
 }
 #else
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
-{	
+{
 	return true;
 }
 
@@ -370,10 +376,6 @@ void OgreFramework::updateOgre(double timeSinceLastFrame)
 {
 	m_MoveScale = m_MoveSpeed   * (float)timeSinceLastFrame;
 	m_RotScale  = m_RotateSpeed * (float)timeSinceLastFrame;
-//    mDescBox = m_pTrayMgr->createTextBox(TL_LEFT, "SampleInfo", "Sample Info", 120, 100);
-//    mCategoryMenu = m_pTrayMgr->createThickSelectMenu(TL_LEFT, "CategoryMenu", "Select Category", 120, 10);
-//    mSampleMenu = m_pTrayMgr->createThickSelectMenu(TL_LEFT, "SampleMenu", "Select Sample", 120, 10);
-//    mSlider = m_pTrayMgr->createThickSlider(TL_LEFT, "SampleSlider", "Slide Samples", 120, 42, 0, 0, 0);
 
 #if OGRE_VERSION >= 0x10800
     m_pSceneMgrMain->setSkyBoxEnabled(true);
@@ -417,8 +419,15 @@ void OgreFramework::getInput()
 #endif
 }
 
-
-Ogre::String OgreFramework::getMacBundlePath()
+Ogre::String OgreFramework::getMacBundlePath() const
 {
-    return Ogre::macBundlePath();
+    return macBundlePath();
+}
+
+void OgreFramework::buttonHit(OgreBites::Button* button)
+{
+    if (button->getName() == "quitButton")
+    {
+        requestOgreShutdown();
+    }
 }
