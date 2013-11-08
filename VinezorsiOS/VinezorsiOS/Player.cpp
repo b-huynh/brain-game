@@ -221,6 +221,21 @@ double Player::getAccuracy() const
     return static_cast<double>(numCorrectTotal) / (numCorrectTotal + numWrongTotal);
 }
 
+Evaluation Player::getEvaluation(GameMode emode) const
+{
+    if (emode == GAME_NORMAL)
+    {
+        if (getHP() > 0)
+            return PASS;
+        else
+            return FAIL;
+    }
+    else return EVEN;
+    //(emode == GAME_TIMED && player->getAccuracy() > 0.8)
+    
+}
+
+
 void Player::setSeed(unsigned value)
 {
     seed = value;
@@ -368,7 +383,7 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
-void Player::newTunnel(Tunnel* tunnel, bool fixspeed)
+void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resetscore)
 {
     hp = globals.startingHP;
     if (!fixspeed)
@@ -376,11 +391,12 @@ void Player::newTunnel(Tunnel* tunnel, bool fixspeed)
         if (tunnel->getMode() == GAME_TIMED)
         {
             camSpeed = globals.initCamSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
-            score = 0.0;
         }
         else
             camSpeed = camSpeed * pow(globals.nlevelSpeedModifier, max(tunnel->getNBack() - 2, 0));
     }
+    if (resetscore)
+        score = 0.0;
     if (camSpeed < globals.minCamSpeed)
         camSpeed = globals.minCamSpeed;
     if (camSpeed > globals.maxCamSpeed)
@@ -393,6 +409,33 @@ void Player::newTunnel(Tunnel* tunnel, bool fixspeed)
     vineSlice = NULL;
     vineT = 0.0;
     double tLeft;
+    
+    if (setmusic)
+    {
+        OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
+        if (tunnel->getNBack() == 1)
+            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
+        else
+        {
+            switch ((tunnel->getNBack() + 1) % 3)
+            {
+                case 0:
+                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
+                    break;
+                case 1:
+                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music2");
+                    break;
+                case 2:
+                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
+                    break;
+            }
+        }
+        if (soundMusic != soundMusicTemp)
+        {
+            if (soundMusic) soundMusic->stop();
+            soundMusic = soundMusicTemp;
+        }
+    }
     
     for (int i = 0; i < vines.size(); ++i)
     {
@@ -444,7 +487,6 @@ void Player::playPodSound(int index) const
 
 void Player::setSounds(bool mode)
 {
-    //soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
     if (mode) // true means all pod sounds
     {
         soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
@@ -493,8 +535,15 @@ void Player::update(double elapsed, Tunnel *tunnel)
 {
     totalElapsed += elapsed;
     
-    if (soundMusic && !soundMusic->isPlaying() && getTotalElapsed() > 1.5)
-        soundMusic->play();
+    if (soundMusic)
+    {
+        if (!soundMusic->isPlaying() && tunnel->getTotalElapsed() > 2.0)
+        {
+            soundMusic->play();
+        }
+//        if (soundMusic->isPlaying() && tunnel->isDone())
+//            soundMusic->stop();
+    }
     
     // Speed up, slow down keys options
     double moveSpeed = globals.modifierCamSpeed * camSpeed;
@@ -614,7 +663,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     
                     if (tunnel->getMode() == GAME_NORMAL)
                     {
-                        double plus = 1.0;
+                        double plus = tunnel->getNBack();
                         for (int i = 0; i < numCorrectCombo - 1 && i < globals.numToSpeedUp; ++i)
                             plus *= 2;
                         score += plus;

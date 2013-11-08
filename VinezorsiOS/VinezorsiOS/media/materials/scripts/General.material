@@ -306,7 +306,7 @@ material General/Wall8
 	}
 }
 
-material General/WallCheckpoint
+material General/WallCheckpointEven
 {
     technique
     {
@@ -314,9 +314,39 @@ material General/WallCheckpoint
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.0 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.5 0.5 0.0 1
+            diffuse 1.0 1.0 0.0 1
+            emissive 0.5 0.5 0.0 1
+        }
+    }
+}
+
+material General/WallCheckpointPass
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.0 0.5 0.0 1
+            diffuse 0.0 1.0 0.0 1
+            emissive 0.0 0.5 0.0 1
+        }
+    }
+}
+
+material General/WallCheckpointFail
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.5 0.0 0.0 1
+            diffuse 1.0 0.0 0.0 1
+            emissive 0.5 0.0 0.0 1
         }
     }
 }

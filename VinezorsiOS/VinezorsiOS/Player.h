@@ -25,6 +25,7 @@ struct PlayerLevel
     PlayerLevel();
 };
 
+enum Evaluation { PASS, FAIL, EVEN };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 
 class Player
@@ -126,6 +127,7 @@ public:
 	double getTotalElapsed() const;
 	double getTotalDistanceTraveled() const;
     double getAccuracy() const;
+    Evaluation getEvaluation(GameMode emode) const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -163,7 +165,7 @@ public:
     void playPodSound(int index) const;
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel, bool fixspeed = false);
+    void newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed = false, bool resetscore = false);
     
 	void move(Vector3 delta);
     void changeMovementMode();

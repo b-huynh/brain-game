@@ -192,7 +192,9 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
-    m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
     //m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
     m_pSoundMgr->createSound("Sound2", "wrongtriangle.wav", false, false, true);

@@ -13,6 +13,7 @@
 @interface SimpleViewController ()
 
 @property (retain, nonatomic) IBOutlet UITextField *TextField_Input;
+@property (retain, nonatomic) IBOutlet UISwitch *Switch_Music;
 
 @end
 
@@ -47,7 +48,7 @@
 - (IBAction)buttonBegin_OnPress:(UIButton *)sender {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    [appDelegate go:_TextField_Input.text];
+    [appDelegate go:_TextField_Input.text :[_Switch_Music isOn]];
 }
 
 @end
