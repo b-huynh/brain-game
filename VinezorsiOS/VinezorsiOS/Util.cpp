@@ -15,6 +15,8 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
+    const double SESSION_TIME = 1500.0;
+    
     const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
     const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
@@ -74,6 +76,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
     const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
     
+    sessionTime = SESSION_TIME;
     progressionMode = 2;
     gameMode = 1;
     tunnelReferenceForward = TUNNEL_REFERENCE_FORWARD;
@@ -150,12 +153,14 @@ void Util::ConfigGlobal::set()
 
     label1_posX = screenWidth / 2;
     label1_posY = 3 * screenHeight / 40;
-    label2_posX = screenWidth / 80;
-    label2_posY = 5 * screenHeight / 40;
+    label4_posX = screenWidth / 80;
+    label4_posY = 5 * screenHeight / 40;
     label3_posX = 11 * screenWidth / 15;
     label3_posY = 5 * screenHeight / 40;
-    label4_posX = screenWidth / 80;
-    label4_posY = 7 * screenHeight / 40;
+    label2_posX = screenWidth / 80;
+    label2_posY = 7 * screenHeight / 40;
+    label5_posX = screenWidth / 2;
+    label5_posY = screenHeight / 2;
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0

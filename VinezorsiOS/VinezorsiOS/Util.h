@@ -27,6 +27,7 @@ namespace Util
     struct ConfigGlobal
     {
         int stageID;
+        double sessionTime;
         int progressionMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
@@ -101,6 +102,8 @@ namespace Util
         int label3_posY;
         int label4_posX;
         int label4_posY;
+        int label5_posX;
+        int label5_posY;
         
         ConfigGlobal();
         void set();

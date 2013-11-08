@@ -109,6 +109,7 @@ void DemoApp::finalizeRTShaderSystem()
 
 void DemoApp::startDemo(const char* name, MusicMode musica)
 {
+    totalElapsed = 0.0;
     playerName = std::string(name);
     musicMode = musica;
     
@@ -163,6 +164,8 @@ void setConfigValue(std::istream& in, std::string paramName)
 {
     if (paramName == "stageID")
         in >> globals.stageID;
+    else if (paramName == "sessionTime")
+        in >> globals.sessionTime;
     else if (paramName == "nback")
         in >> globals.nback;
     else if (paramName == "control")
@@ -419,6 +422,8 @@ void DemoApp::setupDemoScene()
                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
     label4= static_cast<TextAreaOverlayElement*>(
                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
+    label5= static_cast<TextAreaOverlayElement*>(
+                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayMain");
@@ -432,6 +437,7 @@ void DemoApp::setupDemoScene()
     panel2->addChild(label2);
     panel2->addChild(label3);
     panel2->addChild(label4);
+    panel2->addChild(label5);
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
@@ -496,6 +502,14 @@ void DemoApp::setOverlay()
     label4->setColour(ColourValue::White);
     label4->setFontName("Arial");
     label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    
+    label5->setMetricsMode(GMM_PIXELS);
+    label5->setAlignment(TextAreaOverlayElement::Center);
+    label5->setPosition(globals.label5_posX, globals.label5_posY);
+    label5->setCharHeight(globals.screenHeight / 50);
+    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    label5->setFontName("Arial");
+    label5->setCaption("");
     
     if (tunnel->getMode() == GAME_TIMED)
     {
@@ -605,6 +619,13 @@ void DemoApp::update(double elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
+    if (!pause && totalElapsed > globals.sessionTime)
+    {
+        player->saveProgress(savePath);
+        label5->setCaption("Game Over! Thanks for playing!");
+        pause = true;
+    }
+    
     // Determine whether a stage has completed
     if (!tunnel->isDone())
     {
@@ -641,6 +662,7 @@ void DemoApp::update(double elapsed)
     
     // Update the game state
     if (!pause) {
+        totalElapsed += elapsed;
         player->update(elapsed, tunnel);
         
         // Animate Pod Growing outwards or Growing inwards
@@ -689,6 +711,7 @@ void DemoApp::update(double elapsed)
         tunnel->update(elapsed);
         
     } else {
+        /*
         // Navigation Debug Keys
         if (player->getKeyUp())
             player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
@@ -698,6 +721,7 @@ void DemoApp::update(double elapsed)
             player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
         if (player->getKeyRight())
             player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+         */
     }
     
     // Graphical view changes
@@ -712,7 +736,8 @@ void DemoApp::update(double elapsed)
         label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
     else
         label1->setCaption("");
-    label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
+    //label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
+    label2->setCaption("");
     label3->setCaption("N-Back: " + Util::toStringInt(tunnel->getNBack()));
     label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
     //label4->setCaption("");
@@ -954,7 +979,7 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
     double axisY = evt.state.Y.abs;
     double axisX = evt.state.X.abs;
 
-    if (pause)
+    if (pause && totalElapsed <= globals.sessionTime)
     {
         pause = !pause;
         player->setOldPos(player->getCamPos());

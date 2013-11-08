@@ -417,7 +417,7 @@ void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resets
             soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
         else
         {
-            switch ((tunnel->getNBack() + 1) % 3)
+            switch ((tunnel->getNBack() + 1) % 4)
             {
                 case 0:
                     soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
@@ -511,6 +511,7 @@ void Player::setSounds(bool mode)
 void Player::addVine(Vine *vine)
 {
 	vines.push_back(vine);
+    vine->loc = camDir;
 }
 
 void Player::checkCollisions(Tunnel *tunnel)
@@ -781,6 +782,22 @@ void Player::evaluatePlayerLevel(bool pass)
 //Returns false if failed to save to file, true otherwise
 bool Player::saveProgress(std::string file)
 {
+    int fileno = 0;
+    ifstream intest;
+    unsigned test;
+    do {
+        fileno++;
+        file += "_f" + Util::toStringInt(fileno);
+        intest.open(file.c_str());
+        std::cout << "testing " << file << std::endl;
+        if (intest)
+        {
+            std::string junk;
+            intest >> junk >> junk >> junk;
+            intest >> test;
+        }
+    } while (intest && test != seed && !intest.good()); // same seed means same session
+    
     std::ofstream out;
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     

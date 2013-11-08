@@ -134,6 +134,7 @@ private:
     unsigned seed;
     bool pause;
     Vector3 origin;
+    double totalElapsed;
     SceneNode* lightNodeMain;
     SceneNode* lightNodeSide;
     Tunnel* tunnel;
@@ -151,6 +152,7 @@ private:
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
+    TextAreaOverlayElement* label5;
     
     SidebarLocation sidebarMode;
     
