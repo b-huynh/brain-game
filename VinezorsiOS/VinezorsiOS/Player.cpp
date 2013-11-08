@@ -417,7 +417,7 @@ void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resets
             soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
         else
         {
-            switch ((tunnel->getNBack() + 1) % 4)
+            switch ((tunnel->getNBack() + 2) % 4)
             {
                 case 0:
                     soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
@@ -449,6 +449,7 @@ void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resets
             vines[i]->setPos(targetPos);
         }
     }
+    results.clear();
 }
 
 void Player::move(Vector3 delta)
@@ -786,6 +787,7 @@ void Player::evaluatePlayerLevel(bool pass)
 bool Player::saveProgress(std::string file)
 {
     int fileno = 0;
+    /*
     ifstream intest;
     unsigned test;
     do {
@@ -800,7 +802,7 @@ bool Player::saveProgress(std::string file)
             intest >> test;
         }
     } while (intest && test != seed && !intest.good()); // same seed means same session
-    
+    */
     std::ofstream out;
     
     bool newFile = false;
