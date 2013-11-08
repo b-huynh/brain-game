@@ -293,7 +293,7 @@ bool DemoApp::loadSaveFile(std::string savePath)
         std::cout << "Starting from last session StageID " << currStageID << std::endl;
         ret = true;
     } else {
-        currStageID = 5;
+        currStageID = 0;
         std::cout << "Starting from StageID " << currStageID << std::endl;
         ret = false;
     }
@@ -302,20 +302,42 @@ bool DemoApp::loadSaveFile(std::string savePath)
     return ret;
 }
 
-void DemoApp::setupDemoScene()
+std::string buildLogPath(std::string playerName)
 {
-    // Set save, log, config files
-    
     //Get Date
     time_t raw = time(0);
     struct tm * timeinfo = localtime( &raw );
     char buffer [80];
     strftime(buffer, 80, "%F", timeinfo);
     
-    logPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + "-" + std::string(buffer) + ".log";
+    std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
+                        + playerName + "-" + std::string(buffer);
+    
+    int i = 1;
+    std::ifstream testExist (std::string(logPath + ".log").c_str());
+    
+    while (testExist) {
+        testExist.close();
+        logPath = logPath + "_" + Util::toStringInt(i);
+        ++i;
+        testExist.open(std::string(logPath + ".log").c_str());
+    }
+    
+    logPath = logPath + ".log";
+    
+    return logPath;
+}
+
+void DemoApp::setupDemoScene()
+{
+    // Set save, log, config files
+        
     savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
     configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
     configBackup = Util::getIOSDir() + "/backup.conf";
+    
+    //Build log path
+    logPath = buildLogPath(playerName);
     
     bool saveGood = loadSaveFile(savePath);
     if (!saveGood)
@@ -327,7 +349,7 @@ void DemoApp::setupDemoScene()
     
     progressionMode = (ProgressionMode)globals.progressionMode;
     
-    seed = raw;
+    seed = time(0);
     srand(seed);
     
     OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/SpaceSkyBox", 5000, true);
@@ -967,12 +989,13 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
         OgreFramework::getSingletonPtr()->requestOgreShutdown();
     }
      */
-     /*
-    if (axisY <= 300 && axisX <= 300) {
+    
+    else if (axisY <= 300 && axisX <= 300) {
         player->setHP(globals.HPPositiveLimit);
         player->evaluatePlayerLevel(true);
-        setLevel(player->getLevel().nback, player->getLevel().control);
+        setLevel(-1,-1);
     }
+    /*
     else if (axisY <= 300 && axisX > 300) {
         pause = !pause;
         if (!pause) {

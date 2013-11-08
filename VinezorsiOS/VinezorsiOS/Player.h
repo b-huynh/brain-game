@@ -27,6 +27,7 @@ struct PlayerLevel
 
 enum Evaluation { PASS, FAIL, EVEN };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
+enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 
 class Player
 {
@@ -69,11 +70,14 @@ private:
     
     PlayerLevel level;
     struct Result {
+        int stageID;
         int timestamp;
         SectionInfo sectionInfo;
         PodInfo podInfo;
         int nback;
+        double speed;
         GameMode gameMode;
+        ProgressionMode progressionMode;
     };
     std::vector<Result> results;
     

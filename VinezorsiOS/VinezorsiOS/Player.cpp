@@ -644,11 +644,14 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 
                 // This code block is to record data of the pods
                 Result result;
+                result.stageID = globals.stageID;
                 result.timestamp = (int)(totalElapsed * 1000);
                 result.sectionInfo = closest->getSectionInfo();
                 result.podInfo = closest->getPodInfo();
                 result.nback = tunnel->getNBack();
                 result.gameMode = tunnel->getMode();
+                result.progressionMode = (ProgressionMode)globals.progressionMode;
+                result.speed = camSpeed;
                 results.push_back(result);
                 
                 //printf("%d %d\n", result.podInfo.goodPod, result.podInfo.podTaken);
@@ -782,31 +785,49 @@ void Player::evaluatePlayerLevel(bool pass)
 bool Player::saveProgress(std::string file)
 {
     std::ofstream out;
-    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    
+    bool newFile = false;
+    std::ifstream testOpen (file.c_str());
+    if (!testOpen) {
+        testOpen.close();
+        newFile = true;
+        out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    } else {
+        testOpen.close();
+        newFile = false;
+        out.open(file.c_str(), std::ofstream::out | std::ofstream::app);
+    }
     
     std::cout << "Saving tunnel log: " << file << std::endl;
     
     if (out.good()) {
-        out << "% debug seed: " << seed << endl;
-        out << "%" << endl;
-        out << "% PodLocation { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST }" << endl;
-        out << "% PodType { BLUE, GREEN, PINK, YELLOW }" << endl;
-        out << "% Nback {-inf, inf}" << endl;
-        out << "% IsNBackPod {no, yes}" << endl;
-        out << "% PlayerTookPod {no, yes}" << endl;
-        out << "% GameMode { TIMED, NORMAL }" << endl;
-        out << "% Timestamp (s)" << endl;
-        out << "%" << endl;
-        out << "% PodLocation PodType Nback IsNBackPod PlayerTookPod GameMode Timestamp" << endl;
+        if (newFile) {
+            out << "% debug seed: " << seed << endl;
+            out << "%" << endl;
+            out << "% StageID {0, inf}" << endl;
+            out << "% PodLocation { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST }" << endl;
+            out << "% PodType { BLUE, GREEN, PINK, YELLOW }" << endl;
+            out << "% Nback {-inf, inf}" << endl;
+            out << "% IsNBackPod {no, yes}" << endl;
+            out << "% PlayerTookPod {no, yes}" << endl;
+            out << "% GameMode { TIMED, NORMAL }" << endl;
+            out << "% ProgressionMode { SIMPLE_PROGRESSIVE, MULTISENSORY_PROGRESSIVE, DISTRIBUTIVE_ADAPATIVE }" << endl;
+            out << "% Timestamp (s)" << endl;
+            out << "%" << endl;
+            out << "% StageID PodLocation PodType Nback IsNBackPod PlayerTookPod Speed GameMode ProgressionMode Timestamp" << endl;
+        }
         
         for (int i = 0; i < results.size(); ++i) {
             //out << SOUTH << " "
-            out << results[i].podInfo.podLoc << " "
+            out << results[i].stageID << " "
+            << results[i].podInfo.podLoc << " "
             << results[i].podInfo.podType << " "
             << results[i].nback << " "
             << results[i].podInfo.goodPod << " "
             << results[i].podInfo.podTaken << " "
+            << results[i].speed << " "
             << results[i].gameMode << " "
+            << results[i].progressionMode + 1 << " "
             << results[i].timestamp << endl;
         }
         out.close();
