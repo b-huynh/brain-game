@@ -294,7 +294,7 @@ bool DemoApp::loadSaveFile(std::string savePath)
         ret = true;
     } else {
         currStageID = 5;
-        std::cout << "Starting from StageID 1" << std::endl;
+        std::cout << "Starting from StageID " << currStageID << std::endl;
         ret = false;
     }
     
@@ -924,6 +924,7 @@ void DemoApp::runDemo()
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 {
+    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) return true;
     if (player->getKeyLeft())
     {
         player->inputTotalX += evt.state.X.rel;
@@ -947,6 +948,7 @@ bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 }
 bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 {
+    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt)) return true;
     player->setKeyLeft(true);
     
     double axisY = evt.state.Y.abs;
@@ -959,6 +961,12 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
         player->setOldRot(player->getCamRot());
         player->setOldRoll(player->getCamRoll());
     }
+    /*
+    if (axisX <= 300 && axisY >= OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() - 100)
+    {
+        OgreFramework::getSingletonPtr()->requestOgreShutdown();
+    }
+     */
      /*
     if (axisY <= 300 && axisX <= 300) {
         player->setHP(globals.HPPositiveLimit);
@@ -984,6 +992,7 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 }
 bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
 {
+    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt)) return true;
     player->setKeyLeft(false);
     player->inputTotalX = 0.0;
     player->inputMoved = false;
