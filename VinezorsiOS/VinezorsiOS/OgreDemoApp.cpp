@@ -231,7 +231,7 @@ void setConfigValue(std::istream& in, std::string paramName)
 bool DemoApp::loadConfig(std::string filepath, int stageID)
 {
     std::string check, paramName, colon;
-    double paramVal;
+    char nextVal;
     
     std::ifstream in (filepath.c_str());
     if (!in.good())
@@ -243,17 +243,29 @@ bool DemoApp::loadConfig(std::string filepath, int stageID)
         std::cout << "Loading config: " << filepath << std::endl;
     if (!in.good()) return false;
     
-    
     do {
         in >> check;
-        if (check != "{") return;
+        if (check != "{") {
+            std::cout << "ERROR: Config file missing \'{\' in "
+                 << "at least one Stage configuration" << std::endl;
+            return false;
+        }
         
         in >> paramName;
-        while (paramName != "}") {
+        while (paramName != "}" && !in.eof()) {
             in >> colon;
+            nextVal = in.peek();
             setConfigValue(in, paramName);
             in >> paramName;
+            
+            if (colon == "{" || nextVal == '{' || paramName == "{" || in.eof()) {
+                std::cout << "ERROR: Config file missing \'}\' in "
+                          << "at least one Stage configuration." << std::endl;
+                in.close();
+                return false;
+            }
         }
+        
     } while (globals.stageID != stageID && !in.eof());
     
     in.close();
@@ -305,8 +317,13 @@ void DemoApp::setupDemoScene()
     configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
     configBackup = Util::getIOSDir() + "/backup.conf";
     
-    loadSaveFile(savePath);
-    loadConfig(configPath,currStageID);
+    bool saveGood = loadSaveFile(savePath);
+    if (!saveGood)
+        std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
+    
+    bool configGood = loadConfig(configPath,currStageID);
+    if (!configGood)
+        std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
     
     progressionMode = (ProgressionMode)globals.progressionMode;
     
