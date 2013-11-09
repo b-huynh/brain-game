@@ -75,6 +75,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const double TIMED_RUN_CONTROL_UP_DIST1 = 3000.0;
     const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
     const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
+    const int TIMED_RUN_NMAX = 5;
     
     sessionTime = SESSION_TIME;
     progressionMode = 2;
@@ -131,6 +132,7 @@ Util::ConfigGlobal::ConfigGlobal()
     timedRunControlUpDist1 = TIMED_RUN_CONTROL_UP_DIST1;
     timedRunControlUpDist2 = TIMED_RUN_CONTROL_UP_DIST2;
     timedRunControlUpDist3 = TIMED_RUN_CONTROL_UP_DIST3;
+    timedRunNMax = TIMED_RUN_NMAX;
 }
 
 // Updates variables that depend on other globals, should call this if a global has changed

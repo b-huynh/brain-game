@@ -80,6 +80,7 @@ namespace Util
         double timedRunControlUpDist1;
         double timedRunControlUpDist2;
         double timedRunControlUpDist3;
+        int timedRunNMax;
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;

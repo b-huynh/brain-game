@@ -273,7 +273,8 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine) const
         {
             //std::cout << vine->aftert << " " << vine->previoust << std::endl;
             if ((vine->aftert >= 0.46 && vine->aftert <= 0.54) ||
-                (vine->previoust < 0.46 && vine->aftert > 0.54))
+                (vine->previoust < 0.46 && vine->aftert > 0.54) ||
+                (vine->previoust < 0.46 && vine->aftert < vine->previoust))
                 ret.push_back(pods[i]);
         }
          /*

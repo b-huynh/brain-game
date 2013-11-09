@@ -262,23 +262,25 @@ bool Tunnel::hasAvailableSide(Direction side) const
 
 std::string Tunnel::determineMaterial() const
 {
-    switch (nback)
+    if (nback == 1)
+        return "General/Wall1";
+    switch ((nback + 2) % 4)
     {
-        case 1:
-            return "General/Wall1";
-        case 2:
+//        case 1:
+//            return "General/Wall1";
+        case 0:
             return "General/Wall2";
-        case 3:
+        case 1:
             return "General/Wall3";
-        case 4:
+        case 2:
             return "General/Wall4";
-        case 5:
+        case 3:
             return "General/Wall5";
-        case 6:
+        case 4:
             return "General/Wall6";
-        case 7:
+        case 5:
             return "General/Wall7";
-        case 8:
+        case 6:
             return "General/Wall8";
         default:
             return "General/Wall0";
@@ -318,9 +320,45 @@ SectionInfo Tunnel::getNextSectionInfo() const
     return SectionInfo(segmentType, segmentDir, segmentTurnAngle);
 }
 
+
 PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
 {
     Direction podLoc = Util::randDirection(sidesUsed);
+    
+    PodType final = POD_NONE;
+    PodType repeat1 = POD_NONE;
+    PodType repeat2 = POD_NONE;
+    PodType repeat3 = POD_NONE;
+    if (types.size() >= 2 && types[types.size() - 1].podType == types[types.size() - 2].podType)
+        repeat1 = types[types.size() - 1].podType;
+    if (types.size() >= 3 && repeat1 != POD_NONE && types[types.size() - 2].podType == types[types.size() - 3].podType)
+        repeat2 = types[types.size() - 2].podType;
+    if (types.size() >= 4 && repeat2 != POD_NONE && types[types.size() - 3].podType == types[types.size() - 4].podType)
+        repeat3 = types[types.size() - 3].podType;
+    int r = rand() % 100 + 1;
+    bool nbackGuarantee = r <= globals.podNBackChance;
+    
+    PodType guarantee = POD_NONE;
+    if (types.size() >= nback && nback > 0)
+        guarantee = types[types.size() - nback].podType;
+    if (nbackGuarantee && guarantee != repeat2)
+        final = guarantee;
+    if (final == POD_NONE)
+    {
+        std::vector<PodType> candidates;
+        for (int i = 0; i < 4; ++i)
+            if ((PodType)i != repeat2 && (PodType)i != guarantee)
+                candidates.push_back((PodType)i);
+        
+        PodType podType = candidates[rand() % candidates.size()];
+        if (types.size() > 0 && types[types.size() - 1].podType == podType)
+            podType = candidates[rand() % candidates.size()];
+        if (podType == repeat1)
+        {
+            podType = candidates[rand() % candidates.size()];
+        }
+        final = podType;
+    }
     
     /*
     PodType podType = (PodType)(rand() % 4);
@@ -330,7 +368,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     else if (nback == 1 && types.size() > 1 && // Nback == 1 has a different case
              types[types.size() - 1].podType == podType && types[types.size() - 2].podType == podType)
         podType = (PodType)(rand() % 4);
-    */
+
     
     // Next pod has a 1/3 chance to be a good pod
     PodType podType;
@@ -357,6 +395,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
         
         //podType = (PodType)(rand() % 4);
     }
+     */
     
     // The following deals with throwing special settings for certain NBacks occuring before this one
     PodType NBack = getNBackTest(types.size() - 1);
@@ -391,9 +430,9 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     
     // Determine NBack of next pod is good
     bool good = false;
-    if (nback <= 0 || (types.size() >= nback && types[types.size() - nback].podType == podType))
+    if (nback <= 0 || (types.size() >= nback && types[types.size() - nback].podType == final))
         good = true;
-    return PodInfo(podType, podLoc, good);
+    return PodInfo(final, podLoc, good);
 }
 
 void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood)

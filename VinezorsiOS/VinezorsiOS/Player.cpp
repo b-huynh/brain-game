@@ -640,7 +640,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
         
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
             // If player vine is halfway through a segment with a pod, we can get results
-            if (vines[i]->previoust > 0.54 && vines[i]->aftert >= vines[i]->previoust) {
+            if ((vines[i]->previoust > 0.54 && vines[i]->aftert >= vines[i]->previoust) ||
+                (vines[i]->previoust < 0.48 && vines[i]->aftert < vines[i]->previoust)) {
                 
                 History* history = tunnel->getHistory();
                 

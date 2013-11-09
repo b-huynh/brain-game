@@ -83,6 +83,7 @@ protected:
 #include "Tunnel.h"
 #include "Player.h"
 
+enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 
@@ -96,9 +97,11 @@ public:
 	DemoApp();
 	~DemoApp();
     
+    void setConfigValue(std::istream& in, std::string paramName);
+    void setMessage(std::string msg, MessageType type);
 	void startDemo(const char* name, MusicMode musica);
     void setSidebar();
-    void setOverlay();
+    void setOverlay(bool firstTime = false);
     void update(double elapsed);
     void setLevel(int n, int c, bool init = false);
     
@@ -139,6 +142,8 @@ private:
     Tunnel* tunnel;
 	Player* player;
     std::string playerName;
+    std::string message;
+    MessageType messageType;
     
     std::vector<Ogre::Overlay*> overlays;
     
