@@ -25,7 +25,9 @@ struct Vine
     double speed;
     
     Direction loc;
+    int previousID;
     double previoust;
+    int afterID;
     double aftert;
     
 	Vine();

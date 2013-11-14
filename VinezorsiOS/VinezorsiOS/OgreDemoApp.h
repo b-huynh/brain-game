@@ -97,6 +97,7 @@ public:
 	DemoApp();
 	~DemoApp();
     
+    bool setName(const char* name);
     void setConfigValue(std::istream& in, std::string paramName);
     void setMessage(std::string msg, MessageType type);
 	void startDemo(const char* name, MusicMode musica);

@@ -72,23 +72,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/AppDelegate.h"
-            timestampString = "405543922.25677"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
-            landmarkName = "-renderOneFrame:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "VinezorsiOS/AppDelegate.h"
-            timestampString = "405543922.25677"
+            timestampString = "405720916.706006"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "221"
@@ -104,11 +88,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/AppDelegate.h"
-            timestampString = "405543922.25677"
+            timestampString = "405720916.706006"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
+            startingLineNumber = "219"
+            endingLineNumber = "219"
+            landmarkName = "-renderOneFrame:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/AppDelegate.h"
+            timestampString = "405720916.706006"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "-renderOneFrame:"
             landmarkType = "5">
             <Locations>
@@ -164,11 +164,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/AppDelegate.h"
-            timestampString = "405543922.25677"
+            timestampString = "405720916.706006"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
             landmarkName = "-renderOneFrame:"
             landmarkType = "5">
             <Locations>
@@ -210,13 +210,259 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/Player.cpp"
-            timestampString = "405537849.375017"
+            timestampString = "405724400.266703"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "343"
-            endingLineNumber = "343"
+            startingLineNumber = "342"
+            endingLineNumber = "342"
             landmarkName = "Player::setOldPos(Vector3 value)"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/OgreDemoApp.cpp"
+            timestampString = "405907132.863967"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "DemoApp::setMessage(std::string msg, MessageType type)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::setupDemoScene()"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.568055"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "1018">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::setConfigValue(std::istream&amp;, std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.568432"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "1044">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::loadSaveFile(std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.568752"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "384">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::loadSaveFile(std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.569058"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "652">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::setLevel(int, int, bool)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.569417"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "118">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907159.653918"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "536">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405907161.569718"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "538">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/OgreDemoApp.cpp"
+            timestampString = "405907193.423707"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "DemoApp::setMessage(std::string msg, MessageType type)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::setupDemoScene()"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.12383"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "1008">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::setConfigValue(std::istream&amp;, std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.124243"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "1034">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::loadSaveFile(std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.124557"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "374">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::loadSaveFile(std::string)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.124837"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "642">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909104.454775"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "526">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909104.455209"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "970">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.125079"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "528">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DemoApp::update(double)"
+                  moduleName = "VinezorsiOS"
+                  urlString = "file://localhost/Users/phungc/brain-game/VinezorsiOS/VinezorsiOS/OgreDemoApp.cpp"
+                  timestampString = "405909106.125338"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "972">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

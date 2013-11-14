@@ -19,14 +19,14 @@ const double infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
+: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
-: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
+: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
@@ -443,7 +443,8 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     Vector3 forward = rot * globals.tunnelReferenceForward;
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
-	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentCounter, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    ++segmentCounter;
     
     switch (segmentType)
     {
@@ -503,7 +504,8 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
-    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    nsegment->rejuvenate(segmentCounter, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    ++segmentCounter;
     
     switch (segmentType)
     {

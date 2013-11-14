@@ -18,7 +18,7 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: parentNode(NULL), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
+: parentNode(NULL), tunnelSliceID(0), center(), rot(), width(0), depth(0), type(NORMAL_BLANK), materialName(""), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), prerangeT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
@@ -26,8 +26,8 @@ pods(), growthT(0), prerangeT(0), sidesUsed(), podHistory(false), infoStored(fal
         sidesUsed[i] = false;
 }
 
-TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
-: parentNode(parentNode), center(center), rot(rot), width(width), depth(depth), type(type), materialName(material), entireWall(NULL),
+TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
+: parentNode(parentNode), tunnelSliceID(nid), center(center), rot(rot), width(width), depth(depth), type(type), materialName(material), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), prerangeT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -144,6 +144,11 @@ void TunnelSlice::initWalls()
     entireWall->setOrientation(rot);
 
     ++wallID;
+}
+
+int TunnelSlice::getTunnelSliceID() const
+{
+    return tunnelSliceID;
 }
 
 double TunnelSlice::getWallLength() const
@@ -275,7 +280,10 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine) const
             if ((vine->aftert >= 0.46 && vine->aftert <= 0.54) ||
                 (vine->previoust < 0.46 && vine->aftert > 0.54) ||
                 (vine->previoust < 0.46 && vine->aftert < vine->previoust))
+            {
+                std::cout << "POD TAKEN\n";
                 ret.push_back(pods[i]);
+            }
         }
          /*
         double maxR = vine->getRadius() + pods[i]->getHeadRadius() * 1.5;
@@ -438,7 +446,6 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 
     
     manual->end();
     MeshPtr mesh = manual->convertToMesh(meshName);
-    
     Vector3 bl = p1;
     Vector3 tr = p1;
     bl = Vector3(min(bl.x, p2.x), min(bl.y, p2.y), min(bl.z, p2.z));
@@ -495,7 +502,9 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, Vector3 
     
     target->attachObject(intermediateSegmentEntity);
     
+    meshes.push_back(mesh);
     intermediateMeshID++;
+    parentNode->getCreator()->destroyManualObject(manual);
 }
 
 void TunnelSlice::connect(TunnelSlice* next)
@@ -607,7 +616,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = q1 * move;
     p4 = start + move;
     if (sidesUsed[WEST])
-        setIntermediateWall(entireIntermediate, WEST, p1, p2, p3, p4);    
+        setIntermediateWall(entireIntermediate, WEST, p1, p2, p3, p4);
 }
 
 void TunnelSlice::disconnect()
@@ -631,6 +640,14 @@ void TunnelSlice::disconnect()
         bottomLeftIntermediate->getCreator()->destroyMovableObject(bottomLeftIntermediate->getAttachedObject(0));
     if (leftIntermediate)
         leftIntermediate->getCreator()->destroyMovableObject(leftIntermediate->getAttachedObject(0));
+    
+    for (int i = 0; i < meshes.size(); ++i)
+    {
+        meshes[i]->unload();
+        Ogre::MeshManager::getSingleton().remove(meshes[i]->getName());
+    }
+    meshes.clear();
+    
     entireIntermediate->removeAndDestroyAllChildren();
     entireIntermediate->getCreator()->destroySceneNode(entireIntermediate);
     entireIntermediate = NULL;
@@ -662,8 +679,9 @@ void TunnelSlice::updateGrowth(double nt)
         pods[i]->setToGrowth(growthT);
 }
 
-void TunnelSlice::rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
+void TunnelSlice::rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS])
 {
+    this->tunnelSliceID = nid;
     this->type = type;
     this->center = center;
     this->rot = rot;

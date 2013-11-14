@@ -482,6 +482,8 @@ void Util::createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, float h, int nSegments)
@@ -547,6 +549,8 @@ void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strNa
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth)
@@ -587,6 +591,8 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::generateMaterials()

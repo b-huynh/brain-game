@@ -96,10 +96,8 @@
     mTimer = nil;
     
     try {
-        if (isOn)
-            demo.startDemo([str UTF8String], MUSIC_ENABLED);
-        else
-            demo.startDemo([str UTF8String], MUSIC_DISABLED);
+        if (isOn) demo.startDemo([str UTF8String], MUSIC_ENABLED);
+        else demo.startDemo([str UTF8String], MUSIC_DISABLED);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         

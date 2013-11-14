@@ -169,6 +169,22 @@ void DemoApp::startDemo(const char* name, MusicMode musica)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
+bool DemoApp::setName(const char* name)
+{
+    std::string test = "subject000";
+    playerName = name;
+    if (playerName.length() != test.length())
+        return false;
+    
+    if (playerName.substr(0, 7) != "subject")
+        return false;
+    
+    int id = atoi(playerName.substr(7, 3).c_str());
+    if (!((id >= 100 && id <= 200) || (id >= 900 && id <= 999)))
+        return false;
+    return true;
+}
+
 void DemoApp::setConfigValue(std::istream& in, std::string paramName)
 {
     if (paramName == "stageID")
@@ -308,12 +324,12 @@ bool DemoApp::loadSaveFile(std::string savePath)
     if (saveFile.good()) {
         saveFile >> currStageID;
         std::cout << "Starting from last session StageID " << currStageID << std::endl;
-        setMessage("Loaded Save " + playerName, MESSAGE_NORMAL);
+        setMessage("Loaded Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
     } else {
         currStageID = 5;
         std::cout << "Starting from StageID " << currStageID << std::endl;
-        setMessage("New Save " + playerName, MESSAGE_NORMAL);
+        setMessage("New Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = false;
     }
     
@@ -486,8 +502,6 @@ void DemoApp::setupDemoScene()
     sidebarMode = SIDEBAR_NONE;
     setSidebar();
     setOverlay(true);
-    
-    pause = true;
 }
 
 void DemoApp::setOverlay(bool firstTime)
@@ -528,7 +542,7 @@ void DemoApp::setOverlay(bool firstTime)
     label2->setCharHeight(globals.screenHeight / 50);
     label2->setColour(ColourValue::White);
     label2->setFontName("Arial");
-    label2->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
+    label2->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     
     label3->setMetricsMode(GMM_PIXELS);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
@@ -542,7 +556,7 @@ void DemoApp::setOverlay(bool firstTime)
     label4->setCharHeight(globals.screenHeight / 50);
     label4->setColour(ColourValue::White);
     label4->setFontName("Arial");
-    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     
     label5->setMetricsMode(GMM_PIXELS);
     label5->setAlignment(TextAreaOverlayElement::Center);
@@ -717,7 +731,7 @@ void DemoApp::update(double elapsed)
         if (!pause && player->getTotalElapsed() > globals.sessionTime)
         {
             player->saveProgress(logPath);
-            setMessage("Game Over! Thanks for playing!", MESSAGE_FINAL);
+            setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
             label5->setCaption(message);
             pause = true;
         }
@@ -753,6 +767,9 @@ void DemoApp::update(double elapsed)
             else {
                 // Generate a new tunnel because we are at the end
                 setLevel(-1, -1);
+                setMessage("Swipe to Continue", MESSAGE_NORMAL);
+                label5->setCaption(message);\
+                
             }
             
             // Show Pod Color and Play Sound
@@ -793,10 +810,12 @@ void DemoApp::update(double elapsed)
         label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
     else
         label1->setCaption("");
-    //label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    label2->setCaption("");
-    label3->setCaption("N-Back: " + Util::toStringInt(tunnel->getNBack()));
-    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    if (tunnel->getMode() == GAME_TIMED)
+        label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
+    else
+        label2->setCaption("");
+    label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     //label4->setCaption("");
     
     double indicatorRange = barHP->getWidth();
@@ -812,6 +831,7 @@ void DemoApp::update(double elapsed)
 
 void DemoApp::setLevel(int n, int c, bool init)
 {
+    pause = true;
     if (init)
     {
         GameMode game = (GameMode)globals.gameMode;
@@ -838,7 +858,8 @@ void DemoApp::setLevel(int n, int c, bool init)
                             globals.tunnelSegmentsPerSection,
                             globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections);
-        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED);
+        player->setCamSpeed(globals.initCamSpeed);
+        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, true);
         return;
         
     }
@@ -947,7 +968,7 @@ void DemoApp::setLevel(int n, int c, bool init)
     player->setDesireRot(rot);
     
     // If nback is same then panels are changing, keep speed same
-    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() == nback,
+    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() <= nback,
                       tunnel->getMode() == GAME_TIMED || omode == GAME_TIMED);
     
     setOverlay();
@@ -1012,17 +1033,59 @@ bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
         player->inputTotalX += evt.state.X.rel;
         if (!player->inputMoved)
         {
-            if (player->inputTotalX >= globals.screenWidth / 10.0 && player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+            if (player->inputTotalX >= globals.screenWidth / 12.0)
             {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val - 45);
-                player->inputMoved = true;
+                if (pause)
+                {
+                    if (player->getTotalElapsed() <= globals.sessionTime)
+                    {
+                        pause = !pause;
+                        player->setOldPos(player->getCamPos());
+                        player->setOldRot(player->getCamRot());
+                        player->setOldRoll(player->getCamRoll());
+                    
+                        message = "";
+                        messageType = MESSAGE_NONE;
+                        label5->setCaption("");
+                        player->inputMoved = true;
+                    }
+                }
+                else
+                {
+                    if (player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+                    {
+                        double val = player->getDesireRoll();
+                        player->setDesireRoll(val - 45);
+                        player->inputMoved = true;
+                    }
+                }
             }
-            else if (player->inputTotalX <= -globals.screenWidth / 10.0 && player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+            else if (player->inputTotalX <= -globals.screenWidth / 12.0)
             {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val + 45);
-                player->inputMoved = true;
+                if (pause)
+                {
+                    if (player->getTotalElapsed() <= globals.sessionTime)
+                    {
+                        pause = !pause;
+                        player->setOldPos(player->getCamPos());
+                        player->setOldRot(player->getCamRot());
+                        player->setOldRoll(player->getCamRoll());
+                    
+                        message = "";
+                        messageType = MESSAGE_NONE;
+                        label5->setCaption("");
+                        player->inputMoved = true;
+                    }
+                }
+                else
+                {
+                    if (player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+                    {
+                        double val = player->getDesireRoll();
+                        player->setDesireRoll(val + 45);
+                        player->inputMoved = true;
+                    }
+                }
             }
         }
     }
@@ -1036,6 +1099,7 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
     double axisY = evt.state.Y.abs;
     double axisX = evt.state.X.abs;
 
+    /*
     if (pause && totalElapsed <= globals.sessionTime)
     {
         pause = !pause;
@@ -1047,13 +1111,12 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
         messageType = MESSAGE_NONE;
         label5->setCaption("");
     }
+     */
     /*
     if (axisX <= 300 && axisY >= OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() - 100)
     {
         OgreFramework::getSingletonPtr()->requestOgreShutdown();
     }
-     */
-    
     else if (axisY <= 300 && axisX <= 300) {
         player->setHP(globals.HPPositiveLimit);
         player->evaluatePlayerLevel(true);
