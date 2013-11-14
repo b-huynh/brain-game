@@ -27,6 +27,7 @@ namespace Util
     struct ConfigGlobal
     {
         int stageID;
+        double sessionTime;
         int progressionMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
@@ -79,6 +80,7 @@ namespace Util
         double timedRunControlUpDist1;
         double timedRunControlUpDist2;
         double timedRunControlUpDist3;
+        int timedRunNMax;
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;
@@ -101,6 +103,8 @@ namespace Util
         int label3_posY;
         int label4_posX;
         int label4_posY;
+        int label5_posX;
+        int label5_posY;
         
         ConfigGlobal();
         void set();

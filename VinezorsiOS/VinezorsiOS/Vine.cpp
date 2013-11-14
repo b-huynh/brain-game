@@ -10,7 +10,7 @@
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), aftert(0.0)
+: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)

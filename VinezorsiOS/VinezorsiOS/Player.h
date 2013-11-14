@@ -49,6 +49,7 @@ private:
 	bool keyLeft;
 	bool keyRight;
 	
+    TunnelSlice* lookback;
     std::vector<Vine*> vines;
     
     MovementMode movementMode;
@@ -77,6 +78,7 @@ private:
         int nback;
         double speed;
         GameMode gameMode;
+        double score;
         ProgressionMode progressionMode;
     };
     std::vector<Result> results;

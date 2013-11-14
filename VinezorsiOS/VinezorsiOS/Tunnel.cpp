@@ -19,14 +19,14 @@ const double infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
+: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
-: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
+: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
@@ -262,23 +262,25 @@ bool Tunnel::hasAvailableSide(Direction side) const
 
 std::string Tunnel::determineMaterial() const
 {
-    switch (nback)
+    if (nback == 1)
+        return "General/Wall1";
+    switch ((nback + 2) % 4)
     {
-        case 1:
-            return "General/Wall1";
-        case 2:
+//        case 1:
+//            return "General/Wall1";
+        case 0:
             return "General/Wall2";
-        case 3:
+        case 1:
             return "General/Wall3";
-        case 4:
+        case 2:
             return "General/Wall4";
-        case 5:
+        case 3:
             return "General/Wall5";
-        case 6:
+        case 4:
             return "General/Wall6";
-        case 7:
+        case 5:
             return "General/Wall7";
-        case 8:
+        case 6:
             return "General/Wall8";
         default:
             return "General/Wall0";
@@ -318,9 +320,45 @@ SectionInfo Tunnel::getNextSectionInfo() const
     return SectionInfo(segmentType, segmentDir, segmentTurnAngle);
 }
 
+
 PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
 {
     Direction podLoc = Util::randDirection(sidesUsed);
+    
+    PodType final = POD_NONE;
+    PodType repeat1 = POD_NONE;
+    PodType repeat2 = POD_NONE;
+    PodType repeat3 = POD_NONE;
+    if (types.size() >= 2 && types[types.size() - 1].podType == types[types.size() - 2].podType)
+        repeat1 = types[types.size() - 1].podType;
+    if (types.size() >= 3 && repeat1 != POD_NONE && types[types.size() - 2].podType == types[types.size() - 3].podType)
+        repeat2 = types[types.size() - 2].podType;
+    if (types.size() >= 4 && repeat2 != POD_NONE && types[types.size() - 3].podType == types[types.size() - 4].podType)
+        repeat3 = types[types.size() - 3].podType;
+    int r = rand() % 100 + 1;
+    bool nbackGuarantee = r <= globals.podNBackChance;
+    
+    PodType guarantee = POD_NONE;
+    if (types.size() >= nback && nback > 0)
+        guarantee = types[types.size() - nback].podType;
+    if (nbackGuarantee && guarantee != repeat2)
+        final = guarantee;
+    if (final == POD_NONE)
+    {
+        std::vector<PodType> candidates;
+        for (int i = 0; i < 4; ++i)
+            if ((PodType)i != repeat2 && (PodType)i != guarantee)
+                candidates.push_back((PodType)i);
+        
+        PodType podType = candidates[rand() % candidates.size()];
+        if (types.size() > 0 && types[types.size() - 1].podType == podType)
+            podType = candidates[rand() % candidates.size()];
+        if (podType == repeat1)
+        {
+            podType = candidates[rand() % candidates.size()];
+        }
+        final = podType;
+    }
     
     /*
     PodType podType = (PodType)(rand() % 4);
@@ -330,7 +368,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     else if (nback == 1 && types.size() > 1 && // Nback == 1 has a different case
              types[types.size() - 1].podType == podType && types[types.size() - 2].podType == podType)
         podType = (PodType)(rand() % 4);
-    */
+
     
     // Next pod has a 1/3 chance to be a good pod
     PodType podType;
@@ -357,6 +395,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
         
         //podType = (PodType)(rand() % 4);
     }
+     */
     
     // The following deals with throwing special settings for certain NBacks occuring before this one
     PodType NBack = getNBackTest(types.size() - 1);
@@ -391,9 +430,9 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo & sectionInfo) const
     
     // Determine NBack of next pod is good
     bool good = false;
-    if (nback <= 0 || (types.size() >= nback && types[types.size() - nback].podType == podType))
+    if (nback <= 0 || (types.size() >= nback && types[types.size() - nback].podType == final))
         good = true;
-    return PodInfo(podType, podLoc, good);
+    return PodInfo(final, podLoc, good);
 }
 
 void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnDegrees, PodType podType, Direction podLoc, bool podGood)
@@ -404,7 +443,8 @@ void Tunnel::addSegment(TunnelType segmentType, Direction segmentTurn, int turnD
     
     Vector3 forward = rot * globals.tunnelReferenceForward;
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
-	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentCounter, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    ++segmentCounter;
     
     switch (segmentType)
     {
@@ -464,7 +504,8 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
-    nsegment->rejuvenate(segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    nsegment->rejuvenate(segmentCounter, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
+    ++segmentCounter;
     
     switch (segmentType)
     {

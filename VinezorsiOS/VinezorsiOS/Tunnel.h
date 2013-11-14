@@ -28,6 +28,7 @@ public:
 	Vector3 end;
     std::list<TunnelSlice*> segments;
     std::list<TunnelSlice*>::iterator current;
+    int segmentCounter;
 	double segmentWidth;
 	double segmentDepth;
 	int segmentMinAngleTurn;

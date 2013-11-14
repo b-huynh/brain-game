@@ -55,6 +55,8 @@ class TunnelSlice
 private:
     SceneNode* parentNode;
     
+    int tunnelSliceID;
+    
 	Vector3 center;
     Quaternion rot;
 	double width;
@@ -84,6 +86,7 @@ private:
 	SceneNode* bottomIntermediate;
 	SceneNode* bottomLeftIntermediate;
 	SceneNode* leftIntermediate;
+    std::vector<MeshPtr> meshes;
     
     std::vector<Pod*> pods;
     double growthT; // Pod Growth Timing animation
@@ -97,10 +100,11 @@ private:
     bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     
+    int getTunnelSliceID() const;
     double getWallLength() const;
     TunnelType getType() const;
     Quaternion getQuaternion() const;
@@ -139,7 +143,7 @@ public:
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

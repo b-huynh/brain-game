@@ -107,8 +107,18 @@ void DemoApp::finalizeRTShaderSystem()
 }
 #endif // USE_RTSHADER_SYSTEM
 
+void DemoApp::setMessage(std::string msg, MessageType type)
+{
+    if (type > messageType)
+    {
+        message = msg;
+        messageType = type;
+    }
+}
+
 void DemoApp::startDemo(const char* name, MusicMode musica)
 {
+    totalElapsed = 0.0;
     playerName = std::string(name);
     musicMode = musica;
     
@@ -159,10 +169,28 @@ void DemoApp::startDemo(const char* name, MusicMode musica)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-void setConfigValue(std::istream& in, std::string paramName)
+bool DemoApp::setName(const char* name)
+{
+    std::string test = "subject000";
+    playerName = name;
+    if (playerName.length() != test.length())
+        return false;
+    
+    if (playerName.substr(0, 7) != "subject")
+        return false;
+    
+    int id = atoi(playerName.substr(7, 3).c_str());
+    if (!((id >= 100 && id <= 200) || (id >= 900 && id <= 999)))
+        return false;
+    return true;
+}
+
+void DemoApp::setConfigValue(std::istream& in, std::string paramName)
 {
     if (paramName == "stageID")
         in >> globals.stageID;
+    else if (paramName == "sessionTime")
+        in >> globals.sessionTime;
     else if (paramName == "nback")
         in >> globals.nback;
     else if (paramName == "control")
@@ -224,8 +252,13 @@ void setConfigValue(std::istream& in, std::string paramName)
         in >> globals.timedRunControlUpDist2;
     else if (paramName == "timedRunControlUpDist3")
         in >> globals.timedRunControlUpDist3;
+    else if (paramName == "timedRunNMax")
+        in >> globals.timedRunNMax;
     else
+    {
         std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
+        setMessage("WARNING: Unknown config parameter", MESSAGE_NOTIFY);
+    }
 }
 
 bool DemoApp::loadConfig(std::string filepath, int stageID)
@@ -291,10 +324,12 @@ bool DemoApp::loadSaveFile(std::string savePath)
     if (saveFile.good()) {
         saveFile >> currStageID;
         std::cout << "Starting from last session StageID " << currStageID << std::endl;
+        setMessage("Loaded Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
     } else {
         currStageID = 5;
         std::cout << "Starting from StageID " << currStageID << std::endl;
+        setMessage("New Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = false;
     }
     
@@ -345,7 +380,10 @@ void DemoApp::setupDemoScene()
     
     bool configGood = loadConfig(configPath,currStageID);
     if (!configGood)
+    {
         std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
+        setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    }
     
     progressionMode = (ProgressionMode)globals.progressionMode;
     
@@ -441,6 +479,8 @@ void DemoApp::setupDemoScene()
                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
     label4= static_cast<TextAreaOverlayElement*>(
                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
+    label5= static_cast<TextAreaOverlayElement*>(
+                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayMain");
@@ -454,18 +494,17 @@ void DemoApp::setupDemoScene()
     panel2->addChild(label2);
     panel2->addChild(label3);
     panel2->addChild(label4);
+    panel2->addChild(label5);
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
     
     sidebarMode = SIDEBAR_NONE;
     setSidebar();
-    setOverlay();
-    
-    pause = true;
+    setOverlay(true);
 }
 
-void DemoApp::setOverlay()
+void DemoApp::setOverlay(bool firstTime)
 {
     panel1->setMetricsMode(GMM_PIXELS);
     panel1->setPosition(10, 10);
@@ -503,7 +542,7 @@ void DemoApp::setOverlay()
     label2->setCharHeight(globals.screenHeight / 50);
     label2->setColour(ColourValue::White);
     label2->setFontName("Arial");
-    label2->setCaption("Nback: " + Util::toStringInt(tunnel->getNBack()));
+    label2->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     
     label3->setMetricsMode(GMM_PIXELS);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
@@ -517,7 +556,15 @@ void DemoApp::setOverlay()
     label4->setCharHeight(globals.screenHeight / 50);
     label4->setColour(ColourValue::White);
     label4->setFontName("Arial");
-    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
+    
+    label5->setMetricsMode(GMM_PIXELS);
+    label5->setAlignment(TextAreaOverlayElement::Center);
+    label5->setPosition(globals.label5_posX, globals.label5_posY);
+    label5->setCharHeight(globals.screenHeight / 50);
+    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    label5->setFontName("Arial");
+    if (firstTime) label5->setCaption(message);
     
     if (tunnel->getMode() == GAME_TIMED)
     {
@@ -568,7 +615,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            
+            /*
             m_pCameraSide->setPosition(Vector3(0, 0, 30));
             m_pCameraSide->lookAt(Vector3(0, 0, 0));
             m_pCameraSide->setNearClipDistance(1);
@@ -579,6 +626,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
                                            double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             */
             break;
         case SIDEBAR_BOTTOM_LTR:
             m_pViewportMain->setDimensions(
@@ -587,7 +635,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            
+            /*
             m_pCameraSide->setPosition(Vector3(0, 0, 30));
             m_pCameraSide->lookAt(Vector3(0, 0, 0));
             m_pCameraSide->setNearClipDistance(1);
@@ -599,6 +647,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             */
             break;
         case SIDEBAR_BOTTOM_RTL:
             m_pViewportMain->setDimensions(
@@ -607,7 +656,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            
+            /*
             m_pCameraSide->setPosition(Vector3(0, 0, 30));
             m_pCameraSide->lookAt(Vector3(0, 0, 0));
             m_pCameraSide->setNearClipDistance(1);
@@ -619,12 +668,26 @@ void DemoApp::setSidebar()
                                            double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             */
             break;
     }
 }
 
 void DemoApp::update(double elapsed)
 {
+    totalElapsed += elapsed;
+    /*
+    if (message != "" && (
+        (messageType == MESSAGE_NORMAL && totalElapsed >= 3.0) ||
+        (messageType == MESSAGE_NOTIFY && totalElapsed >= 60.0) ||
+        (messageType == MESSAGE_ERROR && totalElapsed >= 60.0))
+        )
+        {
+            message = "";
+            messageType = MESSAGE_NONE;
+            label5->setCaption("");
+        }
+    */
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
     // Determine whether a stage has completed
@@ -665,6 +728,14 @@ void DemoApp::update(double elapsed)
     if (!pause) {
         player->update(elapsed, tunnel);
         
+        if (!pause && player->getTotalElapsed() > globals.sessionTime)
+        {
+            player->saveProgress(logPath);
+            setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
+            label5->setCaption(message);
+            pause = true;
+        }
+        
         // Animate Pod Growing outwards or Growing inwards
         const double GROWTH_SPEED = 1;
         TunnelSlice* nextSliceM = tunnel->getNext(globals.podAppearance);
@@ -696,6 +767,9 @@ void DemoApp::update(double elapsed)
             else {
                 // Generate a new tunnel because we are at the end
                 setLevel(-1, -1);
+                setMessage("Swipe to Continue", MESSAGE_NORMAL);
+                label5->setCaption(message);\
+                
             }
             
             // Show Pod Color and Play Sound
@@ -711,6 +785,7 @@ void DemoApp::update(double elapsed)
         tunnel->update(elapsed);
         
     } else {
+        /*
         // Navigation Debug Keys
         if (player->getKeyUp())
             player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
@@ -720,6 +795,7 @@ void DemoApp::update(double elapsed)
             player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
         if (player->getKeyRight())
             player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+         */
     }
     
     // Graphical view changes
@@ -734,9 +810,12 @@ void DemoApp::update(double elapsed)
         label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
     else
         label1->setCaption("");
-    label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    label3->setCaption("N-Back: " + Util::toStringInt(tunnel->getNBack()));
-    label4->setCaption("Speed: " + Util::toStringDouble(player->getCamSpeed()));
+    if (tunnel->getMode() == GAME_TIMED)
+        label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
+    else
+        label2->setCaption("");
+    label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     //label4->setCaption("");
     
     double indicatorRange = barHP->getWidth();
@@ -752,6 +831,7 @@ void DemoApp::update(double elapsed)
 
 void DemoApp::setLevel(int n, int c, bool init)
 {
+    pause = true;
     if (init)
     {
         GameMode game = (GameMode)globals.gameMode;
@@ -778,7 +858,8 @@ void DemoApp::setLevel(int n, int c, bool init)
                             globals.tunnelSegmentsPerSection,
                             globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections);
-        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED);
+        player->setCamSpeed(globals.initCamSpeed);
+        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, true);
         return;
         
     }
@@ -818,7 +899,7 @@ void DemoApp::setLevel(int n, int c, bool init)
         if (tunnel->getMode() == GAME_TIMED && progressionMode == DISTRIBUTIVE_ADAPTIVE)
         {
             checkGrade = false;
-            if (tunnel->getNBack() + 1 < player->getLevel().nback)
+            if (tunnel->getNBack() + 1 < player->getLevel().nback && tunnel->getNBack() + 1 <= globals.timedRunNMax)
             {
                 loadStage = false;
                 nlevel = tunnel->getNBack() + 1;
@@ -887,7 +968,7 @@ void DemoApp::setLevel(int n, int c, bool init)
     player->setDesireRot(rot);
     
     // If nback is same then panels are changing, keep speed same
-    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() == nback,
+    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() <= nback,
                       tunnel->getMode() == GAME_TIMED || omode == GAME_TIMED);
     
     setOverlay();
@@ -952,17 +1033,59 @@ bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
         player->inputTotalX += evt.state.X.rel;
         if (!player->inputMoved)
         {
-            if (player->inputTotalX >= globals.screenWidth / 10.0 && player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+            if (player->inputTotalX >= globals.screenWidth / 12.0)
             {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val - 45);
-                player->inputMoved = true;
+                if (pause)
+                {
+                    if (player->getTotalElapsed() <= globals.sessionTime)
+                    {
+                        pause = !pause;
+                        player->setOldPos(player->getCamPos());
+                        player->setOldRot(player->getCamRot());
+                        player->setOldRoll(player->getCamRoll());
+                    
+                        message = "";
+                        messageType = MESSAGE_NONE;
+                        label5->setCaption("");
+                        player->inputMoved = true;
+                    }
+                }
+                else
+                {
+                    if (player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
+                    {
+                        double val = player->getDesireRoll();
+                        player->setDesireRoll(val - 45);
+                        player->inputMoved = true;
+                    }
+                }
             }
-            else if (player->inputTotalX <= -globals.screenWidth / 10.0 && player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+            else if (player->inputTotalX <= -globals.screenWidth / 12.0)
             {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val + 45);
-                player->inputMoved = true;
+                if (pause)
+                {
+                    if (player->getTotalElapsed() <= globals.sessionTime)
+                    {
+                        pause = !pause;
+                        player->setOldPos(player->getCamPos());
+                        player->setOldRot(player->getCamRot());
+                        player->setOldRoll(player->getCamRoll());
+                    
+                        message = "";
+                        messageType = MESSAGE_NONE;
+                        label5->setCaption("");
+                        player->inputMoved = true;
+                    }
+                }
+                else
+                {
+                    if (player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
+                    {
+                        double val = player->getDesireRoll();
+                        player->setDesireRoll(val + 45);
+                        player->inputMoved = true;
+                    }
+                }
             }
         }
     }
@@ -976,20 +1099,24 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
     double axisY = evt.state.Y.abs;
     double axisX = evt.state.X.abs;
 
-    if (pause)
+    /*
+    if (pause && totalElapsed <= globals.sessionTime)
     {
         pause = !pause;
         player->setOldPos(player->getCamPos());
         player->setOldRot(player->getCamRot());
         player->setOldRoll(player->getCamRoll());
+        
+        message = "";
+        messageType = MESSAGE_NONE;
+        label5->setCaption("");
     }
+     */
     /*
     if (axisX <= 300 && axisY >= OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() - 100)
     {
         OgreFramework::getSingletonPtr()->requestOgreShutdown();
     }
-     */
-    
     else if (axisY <= 300 && axisX <= 300) {
         player->setHP(globals.HPPositiveLimit);
         player->evaluatePlayerLevel(true);
