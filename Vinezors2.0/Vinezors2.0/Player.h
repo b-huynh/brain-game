@@ -25,7 +25,9 @@ struct PlayerLevel
     PlayerLevel();
 };
 
+enum Evaluation { PASS, FAIL, EVEN };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
+enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 
 class Player
 {
@@ -47,6 +49,7 @@ private:
 	bool keyLeft;
 	bool keyRight;
 	
+    TunnelSlice* lookback;
     std::vector<Vine*> vines;
     
     MovementMode movementMode;
@@ -68,10 +71,15 @@ private:
     
     PlayerLevel level;
     struct Result {
+        int stageID;
         int timestamp;
         SectionInfo sectionInfo;
         PodInfo podInfo;
         int nback;
+        double speed;
+        GameMode gameMode;
+        double score;
+        ProgressionMode progressionMode;
     };
     std::vector<Result> results;
     
@@ -86,7 +94,10 @@ private:
     OgreOggSound::OgreOggISound* soundAccelerate;
     OgreOggSound::OgreOggISound* soundDecelerate;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
+    
 public:
+    double inputTotalX;
+    bool inputMoved;
     
 	Player();
 	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
@@ -121,6 +132,8 @@ public:
     PlayerLevel getLevel() const;
 	double getTotalElapsed() const;
 	double getTotalDistanceTraveled() const;
+    double getAccuracy() const;
+    Evaluation getEvaluation(GameMode emode) const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -157,8 +170,8 @@ public:
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
     
-    void setSounds(GameMode mode);
-    void newTunnel(Tunnel* tunnel);
+    void setSounds(bool mode);
+    void newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed = false, bool resetscore = false);
     
 	void move(Vector3 delta);
     void changeMovementMode();
@@ -169,6 +182,7 @@ public:
     
     void evaluatePlayerLevel(bool pass);
     bool saveProgress(std::string file);
+    bool saveStage(std::string file, int lastStageID);
     void setConfigValues();
     
     ~Player();

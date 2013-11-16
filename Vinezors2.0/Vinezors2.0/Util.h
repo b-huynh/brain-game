@@ -21,13 +21,14 @@ enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST,
 #define NUM_DIRECTIONS 8
 
 namespace Util
-{    
+{
     static const double EPSILON = 0.001;
     
     struct ConfigGlobal
     {
         int stageID;
-        int soundMode;
+        double sessionTime;
+        int progressionMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
@@ -48,6 +49,7 @@ namespace Util
         double podHeadRadius;
         double podStemRadius;
         double podStemLength;
+        int podNBackChance;
         double seatLength;
         int tunnelSections;
         int nback;
@@ -56,6 +58,10 @@ namespace Util
         int startingHP;
         int HPNegativeLimit;
         int HPPositiveLimit;
+        int HPNegativeCorrectAnswer;
+        int HPNegativeWrongAnswer;
+        int HPPositiveCorrectAnswer;
+        int HPPositiveWrongAnswer;
         double drainSpeed;
         double initCamSpeed;
         double modifierCamSpeed;
@@ -70,6 +76,11 @@ namespace Util
         double HPBarYRef;
         double HPBarWidth;
         double HPBarHeight;
+        double timedRunTimer;
+        double timedRunControlUpDist1;
+        double timedRunControlUpDist2;
+        double timedRunControlUpDist3;
+        int timedRunNMax;
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;
@@ -92,6 +103,8 @@ namespace Util
         int label3_posY;
         int label4_posX;
         int label4_posY;
+        int label5_posX;
+        int label5_posY;
         
         ConfigGlobal();
         void set();
@@ -110,6 +123,7 @@ namespace Util
     std::string toStringInt(int value);
     std::string toStringDouble(double value);
     std::string getSaveDir();
+    std::string getIOSDir();
     
     //Config Values
     void setConfigValue (std::string param, double paramVal);
@@ -119,7 +133,7 @@ namespace Util
     void createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings = 16, int nSegments = 16);
     void createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r,  float h, int nSegments = 16);
     void createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth);
-
+    
     void generateMaterials();
 };
 

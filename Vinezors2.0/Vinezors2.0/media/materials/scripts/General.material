@@ -88,6 +88,21 @@ material General/BaseYellow
     }
 }
 
+material General/BarColors
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture barcolors.png
+        }
+      } 
+    }
+}
+
 material General/Sun
 {
     technique
@@ -117,7 +132,6 @@ material General/WallGlass
             scene_blend add
             depth_write off
             diffuse vertexcolour
-            cull_hardware none
 
             texture_unit
 			{
@@ -150,7 +164,6 @@ material General/Wall0
         pass
         {
             lighting on
-            hardware_culling none
  
             ambient 0.1 0.1 0.1 1
             diffuse 0.9 0.9 0.9 1
@@ -166,7 +179,6 @@ material General/Wall1
         pass
         {
             lighting on
-            hardware_culling none
 
             texture_unit
 			{
@@ -183,7 +195,6 @@ material General/Wall2
         pass
 		{
             lighting on
-            hardware_culling none
 
             texture_unit
 			{
@@ -200,7 +211,6 @@ material General/Wall3
         pass
 		{
             lighting on
-            hardware_culling none
 
             texture_unit
 			{
@@ -217,7 +227,6 @@ material General/Wall4
         pass
 		{
             lighting on
-            hardware_culling none
 
             texture_unit
 			{
@@ -236,7 +245,6 @@ material General/Wall5
             lighting on
             scene_blend alpha_blend
             depth_write off
-            hardware_culling none
 
             texture_unit
 			{
@@ -255,7 +263,6 @@ material General/Wall6
             lighting on
             scene_blend alpha_blend
             depth_write off
-            hardware_culling none
 
             texture_unit
 			{
@@ -274,7 +281,6 @@ material General/Wall7
             lighting on
             scene_blend alpha_blend
             depth_write off
-            hardware_culling none
 
             texture_unit
 			{
@@ -284,7 +290,23 @@ material General/Wall7
 	}
 }
 
-material General/WallCheckpoint
+material General/Wall8
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture grass.jpg
+			}
+		}
+	}
+}
+
+material General/WallCheckpointEven
 {
     technique
     {
@@ -292,9 +314,39 @@ material General/WallCheckpoint
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.0 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.5 0.5 0.0 1
+            diffuse 1.0 1.0 0.0 1
+            emissive 0.5 0.5 0.0 1
+        }
+    }
+}
+
+material General/WallCheckpointPass
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.0 0.5 0.0 1
+            diffuse 0.0 1.0 0.0 1
+            emissive 0.0 0.5 0.0 1
+        }
+    }
+}
+
+material General/WallCheckpointFail
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.5 0.0 0.0 1
+            diffuse 1.0 0.0 0.0 1
+            emissive 0.5 0.0 0.0 1
         }
     }
 }
@@ -422,7 +474,7 @@ material General/PodShell
     }
 }
 
-material General/VineTip
+material General/VineTop
 {
     technique
     {
@@ -430,9 +482,26 @@ material General/VineTip
         {
             lighting on
  
-            ambient 0.3 0.3 0.3 1
-            diffuse 0.7 0.7 0.7 1
-            emissive 0.3 0.3 0.3 1
+            ambient 0.0 0.3 0.3 1
+            diffuse 0.5 1.0 1.0 1
+            emissive 0.0 0.3 0.3 1
+        }
+    }
+}
+
+material General/VineBase
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.1 0.1 0.1 1
         }
     }
 }

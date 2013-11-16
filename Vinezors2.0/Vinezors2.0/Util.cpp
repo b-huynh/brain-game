@@ -15,6 +15,8 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
+    const double SESSION_TIME = 1500.0;
+    
     const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
     const Vector3 TUNNEL_REFERENCE_RIGHT = Vector3(1, 0, 0);
@@ -29,11 +31,12 @@ Util::ConfigGlobal::ConfigGlobal()
     const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
     const int INITIATION_SECTIONS = 1;
     const double VINE_T_OFFSET = 1.5;
-    const double VINE_RADIUS = 2.5;
+    const double VINE_RADIUS = 1.5;
     const int POD_APPEARANCE = 2;
     const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
     const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
-    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2.5;
+    const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
+    const int POD_NBACK_CHANCE = 33;
     const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
     const int TUNNEL_SECTIONS = 5;
@@ -44,13 +47,17 @@ Util::ConfigGlobal::ConfigGlobal()
     const int STARTING_HP = 0;
     const int HP_NEGATIVE_LIMIT = -6;
     const int HP_POSITIVE_LIMIT = 6;
+    const int HP_NEGATIVE_CORRECT_ANSWER = 2;
+    const int HP_NEGATIVE_WRONG_ANSWER = -1;
+    const int HP_POSITIVE_CORRECT_ANSWER = 1;
+    const int HP_POSITIVE_WRONG_ANSWER = -2;
     const double DRAIN_SPEED = 2;
     const double INIT_CAM_SPEED = 15.0;
     const double MODIFIER_CAM_SPEED = 5.0;
     const double MIN_CAM_SPEED = 5.0;
     const double MAX_CAM_SPEED = 25.0;
     const double NLEVEL_SPEED_MODIFIER = 0.8;
-
+    
     const int NUM_TO_SPEED_UP = 3;
     const int NUM_TO_SPEED_DOWN = 1;
     const double STEPSIZE_SPEED_UP = 3.0;
@@ -64,30 +71,15 @@ Util::ConfigGlobal::ConfigGlobal()
     const int SCREEN_WIDTH = 1024;
     const int SCREEN_HEIGHT = 800;
     
-    const int VIEWPORT_MAIN_WIDTH_MODERIGHT = SCREEN_WIDTH - 224;
-    const int VIEWPORT_MAIN_HEIGHT_MODERIGHT = SCREEN_HEIGHT;
-    const int VIEWPORT_SIDE_WIDTH_MODERIGHT = 224;
-    const int VIEWPORT_SIDE_HEIGHT_MODERIGHT = SCREEN_HEIGHT;
+    const double TIMED_RUN_TIMER = 120.0;
+    const double TIMED_RUN_CONTROL_UP_DIST1 = 3000.0;
+    const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
+    const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
+    const int TIMED_RUN_NMAX = 5;
     
-    const int VIEWPORT_MAIN_WIDTH_MODEBOTTOM = SCREEN_WIDTH;
-    const int VIEWPORT_MAIN_HEIGHT_MODEBOTTOM = SCREEN_HEIGHT - 100;
-    const int VIEWPORT_SIDE_WIDTH_MODEBOTTOM = SCREEN_WIDTH;
-    const int VIEWPORT_SIDE_HEIGHT_MODEBOTTOM = 100;
-    
-    const int VIEWPORT_MAIN_WIDTH_MODENONE = SCREEN_WIDTH;
-    const int VIEWPORT_MAIN_HEIGHT_MODENONE = SCREEN_HEIGHT;
-    const int VIEWPORT_SIDE_WIDTH_MODENONE = 0;
-    const int VIEWPORT_SIDE_HEIGHT_MODENONE = 0;
-    
-    const int LABEL1_POSX = 10;
-    const int LABEL1_POSY = SCREEN_HEIGHT - 70;
-    const int LABEL2_POSX = 10;
-    const int LABEL2_POSY = SCREEN_HEIGHT - 110;
-    const int LABEL3_POSX = 10;
-    const int LABEL3_POSY = SCREEN_HEIGHT - 150;
-    const int LABEL4_POSX = 10;
-    const int LABEL4_POSY = SCREEN_HEIGHT - 190;
-    
+    sessionTime = SESSION_TIME;
+    progressionMode = 2;
+    gameMode = 1;
     tunnelReferenceForward = TUNNEL_REFERENCE_FORWARD;
     tunnelReferenceUpward = TUNNEL_REFERENCE_UPWARD;
     tunnelReferenceRight = TUNNEL_REFERENCE_RIGHT;
@@ -107,6 +99,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podHeadRadius = POD_HEAD_RADIUS;
     podStemRadius = POD_STEM_RADIUS;
     podStemLength = POD_STEM_LENGTH;
+    podNBackChance = POD_NBACK_CHANCE;
     seatLength = SEAT_LENGTH;
     tunnelSections = TUNNEL_SECTIONS;
     nback = NBACK;
@@ -115,6 +108,10 @@ Util::ConfigGlobal::ConfigGlobal()
     startingHP = STARTING_HP;
     HPNegativeLimit = HP_NEGATIVE_LIMIT;
     HPPositiveLimit = HP_POSITIVE_LIMIT;
+    HPNegativeCorrectAnswer = HP_NEGATIVE_CORRECT_ANSWER;
+    HPNegativeWrongAnswer = HP_NEGATIVE_WRONG_ANSWER;
+    HPPositiveCorrectAnswer = HP_POSITIVE_CORRECT_ANSWER;
+    HPPositiveWrongAnswer = HP_POSITIVE_WRONG_ANSWER;
     drainSpeed = DRAIN_SPEED;
     initCamSpeed = INIT_CAM_SPEED;
     modifierCamSpeed = MODIFIER_CAM_SPEED;
@@ -131,26 +128,11 @@ Util::ConfigGlobal::ConfigGlobal()
     HPBarHeight = HP_BAR_HEIGHT;
     screenWidth = SCREEN_WIDTH;
     screenHeight = SCREEN_HEIGHT;
-    viewportMainWidth_modeRight = VIEWPORT_MAIN_WIDTH_MODERIGHT;
-    viewportMainHeight_modeRight = VIEWPORT_MAIN_HEIGHT_MODERIGHT;
-    viewportSideWidth_modeRight = VIEWPORT_SIDE_WIDTH_MODERIGHT;
-    viewportSideHeight_modeRight = VIEWPORT_SIDE_HEIGHT_MODERIGHT;
-    viewportMainWidth_modeBottom = VIEWPORT_MAIN_WIDTH_MODEBOTTOM;
-    viewportMainHeight_modeBottom = VIEWPORT_MAIN_HEIGHT_MODEBOTTOM;
-    viewportSideWidth_modeBottom = VIEWPORT_SIDE_WIDTH_MODEBOTTOM;
-    viewportSideHeight_modeBottom = VIEWPORT_SIDE_HEIGHT_MODEBOTTOM;
-    viewportMainWidth_modeNone = VIEWPORT_MAIN_WIDTH_MODENONE;
-    viewportMainHeight_modeNone = VIEWPORT_MAIN_HEIGHT_MODENONE;
-    viewportSideWidth_modeNone = VIEWPORT_SIDE_WIDTH_MODENONE;
-    viewportSideHeight_modeNone = VIEWPORT_SIDE_HEIGHT_MODENONE;
-    label1_posX = LABEL1_POSX;
-    label1_posY = LABEL1_POSY;
-    label2_posX = LABEL2_POSX;
-    label2_posY = LABEL2_POSY;
-    label3_posX = LABEL3_POSX;
-    label3_posY = LABEL3_POSY;
-    label4_posX = LABEL4_POSX;
-    label4_posY = LABEL4_POSY;
+    timedRunTimer = TIMED_RUN_TIMER;
+    timedRunControlUpDist1 = TIMED_RUN_CONTROL_UP_DIST1;
+    timedRunControlUpDist2 = TIMED_RUN_CONTROL_UP_DIST2;
+    timedRunControlUpDist3 = TIMED_RUN_CONTROL_UP_DIST3;
+    timedRunNMax = TIMED_RUN_NMAX;
 }
 
 // Updates variables that depend on other globals, should call this if a global has changed
@@ -171,14 +153,16 @@ void Util::ConfigGlobal::set()
     viewportSideWidth_modeNone = 0;
     viewportSideHeight_modeNone = 0;
     
-    label1_posX = 10;
-    label1_posY = screenHeight - 70;
-    label2_posX = 10;
-    label2_posY = screenHeight - 110;
-    label3_posX = 10;
-    label3_posY = screenHeight - 150;
-    label4_posX = 10;
-    label4_posY = screenHeight - 190;
+    label1_posX = screenWidth / 2;
+    label1_posY = 3 * screenHeight / 40;
+    label4_posX = screenWidth / 80;
+    label4_posY = 5 * screenHeight / 40;
+    label3_posX = 11 * screenWidth / 15;
+    label3_posY = 5 * screenHeight / 40;
+    label2_posX = screenWidth / 80;
+    label2_posY = 7 * screenHeight / 40;
+    label5_posX = screenWidth / 2;
+    label5_posY = screenHeight / 2;
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0
@@ -391,6 +375,21 @@ std::string Util::getSaveDir()
     return result;
 }
 
+std::string Util::getIOSDir()
+{
+    
+    //    char * dir = getenv("HOME");
+    const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
+    std::string result = "";
+    if (dir)
+        result = std::string(dir) + "/../Documents";
+    else
+        return "";
+    
+    mkdir(result.c_str(), 0777);
+    return result;
+}
+
 void Util::drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col, bool filled)
 {
     double left = x;
@@ -483,6 +482,8 @@ void Util::createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, float h, int nSegments)
@@ -548,6 +549,8 @@ void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strNa
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth)
@@ -588,81 +591,61 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     {
         mesh->buildTangentVectors(VES_TANGENT, src, dest);
     }
-}
-
-void Util::setConfigValue (std::string param, double paramVal)
-{
-    /*
-    if (param == "segmentWidth")
-        TUNNEL_SEGMENT_WIDTH = paramVal;
-    else if (param == "segmentDepth")
-        TUNNEL_SEGMENT_DEPTH = paramVal;
-    else if (param == "minAngleTurn")
-        TUNNEL_MIN_ANGLE_TURN = (int)paramVal;
-    else if (param == "maxAngleTurn")
-        TUNNEL_MAX_ANGLE_TURN = (int)paramVal;
-    else if (param == "nback")
-        NBACK = (int)paramVal;
-    else if (param == "control")
-        CONTROL = (int)paramVal;
-    else if (param == "historyMode")
-        HISTORY_MODE = (int)paramVal;
-    else;
-    std::cout << "NBACK IS " << NBACK << std::endl;
-     */
+    
+    sceneMgr->destroyManualObject(manual);
 }
 
 void Util::generateMaterials()
 {
     /*
-    MaterialPtr mat0 =
-    MaterialManager::getSingleton().create("PodUnknownMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat0->setLightingEnabled(true);
-    mat0->setAmbient(0.3, 0.3, 0.3);
-    mat0->setDiffuse(0.3, 0.3, 0.3, 1.0);
-    mat0->load();
-    
-    MaterialPtr mat1 =
-    MaterialManager::getSingleton().create("PodRedMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat1->setLightingEnabled(true);
-    mat1->setAmbient(0.5, 0.0, 0.0);
-    mat1->setDiffuse(0.5, 0.0, 0.0, 1.0);
-    mat1->load();
-    
-    MaterialPtr mat2 =
-    MaterialManager::getSingleton().create("PodGreenMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat2->setLightingEnabled(true);
-    mat2->setAmbient(0.0, 0.5, 0.0);
-    mat2->setDiffuse(0.0, 0.5, 0.0, 1.0);
-    mat2->load();
-    
-    MaterialPtr mat3 =
-    MaterialManager::getSingleton().create("PodBlueMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat3->setAmbient(0.0, 0.0, 0.5);
-    mat3->setDiffuse(0.0, 0.0, 0.5, 1.0);
-    mat3->load();
-    
-    MaterialPtr mat4 =
-    MaterialManager::getSingleton().create("PodYellowMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat4->setLightingEnabled(true);
-    mat4->setAmbient(0.5, 0.5, 0.0);
-    mat4->setDiffuse(0.5, 0.5, 0.0, 1.0);
-    mat4->load();
-    
-    MaterialPtr mat5 =
-    MaterialManager::getSingleton().create("StemMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat5->setLightingEnabled(true);
-    mat5->setAmbient(0.25, 0.5, 0.25);
-    mat5->setDiffuse(0.25, 0.5, 0.25, 1.0);
-    mat5->load();
-    
-    MaterialPtr mat6 =
-    MaterialManager::getSingleton().create("PodShellMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-    mat6->setLightingEnabled(true);
-    mat6->setAmbient(0.5, 0.0, 0.0);
-    mat6->setDiffuse(0.5, 0.0, 0.0, 0.1);
-    mat6->load();
-    */
+     MaterialPtr mat0 =
+     MaterialManager::getSingleton().create("PodUnknownMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat0->setLightingEnabled(true);
+     mat0->setAmbient(0.3, 0.3, 0.3);
+     mat0->setDiffuse(0.3, 0.3, 0.3, 1.0);
+     mat0->load();
+     
+     MaterialPtr mat1 =
+     MaterialManager::getSingleton().create("PodRedMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat1->setLightingEnabled(true);
+     mat1->setAmbient(0.5, 0.0, 0.0);
+     mat1->setDiffuse(0.5, 0.0, 0.0, 1.0);
+     mat1->load();
+     
+     MaterialPtr mat2 =
+     MaterialManager::getSingleton().create("PodGreenMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat2->setLightingEnabled(true);
+     mat2->setAmbient(0.0, 0.5, 0.0);
+     mat2->setDiffuse(0.0, 0.5, 0.0, 1.0);
+     mat2->load();
+     
+     MaterialPtr mat3 =
+     MaterialManager::getSingleton().create("PodBlueMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat3->setAmbient(0.0, 0.0, 0.5);
+     mat3->setDiffuse(0.0, 0.0, 0.5, 1.0);
+     mat3->load();
+     
+     MaterialPtr mat4 =
+     MaterialManager::getSingleton().create("PodYellowMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat4->setLightingEnabled(true);
+     mat4->setAmbient(0.5, 0.5, 0.0);
+     mat4->setDiffuse(0.5, 0.5, 0.0, 1.0);
+     mat4->load();
+     
+     MaterialPtr mat5 =
+     MaterialManager::getSingleton().create("StemMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat5->setLightingEnabled(true);
+     mat5->setAmbient(0.25, 0.5, 0.25);
+     mat5->setDiffuse(0.25, 0.5, 0.25, 1.0);
+     mat5->load();
+     
+     MaterialPtr mat6 =
+     MaterialManager::getSingleton().create("PodShellMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+     mat6->setLightingEnabled(true);
+     mat6->setAmbient(0.5, 0.0, 0.0);
+     mat6->setDiffuse(0.5, 0.0, 0.0, 0.1);
+     mat6->load();
+     */
     
     /*
      Technique *technique = m->createTechnique();
@@ -672,5 +655,5 @@ void Util::generateMaterials()
      pass->setAmbient(1.0, 0.0, 0.0);
      pass->setLightingEnabled(true);
      */
-
+    
 }
