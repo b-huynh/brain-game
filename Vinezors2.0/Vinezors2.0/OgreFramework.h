@@ -24,8 +24,6 @@
 #include <OISMouse.h>
 
 #include "OgreOggSoundPlugin.h"
-using namespace Ogre;
-using namespace OgreOggSound;
 
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
@@ -72,6 +70,9 @@ using namespace OgreOggSound;
 
 #include <SdkTrays.h>
 
+using namespace Ogre;
+using namespace OgreOggSound;
+
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #ifdef OGRE_IS_IOS
@@ -93,6 +94,8 @@ public:
 	void moveCamera();
 	void getInput();
     
+    Ogre::String getMacBundlePath() const;
+	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
@@ -100,14 +103,15 @@ public:
     
 #ifdef OGRE_IS_IOS
 	bool touchMoved(const OIS::MultiTouchEvent &evt);
-	bool touchPressed(const OIS::MultiTouchEvent &evt); 
+	bool touchPressed(const OIS::MultiTouchEvent &evt);
 	bool touchReleased(const OIS::MultiTouchEvent &evt);
 	bool touchCancelled(const OIS::MultiTouchEvent &evt);
 #else
 	bool mouseMoved(const OIS::MouseEvent &evt);
-	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id); 
+	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
+    void buttonHit(OgreBites::Button* button);
 	
 	Ogre::Root*                 m_pRoot;
 	Ogre::RenderWindow*			m_pRenderWnd;
@@ -135,7 +139,7 @@ public:
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
-    BillboardSet*               m_pBillboardSet;
+	OgreBites::SdkTrayManager*  m_pTrayMgr;
 protected:
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
@@ -144,17 +148,19 @@ private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator= (const OgreFramework&);
     
-	OgreBites::SdkTrayManager*  m_pTrayMgr;
     Ogre::FrameEvent            m_FrameEvent;
 	int                         m_iNumScreenShots;
     
 	bool                        m_bShutDownOgre;
 	
 	Ogre::Vector3				m_TranslateVector;
-	Ogre::Real                  m_MoveSpeed; 
-	Ogre::Degree				m_RotateSpeed; 
-	float                       m_MoveScale; 
+	Ogre::Real                  m_MoveSpeed;
+	Ogre::Degree				m_RotateSpeed;
+	float                       m_MoveScale;
 	Ogre::Degree				m_RotScale;
+    
+    OgreBites::Button*          m_quitButton;
+    
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;
 #endif
@@ -162,6 +168,6 @@ private:
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#endif 
+#endif
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

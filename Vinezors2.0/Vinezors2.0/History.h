@@ -19,7 +19,7 @@ enum CoverMode { FIRST_TIME, PLAYING };
 struct History
 {
     Ogre::SceneManager* sceneMgr;
-
+    
     int nback;
     std::vector<SceneNode*> seats;
     std::vector<Pod*> list;

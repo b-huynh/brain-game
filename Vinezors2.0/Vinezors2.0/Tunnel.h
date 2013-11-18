@@ -15,19 +15,20 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
-enum GameMode { GAME_TIMED, GAME_NORMAL, GAME_NORMAL_SOUNDLESS };
+enum GameMode { GAME_TIMED, GAME_NORMAL };
 
 // Stores the list of tunnel segments
 class Tunnel
 {
 public:
     SceneNode* parentNode;
-
+    
     SceneNode* mainTunnelNode;
 	Vector3 start;
 	Vector3 end;
     std::list<TunnelSlice*> segments;
     std::list<TunnelSlice*>::iterator current;
+    int segmentCounter;
 	double segmentWidth;
 	double segmentDepth;
 	int segmentMinAngleTurn;

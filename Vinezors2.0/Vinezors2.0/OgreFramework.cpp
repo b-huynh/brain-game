@@ -2,6 +2,8 @@
 #include "macUtils.h"
 #include "Util.h"
 
+#include "ExampleLoadingBar.h"
+
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
@@ -69,64 +71,63 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 #ifndef OGRE_STATIC_LIB
     pluginsPath = m_ResourcePath + "plugins.cfg";
 #endif
-    
     m_pRoot = new Ogre::Root(pluginsPath, Ogre::macBundlePath() + "/ogre.cfg");
     
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif
     
-        if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
+    if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
     else
         return false;
-//    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
-//    m_pRenderWnd->setFullscreen(true, 1024, 800);
+    //    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
+    //    m_pRenderWnd->setFullscreen(true, 1024, 800);
     globals.screenWidth = m_pRenderWnd->getWidth();
     globals.screenHeight = m_pRenderWnd->getHeight();
     globals.set();
     
     /*
-    Ogre::NameValuePairList paramsWnd;
-    paramsWnd["border"] = "fixed";
-    m_pRenderWnd = m_pRoot->createRenderWindow(wndTitle, Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT, false, &paramsWnd);
-    */
+     Ogre::NameValuePairList paramsWnd;
+     paramsWnd["border"] = "fixed";
+     m_pRenderWnd = m_pRoot->createRenderWindow(wndTitle, Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT, false, &paramsWnd);
+     */
 	m_pSceneMgrMain = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerMain");
-	m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
+	//m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
 	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-	m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	//m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
-	m_pCameraMain->setNearClipDistance(1);
-//    m_pCameraMain->setFarClipDistance(500.0);
+	m_pCameraMain->setNearClipDistance(0.1);
+    //    m_pCameraMain->setFarClipDistance(500.0);
 	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
-        0.0,
-        0.0,
-        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
-        double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
+                                                0.0,
+                                                0.0,
+                                                double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+                                                double(globals.viewportMainHeight_modeNone) / globals.screenHeight);
 	m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
-    
-	m_pCameraSide = m_pSceneMgrSide->createCamera("CameraSide");
-	m_pCameraSide->setPosition(Vector3(0, 0, 30));
-	m_pCameraSide->lookAt(Vector3(0, 0, 0));
-	m_pCameraSide->setNearClipDistance(1);
-    m_pCameraSide->setOrthoWindow(10.0, 25.0);
-    m_pCameraSide->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-	m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0,
-        double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
-        0.0,
-        double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
-        double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
-	m_pViewportSide->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-	m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-	m_pViewportSide->setCamera(m_pCameraSide);
-    m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
-    
+    /*
+     m_pCameraSide = m_pSceneMgrSide->createCamera("CameraSide");
+     m_pCameraSide->setPosition(Vector3(0, 0, 30));
+     m_pCameraSide->lookAt(Vector3(0, 0, 0));
+     m_pCameraSide->setNearClipDistance(1);
+     m_pCameraSide->setOrthoWindow(10.0, 25.0);
+     m_pCameraSide->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
+     m_pViewportSide = m_pRenderWnd->addViewport(m_pCameraSide, 0,
+     double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+     0.0,
+     double(globals.viewportSideWidth_modeNone) / globals.screenWidth,
+     double(globals.viewportSideHeight_modeNone) / globals.screenHeight);
+     m_pViewportSide->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+     m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+     m_pViewportSide->setCamera(m_pCameraSide);
+     m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
+     */
 	unsigned long hWnd = 0;
     OIS::ParamList paramList;
     m_pRenderWnd->getCustomAttribute("WINDOW", &hWnd);
@@ -157,7 +158,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 		m_pMouse->setEventCallback(this);
 	else
 		m_pMouse->setEventCallback(pMouseListener);
-
+    
 	Ogre::String secName, typeName, archName;
 	Ogre::ConfigFile cf;
     
@@ -191,29 +192,37 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     
     m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
     
+    Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
+    
+	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
+    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+    m_pTrayMgr->hideCursor();
+    m_pTrayMgr->setListener(this);
+    m_pTrayMgr->setTrayPadding(10.0);
+    
+    Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
+    //  m_quitButton = OgreFramework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_BOTTOMLEFT, "sdkQuitButton", "QUIT", 250);
+    
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
-    m_pSoundMgr->createSound("Music1", "FrozenHillside.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound3", "VinezorsNegativeBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBlip.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceChime.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound7", "VinezorsSpaceTone.wav", false, false, true);
-    
-    m_pBillboardSet = m_pSceneMgrMain->createBillboardSet("TheBillboardSet");
+    //m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound2", "wrongtriangle.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound3", "VinezorsSpaceBlip.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBeep.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceChime.wav", false, false, true);
+    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceTone.wav", false, false, true);
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     
 	m_pTimer = OGRE_NEW Ogre::Timer();
 	m_pTimer->reset();
-	
-	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    m_pTrayMgr->hideCursor();
     
 	m_pRenderWnd->setActive(true);
     
@@ -320,8 +329,6 @@ bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
             break;
     }
 #endif
-	//m_pCamera->yaw(Degree(state.X.rel * -0.1));
-	//m_pCamera->pitch(Degree(state.Y.rel * -0.1));
 	
 	return true;
 }
@@ -330,7 +337,9 @@ bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
 
 bool OgreFramework::touchPressed(const OIS:: MultiTouchEvent &evt)
 {
-#pragma unused(evt)
+    double axisY = evt.state.Y.abs;
+    double axisX = evt.state.X.abs;
+    
 	return true;
 }
 
@@ -338,8 +347,7 @@ bool OgreFramework::touchPressed(const OIS:: MultiTouchEvent &evt)
 
 bool OgreFramework::touchReleased(const OIS:: MultiTouchEvent &evt)
 {
-#pragma unused(evt)
-	return true;
+    return true;
 }
 
 bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
@@ -349,7 +357,7 @@ bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
 }
 #else
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
-{	
+{
 	return true;
 }
 
@@ -368,11 +376,11 @@ void OgreFramework::updateOgre(double timeSinceLastFrame)
 {
 	m_MoveScale = m_MoveSpeed   * (float)timeSinceLastFrame;
 	m_RotScale  = m_RotateSpeed * (float)timeSinceLastFrame;
-
+    
 #if OGRE_VERSION >= 0x10800
     m_pSceneMgrMain->setSkyBoxEnabled(true);
 #endif
-
+    
 	m_TranslateVector = Vector3::ZERO;
     
 	getInput();
@@ -385,7 +393,7 @@ void OgreFramework::updateOgre(double timeSinceLastFrame)
 void OgreFramework::moveCamera()
 {
 #if !defined(OGRE_IS_IOS)
-	if(m_pKeyboard->isKeyDown(OIS::KC_LSHIFT)) 
+	if(m_pKeyboard->isKeyDown(OIS::KC_LSHIFT))
 		m_pCameraMain->moveRelative(m_TranslateVector);
 	else
 #endif
@@ -396,17 +404,30 @@ void OgreFramework::getInput()
 {
 #if !defined(OGRE_IS_IOS)
     /*
-	if(m_pKeyboard->isKeyDown(OIS::KC_A))
-		m_TranslateVector.x = -m_MoveScale;
-	
-	if(m_pKeyboard->isKeyDown(OIS::KC_D))
-		m_TranslateVector.x = m_MoveScale;
-	
-	if(m_pKeyboard->isKeyDown(OIS::KC_W))
-		m_TranslateVector.z = -m_MoveScale;
-	
-	if(m_pKeyboard->isKeyDown(OIS::KC_S))
-		m_TranslateVector.z = m_MoveScale;
+     if(m_pKeyboard->isKeyDown(OIS::KC_A))
+     m_TranslateVector.x = -m_MoveScale;
+     
+     if(m_pKeyboard->isKeyDown(OIS::KC_D))
+     m_TranslateVector.x = m_MoveScale;
+     
+     if(m_pKeyboard->isKeyDown(OIS::KC_W))
+     m_TranslateVector.z = -m_MoveScale;
+     
+     if(m_pKeyboard->isKeyDown(OIS::KC_S))
+     m_TranslateVector.z = m_MoveScale;
      */
 #endif
+}
+
+Ogre::String OgreFramework::getMacBundlePath() const
+{
+    return macBundlePath();
+}
+
+void OgreFramework::buttonHit(OgreBites::Button* button)
+{
+    if (button->getName() == "quitButton")
+    {
+        requestOgreShutdown();
+    }
 }

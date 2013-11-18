@@ -19,7 +19,7 @@ const double PANEL_Y = -10.0;
 
 History::History(Ogre::SceneManager* sceneMgr, int nback)
 : sceneMgr(sceneMgr), nback(nback), seats(), list(), coverNode(NULL), coverDest(),
-    panelHeight(PANEL_HEIGHT), panelX(PANEL_X), panelY(PANEL_Y), reservedHeight(), coverHeight(), coverOffsetY(), coverInd(), mode(FIRST_TIME)
+panelHeight(PANEL_HEIGHT), panelX(PANEL_X), panelY(PANEL_Y), reservedHeight(), coverHeight(), coverOffsetY(), coverInd(), mode(FIRST_TIME)
 {
     initSeats(nback);
 }
@@ -73,7 +73,7 @@ void History::initSeats(int nback)
     coverNode->setPosition(coverDest);
     coverNode->scale(coverHeight, coverHeight, coverHeight);
     coverNode->pitch(Degree(90));
-
+    
     ++coverID;
 }
 
@@ -81,7 +81,7 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength, NO_DIRECTION);
     cpy->revealPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
@@ -164,12 +164,10 @@ void History::determineCoverLoc(bool success)
                     setCoverDest(coverInd);
                     saveInd = coverInd;
                 }
-                std::cout << coverInd << " " << saveInd << std::endl;
             }
             else
             {
                 coverInd = nback - 1;
-                std::cout << coverInd << " " << saveInd << std::endl;
             }
             break;
         }

@@ -12,10 +12,11 @@
 #include "OgreFramework.h"
 #include "Util.h"
 #include "Pod.h"
+#include "Vine.h"
 
 #include <vector>
 
-enum TunnelType { NORMAL_WITH_ONE_POD, NORMAL_WITH_THREE_PODS, NORMAL_WITH_FIVE_PODS, NORMAL_WITH_MANY_PODS, NORMAL_BLANK, CHECKPOINT };
+enum TunnelType { NORMAL_WITH_ONE_POD, NORMAL_WITH_THREE_PODS, NORMAL_WITH_FIVE_PODS, NORMAL_WITH_MANY_PODS, NORMAL_BLANK, CHECKPOINT_PASS, CHECKPOINT_FAIL, CHECKPOINT_EVEN };
 
 struct SectionInfo
 {
@@ -35,7 +36,7 @@ struct SectionInfo
 struct PodInfo
 {
     PodType podType;
-    Direction podLoc; 
+    Direction podLoc;
     bool goodPod; // is the pod good to take?
     bool podTaken; // is the pod gone?
     
@@ -53,6 +54,8 @@ class TunnelSlice
 {
 private:
     SceneNode* parentNode;
+    
+    int tunnelSliceID;
     
 	Vector3 center;
     Quaternion rot;
@@ -83,6 +86,7 @@ private:
 	SceneNode* bottomIntermediate;
 	SceneNode* bottomLeftIntermediate;
 	SceneNode* leftIntermediate;
+    std::vector<MeshPtr> meshes;
     
     std::vector<Pod*> pods;
     double growthT; // Pod Growth Timing animation
@@ -96,10 +100,11 @@ private:
     bool infoStored; // Used to avoid saving data multiple times
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
 	
     void initWalls();
     
+    int getTunnelSliceID() const;
     double getWallLength() const;
     TunnelType getType() const;
     Quaternion getQuaternion() const;
@@ -120,6 +125,7 @@ public:
     bool hasAvailableSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
+    std::vector<Pod*> findCollisions(Vine *vine) const;
     Vector3 requestWallDistance(Direction dir) const;
     Vector3 requestMove(Direction dir) const;
     Vector3 requestPosition(Vector3 cur, Direction dir) const;
@@ -137,7 +143,7 @@ public:
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

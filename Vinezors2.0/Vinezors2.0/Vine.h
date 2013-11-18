@@ -18,10 +18,17 @@ struct Vine
     Ogre::SceneNode* parentNode;
     
 	SceneNode *tip;
+	SceneNode *base;
 	Vector3 dest;
     Vector3 forward;
     double radius;
     double speed;
+    
+    Direction loc;
+    int previousID;
+    double previoust;
+    int afterID;
+    double aftert;
     
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius);
@@ -34,6 +41,7 @@ struct Vine
 	void setDest(Vector3 value);
 	void setForward(Vector3 value);
     double getRadius() const;
+    void setQuaternion(Quaternion rot);
     
 	void move(Vector3 delta);
 	

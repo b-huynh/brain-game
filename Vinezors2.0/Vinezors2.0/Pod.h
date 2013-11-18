@@ -30,8 +30,8 @@ private:
     SceneNode* entirePod;
 	SceneNode* stem;
 	SceneNode* head;
-    SceneNode* shell;
     
+    Direction loc;
     bool podTaken;
     
     Vector3 dest;
@@ -39,7 +39,7 @@ private:
 public:
 	Pod();
     
-	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius);
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius, Direction loc);
 	
     Vector3 getBase() const;
     Vector3 getTip() const;
@@ -48,6 +48,9 @@ public:
 	SceneNode* getHead() const;
 	Vector3 getDest() const;
 	Vector3 getPosition() const;
+	Direction getLoc() const;
+	double getStemRadius() const;
+	double getHeadRadius() const;
     
     bool isPodTaken() const;
     

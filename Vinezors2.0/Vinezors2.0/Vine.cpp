@@ -7,22 +7,29 @@
 //
 #include "Vine.h"
 
-static int vineTipID = 0;
+static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0)
+: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
 : parentNode(parentNode), tip(NULL), dest(), forward(), radius(radius), speed(0.0)
 {
-    tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineTipID));
+    tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
-    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineTipID), "vineMesh");
-    tipEntity->setMaterialName("General/VineTip");
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "vineTopMesh");
+    tipEntity->setMaterialName("General/VineTop");
     tip->attachObject(tipEntity);
     
-    ++vineTipID;
+    base = tip->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
+    
+    Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "vineDiskMesh");
+    baseEntity->setMaterialName("General/VineBase");
+    base->attachObject(baseEntity);
+    base->translate(0, -1.0, 0);
+    
+    ++vineID;
 }
 
 SceneNode* Vine::getTip() const
@@ -70,6 +77,11 @@ double Vine::getRadius() const
     return radius;
 }
 
+void Vine::setQuaternion(Quaternion rot)
+{
+    tip->setOrientation(rot);
+}
+
 void Vine::update(double elapsed)
 {
     double moveSpeed = speed;
@@ -98,8 +110,14 @@ void Vine::update(double elapsed)
 
 void Vine::removeFromScene()
 {
+    base->getCreator()->destroyMovableObject(base->getAttachedObject(0)); // Assuming only one entity
+    base->removeAndDestroyAllChildren();
+    base->getCreator()->destroySceneNode(base);
+    base = NULL;
+    
     tip->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
     tip->removeAndDestroyAllChildren();
     tip->getCreator()->destroySceneNode(tip);
     tip = NULL;
+    
 }
