@@ -19,15 +19,25 @@ Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
     tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
     Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "vineTopMesh");
+    //Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "flowerShip.mesh");
     tipEntity->setMaterialName("General/VineTop");
     tip->attachObject(tipEntity);
+    tip->scale(0.1,0.1,0.1);
+    //tip->yaw(Radian(180.0));
     
     base = tip->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
     
-    Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "vineDiskMesh");
-    baseEntity->setMaterialName("General/VineBase");
+    //Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "vineDiskMesh");
+    Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "flowerShip.mesh");
+    //baseEntity->setMaterialName("General/VineBase");
     base->attachObject(baseEntity);
-    base->translate(0, -1.0, 0);
+    //base->translate(0, 0.0 + tip->getPosition().y, 0);
+    //base->scale(0.5,0.5,0.5);
+    base->scale(3,3,3);
+    base->setPosition(tip->getPosition().x, tip->getPosition().y, tip->getPosition().z);
+    base->translate(0, -7.0, 0);
+    //base->scale(0.5,0.5,0.5);
+    //base->translate(0, -1.0, 0);
     
     ++vineID;
 }

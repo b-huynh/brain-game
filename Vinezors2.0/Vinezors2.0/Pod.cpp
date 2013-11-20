@@ -39,9 +39,11 @@ Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, d
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
     
-    Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "podMesh");
-    headEntity->setMaterialName("General/PodUnknown");
+    //Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "podMesh");
+    Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellBland.mesh");
+    //headEntity->setMaterialName("General/PodUnknown");
     head->attachObject(headEntity);
+    head->scale(0.5,0.5,0.5);
     
     entirePod->setPosition(tip);
     
@@ -125,32 +127,43 @@ void Pod::takePod()
 
 void Pod::hidePod()
 {
-    static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+    //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+    //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("fuelCellBland.material");
 }
 
 void Pod::revealPod()
 {
+    head->getCreator()->destroyMovableObject(head->getAttachedObject(0));
+    Entity * headEntity;
     switch (type)
     {
         case POD_BLUE:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodBlue");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodBlue");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellBlue.mesh");
             break;
         case POD_GREEN:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodGreen");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodGreen");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellGreen.mesh");
             break;
         case POD_PINK:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodRed");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodRed");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellRed.mesh");
             break;
         case POD_YELLOW:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodYellow");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodYellow");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellYellow.mesh");
             break;
         case POD_BLACK:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellBland.mesh");
             break;
         default:
-            static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+            //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodUnknown");
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCellBland.mesh");
             break;
     }
+    head->attachObject(headEntity);
+    podID++;
 }
 
 void Pod::setDest(Vector3 value)
