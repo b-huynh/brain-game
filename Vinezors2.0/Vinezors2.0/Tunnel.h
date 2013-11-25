@@ -53,7 +53,8 @@ public:
     Direction basis;
     bool sidesUsed[NUM_DIRECTIONS];
     
-    bool done;
+    bool done;      // Says stage is over, but not the ending animation
+    bool cleanup;   // Totally done, ending animation is over
 public:
 	Tunnel();
     
@@ -92,7 +93,8 @@ public:
     std::string determineMaterial() const;
     
     bool isDone() const;
-    void setDone(bool value);
+    void setDone(Evaluation eval);
+    bool needsCleaning() const;
     
     void setNewControl(int control);
 	void removeSegment();
@@ -110,7 +112,7 @@ public:
     
     void constructTunnel(int size, Quaternion q = Quaternion(1, 0, 0, 0));
     
-    void update(double elapsed);
+    void update(Player* player, Hud* hud, double elapsed);
     
 	~Tunnel();
 };

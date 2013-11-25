@@ -17,8 +17,21 @@
 
 #include <string>
 
+enum Evaluation { PASS, FAIL, EVEN };
+enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
+enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
+enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
+enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
+enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
+enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
+#define NUM_POD_TYPES 5
+
+// Forward Declarations
+class Tunnel;
+class Player;
+class Hud;
 
 namespace Util
 {
@@ -106,8 +119,27 @@ namespace Util
         int label5_posX;
         int label5_posY;
         
+        int currStageID;
+        std::string configPath;
+        std::string configBackup;
+        std::string logPath;
+        std::string savePath;
+        std::string playerName;
+        std::string message;
+        MessageType messageType;
+        
         ConfigGlobal();
         void set();
+        
+        void initPaths(const char* name);
+        void setConfigValue(std::istream& in, std::string paramName);
+        bool loadConfig(int stageID);
+        bool loadSaveFile(std::string savePath);
+        
+        void setMessage(std::string msg, MessageType type);
+        void clearMessage();
+        bool setName(const char* name);
+        std::string buildLogPath(std::string playerName);
     };
     
     int getDegrees(Direction dir);
@@ -122,11 +154,8 @@ namespace Util
     double randRangeDouble(double min, double max);
     std::string toStringInt(int value);
     std::string toStringDouble(double value);
-    std::string getSaveDir();
+    std::string getOSXDir();
     std::string getIOSDir();
-    
-    //Config Values
-    void setConfigValue (std::string param, double paramVal);
     
     void drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
     

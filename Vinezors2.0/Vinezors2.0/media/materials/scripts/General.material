@@ -97,7 +97,7 @@ material General/BarColors
         lighting off
         texture_unit
         {
-            texture barcolors.png
+            texture barcolorsbright.png
         }
       } 
     }
@@ -461,7 +461,7 @@ material General/PodShell
     technique
     {
         pass
-        {
+        {f
             scene_blend alpha_blend
             depth_write off
  

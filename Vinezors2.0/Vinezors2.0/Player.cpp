@@ -382,6 +382,20 @@ void Player::setCamSpeed(double value)
     camSpeed = value;
 }
 
+void Player::saveCam()
+{
+    oldPos = camPos;
+    oldRot = camRot;
+    oldRoll = camRoll;
+}
+
+void Player::revertCam()
+{
+    camPos = oldPos;
+    camRot = oldRot;
+    camRoll = oldRoll;
+}
+
 void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resetscore)
 {
     hp = globals.startingHP;
@@ -536,19 +550,80 @@ void Player::checkCollisions(Tunnel *tunnel)
 	}
 }
 
-void Player::update(double elapsed, Tunnel *tunnel)
+void Player::resetCursorMoved()
+{
+    inputTotalX = 0;
+    inputMoved = false;
+}
+
+void Player::setCursorMoved()
+{
+    inputMoved = true;
+}
+
+void Player::updateCursorCooldown(double elapsed)
+{
+    // Cooldown before next swipe can be read
+    if (inputMoved)
+    {
+        if (inputTotalX > 0.0)
+        {
+            inputTotalX -= globals.screenWidth / 2.0 * elapsed;
+            if (inputTotalX <= 0.0)
+            {
+                inputTotalX = 0.0;
+                inputMoved = false;
+            }
+        }
+        else if (inputTotalX < 0.0)
+        {
+            inputTotalX += globals.screenWidth / 2.0 * elapsed;
+            if (inputTotalX >= 0.0)
+            {
+                inputTotalX = 0.0;
+                inputMoved = false;
+            }
+        }
+    }
+}
+
+void Player::checkCursorMove(double dx, double dy)
+{
+    inputTotalX += dx;
+}
+
+bool Player::checkPerformLeftMove()
+{
+#if defined(OGRE_IS_IOS)
+    if (!inputMoved && inputTotalX >= globals.screenWidth / 12.0)
+    {
+        return true;
+    }
+    else return false;
+#else
+    return true;
+#endif
+}
+
+bool Player::checkPerformRightMove()
+{
+#if defined(OGRE_IS_IOS)
+    if (!inputMoved && inputTotalX <= globals.screenWidth / 12.0)
+    {
+        return true;
+    }
+    else return false;
+#else
+    return true;
+#endif
+}
+
+void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
 {
     totalElapsed += elapsed;
     
-    if (soundMusic)
-    {
-        if (!soundMusic->isPlaying() && tunnel->getTotalElapsed() > 2.0)
-        {
+    if (soundMusic && !soundMusic->isPlaying() && tunnel->getTotalElapsed() > 2.0)
             soundMusic->play();
-        }
-        //        if (soundMusic->isPlaying() && tunnel->isDone())
-        //            soundMusic->stop();
-    }
     
     // Speed up, slow down keys options
     double moveSpeed = globals.modifierCamSpeed * camSpeed;
@@ -557,15 +632,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
         moveSpeed = globals.modifierCamSpeed * globals.maxCamSpeed * 2;
     }
     else {
-        /*
-         if (speedControl == SPEED_CONTROL_AUTO)
-         {
-         if (keyUp)
-         moveSpeed *= 2;
-         if (keyDown)
-         moveSpeed /= 2;
-         }
-         */
+        
+        // Update scores if any
         double distTraveled = moveSpeed * elapsed;
         if (tunnel->getMode() == GAME_TIMED)
             score += distTraveled / 10.0;
@@ -586,16 +654,9 @@ void Player::update(double elapsed, Tunnel *tunnel)
     
     for (int i = 0; i < vines.size(); ++i)
     {
-        //// Hardcode the vine where to go
-        //if (keyLeft)
-        //    setDir(WEST);
-        //else
-        //    setDir(SOUTH);
-        
         // Determine which tunnel segment and corner each vine should be
         // in. This is done by calculating a t from 0 to 1
         double tLeft;
-        //TunnelSlice* closest = tunnel->findSliceFromCurrent(vines[i]->getPos(), 0, tLeft);
         TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, 0, tLeft);
         if (closest && closest->getType() < NORMAL_BLANK && !closest->isPodHistory() && !tunnel->isDone())
         {
@@ -622,14 +683,12 @@ void Player::update(double elapsed, Tunnel *tunnel)
                     Vector3 p2 = closest->getStart() + closest->requestMove(vineDir);
                     
                     targetPos = p1 + (p2 - p1) * (1.0 + tLeft);
-                    //targetPos = p1 + (p2 - p1) * ((closest->getPrerangeT() - tLeft) / closest->getPrerangeT());
                     
                 } else {
                     targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir);
                 }
             }
             vines[i]->setDest(targetPos);
-            //vines[i]->setPos(targetPos);
             vines[i]->setForward(closest->getForward());
         }
         vines[i]->previousID = vines[i]->afterID;
@@ -640,23 +699,26 @@ void Player::update(double elapsed, Tunnel *tunnel)
         vines[i]->setQuaternion(getCombinedRotAndRoll());
 		vines[i]->update(elapsed);
         
-        if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone()) {
-            
+        // If player vine is halfway through a segment with a pod, we can get results
+        //
+        // Lookback is used to check for players going very fast incase they skipped the
+        // other entirely.
+        TunnelSlice* targetSlice = NULL;
+        if (closest && closest->getType() < NORMAL_BLANK && !closest->isInfoStored() && !tunnel->isDone() && vines[i]->previoust > 0.54 && vines[i]->previousID == vines[i]->afterID)
+            targetSlice = closest;
+        if (lookback && lookback->getType() < NORMAL_BLANK && !lookback->isInfoStored() && !tunnel->isDone() && vines[i]->previoust > 0.54 && vines[i]->previousID != vines[i]->afterID)
+            targetSlice = lookback;
+        if (targetSlice) {
             //            printf("%d %f %f\n", closest->getTunnelSliceID(), vines[i]->previoust, vines[i]->aftert);
-            // If player vine is halfway through a segment with a pod, we can get results
-            //            if ((vines[i]->previoust > 0.54 && vines[i]->aftert > vines[i]->previoust) ||
-            //                (vines[i]->previoust < 0.48 && vines[i]->aftert < vines[i]->previoust))
             
-            if (vines[i]->previoust > 0.54 && vines[i]->previousID == vines[i]->afterID)
-            {
                 History* history = tunnel->getHistory();
                 
                 // This code block is to record data of the pods
                 Result result;
                 result.stageID = globals.stageID;
                 result.timestamp = (int)(totalElapsed * 1000);
-                result.sectionInfo = closest->getSectionInfo();
-                result.podInfo = closest->getPodInfo();
+                result.sectionInfo = targetSlice->getSectionInfo();
+                result.podInfo = targetSlice->getPodInfo();
                 result.nback = tunnel->getNBack();
                 result.gameMode = tunnel->getMode();
                 result.progressionMode = (ProgressionMode)globals.progressionMode;
@@ -717,83 +779,8 @@ void Player::update(double elapsed, Tunnel *tunnel)
                 }
                 
                 // Flag to trigger only once
-                closest->setInfoStored(true);
-            }
-        }
-        if (lookback && lookback->getType() < NORMAL_BLANK && !lookback->isInfoStored() && !tunnel->isDone()) {
+                targetSlice->setInfoStored(true);
             
-            if (vines[i]->previoust > 0.54 && vines[i]->previousID != vines[i]->afterID)
-            {
-                History* history = tunnel->getHistory();
-                
-                // This code block is to record data of the pods
-                Result result;
-                result.stageID = globals.stageID;
-                result.timestamp = (int)(totalElapsed * 1000);
-                result.sectionInfo = lookback->getSectionInfo();
-                result.podInfo = lookback->getPodInfo();
-                result.nback = tunnel->getNBack();
-                result.gameMode = tunnel->getMode();
-                result.progressionMode = (ProgressionMode)globals.progressionMode;
-                result.score = score;
-                result.speed = camSpeed;
-                results.push_back(result);
-                
-                //printf("%d %d\n", result.podInfo.goodPod, result.podInfo.podTaken);
-                
-                // Determine whether the player got it right or not
-                if (result.podInfo.goodPod && result.podInfo.podTaken) {
-                    if (soundFeedbackGood)
-                        soundFeedbackGood->play();
-                    hp = hp < 0 ? hp + globals.HPNegativeCorrectAnswer : hp + globals.HPPositiveCorrectAnswer;
-                    if (hp > globals.HPPositiveLimit)
-                        hp = globals.HPPositiveLimit;
-                    ++numCorrectTotal;
-                    ++numCorrectCombo;
-                    numWrongCombo = 0;
-                    
-                    if (tunnel->getMode() == GAME_NORMAL)
-                    {
-                        double plus = tunnel->getNBack();
-                        for (int i = 0; i < numCorrectCombo - 1 && i < globals.numToSpeedUp; ++i)
-                            plus *= 2;
-                        score += plus;
-                    }
-                    
-                    if (speedControl == SPEED_CONTROL_AUTO && numCorrectCombo >= globals.numToSpeedUp)
-                    {
-                        camSpeed += globals.stepsizeSpeedUp;
-                        if (camSpeed > globals.maxCamSpeed)
-                            camSpeed = globals.maxCamSpeed;
-                        camSpeed = (int)camSpeed;
-                    }
-                    
-                    if (history) history->determineCoverLoc(true);
-                }
-                else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
-                         (!result.podInfo.goodPod && result.podInfo.podTaken)) {
-                    if (soundFeedbackBad)
-                        soundFeedbackBad->play();
-                    hp = hp > 0 ? hp + globals.HPPositiveWrongAnswer : hp + globals.HPNegativeWrongAnswer;
-                    if (hp < globals.HPNegativeLimit)
-                        hp = globals.HPNegativeLimit;
-                    ++numWrongTotal;
-                    ++numWrongCombo;
-                    numCorrectCombo = 0;
-                    if (speedControl == SPEED_CONTROL_AUTO && numWrongCombo >= globals.numToSpeedDown)
-                    {
-                        camSpeed += globals.stepsizeSpeedDown;
-                        if (camSpeed < globals.minCamSpeed)
-                            camSpeed = globals.minCamSpeed;
-                        camSpeed = (int)camSpeed;
-                    }
-                    
-                    if (history) history->determineCoverLoc(false);
-                }
-                
-                // Flag to trigger only once
-                lookback->setInfoStored(true);
-            }
         }
         lookback = closest;
     }
@@ -822,27 +809,7 @@ void Player::update(double elapsed, Tunnel *tunnel)
         
     }
     
-    if (inputMoved)
-    {
-        if (inputTotalX > 0.0)
-        {
-            inputTotalX -= globals.screenWidth / 2.0 * elapsed;
-            if (inputTotalX <= 0.0)
-            {
-                inputTotalX = 0.0;
-                inputMoved = false;
-            }
-        }
-        else if (inputTotalX < 0.0)
-        {
-            inputTotalX += globals.screenWidth / 2.0 * elapsed;
-            if (inputTotalX >= 0.0)
-            {
-                inputTotalX = 0.0;
-                inputMoved = false;
-            }
-        }
-    }
+    updateCursorCooldown(elapsed);
     checkCollisions(tunnel);
 }
 

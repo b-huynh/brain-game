@@ -643,6 +643,7 @@ void TunnelSlice::disconnect()
     
     for (int i = 0; i < meshes.size(); ++i)
     {
+        // ***** Should understand this further, could not need one or the other statement.
         meshes[i]->unload();
         Ogre::MeshManager::getSingleton().remove(meshes[i]->getName());
     }

@@ -12,8 +12,8 @@
 #include "OgreFramework.h"
 #include "Util.h"
 
-enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
-#define NUM_POD_TYPES 5
+// This is here tempoarily until we figure out how to change colors of specific parts of mesh
+enum MeshType { BASIC, FUEL };
 
 // These are objects which are attached to the walls and may act as hints, boosters, or penalties.
 // They are comprised of a stem (cylinder) and a head (sphere)
@@ -22,10 +22,12 @@ class Pod
 private:
     Ogre::SceneNode* parentNode;
     
+    MeshType mtype;
     Vector3 base;
     Vector3 tip;
 	PodType type;
     double stemRadius;
+    double stemLength;
     double headRadius;
     SceneNode* entirePod;
 	SceneNode* stem;
@@ -41,6 +43,9 @@ public:
     
 	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodType type, double stemRadius, double headRadius, Direction loc);
 	
+    void loadBasicShape();
+    void loadFuelCell();
+    
     Vector3 getBase() const;
     Vector3 getTip() const;
 	PodType getType() const;
@@ -50,6 +55,7 @@ public:
 	Vector3 getPosition() const;
 	Direction getLoc() const;
 	double getStemRadius() const;
+	double getStemLength() const;
 	double getHeadRadius() const;
     
     bool isPodTaken() const;

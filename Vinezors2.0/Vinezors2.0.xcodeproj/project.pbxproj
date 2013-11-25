@@ -15,6 +15,8 @@
 		5D15DF481825B36D00DF0F99 /* TunnelTile_FluidPipes2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */; };
 		5D15DF491825B36D00DF0F99 /* TunnelTile_pipes_D.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */; };
 		5D15DF4A1825B36D00DF0F99 /* TunnelTile_Wires.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */; };
+		5D3041C21842B76F00BD26C0 /* runnerShip.mesh in Resources */ = {isa = PBXBuildFile; fileRef = 5D3041C11842B76F00BD26C0 /* runnerShip.mesh */; };
+		5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D3041C318431C3800BD26C0 /* Hud.cpp */; };
 		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5D77CC59181B06A2001D4461 /* TunnelTile_SpaceStation.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */; };
 		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
@@ -96,6 +98,9 @@
 		5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_FluidPipes2.png; sourceTree = "<group>"; };
 		5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_pipes_D.png; sourceTree = "<group>"; };
 		5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_Wires.png; sourceTree = "<group>"; };
+		5D3041C11842B76F00BD26C0 /* runnerShip.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = runnerShip.mesh; sourceTree = "<group>"; };
+		5D3041C318431C3800BD26C0 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
+		5D3041C418431C3800BD26C0 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
 		5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_SpaceStation.png; sourceTree = "<group>"; };
 		5DBB9F50180BE8A300C7F23F /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		5DBB9F51180BE8A300C7F23F /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
@@ -310,6 +315,7 @@
 		5DE122A617F0DA8200E49916 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				5D3041C11842B76F00BD26C0 /* runnerShip.mesh */,
 				B6D678CE183CB46800667F8E /* flowerShip.mesh */,
 				B6D678CF183CB46800667F8E /* fuelCellBland.mesh */,
 				B6D678D0183CB46800667F8E /* fuelCellBlue.mesh */,
@@ -367,6 +373,8 @@
 				5DE122DA17F0DC6700E49916 /* Player.h */,
 				5DBB9F50180BE8A300C7F23F /* History.cpp */,
 				5DBB9F51180BE8A300C7F23F /* History.h */,
+				5D3041C318431C3800BD26C0 /* Hud.cpp */,
+				5D3041C418431C3800BD26C0 /* Hud.h */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -494,6 +502,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6C64C2217DE8C5B0092CA8E /* InfoPlist.strings in Resources */,
+				5D3041C21842B76F00BD26C0 /* runnerShip.mesh in Resources */,
 				B6C64C4417DE8C5B0092CA8E /* ogre.cfg in Resources */,
 				B6D678CB183CB45C00667F8E /* fuelCellGreen.material in Resources */,
 				B6C64C4717DE8C5B0092CA8E /* plugins.cfg in Resources */,
@@ -546,6 +555,7 @@
 				B6C64C2317DE8C5B0092CA8E /* main.mm in Sources */,
 				B6C64C4517DE8C5B0092CA8E /* OgreDemoApp.cpp in Sources */,
 				B6C64C4617DE8C5B0092CA8E /* OgreFramework.cpp in Sources */,
+				5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */,
 				B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */,
 				B6C64C4A17DE8C5B0092CA8E /* Util.cpp in Sources */,
 				5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */,
