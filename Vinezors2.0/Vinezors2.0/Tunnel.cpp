@@ -7,7 +7,8 @@
 //
 
 #include "Tunnel.h"
-
+#include "Player.h"
+#include "Hud.h"
 #include <cstdlib>
 
 using namespace std;
@@ -19,17 +20,17 @@ const double infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false)
+: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), current(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), sectionSize(0), podSegmentSize(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), activePods(), mode(GAME_NORMAL), totalElapsed(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), done(false), cleanup(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize)
-: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false)
+: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), current(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), sectionIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), activePods(), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
-    //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
+    history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     
     setNewControl(control);
@@ -287,15 +288,31 @@ std::string Tunnel::determineMaterial() const
     }
 }
 
-
 bool Tunnel::isDone() const
 {
     return done;
 }
 
-void Tunnel::setDone(bool value)
+void Tunnel::setDone(Evaluation eval)
 {
-    done = value;
+    // Generate a CHECKPOINT tunnel section
+    for (int i = 0; i < globals.initiationSections; ++i) {
+        SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);
+        if (eval == PASS)
+            info.tunnelType = CHECKPOINT_PASS;
+        else if (eval == FAIL)
+            info.tunnelType = CHECKPOINT_FAIL;
+        else
+            info.tunnelType = CHECKPOINT_EVEN;
+        //                }
+        addSection(info);
+    }
+    done = true;
+}
+
+bool Tunnel::needsCleaning() const
+{
+    return cleanup;
 }
 
 void Tunnel::setNewControl(int control)
@@ -504,6 +521,10 @@ void Tunnel::renewSegment(TunnelType segmentType, Direction segmentTurn, int tur
     Vector3 stepend = end + forward * (segmentDepth + globals.tunnelSegmentBuffer);
     
 	TunnelSlice *nsegment = segments.front();
+    
+    if (nsegment->getType() == NORMAL_WITH_ONE_POD)
+        activePods.pop_front();
+    
     nsegment->rejuvenate(segmentCounter, segmentType, (end + stepend) / 2, rot, segmentWidth, segmentDepth, determineMaterial(), sidesUsed);
     ++segmentCounter;
     
@@ -685,9 +706,73 @@ std::vector<Pod *> Tunnel::findPodCollisions(SceneNode *ent)
     return collisions;
 }
 
-void Tunnel::update(double elapsed)
+void Tunnel::update(Player* player, Hud* hud, double elapsed)
 {
     totalElapsed += elapsed;
+    
+    // Determine whether a stage has completed
+    if (!isDone())
+    {
+        if (getMode() == GAME_NORMAL)
+        {
+            // Notify completion of stage
+            if (player->getHP() >= globals.HPPositiveLimit ||
+                player->getHP() <= globals.HPNegativeLimit)
+                setDone(player->getEvaluation(getMode()));
+        }
+        else
+        {
+            if (getTotalElapsed() > globals.timedRunTimer)
+                setDone(player->getEvaluation(getMode()));
+        }
+    }
+    // Animate Pod Growing outwards or Growing inwards
+    const double GROWTH_SPEED = player->getCamSpeed() / 10.0;
+    TunnelSlice* nextSliceM = getNext(globals.podAppearance);
+    if (nextSliceM) {
+        if (!isDone())
+            nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
+        else
+            nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
+    }
+    nextSliceM = getNext(globals.podAppearance + 1);
+    if (nextSliceM) {
+        if (!isDone())
+            nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
+        else
+            nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
+    }
+    
+    // Check to see if we need to recycle tunnel segments
+    if (renewIfNecessary(player->getCamPos())) {
+        // Set new camera slerp goal
+        player->saveCam();
+        TunnelSlice* nextSlice1 = getNext(1);
+        if (nextSlice1)
+        {
+            player->setDesireRot(nextSlice1->getQuaternion());
+        }
+        else {
+            cleanup = true; // Flag to notify main app this tunnel is completely over
+        }
+        
+        // Show Pod Color and Play Sound
+        TunnelSlice* nextSliceN = getNext(globals.podAppearance);
+        if (nextSliceN && !isDone())
+        {
+            for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
+                nextSliceN->getPods()[i]->revealPod();
+                activePods.push_back(nextSliceN->getPods()[i]);
+                nextSliceN->getPods()[i]->setRotateSpeed(5.0);
+                player->playPodSound(nextSliceN->getPods()[i]->getType());
+            }
+        }
+    }
+    std::list<Pod *>::iterator it;
+    for (it = activePods.begin(); it != activePods.end(); ++it)
+    {
+        (*it)->update(elapsed);
+    }
     if (history) history->update(elapsed);
 }
 

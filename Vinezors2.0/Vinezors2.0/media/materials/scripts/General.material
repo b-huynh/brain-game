@@ -97,7 +97,24 @@ material General/BarColors
         lighting off
         texture_unit
         {
-            texture barcolors.png
+            texture barcolorslong.png
+        }
+      } 
+    }
+}
+
+material General/Indicator
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture indicator.png
         }
       } 
     }
@@ -361,6 +378,7 @@ material General/PodUnknown
  
             ambient 0.1 0.1 0.1 1
             diffuse 0.5 0.5 0.5 1
+            specular 0.5 0.5 0.5 24
             emissive 0.1 0.1 0.1 1
         }
     }
@@ -376,6 +394,7 @@ material General/PodBlack
  
             ambient 0.0 0.0 0.0 1
             diffuse 0.1 0.1 0.1 1
+            specular 0.5 0.5 0.5 24
             emissive 0.0 0.0 0.0 1
         }
     }
@@ -391,6 +410,7 @@ material General/PodRed
  
             ambient 0.3 0.1 0.1 1
             diffuse 0.8 0.1 0.1 1
+            specular 0.8 0.5 0.5 24
             emissive 0.3 0.1 0.1 1
         }
     }
@@ -406,6 +426,7 @@ material General/PodGreen
  
             ambient 0.1 0.3 0.1 1
             diffuse 0.1 0.8 0.1 1
+            specular 0.5 0.8 0.5 24
             emissive 0.1 0.3 0.1 1
         }
     }
@@ -421,6 +442,7 @@ material General/PodBlue
  
             ambient 0.1 0.1 0.3 1
             diffuse 0.1 0.1 0.8 1
+            specular 0.5 0.5 0.8 24
             emissive 0.1 0.1 0.3 1
         }
     }
@@ -436,6 +458,7 @@ material General/PodYellow
  
             ambient 0.3 0.3 0.1 1
             diffuse 0.8 0.8 0.1 1
+            specular 0.8 0.8 0.5 24
             emissive 0.3 0.3 0.1 1
         }
     }
@@ -461,7 +484,7 @@ material General/PodShell
     technique
     {
         pass
-        {
+        {f
             scene_blend alpha_blend
             depth_write off
  

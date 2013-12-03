@@ -91,8 +91,6 @@ public:
 	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
 	void updateOgre(double timeSinceLastFrame);
-	void moveCamera();
-	void getInput();
     
     Ogre::String getMacBundlePath() const;
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
@@ -152,12 +150,6 @@ private:
 	int                         m_iNumScreenShots;
     
 	bool                        m_bShutDownOgre;
-	
-	Ogre::Vector3				m_TranslateVector;
-	Ogre::Real                  m_MoveSpeed;
-	Ogre::Degree				m_RotateSpeed;
-	float                       m_MoveScale;
-	Ogre::Degree				m_RotScale;
     
     OgreBites::Button*          m_quitButton;
     

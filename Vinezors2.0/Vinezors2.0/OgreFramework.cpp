@@ -15,9 +15,6 @@ extern Util::ConfigGlobal globals;
 
 OgreFramework::OgreFramework()
 {
-	m_MoveSpeed			= 10.0f;
-	m_RotateSpeed       = 0.3f;
-    
 	m_bShutDownOgre     = false;
 	m_iNumScreenShots   = 0;
     
@@ -93,15 +90,15 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
      m_pRenderWnd = m_pRoot->createRenderWindow(wndTitle, Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT, false, &paramsWnd);
      */
 	m_pSceneMgrMain = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerMain");
-	//m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
+	m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
 	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-	//m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
 	m_pCameraMain->setNearClipDistance(0.1);
-    //    m_pCameraMain->setFarClipDistance(500.0);
+    //m_pCameraMain->setFarClipDistance(500.0);
 	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
                                                 0.0,
                                                 0.0,
@@ -111,7 +108,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
-    /*
+
      m_pCameraSide = m_pSceneMgrSide->createCamera("CameraSide");
      m_pCameraSide->setPosition(Vector3(0, 0, 30));
      m_pCameraSide->lookAt(Vector3(0, 0, 0));
@@ -127,7 +124,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
      m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
      m_pViewportSide->setCamera(m_pCameraSide);
      m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
-     */
+     
 	unsigned long hWnd = 0;
     OIS::ParamList paramList;
     m_pRenderWnd->getCustomAttribute("WINDOW", &hWnd);
@@ -210,13 +207,15 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
-    m_pSoundMgr->createSound("Sound1", "chimeup.wav", false, false, true);
-    //m_pSoundMgr->createSound("Sound2", "chimedown.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound2", "wrongtriangle.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound3", "VinezorsSpaceBlip.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound4", "VinezorsSpaceBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound5", "VinezorsSpaceChime.wav", false, false, true);
-    m_pSoundMgr->createSound("Sound6", "VinezorsSpaceTone.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundGreatFeedback", "chimeup.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundGoodFeedback", "VinezorsFeedbackLight.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundBadFeedback", "chimedown.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod1", "VinezorsSpaceBlip.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod2", "VinezorsSpaceBeep.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod3", "VinezorsSpaceChime.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod4", "VinezorsSpaceTone.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundStartup", "VinezorsStartup.wav", false, false, true);
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -275,21 +274,6 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef)
 			mode = 2;
 		}
 	}
-    
-	if(m_pKeyboard->isKeyDown(OIS::KC_O))
-	{
-		if(m_pTrayMgr->isLogoVisible())
-        {
-            m_pTrayMgr->hideLogo();
-            m_pTrayMgr->hideFrameStats();
-        }
-        else
-        {
-            m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-            m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-        }
-	}
-    
 #endif
 	return true;
 }
@@ -374,49 +358,12 @@ bool OgreFramework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID
 
 void OgreFramework::updateOgre(double timeSinceLastFrame)
 {
-	m_MoveScale = m_MoveSpeed   * (float)timeSinceLastFrame;
-	m_RotScale  = m_RotateSpeed * (float)timeSinceLastFrame;
-    
 #if OGRE_VERSION >= 0x10800
     m_pSceneMgrMain->setSkyBoxEnabled(true);
 #endif
     
-	m_TranslateVector = Vector3::ZERO;
-    
-	getInput();
-	moveCamera();
-    
 	m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
-}
-
-void OgreFramework::moveCamera()
-{
-#if !defined(OGRE_IS_IOS)
-	if(m_pKeyboard->isKeyDown(OIS::KC_LSHIFT))
-		m_pCameraMain->moveRelative(m_TranslateVector);
-	else
-#endif
-		m_pCameraMain->moveRelative(m_TranslateVector / 10);
-}
-
-void OgreFramework::getInput()
-{
-#if !defined(OGRE_IS_IOS)
-    /*
-     if(m_pKeyboard->isKeyDown(OIS::KC_A))
-     m_TranslateVector.x = -m_MoveScale;
-     
-     if(m_pKeyboard->isKeyDown(OIS::KC_D))
-     m_TranslateVector.x = m_MoveScale;
-     
-     if(m_pKeyboard->isKeyDown(OIS::KC_W))
-     m_TranslateVector.z = -m_MoveScale;
-     
-     if(m_pKeyboard->isKeyDown(OIS::KC_S))
-     m_TranslateVector.z = m_MoveScale;
-     */
-#endif
 }
 
 Ogre::String OgreFramework::getMacBundlePath() const

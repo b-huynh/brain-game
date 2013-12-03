@@ -31,7 +31,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
     const int INITIATION_SECTIONS = 1;
     const double VINE_T_OFFSET = 1.5;
-    const double VINE_RADIUS = 1.5;
+    const double VINE_RADIUS = TUNNEL_SEGMENT_WIDTH / 15;
     const int POD_APPEARANCE = 2;
     const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
     const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
@@ -135,7 +135,7 @@ Util::ConfigGlobal::ConfigGlobal()
     timedRunNMax = TIMED_RUN_NMAX;
 }
 
-// Updates variables that depend on other globals, should call this if a global has changed
+// Updates variables that depend on other globals, should call this if a game global has changed
 void Util::ConfigGlobal::set()
 {
     viewportMainWidth_modeRight = screenWidth - 224;
@@ -163,6 +163,252 @@ void Util::ConfigGlobal::set()
     label2_posY = 7 * screenHeight / 40;
     label5_posX = screenWidth / 2;
     label5_posY = screenHeight / 2;
+}
+
+void Util::ConfigGlobal::initPaths(const char* name)
+{
+    playerName = name;
+    
+#if defined(OGRE_IS_IOS)
+    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
+    configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
+    configBackup = Util::getIOSDir() + "/backup.conf";
+#else
+    savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
+    configPath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".conf";
+    configBackup = Util::getOSXDir() + "/backup.conf";
+#endif
+    
+    //Build log path
+    logPath = buildLogPath(playerName);
+    
+    bool saveGood = loadSaveFile(savePath);
+    if (!saveGood)
+        std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
+    
+    bool configGood = loadConfig(currStageID);
+    if (!configGood)
+    {
+        std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
+        setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    }
+    
+}
+
+void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
+{
+    if (paramName == "stageID")
+        in >> stageID;
+    else if (paramName == "sessionTime")
+        in >> sessionTime;
+    else if (paramName == "nback")
+        in >> nback;
+    else if (paramName == "control")
+        in >> control;
+    else if (paramName == "progressionMode")
+    {
+        in >> progressionMode;
+        progressionMode--; // Kelly wants it config file to start at 1, we start at 0
+    }
+    else if (paramName == "gameMode")
+        in >> gameMode;
+    else if (paramName == "tunnelMinAngleTurn")
+        in >> tunnelMinAngleTurn;
+    else if (paramName == "tunnelMaxAngleTurn")
+        in >> tunnelMaxAngleTurn;
+    else if (paramName == "tunnelSegmentsPerSection")
+        in >> tunnelSegmentsPerSection;
+    else if (paramName == "tunnelSegmentsPerPod")
+        in >> tunnelSegmentsPerPod;
+    else if (paramName == "podAppearance")
+        in >> podAppearance;
+    else if (paramName == "podNBackChance")
+        in >> podNBackChance;
+    else if (paramName == "HPNegativeLimit")
+        in >> HPNegativeLimit;
+    else if (paramName == "HPPositiveLimit")
+        in >> HPPositiveLimit;
+    else if (paramName == "HPPositiveCorrectAnswer")
+        in >> HPPositiveCorrectAnswer;
+    else if (paramName == "HPPositiveWrongAnswer")
+        in >> HPPositiveWrongAnswer;
+    else if (paramName == "HPNegativeCorrectAnswer")
+        in >> HPNegativeCorrectAnswer;
+    else if (paramName == "HPNegativeWrongAnswer")
+        in >> HPNegativeWrongAnswer;
+    else if (paramName == "initCamSpeed")
+        in >> initCamSpeed;
+    else if (paramName == "modifierCamSpeed")
+        in >> modifierCamSpeed;
+    else if (paramName == "minCamSpeed")
+        in >> minCamSpeed;
+    else if (paramName == "maxCamSpeed")
+        in >> maxCamSpeed;
+    else if (paramName == "nlevelSpeedModifier")
+        in >> nlevelSpeedModifier;
+    else if (paramName == "numToSpeedUp")
+        in >> numToSpeedUp;
+    else if (paramName == "numToSpeedDown")
+        in >> numToSpeedDown;
+    else if (paramName == "stepsizeSpeedUp")
+        in >> stepsizeSpeedUp;
+    else if (paramName == "stepsizeSpeedDown")
+        in >> stepsizeSpeedDown;
+    else if (paramName == "timedRunTimer")
+        in >> timedRunTimer;
+    else if (paramName == "timedRunControlUpDist1")
+        in >> timedRunControlUpDist1;
+    else if (paramName == "timedRunControlUpDist2")
+        in >> timedRunControlUpDist2;
+    else if (paramName == "timedRunControlUpDist3")
+        in >> timedRunControlUpDist3;
+    else if (paramName == "timedRunNMax")
+        in >> timedRunNMax;
+    else
+    {
+        std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
+        setMessage("WARNING: Unknown config parameter", MESSAGE_NOTIFY);
+    }
+}
+
+bool Util::ConfigGlobal::loadConfig(int sid)
+{
+    std::string check, paramName, colon;
+    char nextVal;
+    
+    std::ifstream in (configPath.c_str());
+    if (!in.good())
+    {
+        in.open(configBackup.c_str());
+        std::cout << "Loading config: " << configBackup << std::endl;
+    }
+    else
+        std::cout << "Loading config: " << configPath << std::endl;
+    if (!in.good()) return false;
+    
+    do {
+        in >> check;
+        if (check != "{") {
+            std::cout << "ERROR: Config file missing \'{\' in "
+            << "at least one Stage configuration" << std::endl;
+            return false;
+        }
+        
+        in >> paramName;
+        while (paramName != "}" && !in.eof()) {
+            in >> colon;
+            nextVal = in.peek();
+            setConfigValue(in, paramName);
+            in >> paramName;
+            
+            if (colon == "{" || nextVal == '{' || paramName == "{" || in.eof()) {
+                std::cout << "ERROR: Config file missing \'}\' in "
+                << "at least one Stage configuration." << std::endl;
+                in.close();
+                return false;
+            }
+        }
+        
+    // *************** Would this mean that the parameters will not be read for the
+    // current stage object since stageID is usually the first element? C.P.
+    } while (stageID != sid && !in.eof());
+    
+    in.close();
+    
+    if (stageID == sid) {
+        std::cout << "Loaded stageID " << stageID << std::endl;
+        return true;
+    } else {
+        std::cout << "Failed to load stageID " << stageID << std::endl;
+        return false;
+    }
+    
+    return false;
+}
+
+bool Util::ConfigGlobal::loadSaveFile(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    bool ret = false;
+    
+    std::cout << "Loading player save: " << savePath << std::endl;
+    
+    if (saveFile.good()) {
+        saveFile >> currStageID;
+        std::cout << "Starting from last session StageID " << currStageID << std::endl;
+        setMessage("Loaded Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = true;
+    } else {
+        currStageID = 5;
+        std::cout << "Starting from StageID " << currStageID << std::endl;
+        setMessage("New Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = false;
+    }
+    
+    saveFile.close();
+    return ret;
+}
+
+void Util::ConfigGlobal::setMessage(std::string msg, MessageType type)
+{
+    if (type > messageType)
+    {
+        message = msg;
+        messageType = type;
+    }
+}
+
+void Util::ConfigGlobal::clearMessage()
+{
+    message = "";
+    messageType = MESSAGE_NONE;
+}
+
+bool Util::ConfigGlobal::setName(const char* name)
+{
+    std::string test = "subject000";
+    playerName = name;
+    if (playerName.length() != test.length())
+        return false;
+    
+    if (playerName.substr(0, 7) != "subject")
+        return false;
+    
+    int id = atoi(playerName.substr(7, 3).c_str());
+    if (!((id >= 100 && id <= 200) || (id >= 900 && id <= 999)))
+        return false;
+    return true;
+}
+
+std::string Util::ConfigGlobal::buildLogPath(std::string playerName)
+{
+    //Get Date
+    time_t raw = time(0);
+    struct tm * timeinfo = localtime( &raw );
+    char buffer [80];
+    strftime(buffer, 80, "%F", timeinfo);
+    
+#if defined(OGRE_IS_IOS)
+    std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
+    + playerName + "-" + std::string(buffer);
+#else
+    std::string logPath = Util::getOSXDir() + "/" + playerName + "/"
+    + playerName + "-" + std::string(buffer);
+#endif
+    
+    int i = 1;
+    std::ifstream testExist (std::string(logPath + ".log").c_str());
+    
+    while (testExist) {
+        testExist.close();
+        logPath = logPath + "_" + Util::toStringInt(i);
+        ++i;
+        testExist.open(std::string(logPath + ".log").c_str());
+    }
+    
+    logPath = logPath + ".log";
+    
+    return logPath;
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0
@@ -362,12 +608,12 @@ std::string Util::toStringDouble(double value)
 	return ss.str();
 }
 
-std::string Util::getSaveDir()
+std::string Util::getOSXDir()
 {
     char * dir = getenv("HOME");
     std::string result = "";
     if (dir)
-        result = std::string(dir) + "/braingame/";
+        result = std::string(dir) + "/braingame/Documents";
     else
         return "";
     
@@ -377,8 +623,6 @@ std::string Util::getSaveDir()
 
 std::string Util::getIOSDir()
 {
-    
-    //    char * dir = getenv("HOME");
     const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
     std::string result = "";
     if (dir)
@@ -541,6 +785,108 @@ void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strNa
     MeshPtr mesh = manual->convertToMesh(strName);
     Vector3 bl = Vector3(-r, -h / 2, -r);
     Vector3 tr = Vector3(r, h / 2, r);
+    mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
+    
+    mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+    
+    sceneMgr->destroyManualObject(manual);
+}
+
+void Util::createDiamond(Ogre::SceneManager* sceneMgr, const std::string& strName, float w, float h)
+{
+    ManualObject * manual = sceneMgr->createManualObject(strName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    manual->position(0, h, 0);
+    manual->normal(0, 1, 0);
+    manual->textureCoord(0.5, 1.0);
+    manual->position(-w, 0, -w);
+    manual->normal(-sqrt(2), 0, -sqrt(2));
+    manual->textureCoord(0.0, 0.0);
+    manual->position(w, 0, -w);
+    manual->normal(sqrt(2), 0, -sqrt(2));
+    manual->textureCoord(1.0, 0.0);
+    manual->position(w, 0, w);
+    manual->normal(sqrt(2), 0, sqrt(2));
+    manual->textureCoord(1.0, 1.0);
+    manual->position(-w, 0, w);
+    manual->normal(-sqrt(2), 0, sqrt(2));
+    manual->textureCoord(1.0, 0.0);
+    manual->position(0, -h, 0);
+    manual->normal(0, -1, 0);
+    manual->textureCoord(0.5, 0.0);
+    
+    manual->triangle(4, 3, 0);
+    manual->triangle(3, 2, 0);
+    manual->triangle(2, 1, 0);
+    manual->triangle(1, 4, 0);
+    manual->triangle(1, 2, 5);
+    manual->triangle(2, 3, 5);
+    manual->triangle(3, 4, 5);
+    manual->triangle(4, 1, 5);
+    manual->end();
+    
+    MeshPtr mesh = manual->convertToMesh(strName);
+    Vector3 bl = Vector3(-w, -h, -w);
+    Vector3 tr = Vector3(w, h, w);
+    mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
+    
+    mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+    
+    sceneMgr->destroyManualObject(manual);
+}
+
+void Util::createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, float l, float w, float h)
+{
+    ManualObject * manual = sceneMgr->createManualObject(strName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    manual->position(-l, -w, -h);
+    manual->normal(-sqrt(3), -sqrt(3), -sqrt(3));
+    manual->textureCoord(0.0, 0.0);
+    manual->position(l, -w, -h);
+    manual->normal(sqrt(3), -sqrt(3), -sqrt(3));
+    manual->textureCoord(0.5, 0.0);
+    manual->position(l, w, -h);
+    manual->normal(sqrt(3), sqrt(3), -sqrt(3));
+    manual->textureCoord(0.5, 0.5);
+    manual->position(-l, w, -h);
+    manual->normal(-sqrt(3), sqrt(3), -sqrt(3));
+    manual->textureCoord(0.0, 0.5);
+    manual->position(-l, -w, h);
+    manual->normal(-sqrt(3), -sqrt(3), sqrt(3));
+    manual->textureCoord(0.5, 0.5);
+    manual->position(l, -w, h);
+    manual->normal(sqrt(3), -sqrt(3), sqrt(3));
+    manual->textureCoord(1.0, 0.5);
+    manual->position(l, w, h);
+    manual->normal(sqrt(3), sqrt(3), sqrt(3));
+    manual->textureCoord(1.0, 1.0);
+    manual->position(-l, w, h);
+    manual->normal(-sqrt(3), sqrt(3), sqrt(3));
+    manual->textureCoord(0.5, 1.0);
+    manual->quad(3, 2, 1, 0);
+    manual->quad(7, 6, 2, 3);
+    manual->quad(4, 5, 6, 7);
+    manual->quad(0, 1, 5, 4);
+    manual->quad(1, 2, 6, 5);
+    manual->quad(3, 0, 4, 7);
+    
+    manual->end();
+    
+    MeshPtr mesh = manual->convertToMesh(strName);
+    Vector3 bl = Vector3(-l, -w, -h);
+    Vector3 tr = Vector3(l, w, h);
     mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
     
     mesh->_setBoundingSphereRadius((tr - bl).length() / 2);

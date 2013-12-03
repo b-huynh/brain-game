@@ -10,36 +10,66 @@
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), tip(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), entireVine(NULL), tip(NULL), base(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
-: parentNode(parentNode), tip(NULL), dest(), forward(), radius(radius), speed(0.0)
+: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), dest(), forward(), radius(radius), speed(0.0)
 {
-    tip = parentNode->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
+    loadRunnerShip();
+    ++vineID;
+}
+
+void Vine::loadBasicShip()
+{
+    removeFromScene();
+    entireVine = parentNode->createChildSceneNode("entireVineNode" + Util::toStringInt(vineID));
     
-    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "vineTopMesh");
-    //Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "flowerShip.mesh");
+    tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
+    
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "sphereMesh");
     tipEntity->setMaterialName("General/VineTop");
     tip->attachObject(tipEntity);
-    tip->scale(0.1,0.1,0.1);
-    //tip->yaw(Radian(180.0));
+    tip->scale(radius,radius,radius);
     
-    base = tip->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
-    
-    //Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "vineDiskMesh");
-    Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "flowerShip.mesh");
-    //baseEntity->setMaterialName("General/VineBase");
+    base = entireVine->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
+     
+    Entity* baseEntity = base->getCreator()->createEntity("vineBaseEntity" + Util::toStringInt(vineID), "cylinderMesh");
+    baseEntity->setMaterialName("General/VineBase");
     base->attachObject(baseEntity);
-    //base->translate(0, 0.0 + tip->getPosition().y, 0);
-    //base->scale(0.5,0.5,0.5);
-    base->scale(3,3,3);
-    base->setPosition(tip->getPosition().x, tip->getPosition().y, tip->getPosition().z);
-    base->translate(0, -7.0, 0);
-    //base->scale(0.5,0.5,0.5);
-    //base->translate(0, -1.0, 0);
+    base->translate(0, -radius / 3.0, 0);
+    base->scale(radius * 1.5, radius / 1.5, radius * 1.5);
+}
+
+void Vine::loadRunnerShip()
+{
+    removeFromScene();
+    entireVine = parentNode->createChildSceneNode("entireVineNode" + Util::toStringInt(vineID));
     
-    ++vineID;
+    tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
+    
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "runnerShip.mesh");
+    tip->attachObject(tipEntity);
+    tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
+    tip->yaw(Degree(180.0));
+    
+//    tipEntity->getSubEntity(0)->setMaterialName("General/PodYellow");
+//    tipEntity->getSubEntity(1)->setMaterialName("General/PodRed");
+//    tipEntity->getSubEntity(2)->setMaterialName("General/PodBlue");
+//    tipEntity->getSubEntity(3)->setMaterialName("General/PodGreen");
+}
+
+void Vine::loadFlowerShip()
+{
+    removeFromScene();
+    entireVine = parentNode->createChildSceneNode("entireVineNode" + Util::toStringInt(vineID));
+    
+    tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
+    
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "flowerVehicle.mesh");
+    tip->attachObject(tipEntity);
+    tip->yaw(Degree(180.0));
+    tip->scale(0.5, 0.5, 0.5);
 }
 
 SceneNode* Vine::getTip() const
@@ -49,12 +79,12 @@ SceneNode* Vine::getTip() const
 
 Vector3 Vine::getPos() const
 {
-	return tip->getPosition();
+	return entireVine->getPosition();
 }
 
 void Vine::setPos(Vector3 value)
 {
-	tip->setPosition(value);
+	entireVine->setPosition(value);
 }
 
 Vector3 Vine::getDest() const
@@ -79,7 +109,7 @@ void Vine::setForward(Vector3 value)
 
 void Vine::move(Vector3 delta)
 {
-	tip->translate(delta);
+	entireVine->translate(delta);
 }
 
 double Vine::getRadius() const
@@ -89,14 +119,14 @@ double Vine::getRadius() const
 
 void Vine::setQuaternion(Quaternion rot)
 {
-    tip->setOrientation(rot);
+    entireVine->setOrientation(rot);
 }
 
 void Vine::update(double elapsed)
 {
     double moveSpeed = speed;
     
-	Vector3 dist = dest - tip->getPosition();
+	Vector3 dist = dest - entireVine->getPosition();
     // This should never happen, but we will ensure the player will never fall behind
     if (dist.length() > 1.1 * speed) {
         moveSpeed = dist.length();
@@ -120,14 +150,25 @@ void Vine::update(double elapsed)
 
 void Vine::removeFromScene()
 {
-    base->getCreator()->destroyMovableObject(base->getAttachedObject(0)); // Assuming only one entity
-    base->removeAndDestroyAllChildren();
-    base->getCreator()->destroySceneNode(base);
-    base = NULL;
+    if (base)
+    {
+        base->getCreator()->destroyMovableObject(base->getAttachedObject(0)); // Assuming only one entity
+        base->removeAndDestroyAllChildren();
+        base->getCreator()->destroySceneNode(base);
+        base = NULL;
+    }
+    if (tip)
+    {
+        tip->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
+        tip->removeAndDestroyAllChildren();
+        tip->getCreator()->destroySceneNode(tip);
+        tip = NULL;
+    }
     
-    tip->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
-    tip->removeAndDestroyAllChildren();
-    tip->getCreator()->destroySceneNode(tip);
-    tip = NULL;
-    
+    if (entireVine)
+    {
+        entireVine->removeAndDestroyAllChildren();
+        entireVine->getCreator()->destroySceneNode(base);
+        entireVine = NULL;
+    }
 }

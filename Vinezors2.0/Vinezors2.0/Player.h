@@ -9,8 +9,6 @@
 #ifndef __Vinezors2_0__Player__
 #define __Vinezors2_0__Player__
 
-#pragma once
-
 #include <vector>
 #include <fstream>
 #include "Util.h"
@@ -24,10 +22,6 @@ struct PlayerLevel
     
     PlayerLevel();
 };
-
-enum Evaluation { PASS, FAIL, EVEN };
-enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
-enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 
 class Player
 {
@@ -89,15 +83,17 @@ private:
     double vineT;
     
     OgreOggSound::OgreOggISound* soundMusic;
+    OgreOggSound::OgreOggISound* soundFeedbackGreat;
     OgreOggSound::OgreOggISound* soundFeedbackGood;
     OgreOggSound::OgreOggISound* soundFeedbackBad;
-    OgreOggSound::OgreOggISound* soundAccelerate;
-    OgreOggSound::OgreOggISound* soundDecelerate;
+    OgreOggSound::OgreOggISound* soundStartup;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
+    bool triggerStartup;
     
-public:
+    // iOS Swipe Capabilities
     double inputTotalX;
     bool inputMoved;
+public:
     
 	Player();
 	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
@@ -162,6 +158,8 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(double value);
+    void saveCam();
+    void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
 	Vector3 getCamUpward(bool combined = true) const;
 	Vector3 getCamRight(bool combined = true) const;
@@ -178,7 +176,13 @@ public:
 	void addVine(Vine* vine);
 	void checkCollisions(Tunnel* tunnel);
     
-	void update(double elapsed, Tunnel* tunnel);
+    void resetCursorMoved();
+    void setCursorMoved();
+    void updateCursorCooldown(double elapsed);
+    void checkCursorMove(double dx, double dy);
+    bool checkPerformLeftMove();
+    bool checkPerformRightMove();
+	void update(Tunnel* tunnel, Hud* hud, double elapsed);
     
     void evaluatePlayerLevel(bool pass);
     bool saveProgress(std::string file);

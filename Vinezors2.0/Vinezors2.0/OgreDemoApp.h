@@ -78,14 +78,7 @@ protected:
 };
 #endif
 
-#include "Pod.h"
-#include "TunnelSlice.h"
-#include "Tunnel.h"
-#include "Player.h"
-
-enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
-enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
-enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
+#include "Util.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener, public Ogre::RenderTargetListener
@@ -98,16 +91,16 @@ public:
 	~DemoApp();
     
     bool setName(const char* name);
-    void setConfigValue(std::istream& in, std::string paramName);
-    void setMessage(std::string msg, MessageType type);
 	void startDemo(const char* name, MusicMode musica);
     void setSidebar();
-    void setOverlay(bool firstTime = false);
     void update(double elapsed);
     void setLevel(int n, int c, bool init = false);
     
     bool loadSaveFile(std::string saveFile);
     bool loadConfig(std::string filepath, int stageID);
+    
+    void activatePerformLeftMove();
+    void activatePerformRightMove();
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
@@ -142,29 +135,9 @@ private:
     SceneNode* lightNodeSide;
     Tunnel* tunnel;
 	Player* player;
-    std::string playerName;
-    std::string message;
-    MessageType messageType;
-    
-    std::vector<Ogre::Overlay*> overlays;
-    
-    OverlayContainer* panelText;
-    BorderPanelOverlayElement* healthArea;
-    PanelOverlayElement* barHP;
-    PanelOverlayElement* indicator;
-    TextAreaOverlayElement* label1;
-    TextAreaOverlayElement* label2;
-    TextAreaOverlayElement* label3;
-    TextAreaOverlayElement* label4;
-    TextAreaOverlayElement* label5;
+    Hud* hud;
     
     SidebarLocation sidebarMode;
-    
-    int currStageID;
-    std::string configPath;
-    std::string configBackup;
-    std::string logPath;
-    std::string savePath;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM

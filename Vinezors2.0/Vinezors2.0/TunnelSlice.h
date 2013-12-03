@@ -127,8 +127,8 @@ public:
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine) const;
     Vector3 requestWallDistance(Direction dir) const;
-    Vector3 requestMove(Direction dir) const;
-    Vector3 requestPosition(Vector3 cur, Direction dir) const;
+    Vector3 requestMove(Direction dir, double offset) const;
+    Vector3 requestPosition(Vector3 cur, Direction dir, double offset) const;
     
     void setSectionInfo(const SectionInfo & value);
     void setPodInfo(const PodInfo & value);
