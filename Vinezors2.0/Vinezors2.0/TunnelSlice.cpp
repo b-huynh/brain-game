@@ -54,7 +54,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[NORTHWEST]) {
         topLeftWall = entireWall->createChildSceneNode("topLeftWallNode" + Util::toStringInt(wallID));
-        Entity* topLeftWallEntity = topLeftWall->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* topLeftWallEntity = topLeftWall->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "planeMesh");
         topLeftWall->attachObject(topLeftWallEntity);
         move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
         topLeftWall->translate(move);
@@ -65,7 +65,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[NORTH]) {
         topWall = entireWall->createChildSceneNode("topWallNode" + Util::toStringInt(wallID));
-        Entity* topWallEntity = topWall->getCreator()->createEntity("topWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* topWallEntity = topWall->getCreator()->createEntity("topWallEntity" + Util::toStringInt(wallID), "planeMesh");
         topWall->attachObject(topWallEntity);
         move = Vector3(0, width / 2, 0);
         topWall->translate(move);
@@ -76,7 +76,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[NORTHEAST]) {
         topRightWall = entireWall->createChildSceneNode("topRightWallNode" + Util::toStringInt(wallID));
-        Entity* topRightWallEntity = topRightWall->getCreator()->createEntity("topRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* topRightWallEntity = topRightWall->getCreator()->createEntity("topRightWallEntity" + Util::toStringInt(wallID), "planeMesh");
         topRightWall->attachObject(topRightWallEntity);
         move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
         topRightWall->translate(move);
@@ -87,7 +87,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[EAST]) {
         rightWall = entireWall->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
-        Entity* rightWallEntity = rightWall->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* rightWallEntity = rightWall->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "planeMesh");
         rightWall->attachObject(rightWallEntity);
         move = Vector3(width / 2, 0, 0);
         rightWall->translate(move);
@@ -98,7 +98,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[SOUTHEAST]) {
         bottomRightWall = entireWall->createChildSceneNode("bottomRightWallNode" + Util::toStringInt(wallID));
-        Entity* bottomRightWallEntity = bottomRightWall->getCreator()->createEntity("bottomRightWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* bottomRightWallEntity = bottomRightWall->getCreator()->createEntity("bottomRightWallEntity" + Util::toStringInt(wallID), "planeMesh");
         bottomRightWall->attachObject(bottomRightWallEntity);
         move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
         bottomRightWall->translate(move);
@@ -109,7 +109,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[SOUTH]) {
         bottomWall = entireWall->createChildSceneNode("bottomWallNode" + Util::toStringInt(wallID));
-        Entity* bottomWallEntity = bottomWall->getCreator()->createEntity("bottomWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* bottomWallEntity = bottomWall->getCreator()->createEntity("bottomWallEntity" + Util::toStringInt(wallID), "planeMesh");
         bottomWall->attachObject(bottomWallEntity);
         move = Vector3(0, -width / 2, 0);
         bottomWall->translate(move);
@@ -120,7 +120,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[SOUTHWEST]) {
         bottomLeftWall = entireWall->createChildSceneNode("bottomLeftWallNode" + Util::toStringInt(wallID));
-        Entity* bottomLeftWallEntity = bottomLeftWall->getCreator()->createEntity("bottomLeftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* bottomLeftWallEntity = bottomLeftWall->getCreator()->createEntity("bottomLeftWallEntity" + Util::toStringInt(wallID), "planeMesh");
         bottomLeftWall->attachObject(bottomLeftWallEntity);
         move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
         bottomLeftWall->translate(move);
@@ -131,7 +131,7 @@ void TunnelSlice::initWalls()
     
     if (sidesUsed[WEST]) {
         leftWall = entireWall->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
-        Entity* leftWallEntity = leftWall->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "wallTileMesh");
+        Entity* leftWallEntity = leftWall->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "planeMesh");
         leftWall->attachObject(leftWallEntity);
         move = Vector3(-width / 2, 0, 0);
         leftWall->translate(move);
@@ -336,20 +336,17 @@ Vector3 TunnelSlice::requestWallDistance(Direction dir) const
     return move;
 }
 
-Vector3 TunnelSlice::requestMove(Direction dir) const
+Vector3 TunnelSlice::requestMove(Direction dir, double offset) const
 {
-	double wallLength = getWallLength();
-	const double WALL_OFFSET = wallLength / 2;
-    
     Vector3 move = rot * requestWallDistance(dir);
-    move = move * ((move.length() - WALL_OFFSET) / move.length());
+    move = move * ((move.length() - offset) / move.length());
     
     return move;
 }
 
-Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir) const
+Vector3 TunnelSlice::requestPosition(Vector3 cur, Direction dir, double offset) const
 {
-    return cur + requestMove(dir);
+    return cur + requestMove(dir, offset);
 }
 
 void TunnelSlice::setSectionInfo(const SectionInfo & value)

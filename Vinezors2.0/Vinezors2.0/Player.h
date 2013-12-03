@@ -83,11 +83,12 @@ private:
     double vineT;
     
     OgreOggSound::OgreOggISound* soundMusic;
+    OgreOggSound::OgreOggISound* soundFeedbackGreat;
     OgreOggSound::OgreOggISound* soundFeedbackGood;
     OgreOggSound::OgreOggISound* soundFeedbackBad;
-    OgreOggSound::OgreOggISound* soundAccelerate;
-    OgreOggSound::OgreOggISound* soundDecelerate;
+    OgreOggSound::OgreOggISound* soundStartup;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
+    bool triggerStartup;
     
     // iOS Swipe Capabilities
     double inputTotalX;

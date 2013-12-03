@@ -175,10 +175,13 @@ void DemoApp::setupDemoScene()
     
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "sphereMesh", 1.0, 16, 16);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "cylinderMesh", 1.0, 1.0, 16);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", 1.0, 1.0);
-    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "podMesh", globals.podHeadRadius, 16, 16);
-    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
-    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
+    Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "diamondMesh", 1.0, 1.0);
+    Util::createBox(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "boxMesh", 1.0, 1.0, 1.0);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "planeMesh", 1.0, 1.0);
+    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "sphereMesh", 1.0, 16, 16);
+    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "cylinderMesh", 1.0, 1.0, 16);
+    //Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "diamondMesh", 1.0, 1.0);
+    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "planeMesh", 1.0, 1.0);
     
 	origin = Vector3(0, 0, 0);
     
@@ -209,14 +212,12 @@ void DemoApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
-    /*
      Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
      lightSide->setDiffuseColour(1.0, 1.0, 1.0);
      lightSide->setSpecularColour(1.0, 1.0, 1.0);
      lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
      lightNodeSide->attachObject(lightSide);
      lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
-     */
     
     hud = new Hud();
     
@@ -243,7 +244,6 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainHeight_modeNone) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
             
-            /*
              m_pCameraSide->setOrthoWindow(0.0, 0.0);
              m_pViewportSide->setDimensions(
              double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
@@ -251,7 +251,7 @@ void DemoApp::setSidebar()
              double(globals.viewportSideWidth_modeNone) / globals.screenWidth,
              double(globals.viewportSideHeight_modeNone) / globals.screenHeight);
              m_pCameraSide->setAspectRatio(Real(0.0));
-             */
+             
             break;
         case SIDEBAR_RIGHT:
             m_pViewportMain->setDimensions(
@@ -260,7 +260,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
+            
              m_pCameraSide->setPosition(Vector3(0, 0, 30));
              m_pCameraSide->lookAt(Vector3(0, 0, 0));
              m_pCameraSide->setNearClipDistance(1);
@@ -271,7 +271,7 @@ void DemoApp::setSidebar()
              double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
              double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
              m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+             
             break;
         case SIDEBAR_BOTTOM_LTR:
             m_pViewportMain->setDimensions(
@@ -280,7 +280,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
+            
              m_pCameraSide->setPosition(Vector3(0, 0, 30));
              m_pCameraSide->lookAt(Vector3(0, 0, 0));
              m_pCameraSide->setNearClipDistance(1);
@@ -292,7 +292,7 @@ void DemoApp::setSidebar()
              double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
              double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
              m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+             
             break;
         case SIDEBAR_BOTTOM_RTL:
             m_pViewportMain->setDimensions(
@@ -301,7 +301,7 @@ void DemoApp::setSidebar()
                                            double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
                                            double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
+            
              m_pCameraSide->setPosition(Vector3(0, 0, 30));
              m_pCameraSide->lookAt(Vector3(0, 0, 0));
              m_pCameraSide->setNearClipDistance(1);
@@ -313,7 +313,7 @@ void DemoApp::setSidebar()
              double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
              double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
              m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+             
             break;
     }
 }
@@ -413,18 +413,18 @@ void DemoApp::setLevel(int n, int c, bool init)
     if (n >= 0) // For Debugging keys
     {
         tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth,
-                            globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn,
-                            globals.tunnelMaxAngleTurn,
-                            (GameMode)globals.gameMode,
-                            n,
-                            c,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
+            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
+            globals.tunnelSegmentWidth,
+            globals.tunnelSegmentDepth,
+            globals.tunnelMinAngleTurn,
+            globals.tunnelMaxAngleTurn,
+            (GameMode)globals.gameMode,
+            n,
+            c,
+            player->getVineDir(),
+            globals.tunnelSegmentsPerSection,
+            globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections, rot);
     }
     else // Automatically determine
@@ -482,18 +482,18 @@ void DemoApp::setLevel(int n, int c, bool init)
         }
         
         tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth,
-                            globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn,
-                            globals.tunnelMaxAngleTurn,
-                            nmode,
-                            nlevel,
-                            ncontrol,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
+            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
+            globals.tunnelSegmentWidth,
+            globals.tunnelSegmentDepth,
+            globals.tunnelMinAngleTurn,
+            globals.tunnelMaxAngleTurn,
+            nmode,
+            nlevel,
+            ncontrol,
+            player->getVineDir(),
+            globals.tunnelSegmentsPerSection,
+            globals.tunnelSegmentsPerPod);
         tunnel->constructTunnel(globals.tunnelSections, rot);
     }
     
@@ -924,26 +924,13 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 
 void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
-    /*
-    if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportMain)
+    if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
     {
-        for(int i = 0; i < overlays.size(); ++i)
-            if (sidebarMode != SIDEBAR_NONE && overlays[i]->getName() != "OverlayMain")
-                overlays[i]->hide();
+        hud->hideOverlays();
     }
-    else if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
-    {
-        for(int i = 0; i < overlays.size(); ++i)
-            if (sidebarMode == SIDEBAR_NONE || overlays[i]->getName() != "OverlaySide")
-                overlays[i]->hide();
-    }
-     */
 }
 
 void DemoApp::postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
-    /*
-    for(int i = 0; i < overlays.size(); ++i)
-        overlays[i]->show();
-     */
+    hud->showOverlays();
 }

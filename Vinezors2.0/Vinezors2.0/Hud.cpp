@@ -52,7 +52,7 @@ Hud::Hud()
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayHealthArea");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayText");
     overlay1->add2D(healthArea);
-    overlay1->add2D(barHP);
+    //overlay1->add2D(barHP);
     overlay1->add2D(indicator);
     overlay2->add2D(panelText);
     
@@ -74,7 +74,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     healthArea->setMetricsMode(GMM_RELATIVE);
     healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
     healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
-    healthArea->setMaterialName("General/BaseWhite");
+    healthArea->setMaterialName("General/BarColors");
     
     barHP->setMetricsMode(GMM_RELATIVE);
     barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
@@ -87,7 +87,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     indicator->setMetricsMode(GMM_RELATIVE);
     indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
     indicator->setDimensions(healthArea->getWidth() / 50, globals.HPBarHeight + 0.01);
-    indicator->setMaterialName("General/BaseBlack");
+    indicator->setMaterialName("General/Indicator");
     
     label1->setMetricsMode(GMM_PIXELS);
     label1->setAlignment(TextAreaOverlayElement::Center);
@@ -166,6 +166,18 @@ void Hud::update(Tunnel* tunnel, Player* player, double elapsed)
         indicatorRange *= (player->getHP() - globals.HPNegativeLimit) / (double)(hpRange);
         indicator->setPosition(barHP->getLeft() + indicatorRange, indicator->getTop());
     }
+}
+
+void Hud::hideOverlays()
+{
+    for (int i = 0; i < overlays.size(); ++i)
+        overlays[i]->hide();
+}
+
+void Hud::showOverlays()
+{
+    for (int i = 0; i < overlays.size(); ++i)
+        overlays[i]->show();
 }
 
 Hud::~Hud()

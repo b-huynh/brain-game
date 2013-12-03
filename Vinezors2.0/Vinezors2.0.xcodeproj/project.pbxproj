@@ -46,12 +46,6 @@
 		B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1B17DE8C5B0092CA8E /* Pod.cpp */; };
 		B6C64C4917DE8C5B0092CA8E /* resources.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B6C64C1D17DE8C5B0092CA8E /* resources.cfg */; };
 		B6C64C4A17DE8C5B0092CA8E /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1E17DE8C5B0092CA8E /* Util.cpp */; };
-		B6D678C8183CB45C00667F8E /* flowerShip.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C2183CB45C00667F8E /* flowerShip.material */; };
-		B6D678C9183CB45C00667F8E /* fuelCellBland.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C3183CB45C00667F8E /* fuelCellBland.material */; };
-		B6D678CA183CB45C00667F8E /* fuelCellBlue.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C4183CB45C00667F8E /* fuelCellBlue.material */; };
-		B6D678CB183CB45C00667F8E /* fuelCellGreen.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C5183CB45C00667F8E /* fuelCellGreen.material */; };
-		B6D678CC183CB45C00667F8E /* fuelCellRed.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C6183CB45C00667F8E /* fuelCellRed.material */; };
-		B6D678CD183CB45C00667F8E /* fuelCellYellow.material in Resources */ = {isa = PBXBuildFile; fileRef = B6D678C7183CB45C00667F8E /* fuelCellYellow.material */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -192,18 +186,6 @@
 		B6C64C1F17DE8C5B0092CA8E /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		B6C64C2017DE8C5B0092CA8E /* Vinezors2.0-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Vinezors2.0-Info.plist"; sourceTree = "<group>"; };
 		B6C64C2117DE8C5B0092CA8E /* Vinezors2.0-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Vinezors2.0-Prefix.pch"; sourceTree = "<group>"; };
-		B6D678C2183CB45C00667F8E /* flowerShip.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flowerShip.material; sourceTree = "<group>"; };
-		B6D678C3183CB45C00667F8E /* fuelCellBland.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fuelCellBland.material; sourceTree = "<group>"; };
-		B6D678C4183CB45C00667F8E /* fuelCellBlue.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fuelCellBlue.material; sourceTree = "<group>"; };
-		B6D678C5183CB45C00667F8E /* fuelCellGreen.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fuelCellGreen.material; sourceTree = "<group>"; };
-		B6D678C6183CB45C00667F8E /* fuelCellRed.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fuelCellRed.material; sourceTree = "<group>"; };
-		B6D678C7183CB45C00667F8E /* fuelCellYellow.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fuelCellYellow.material; sourceTree = "<group>"; };
-		B6D678CE183CB46800667F8E /* flowerShip.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = flowerShip.mesh; sourceTree = "<group>"; };
-		B6D678CF183CB46800667F8E /* fuelCellBland.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuelCellBland.mesh; sourceTree = "<group>"; };
-		B6D678D0183CB46800667F8E /* fuelCellBlue.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuelCellBlue.mesh; sourceTree = "<group>"; };
-		B6D678D1183CB46800667F8E /* fuelCellGreen.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuelCellGreen.mesh; sourceTree = "<group>"; };
-		B6D678D2183CB46800667F8E /* fuelCellRed.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuelCellRed.mesh; sourceTree = "<group>"; };
-		B6D678D3183CB46800667F8E /* fuelCellYellow.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = fuelCellYellow.mesh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,12 +253,6 @@
 		5DE1229417F0DA8200E49916 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
-				B6D678C2183CB45C00667F8E /* flowerShip.material */,
-				B6D678C3183CB45C00667F8E /* fuelCellBland.material */,
-				B6D678C4183CB45C00667F8E /* fuelCellBlue.material */,
-				B6D678C5183CB45C00667F8E /* fuelCellGreen.material */,
-				B6D678C6183CB45C00667F8E /* fuelCellRed.material */,
-				B6D678C7183CB45C00667F8E /* fuelCellYellow.material */,
 				5DE1229517F0DA8200E49916 /* Examples.material */,
 				5DE1229617F0DA8200E49916 /* General.material */,
 				5DE1229717F0DA8200E49916 /* Ogre.material */,
@@ -316,12 +292,6 @@
 			isa = PBXGroup;
 			children = (
 				5D3041C11842B76F00BD26C0 /* runnerShip.mesh */,
-				B6D678CE183CB46800667F8E /* flowerShip.mesh */,
-				B6D678CF183CB46800667F8E /* fuelCellBland.mesh */,
-				B6D678D0183CB46800667F8E /* fuelCellBlue.mesh */,
-				B6D678D1183CB46800667F8E /* fuelCellGreen.mesh */,
-				B6D678D2183CB46800667F8E /* fuelCellRed.mesh */,
-				B6D678D3183CB46800667F8E /* fuelCellYellow.mesh */,
 				5DE122A717F0DA8200E49916 /* ogrehead.mesh */,
 			);
 			path = models;
@@ -504,25 +474,19 @@
 				B6C64C2217DE8C5B0092CA8E /* InfoPlist.strings in Resources */,
 				5D3041C21842B76F00BD26C0 /* runnerShip.mesh in Resources */,
 				B6C64C4417DE8C5B0092CA8E /* ogre.cfg in Resources */,
-				B6D678CB183CB45C00667F8E /* fuelCellGreen.material in Resources */,
 				B6C64C4717DE8C5B0092CA8E /* plugins.cfg in Resources */,
 				B6C64C4917DE8C5B0092CA8E /* resources.cfg in Resources */,
 				5D11B18218170E730052AF40 /* craze.png in Resources */,
 				5D11B18318170E730052AF40 /* smiley.png in Resources */,
-				B6D678CA183CB45C00667F8E /* fuelCellBlue.material in Resources */,
-				B6D678CC183CB45C00667F8E /* fuelCellRed.material in Resources */,
 				5D11B18418170E730052AF40 /* TunnelTile_pipes_R.png in Resources */,
 				5D11B18518170E730052AF40 /* white_fixed.png in Resources */,
 				5D77CC59181B06A2001D4461 /* TunnelTile_SpaceStation.png in Resources */,
 				5DC4DAA21822D4690019691C /* VinezorsDecelerate.wav in Resources */,
-				B6D678C8183CB45C00667F8E /* flowerShip.material in Resources */,
 				5DC4DAA31822D4690019691C /* VinezorsNegativeBeep.wav in Resources */,
 				5DC4DAA41822D4690019691C /* VinezorsAccelerate.wav in Resources */,
 				5DC4DAA51822D4690019691C /* VinezorsSpaceBlip.wav in Resources */,
 				5DC4DAA71822DDF80019691C /* chimedown.wav in Resources */,
 				5D15DF471825B36D00DF0F99 /* TunnelTile_FluidPipes.png in Resources */,
-				B6D678C9183CB45C00667F8E /* fuelCellBland.material in Resources */,
-				B6D678CD183CB45C00667F8E /* fuelCellYellow.material in Resources */,
 				5D15DF481825B36D00DF0F99 /* TunnelTile_FluidPipes2.png in Resources */,
 				5D15DF491825B36D00DF0F99 /* TunnelTile_pipes_D.png in Resources */,
 				5D15DF4A1825B36D00DF0F99 /* TunnelTile_Wires.png in Resources */,

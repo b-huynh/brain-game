@@ -16,6 +16,7 @@ struct Vine
 {
     Ogre::SceneNode* parentNode;
     
+    SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
 	Vector3 dest;

@@ -32,12 +32,13 @@ private:
     SceneNode* entirePod;
 	SceneNode* stem;
 	SceneNode* head;
+    double moveSpeed;
+    double rotateSpeed;
     
     Direction loc;
     bool podTaken;
     
     Vector3 dest;
-    
 public:
 	Pod();
     
@@ -66,7 +67,9 @@ public:
 	void takePod();
     void hidePod();
     void revealPod();
-	void setDest(Vector3 value);
+    void setDest(Vector3 value);
+	void setMoveSpeed(double value);
+	void setRotateSpeed(double value);
     
 	void removeFromScene();
     

@@ -797,6 +797,108 @@ void Util::createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strNa
     sceneMgr->destroyManualObject(manual);
 }
 
+void Util::createDiamond(Ogre::SceneManager* sceneMgr, const std::string& strName, float w, float h)
+{
+    ManualObject * manual = sceneMgr->createManualObject(strName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    manual->position(0, h, 0);
+    manual->normal(0, 1, 0);
+    manual->textureCoord(0.5, 1.0);
+    manual->position(-w, 0, -w);
+    manual->normal(-sqrt(2), 0, -sqrt(2));
+    manual->textureCoord(0.0, 0.0);
+    manual->position(w, 0, -w);
+    manual->normal(sqrt(2), 0, -sqrt(2));
+    manual->textureCoord(1.0, 0.0);
+    manual->position(w, 0, w);
+    manual->normal(sqrt(2), 0, sqrt(2));
+    manual->textureCoord(1.0, 1.0);
+    manual->position(-w, 0, w);
+    manual->normal(-sqrt(2), 0, sqrt(2));
+    manual->textureCoord(1.0, 0.0);
+    manual->position(0, -h, 0);
+    manual->normal(0, -1, 0);
+    manual->textureCoord(0.5, 0.0);
+    
+    manual->triangle(4, 3, 0);
+    manual->triangle(3, 2, 0);
+    manual->triangle(2, 1, 0);
+    manual->triangle(1, 4, 0);
+    manual->triangle(1, 2, 5);
+    manual->triangle(2, 3, 5);
+    manual->triangle(3, 4, 5);
+    manual->triangle(4, 1, 5);
+    manual->end();
+    
+    MeshPtr mesh = manual->convertToMesh(strName);
+    Vector3 bl = Vector3(-w, -h, -w);
+    Vector3 tr = Vector3(w, h, w);
+    mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
+    
+    mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+    
+    sceneMgr->destroyManualObject(manual);
+}
+
+void Util::createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, float l, float w, float h)
+{
+    ManualObject * manual = sceneMgr->createManualObject(strName);
+    manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
+    
+    manual->position(-l, -w, -h);
+    manual->normal(-sqrt(3), -sqrt(3), -sqrt(3));
+    manual->textureCoord(0.0, 0.0);
+    manual->position(l, -w, -h);
+    manual->normal(sqrt(3), -sqrt(3), -sqrt(3));
+    manual->textureCoord(0.5, 0.0);
+    manual->position(l, w, -h);
+    manual->normal(sqrt(3), sqrt(3), -sqrt(3));
+    manual->textureCoord(0.5, 0.5);
+    manual->position(-l, w, -h);
+    manual->normal(-sqrt(3), sqrt(3), -sqrt(3));
+    manual->textureCoord(0.0, 0.5);
+    manual->position(-l, -w, h);
+    manual->normal(-sqrt(3), -sqrt(3), sqrt(3));
+    manual->textureCoord(0.5, 0.5);
+    manual->position(l, -w, h);
+    manual->normal(sqrt(3), -sqrt(3), sqrt(3));
+    manual->textureCoord(1.0, 0.5);
+    manual->position(l, w, h);
+    manual->normal(sqrt(3), sqrt(3), sqrt(3));
+    manual->textureCoord(1.0, 1.0);
+    manual->position(-l, w, h);
+    manual->normal(-sqrt(3), sqrt(3), sqrt(3));
+    manual->textureCoord(0.5, 1.0);
+    manual->quad(3, 2, 1, 0);
+    manual->quad(7, 6, 2, 3);
+    manual->quad(4, 5, 6, 7);
+    manual->quad(0, 1, 5, 4);
+    manual->quad(1, 2, 6, 5);
+    manual->quad(3, 0, 4, 7);
+    
+    manual->end();
+    
+    MeshPtr mesh = manual->convertToMesh(strName);
+    Vector3 bl = Vector3(-l, -w, -h);
+    Vector3 tr = Vector3(l, w, h);
+    mesh->_setBounds( AxisAlignedBox( bl, tr ), false );
+    
+    mesh->_setBoundingSphereRadius((tr - bl).length() / 2);
+    unsigned short src, dest;
+    if (!mesh->suggestTangentVectorBuildParams(VES_TANGENT, src, dest))
+    {
+        mesh->buildTangentVectors(VES_TANGENT, src, dest);
+    }
+    
+    sceneMgr->destroyManualObject(manual);
+}
+
 void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth)
 {
     ManualObject * manual = sceneMgr->createManualObject(strName);

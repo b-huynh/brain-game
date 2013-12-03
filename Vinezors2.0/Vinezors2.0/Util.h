@@ -161,6 +161,8 @@ namespace Util
     
     void createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings = 16, int nSegments = 16);
     void createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r,  float h, int nSegments = 16);
+    void createDiamond(Ogre::SceneManager* sceneMgr, const std::string& strName, float w, float h);
+    void createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, float l, float w, float h);
     void createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth);
     
     void generateMaterials();

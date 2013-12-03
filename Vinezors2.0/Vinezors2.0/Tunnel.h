@@ -43,6 +43,7 @@ public:
     int podIndex;
     int renewalSectionCounter;
     int renewalPodCounter;
+    std::list<Pod*> activePods; // Animating pods
     
     // Stage attributes
     GameMode mode;

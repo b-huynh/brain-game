@@ -20,14 +20,14 @@ PlayerLevel::PlayerLevel()
 }
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), lookback(NULL), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), speedControl(SPEED_CONTROL_FLEXIBLE), level(), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES), inputTotalX(0.0), inputMoved(false)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), lookback(NULL), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), camSpeed(0.0), vineOffset(0), speedControl(SPEED_CONTROL_FLEXIBLE), level(), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_TYPES), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
 }
 
 Player::Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), lookback(NULL), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), speedControl(speedControl), level(level), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundAccelerate(NULL), soundDecelerate(NULL), soundPods(NUM_POD_TYPES), inputTotalX(0.0), inputMoved(false)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), lookback(NULL), vines(), movementMode(MOVEMENT_ROTATING), camDir(SOUTH), vineDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), camSpeed(camSpeed), vineOffset(offset), speedControl(speedControl), level(level), results(), totalElapsed(0), totalDistanceTraveled(0.0), vineSlice(NULL), vineT(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_TYPES), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -458,7 +458,7 @@ void Player::newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed, bool resets
     {
         TunnelSlice* closest = tunnel->findSliceFromCurrent(camPos, vineOffset, tLeft);
         if (closest) {
-            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), vineDir);
+            Vector3 targetPos = targetPos = closest->requestPosition(closest->getCenter(tLeft), vineDir, closest->getWallLength() / 1.5);
             vines[i]->setDest(targetPos);
             vines[i]->setPos(targetPos);
         }
@@ -507,19 +507,22 @@ void Player::setSounds(bool mode)
 {
     if (mode) // true means all pod sounds
     {
-        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
-        soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound3");
-        soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound4");
-        soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound5");
-        soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound6");
+        soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+        soundPods[POD_BLUE] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod1");
+        soundPods[POD_GREEN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
+        soundPods[POD_PINK] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod3");
+        soundPods[POD_YELLOW] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod4");
+        soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
     }
     else // false means no pod sounds
     {
-        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound1");
-        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Sound2");
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
         for (int i = 0; i < NUM_POD_TYPES; ++i)
             soundPods[i] = NULL;
+        soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
     }
 }
 
@@ -622,12 +625,17 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
 {
     totalElapsed += elapsed;
     
+    if (triggerStartup && soundStartup && !soundStartup->isPlaying())
+    {
+        soundStartup->play();
+        triggerStartup = false;
+    }
     if (soundMusic && !soundMusic->isPlaying() && tunnel->getTotalElapsed() > 2.0)
-            soundMusic->play();
+        soundMusic->play();
     
     // Speed up, slow down keys options
     double moveSpeed = globals.modifierCamSpeed * camSpeed;
-    if (tunnel->isDone())
+    if (tunnel->isDone() || tunnel->getTotalElapsed() <= 0.5)
     {
         moveSpeed = globals.modifierCamSpeed * globals.maxCamSpeed * 2;
     }
@@ -674,18 +682,18 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
             Vector3 targetPos;
             if (tLeft >= 0.0) {
                 vineSlice = closest;
-                targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir);
+                targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir, closest->getWallLength() / 1.5);
             } else {
                 if (vineSlice) {
                     if (closest->getPrerangeT() == 0.0)
                         closest->setPrerangeT(tLeft);
-                    Vector3 p1 = vineSlice->getEnd() + vineSlice->requestMove(vineDir);
-                    Vector3 p2 = closest->getStart() + closest->requestMove(vineDir);
+                    Vector3 p1 = vineSlice->getEnd() + vineSlice->requestMove(vineDir, closest->getWallLength() / 1.5);
+                    Vector3 p2 = closest->getStart() + closest->requestMove(vineDir, closest->getWallLength() / 1.5);
                     
                     targetPos = p1 + (p2 - p1) * (1.0 + tLeft);
                     
                 } else {
-                    targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir);
+                    targetPos = closest->getCenter(tLeft) + closest->requestMove(vineDir, closest->getWallLength() / 1.5);
                 }
             }
             vines[i]->setDest(targetPos);
@@ -730,8 +738,8 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                 
                 // Determine whether the player got it right or not
                 if (result.podInfo.goodPod && result.podInfo.podTaken) {
-                    if (soundFeedbackGood)
-                        soundFeedbackGood->play();
+                    if (soundFeedbackGreat)
+                        soundFeedbackGreat->play();
                     hp = hp < 0 ? hp + globals.HPNegativeCorrectAnswer : hp + globals.HPPositiveCorrectAnswer;
                     if (hp > globals.HPPositiveLimit)
                         hp = globals.HPPositiveLimit;
@@ -756,6 +764,12 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                     }
                     
                     if (history) history->determineCoverLoc(true);
+                }
+                else if (!result.podInfo.goodPod && !result.podInfo.podTaken)
+                {
+                    if (soundFeedbackGood)
+                        soundFeedbackGood->play();
+                    
                 }
                 else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
                          (!result.podInfo.goodPod && result.podInfo.podTaken)) {

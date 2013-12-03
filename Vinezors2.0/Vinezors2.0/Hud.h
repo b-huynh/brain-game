@@ -32,6 +32,9 @@ public:
     
     void update(Tunnel* tunnel, Player* player, double elapsed);
     
+    void hideOverlays();
+    void showOverlays();
+    
     ~Hud();
 };
 
