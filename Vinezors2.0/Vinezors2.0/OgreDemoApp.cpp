@@ -202,6 +202,8 @@ void DemoApp::setupDemoScene()
     player->setSounds(progressionMode != SIMPLE_PROGRESSIVE);
     player->setConfigValues();
     
+    hud = new Hud();
+    
     setLevel(-1, -1, true);
     
     Light* lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("Light");
@@ -219,11 +221,10 @@ void DemoApp::setupDemoScene()
      lightNodeSide->attachObject(lightSide);
      lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
     
-    hud = new Hud();
+    Ogre::TexturePtr rtt_texture = OgreFramework::getSingletonPtr()->m_pTextureMgr->createManual("RttTex", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, OgreFramework::getSingletonPtr()->m_pRenderWnd->getWidth(), OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight(), 0, Ogre::PF_R8G8B8, Ogre::TU_RENDERTARGET);
     
     sidebarMode = SIDEBAR_NONE;
     setSidebar();
-    hud->init(tunnel, player);
 }
 
 void DemoApp::setSidebar()
@@ -335,7 +336,6 @@ void DemoApp::update(double elapsed)
         }
         
         player->update(tunnel, hud, elapsed);
-        tunnel->update(player, hud, elapsed);
         if (tunnel->needsCleaning())
         {
             // Generate a new tunnel because we are done with current one
@@ -370,51 +370,25 @@ void DemoApp::update(double elapsed)
 void DemoApp::setLevel(int n, int c, bool init)
 {
     pause = true;
-    if (init)
-    {
-        GameMode game = (GameMode)globals.gameMode;
-        int nlevel = player->getLevel().nback;
-        int ncontrol = player->getLevel().control;
-        if (progressionMode == DISTRIBUTIVE_ADAPTIVE)
-        {
-            if (player->getLevel().nback > 2)
-            {
-                game = GAME_TIMED;
-                nlevel = 2;
-                ncontrol = 1;
-            }
-        }
-        tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth, globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn, globals.tunnelMaxAngleTurn,
-                            game,
-                            nlevel,
-                            ncontrol,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections);
-        player->setCamSpeed(globals.initCamSpeed);
-        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, true);
-        return;
-        
-    }
     
-    Vector3 newOrigin = tunnel->getEnd();
-    TunnelSlice* current = tunnel->getCurrent();
-    Quaternion rot = tunnel->getBack()->getQuaternion();
-    Vector3 forward = tunnel->getBack()->getForward();
-    int nback = tunnel->getNBack();
-    GameMode omode = tunnel->getMode();
-    delete tunnel;
+    Vector3 newOrigin = tunnel ? tunnel->getEnd() : Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
+    Quaternion newRot = tunnel ? tunnel->getBack()->getQuaternion() : Quaternion(1, 0, 0, 0);
+    Vector3 newForward = tunnel ? tunnel->getBack()->getForward() : globals.tunnelReferenceForward;
+    int oldNBack = tunnel ? tunnel->getNBack() : 0;
+    GameMode oldGameMode = tunnel ? tunnel->getMode() : GAME_TIMED;
+    if (tunnel) delete tunnel;
     
     if (n >= 0) // For Debugging keys
     {
+        PodType testType = rand() % 2 || progressionMode == SIMPLE_PROGRESSIVE ? POD_TYPE_COLOR : POD_TYPE_SOUND;
+        bool haveColor = globals.gameMode == GAME_TIMED || (rand() % 2);
+        bool haveSound = globals.gameMode == GAME_TIMED || (rand() % 2);
+        
+        std::cout << (testType == POD_TYPE_COLOR) << (testType == POD_TYPE_SOUND) << std::endl;
+        std::cout << haveColor << haveSound << std::endl;
         tunnel = new Tunnel(
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
+            newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
             globals.tunnelSegmentWidth,
             globals.tunnelSegmentDepth,
             globals.tunnelMinAngleTurn,
@@ -424,8 +398,16 @@ void DemoApp::setLevel(int n, int c, bool init)
             c,
             player->getVineDir(),
             globals.tunnelSegmentsPerSection,
-            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections, rot);
+            globals.tunnelSegmentsPerPod,
+            testType,
+            haveColor,
+            haveSound && progressionMode != SIMPLE_PROGRESSIVE,
+            false);
+        tunnel->constructTunnel(globals.tunnelSections, newRot, true);
+        PlayerLevel skill = player->getLevel();
+        skill.nback = n;
+        skill.control = c;
+        player->setLevel(skill);
     }
     else // Automatically determine
     {
@@ -433,14 +415,15 @@ void DemoApp::setLevel(int n, int c, bool init)
         int nlevel;
         int ncontrol;
         bool loadStage = true;
-        bool checkGrade = true;
-        if (tunnel->getMode() == GAME_TIMED && progressionMode == DISTRIBUTIVE_ADAPTIVE)
+        bool checkGrade = !init;
+        
+        if (oldGameMode == GAME_TIMED && progressionMode == DISTRIBUTIVE_ADAPTIVE)
         {
             checkGrade = false;
-            if (tunnel->getNBack() + 1 < player->getLevel().nback && tunnel->getNBack() + 1 <= globals.timedRunNMax)
+            if (oldNBack + 1 < player->getLevel().nback && oldNBack + 1 <= globals.timedRunNMax)
             {
                 loadStage = false;
-                nlevel = tunnel->getNBack() + 1;
+                nlevel = oldNBack + 1;
                 ncontrol = 1;
                 nmode = GAME_TIMED;
             }
@@ -452,12 +435,10 @@ void DemoApp::setLevel(int n, int c, bool init)
         player->saveProgress(globals.logPath);
         if (checkGrade)
         {
-            if (player->getEvaluation(tunnel->getMode()) != FAIL)
-                pass = true;
-            
-            if (pass)
+            Evaluation eval = player->getEvaluation(tunnel);
+            if (eval == PASS)
                 globals.currStageID++;
-            else if (globals.currStageID > 1)
+            else if (eval == FAIL && globals.currStageID > 1)
                 globals.currStageID--;
             
             player->saveStage(globals.savePath, globals.currStageID);
@@ -480,10 +461,28 @@ void DemoApp::setLevel(int n, int c, bool init)
                 nmode = tunnel->getMode();
             }
         }
+        if (init)
+        {
+            nmode = (GameMode)globals.gameMode;
+            nlevel = player->getLevel().nback;
+            ncontrol = player->getLevel().nback;
+            if (progressionMode == DISTRIBUTIVE_ADAPTIVE)
+            {
+                if (player->getLevel().nback > 2)
+                {
+                    nmode = GAME_TIMED;
+                    nlevel = 2;
+                    ncontrol = 1;
+                }
+            }
+        }
         
+        PodType testType = rand() % 2 || progressionMode == SIMPLE_PROGRESSIVE ? POD_TYPE_COLOR : POD_TYPE_SOUND;
+        bool haveColor = nmode == GAME_TIMED || (rand() % 2);
+        bool haveSound = nmode == GAME_TIMED || (rand() % 2);
         tunnel = new Tunnel(
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
+            newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
             globals.tunnelSegmentWidth,
             globals.tunnelSegmentDepth,
             globals.tunnelMinAngleTurn,
@@ -493,18 +492,22 @@ void DemoApp::setLevel(int n, int c, bool init)
             ncontrol,
             player->getVineDir(),
             globals.tunnelSegmentsPerSection,
-            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections, rot);
+            globals.tunnelSegmentsPerPod,
+            testType,
+            haveColor,
+            haveSound && progressionMode != SIMPLE_PROGRESSIVE,
+            false);
+        tunnel->constructTunnel(globals.tunnelSections, newRot, true);
     }
     
     player->setCamPos(newOrigin);
-    player->setCamRot(rot);
-    player->setDesireRot(rot);
+    player->setCamRot(newRot);
+    player->setDesireRot(newRot);
     player->saveCam();
     
     // If nback is same then panels are changing, keep speed same
-    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() <= nback,
-                      tunnel->getMode() == GAME_TIMED || omode == GAME_TIMED);
+    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() <= oldNBack,
+                      tunnel->getMode() == GAME_TIMED || oldGameMode == GAME_TIMED);
     
     hud->init(tunnel, player);
 }
@@ -688,8 +691,8 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
         Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;
         Quaternion pitchRot;
-        yawRot.FromAngleAxis(Degree(-dmove.x) / 2, up);
-        pitchRot.FromAngleAxis(Degree(-dmove.y) / 2, right);
+        yawRot.FromAngleAxis(Degree(-dmove.x) / 4, up);
+        pitchRot.FromAngleAxis(Degree(-dmove.y) / 4, right);
         
         Quaternion curRot = player->getCamRot();
         curRot = pitchRot * yawRot * curRot;

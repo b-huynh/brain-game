@@ -33,22 +33,6 @@ struct SectionInfo
     {}
 };
 
-struct PodInfo
-{
-    PodType podType;
-    Direction podLoc;
-    bool goodPod; // is the pod good to take?
-    bool podTaken; // is the pod gone?
-    
-    PodInfo()
-    : podType(POD_NONE), podLoc(NO_DIRECTION), goodPod(false)
-    {}
-    
-    PodInfo(PodType pt, Direction pl, bool g)
-    : podType(pt), podLoc(pl), goodPod(g), podTaken(false)
-    {}
-};
-
 // Contains the components of a segment of a tunnel which include the wall and pod information
 class TunnelSlice
 {
@@ -90,14 +74,12 @@ private:
     
     std::vector<Pod*> pods;
     double growthT; // Pod Growth Timing animation
-    double prerangeT; // Used to reduce bounce of player
     
     bool sidesUsed[NUM_DIRECTIONS];
     
     SectionInfo sectionInfo;
-    PodInfo podInfo;
-    bool podHistory; // Used to avoid saving data multiple times
-    bool infoStored; // Used to avoid saving data multiple times
+    bool podHistory; // Used to avoid saving data multiple times for history panel
+    bool infoStored; // Used to avoid saving data multiple times for log files
 public:
 	TunnelSlice();
 	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
@@ -113,30 +95,26 @@ public:
 	Vector3 getCenter() const;
 	Vector3 getCenter(double t) const;
 	double getT(Vector3 pos) const;
-	double getPrerangeT() const;
     Vector3 getForward() const;
 	Vector3 getUpward() const;
 	Vector3 getRight() const;
     std::vector<Pod *> getPods() const;
     SectionInfo getSectionInfo() const;
-    PodInfo getPodInfo() const;
     bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
-    std::vector<Pod*> findCollisions(Vine *vine) const;
+    void findCollisions(Vine *vine);
     Vector3 requestWallDistance(Direction dir) const;
     Vector3 requestMove(Direction dir, double offset) const;
     Vector3 requestPosition(Vector3 cur, Direction dir, double offset) const;
     
     void setSectionInfo(const SectionInfo & value);
-    void setPodInfo(const PodInfo & value);
     void setPodHistory(bool value);
     void setInfoStored(bool value);
-    void setPrerangeT(double value);
 	void move(Vector3 delta);
-	void addPod(Direction loc, PodType type);
+	void addPod(const PodInfo & value);
     void setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4);
     void connect(TunnelSlice* next);
     void disconnect();

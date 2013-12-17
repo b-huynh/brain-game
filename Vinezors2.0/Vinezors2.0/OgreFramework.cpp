@@ -37,6 +37,8 @@ OgreFramework::OgreFramework()
 	m_pOverlayMgr       = 0;
     m_pFontMgr          = 0;
     m_pMaterialMgr      = 0;
+    m_pTextureMgr       = 0;
+    m_pCompositeMgr     = 0;
     
     m_pSoundMgr         = 0;
     
@@ -162,6 +164,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     cf.load(m_ResourcePath + "resources.cfg");
     
     m_pResourceGroupMgr = Ogre::ResourceGroupManager::getSingletonPtr();
+    m_pOverlayMgr = Ogre::OverlayManager::getSingletonPtr();
+    m_pFontMgr = Ogre::FontManager::getSingletonPtr();
+    m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
+    m_pTextureMgr = Ogre::TextureManager::getSingletonPtr();
+    m_pCompositeMgr = CompositorManager::getSingletonPtr();
     
 	Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
     while (seci.hasMoreElements())
@@ -184,11 +191,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
         }
     }
     
-    m_pOverlayMgr = Ogre::OverlayManager::getSingletonPtr();
-    m_pFontMgr = Ogre::FontManager::getSingletonPtr();
-    
-    m_pMaterialMgr = Ogre::MaterialManager::getSingletonPtr();
-    
     Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
     
 	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
@@ -207,15 +209,17 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
-    m_pSoundMgr->createSound("SoundGreatFeedback", "chimeup.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundGoodFeedback", "VinezorsFeedbackLight.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundAmazingFeedback", "dingupenough.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundGoodFeedback", "VinezorsFeedbackLight2.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundBadFeedback", "chimedown.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod1", "VinezorsSpaceBlip.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod2", "VinezorsSpaceBeep.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod3", "VinezorsSpaceChime.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod4", "VinezorsSpaceTone.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundStartup", "VinezorsStartup.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod1", "podspacebleep.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod2", "podspaceblip.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod3", "podspacechime.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod4", "podspacetone.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();

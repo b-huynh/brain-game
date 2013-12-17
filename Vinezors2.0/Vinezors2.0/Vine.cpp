@@ -7,14 +7,16 @@
 //
 #include "Vine.h"
 
+extern Util::ConfigGlobal globals;
+
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), entireVine(NULL), tip(NULL), base(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
-: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), dest(), forward(), radius(radius), speed(0.0)
+: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), forward(), radius(radius), speed(0.0)
 {
     loadRunnerShip();
     ++vineID;
@@ -52,6 +54,18 @@ void Vine::loadRunnerShip()
     tip->attachObject(tipEntity);
     tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
     tip->yaw(Degree(180.0));
+    
+    /*
+    shell = entireVine->createChildSceneNode("shellNode" + Util::toStringInt(vineID));
+    Entity* shellEntity = shell->getCreator()->createEntity("vineShellEntity" + Util::toStringInt(vineID), "sphereMesh");
+    shellEntity->setMaterialName("General/VineShell");
+    shell->attachObject(shellEntity);
+    shell->scale(
+        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer),
+        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer),
+        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer));
+    shell->setScale(radius * 2.5, radius * 2.5, radius * 2.5);
+    */
     
 //    tipEntity->getSubEntity(0)->setMaterialName("General/PodYellow");
 //    tipEntity->getSubEntity(1)->setMaterialName("General/PodRed");
@@ -163,6 +177,13 @@ void Vine::removeFromScene()
         tip->removeAndDestroyAllChildren();
         tip->getCreator()->destroySceneNode(tip);
         tip = NULL;
+    }
+    if (shell)
+    {
+        shell->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
+        shell->removeAndDestroyAllChildren();
+        shell->getCreator()->destroySceneNode(shell);
+        shell = NULL;
     }
     
     if (entireVine)

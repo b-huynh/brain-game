@@ -33,17 +33,20 @@ private:
     std::string name;
     int hp;
     int numCorrectTotal;
+    int numSafeTotal;
+    int numMissedTotal;
     int numWrongTotal;
+    int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
-	double score;
+	double score; // a value of pride
+    int points; // money to buy
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
 	bool keyLeft;
 	bool keyRight;
 	
-    TunnelSlice* lookback;
     std::vector<Vine*> vines;
     
     MovementMode movementMode;
@@ -59,7 +62,9 @@ private:
     Quaternion desireRot;
     int desireRoll;
     double camSpeed;
+    
 	double vineOffset; // offset to camPos in direction of forward
+    TunnelSlice* lookback;
     
     SpeedControlMode speedControl;
     
@@ -79,8 +84,6 @@ private:
     
     double totalElapsed;
     double totalDistanceTraveled;
-    TunnelSlice* vineSlice; // Used for vine movement
-    double vineT;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -102,10 +105,14 @@ public:
     std::string getName() const;
     int getHP() const;
     int getNumCorrectTotal() const;
+    int getNumSafeTotal() const;
+    int getNumMissedTotal() const;
     int getNumWrongTotal() const;
+    int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
 	double getScore() const;
+	int getPoints() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -129,7 +136,8 @@ public:
 	double getTotalElapsed() const;
 	double getTotalDistanceTraveled() const;
     double getAccuracy() const;
-    Evaluation getEvaluation(GameMode emode) const;
+    double getProgress(Tunnel* tunnel) const;
+    Evaluation getEvaluation(Tunnel* tunnel) const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -158,6 +166,7 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(double value);
+    void setLevel(PlayerLevel value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;

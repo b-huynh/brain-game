@@ -19,6 +19,7 @@ struct Vine
     SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
+	SceneNode *shell;
 	Vector3 dest;
     Vector3 forward;
     double radius;

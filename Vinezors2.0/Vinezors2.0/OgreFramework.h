@@ -134,6 +134,8 @@ public:
 	Ogre::OverlayManager*		m_pOverlayMgr;
 	Ogre::FontManager*          m_pFontMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
+    Ogre::TextureManager*       m_pTextureMgr;
+    Ogre::CompositorManager*    m_pCompositeMgr;
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
