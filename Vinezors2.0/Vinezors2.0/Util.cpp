@@ -16,6 +16,10 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     const double SESSION_TIME = 1500.0;
+    const int STAGE_TOTAL_SIGNALS = 30;
+    const int STAGE_TOTAL_TARGETS = 10;
+    const double STAGE_ADVANCE_THRESHOLD = 0.8;
+    const double STAGE_DEVANCE_THRESHOLD = 0.3;
     
     const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
@@ -53,6 +57,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const int HP_POSITIVE_WRONG_ANSWER = -2;
     const double DRAIN_SPEED = 2;
     const double INIT_CAM_SPEED = 15.0;
+    const double STARTUP_CAM_SPEED = 60.0;
     const double MODIFIER_CAM_SPEED = 5.0;
     const double MIN_CAM_SPEED = 5.0;
     const double MAX_CAM_SPEED = 25.0;
@@ -78,6 +83,10 @@ Util::ConfigGlobal::ConfigGlobal()
     const int TIMED_RUN_NMAX = 5;
     
     sessionTime = SESSION_TIME;
+    stageTotalSignals = STAGE_TOTAL_SIGNALS;
+    stageTotalTargets = STAGE_TOTAL_TARGETS;
+    stageAdvanceThreshold = STAGE_ADVANCE_THRESHOLD;
+    stageDevanceThreshold = STAGE_DEVANCE_THRESHOLD;
     progressionMode = 2;
     gameMode = 1;
     tunnelReferenceForward = TUNNEL_REFERENCE_FORWARD;
@@ -114,6 +123,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveWrongAnswer = HP_POSITIVE_WRONG_ANSWER;
     drainSpeed = DRAIN_SPEED;
     initCamSpeed = INIT_CAM_SPEED;
+    startupCamSpeed = STARTUP_CAM_SPEED;
     modifierCamSpeed = MODIFIER_CAM_SPEED;
     minCamSpeed = MIN_CAM_SPEED;
     maxCamSpeed = MAX_CAM_SPEED;
@@ -155,14 +165,16 @@ void Util::ConfigGlobal::set()
     
     label1_posX = screenWidth / 2;
     label1_posY = 3 * screenHeight / 40;
-    label4_posX = screenWidth / 80;
-    label4_posY = 5 * screenHeight / 40;
-    label3_posX = 11 * screenWidth / 15;
-    label3_posY = 5 * screenHeight / 40;
     label2_posX = screenWidth / 80;
     label2_posY = 7 * screenHeight / 40;
-    label5_posX = screenWidth / 2;
-    label5_posY = screenHeight / 2;
+    label3_posX = screenWidth - screenWidth / 40;
+    label3_posY = 5 * screenHeight / 40;
+    label4_posX = screenWidth / 80;
+    label4_posY = 5 * screenHeight / 40;
+    label5_posX = screenWidth - screenWidth / 40;
+    label5_posY = 7 * screenHeight / 40;
+    label6_posX = screenWidth / 2;
+    label6_posY = screenHeight / 2;
 }
 
 void Util::ConfigGlobal::initPaths(const char* name)
@@ -583,6 +595,13 @@ Direction Util::randDirection(const bool sides[NUM_DIRECTIONS])
     return dirs[randDirIndex];
 }
 
+Vector3 Util::randVector3()
+{
+    Vector3 temp(0, 1, 0);
+    return temp.randomDeviant(Degree(randRangeDouble(0.0, 180.0)));
+}
+
+
 int Util::randRangeInt(int min, int max)
 {
     return min + rand () % (max - min + 1);
@@ -851,29 +870,31 @@ void Util::createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, f
     ManualObject * manual = sceneMgr->createManualObject(strName);
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
+    double mag = sqrt(l * l + w * w + h * h);
+    
     manual->position(-l, -w, -h);
-    manual->normal(-sqrt(3), -sqrt(3), -sqrt(3));
+    manual->normal(-sqrt(mag), -sqrt(mag), -sqrt(mag));
     manual->textureCoord(0.0, 0.0);
     manual->position(l, -w, -h);
-    manual->normal(sqrt(3), -sqrt(3), -sqrt(3));
+    manual->normal(sqrt(mag), -sqrt(mag), -sqrt(mag));
     manual->textureCoord(0.5, 0.0);
     manual->position(l, w, -h);
-    manual->normal(sqrt(3), sqrt(3), -sqrt(3));
+    manual->normal(sqrt(mag), sqrt(mag), -sqrt(mag));
     manual->textureCoord(0.5, 0.5);
     manual->position(-l, w, -h);
-    manual->normal(-sqrt(3), sqrt(3), -sqrt(3));
+    manual->normal(-sqrt(mag), sqrt(mag), -sqrt(mag));
     manual->textureCoord(0.0, 0.5);
     manual->position(-l, -w, h);
-    manual->normal(-sqrt(3), -sqrt(3), sqrt(3));
+    manual->normal(-sqrt(mag), -sqrt(mag), sqrt(mag));
     manual->textureCoord(0.5, 0.5);
     manual->position(l, -w, h);
-    manual->normal(sqrt(3), -sqrt(3), sqrt(3));
+    manual->normal(sqrt(mag), -sqrt(mag), sqrt(mag));
     manual->textureCoord(1.0, 0.5);
     manual->position(l, w, h);
-    manual->normal(sqrt(3), sqrt(3), sqrt(3));
+    manual->normal(sqrt(mag), sqrt(mag), sqrt(mag));
     manual->textureCoord(1.0, 1.0);
     manual->position(-l, w, h);
-    manual->normal(-sqrt(3), sqrt(3), sqrt(3));
+    manual->normal(-sqrt(mag), sqrt(mag), sqrt(mag));
     manual->textureCoord(0.5, 1.0);
     manual->quad(3, 2, 1, 0);
     manual->quad(7, 6, 2, 3);

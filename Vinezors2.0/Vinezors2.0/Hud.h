@@ -21,11 +21,14 @@ private:
     BorderPanelOverlayElement* healthArea;
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
+    PanelOverlayElement* thresholdBottom;
+    PanelOverlayElement* thresholdTop;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
     TextAreaOverlayElement* label5;
+    TextAreaOverlayElement* label6;
 public:
     Hud();
     void init(Tunnel* tunnel, Player* player);

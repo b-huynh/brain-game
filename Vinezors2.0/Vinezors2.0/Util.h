@@ -25,10 +25,15 @@ enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
-enum PodType { POD_BLUE, POD_GREEN, POD_PINK, POD_YELLOW, POD_BLACK, POD_NONE };
-#define NUM_POD_TYPES 5
+enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
+#define NUM_POD_TYPES 3
+enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_UNKNOWN };
+enum PodShape { POD_SHAPE_SPHERE, POD_SHAPE_TRIANGLE, POD_SHAPE_DIAMOND, POD_SHAPE_CONE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
+enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
+enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
+#define NUM_POD_SIGNALS 5
 
-// Forward Declarations
+// Forward Declarations of main components of the game
 class Tunnel;
 class Player;
 class Hud;
@@ -41,6 +46,10 @@ namespace Util
     {
         int stageID;
         double sessionTime;
+        int stageTotalSignals;
+        int stageTotalTargets;
+        double stageAdvanceThreshold;
+        double stageDevanceThreshold;
         int progressionMode;
         int gameMode;
         Vector3 tunnelReferenceForward;
@@ -77,6 +86,7 @@ namespace Util
         int HPPositiveWrongAnswer;
         double drainSpeed;
         double initCamSpeed;
+        double startupCamSpeed;
         double modifierCamSpeed;
         double minCamSpeed;
         double maxCamSpeed;
@@ -118,6 +128,8 @@ namespace Util
         int label4_posY;
         int label5_posX;
         int label5_posY;
+        int label6_posX;
+        int label6_posY;
         
         int currStageID;
         std::string configPath;
@@ -149,6 +161,7 @@ namespace Util
     void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
+    Vector3 randVector3();
     
     int randRangeInt(int min, int max);
     double randRangeDouble(double min, double max);
