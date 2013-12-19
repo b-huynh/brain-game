@@ -97,7 +97,7 @@ material General/BarColors
         lighting off
         texture_unit
         {
-            texture barcolorswinter.png
+            texture barcolorsranged.png
         }
       } 
     }
@@ -348,6 +348,70 @@ material General/Wall8
             texture_unit
 			{
 				texture grass.jpg
+			}
+		}
+	}
+}
+
+material General/NatureWall1
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Ground_Texture_02.jpg
+			}
+		}
+	}
+}
+
+material General/NatureWall2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Ground_Texture_01.jpg
+			}
+		}
+	}
+}
+
+material General/NatureWall3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Green_Grass_Texture_01.jpg
+			}
+		}
+	}
+}
+
+material General/NatureWall4
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Wood_Texture_04.jpg
 			}
 		}
 	}
