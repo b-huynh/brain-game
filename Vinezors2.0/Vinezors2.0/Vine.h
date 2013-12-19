@@ -25,12 +25,16 @@ struct Vine
     double radius;
     double speed;
     
-    // Tunnel information
+    // Vine-Tunnel information
     Direction loc;
     int previousID;
     double previoust;
     int afterID;
     double aftert;
+    
+    double totalElapsed;
+    double wobbleSpeed;
+    bool wobbling;
     
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius);
@@ -47,6 +51,7 @@ struct Vine
 	void setForward(Vector3 value);
     double getRadius() const;
     void setQuaternion(Quaternion rot);
+    void setWobble(bool value);
     
 	void move(Vector3 delta);
 	

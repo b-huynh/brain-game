@@ -97,7 +97,7 @@ material General/BarColors
         lighting off
         texture_unit
         {
-            texture barcolorsranged.png
+            texture barcolorswinter.png
         }
       } 
     }
@@ -115,6 +115,40 @@ material General/Indicator
         texture_unit
         {
             texture indicatorwhite.png
+        }
+      } 
+    }
+}
+
+material General/StarGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture stargray.png
+        }
+      } 
+    }
+}
+
+material General/StarGold
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture stargold.png
         }
       } 
     }

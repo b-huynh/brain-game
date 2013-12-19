@@ -62,6 +62,7 @@ private:
     Quaternion desireRot;
     int desireRoll;
     double camSpeed;
+    double finalSpeed;
     
 	double vineOffset; // offset to camPos in direction of forward
     TunnelSlice* lookback;
@@ -89,6 +90,7 @@ private:
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
     OgreOggSound::OgreOggISound* soundFeedbackGood;
     OgreOggSound::OgreOggISound* soundFeedbackBad;
+    OgreOggSound::OgreOggISound* soundCollision;
     OgreOggSound::OgreOggISound* soundStartup;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
@@ -130,6 +132,7 @@ public:
 	Quaternion getDesireRot() const;
 	int getDesireRoll() const;
 	double getCamSpeed() const;
+	double getFinalSpeed() const;
 	Vector3 getVineOffset() const;
     SpeedControlMode getSpeedControl() const;
     PlayerLevel getLevel() const;
@@ -178,7 +181,7 @@ public:
     void playPodSound(int index) const;
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel, bool setmusic, bool fixspeed = false, bool resetscore = false);
+    void newTunnel(Tunnel* tunnel, bool setmusic, bool resetscore = false);
     
 	void move(Vector3 delta);
     void changeMovementMode();

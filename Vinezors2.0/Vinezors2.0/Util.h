@@ -46,12 +46,25 @@ namespace Util
     {
         int stageID;
         double sessionTime;
+        double stageTime;
         int stageTotalSignals;
         int stageTotalTargets;
-        double stageAdvanceThreshold;
-        double stageDevanceThreshold;
+        int stageTotalTargetsVariance;
+        double stageProficiencyThreshold1;
+        double stageProficiencyThreshold2;
+        double stageProficiencyThreshold3;
+        double stageTimeThreshold1;
+        double stageTimeThreshold2;
+        double stageTimeThreshold3;
+        double stageNavigationThreshold1;
+        double stageNavigationThreshold2;
+        double stageNavigationThreshold3;
         int progressionMode;
         int gameMode;
+        int podTestType;
+        int revealColor;
+        int revealSound;
+        int revealShape;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;
@@ -63,7 +76,10 @@ namespace Util
         double tunnelWallLength;
         int tunnelSegmentsPerSection;
         int tunnelSegmentsPerPod;
+        int tunnelSegmentsPerDistractors;
         int tunnelSegmentsBeforeRefresh;
+        int initialSegmentsFirstPod;
+        int initialSegmentsFirstDistractors;
         int initiationSections;
         double vineTOffset;
         double vineRadius;
@@ -71,7 +87,8 @@ namespace Util
         double podHeadRadius;
         double podStemRadius;
         double podStemLength;
-        int podNBackChance;
+        int podBinSize; // This is for tunnels that pre-generate the pod sequence
+        int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         double seatLength;
         int tunnelSections;
         int nback;
@@ -99,7 +116,6 @@ namespace Util
         double HPBarYRef;
         double HPBarWidth;
         double HPBarHeight;
-        double timedRunTimer;
         double timedRunControlUpDist1;
         double timedRunControlUpDist2;
         double timedRunControlUpDist3;
@@ -154,6 +170,7 @@ namespace Util
         std::string buildLogPath(std::string playerName);
     };
     
+    double clamp(double val, double min, double max);
     int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
