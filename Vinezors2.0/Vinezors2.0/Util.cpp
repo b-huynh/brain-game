@@ -16,10 +16,19 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     const double SESSION_TIME = 1500.0;
-    const int STAGE_TOTAL_SIGNALS = 30;
-    const int STAGE_TOTAL_TARGETS = 10;
-    const double STAGE_ADVANCE_THRESHOLD = 0.8;
-    const double STAGE_DEVANCE_THRESHOLD = 0.3;
+    const double STAGE_TIME = 90.0;
+    const int STAGE_TOTAL_SIGNALS = 60;
+    const int STAGE_TOTAL_TARGETS = 20;
+    const int STAGE_TOTAL_TARGETS_VARIANCE = 2;
+    const double STAGE_PROFICIENCY_THRESHOLD1 = 0.6; // Where on bar is indicator in %
+    const double STAGE_PROFICIENCY_THRESHOLD2 = 0.8;
+    const double STAGE_PROFICIENCY_THRESHOLD3 = 0.95;
+    const double STAGE_TIME_THRESHOLD1 = 10; // How many seconds left of stage for this star
+    const double STAGE_TIME_THRESHOLD2 = 25;
+    const double STAGE_TIME_THRESHOLD3 = 30;
+    const double STAGE_NAVIGATION_THRESHOLD1 = 1; // How many seconds left of stage for this star
+    const double STAGE_NAVIGATION_THRESHOLD2 = 2;
+    const double STAGE_NAVIGATION_THRESHOLD3 = 3;
     
     const Vector3 TUNNEL_REFERENCE_FORWARD = Vector3(0, 0, -1);
     const Vector3 TUNNEL_REFERENCE_UPWARD = Vector3(0, 1, 0);
@@ -31,8 +40,11 @@ Util::ConfigGlobal::ConfigGlobal()
     const double TUNNEL_SEGMENT_BUFFER = 25;
     const double TUNNEL_WALL_LENGTH = TUNNEL_SEGMENT_WIDTH / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
     const int TUNNEL_SEGMENTS_PER_SECTION = 5;
-    const int TUNNEL_SEGMENTS_PER_POD = 3;
+    const int TUNNEL_SEGMENTS_PER_POD = 4;
+    const int TUNNEL_SEGMENTS_PER_DISTRACTORS = 4;
     const int TUNNEL_SEGMENTS_BEFORE_REFRESH = TUNNEL_SEGMENTS_PER_SECTION * 2;
+    const int INITIAL_SEGMENTS_FIRST_POD = 0;
+    const int INITIAL_SEGMENTS_FIRST_DISTRACTORS = -2;
     const int INITIATION_SECTIONS = 1;
     const double VINE_T_OFFSET = 1.5;
     const double VINE_RADIUS = TUNNEL_SEGMENT_WIDTH / 15;
@@ -40,6 +52,7 @@ Util::ConfigGlobal::ConfigGlobal()
     const double POD_HEAD_RADIUS = TUNNEL_SEGMENT_WIDTH / 25;
     const double POD_STEM_RADIUS = TUNNEL_SEGMENT_WIDTH / 100;
     const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
+    const int POD_BIN_SIZE = 9;
     const int POD_NBACK_CHANCE = 33;
     const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
@@ -48,13 +61,13 @@ Util::ConfigGlobal::ConfigGlobal()
     const int CONTROL = 1; //Configurable
     const int HISTORY_MODE = -1; //Confiugrable
     
-    const int STARTING_HP = 0;
-    const int HP_NEGATIVE_LIMIT = -6;
-    const int HP_POSITIVE_LIMIT = 6;
-    const int HP_NEGATIVE_CORRECT_ANSWER = 2;
+    const int STARTING_HP = 3;
+    const int HP_NEGATIVE_LIMIT = 0;
+    const int HP_POSITIVE_LIMIT = 3;
+    const int HP_NEGATIVE_CORRECT_ANSWER = 0;
     const int HP_NEGATIVE_WRONG_ANSWER = -1;
-    const int HP_POSITIVE_CORRECT_ANSWER = 1;
-    const int HP_POSITIVE_WRONG_ANSWER = -2;
+    const int HP_POSITIVE_CORRECT_ANSWER = 0;
+    const int HP_POSITIVE_WRONG_ANSWER = -1;
     const double DRAIN_SPEED = 2;
     const double INIT_CAM_SPEED = 15.0;
     const double STARTUP_CAM_SPEED = 60.0;
@@ -76,19 +89,31 @@ Util::ConfigGlobal::ConfigGlobal()
     const int SCREEN_WIDTH = 1024;
     const int SCREEN_HEIGHT = 800;
     
-    const double TIMED_RUN_TIMER = 120.0;
     const double TIMED_RUN_CONTROL_UP_DIST1 = 3000.0;
     const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
     const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
     const int TIMED_RUN_NMAX = 5;
     
     sessionTime = SESSION_TIME;
+    stageTime = STAGE_TIME;
     stageTotalSignals = STAGE_TOTAL_SIGNALS;
     stageTotalTargets = STAGE_TOTAL_TARGETS;
-    stageAdvanceThreshold = STAGE_ADVANCE_THRESHOLD;
-    stageDevanceThreshold = STAGE_DEVANCE_THRESHOLD;
+    stageTotalTargetsVariance = STAGE_TOTAL_TARGETS_VARIANCE;
+    stageProficiencyThreshold1 = STAGE_PROFICIENCY_THRESHOLD1;
+    stageProficiencyThreshold2 = STAGE_PROFICIENCY_THRESHOLD2;
+    stageProficiencyThreshold3 = STAGE_PROFICIENCY_THRESHOLD3;
+    stageTimeThreshold1 = STAGE_TIME_THRESHOLD1;
+    stageTimeThreshold2 = STAGE_TIME_THRESHOLD2;
+    stageTimeThreshold3 = STAGE_TIME_THRESHOLD3;
+    stageNavigationThreshold1 = STAGE_NAVIGATION_THRESHOLD1;
+    stageNavigationThreshold2 = STAGE_NAVIGATION_THRESHOLD2;
+    stageNavigationThreshold3 = STAGE_NAVIGATION_THRESHOLD3;
     progressionMode = 2;
     gameMode = 1;
+    podTestType = 0;
+    revealColor = 1;
+    revealSound = 1;
+    revealShape = 1;
     tunnelReferenceForward = TUNNEL_REFERENCE_FORWARD;
     tunnelReferenceUpward = TUNNEL_REFERENCE_UPWARD;
     tunnelReferenceRight = TUNNEL_REFERENCE_RIGHT;
@@ -100,7 +125,10 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelWallLength = TUNNEL_WALL_LENGTH;
     tunnelSegmentsPerSection = TUNNEL_SEGMENTS_PER_SECTION;
     tunnelSegmentsPerPod = TUNNEL_SEGMENTS_PER_POD;
+    tunnelSegmentsPerDistractors = TUNNEL_SEGMENTS_PER_DISTRACTORS;
     tunnelSegmentsBeforeRefresh = TUNNEL_SEGMENTS_BEFORE_REFRESH;
+    initialSegmentsFirstPod = INITIAL_SEGMENTS_FIRST_POD;
+    initialSegmentsFirstDistractors = INITIAL_SEGMENTS_FIRST_DISTRACTORS;
     initiationSections = INITIATION_SECTIONS;
     vineTOffset = VINE_T_OFFSET;
     vineRadius = VINE_RADIUS;
@@ -108,6 +136,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podHeadRadius = POD_HEAD_RADIUS;
     podStemRadius = POD_STEM_RADIUS;
     podStemLength = POD_STEM_LENGTH;
+    podBinSize = POD_BIN_SIZE;
     podNBackChance = POD_NBACK_CHANCE;
     seatLength = SEAT_LENGTH;
     tunnelSections = TUNNEL_SECTIONS;
@@ -138,7 +167,6 @@ Util::ConfigGlobal::ConfigGlobal()
     HPBarHeight = HP_BAR_HEIGHT;
     screenWidth = SCREEN_WIDTH;
     screenHeight = SCREEN_HEIGHT;
-    timedRunTimer = TIMED_RUN_TIMER;
     timedRunControlUpDist1 = TIMED_RUN_CONTROL_UP_DIST1;
     timedRunControlUpDist2 = TIMED_RUN_CONTROL_UP_DIST2;
     timedRunControlUpDist3 = TIMED_RUN_CONTROL_UP_DIST3;
@@ -213,6 +241,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageID;
     else if (paramName == "sessionTime")
         in >> sessionTime;
+    else if (paramName == "stageTime")
+        in >> stageTime;
+    else if (paramName == "stageTotalSignals")
+        in >> stageTotalSignals;
+    else if (paramName == "stageTotalTargets")
+        in >> stageTotalTargets;
+    else if (paramName == "stageTotalTargetsVariance")
+        in >> stageTotalTargetsVariance;
     else if (paramName == "nback")
         in >> nback;
     else if (paramName == "control")
@@ -224,6 +260,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
     }
     else if (paramName == "gameMode")
         in >> gameMode;
+    else if (paramName == "podTestType")
+        in >> podTestType;
+    else if (paramName == "revealColor")
+        in >> revealColor;
+    else if (paramName == "revealSound")
+        in >> revealSound;
+    else if (paramName == "revealShape")
+        in >> revealShape;
     else if (paramName == "tunnelMinAngleTurn")
         in >> tunnelMinAngleTurn;
     else if (paramName == "tunnelMaxAngleTurn")
@@ -232,8 +276,12 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerSection;
     else if (paramName == "tunnelSegmentsPerPod")
         in >> tunnelSegmentsPerPod;
+    else if (paramName == "tunnelSegmentsPerDistractors")
+        in >> tunnelSegmentsPerDistractors;
     else if (paramName == "podAppearance")
         in >> podAppearance;
+    else if (paramName == "podBinSize")
+        in >> podBinSize;
     else if (paramName == "podNBackChance")
         in >> podNBackChance;
     else if (paramName == "HPNegativeLimit")
@@ -266,8 +314,6 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stepsizeSpeedUp;
     else if (paramName == "stepsizeSpeedDown")
         in >> stepsizeSpeedDown;
-    else if (paramName == "timedRunTimer")
-        in >> timedRunTimer;
     else if (paramName == "timedRunControlUpDist1")
         in >> timedRunControlUpDist1;
     else if (paramName == "timedRunControlUpDist2")
@@ -351,7 +397,7 @@ bool Util::ConfigGlobal::loadSaveFile(std::string savePath)
         setMessage("Loaded Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
     } else {
-        currStageID = 5;
+        currStageID = 1;
         std::cout << "Starting from StageID " << currStageID << std::endl;
         setMessage("New Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = false;
@@ -421,6 +467,15 @@ std::string Util::ConfigGlobal::buildLogPath(std::string playerName)
     logPath = logPath + ".log";
     
     return logPath;
+}
+
+double Util::clamp(double val, double min, double max)
+{
+    if (val < min)
+        val = min;
+    if (val > max)
+        val = max;
+    return val;
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0

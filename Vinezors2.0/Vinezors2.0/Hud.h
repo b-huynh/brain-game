@@ -21,8 +21,9 @@ private:
     BorderPanelOverlayElement* healthArea;
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
-    PanelOverlayElement* thresholdBottom;
-    PanelOverlayElement* thresholdTop;
+    PanelOverlayElement* threshold1;
+    PanelOverlayElement* threshold2;
+    PanelOverlayElement* threshold3;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
     TextAreaOverlayElement* label3;

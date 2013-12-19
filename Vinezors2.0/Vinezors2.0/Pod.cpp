@@ -19,10 +19,11 @@ Pod::Pod()
 {
 }
 
-Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, double stemRadius, double headRadius)
-: parentNode(parentNode), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTaken(false), podGood(false), dest()
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, double stemRadius, double headRadius)
+: parentNode(parentNode), mtype(mtype), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTaken(false), podGood(false), dest()
 {
-    loadFuelCell();
+    if (mtype == BASIC) loadBasicShape();
+    else if (mtype == FUEL) loadFuelCell();
     
     ++podID;
 }
@@ -30,7 +31,6 @@ Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodSignal podSi
 void Pod::loadBasicShape()
 {
     removeFromScene();
-    mtype = BASIC;
     
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     
@@ -47,7 +47,26 @@ void Pod::loadBasicShape()
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
     
-    Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "boxMesh");
+    //Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+    Entity* headEntity = NULL;
+    switch (podShape)
+    {
+        case POD_SHAPE_CONE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "cylinderMesh");
+            break;
+        case POD_SHAPE_SPHERE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+            break;
+        case POD_SHAPE_DIAMOND:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "diamondMesh");
+            break;
+        case POD_SHAPE_TRIANGLE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "boxMesh");
+            break;
+        default:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "cylinderMesh");
+            break;
+    }
     headEntity->setMaterialName("General/PodUnknown");
     head->attachObject(headEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
@@ -61,7 +80,6 @@ void Pod::loadBasicShape()
 void Pod::loadFuelCell()
 {
     removeFromScene();
-    mtype = FUEL;
     
 	double stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
@@ -80,13 +98,32 @@ void Pod::loadFuelCell()
     
     head = parentNode->createChildSceneNode("headNode" + Util::toStringInt(podID));
     
-    Entity* headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "emptyFuel.mesh");
+    Entity* headEntity = NULL;
+    switch (podShape)
+    {
+        case POD_SHAPE_CONE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCylinder.mesh");
+            break;
+        case POD_SHAPE_SPHERE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelSphere.mesh");
+            break;
+        case POD_SHAPE_DIAMOND:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCube.mesh");
+            break;
+        case POD_SHAPE_TRIANGLE:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelTri.mesh");
+            break;
+        default:
+            headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCylinder.mesh");
+            break;
+    }
     headEntity->getSubEntity(1)->setMaterialName("General/PodUnknown");
     head->attachObject(headEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->scale(headRadius / 1.5, 0.05, headRadius / 1.5);
     head->setPosition(base);
     head->translate(v / 2);
+    setRotateSpeed(Vector3(5, 0, 0));
     
     // The follow is to make a fuel cell randomly float
     //head->pitch(Degree(Util::randRangeDouble(0.0, 90.0)));
@@ -97,6 +134,11 @@ void Pod::loadFuelCell()
     
     setToGrowth(0.0);
     
+}
+
+MeshType Pod::getMeshType() const
+{
+    return mtype;
 }
 
 Vector3 Pod::getBase() const
@@ -172,7 +214,7 @@ Direction Pod::getLoc() const
 
 PodInfo Pod::getPodInfo() const
 {
-    return PodInfo(podSignal, podColor, podShape, podSound, loc, podGood, podTaken);
+    return PodInfo(mtype, podSignal, podColor, podShape, podSound, loc, podGood, podTrigger, podTaken);
 }
 
 double Pod::getStemRadius() const
@@ -193,6 +235,11 @@ double Pod::getHeadRadius() const
 bool Pod::isPodTaken() const
 {
     return podTaken;
+}
+
+bool Pod::getPodTrigger() const
+{
+    return podTrigger;
 }
 
 bool Pod::isPodGood() const
@@ -236,7 +283,7 @@ void Pod::revealPod()
                 static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodYellow");
                 break;
             default:
-                static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodWhite");
+                //static_cast<Entity*>(head->getAttachedObject(0))->setMaterialName("General/PodWhite");
                 break;
         }
         
@@ -258,36 +305,10 @@ void Pod::revealPod()
                 headEntity->getSubEntity(1)->setMaterialName("General/PodYellow");
                 break;
             default:
+                // Have the entity light up still, just with unknown color
                 headEntity->getSubEntity(1)->setMaterialName("General/PodWhite");
                 break;
         }
-        /*
-        head->getCreator()->destroyMovableObject(head->getAttachedObject(0));
-        Entity * headEntity;
-        switch (type)
-        {
-            case POD_BLUE:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "blueFuel.mesh");
-                break;
-            case POD_GREEN:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "greenFuel.mesh");
-                break;
-            case POD_PINK:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "redFuel.mesh");
-                break;
-            case POD_YELLOW:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "yellowFuel.mesh");
-                break;
-            case POD_BLACK:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "emptyFuel.mesh");
-                break;
-            default:
-                headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "emptyFuel.mesh");
-            break;
-        }
-        head->attachObject(headEntity);
-         */
-        podID++;
     }
 }
 
@@ -309,6 +330,11 @@ void Pod::setRotateSpeed(Vector3 value)
 void Pod::setPodGood(bool value)
 {
     podGood = value;
+}
+
+void Pod::setPodTrigger(bool value)
+{
+    podTrigger = value;
 }
 
 void Pod::removeFromScene()

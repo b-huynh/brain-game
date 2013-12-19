@@ -35,10 +35,12 @@ Hud::Hud()
                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HealthBar"));
     indicator = static_cast<PanelOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Indicator"));
-    thresholdBottom = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "thresholdBottom"));
-    thresholdTop = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "thresholdTop"));
+    threshold1 = static_cast<PanelOverlayElement*>(
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold1"));
+    threshold2 = static_cast<PanelOverlayElement*>(
+                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold2"));
+    threshold3 = static_cast<PanelOverlayElement*>(
+                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold3"));
     
     // Create text area
     label1 = static_cast<TextAreaOverlayElement*>(
@@ -60,8 +62,9 @@ Hud::Hud()
     overlay1->add2D(healthArea);
     //overlay1->add2D(barHP);
     overlay1->add2D(indicator);
-    //overlay1->add2D(thresholdBottom);
-    //overlay1->add2D(thresholdTop);
+    overlay1->add2D(threshold1);
+    overlay1->add2D(threshold2);
+    overlay1->add2D(threshold3);
     overlay2->add2D(panelText);
     
     panelText->addChild(label1);
@@ -93,18 +96,20 @@ void Hud::init(Tunnel* tunnel, Player* player)
     
     indicator->setMetricsMode(GMM_RELATIVE);
     indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
-    indicator->setDimensions(healthArea->getWidth() / 50, globals.HPBarHeight + 0.01);
+    indicator->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
     indicator->setMaterialName("General/Indicator");
     
-    thresholdBottom->setMetricsMode(GMM_RELATIVE);
-    thresholdBottom->setPosition(barHP->getLeft() + globals.stageDevanceThreshold, barHP->getTop() - 0.005);
-    thresholdBottom->setDimensions(healthArea->getWidth() / 50, globals.HPBarHeight + 0.01);
-    thresholdBottom->setMaterialName("General/Indicator");
+    threshold1->setMetricsMode(GMM_RELATIVE);
+    threshold1->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
+    threshold1->setMaterialName("General/StarGray");
     
-    thresholdTop->setMetricsMode(GMM_RELATIVE);
-    thresholdTop->setPosition(barHP->getLeft() + globals.stageAdvanceThreshold, barHP->getTop() - 0.005);
-    thresholdTop->setDimensions(healthArea->getWidth() / 50, globals.HPBarHeight + 0.01);
-    thresholdTop->setMaterialName("General/Indicator");
+    threshold2->setMetricsMode(GMM_RELATIVE);
+    threshold2->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
+    threshold2->setMaterialName("General/StarGray");
+    
+    threshold3->setMetricsMode(GMM_RELATIVE);
+    threshold3->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
+    threshold3->setMaterialName("General/StarGray");
     
     label1->setMetricsMode(GMM_PIXELS);
     label1->setAlignment(TextAreaOverlayElement::Center);
@@ -151,16 +156,18 @@ void Hud::init(Tunnel* tunnel, Player* player)
         healthArea->hide();
         barHP->hide();
         indicator->hide();
-        thresholdBottom->hide();
-        thresholdTop->hide();
     }
-    else
+    else if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         healthArea->show();
         barHP->show();
         indicator->show();
-        thresholdBottom->show();
-        thresholdTop->show();
+    }
+    else //if (tunnel->getMode() == GAME_NAVIGATION)
+    {
+        healthArea->hide();
+        barHP->hide();
+        indicator->hide();
     }
     
     for(int i = 0; i < overlays.size(); ++i)
@@ -169,34 +176,99 @@ void Hud::init(Tunnel* tunnel, Player* player)
 
 void Hud::update(Tunnel* tunnel, Player* player, double elapsed)
 {
+    double timeLeft = std::max(globals.stageTime - tunnel->getTotalElapsed(), 0.0);
+    
     if (tunnel->getMode() == GAME_TIMED)
-        label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
+        label1->setCaption(Util::toStringInt(timeLeft));
     else
         label1->setCaption("");
     if (tunnel->getMode() == GAME_TIMED)
         //label2->setCaption("Distance: " + Util::toStringInt(player->getScore()));
         label2->setCaption("");
-    else
+    else if (tunnel->getMode() == GAME_PROFICIENCY)
     {
-        label2->setCaption("");
+        label2->setCaption("Time: " + Util::toStringInt(timeLeft));
         // Not for the 20th deadline
         //if (player->getNumCorrectBonus() <= 0)
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()));
         //else
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()) + " + " + Util::toStringInt(player->getNumCorrectBonus()));
     }
-    label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    if (tunnel->getMode() != GAME_NAVIGATION)
+        label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    else
+        label3->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
     label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
-    label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    if (tunnel->getMode() != GAME_NAVIGATION)
+        label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    else
+        label5->setCaption("");
     label6->setCaption(globals.message);
     
     double indicatorRange = barHP->getWidth();
     double barWidth = globals.HPBarWidth;
     // As accuracy bar
-    if (tunnel->getMode() != GAME_TIMED)
+    if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);
-        indicator->setPosition(barHP->getLeft() + player->getProgress(tunnel), indicator->getTop());
+        double progress = player->getProgress(tunnel);
+        indicator->setPosition(barHP->getLeft() + barWidth * progress, indicator->getTop());
+        
+        threshold1->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold1, barHP->getTop() - 0.005);
+        threshold2->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold2, barHP->getTop() - 0.005);
+        threshold3->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold3, barHP->getTop() - 0.005);
+        if (progress >= globals.stageProficiencyThreshold1)
+            threshold1->setMaterialName("General/StarGold");
+        else
+            threshold1->setMaterialName("General/StarGray");
+        if (progress >= globals.stageProficiencyThreshold2)
+            threshold2->setMaterialName("General/StarGold");
+        else
+            threshold2->setMaterialName("General/StarGray");
+        if (progress >= globals.stageProficiencyThreshold3)
+            threshold3->setMaterialName("General/StarGold");
+        else
+            threshold3->setMaterialName("General/StarGray");
+            
+    }
+    else if (tunnel->getMode() == GAME_TIMED)
+    {
+        threshold1->setPosition(0.45, 0.15);
+        threshold2->setPosition(0.50, 0.15);
+        threshold3->setPosition(0.55, 0.15);
+        
+        label1->setCaption(Util::toStringInt(timeLeft));
+        if (timeLeft >= globals.stageTimeThreshold1)
+            threshold1->setMaterialName("General/StarGold");
+        else
+            threshold1->setMaterialName("General/StarGray");
+        if (timeLeft >= globals.stageTimeThreshold2)
+            threshold2->setMaterialName("General/StarGold");
+        else
+            threshold2->setMaterialName("General/StarGray");
+        if (timeLeft >= globals.stageTimeThreshold3)
+            threshold3->setMaterialName("General/StarGold");
+        else
+            threshold3->setMaterialName("General/StarGray");
+    }
+    else //if (tunnel->getMode() == GAME_NAVIGATION)
+    {
+        threshold1->setPosition(0.45, 0.15);
+        threshold2->setPosition(0.50, 0.15);
+        threshold3->setPosition(0.55, 0.15);
+        
+        if (player->getHP() + 0.01 >= globals.stageNavigationThreshold1)
+            threshold1->setMaterialName("General/StarGold");
+        else
+            threshold1->setMaterialName("General/StarGray");
+        if (player->getHP() + 0.01 >=globals.stageNavigationThreshold2)
+            threshold2->setMaterialName("General/StarGold");
+        else
+            threshold2->setMaterialName("General/StarGray");
+        if (player->getHP() + 0.01 >= globals.stageNavigationThreshold3)
+            threshold3->setMaterialName("General/StarGold");
+        else
+            threshold3->setMaterialName("General/StarGray");
     }
     /*
     // As HP counter

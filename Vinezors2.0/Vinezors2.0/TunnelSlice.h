@@ -16,21 +16,36 @@
 
 #include <vector>
 
-enum TunnelType { NORMAL_WITH_ONE_POD, NORMAL_WITH_THREE_PODS, NORMAL_WITH_FIVE_PODS, NORMAL_WITH_MANY_PODS, NORMAL_BLANK, CHECKPOINT_PASS, CHECKPOINT_FAIL, CHECKPOINT_EVEN };
+enum TunnelType { NORMAL, BLANK, CHECKPOINT_PASS, CHECKPOINT_FAIL, CHECKPOINT_EVEN };
 
 struct SectionInfo
 {
     TunnelType tunnelType;
     Direction tunnelDir; // The direction each segment is turning
     int tunnelDirAngle; // The amount of turning degrees for each segment
+    bool sidesSafe[NUM_DIRECTIONS];
     
     SectionInfo()
-    : tunnelType(NORMAL_BLANK), tunnelDir(NO_DIRECTION), tunnelDirAngle(0)
-    {}
+    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), sidesSafe()
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+            sidesSafe[i] = true;
+    }
     
-    SectionInfo(TunnelType tt, Direction td, int tda)
+    SectionInfo(const SectionInfo & info)
+    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), sidesSafe()
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+            sidesSafe[i] = info.sidesSafe[i];
+        
+    }
+    
+    SectionInfo(TunnelType tt, Direction td, int tda, const bool safe[NUM_DIRECTIONS])
     : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda)
-    {}
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+            sidesSafe[i] = safe[i];
+    }
 };
 
 // Contains the components of a segment of a tunnel which include the wall and pod information
@@ -76,13 +91,14 @@ private:
     double growthT; // Pod Growth Timing animation
     
     bool sidesUsed[NUM_DIRECTIONS];
+    bool sidesSafe[NUM_DIRECTIONS];
     
     SectionInfo sectionInfo;
     bool podHistory; // Used to avoid saving data multiple times for history panel
     bool infoStored; // Used to avoid saving data multiple times for log files
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
 	
     void initWalls();
     
@@ -103,9 +119,10 @@ public:
     bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
+    bool hasSafeSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
-    void findCollisions(Vine *vine);
+    std::vector<Pod*> findCollisions(Vine *vine);
     Vector3 requestWallDistance(Direction dir) const;
     Vector3 requestMove(Direction dir, double offset) const;
     Vector3 requestPosition(Vector3 cur, Direction dir, double offset) const;
@@ -121,7 +138,7 @@ public:
     void clearPods();
     void updateGrowth(double nt);
     
-    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool sides[NUM_DIRECTIONS]);
+    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
     
 	void removeFromScene();
 };

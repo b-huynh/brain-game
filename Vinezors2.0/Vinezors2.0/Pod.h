@@ -17,21 +17,23 @@ enum MeshType { BASIC, FUEL };
 
 struct PodInfo
 {
+    MeshType meshType;
     PodSignal podSignal;
     PodColor podColor;
     PodShape podShape;
     PodSound podSound;
     Direction podLoc;
     bool goodPod; // is the pod good to take?
+    bool podTrigger; // trigger on: false = after pod has past, true = on collision
     bool podTaken; // is the pod gone?
     
     PodInfo()
-    : podSignal(POD_SIGNAL_UNKNOWN), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
-    podLoc(NO_DIRECTION), goodPod(false), podTaken(false)
+    : meshType(BASIC), podSignal(POD_SIGNAL_UNKNOWN), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
+    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false)
     {}
     
-    PodInfo(PodSignal psig, PodColor pcol, PodShape pshp, PodSound psod, Direction pl, bool good, bool taken = false)
-    : podSignal(psig), podColor(pcol), podLoc(pl), podSound(psod), goodPod(good), podTaken(taken)
+    PodInfo(MeshType mtype, PodSignal psig, PodColor pcol, PodShape pshp, PodSound psod, Direction pl, bool good, bool trigger = false, bool taken = false)
+    : meshType(mtype), podSignal(psig), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
 };
 
@@ -61,17 +63,19 @@ private:
     
     Direction loc;
     bool podTaken;
+    bool podTrigger;
     bool podGood;
     
     Vector3 dest;
 public:
 	Pod();
     
-	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, double stemRadius, double headRadius);
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, double stemRadius, double headRadius);
 	
     void loadBasicShape();
     void loadFuelCell();
     
+    MeshType getMeshType() const;
     Vector3 getBase() const;
     Vector3 getTip() const;
 	PodSignal getPodSignal() const;
@@ -89,6 +93,7 @@ public:
 	double getHeadRadius() const;
     
     bool isPodTaken() const;
+    bool getPodTrigger() const;
     bool isPodGood() const;
     
 	void move(Vector3 delta);
@@ -101,6 +106,7 @@ public:
 	void setMoveSpeed(double value);
 	void setRotateSpeed(Vector3 value);
     void setPodGood(bool value);
+    void setPodTrigger(bool value);
     
 	void removeFromScene();
     

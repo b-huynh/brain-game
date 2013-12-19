@@ -15,7 +15,7 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
-enum GameMode { GAME_TIMED, GAME_NORMAL };
+enum GameMode { GAME_PROFICIENCY, GAME_TIMED, GAME_NAVIGATION };
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -48,6 +48,7 @@ public:
     std::vector<PodInfo> types;
     int sectionSize;
     int podSegmentSize;
+    int distractorSegmentSize;
     int spawnIndex; // The current index to spawn which pod.
     int spawnLimit;
     int numTargets;
@@ -57,6 +58,7 @@ public:
     int podIndex;
     int renewalSectionCounter;
     int renewalPodCounter;
+    int renewalDistractorCounter;
     std::list<Pod*> activePods; // Animating pods
     
     // Stage attributes
@@ -78,7 +80,7 @@ public:
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, PodType testType, bool setColors, bool setSounds, bool setShapes);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, double segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, PodType testType, bool setColors, bool setSounds, bool setShapes);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -136,10 +138,12 @@ public:
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
+    SectionInfo getNextSegmentInfo(SectionInfo sectionInfo) const;
     PodInfo getNextPodInfoAt(SetPodTarget setting, int index);
     PodInfo getNextPodInfo(SetPodTarget setting);
-    void addSegment(SectionInfo sectionInfo, PodInfo podInfo);
-	void renewSegment(SectionInfo sectionInfo, PodInfo podInfo);
+    std::vector<PodInfo> getNextDistractorInfo(PodInfo signal = PodInfo());
+    void addSegment(SectionInfo sectionInfo, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
+	void renewSegment(SectionInfo sectionInfo, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
     void addSection(SectionInfo newSection);
     void renewSection(SectionInfo newSection);
     

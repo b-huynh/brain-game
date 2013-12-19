@@ -16,7 +16,7 @@ Vine::Vine()
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
-: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), forward(), radius(radius), speed(0.0)
+: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), forward(), radius(radius), speed(0.0), loc(NO_DIRECTION), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
     loadRunnerShip();
     ++vineID;
@@ -121,11 +121,6 @@ void Vine::setForward(Vector3 value)
 	forward = value;
 }
 
-void Vine::move(Vector3 delta)
-{
-	entireVine->translate(delta);
-}
-
 double Vine::getRadius() const
 {
     return radius;
@@ -136,8 +131,32 @@ void Vine::setQuaternion(Quaternion rot)
     entireVine->setOrientation(rot);
 }
 
+void Vine::setWobble(bool value)
+{
+    wobbling = value;
+    totalElapsed = 0.0;
+    wobbleSpeed = 0.0;
+}
+
+void Vine::move(Vector3 delta)
+{
+	entireVine->translate(delta);
+}
+
 void Vine::update(double elapsed)
 {
+    if (wobbling)
+    {
+        totalElapsed += elapsed;
+        wobbleSpeed += elapsed;
+        if (wobbleSpeed > 2.0)
+            wobbleSpeed = 2.0;
+        entireVine->roll(15 * Degree(sin(32 * wobbleSpeed * totalElapsed)));
+        if (totalElapsed >= 0.5)
+            setWobble(false);
+    }
+    
+    /*
     double moveSpeed = speed;
     
 	Vector3 dist = dest - entireVine->getPosition();
@@ -160,6 +179,7 @@ void Vine::update(double elapsed)
 		delta = dist;
     
 	move(delta);
+     */
 }
 
 void Vine::removeFromScene()

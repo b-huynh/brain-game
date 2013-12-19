@@ -215,6 +215,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundBadFeedback", "chimedown.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod1", "podspacebleep.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod2", "podspaceblip.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod3", "podspacechime.wav", false, false, true);
