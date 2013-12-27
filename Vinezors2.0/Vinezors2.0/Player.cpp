@@ -257,10 +257,8 @@ Evaluation Player::getEvaluation(Tunnel* tunnel) const
 {
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
-        if (getProgress(tunnel) >= globals.stageProficiencyThreshold2)
+        if (getProgress(tunnel) >= globals.stageProficiencyThreshold1)
             return PASS;
-        else if (getProgress(tunnel) < globals.stageProficiencyThreshold3)
-            return FAIL;
         else
             return EVEN;
         //return getHP() > 0 ? PASS : FAIL;
@@ -545,7 +543,7 @@ void Player::setSounds(bool mode)
     if (mode) // true means all pod sounds
     {
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
-        soundFeedbackGood = NULL;
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
         soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
         soundPods[POD_SIGNAL_1] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod1");
         soundPods[POD_SIGNAL_2] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
@@ -558,7 +556,7 @@ void Player::setSounds(bool mode)
     else // false means no pod sounds
     {
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
-        soundFeedbackGood = NULL;
+        soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
         soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
         for (int i = 0; i < NUM_POD_SIGNALS; ++i)
             soundPods[i] = NULL;
@@ -586,28 +584,17 @@ void Player::checkCollisions(Tunnel *tunnel)
                 {
                     if (!tunnel->isDone() && hits[i]->getPodTrigger())
                     {
-                        if (hits[i]->isPodGood())
+                        hp += globals.HPPositiveWrongAnswer;
+                        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                        if (soundCollision)
                         {
-                            hp += globals.HPPositiveCorrectAnswer;
-                            if (soundFeedbackGreat)
-                            {
-                                soundFeedbackGreat->stop();
-                                soundFeedbackGreat->play();
-                            }
+                            soundCollision->stop();
+                            soundCollision->play();
                         }
-                        else
-                        {
-                            hp += globals.HPPositiveWrongAnswer;
-                            if (soundCollision)
-                            {
-                                soundCollision->stop();
-                                soundCollision->play();
-                            }
-                            camSpeed += globals.stepsizeSpeedDown;
-                            camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-        
-                            vines[i]->setWobble(true);
-                        }
+                        camSpeed += globals.stepsizeSpeedDown;
+                        camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+    
+                        vines[i]->setWobble(true);
                     }
                 }
         }
@@ -616,7 +603,7 @@ void Player::checkCollisions(Tunnel *tunnel)
 
 void Player::resetCursorMoved()
 {
-    inputTotalX = 0;
+    inputTotalX = 0.0;
     inputMoved = false;
 }
 
@@ -630,9 +617,12 @@ void Player::updateCursorCooldown(double elapsed)
     // Cooldown before next swipe can be read
     if (inputMoved)
     {
+        inputLeftBound = globals.screenWidth / globals.swipeSensitivity;
+        inputRightBound = -globals.screenWidth / globals.swipeSensitivity;
+        /*
         if (inputTotalX > 0.0)
         {
-            inputTotalX -= globals.screenWidth / 2.0 * elapsed;
+            inputTotalX -= 2 * globals.screenWidth * elapsed;
             if (inputTotalX <= 0.0)
             {
                 inputTotalX = 0.0;
@@ -641,13 +631,19 @@ void Player::updateCursorCooldown(double elapsed)
         }
         else if (inputTotalX < 0.0)
         {
-            inputTotalX += globals.screenWidth / 2.0 * elapsed;
+            inputTotalX += 2 * globals.screenWidth * elapsed;
             if (inputTotalX >= 0.0)
             {
                 inputTotalX = 0.0;
                 inputMoved = false;
             }
         }
+         */
+    }
+    else
+    {
+        inputLeftBound = globals.screenWidth / globals.swipeSensitivity;
+        inputRightBound = -globals.screenWidth / globals.swipeSensitivity;
     }
 }
 
@@ -656,30 +652,24 @@ void Player::checkCursorMove(double dx, double dy)
     inputTotalX += dx;
 }
 
-bool Player::checkPerformLeftMove()
+bool Player::checkPerformLeftMove(bool force)
 {
-#if defined(OGRE_IS_IOS)
-    if (!inputMoved && inputTotalX >= globals.screenWidth / 12.0)
+    if (force || (inputTotalX > inputLeftBound))
     {
+        inputTotalX = 0.0;
         return true;
     }
     else return false;
-#else
-    return true;
-#endif
 }
 
-bool Player::checkPerformRightMove()
+bool Player::checkPerformRightMove(bool force)
 {
-#if defined(OGRE_IS_IOS)
-    if (!inputMoved && inputTotalX <= globals.screenWidth / 12.0)
+    if (force || (inputTotalX < inputRightBound))
     {
+        inputTotalX = 0.0;
         return true;
     }
     else return false;
-#else
-    return true;
-#endif
 }
 
 void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
@@ -827,10 +817,21 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                     
                     // Determine whether the player got it right or not
                     if (result.podInfo.goodPod && result.podInfo.podTaken) {
-                        if (soundFeedbackGreat)
+                        if (tunnel->getMode() == GAME_NAVIGATION)
                         {
-                            soundFeedbackGreat->stop();
-                            soundFeedbackGreat->play();
+                            if (soundFeedbackGood)
+                            {
+                                soundFeedbackGood->stop();
+                                soundFeedbackGood->play();
+                            }
+                        }
+                        else
+                        {
+                            if (soundFeedbackGreat)
+                            {
+                                soundFeedbackGreat->stop();
+                                soundFeedbackGreat->play();
+                            }
                         }
                         ++numCorrectTotal;
                         ++numCorrectCombo;
@@ -848,18 +849,10 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                         if (numCorrectBonus > 5)
                             numCorrectBonus = 5;
                         
-                        if (tunnel->getMode() == GAME_NAVIGATION)
+                        if (numCorrectCombo >= globals.numToSpeedUp)
                         {
                             camSpeed += globals.stepsizeSpeedUp;
                             camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-                        }
-                        else
-                        {
-                            if (numCorrectCombo >= globals.numToSpeedUp)
-                            {
-                                camSpeed += globals.stepsizeSpeedUp;
-                                camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-                            }
                         }
                         
                         if (history) history->determineCoverLoc(true);
@@ -871,14 +864,6 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                         
                         if (numCorrectBonus > 5)
                             numCorrectBonus = 5;
-                        else
-                        {
-                            if (soundFeedbackGood)
-                            {
-                                soundFeedbackGood->stop();
-                                soundFeedbackGood->play();
-                            }
-                        }
                     }
                     else if ((result.podInfo.goodPod && !result.podInfo.podTaken) ||
                              (!result.podInfo.goodPod && result.podInfo.podTaken)) {
@@ -894,18 +879,10 @@ void Player::update(Tunnel* tunnel, Hud* hud, double elapsed)
                         ++numWrongCombo;
                         numCorrectCombo = 0;
                         
-                        if (tunnel->getMode() == GAME_NAVIGATION)
+                        if (numWrongCombo >= globals.numToSpeedDown && tunnel->getMode() != GAME_NAVIGATION)
                         {
-                            camSpeed += globals.stepsizeSpeedUp;
+                            camSpeed += globals.stepsizeSpeedDown;
                             camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-                        }
-                        else
-                        {
-                            if (numWrongCombo >= globals.numToSpeedDown)
-                            {
-                                camSpeed += globals.stepsizeSpeedDown;
-                                camSpeed = Util::clamp(camSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-                            }
                         }
                     
                         numCorrectBonus = 0;

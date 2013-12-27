@@ -128,7 +128,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label3->setAlignment(TextAreaOverlayElement::Right);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
     label3->setCharHeight(globals.screenHeight / 50);
-    label3->setColour(ColourValue::White);
+    label3->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_PIXELS);
@@ -141,7 +141,6 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label5->setAlignment(TextAreaOverlayElement::Right);
     label5->setPosition(globals.label5_posX, globals.label5_posY);
     label5->setCharHeight(globals.screenHeight / 50);
-    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label5->setFontName("Arial");
     
     label6->setMetricsMode(GMM_PIXELS);
@@ -185,22 +184,22 @@ void Hud::update(Tunnel* tunnel, Player* player, double elapsed)
     if (tunnel->getMode() == GAME_TIMED)
         //label2->setCaption("Distance: " + Util::toStringInt(player->getScore()));
         label2->setCaption("");
-    else if (tunnel->getMode() == GAME_PROFICIENCY)
+    else if (globals.stageTime)
     {
         label2->setCaption("Time: " + Util::toStringInt(timeLeft));
-        // Not for the 20th deadline
+        // Not for the January deadline
         //if (player->getNumCorrectBonus() <= 0)
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()));
         //else
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()) + " + " + Util::toStringInt(player->getNumCorrectBonus()));
     }
     if (tunnel->getMode() != GAME_NAVIGATION)
-        label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+        label3->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
     else
         label3->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
     label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
     if (tunnel->getMode() != GAME_NAVIGATION)
-        label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+        label5->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     else
         label5->setCaption("");
     label6->setCaption(globals.message);

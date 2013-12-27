@@ -1,6 +1,8 @@
 #include "OgreDemoApp.h"
 
-#include "Util.h"
+#include "Tunnel.h"
+#include "Player.h"
+#include "Hud.h"
 #include <fstream>
 #include <ctime>
 #include <cstdlib>
@@ -107,19 +109,10 @@ void DemoApp::finalizeRTShaderSystem()
 }
 #endif // USE_RTSHADER_SYSTEM
 
-void DemoApp::setMessage(std::string msg, MessageType type)
-{
-    if (type > messageType)
-    {
-        message = msg;
-        messageType = type;
-    }
-}
-
 void DemoApp::startDemo(const char* name, MusicMode musica)
 {
     totalElapsed = 0.0;
-    playerName = std::string(name);
+    globals.initPaths(name);
     musicMode = musica;
     
 	new OgreFramework();
@@ -169,224 +162,8 @@ void DemoApp::startDemo(const char* name, MusicMode musica)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-bool DemoApp::setName(const char* name)
-{
-    std::string test = "subject000";
-    playerName = name;
-    if (playerName.length() != test.length())
-        return false;
-    
-    if (playerName.substr(0, 7) != "subject")
-        return false;
-    
-    int id = atoi(playerName.substr(7, 3).c_str());
-    if (!((id >= 100 && id <= 200) || (id >= 900 && id <= 999)))
-        return false;
-    return true;
-}
-
-void DemoApp::setConfigValue(std::istream& in, std::string paramName)
-{
-    if (paramName == "stageID")
-        in >> globals.stageID;
-    else if (paramName == "sessionTime")
-        in >> globals.sessionTime;
-    else if (paramName == "nback")
-        in >> globals.nback;
-    else if (paramName == "control")
-        in >> globals.control;
-    else if (paramName == "progressionMode")
-    {
-        in >> globals.progressionMode;
-        globals.progressionMode--;
-    }
-    else if (paramName == "gameMode")
-        in >> globals.gameMode;
-    else if (paramName == "tunnelMinAngleTurn")
-        in >> globals.tunnelMinAngleTurn;
-    else if (paramName == "tunnelMaxAngleTurn")
-        in >> globals.tunnelMaxAngleTurn;
-    else if (paramName == "tunnelSegmentsPerSection")
-        in >> globals.tunnelSegmentsPerSection;
-    else if (paramName == "tunnelSegmentsPerPod")
-        in >> globals.tunnelSegmentsPerPod;
-    else if (paramName == "podAppearance")
-        in >> globals.podAppearance;
-    else if (paramName == "podNBackChance")
-        in >> globals.podNBackChance;
-    else if (paramName == "HPNegativeLimit")
-        in >> globals.HPNegativeLimit;
-    else if (paramName == "HPPositiveLimit")
-        in >> globals.HPPositiveLimit;
-    else if (paramName == "HPPositiveCorrectAnswer")
-        in >> globals.HPPositiveCorrectAnswer;
-    else if (paramName == "HPPositiveWrongAnswer")
-        in >> globals.HPPositiveWrongAnswer;
-    else if (paramName == "HPNegativeCorrectAnswer")
-        in >> globals.HPNegativeCorrectAnswer;
-    else if (paramName == "HPNegativeWrongAnswer")
-        in >> globals.HPNegativeWrongAnswer;
-    else if (paramName == "initCamSpeed")
-        in >> globals.initCamSpeed;
-    else if (paramName == "modifierCamSpeed")
-        in >> globals.modifierCamSpeed;
-    else if (paramName == "minCamSpeed")
-        in >> globals.minCamSpeed;
-    else if (paramName == "maxCamSpeed")
-        in >> globals.maxCamSpeed;
-    else if (paramName == "nlevelSpeedModifier")
-        in >> globals.nlevelSpeedModifier;
-    else if (paramName == "numToSpeedUp")
-        in >> globals.numToSpeedUp;
-    else if (paramName == "numToSpeedDown")
-        in >> globals.numToSpeedDown;
-    else if (paramName == "stepsizeSpeedUp")
-        in >> globals.stepsizeSpeedUp;
-    else if (paramName == "stepsizeSpeedDown")
-        in >> globals.stepsizeSpeedDown;
-    else if (paramName == "timedRunTimer")
-        in >> globals.timedRunTimer;
-    else if (paramName == "timedRunControlUpDist1")
-        in >> globals.timedRunControlUpDist1;
-    else if (paramName == "timedRunControlUpDist2")
-        in >> globals.timedRunControlUpDist2;
-    else if (paramName == "timedRunControlUpDist3")
-        in >> globals.timedRunControlUpDist3;
-    else if (paramName == "timedRunNMax")
-        in >> globals.timedRunNMax;
-    else
-    {
-        std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
-        setMessage("WARNING: Unknown config parameter", MESSAGE_NOTIFY);
-    }
-}
-
-bool DemoApp::loadConfig(std::string filepath, int stageID)
-{
-    std::string check, paramName, colon;
-    char nextVal;
-    
-    std::ifstream in (filepath.c_str());
-    if (!in.good())
-    {
-        in.open(configBackup.c_str());
-        std::cout << "Loading config: " << configBackup << std::endl;
-    }
-    else
-        std::cout << "Loading config: " << filepath << std::endl;
-    if (!in.good()) return false;
-    
-    do {
-        in >> check;
-        if (check != "{") {
-            std::cout << "ERROR: Config file missing \'{\' in "
-                 << "at least one Stage configuration" << std::endl;
-            return false;
-        }
-        
-        in >> paramName;
-        while (paramName != "}" && !in.eof()) {
-            in >> colon;
-            nextVal = in.peek();
-            setConfigValue(in, paramName);
-            in >> paramName;
-            
-            if (colon == "{" || nextVal == '{' || paramName == "{" || in.eof()) {
-                std::cout << "ERROR: Config file missing \'}\' in "
-                          << "at least one Stage configuration." << std::endl;
-                in.close();
-                return false;
-            }
-        }
-        
-    } while (globals.stageID != stageID && !in.eof());
-    
-    in.close();
-    
-    if (globals.stageID == stageID) {
-        std::cout << "Loaded stageID " << globals.stageID << std::endl;
-        return true;
-    } else {
-        std::cout << "Failed to load stageID " << stageID << std::endl;
-        return false;
-    }
-    
-    return false;
-}
-
-bool DemoApp::loadSaveFile(std::string savePath)
-{
-    std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
-    
-    std::cout << "Loading player save: " << savePath << std::endl;
-    
-    if (saveFile.good()) {
-        saveFile >> currStageID;
-        std::cout << "Starting from last session StageID " << currStageID << std::endl;
-        setMessage("Loaded Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        currStageID = 5;
-        std::cout << "Starting from StageID " << currStageID << std::endl;
-        setMessage("New Save " + playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    
-    saveFile.close();
-    return ret;
-}
-
-std::string buildLogPath(std::string playerName)
-{
-    //Get Date
-    time_t raw = time(0);
-    struct tm * timeinfo = localtime( &raw );
-    char buffer [80];
-    strftime(buffer, 80, "%F", timeinfo);
-    
-    std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
-                        + playerName + "-" + std::string(buffer);
-    
-    int i = 1;
-    std::ifstream testExist (std::string(logPath + ".log").c_str());
-    
-    while (testExist) {
-        testExist.close();
-        logPath = logPath + "_" + Util::toStringInt(i);
-        ++i;
-        testExist.open(std::string(logPath + ".log").c_str());
-    }
-    
-    logPath = logPath + ".log";
-    
-    return logPath;
-}
-
 void DemoApp::setupDemoScene()
 {
-    // Set save, log, config files
-        
-    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
-    configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
-    configBackup = Util::getIOSDir() + "/backup.conf";
-    
-    //Build log path
-    logPath = buildLogPath(playerName);
-    
-    bool saveGood = loadSaveFile(savePath);
-    if (!saveGood)
-        std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
-    
-    bool configGood = loadConfig(configPath,currStageID);
-    if (!configGood)
-    {
-        std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
-        setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    }
-    
-    progressionMode = (ProgressionMode)globals.progressionMode;
-    
     seed = time(0);
     srand(seed);
     
@@ -394,14 +171,16 @@ void DemoApp::setupDemoScene()
     
     Util::generateMaterials();
     
-    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "podMesh", globals.podHeadRadius, 16, 16);
-    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineTopMesh", globals.vineRadius, 32, 32);
-    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "vineDiskMesh", globals.vineRadius * 1.5, 1.0, 16);
-    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "wallTileMesh", 1.0, 1.0);
-    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "podMesh", globals.podHeadRadius, 16, 16);
-    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "stemMesh", globals.podStemRadius, globals.podStemLength, 16);
-    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "seatMesh", 1.0, 1.0);
+    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "sphereMesh", 1.0, 8, 8);
+    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "cylinderMesh", 1.0, 1.0, 8);
+    Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "diamondMesh", 1.0, 1.0);
+    Util::createBox(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "boxMesh", 1.0, 1.0, 1.0);
+    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "planeMesh", 1.0, 1.0);
+    Util::createDefaultSegments(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
+    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "sphereMesh", 1.0, 16, 16);
+    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "cylinderMesh", 1.0, 1.0, 16);
+    //Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "diamondMesh", 1.0, 1.0);
+    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "planeMesh", 1.0, 1.0);
     
 	origin = Vector3(0, 0, 0);
     
@@ -409,7 +188,7 @@ void DemoApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
 	player = new Player(
-                        "",
+                        globals.playerName,
                         PlayerLevel(),
                         OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition(),
                         OgreFramework::getSingletonPtr()->m_pCameraMain->getOrientation(),
@@ -419,9 +198,10 @@ void DemoApp::setupDemoScene()
                         seed,
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
-    player->setSounds(progressionMode != SIMPLE_PROGRESSIVE);
+    player->setSounds(true);
     player->setConfigValues();
-    player->setName(playerName);
+    
+    hud = new Hud();
     
     setLevel(-1, -1, true);
     
@@ -434,150 +214,16 @@ void DemoApp::setupDemoScene()
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
     /*
-    Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
-    lightSide->setDiffuseColour(1.0, 1.0, 1.0);
-    lightSide->setSpecularColour(1.0, 1.0, 1.0);
-    lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
-    lightNodeSide->attachObject(lightSide);
-    lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
-     */
-    
-    // The code snippet below is used to output text
-    // create a font resource
-    ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    resourceText->setParameter("type", "truetype");
-    resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
-    resourceText->setParameter("size", "16");
-    resourceText->setParameter("resolution", "96");
-    resourceText->load();
-    
-    // Create panels
-    panel1 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HudInterface"));
-    panel1->setMetricsMode(GMM_PIXELS);
-    panel1->setPosition(10, 10);
-    panel1->setDimensions(10, 10);
-    
-    panel2 = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SideInterface"));
-    panel2->setMetricsMode(GMM_PIXELS);
-    panel2->setPosition(10, 10);
-    panel2->setDimensions(10, 10);
-    
-    healthArea = static_cast<BorderPanelOverlayElement*>(
-                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("BorderPanel", "HealthAreaBorder"));
-    
-    barHP = static_cast<PanelOverlayElement*>(
-                                              OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HealthBar"));
-    indicator = static_cast<PanelOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Indicator"));
-    
-    // Create text area
-    label1= static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
-    label2= static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
-    label3= static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
-    label4= static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
-    label5= static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
-    
-    // Create an overlay, and add the panel
-    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayMain");
-    Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlaySide");
-    overlay1->add2D(panel1);
-    overlay2->add2D(panel2);
-    panel1->addChild(healthArea);
-    panel1->addChild(barHP);
-    panel1->addChild(indicator);
-    panel2->addChild(label1);
-    panel2->addChild(label2);
-    panel2->addChild(label3);
-    panel2->addChild(label4);
-    panel2->addChild(label5);
-    
-    overlays.push_back(overlay1);
-    overlays.push_back(overlay2);
+     Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
+     lightSide->setDiffuseColour(1.0, 1.0, 1.0);
+     lightSide->setSpecularColour(1.0, 1.0, 1.0);
+     lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
+     lightNodeSide->attachObject(lightSide);
+     lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
+    */
     
     sidebarMode = SIDEBAR_NONE;
-    setSidebar();
-    setOverlay(true);
-}
-
-void DemoApp::setOverlay(bool firstTime)
-{
-    panel1->setMetricsMode(GMM_PIXELS);
-    panel1->setPosition(10, 10);
-    panel1->setDimensions(10, 10);
-    
-    panel2->setMetricsMode(GMM_PIXELS);
-    panel2->setPosition(10, 10);
-    panel2->setDimensions(10, 10);
-    
-    healthArea->setMetricsMode(GMM_RELATIVE);
-    healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
-    healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
-    healthArea->setMaterialName("BaseWhite");
-    
-    barHP->setMetricsMode(GMM_RELATIVE);
-    barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
-    barHP->setDimensions(0.0, globals.HPBarHeight);
-    barHP->setMaterialName("General/BarColors");
-    
-    indicator->setMetricsMode(GMM_RELATIVE);
-    indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
-    indicator->setDimensions(healthArea->getWidth() / 50, globals.HPBarHeight + 0.01);
-    indicator->setMaterialName("General/BaseBlack");
-    
-    label1->setMetricsMode(GMM_PIXELS);
-    label1->setAlignment(TextAreaOverlayElement::Center);
-    label1->setPosition(globals.label1_posX, globals.label1_posY);
-    label1->setCharHeight(globals.screenHeight / 30);
-    label1->setFontName("Arial");
-    label1->setColour(ColourValue::Green);
-    label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
-    
-    label2->setMetricsMode(GMM_PIXELS);
-    label2->setPosition(globals.label2_posX, globals.label2_posY);
-    label2->setCharHeight(globals.screenHeight / 50);
-    label2->setColour(ColourValue::White);
-    label2->setFontName("Arial");
-    label2->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
-    
-    label3->setMetricsMode(GMM_PIXELS);
-    label3->setPosition(globals.label3_posX, globals.label3_posY);
-    label3->setCharHeight(globals.screenHeight / 50);
-    label3->setColour(ColourValue::White);
-    label3->setFontName("Arial");
-    label3->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    
-    label4->setMetricsMode(GMM_PIXELS);
-    label4->setPosition(globals.label4_posX, globals.label4_posY);
-    label4->setCharHeight(globals.screenHeight / 50);
-    label4->setColour(ColourValue::White);
-    label4->setFontName("Arial");
-    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
-    
-    label5->setMetricsMode(GMM_PIXELS);
-    label5->setAlignment(TextAreaOverlayElement::Center);
-    label5->setPosition(globals.label5_posX, globals.label5_posY);
-    label5->setCharHeight(globals.screenHeight / 50);
-    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    label5->setFontName("Arial");
-    if (firstTime) label5->setCaption(message);
-    
-    if (tunnel->getMode() == GAME_TIMED)
-    {
-        healthArea->hide();
-        barHP->hide();
-        indicator->hide();
-    }
-    else
-    {
-        healthArea->show();
-        barHP->show();
-        indicator->show();
-    }
+    //setSidebar();
 }
 
 void DemoApp::setSidebar()
@@ -594,208 +240,119 @@ void DemoApp::setSidebar()
             m_pViewportMain->setDimensions(
                                            0.0,
                                            0.0,
-                                           double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
-                                           double(globals.viewportMainHeight_modeNone) / globals.screenHeight);
+                                           float(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeNone) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
             
-            /*
-            m_pCameraSide->setOrthoWindow(0.0, 0.0);
-            m_pViewportSide->setDimensions(
-                                           double(globals.viewportMainWidth_modeNone) / globals.screenWidth,
-                                           0.0,
-                                           double(globals.viewportSideWidth_modeNone) / globals.screenWidth,
-                                           double(globals.viewportSideHeight_modeNone) / globals.screenHeight);
-            m_pCameraSide->setAspectRatio(Real(0.0));
-             */
+             m_pCameraSide->setOrthoWindow(0.0, 0.0);
+             m_pViewportSide->setDimensions(
+             float(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+             0.0,
+             float(globals.viewportSideWidth_modeNone) / globals.screenWidth,
+             float(globals.viewportSideHeight_modeNone) / globals.screenHeight);
+             m_pCameraSide->setAspectRatio(Real(0.0));
+             
             break;
         case SIDEBAR_RIGHT:
             m_pViewportMain->setDimensions(
                                            0.0,
                                            0.0,
-                                           double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
-                                           double(globals.viewportMainHeight_modeRight) / globals.screenHeight);
+                                           float(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeRight) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
-            m_pCameraSide->setPosition(Vector3(0, 0, 30));
-            m_pCameraSide->lookAt(Vector3(0, 0, 0));
-            m_pCameraSide->setNearClipDistance(1);
-            m_pCameraSide->setOrthoWindow(10.0, 25.0);
-            m_pViewportSide->setDimensions(
-                                           double(globals.viewportMainWidth_modeRight) / globals.screenWidth,
-                                           0.0,
-                                           double(globals.viewportSideWidth_modeRight) / globals.screenWidth,
-                                           double(globals.viewportSideHeight_modeRight) / globals.screenHeight);
-            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+            
+             m_pCameraSide->setPosition(Vector3(0, 0, 30));
+             m_pCameraSide->lookAt(Vector3(0, 0, 0));
+             m_pCameraSide->setNearClipDistance(1);
+             m_pCameraSide->setOrthoWindow(10.0, 25.0);
+             m_pViewportSide->setDimensions(
+             float(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+             0.0,
+             float(globals.viewportSideWidth_modeRight) / globals.screenWidth,
+             float(globals.viewportSideHeight_modeRight) / globals.screenHeight);
+             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             
             break;
         case SIDEBAR_BOTTOM_LTR:
             m_pViewportMain->setDimensions(
                                            0.0,
                                            0.0,
-                                           double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
-                                           double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
+                                           float(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
-            m_pCameraSide->setPosition(Vector3(0, 0, 30));
-            m_pCameraSide->lookAt(Vector3(0, 0, 0));
-            m_pCameraSide->setNearClipDistance(1);
-            m_pCameraSide->roll(Degree(-90));
-            m_pCameraSide->setOrthoWindow(5, 2.5);
-            m_pViewportSide->setDimensions(
-                                           0.0,
-                                           double(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
-                                           double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
-                                           double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
-            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+            
+             m_pCameraSide->setPosition(Vector3(0, 0, 30));
+             m_pCameraSide->lookAt(Vector3(0, 0, 0));
+             m_pCameraSide->setNearClipDistance(1);
+             m_pCameraSide->roll(Degree(-90));
+             m_pCameraSide->setOrthoWindow(5, 2.5);
+             m_pViewportSide->setDimensions(
+             0.0,
+             float(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
+             float(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
+             float(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
+             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             
             break;
         case SIDEBAR_BOTTOM_RTL:
             m_pViewportMain->setDimensions(
                                            0.0,
                                            0.0,
-                                           double(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
-                                           double(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
+                                           float(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
             m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
-            /*
-            m_pCameraSide->setPosition(Vector3(0, 0, 30));
-            m_pCameraSide->lookAt(Vector3(0, 0, 0));
-            m_pCameraSide->setNearClipDistance(1);
-            m_pCameraSide->roll(Degree(90));
-            m_pCameraSide->setOrthoWindow(5, 2.5);
-            m_pViewportSide->setDimensions(
-                                           0.0,
-                                           double(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
-                                           double(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
-                                           double(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
-            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
-             */
+            
+             m_pCameraSide->setPosition(Vector3(0, 0, 30));
+             m_pCameraSide->lookAt(Vector3(0, 0, 0));
+             m_pCameraSide->setNearClipDistance(1);
+             m_pCameraSide->roll(Degree(90));
+             m_pCameraSide->setOrthoWindow(5, 2.5);
+             m_pViewportSide->setDimensions(
+             0.0,
+             float(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
+             float(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
+             float(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
+             m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+             
             break;
     }
 }
 
-void DemoApp::update(double elapsed)
+void DemoApp::update(float elapsed)
 {
     totalElapsed += elapsed;
-    /*
-    if (message != "" && (
-        (messageType == MESSAGE_NORMAL && totalElapsed >= 3.0) ||
-        (messageType == MESSAGE_NOTIFY && totalElapsed >= 60.0) ||
-        (messageType == MESSAGE_ERROR && totalElapsed >= 60.0))
-        )
-        {
-            message = "";
-            messageType = MESSAGE_NONE;
-            label5->setCaption("");
-        }
-    */
-    OgreFramework::getSingletonPtr()->m_pSoundMgr->update();
     
-    // Determine whether a stage has completed
-    if (!tunnel->isDone())
-    {
-        if (tunnel->getMode() == GAME_NORMAL)
-        {
-            // Notify completion of stage
-            if (player->getHP() >= globals.HPPositiveLimit ||
-                player->getHP() <= globals.HPNegativeLimit)
-                tunnel->setDone(true);
-        }
-        else
-        {
-            if (tunnel->getTotalElapsed() > globals.timedRunTimer)
-                tunnel->setDone(true);
-        }
-        if (tunnel->isDone())
-        {
-            // Generate a CHECKPOINT tunnel section
-            for (int i = 0; i < globals.initiationSections; ++i) {
-                SectionInfo info = SectionInfo(NORMAL_BLANK, NO_DIRECTION, 0);
-//                if (i == globals.initiationSections - 1) {
-                Evaluation eval = player->getEvaluation(tunnel->getMode());
-                if (eval == PASS)
-                    info.tunnelType = CHECKPOINT_PASS;
-                else if (eval == FAIL)
-                    info.tunnelType = CHECKPOINT_FAIL;
-                else
-                    info.tunnelType = CHECKPOINT_EVEN;
-//                }
-                tunnel->addSection(info);
-            }
-        }
-    }
-    
+    OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
+
     // Update the game state
     if (!pause) {
-        player->update(elapsed, tunnel);
-        
+        // Stop the game
         if (!pause && player->getTotalElapsed() > globals.sessionTime)
         {
-            player->saveProgress(logPath);
-            setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
-            label5->setCaption(message);
+            player->saveProgress(globals.logPath);
+            globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
             pause = true;
         }
         
-        // Animate Pod Growing outwards or Growing inwards
-        const double GROWTH_SPEED = 1;
-        TunnelSlice* nextSliceM = tunnel->getNext(globals.podAppearance);
-        if (nextSliceM) {
-            if (!tunnel->isDone())
-                nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
-            else
-                nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
+        player->update(tunnel, hud, elapsed);
+        if (tunnel->needsCleaning())
+        {
+            // Generate a new tunnel because we are done with current one
+            setLevel(-1, -1);
+            globals.setMessage("Swipe to Continue", MESSAGE_NORMAL);
         }
-        nextSliceM = tunnel->getNext(globals.podAppearance + 1);
-        if (nextSliceM) {
-            if (!tunnel->isDone())
-                nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
-            else
-                nextSliceM->updateGrowth(-GROWTH_SPEED * elapsed);
-        }
-        
-        // If player's current position is out of its current segment...
-        if (tunnel->renewIfNecessary(player->getCamPos())) {
-            // Set new camera slerp goal
-            player->setOldPos(player->getCamPos());
-            player->setOldRot(player->getCamRot());
-            player->setOldRoll(player->getCamRoll());
-            TunnelSlice* nextSlice1 = tunnel->getNext(1);
-            if (nextSlice1)
-            {
-                player->setDesireRot(nextSlice1->getQuaternion());
-            }
-            else {
-                // Generate a new tunnel because we are at the end
-                setLevel(-1, -1);
-                setMessage("Swipe to Continue", MESSAGE_NORMAL);
-                label5->setCaption(message);\
-                
-            }
-            
-            // Show Pod Color and Play Sound
-            TunnelSlice* nextSliceN = tunnel->getNext(globals.podAppearance);
-            if (nextSliceN && !tunnel->isDone())
-            {
-                for (int i = 0; i < nextSliceN->getPods().size(); ++i) {
-                    nextSliceN->getPods()[i]->revealPod();
-                    player->playPodSound(nextSliceN->getPods()[i]->getType());
-                }
-            }
-        }
-        tunnel->update(elapsed);
-        
     } else {
-        /*
-        // Navigation Debug Keys
-        if (player->getKeyUp())
-            player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
-        if (player->getKeyDown())
-            player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
-        if (player->getKeyLeft())
-            player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
-        if (player->getKeyRight())
-            player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
-         */
+#if !defined(OGRE_IS_IOS)
+         // Navigation Debug Keys
+         if (player->getKeyUp())
+         player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+         if (player->getKeyDown())
+         player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+         if (player->getKeyLeft())
+         player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+         if (player->getKeyRight())
+         player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+#endif
     }
     
     // Graphical view changes
@@ -806,88 +363,44 @@ void DemoApp::update(double elapsed)
     OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
     OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyBoxNode()->setOrientation(player->getCombinedRotAndRoll());
     
-    if (tunnel->getMode() == GAME_TIMED)
-        label1->setCaption(Util::toStringInt(std::max(globals.timedRunTimer - tunnel->getTotalElapsed(), 0.0)));
-    else
-        label1->setCaption("");
-    if (tunnel->getMode() == GAME_TIMED)
-        label2->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    else
-        label2->setCaption("");
-    label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
-    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
-    //label4->setCaption("");
-    
-    double indicatorRange = barHP->getWidth();
-    double barWidth = globals.HPBarWidth;
-    if (tunnel->getMode() != GAME_TIMED)
-    {
-        barHP->setDimensions(barWidth, globals.HPBarHeight);
-        int hpRange = globals.HPPositiveLimit - globals.HPNegativeLimit;
-        indicatorRange *= (player->getHP() - globals.HPNegativeLimit) / (double)(hpRange);
-        indicator->setPosition(barHP->getLeft() + indicatorRange, indicator->getTop());
-     }
+    hud->update(tunnel, player, elapsed);
 }
 
 void DemoApp::setLevel(int n, int c, bool init)
 {
     pause = true;
-    if (init)
-    {
-        GameMode game = (GameMode)globals.gameMode;
-        int nlevel = player->getLevel().nback;
-        int ncontrol = player->getLevel().control;
-        if (progressionMode == DISTRIBUTIVE_ADAPTIVE)
-        {
-            if (player->getLevel().nback > 2)
-            {
-                game = GAME_TIMED;
-                nlevel = 2;
-                ncontrol = 1;
-            }
-        }
-        tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth, globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn, globals.tunnelMaxAngleTurn,
-                            game,
-                            nlevel,
-                            ncontrol,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections);
-        player->setCamSpeed(globals.initCamSpeed);
-        player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, true);
-        return;
-        
-    }
     
-    Vector3 newOrigin = tunnel->getEnd();
-    TunnelSlice* current = tunnel->getCurrent();
-    Quaternion rot = tunnel->getBack()->getQuaternion();
-    Vector3 forward = tunnel->getBack()->getForward();
-    int nback = tunnel->getNBack();
-    GameMode omode = tunnel->getMode();
-    delete tunnel;
+    Vector3 newOrigin = tunnel ? tunnel->getEnd() : Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
+    Quaternion newRot = tunnel ? tunnel->getBack()->getQuaternion() : Quaternion(1, 0, 0, 0);
+    Vector3 newForward = tunnel ? tunnel->getBack()->getForward() : globals.tunnelReferenceForward;
+    int oldNBack = tunnel ? tunnel->getNBack() : 0;
+    GameMode oldGameMode = tunnel ? tunnel->getMode() : GAME_TIMED;
+    if (tunnel) delete tunnel;
     
     if (n >= 0) // For Debugging keys
     {
         tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth,
-                            globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn,
-                            globals.tunnelMaxAngleTurn,
-                            (GameMode)globals.gameMode,
-                            n,
-                            c,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections, rot);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
+            newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
+            globals.tunnelSegmentWidth,
+            globals.tunnelSegmentDepth,
+            globals.tunnelMinAngleTurn,
+            globals.tunnelMaxAngleTurn,
+            (GameMode)globals.gameMode,
+            n,
+            c,
+            SOUTH,
+            globals.tunnelSegmentsPerSection,
+            globals.tunnelSegmentsPerPod,
+            globals.tunnelSegmentsPerDistractors,
+            globals.revealColor,
+            globals.revealSound,
+            globals.revealShape);
+        tunnel->constructTunnel(globals.tunnelSections, newRot, (GameMode)globals.gameMode != GAME_NAVIGATION);
+        PlayerLevel skill = player->getLevel();
+        skill.nback = n;
+        skill.control = c;
+        player->setLevel(skill);
     }
     else // Automatically determine
     {
@@ -895,39 +408,23 @@ void DemoApp::setLevel(int n, int c, bool init)
         int nlevel;
         int ncontrol;
         bool loadStage = true;
-        bool checkGrade = true;
-        if (tunnel->getMode() == GAME_TIMED && progressionMode == DISTRIBUTIVE_ADAPTIVE)
-        {
-            checkGrade = false;
-            if (tunnel->getNBack() + 1 < player->getLevel().nback && tunnel->getNBack() + 1 <= globals.timedRunNMax)
-            {
-                loadStage = false;
-                nlevel = tunnel->getNBack() + 1;
-                ncontrol = 1;
-                nmode = GAME_TIMED;
-            }
-            else
-                loadStage = true;
-        }
-        
+        bool checkGrade = !init;
         bool pass = false;
-        player->saveProgress(logPath);
+        player->saveProgress(globals.logPath);
         if (checkGrade)
         {
-            if (player->getEvaluation(tunnel->getMode()) != FAIL)
-                pass = true;
+            Evaluation eval = player->getEvaluation(tunnel);
+            if (eval == PASS)
+                globals.currStageID++;
+            //else if (eval == FAIL && globals.currStageID > 1)
+            //    globals.currStageID--;
             
-            if (pass)
-                currStageID++;
-            else if (currStageID > 1)
-                currStageID--;
-            
-            player->saveStage(savePath,currStageID);
+            player->saveStage(globals.savePath, globals.currStageID);
         }
         
         if (loadStage)
         {
-            if (loadConfig(configPath,currStageID))
+            if (globals.loadConfig(globals.currStageID))
             {
                 player->setConfigValues();
                 nlevel = globals.nback;
@@ -939,39 +436,45 @@ void DemoApp::setLevel(int n, int c, bool init)
                 if (checkGrade) player->evaluatePlayerLevel(pass);
                 nlevel = player->getLevel().nback;
                 ncontrol = player->getLevel().control;
-                nmode = tunnel->getMode();
+                nmode = oldGameMode;
             }
         }
-        
+        if (init)
+        {
+            nmode = (GameMode)globals.gameMode;
+            nlevel = player->getLevel().nback;
+            ncontrol = player->getLevel().nback;
+        }
         tunnel = new Tunnel(
-                            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                            newOrigin + forward * (globals.tunnelSegmentWidth / 2),
-                            globals.tunnelSegmentWidth,
-                            globals.tunnelSegmentDepth,
-                            globals.tunnelMinAngleTurn,
-                            globals.tunnelMaxAngleTurn,
-                            nmode,
-                            nlevel,
-                            ncontrol,
-                            player->getVineDir(),
-                            globals.tunnelSegmentsPerSection,
-                            globals.tunnelSegmentsPerPod);
-        tunnel->constructTunnel(globals.tunnelSections, rot);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
+            newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
+            globals.tunnelSegmentWidth,
+            globals.tunnelSegmentDepth,
+            globals.tunnelMinAngleTurn,
+            globals.tunnelMaxAngleTurn,
+            nmode,
+            nlevel,
+            ncontrol,
+            SOUTH,
+            globals.tunnelSegmentsPerSection,
+            globals.tunnelSegmentsPerPod,
+            globals.tunnelSegmentsPerDistractors,
+            globals.revealColor,
+            globals.revealSound,
+            globals.revealShape);
+        tunnel->constructTunnel(globals.tunnelSections, newRot, nmode != GAME_NAVIGATION);
     }
     
-    player->setCamPos(newOrigin);
-    player->setCamRot(rot);
-    player->setCamRoll(player->getDesireRoll());
-    player->setOldPos(player->getCamPos());
-    player->setOldRot(player->getCamRot());
-    player->setOldRoll(player->getCamRoll());
-    player->setDesireRot(rot);
-    
     // If nback is same then panels are changing, keep speed same
-    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED, tunnel->getNBack() <= nback,
-                      tunnel->getMode() == GAME_TIMED || omode == GAME_TIMED);
+    player->setCamPos(newOrigin);
+    player->setCamRot(newRot);
+    player->setDesireRot(newRot);
+    player->newTunnel(tunnel,
+                      musicMode == MUSIC_ENABLED,
+                      tunnel->getMode() == GAME_TIMED || oldGameMode == GAME_TIMED);
+    player->saveCam();
     
-    setOverlay();
+    hud->init(tunnel, player);
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -980,8 +483,8 @@ void DemoApp::runDemo()
 {
 	OgreFramework::getSingletonPtr()->m_pLog->logMessage("Start main loop...");
     
-	double timeSinceLastFrame = 0;
-	double startTime = 0;
+	float timeSinceLastFrame = 0;
+	float startTime = 0;
     
     OgreFramework::getSingletonPtr()->m_pRenderWnd->resetStatistics();
     
@@ -1024,128 +527,96 @@ void DemoApp::runDemo()
 #endif
 }
 
+void DemoApp::activatePerformLeftMove()
+{
+    if (pause)
+    {
+#if defined(OGRE_IS_IOS)
+        if (player->getTotalElapsed() <= globals.sessionTime)
+        {
+            pause = !pause;
+            player->revertCam();
+            
+            globals.clearMessage();
+        }
+#endif
+    }
+    else
+    {
+        if (player->setVineDirRequest(Util::rightOf(player->getVineDest()), tunnel))
+        {
+            float val = player->getDesireRoll();
+            player->setDesireRoll(val + 45);
+        }
+    }
+}
+
+void DemoApp::activatePerformRightMove()
+{
+    if (pause)
+    {
+#if defined(OGRE_IS_IOS)
+        if (player->getTotalElapsed() <= globals.sessionTime)
+        {
+            pause = !pause;
+            player->revertCam();
+            
+            globals.clearMessage();
+        }
+#endif
+    }
+    else
+    {
+        if (player->setVineDirRequest(Util::leftOf(player->getVineDest()), tunnel))
+        {
+            float val = player->getDesireRoll();
+            player->setDesireRoll(val - 45);
+        }
+    }
+}
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 {
-    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) return true;
-    if (player->getKeyLeft())
+    if (player->getMouseLeft())
     {
-        player->inputTotalX += evt.state.X.rel;
-        if (!player->inputMoved)
+        player->checkCursorMove(evt.state.X.rel, evt.state.Y.rel);
+        if (player->checkPerformLeftMove(false))
         {
-            if (player->inputTotalX >= globals.screenWidth / 12.0)
-            {
-                if (pause)
-                {
-                    if (player->getTotalElapsed() <= globals.sessionTime)
-                    {
-                        pause = !pause;
-                        player->setOldPos(player->getCamPos());
-                        player->setOldRot(player->getCamRot());
-                        player->setOldRoll(player->getCamRoll());
-                    
-                        message = "";
-                        messageType = MESSAGE_NONE;
-                        label5->setCaption("");
-                        player->inputMoved = true;
-                    }
-                }
-                else
-                {
-                    if (player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
-                    {
-                        double val = player->getDesireRoll();
-                        player->setDesireRoll(val - 45);
-                        player->inputMoved = true;
-                    }
-                }
-            }
-            else if (player->inputTotalX <= -globals.screenWidth / 12.0)
-            {
-                if (pause)
-                {
-                    if (player->getTotalElapsed() <= globals.sessionTime)
-                    {
-                        pause = !pause;
-                        player->setOldPos(player->getCamPos());
-                        player->setOldRot(player->getCamRot());
-                        player->setOldRoll(player->getCamRoll());
-                    
-                        message = "";
-                        messageType = MESSAGE_NONE;
-                        label5->setCaption("");
-                        player->inputMoved = true;
-                    }
-                }
-                else
-                {
-                    if (player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
-                    {
-                        double val = player->getDesireRoll();
-                        player->setDesireRoll(val + 45);
-                        player->inputMoved = true;
-                    }
-                }
-            }
+            activatePerformLeftMove();
+            player->setCursorMoved();
+        }
+        else if (player->checkPerformRightMove(false))
+        {
+            activatePerformRightMove();
+            player->setCursorMoved();
         }
     }
     return true;
 }
 bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 {
-    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt)) return true;
-    player->setKeyLeft(true);
+    player->setMouseLeft(true);
     
-    double axisY = evt.state.Y.abs;
-    double axisX = evt.state.X.abs;
-
-    /*
-    if (pause && totalElapsed <= globals.sessionTime)
-    {
-        pause = !pause;
-        player->setOldPos(player->getCamPos());
-        player->setOldRot(player->getCamRot());
-        player->setOldRoll(player->getCamRoll());
-        
-        message = "";
-        messageType = MESSAGE_NONE;
-        label5->setCaption("");
-    }
-     */
-    /*
-    if (axisX <= 300 && axisY >= OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight() - 100)
-    {
-        OgreFramework::getSingletonPtr()->requestOgreShutdown();
-    }
-    else if (axisY <= 300 && axisX <= 300) {
-        player->setHP(globals.HPPositiveLimit);
-        player->evaluatePlayerLevel(true);
-        setLevel(-1,-1);
-    }
-    /*
-    else if (axisY <= 300 && axisX > 300) {
-        pause = !pause;
-        if (!pause) {
-            player->setCamPos(player->getOldPos());
-            player->setCamRot(player->getOldRot());
-            player->setCamRoll(player->getOldRoll());
-        } else {
-            player->setOldPos(player->getCamPos());
-            player->setOldRot(player->getCamRot());
-            player->setOldRoll(player->getCamRoll());
-        }
-    }
-    else
-        player->setKeyLeft(true);
-    */
+    float axisY = evt.state.Y.abs;
+    float axisX = evt.state.X.abs;
+    
+     if (axisY <= 300 && axisX <= globals.screenWidth / 2) {
+         --globals.currStageID;
+         if (globals.currStageID < 1)
+             globals.currStageID = 1;
+         setLevel(-1,-1);
+     } else if (axisY <= 300 && axisX > globals.screenWidth / 2) {
+         ++globals.currStageID;
+         setLevel(-1,-1);
+     }
+    
     return true;
 }
 bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
 {
-    //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt)) return true;
-    player->setKeyLeft(false);
-    player->inputTotalX = 0.0;
-    player->inputMoved = false;
+    player->setMouseLeft(false);
+    player->resetCursorMoved();
     return true;
 }
 bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
@@ -1156,22 +627,40 @@ bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
 bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     if (pause) {
-         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
-         
-         Vector3 right = player->getCamRight(true);
-         Vector3 up = player->getCamUpward(true);
-         Quaternion yawRot;
-         Quaternion pitchRot;
-         yawRot.FromAngleAxis(Degree(-dmove.x) / 2, up);
-         pitchRot.FromAngleAxis(Degree(-dmove.y) / 2, right);
-         
-         Quaternion curRot = player->getCamRot();
-         curRot = pitchRot * yawRot * curRot;
-         player->setCamRot(curRot);
-         curRot = player->getCombinedRotAndRoll();
-         OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(curRot);
-         
-         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
+        // Move the camera when paused
+        Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
+        
+        Vector3 right = player->getCamRight(true);
+        Vector3 up = player->getCamUpward(true);
+        Quaternion yawRot;
+        Quaternion pitchRot;
+        yawRot.FromAngleAxis(Degree(-dmove.x) / 4, up);
+        pitchRot.FromAngleAxis(Degree(-dmove.y) / 4, right);
+        
+        Quaternion curRot = player->getCamRot();
+        curRot = pitchRot * yawRot * curRot;
+        player->setCamRot(curRot);
+        curRot = player->getCombinedRotAndRoll();
+        OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(curRot);
+        
+        player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
+    }
+    else
+    {
+        //if (player->getMouseLeft())
+        {
+            player->checkCursorMove(evt.state.X.rel, evt.state.Y.rel);
+            if (player->checkPerformLeftMove(false))
+            {
+                activatePerformLeftMove();
+                player->setCursorMoved();
+            }
+            else if (player->checkPerformRightMove(false))
+            {
+                activatePerformRightMove();
+                player->setCursorMoved();
+            }
+        }
     }
     return true;
 }
@@ -1195,6 +684,7 @@ bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     {
         case OIS::MB_Left:
             player->setMouseLeft(false);
+            player->resetCursorMoved();
             break;
         default:
             break;
@@ -1215,21 +705,16 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_LEFT:
         {
             player->setKeyLeft(true);
-            if (player->setVineDirRequest(Util::rightOf(player->getVineDir()), tunnel))
-            {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val + 45);
-            }
+            if (player->checkPerformLeftMove(true))
+                activatePerformLeftMove();
             break;
         }
         case OIS::KC_RIGHT:
         {
             player->setKeyRight(true);
-            if (player->setVineDirRequest(Util::leftOf(player->getVineDir()), tunnel))
-            {
-                double val = player->getDesireRoll();
-                player->setDesireRoll(val - 45);
-            }
+            player->resetCursorMoved();
+            if (player->checkPerformRightMove(true))
+                activatePerformRightMove();
             break;
         }
         case OIS::KC_UP:
@@ -1260,13 +745,10 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         {
             pause = !pause;
             if (!pause) {
-                player->setCamPos(player->getOldPos());
-                player->setCamRot(player->getOldRot());
-                player->setCamRoll(player->getOldRoll());
+                globals.clearMessage();
+                player->revertCam();
             } else {
-                player->setOldPos(player->getCamPos());
-                player->setOldRot(player->getCamRot());
-                player->setOldRoll(player->getCamRoll());
+                player->saveCam();
             }
             break;
         }
@@ -1340,6 +822,20 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
             setLevel(player->getLevel().nback, 4);
             break;
         }
+        case OIS::KC_MINUS:
+        {
+            globals.currStageID--;
+            if (globals.currStageID < 1)
+                globals.currStageID = 1;
+            setLevel(-1, -1);
+            break;
+        }
+        case OIS::KC_EQUALS:
+        {
+            globals.currStageID++;
+            setLevel(-1, -1);
+            break;
+        }
         case OIS::KC_T:
         {
             player->setHP(globals.HPPositiveLimit);
@@ -1347,11 +843,13 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_Z:
         {
+            /*
             sidebarMode++;
             if (sidebarMode > 3)
                 sidebarMode = (SidebarLocation)0;
             setSidebar();
             break;
+             */
         }
         case OIS::KC_X:
         {
@@ -1407,22 +905,13 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 
 void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
-    if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportMain)
+    if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
     {
-        for(int i = 0; i < overlays.size(); ++i)
-            if (sidebarMode != SIDEBAR_NONE && overlays[i]->getName() != "OverlayMain")
-                overlays[i]->hide();
-    }
-    else if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
-    {
-        for(int i = 0; i < overlays.size(); ++i)
-            if (sidebarMode == SIDEBAR_NONE || overlays[i]->getName() != "OverlaySide")
-                overlays[i]->hide();
+        hud->hideOverlays();
     }
 }
 
 void DemoApp::postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
-    for(int i = 0; i < overlays.size(); ++i)
-        overlays[i]->show();
+    hud->showOverlays();
 }

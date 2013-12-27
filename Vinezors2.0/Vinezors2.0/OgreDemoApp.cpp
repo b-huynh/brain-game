@@ -214,17 +214,17 @@ void DemoApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
+    /*
      Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
      lightSide->setDiffuseColour(1.0, 1.0, 1.0);
      lightSide->setSpecularColour(1.0, 1.0, 1.0);
      lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
      lightNodeSide->attachObject(lightSide);
      lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
-    
-    Ogre::TexturePtr rtt_texture = OgreFramework::getSingletonPtr()->m_pTextureMgr->createManual("RttTex", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, OgreFramework::getSingletonPtr()->m_pRenderWnd->getWidth(), OgreFramework::getSingletonPtr()->m_pRenderWnd->getHeight(), 0, Ogre::PF_R8G8B8, Ogre::TU_RENDERTARGET);
+    */
     
     sidebarMode = SIDEBAR_NONE;
-    setSidebar();
+    //setSidebar();
 }
 
 void DemoApp::setSidebar()
@@ -459,7 +459,7 @@ void DemoApp::setLevel(int n, int c, bool init)
                 if (checkGrade) player->evaluatePlayerLevel(pass);
                 nlevel = player->getLevel().nback;
                 ncontrol = player->getLevel().control;
-                nmode = tunnel->getMode();
+                nmode = oldGameMode;
             }
         }
         if (init)
@@ -576,7 +576,6 @@ void DemoApp::activatePerformLeftMove()
             player->revertCam();
             
             globals.clearMessage();
-            player->setCursorMoved();
         }
 #endif
     }
@@ -586,7 +585,6 @@ void DemoApp::activatePerformLeftMove()
         {
             double val = player->getDesireRoll();
             player->setDesireRoll(val + 45);
-            player->setCursorMoved();
         }
     }
 }
@@ -602,7 +600,6 @@ void DemoApp::activatePerformRightMove()
             player->revertCam();
             
             globals.clearMessage();
-            player->setCursorMoved();
         }
 #endif
     }
@@ -612,7 +609,6 @@ void DemoApp::activatePerformRightMove()
         {
             double val = player->getDesireRoll();
             player->setDesireRoll(val - 45);
-            player->setCursorMoved();
         }
     }
 }
@@ -620,19 +616,25 @@ void DemoApp::activatePerformRightMove()
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
 {
-    if (player->getKeyLeft())
+    if (player->getMouseLeft())
     {
         player->checkCursorMove(evt.state.X.rel, evt.state.Y.rel);
-        if (player->checkPerformLeftMove())
+        if (player->checkPerformLeftMove(false))
+        {
             activatePerformLeftMove();
-        else if (player->checkPerformRightMove())
+            player->setCursorMoved();
+        }
+        else if (player->checkPerformRightMove(false))
+        {
             activatePerformRightMove();
+            player->setCursorMoved();
+        }
     }
     return true;
 }
 bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 {
-    player->setKeyLeft(true);
+    player->setMouseLeft(true);
     
     double axisY = evt.state.Y.abs;
     double axisX = evt.state.X.abs;
@@ -675,8 +677,8 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
 bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
 {
     //if (OgreFramework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt)) return true;
-    player->setKeyLeft(false);
-    player->resetCursorMove();
+    player->setMouseLeft(false);
+    player->resetCursorMoved();
     return true;
 }
 bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
@@ -705,6 +707,23 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
         
         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
     }
+    else
+    {
+        //if (player->getMouseLeft())
+        {
+            player->checkCursorMove(evt.state.X.rel, evt.state.Y.rel);
+            if (player->checkPerformLeftMove(false))
+            {
+                activatePerformLeftMove();
+                player->setCursorMoved();
+            }
+            else if (player->checkPerformRightMove(false))
+            {
+                activatePerformRightMove();
+                player->setCursorMoved();
+            }
+        }
+    }
     return true;
 }
 
@@ -727,6 +746,7 @@ bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     {
         case OIS::MB_Left:
             player->setMouseLeft(false);
+            player->resetCursorMoved();
             break;
         default:
             break;
@@ -747,14 +767,15 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_LEFT:
         {
             player->setKeyLeft(true);
-            if (player->checkPerformLeftMove())
+            if (player->checkPerformLeftMove(true))
                 activatePerformLeftMove();
             break;
         }
         case OIS::KC_RIGHT:
         {
             player->setKeyRight(true);
-            if (player->checkPerformRightMove())
+            player->resetCursorMoved();
+            if (player->checkPerformRightMove(true))
                 activatePerformRightMove();
             break;
         }
@@ -884,11 +905,13 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_Z:
         {
+            /*
             sidebarMode++;
             if (sidebarMode > 3)
                 sidebarMode = (SidebarLocation)0;
             setSidebar();
             break;
+             */
         }
         case OIS::KC_X:
         {

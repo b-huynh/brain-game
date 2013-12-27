@@ -23,11 +23,7 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-//#ifdef OGRE_IS_IOS
 #define OGRE_STATIC_OgreOggSound 1
-//#else
-//#include "OgreOggSoundPlugin.h"
-//#endif
 
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
@@ -94,9 +90,7 @@ public:
 #else
 	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
-	void updateOgre(double timeSinceLastFrame);
-	void moveCamera();
-	void getInput();
+	void updateOgre(float timeSinceLastFrame);
     
     Ogre::String getMacBundlePath() const;
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
@@ -139,7 +133,10 @@ public:
     Ogre::ResourceGroupManager* m_pResourceGroupMgr;
 	Ogre::OverlayManager*		m_pOverlayMgr;
 	Ogre::FontManager*          m_pFontMgr;
+    Ogre::MeshManager*          m_pMeshMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
+    Ogre::TextureManager*       m_pTextureMgr;
+    Ogre::CompositorManager*    m_pCompositeMgr;
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
@@ -156,12 +153,6 @@ private:
 	int                         m_iNumScreenShots;
     
 	bool                        m_bShutDownOgre;
-	
-	Ogre::Vector3				m_TranslateVector;
-	Ogre::Real                  m_MoveSpeed;
-	Ogre::Degree				m_RotateSpeed;
-	float                       m_MoveScale;
-	Ogre::Degree				m_RotScale;
     
     OgreBites::Button*          m_quitButton;
     

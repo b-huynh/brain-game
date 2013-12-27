@@ -54,6 +54,8 @@ Util::ConfigGlobal::ConfigGlobal()
     const double POD_STEM_LENGTH = TUNNEL_WALL_LENGTH / 2;
     const int POD_BIN_SIZE = 9;
     const int POD_NBACK_CHANCE = 33;
+    const int STAGE_TOTAL_DISTRACTORS_MIN = 1;
+    const int STAGE_TOTAL_DISTRACTORS_MAX = 1;
     const double SEAT_LENGTH = POD_HEAD_RADIUS * 2;
     
     const int TUNNEL_SECTIONS = 5;
@@ -92,7 +94,12 @@ Util::ConfigGlobal::ConfigGlobal()
     const double TIMED_RUN_CONTROL_UP_DIST1 = 3000.0;
     const double TIMED_RUN_CONTROL_UP_DIST2 = 7500.0;
     const double TIMED_RUN_CONTROL_UP_DIST3 = 20000.0;
+    const int TIMED_RUN_CONTROL_UP_SIGNAL1 = 10;
+    const int TIMED_RUN_CONTROL_UP_SIGNAL2 = 25;
+    const int TIMED_RUN_CONTROL_UP_SIGNAL3 = 50;
     const int TIMED_RUN_NMAX = 5;
+    
+    const double SWIPE_SENSITIVITY = 15.0;
     
     sessionTime = SESSION_TIME;
     stageTime = STAGE_TIME;
@@ -138,6 +145,8 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemLength = POD_STEM_LENGTH;
     podBinSize = POD_BIN_SIZE;
     podNBackChance = POD_NBACK_CHANCE;
+    stageTotalDistractorsMin = STAGE_TOTAL_DISTRACTORS_MIN;
+    stageTotalDistractorsMax = STAGE_TOTAL_DISTRACTORS_MAX;
     seatLength = SEAT_LENGTH;
     tunnelSections = TUNNEL_SECTIONS;
     nback = NBACK;
@@ -170,7 +179,11 @@ Util::ConfigGlobal::ConfigGlobal()
     timedRunControlUpDist1 = TIMED_RUN_CONTROL_UP_DIST1;
     timedRunControlUpDist2 = TIMED_RUN_CONTROL_UP_DIST2;
     timedRunControlUpDist3 = TIMED_RUN_CONTROL_UP_DIST3;
+    timedRunControlUpSignal1 = TIMED_RUN_CONTROL_UP_SIGNAL1;
+    timedRunControlUpSignal2 = TIMED_RUN_CONTROL_UP_SIGNAL2;
+    timedRunControlUpSignal3 = TIMED_RUN_CONTROL_UP_SIGNAL3;
     timedRunNMax = TIMED_RUN_NMAX;
+    swipeSensitivity = SWIPE_SENSITIVITY;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -284,6 +297,10 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> podBinSize;
     else if (paramName == "podNBackChance")
         in >> podNBackChance;
+    else if (paramName == "stageTotalDistractorsMin")
+        in >> stageTotalDistractorsMin;
+    else if (paramName == "stageTotalDistractorsMax")
+        in >> stageTotalDistractorsMax;
     else if (paramName == "HPNegativeLimit")
         in >> HPNegativeLimit;
     else if (paramName == "HPPositiveLimit")
@@ -320,6 +337,12 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> timedRunControlUpDist2;
     else if (paramName == "timedRunControlUpDist3")
         in >> timedRunControlUpDist3;
+    else if (paramName == "timedRunControlUpSignal1")
+        in >> timedRunControlUpSignal1;
+    else if (paramName == "timedRunControlUpSignal2")
+        in >> timedRunControlUpSignal2;
+    else if (paramName == "timedRunControlUpSignal3")
+        in >> timedRunControlUpSignal3;
     else if (paramName == "timedRunNMax")
         in >> timedRunNMax;
     else

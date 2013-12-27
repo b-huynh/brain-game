@@ -98,6 +98,8 @@ private:
     // iOS Swipe Capabilities
     double inputTotalX;
     bool inputMoved;
+    double inputLeftBound;
+    double inputRightBound;
 public:
     
 	Player();
@@ -192,8 +194,8 @@ public:
     void setCursorMoved();
     void updateCursorCooldown(double elapsed);
     void checkCursorMove(double dx, double dy);
-    bool checkPerformLeftMove();
-    bool checkPerformRightMove();
+    bool checkPerformLeftMove(bool force);
+    bool checkPerformRightMove(bool force);
 	void update(Tunnel* tunnel, Hud* hud, double elapsed);
     
     void evaluatePlayerLevel(bool pass);

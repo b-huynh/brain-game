@@ -29,9 +29,9 @@
     // isn't available.
     id mDisplayLink;
     NSDate *mDate;
-    double mLastFrameTime;
-    double mStartTime;
-    double mDeltaTime;
+    float mLastFrameTime;
+    float mStartTime;
+    float mDeltaTime;
     BOOL mDisplayLinkSupported;
     BOOL ready;
     
@@ -44,9 +44,9 @@
 - (void)renderOneFrame:(id)sender;
 
 @property (retain) NSTimer *mTimer;
-@property (nonatomic) double mLastFrameTime;
-@property (nonatomic) double mStartTime;
-@property (nonatomic) double mDeltaTime;
+@property (nonatomic) float mLastFrameTime;
+@property (nonatomic) float mStartTime;
+@property (nonatomic) float mDeltaTime;
 @property (strong, nonatomic) UIWindow *window;
 
 @end
@@ -57,12 +57,12 @@
 @dynamic mLastFrameTime;
 @dynamic mStartTime;
 
-- (double)mLastFrameTime
+- (float)mLastFrameTime
 {
     return mLastFrameTime;
 }
 
-- (void)setLastFrameTime:(double)frameInterval
+- (void)setLastFrameTime:(float)frameInterval
 {
     // Frame interval defines how many display frames must pass between each time the
     // display link fires. The display link will only fire 30 times a second when the
@@ -91,7 +91,7 @@
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mLastFrameTime = 1;
-    mDeltaTime = 1.0f / 25.0f;
+    mDeltaTime = 1.0f / 30.0f;
     mStartTime = 0;
     mTimer = nil;
     
@@ -139,7 +139,7 @@
     ready = FALSE;
     mDisplayLinkSupported = FALSE;
     mLastFrameTime = 1;
-    mDeltaTime = 1.0 / 25.0;
+    mDeltaTime = 1.0 / 30.0f;
     mStartTime = 0;
     mTimer = nil;
     
