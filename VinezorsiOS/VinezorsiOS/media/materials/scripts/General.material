@@ -353,6 +353,70 @@ material General/Wall8
 	}
 }
 
+material General/WallCartoon2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Ground.jpg
+            }
+		}
+	}
+}
+
+material General/WallCartoon3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Rock.jpg
+			}
+		}
+	}
+}
+
+material General/WallCartoon4
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Stone.jpg
+			}
+		}
+	}
+}
+
+material General/WallCartoon5
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Wood.jpg
+			}
+		}
+	}
+}
+
 material General/WallCheckpointEven
 {
     technique

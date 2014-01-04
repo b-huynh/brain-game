@@ -308,8 +308,8 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
             // Is vine where pod is in time?
             //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
             if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
-                (vine->previousID == tunnelSliceID && vine->previoust < 0.45 && (vine->aftert > 0.55 || vine->afterID > vine->previousID)) ||
-                (vine->afterID == tunnelSliceID && ((vine->aftert >= 0.45 && vine->aftert <= 0.55) || (vine->aftert > 0.55 && vine->previousID < vine->afterID))))
+                (vine->previousID == tunnelSliceID && vine->previoust < globals.podCollisionMin && (vine->aftert > globals.podCollisionMax || vine->afterID > vine->previousID)) ||
+                (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.podCollisionMin && vine->aftert <= globals.podCollisionMax) || (vine->aftert > globals.podCollisionMax && vine->previousID < vine->afterID))))
             {
                 pods[i]->takePod();
                 ret.push_back(pods[i]);

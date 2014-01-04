@@ -64,11 +64,13 @@ public:
     // Stage attributes
     GameMode mode;
     float totalElapsed;
+    float timePenalty;
     int nback;
     int control;
     History* history;
     Direction basis;
     bool sidesUsed[NUM_DIRECTIONS];
+    Evaluation eval;
     
     bool setColors;
     bool setSounds;
@@ -113,6 +115,7 @@ public:
     Quaternion getQuaternion() const;
     Quaternion getCombinedQuaternion(TunnelSlice* slice) const;
     History* getHistory() const;
+    Evaluation getEval() const;
     
 	float getSegmentWidth() const;
 	float getSegmentDepth() const;
@@ -122,15 +125,18 @@ public:
     PodSignal getNBackTest(int section) const;
     GameMode getMode() const;
     float getTotalElapsed() const;
+    float getTimePenalty() const;
     int getNBack() const;
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
     std::string determineMaterial() const;
     
+    void checkIfDone(Player* player);
     bool isDone() const;
-    void setDone(Evaluation eval);
+    void setDone(int stars);
     void upgradeControl();
+    void addToTimePenalty(float value);
     bool needsCleaning() const;
     
     void setNewControl(int control);

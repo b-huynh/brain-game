@@ -175,7 +175,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
 
 void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
 {
-    float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed(), 0.0f);
+    float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     
     if (tunnel->getMode() == GAME_TIMED)
         label1->setCaption(Util::toStringInt(timeLeft));
@@ -206,29 +206,15 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
     
     float indicatorRange = barHP->getWidth();
     float barWidth = globals.HPBarWidth;
-    // As accuracy bar
+    // Set UI positions depending on game mode
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);
-        float progress = player->getProgress(tunnel);
-        indicator->setPosition(barHP->getLeft() + barWidth * progress, indicator->getTop());
+        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(tunnel), indicator->getTop());
         
         threshold1->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold1, barHP->getTop() - 0.005);
         threshold2->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold2, barHP->getTop() - 0.005);
         threshold3->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold3, barHP->getTop() - 0.005);
-        if (progress >= globals.stageProficiencyThreshold1)
-            threshold1->setMaterialName("General/StarGold");
-        else
-            threshold1->setMaterialName("General/StarGray");
-        if (progress >= globals.stageProficiencyThreshold2)
-            threshold2->setMaterialName("General/StarGold");
-        else
-            threshold2->setMaterialName("General/StarGray");
-        if (progress >= globals.stageProficiencyThreshold3)
-            threshold3->setMaterialName("General/StarGold");
-        else
-            threshold3->setMaterialName("General/StarGray");
-            
     }
     else if (tunnel->getMode() == GAME_TIMED)
     {
@@ -237,40 +223,41 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
         threshold3->setPosition(0.50, 0.15);
         
         label1->setCaption(Util::toStringInt(timeLeft));
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold1 + tunnel->getNBack())
-            threshold1->setMaterialName("General/StarGold");
-        else
-            threshold1->setMaterialName("General/StarGray");
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold2 + tunnel->getNBack())
-            threshold2->setMaterialName("General/StarGold");
-        else
-            threshold2->setMaterialName("General/StarGray");
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold3 + tunnel->getNBack())
-            threshold3->setMaterialName("General/StarGold");
-        else
-            threshold3->setMaterialName("General/StarGray");
     }
     else //if (tunnel->getMode() == GAME_NAVIGATION)
     {
         threshold1->setPosition(0.40, 0.15);
         threshold2->setPosition(0.45, 0.15);
         threshold3->setPosition(0.50, 0.15);
-        
-        if (player->getNumCorrectTotal() >= globals.stageNavigationThreshold1)
-            threshold1->setMaterialName("General/StarGold");
-        else
-            threshold1->setMaterialName("General/StarGray");
-        if (player->getNumCorrectTotal() >=globals.stageNavigationThreshold2)
-            threshold2->setMaterialName("General/StarGold");
-        else
-            threshold2->setMaterialName("General/StarGray");
-        if (player->getNumCorrectTotal() >= globals.stageNavigationThreshold3)
-            threshold3->setMaterialName("General/StarGold");
-        else
-            threshold3->setMaterialName("General/StarGray");
+    }
+    
+    // Set color of stars
+    if (player->getStars() >= 3)
+    {
+        threshold1->setMaterialName("General/StarGold");
+        threshold2->setMaterialName("General/StarGold");
+        threshold3->setMaterialName("General/StarGold");
+    }
+    else if (player->getStars() == 2)
+    {
+        threshold1->setMaterialName("General/StarGold");
+        threshold2->setMaterialName("General/StarGold");
+        threshold3->setMaterialName("General/StarGray");
+    }
+    else if (player->getStars() == 1)
+    {
+        threshold1->setMaterialName("General/StarGold");
+        threshold2->setMaterialName("General/StarGray");
+        threshold3->setMaterialName("General/StarGray");
+    }
+    else
+    {
+        threshold1->setMaterialName("General/StarGray");
+        threshold2->setMaterialName("General/StarGray");
+        threshold3->setMaterialName("General/StarGray");
     }
     /*
-    // As HP counter
+    // As HP Bar
     if (tunnel->getMode() != GAME_TIMED)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);

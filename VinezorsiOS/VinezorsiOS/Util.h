@@ -39,7 +39,7 @@ class Hud;
 
 namespace Util
 {
-    static const float EPSILON = 0.01f;
+    static const float EPSILON = 0.0075f;
     
     struct ConfigGlobal
     {
@@ -58,6 +58,7 @@ namespace Util
         int stageNavigationThreshold1;
         int stageNavigationThreshold2;
         int stageNavigationThreshold3;
+        int stageStarPassThreshold;
         int gameMode;
         int revealColor;
         int revealSound;
@@ -86,6 +87,8 @@ namespace Util
         float podStemRadius;
         float podStemLength;
         float podRotateSpeed;
+        float podCollisionMin;
+        float podCollisionMax;
         int podBinSize; // This is for tunnels that pre-generate the pod sequence
         int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int stageTotalDistractorsMin;
@@ -102,6 +105,8 @@ namespace Util
         int HPNegativeWrongAnswer;
         int HPPositiveCorrectAnswer;
         int HPPositiveWrongAnswer;
+        float distractorSpeedPenalty;
+        float distractorTimePenalty;
         float initCamSpeed;
         float startupCamSpeed;
         float modifierCamSpeed;
@@ -119,7 +124,10 @@ namespace Util
         float timedRunControlUpDist1;
         float timedRunControlUpDist2;
         float timedRunControlUpDist3;
-        int timedRunNMax;
+        int setSkyBox;
+        int setWallPanelTexture;
+        int setVineShip;
+        int setPodMesh;
         float swipeSensitivity;
         int swipeInverted;
         
@@ -165,7 +173,6 @@ namespace Util
         void initPaths(const char* name);
         void setConfigValue(std::istream& in, std::string paramName);
         bool loadConfig(int stageID);
-        bool loadSaveFile(std::string savePath);
         
         void setMessage(std::string msg, MessageType type);
         void clearMessage();

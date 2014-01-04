@@ -15,12 +15,12 @@
 #include "Vine.h"
 #include "Tunnel.h"
 
-struct PlayerLevel
+struct PlayerStagePerformance
 {
-    int nback;
-    int control;
+    int stageID;
+    int stars;
     
-    PlayerLevel();
+    PlayerStagePerformance() : stageID(0), stars(0) {}
 };
 
 class Player
@@ -41,6 +41,7 @@ private:
     int numWrongCombo;
 	float score; // a value of pride
     int points; // money to buy
+    int stars;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -68,7 +69,6 @@ private:
     
     SpeedControlMode speedControl;
     
-    PlayerLevel level;
     struct Result {
         int stageID;
         int timestamp;
@@ -80,9 +80,11 @@ private:
         float score;
     };
     std::vector<Result> results;
+    std::vector<PlayerStagePerformance> performances;
     
     float totalElapsed;
     float totalDistanceTraveled;
+    float animationTimer;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -101,7 +103,7 @@ private:
 public:
     
 	Player();
-	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, float camSpeed, float  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
+	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -115,6 +117,7 @@ public:
     int getNumWrongCombo() const;
 	float getScore() const;
 	int getPoints() const;
+    int getStars() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -136,12 +139,11 @@ public:
 	float getFinalSpeed() const;
 	Vector3 getVineOffset() const;
     SpeedControlMode getSpeedControl() const;
-    PlayerLevel getLevel() const;
 	float getTotalElapsed() const;
 	float getTotalDistanceTraveled() const;
+	float getAnimationTimer() const;
     float getAccuracy() const;
     float getProgress(Tunnel* tunnel) const;
-    Evaluation getEvaluation(Tunnel* tunnel) const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -151,6 +153,8 @@ public:
     void setNumCorrectCombo(int value);
     void setNumWrongCombo(int value);
 	void setScore(float value);
+    void setPoints(int value);
+    void setStars(int value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
@@ -169,7 +173,6 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setCamSpeed(float value);
-    void setLevel(PlayerLevel value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -181,7 +184,7 @@ public:
     void playPodSound(int index) const;
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel, bool setmusic, bool resetscore = false);
+    void newTunnel(Tunnel* tunnel, bool setmusic);
     
 	void move(Vector3 delta);
     void changeMovementMode();
@@ -194,12 +197,12 @@ public:
     void checkCursorMove(float dx, float dy);
     bool checkPerformLeftMove(bool force);
     bool checkPerformRightMove(bool force);
+    void setStars(Tunnel* tunnel);
 	void update(Tunnel* tunnel, Hud* hud, float elapsed);
     
-    void evaluatePlayerLevel(bool pass);
-    bool saveProgress(std::string file);
-    bool saveStage(std::string file, int lastStageID);
-    void setConfigValues();
+    bool saveStage(std::string file);
+    bool saveProgress(std::string file, int lastStageID);
+    bool loadProgress(std::string savePath);
     
     ~Player();
 };

@@ -167,8 +167,6 @@ void DemoApp::setupDemoScene()
     seed = time(0);
     srand(seed);
     
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/SpaceSkyBox", 5000, true);
-    
     Util::generateMaterials();
     
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "sphereMesh", 1.0, 8, 8);
@@ -189,7 +187,6 @@ void DemoApp::setupDemoScene()
     
 	player = new Player(
                         globals.playerName,
-                        PlayerLevel(),
                         OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition(),
                         OgreFramework::getSingletonPtr()->m_pCameraMain->getOrientation(),
                         globals.initCamSpeed,
@@ -199,11 +196,12 @@ void DemoApp::setupDemoScene()
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds(true);
-    player->setConfigValues();
+    if (!player->loadProgress(globals.savePath))
+        std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     
     hud = new Hud();
     
-    setLevel(-1, -1, true);
+    setLevel(-1, -1);
     
     Light* lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("Light");
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
@@ -326,14 +324,6 @@ void DemoApp::update(float elapsed)
 
     // Update the game state
     if (!pause) {
-        // Stop the game
-        if (!pause && player->getTotalElapsed() > globals.sessionTime)
-        {
-            player->saveProgress(globals.logPath);
-            globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
-            pause = true;
-        }
-        
         player->update(tunnel, hud, elapsed);
         if (tunnel->needsCleaning())
         {
@@ -366,19 +356,31 @@ void DemoApp::update(float elapsed)
     hud->update(tunnel, player, elapsed);
 }
 
-void DemoApp::setLevel(int n, int c, bool init)
+void DemoApp::setLevel(int n, int c, Evaluation forced)
 {
     pause = true;
+    // Stop the game
+    if (player->getTotalElapsed() > globals.sessionTime)
+    {
+        globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
+        return;
+    }
     
     Vector3 newOrigin = tunnel ? tunnel->getEnd() : Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
     Quaternion newRot = tunnel ? tunnel->getBack()->getQuaternion() : Quaternion(1, 0, 0, 0);
     Vector3 newForward = tunnel ? tunnel->getBack()->getForward() : globals.tunnelReferenceForward;
     int oldNBack = tunnel ? tunnel->getNBack() : 0;
     GameMode oldGameMode = tunnel ? tunnel->getMode() : GAME_TIMED;
-    if (tunnel) delete tunnel;
+    Evaluation eval = tunnel ? tunnel->getEval() : EVEN;
     
     if (n >= 0) // For Debugging keys
     {
+        if (tunnel)
+        {
+            player->saveProgress(globals.savePath, globals.currStageID);
+            delete tunnel;
+        }
+        
         tunnel = new Tunnel(
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
             newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
@@ -397,54 +399,35 @@ void DemoApp::setLevel(int n, int c, bool init)
             globals.revealSound,
             globals.revealShape);
         tunnel->constructTunnel(globals.tunnelSections, newRot, (GameMode)globals.gameMode != GAME_NAVIGATION);
-        PlayerLevel skill = player->getLevel();
-        skill.nback = n;
-        skill.control = c;
-        player->setLevel(skill);
     }
     else // Automatically determine
     {
         GameMode nmode;
         int nlevel;
         int ncontrol;
-        bool loadStage = true;
-        bool checkGrade = !init;
-        bool pass = false;
-        player->saveProgress(globals.logPath);
-        if (checkGrade)
+        
+        if (tunnel)
         {
-            Evaluation eval = player->getEvaluation(tunnel);
-            if (eval == PASS)
-                globals.currStageID++;
-            //else if (eval == FAIL && globals.currStageID > 1)
-            //    globals.currStageID--;
-            
-            player->saveStage(globals.savePath, globals.currStageID);
+            player->saveStage(globals.logPath);
+            Evaluation eval = tunnel->getEval();
+            player->saveProgress(globals.savePath, globals.currStageID);
+            if (eval == PASS || forced == PASS) globals.currStageID++;
+            else if (eval == FAIL || forced == FAIL) globals.currStageID--;
+            if (globals.currStageID < 1) globals.currStageID = 1;
+            delete tunnel;
         }
         
-        if (loadStage)
+        // Load configuration
+        if (!globals.loadConfig(globals.currStageID))
         {
-            if (globals.loadConfig(globals.currStageID))
-            {
-                player->setConfigValues();
-                nlevel = globals.nback;
-                ncontrol = globals.control;
-                nmode = (GameMode)globals.gameMode;
-            }
-            else
-            {
-                if (checkGrade) player->evaluatePlayerLevel(pass);
-                nlevel = player->getLevel().nback;
-                ncontrol = player->getLevel().control;
-                nmode = oldGameMode;
-            }
+            std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
+            globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
         }
-        if (init)
-        {
-            nmode = (GameMode)globals.gameMode;
-            nlevel = player->getLevel().nback;
-            ncontrol = player->getLevel().nback;
-        }
+        
+        nlevel = globals.nback;
+        ncontrol = globals.control;
+        nmode = (GameMode)globals.gameMode;
+
         tunnel = new Tunnel(
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
             newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
@@ -469,12 +452,25 @@ void DemoApp::setLevel(int n, int c, bool init)
     player->setCamPos(newOrigin);
     player->setCamRot(newRot);
     player->setDesireRot(newRot);
-    player->newTunnel(tunnel,
-                      musicMode == MUSIC_ENABLED,
-                      tunnel->getMode() == GAME_TIMED || oldGameMode == GAME_TIMED);
+    player->newTunnel(tunnel, musicMode == MUSIC_ENABLED);
     player->saveCam();
     
     hud->init(tunnel, player);
+    switch (globals.setSkyBox)
+    {
+        case 0:
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBoxEnabled(false);
+            break;
+        case 1:
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/MorningSkyBox", 5000, true);
+            break;
+        case 2:
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/CloudyNoonSkyBox", 5000, true);
+            break;
+        default:
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/SpaceSkyBox", 5000, true);
+            break;
+    }
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -543,7 +539,7 @@ void DemoApp::activatePerformLeftMove()
     }
     else
     {
-        if (player->setVineDirRequest(Util::rightOf(player->getVineDest()), tunnel))
+        if (player->setVineDirRequest(Util::rightOf(player->getVineDest()), tunnel) && !tunnel->isDone())
         {
             float val = player->getDesireRoll();
             player->setDesireRoll(val + 45);
@@ -567,7 +563,7 @@ void DemoApp::activatePerformRightMove()
     }
     else
     {
-        if (player->setVineDirRequest(Util::leftOf(player->getVineDest()), tunnel))
+        if (player->setVineDirRequest(Util::leftOf(player->getVineDest()), tunnel) && !tunnel->isDone())
         {
             float val = player->getDesireRoll();
             player->setDesireRoll(val - 45);
@@ -602,13 +598,9 @@ bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
     float axisX = evt.state.X.abs;
     
      if (axisY <= 300 && axisX <= globals.screenWidth / 2) {
-         --globals.currStageID;
-         if (globals.currStageID < 1)
-             globals.currStageID = 1;
-         setLevel(-1,-1);
+         setLevel(-1,-1, FAIL);
      } else if (axisY <= 300 && axisX > globals.screenWidth / 2) {
-         ++globals.currStageID;
-         setLevel(-1,-1);
+         setLevel(-1,-1, PASS);
      }
     
     return true;
@@ -752,104 +744,15 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
             }
             break;
         }
-        case OIS::KC_1:
-        {
-            setLevel(1, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_2:
-        {
-            setLevel(2, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_3:
-        {
-            setLevel(3, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_4:
-        {
-            setLevel(4, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_5:
-        {
-            setLevel(5, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_6:
-        {
-            setLevel(6, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_7:
-        {
-            setLevel(7, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_8:
-        {
-            setLevel(8, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_9:
-        {
-            setLevel(9, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_0:
-        {
-            setLevel(10, player->getLevel().control);
-            break;
-        }
-        case OIS::KC_Q:
-        {
-            setLevel(player->getLevel().nback, 1);
-            break;
-        }
-        case OIS::KC_W:
-        {
-            setLevel(player->getLevel().nback, 2);
-            break;
-        }
-        case OIS::KC_E:
-        {
-            setLevel(player->getLevel().nback, 3);
-            break;
-        }
-        case OIS::KC_R:
-        {
-            setLevel(player->getLevel().nback, 4);
-            break;
-        }
         case OIS::KC_MINUS:
         {
-            globals.currStageID--;
-            if (globals.currStageID < 1)
-                globals.currStageID = 1;
-            setLevel(-1, -1);
+            setLevel(-1, -1, FAIL);
             break;
         }
         case OIS::KC_EQUALS:
         {
-            globals.currStageID++;
-            setLevel(-1, -1);
+            setLevel(-1, -1, PASS);
             break;
-        }
-        case OIS::KC_T:
-        {
-            player->setHP(globals.HPPositiveLimit);
-            break;
-        }
-        case OIS::KC_Z:
-        {
-            /*
-            sidebarMode++;
-            if (sidebarMode > 3)
-                sidebarMode = (SidebarLocation)0;
-            setSidebar();
-            break;
-             */
         }
         case OIS::KC_X:
         {

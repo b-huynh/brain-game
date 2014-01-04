@@ -22,8 +22,6 @@ Pod::Pod()
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
 : parentNode(parentNode), mtype(mtype), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTaken(false), podGood(false), dest()
 {
-    this->mtype = BASIC;
-    mtype = BASIC;
     if (mtype == BASIC) loadBasicShape();
     else if (mtype == FUEL) loadFuelCell();
     
@@ -70,6 +68,7 @@ void Pod::loadBasicShape()
             break;
         default:
             headEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "cylinderMesh");
+            head->scale(headRadius * 1.5, headRadius * 3, headRadius * 1.5);
             break;
     }
     headEntity->setMaterialName("General/PodUnknown");
@@ -86,18 +85,7 @@ void Pod::loadFuelCell()
     
 	float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
-    /*
-    stem = entirePod->createChildSceneNode("stemNode" + Util::toStringInt(podID));
-    
-    Entity* stemEntity = stem->getCreator()->createEntity("stemEntity" + Util::toStringInt(podID), "cylinderMesh");
-    stemEntity->setMaterialName("General/PodStem");
-    stem->attachObject(stemEntity);
-     */
     Vector3 v = tip - base;
-    /*
-    //stem->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
-    //stem->translate(v / -2);
-    */
     
     head = parentNode->createChildSceneNode("headNode" + Util::toStringInt(podID));
     
@@ -129,15 +117,7 @@ void Pod::loadFuelCell()
     head->translate(v / 2);
     setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
     
-    // The follow is to make a fuel cell randomly float
-    //head->pitch(Degree(Util::randRangefloat(0.0, 90.0)));
-    //head->roll(Degree(Util::randRangefloat(0.0, 90.0)));
-    //setRotateSpeed(Util::randVector3() * Util::randRangefloat(1.0, 5.0));
-    //rotateSpeed.x = 0;
-    //head->translate(v / -1.75);
-    
     setToGrowth(0.0);
-    
 }
 
 MeshType Pod::getMeshType() const
