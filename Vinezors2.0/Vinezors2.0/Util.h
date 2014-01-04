@@ -89,6 +89,8 @@ namespace Util
         double podStemLength;
         int podBinSize; // This is for tunnels that pre-generate the pod sequence
         int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
+        int stageTotalDistractorsMin;
+        int stageTotalDistractorsMax;
         double seatLength;
         int tunnelSections;
         int nback;
@@ -119,7 +121,11 @@ namespace Util
         double timedRunControlUpDist1;
         double timedRunControlUpDist2;
         double timedRunControlUpDist3;
+        int timedRunControlUpSignal1;
+        int timedRunControlUpSignal2;
+        int timedRunControlUpSignal3;
         int timedRunNMax;
+        double swipeSensitivity;
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;

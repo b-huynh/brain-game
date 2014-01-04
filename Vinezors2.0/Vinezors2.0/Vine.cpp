@@ -18,7 +18,7 @@ Vine::Vine()
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
 : parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), forward(), radius(radius), speed(0.0), loc(NO_DIRECTION), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
-    loadRunnerShip();
+    loadFlowerShip();
     ++vineID;
 }
 

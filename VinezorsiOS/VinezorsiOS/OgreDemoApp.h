@@ -23,18 +23,18 @@ public:
     
 	ShaderGeneratorTechniqueResolverListener(RTShader::ShaderGenerator* pShaderGenerator)
 	{
-		mShaderGenerator = pShaderGenerator;			
+		mShaderGenerator = pShaderGenerator;
 	}
     
 	/** This is the hook point where shader based technique will be created.
      It will be called whenever the material manager won't find appropriate technique
      that satisfy the target scheme name. If the scheme name is out target RT Shader System
-     scheme name we will try to create shader generated technique for it. 
+     scheme name we will try to create shader generated technique for it.
      */
-	virtual Technique* handleSchemeNotFound(unsigned short schemeIndex, 
-                                                  const String& schemeName, Material* originalMaterial, unsigned short lodIndex,
-                                                  const Renderable* rend)
-	{	
+	virtual Technique* handleSchemeNotFound(unsigned short schemeIndex,
+                                            const String& schemeName, Material* originalMaterial, unsigned short lodIndex,
+                                            const Renderable* rend)
+	{
 		Technique* generatedTech = NULL;
         
 		// Case this is the default shader generator scheme.
@@ -44,9 +44,9 @@ public:
             
 			// Create shader generated technique for this material.
 			techniqueCreated = mShaderGenerator->createShaderBasedTechnique(
-                                                                            originalMaterial->getName(), 
-                                                                            MaterialManager::DEFAULT_SCHEME_NAME, 
-                                                                            schemeName);	
+                                                                            originalMaterial->getName(),
+                                                                            MaterialManager::DEFAULT_SCHEME_NAME,
+                                                                            schemeName);
             
 			// Case technique registration succeeded.
 			if (techniqueCreated)
@@ -66,26 +66,19 @@ public:
 						generatedTech = curTech;
 						break;
 					}
-				}				
+				}
 			}
 		}
         
 		return generatedTech;
 	}
     
-protected:	
-	RTShader::ShaderGenerator*	mShaderGenerator;			// The shader generator instance.		
+protected:
+	RTShader::ShaderGenerator*	mShaderGenerator;			// The shader generator instance.
 };
 #endif
 
-#include "Pod.h"
-#include "TunnelSlice.h"
-#include "Tunnel.h"
-#include "Player.h"
-
-enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
-enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
-enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
+#include "Util.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener, public Ogre::RenderTargetListener
@@ -98,16 +91,16 @@ public:
 	~DemoApp();
     
     bool setName(const char* name);
-    void setConfigValue(std::istream& in, std::string paramName);
-    void setMessage(std::string msg, MessageType type);
 	void startDemo(const char* name, MusicMode musica);
     void setSidebar();
-    void setOverlay(bool firstTime = false);
-    void update(double elapsed);
-    void setLevel(int n, int c, bool init = false);
+    void update(float elapsed);
+    void setLevel(int n, int c, Evaluation forced = EVEN);
     
     bool loadSaveFile(std::string saveFile);
     bool loadConfig(std::string filepath, int stageID);
+    
+    void activatePerformLeftMove();
+    void activatePerformRightMove();
     
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
@@ -124,59 +117,37 @@ public:
 	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef);
     virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
     virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
-
+    
 private:
     void setupDemoScene();
 	void runDemo();
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-    ProgressionMode progressionMode;
     MusicMode musicMode;
     
     unsigned seed;
     bool pause;
     Vector3 origin;
-    double totalElapsed;
+    float totalElapsed;
     SceneNode* lightNodeMain;
     SceneNode* lightNodeSide;
     Tunnel* tunnel;
 	Player* player;
-    std::string playerName;
-    std::string message;
-    MessageType messageType;
-    
-    std::vector<Ogre::Overlay*> overlays;
-    
-    OverlayContainer* panel1;
-    OverlayContainer* panel2;
-    BorderPanelOverlayElement* healthArea;
-    PanelOverlayElement* barHP;
-    PanelOverlayElement* indicator;
-    TextAreaOverlayElement* label1;
-    TextAreaOverlayElement* label2;
-    TextAreaOverlayElement* label3;
-    TextAreaOverlayElement* label4;
-    TextAreaOverlayElement* label5;
+    Hud* hud;
     
     SidebarLocation sidebarMode;
-    
-    int currStageID;
-    std::string configPath;
-    std::string configBackup;
-    std::string logPath;
-    std::string savePath;
     
 	bool					m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM
     RTShader::ShaderGenerator*			mShaderGenerator;			// The Shader generator instance.
-    ShaderGeneratorTechniqueResolverListener*	mMaterialMgrListener;		// Shader generator material manager listener.	
+    ShaderGeneratorTechniqueResolverListener*	mMaterialMgrListener;		// Shader generator material manager listener.
 #endif // USE_RTSHADER_SYSTEM
-
+    
 };
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#endif 
+#endif
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

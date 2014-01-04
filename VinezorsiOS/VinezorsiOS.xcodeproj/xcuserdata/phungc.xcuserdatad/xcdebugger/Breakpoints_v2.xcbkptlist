@@ -209,29 +209,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "VinezorsiOS/Player.cpp"
-            timestampString = "405724400.266703"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "342"
-            endingLineNumber = "342"
-            landmarkName = "Player::setOldPos(Vector3 value)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreDemoApp.cpp"
             timestampString = "405907132.863967"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "114"
             endingLineNumber = "114"
-            landmarkName = "DemoApp::setMessage(std::string msg, MessageType type)"
+            landmarkName = "DemoApp::startDemo(const char* name, MusicMode musica)"
             landmarkType = "5">
             <Locations>
                <Location
@@ -346,9 +330,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "DemoApp::setMessage(std::string msg, MessageType type)"
-            landmarkType = "5">
+            endingLineNumber = "111">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -463,6 +445,22 @@
                   offsetFromSymbolStart = "972">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/Tunnel.cpp"
+            timestampString = "410473995.273425"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "475"
+            endingLineNumber = "475"
+            landmarkName = "Tunnel::setDone(int stars)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -9,7 +9,6 @@
 #ifndef __Vinezors2_0__Vine__
 #define __Vinezors2_0__Vine__
 
-#include <list>
 #include "Util.h"
 
 // Represents the character (as a vine), currently incomplete.
@@ -17,35 +16,44 @@ struct Vine
 {
     Ogre::SceneNode* parentNode;
     
+    SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
-	Vector3 dest;
+	SceneNode *shell;
     Vector3 forward;
-    double radius;
-    double speed;
+    float radius;
     
+    // Vine-Tunnel information
     Direction loc;
+    Direction dest;
+    float transition;
     int previousID;
-    double previoust;
+    float previoust;
     int afterID;
-    double aftert;
+    float aftert;
+    
+    float totalElapsed;
+    float wobbleSpeed;
+    bool wobbling;
     
 	Vine();
-	Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius);
+	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
 	
+    void loadBasicShip();
+    void loadRunnerShip();
+    void loadFlowerShip();
 	SceneNode* getTip() const;
 	Vector3 getPos() const;
 	void setPos(Vector3 value);
-	Vector3 getDest() const;
-	Vector3 getForward() const;
-	void setDest(Vector3 value);
+    Vector3 getForward() const;
 	void setForward(Vector3 value);
-    double getRadius() const;
+    float getRadius() const;
     void setQuaternion(Quaternion rot);
+    void setWobble(bool value);
     
 	void move(Vector3 delta);
 	
-	void update(double elapsed);
+	void update(float elapsed);
     
 	void removeFromScene();
 };

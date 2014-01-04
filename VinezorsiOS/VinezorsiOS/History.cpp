@@ -13,13 +13,13 @@ extern Util::ConfigGlobal globals;
 static int seatID = 0;
 static int coverID = 0;
 
-const double PANEL_HEIGHT = 18;
-const double PANEL_X = 0.0;
-const double PANEL_Y = -10.0;
+const float PANEL_HEIGHT = 18;
+const float PANEL_X = 0.0;
+const float PANEL_Y = -10.0;
 
 History::History(Ogre::SceneManager* sceneMgr, int nback)
 : sceneMgr(sceneMgr), nback(nback), seats(), list(), coverNode(NULL), coverDest(),
-    panelHeight(PANEL_HEIGHT), panelX(PANEL_X), panelY(PANEL_Y), reservedHeight(), coverHeight(), coverOffsetY(), coverInd(), mode(FIRST_TIME)
+panelHeight(PANEL_HEIGHT), panelX(PANEL_X), panelY(PANEL_Y), reservedHeight(), coverHeight(), coverOffsetY(), coverInd(), mode(FIRST_TIME)
 {
     initSeats(nback);
 }
@@ -34,16 +34,16 @@ void History::initSeats(int nback)
     
     ++seatID;
     
-    double x = panelX;
-    double y = panelY + panelHeight;
+    float x = panelX;
+    float y = panelY + panelHeight;
     for (int i = 0; i < SIZE; ++i)
     {
-        double midx = x;
-        double midy = y + reservedHeight / 2;
+        float midx = x;
+        float midy = y + reservedHeight / 2;
         
         SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode("seatNode" + Util::toStringInt(seatID));
         
-        Entity* nodeEntity = node->getCreator()->createEntity("seatEntity" + Util::toStringInt(seatID), "seatMesh");
+        Entity* nodeEntity = node->getCreator()->createEntity("seatEntity" + Util::toStringInt(seatID), "planeMesh");
         
         if (i == nback - 1)
             nodeEntity->setMaterialName("General/PodYellow");
@@ -64,7 +64,7 @@ void History::initSeats(int nback)
     coverNode = sceneMgr->getRootSceneNode()->createChildSceneNode("coverNode" + Util::toStringInt(coverID));
     
     coverHeight = 2 * panelHeight;
-    Entity* coverEntity = coverNode->getCreator()->createEntity("seatEntity" + Util::toStringInt(seatID), "seatMesh");
+    Entity* coverEntity = coverNode->getCreator()->createEntity("seatEntity" + Util::toStringInt(seatID), "planeMesh");
     coverEntity->setMaterialName("General/BaseWhite");
     coverNode->attachObject(coverEntity);
     coverOffsetY = reservedHeight / 2 - coverHeight / 2;
@@ -73,7 +73,7 @@ void History::initSeats(int nback)
     coverNode->setPosition(coverDest);
     coverNode->scale(coverHeight, coverHeight, coverHeight);
     coverNode->pitch(Degree(90));
-
+    
     ++coverID;
 }
 
@@ -81,7 +81,8 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y, globals.podStemLength), podInfo.podType, globals.podHeadRadius, globals.podStemLength, NO_DIRECTION);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y + reservedHeight, globals.podStemLength), BASIC, podInfo.podSignal, podInfo.podColor, podInfo.podShape, podInfo.podSound, NO_DIRECTION, globals.podStemRadius, globals.podHeadRadius);
+    cpy->setMoveSpeed(5.0);
     cpy->revealPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
@@ -112,7 +113,7 @@ void History::revealPod()
         list[0]->revealPod();
 }
 
-void History::update(double elapsed)
+void History::update(float elapsed)
 {
     for (int i = 0; i < list.size(); ++i)
         list[i]->update(elapsed);
@@ -120,7 +121,7 @@ void History::update(double elapsed)
     Vector3 dist = coverDest - coverNode->getPosition();
     Vector3 move;
     
-    double distlen2 = dist.squaredLength();
+    float distlen2 = dist.squaredLength();
     move = dist * 1.5 * elapsed;
     
     if (move.squaredLength() >= distlen2)

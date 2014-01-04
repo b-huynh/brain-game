@@ -249,6 +249,72 @@ material General/Wall2
 
             texture_unit
 			{
+				texture Cartoon_Texture_Ground.jpg
+			}
+		}
+	}
+}
+
+material General/Wall3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Rock.jpg
+			}
+		}
+	}
+}
+
+material General/Wall4
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Stone.jpg
+			}
+		}
+	}
+}
+
+material General/Wall5
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Wood.jpg
+			}
+		}
+	}
+}
+/*
+material General/Wall2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
 				texture TunnelTile_SpaceStation.png
 			}
 		}
@@ -304,7 +370,7 @@ material General/Wall5
 		}
 	}
 }
-
+*/
 material General/Wall6
 {
     technique

@@ -30,7 +30,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, double segmentWidth, 
 : parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), sectionIndex(0), spawnIndex(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(mode), totalElapsed(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), testType(testType), setColors(setColors), setSounds(setSounds), setShapes(setShapes), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
-    history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
+    //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     
     setNewControl(control);
@@ -387,7 +387,6 @@ std::string Tunnel::determineMaterial() const
     {
         case 0:
             return "General/Wall2";
-            //return "TextureModColor";
         case 1:
             return "General/Wall3";
         case 2:
@@ -430,15 +429,15 @@ void Tunnel::upgradeControl()
 {
     // Measure by num signals
     int currentControlLevel = control;
-    if ((currentControlLevel == 1 && getSignalsLeft() <= spawnLimit - 10 - nback) ||
-        (currentControlLevel == 2 && getSignalsLeft() <= spawnLimit - 25 - nback) ||
-        (currentControlLevel == 3 && getSignalsLeft() <= spawnLimit - 50 - nback))
+    if ((currentControlLevel == 1 && getSignalsLeft() <= spawnLimit - globals.timedRunControlUpSignal1 - nback) ||
+        (currentControlLevel == 2 && getSignalsLeft() <= spawnLimit - globals.timedRunControlUpSignal2 - nback) ||
+        (currentControlLevel == 3 && getSignalsLeft() <= spawnLimit - globals.timedRunControlUpSignal3 - nback))
     {
         currentControlLevel++;
         SectionInfo info = SectionInfo(CHECKPOINT_PASS, NO_DIRECTION, 0, sidesUsed);
         //addSegment(info);
         setNewControl(currentControlLevel);
-    }
+    }		
     
 }
 
@@ -626,14 +625,12 @@ std::vector<PodInfo> Tunnel::getNextDistractorInfo(PodInfo signal)
     if (signal.podLoc != NO_DIRECTION)
         ret.push_back(signal);
     
-    if (getMode() != GAME_NAVIGATION)
-        return ret;
-    
     std::vector<int> availDirs;
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         if (sidesUsed[i] && (Direction)(i) != signal.podLoc) availDirs.push_back(i);
     
-    while (availDirs.size() > 1 - (signal.podLoc != NO_DIRECTION))
+    int count = Util::randRangeInt(globals.stageTotalDistractorsMin, globals.stageTotalDistractorsMax);
+    while (count > 0 && availDirs.size() > 0)
     {
         int rind = rand() % availDirs.size();
         PodInfo newDistractor = PodInfo(BASIC, POD_SIGNAL_UNKNOWN, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_UNKNOWN, (Direction)availDirs[rind], false, true, false);
@@ -641,6 +638,7 @@ std::vector<PodInfo> Tunnel::getNextDistractorInfo(PodInfo signal)
         
         availDirs[rind] = availDirs[availDirs.size() - 1];
         availDirs.pop_back();
+        --count;
     }
     
     return ret;
@@ -1006,32 +1004,28 @@ void Tunnel::update(Player* player, Hud* hud, double elapsed)
         totalElapsed += elapsed;
         if (getMode() == GAME_PROFICIENCY)
         {
-            if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
-                setDone(EVEN);
-            else if (spawnLimit > 0 && getSignalsLeft() <= 0)
+            if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(player->getEvaluation(this));
-            //else if (player->getHP() >= globals.HPPositiveLimit ||
-            //        player->getHP() <= globals.HPNegativeLimit)
-            //
-            //setDone(player->getEvaluation(this));
+            else if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
+                setDone(EVEN);
         }
         else if (getMode() == GAME_TIMED)
         {
-            if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
-                setDone(FAIL);
-            else if (spawnLimit > 0 && getSignalsLeft() <= 0)
+            if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(PASS);
+            else if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
+                setDone(EVEN);
         }
         else //if (getMode() == GAME_NAVIGATION)
         {
-            if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
+            if (numTargets > 0 && player->getNumCorrectTotal() >= numTargets)
+                setDone(PASS);
+            else if (globals.stageTime > 0 && getTotalElapsed() > globals.stageTime)
                 setDone(EVEN);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(EVEN);
-            else if (numTargets > 0 && player->getNumCorrectTotal() >= numTargets)
-                setDone(PASS);
             else if (player->getHP() + 0.1 < globals.stageNavigationThreshold1)
-                setDone(FAIL);
+                setDone(EVEN);
         }
     }
     

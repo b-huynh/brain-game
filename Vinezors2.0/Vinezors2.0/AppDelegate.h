@@ -115,24 +115,13 @@ static id mAppDelegate;
     {
 		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
 		{
-//			mTimeCurrent = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
-//			mTimeDelta = mTimeCurrent - mTimePrevious;
-            
 			OgreFramework::getSingletonPtr()->m_pKeyboard->capture();
 			OgreFramework::getSingletonPtr()->m_pMouse->capture();
             
-//            if (mTimeDelta > 0)
-//            {
-//                demo.update(mTimeDelta);
-//                OgreFramework::getSingletonPtr()->updateOgre(mTimeDelta);
+            demo.update(mDeltaTime);
+            OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
                 
-                demo.update(mDeltaTime);
-                OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
-                
-                OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
-//            }
-            
-//            mTimePrevious = mTimeCurrent;
+            OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
 		}
     }
     else

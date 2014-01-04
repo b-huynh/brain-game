@@ -92,9 +92,9 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
      m_pRenderWnd = m_pRoot->createRenderWindow(wndTitle, Util::SCREEN_WIDTH, Util::SCREEN_HEIGHT, false, &paramsWnd);
      */
 	m_pSceneMgrMain = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerMain");
-	m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
+	//m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
 	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-	m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	//m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -110,7 +110,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
-
+    /*
      m_pCameraSide = m_pSceneMgrSide->createCamera("CameraSide");
      m_pCameraSide->setPosition(Vector3(0, 0, 30));
      m_pCameraSide->lookAt(Vector3(0, 0, 0));
@@ -126,7 +126,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
      m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
      m_pViewportSide->setCamera(m_pCameraSide);
      m_pViewportSide->getTarget()->addListener(pRenderTargetListener);
-     
+     */
 	unsigned long hWnd = 0;
     OIS::ParamList paramList;
     m_pRenderWnd->getCustomAttribute("WINDOW", &hWnd);
