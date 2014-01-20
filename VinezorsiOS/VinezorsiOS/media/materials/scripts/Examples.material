@@ -60,6 +60,7 @@ material Examples/TrippySkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -78,6 +79,7 @@ material Examples/SpaceSkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -96,6 +98,7 @@ material Examples/SceneSkyBox1
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -132,6 +135,7 @@ material Examples/SceneSkyBox2
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -168,6 +172,7 @@ material Examples/CloudyNoonSkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -186,6 +191,7 @@ material Examples/StormySkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -204,6 +210,7 @@ material Examples/EarlyMorningSkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -322,6 +329,7 @@ material Examples/EveningSkyBox
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{
@@ -404,6 +412,7 @@ material Examples/SpaceSkyPlane
 		{
 			lighting off
 			depth_write off
+            fog_override true
 
 			texture_unit
 			{

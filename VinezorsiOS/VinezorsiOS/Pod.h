@@ -45,6 +45,12 @@ private:
     Ogre::SceneNode* parentNode;
     
     MeshType mtype;
+    std::string materialName;
+    
+    Entity* headContentEntity;
+    SceneNode* glowNode;
+    ParticleSystem* glowEffect;
+    
     Vector3 base;
     Vector3 tip;
     PodSignal podSignal;
@@ -62,6 +68,7 @@ private:
     Vector3 rotateSpeed;
     
     Direction loc;
+    bool podTested;
     bool podTaken;
     bool podTrigger;
     bool podGood;
@@ -82,6 +89,7 @@ public:
 	PodColor getPodColor() const;
 	PodShape getPodShape() const;
 	PodSound getPodSound() const;
+    SceneNode* getEntirePod() const;
 	SceneNode* getStem() const;
 	SceneNode* getHead() const;
 	Vector3 getDest() const;
@@ -91,7 +99,9 @@ public:
 	float getStemRadius() const;
 	float getStemLength() const;
 	float getHeadRadius() const;
+    SceneNode* getGlowNode() const;
     
+    bool isPodTested() const;
     bool isPodTaken() const;
     bool getPodTrigger() const;
     bool isPodGood() const;
@@ -99,12 +109,16 @@ public:
 	void move(Vector3 delta);
 	
     void setToGrowth(float t);
+    void setSkin();
 	void takePod();
     void hidePod();
     void revealPod();
+    void uncloakPod();
+    void generateGlow();
     void setDest(Vector3 value);
 	void setMoveSpeed(float value);
 	void setRotateSpeed(Vector3 value);
+    void setPodTested(bool value);
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     

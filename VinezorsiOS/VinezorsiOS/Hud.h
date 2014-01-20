@@ -30,6 +30,7 @@ private:
     TextAreaOverlayElement* label4;
     TextAreaOverlayElement* label5;
     TextAreaOverlayElement* label6;
+    TextAreaOverlayElement* label7;
 public:
     Hud();
     void init(Tunnel* tunnel, Player* player);

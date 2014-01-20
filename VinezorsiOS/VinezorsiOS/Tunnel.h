@@ -46,10 +46,19 @@ public:
     
     std::vector<SectionInfo> sections;
     std::vector<PodInfo> types;
+    
+    struct TargetInfo
+    {
+        bool level1;
+        bool level2;
+        bool level3;
+    };
+    std::vector<TargetInfo> targets;
     int sectionSize;
     int podSegmentSize;
     int distractorSegmentSize;
     int spawnIndex; // The current index to spawn which pod.
+    int spawnCombo;
     int spawnLimit;
     int numTargets;
     
@@ -72,16 +81,14 @@ public:
     bool sidesUsed[NUM_DIRECTIONS];
     Evaluation eval;
     
-    bool setColors;
-    bool setSounds;
-    bool setShapes;
+    std::vector<std::vector<PodObject> > podObjects;
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, bool setColors, bool setSounds, bool setShapes);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodObject> > & podObjects);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -107,8 +114,10 @@ public:
 	TunnelSlice* getBack() const;
 	TunnelSlice* getNext(int i) const;
 	int getSpawnIndex() const;
+	int getSpawnCombo() const;
 	int getSpawnLimit() const;
 	int getNumTargets() const;
+	int getTotalCollections() const;
 	int getSignalsLeft() const;
 	int getSectionIndex() const;
 	int getPodIndex() const;
@@ -116,12 +125,13 @@ public:
     Quaternion getCombinedQuaternion(TunnelSlice* slice) const;
     History* getHistory() const;
     Evaluation getEval() const;
+    Pod* getNearestPod(int numSlices) const;
     
 	float getSegmentWidth() const;
 	float getSegmentDepth() const;
     std::vector<SectionInfo> getSectionInfo() const;
     std::vector<PodInfo> getPodInfo() const;
-    Quaternion getNewSegmentQuaternion(Direction dir, int degrees);
+    Quaternion getNewSegmentQuaternion(Direction dir, int degrees) const;
     PodSignal getNBackTest(int section) const;
     GameMode getMode() const;
     float getTotalElapsed() const;
@@ -135,6 +145,7 @@ public:
     void checkIfDone(Player* player);
     bool isDone() const;
     void setDone(int stars);
+    void setSpawnCombo(int level);
     void upgradeControl();
     void addToTimePenalty(float value);
     bool needsCleaning() const;
@@ -144,11 +155,13 @@ public:
     
     SectionInfo getNextSectionInfo() const;
     SectionInfo getNextSegmentInfo(SectionInfo sectionInfo) const;
-    PodInfo getNextPodInfoAt(SetPodTarget setting, int index);
-    PodInfo getNextPodInfo(SetPodTarget setting);
-    std::vector<PodInfo> getNextDistractorInfo(PodInfo signal = PodInfo());
-    void addSegment(SectionInfo sectionInfo, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
-	void renewSegment(SectionInfo sectionInfo, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
+    PodInfo getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting);
+    PodInfo getNextPodInfo(SectionInfo segmentInfo, SetPodTarget setting);
+    PodInfo getNextPodInfo(SectionInfo segmentInfo);
+    std::vector<PodInfo> getNextDistractorInfo(SectionInfo segmentInfo, PodInfo signal = PodInfo());
+    void setPods(TunnelSlice* segment, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
+    void addSegment(SectionInfo sectionInfo);
+	void renewSegment(SectionInfo sectionInfo);
     void addSection(SectionInfo newSection);
     void renewSection(SectionInfo newSection);
     
@@ -157,6 +170,7 @@ public:
     
     std::vector<Pod *> findPodCollisions(SceneNode* ent);
     
+    void presetTargets(int level);
     void constructTunnel(int size, Quaternion q = Quaternion(1, 0, 0, 0), bool pregenPods = false);
     
     void update(Player* player, Hud* hud, float elapsed);

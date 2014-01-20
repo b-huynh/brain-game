@@ -23,28 +23,29 @@ struct SectionInfo
     TunnelType tunnelType;
     Direction tunnelDir; // The direction each segment is turning
     int tunnelDirAngle; // The amount of turning degrees for each segment
-    bool sidesSafe[NUM_DIRECTIONS];
+    Quaternion tunnelRot;
+    bool sidesUsed[NUM_DIRECTIONS];
     
     SectionInfo()
-    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), sidesSafe()
+    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), tunnelRot(), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = true;
+            sidesUsed[i] = false;
     }
     
     SectionInfo(const SectionInfo & info)
-    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), sidesSafe()
+    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), tunnelRot(info.tunnelRot), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = info.sidesSafe[i];
+            sidesUsed[i] = info.sidesUsed[i];
         
     }
     
-    SectionInfo(TunnelType tt, Direction td, int tda, const bool safe[NUM_DIRECTIONS])
-    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda)
+    SectionInfo(TunnelType tt, Direction td, int tda, Quaternion rot, const bool used[NUM_DIRECTIONS])
+    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda), tunnelRot(rot), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = safe[i];
+            sidesUsed[i] = used[i];
     }
 };
 
@@ -58,13 +59,17 @@ private:
     
 	Vector3 center;
     Quaternion rot;
-	double width;
-	double depth;
+    Direction dir; // Direction from previous tunnel slice
+    int dirAngle;
+	float width;
+	float depth;
 	
 	TunnelType type;
     std::string materialName;
     
     // This segment's mesh
+    SceneNode* sliceNode;
+    
     SceneNode* entireWall;
 	SceneNode* topLeftWall;
 	SceneNode* topWall;
@@ -88,29 +93,27 @@ private:
     std::vector<MeshPtr> meshes;
     
     std::vector<Pod*> pods;
-    double growthT; // Pod Growth Timing animation
+    float growthT; // Pod Growth Timing animation
     
     bool sidesUsed[NUM_DIRECTIONS];
-    bool sidesSafe[NUM_DIRECTIONS];
     
-    SectionInfo sectionInfo;
     bool podHistory; // Used to avoid saving data multiple times for history panel
     bool infoStored; // Used to avoid saving data multiple times for log files
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
 	
     void initWalls();
     
     int getTunnelSliceID() const;
-    double getWallLength() const;
+    float getWallLength() const;
     TunnelType getType() const;
     Quaternion getQuaternion() const;
 	Vector3 getStart() const;
 	Vector3 getEnd() const;
 	Vector3 getCenter() const;
-	Vector3 getCenter(double t) const;
-	double getT(Vector3 pos) const;
+	Vector3 getCenter(float t) const;
+	float getT(Vector3 pos) const;
     Vector3 getForward() const;
 	Vector3 getUpward() const;
 	Vector3 getRight() const;
@@ -119,26 +122,25 @@ public:
     bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
-    bool hasSafeSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);
+    Vector3 requestWallDirection(Direction dir) const;
     Vector3 requestWallDistance(Direction dir) const;
-    Vector3 requestMove(Direction dir, double offset) const;
-    Vector3 requestPosition(Vector3 cur, Direction dir, double offset) const;
+    Vector3 requestWallMove(Direction dir, float offset) const;
+    Vector3 requestWallPosition(Vector3 cur, Direction dir, float offset) const;
     
-    void setSectionInfo(const SectionInfo & value);
     void setPodHistory(bool value);
     void setInfoStored(bool value);
 	void move(Vector3 delta);
 	void addPod(const PodInfo & value);
-    void setIntermediateWall(SceneNode* entire, Direction dir, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4);
+    void setIntermediateWall(SceneNode* entire, Direction dir, ManualObject * manual, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 & bl, Vector3 & tr);
     void connect(TunnelSlice* next);
     void disconnect();
     void clearPods();
-    void updateGrowth(double nt);
+    void updateGrowth(float nt);
     
-    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, double width, double depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
+    void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
     
 	void removeFromScene();
 };

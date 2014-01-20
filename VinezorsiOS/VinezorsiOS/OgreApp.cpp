@@ -1,4 +1,4 @@
-#include "OgreDemoApp.h"
+#include "OgreApp.h"
 
 #include "Tunnel.h"
 #include "Player.h"
@@ -9,13 +9,13 @@
 
 Util::ConfigGlobal globals;
 
-DemoApp::DemoApp()
+OgreApp::OgreApp()
 {
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-DemoApp::~DemoApp()
+OgreApp::~OgreApp()
 {
 #ifdef USE_RTSHADER_SYSTEM
     mShaderGenerator->removeSceneManager(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
@@ -32,7 +32,7 @@ DemoApp::~DemoApp()
 /*-----------------------------------------------------------------------------
  | Initialize the RT Shader system.
  -----------------------------------------------------------------------------*/
-bool DemoApp::initializeRTShaderSystem(SceneManager* sceneMgr)
+bool OgreApp::initializeRTShaderSystem(SceneManager* sceneMgr)
 {
     if (RTShader::ShaderGenerator::initialize())
     {
@@ -87,7 +87,7 @@ bool DemoApp::initializeRTShaderSystem(SceneManager* sceneMgr)
 /*-----------------------------------------------------------------------------
  | Finalize the RT Shader system.
  -----------------------------------------------------------------------------*/
-void DemoApp::finalizeRTShaderSystem()
+void OgreApp::finalizeRTShaderSystem()
 {
     // Restore default scheme.
     MaterialManager::getSingleton().setActiveScheme(MaterialManager::DEFAULT_SCHEME_NAME);
@@ -109,15 +109,21 @@ void DemoApp::finalizeRTShaderSystem()
 }
 #endif // USE_RTSHADER_SYSTEM
 
-void DemoApp::startDemo(const char* name, MusicMode musica)
+void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica)
 {
     totalElapsed = 0.0;
     globals.initPaths(name);
     musicMode = musica;
     
 	new OgreFramework();
-	if(!OgreFramework::getSingletonPtr()->initOgre("DemoApp v1.0", this, this, this))
+#if !defined(OGRE_IS_IOS)
+    if (!OgreFramework::getSingletonPtr()->initOgre(uiWindow, uiView, width, height, this, this, this))
+        return;
+#else
+	if (!OgreFramework::getSingletonPtr()->initOgre(uiWindow, uiView, width, height, this))
 		return;
+#endif
+
     
 	m_bShutdown = false;
     
@@ -162,10 +168,11 @@ void DemoApp::startDemo(const char* name, MusicMode musica)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-void DemoApp::setupDemoScene()
+void OgreApp::setupDemoScene()
 {
     seed = time(0);
     srand(seed);
+    sessionOver = false;
     
     Util::generateMaterials();
     
@@ -199,6 +206,7 @@ void DemoApp::setupDemoScene()
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     
+    tunnel = NULL;
     hud = new Hud();
     
     setLevel(-1, -1);
@@ -224,7 +232,7 @@ void DemoApp::setupDemoScene()
     //setSidebar();
 }
 
-void DemoApp::setSidebar()
+void OgreApp::setSidebar()
 {
     Camera* m_pCameraMain = OgreFramework::getSingletonPtr()->m_pCameraMain;
     Camera* m_pCameraSide = OgreFramework::getSingletonPtr()->m_pCameraSide;
@@ -316,12 +324,12 @@ void DemoApp::setSidebar()
     }
 }
 
-void DemoApp::update(float elapsed)
+void OgreApp::update(float elapsed)
 {
     totalElapsed += elapsed;
     
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-
+        
     // Update the game state
     if (!pause) {
         player->update(tunnel, hud, elapsed);
@@ -329,7 +337,6 @@ void DemoApp::update(float elapsed)
         {
             // Generate a new tunnel because we are done with current one
             setLevel(-1, -1);
-            globals.setMessage("Swipe to Continue", MESSAGE_NORMAL);
         }
     } else {
 #if !defined(OGRE_IS_IOS)
@@ -351,24 +358,19 @@ void DemoApp::update(float elapsed)
     Quaternion camRot = player->getCombinedRotAndRoll();
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
     OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyBoxNode()->setOrientation(player->getCombinedRotAndRoll());
+    
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     
     hud->update(tunnel, player, elapsed);
 }
 
-void DemoApp::setLevel(int n, int c, Evaluation forced)
+void OgreApp::setLevel(int n, int c, Evaluation forced)
 {
-    pause = true;
-    // Stop the game
-    if (player->getTotalElapsed() > globals.sessionTime)
-    {
-        globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
-        return;
-    }
+    globals.clearMessage();
     
-    Vector3 newOrigin = tunnel ? tunnel->getEnd() : Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
-    Quaternion newRot = tunnel ? tunnel->getBack()->getQuaternion() : Quaternion(1, 0, 0, 0);
-    Vector3 newForward = tunnel ? tunnel->getBack()->getForward() : globals.tunnelReferenceForward;
+    Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
+    Quaternion newRot = Quaternion(1, 0, 0, 0);
+    Vector3 newForward = globals.tunnelReferenceForward;
     int oldNBack = tunnel ? tunnel->getNBack() : 0;
     GameMode oldGameMode = tunnel ? tunnel->getMode() : GAME_TIMED;
     Evaluation eval = tunnel ? tunnel->getEval() : EVEN;
@@ -395,9 +397,7 @@ void DemoApp::setLevel(int n, int c, Evaluation forced)
             globals.tunnelSegmentsPerSection,
             globals.tunnelSegmentsPerPod,
             globals.tunnelSegmentsPerDistractors,
-            globals.revealColor,
-            globals.revealSound,
-            globals.revealShape);
+            globals.podObjects);
         tunnel->constructTunnel(globals.tunnelSections, newRot, (GameMode)globals.gameMode != GAME_NAVIGATION);
     }
     else // Automatically determine
@@ -442,9 +442,7 @@ void DemoApp::setLevel(int n, int c, Evaluation forced)
             globals.tunnelSegmentsPerSection,
             globals.tunnelSegmentsPerPod,
             globals.tunnelSegmentsPerDistractors,
-            globals.revealColor,
-            globals.revealSound,
-            globals.revealShape);
+            globals.podObjects);
         tunnel->constructTunnel(globals.tunnelSections, newRot, nmode != GAME_NAVIGATION);
     }
     
@@ -453,29 +451,81 @@ void DemoApp::setLevel(int n, int c, Evaluation forced)
     player->setCamRot(newRot);
     player->setDesireRot(newRot);
     player->newTunnel(tunnel, musicMode == MUSIC_ENABLED);
-    player->saveCam();
     
     hud->init(tunnel, player);
+    
+    Plane plane;
     switch (globals.setSkyBox)
     {
         case 0:
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBoxEnabled(false);
+            plane.d = 3000;
+            plane.normal = Ogre::Vector3(0, 0, 1);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/SpaceSkyPlane", 80, 4, true);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+            OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
             break;
         case 1:
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/MorningSkyBox", 5000, true);
-            break;
-        case 2:
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/CloudyNoonSkyBox", 5000, true);
+            plane.d = 160;
+            plane.normal = Ogre::Vector3(0, 0, 1);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/TestSkyPlane0", 1, 1, true);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(1.0, 1.0, 1.0, 0.0), 0.0, 300.0, 600.0);
+            OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
             break;
         default:
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyBox(true, "Examples/SpaceSkyBox", 5000, true);
+            plane.d = 3000;
+            plane.normal = Ogre::Vector3(0, 0, 1);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/SpaceSkyPlane", 80, 4, true);
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+            OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
             break;
     }
+    
+    // Stop the game
+    setPause(true);
+}
+
+void OgreApp::setPause(bool value)
+{
+    if (value)
+    {
+        pause = value;
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+        player->pause();
+        if (player->getTotalElapsed() > globals.sessionTime)
+        {
+            globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
+            sessionOver = true;
+        }
+        else
+            globals.setMessage("Swipe to Continue - Stage " + Util::toStringInt(globals.currStageID), MESSAGE_NORMAL);
+        Ogre::ControllerManager::getSingleton().setTimeFactor(0);
+    }
+    else if (!sessionOver)
+    {
+        pause = value;
+        player->unpause();
+            
+        globals.clearMessage();
+        Ogre::ControllerManager::getSingleton().setTimeFactor(1);
+    }
+}
+
+bool OgreApp::isPaused() const
+{
+    return pause;
+}
+
+bool OgreApp::isSessionOver() const
+{
+    return sessionOver;
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-void DemoApp::runDemo()
+void OgreApp::runDemo()
 {
 	OgreFramework::getSingletonPtr()->m_pLog->logMessage("Start main loop...");
     
@@ -523,19 +573,29 @@ void DemoApp::runDemo()
 #endif
 }
 
-void DemoApp::activatePerformLeftMove()
+void OgreApp::activateTouchPress(float x, float y)
+{
+    //player->setKeySpace(true);
+    return true;
+    
+}
+
+void OgreApp::activateTouchRelease(float x, float y)
+{
+    //player->setKeySpace(false);
+    return true;
+}
+
+void OgreApp::activateTouchMove(float dx, float dy)
+{
+    return true;
+}
+
+void OgreApp::activatePerformLeftMove()
 {
     if (pause)
     {
-#if defined(OGRE_IS_IOS)
-        if (player->getTotalElapsed() <= globals.sessionTime)
-        {
-            pause = !pause;
-            player->revertCam();
-            
-            globals.clearMessage();
-        }
-#endif
+        setPause(false);
     }
     else
     {
@@ -547,19 +607,11 @@ void DemoApp::activatePerformLeftMove()
     }
 }
 
-void DemoApp::activatePerformRightMove()
+void OgreApp::activatePerformRightMove()
 {
     if (pause)
     {
-#if defined(OGRE_IS_IOS)
-        if (player->getTotalElapsed() <= globals.sessionTime)
-        {
-            pause = !pause;
-            player->revertCam();
-            
-            globals.clearMessage();
-        }
-#endif
+        setPause(false);
     }
     else
     {
@@ -571,52 +623,27 @@ void DemoApp::activatePerformRightMove()
     }
 }
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-bool DemoApp::touchMoved(const OIS::MultiTouchEvent &evt)
+void OgreApp::activatePerformDoubleTap(float x, float y)
 {
-    if (player->getMouseLeft())
-    {
-        player->checkCursorMove(evt.state.X.rel, evt.state.Y.rel);
-        if (player->checkPerformLeftMove(false))
-        {
-            activatePerformLeftMove();
-            player->setCursorMoved();
-        }
-        else if (player->checkPerformRightMove(false))
-        {
-            activatePerformRightMove();
-            player->setCursorMoved();
-        }
+    if (!pause) player->performShockwave(tunnel);
+}
+
+void OgreApp::activatePerformSingleTap(float x, float y)
+{
+    if (y <= 300 && x <= globals.screenWidth / 2) {
+        setLevel(-1,-1, FAIL);
+    } else if (y <= 300 && x > globals.screenWidth / 2) {
+        setLevel(-1,-1, PASS);
     }
-    return true;
 }
-bool DemoApp::touchPressed(const OIS::MultiTouchEvent &evt)
+
+void OgreApp::activatePerformPinch()
 {
-    player->setMouseLeft(true);
-    
-    float axisY = evt.state.Y.abs;
-    float axisX = evt.state.X.abs;
-    
-     if (axisY <= 300 && axisX <= globals.screenWidth / 2) {
-         setLevel(-1,-1, FAIL);
-     } else if (axisY <= 300 && axisX > globals.screenWidth / 2) {
-         setLevel(-1,-1, PASS);
-     }
-    
-    return true;
+    setPause(!pause);
 }
-bool DemoApp::touchReleased(const OIS::MultiTouchEvent &evt)
-{
-    player->setMouseLeft(false);
-    player->resetCursorMoved();
-    return true;
-}
-bool DemoApp::touchCancelled(const OIS::MultiTouchEvent &evt)
-{
-    return true;
-}
-#else
-bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
+
+#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
+bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     if (pause) {
         // Move the camera when paused
@@ -657,7 +684,7 @@ bool DemoApp::mouseMoved(const OIS::MouseEvent &evt)
     return true;
 }
 
-bool DemoApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     switch (id)
     {
@@ -670,7 +697,7 @@ bool DemoApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     return true;
 }
 
-bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
+bool OgreApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     switch (id)
     {
@@ -687,7 +714,7 @@ bool DemoApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
+bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
 {
 #if !defined(OGRE_IS_IOS)
 	OgreFramework::getSingletonPtr()->keyPressed(keyEventRef);
@@ -714,10 +741,10 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
             player->setKeyUp(true);
             if (player->getSpeedControl() == SPEED_CONTROL_FLEXIBLE)
             {
-                int s = player->getCamSpeed();
+                int s = player->getBaseSpeed();
                 if (s + 1 <= globals.maxCamSpeed)
                     s++;
-                player->setCamSpeed(s);
+                player->setBaseSpeed(s);
             }
             break;
         }
@@ -726,22 +753,16 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
             player->setKeyDown(true);
             if (player->getSpeedControl() == SPEED_CONTROL_FLEXIBLE)
             {
-                int s = player->getCamSpeed();
+                int s = player->getBaseSpeed();
                 if (s - 1 >= globals.minCamSpeed)
                     s--;
-                player->setCamSpeed(s);
+                player->setBaseSpeed(s);
             }
             break;
         }
         case OIS::KC_P:
         {
-            pause = !pause;
-            if (!pause) {
-                globals.clearMessage();
-                player->revertCam();
-            } else {
-                player->saveCam();
-            }
+            setPause(!pause);
             break;
         }
         case OIS::KC_MINUS:
@@ -759,6 +780,17 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
             player->changeMovementMode();
             break;
         }
+        case OIS::KC_C:
+        {
+            player->setShowCombo(player->getShowCombo() ? 0 : 1);
+            break;
+        }
+        case OIS::KC_SPACE:
+        {
+            player->setKeySpace(true);
+            activatePerformDoubleTap();
+            break;
+        }
         default:
             break;
     }
@@ -768,7 +800,7 @@ bool DemoApp::keyPressed(const OIS::KeyEvent &keyEventRef)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
+bool OgreApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 {
 #if !defined(OGRE_IS_IOS)
 	OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
@@ -795,6 +827,11 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
             player->setKeyDown(false);
             break;
         }
+        case OIS::KC_SPACE:
+        {
+            player->setKeySpace(false);
+            break;
+        }
         default:
             break;
     }
@@ -806,7 +843,7 @@ bool DemoApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 
-void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
+void OgreApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
     if (evt.source == OgreFramework::getSingletonPtr()->m_pViewportSide)
     {
@@ -814,7 +851,7 @@ void DemoApp::preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
     }
 }
 
-void DemoApp::postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
+void OgreApp::postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt)
 {
     hud->showOverlays();
 }

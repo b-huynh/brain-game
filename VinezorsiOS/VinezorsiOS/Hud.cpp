@@ -54,7 +54,9 @@ Hud::Hud()
     label5 = static_cast<TextAreaOverlayElement*>(
                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
     label6 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel6"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel6"));
+    label7 = static_cast<TextAreaOverlayElement*>(
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel7"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayHealthArea");
@@ -62,9 +64,9 @@ Hud::Hud()
     overlay1->add2D(healthArea);
     //overlay1->add2D(barHP);
     overlay1->add2D(indicator);
-    overlay1->add2D(threshold1);
-    overlay1->add2D(threshold2);
-    overlay1->add2D(threshold3);
+    //overlay1->add2D(threshold1);
+    //overlay1->add2D(threshold2);
+    //overlay1->add2D(threshold3);
     overlay2->add2D(panelText);
     
     panelText->addChild(label1);
@@ -73,6 +75,7 @@ Hud::Hud()
     panelText->addChild(label4);
     panelText->addChild(label5);
     panelText->addChild(label6);
+    panelText->addChild(label7);
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
 }
@@ -100,15 +103,15 @@ void Hud::init(Tunnel* tunnel, Player* player)
     indicator->setMaterialName("General/Indicator");
     
     threshold1->setMetricsMode(GMM_RELATIVE);
-    threshold1->setDimensions(healthArea->getWidth() / 10, globals.HPBarHeight + 0.01);
+    threshold1->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
     threshold1->setMaterialName("General/StarGray");
     
     threshold2->setMetricsMode(GMM_RELATIVE);
-    threshold2->setDimensions(healthArea->getWidth() / 10, globals.HPBarHeight + 0.01);
+    threshold2->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
     threshold2->setMaterialName("General/StarGray");
     
     threshold3->setMetricsMode(GMM_RELATIVE);
-    threshold3->setDimensions(healthArea->getWidth() / 10, globals.HPBarHeight + 0.01);
+    threshold3->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
     threshold3->setMaterialName("General/StarGray");
     
     label1->setMetricsMode(GMM_PIXELS);
@@ -128,7 +131,6 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label3->setAlignment(TextAreaOverlayElement::Right);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
     label3->setCharHeight(globals.screenHeight / 50);
-    label3->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_PIXELS);
@@ -141,6 +143,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label5->setAlignment(TextAreaOverlayElement::Right);
     label5->setPosition(globals.label5_posX, globals.label5_posY);
     label5->setCharHeight(globals.screenHeight / 50);
+    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label5->setFontName("Arial");
     
     label6->setMetricsMode(GMM_PIXELS);
@@ -149,6 +152,13 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label6->setCharHeight(globals.screenHeight / 50);
     label6->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label6->setFontName("Arial");
+    
+    label7->setMetricsMode(GMM_PIXELS);
+    label7->setAlignment(TextAreaOverlayElement::Center);
+    label7->setPosition(globals.label7_posX, globals.label7_posY);
+    label7->setCharHeight(globals.screenHeight / 30);
+    label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    label7->setFontName("Arial");
     
     if (tunnel->getMode() == GAME_TIMED)
     {
@@ -194,15 +204,24 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()) + " + " + Util::toStringInt(player->getNumCorrectBonus()));
     }
     if (tunnel->getMode() != GAME_NAVIGATION)
-        label3->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+        label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     else
-        label3->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
-    label4->setCaption("Speed: " + Util::toStringInt(player->getCamSpeed()));
-    if (tunnel->getMode() != GAME_NAVIGATION)
-        label5->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+        label3->setCaption("");
+    label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
+    if (tunnel->getMode() == GAME_TIMED)
+        label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    else if (tunnel->getMode() == GAME_NAVIGATION)
+        label5->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
+    label7->setCaption("");
+    if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
+    {
+        if (tunnel->getSpawnCombo() > 1)
+            label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
+    }
+    
     
     float indicatorRange = barHP->getWidth();
     float barWidth = globals.HPBarWidth;

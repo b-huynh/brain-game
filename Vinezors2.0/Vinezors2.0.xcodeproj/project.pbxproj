@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
 		5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D3041C318431C3800BD26C0 /* Hud.cpp */; };
 		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
@@ -49,6 +50,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */,
 				5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */,
 				5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */,
 			);

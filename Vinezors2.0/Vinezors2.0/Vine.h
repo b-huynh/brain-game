@@ -16,47 +16,54 @@ struct Vine
 {
     Ogre::SceneNode* parentNode;
     
+    int vineType;
     SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
 	SceneNode *shell;
-	Vector3 dest;
+    ParticleSystem* shockwaveEffect;
     Vector3 forward;
-    double radius;
-    double speed;
+    float radius;
     
     // Vine-Tunnel information
     Direction loc;
+    Direction dest;
+    float transition;
     int previousID;
-    double previoust;
+    float previoust;
     int afterID;
-    double aftert;
+    float aftert;
     
-    double totalElapsed;
-    double wobbleSpeed;
+    float totalElapsed;
+    float wobbleSpeed;
     bool wobbling;
     
 	Vine();
-	Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius);
+	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
 	
+    void reloadIfNecessary();
+    void loadShip();
     void loadBasicShip();
     void loadRunnerShip();
     void loadFlowerShip();
+    int getVineType() const;
+    SceneNode* getEntireVine() const;
 	SceneNode* getTip() const;
+    SceneNode* getBase() const;
 	Vector3 getPos() const;
 	void setPos(Vector3 value);
-	Vector3 getDest() const;
-	Vector3 getForward() const;
-	void setDest(Vector3 value);
+    Vector3 getForward() const;
 	void setForward(Vector3 value);
-    double getRadius() const;
+    float getRadius() const;
     void setQuaternion(Quaternion rot);
     void setWobble(bool value);
+    void setShockwave();
     
 	void move(Vector3 delta);
 	
-	void update(double elapsed);
+	void update(float elapsed);
     
+    void removeShockwave();
 	void removeFromScene();
 };
 

@@ -7,8 +7,7 @@
 //
 
 #import "SimpleViewController.h"
-
-@class AppDelegate;
+#import "AppDelegate.h"
 
 @interface SimpleViewController ()
 
@@ -42,6 +41,7 @@
 
 - (void)dealloc {
     [_TextField_Input release];
+    [_Switch_Music release];
     [super dealloc];
 }
 
