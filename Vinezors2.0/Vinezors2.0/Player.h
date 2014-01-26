@@ -15,12 +15,12 @@
 #include "Vine.h"
 #include "Tunnel.h"
 
-struct PlayerLevel
+struct PlayerStagePerformance
 {
-    int nback;
-    int control;
+    int stageID;
+    int stars;
     
-    PlayerLevel();
+    PlayerStagePerformance() : stageID(0), stars(0) {}
 };
 
 class Player
@@ -39,19 +39,22 @@ private:
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
-	double score; // a value of pride
+	float score; // a value of pride
     int points; // money to buy
+    int stars;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
 	bool keyLeft;
 	bool keyRight;
+	bool keySpace;
 	
     std::vector<Vine*> vines;
     
     MovementMode movementMode;
+    bool showCombo;
+    
 	Direction camDir; // direction offset on tunnel for player camera
-	Direction vineDir; // direction offset on tunnel for vine
 	Vector2 mousePos;
     Vector3 oldPos;
 	Vector3 camPos;
@@ -61,30 +64,34 @@ private:
     int camRoll;
     Quaternion desireRot;
     int desireRoll;
-    double camSpeed;
-    double finalSpeed;
+    float baseSpeed;
+    float finalSpeed;
     
-	double vineOffset; // offset to camPos in direction of forward
+	float vineOffset; // offset to camPos in direction of forward
     TunnelSlice* lookback;
+    Pod* earlySelect;
+    float glowSpeed;
     
     SpeedControlMode speedControl;
     
-    PlayerLevel level;
     struct Result {
         int stageID;
         int timestamp;
         SectionInfo sectionInfo;
         PodInfo podInfo;
         int nback;
-        double speed;
+        float speed;
         GameMode gameMode;
-        double score;
-        ProgressionMode progressionMode;
+        float score;
     };
     std::vector<Result> results;
+    std::vector<PlayerStagePerformance> performances;
     
-    double totalElapsed;
-    double totalDistanceTraveled;
+    float totalElapsed;
+    float totalDistanceTraveled;
+    float animationTimer;
+    float speedTimer;
+    float glowTimer;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -96,14 +103,14 @@ private:
     bool triggerStartup;
     
     // iOS Swipe Capabilities
-    double inputTotalX;
+    float inputTotalX;
     bool inputMoved;
-    double inputLeftBound;
-    double inputRightBound;
+    float inputLeftBound;
+    float inputRightBound;
 public:
     
 	Player();
-	Player(const std::string & name, const PlayerLevel & level, Vector3 camPos, Quaternion camRot, double camSpeed, double  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
+	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -115,15 +122,18 @@ public:
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
-	double getScore() const;
+	float getScore() const;
 	int getPoints() const;
+    int getStars() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
 	bool getKeyLeft() const;
 	bool getKeyRight() const;
+	bool getKeySpace() const;
 	Direction getCamDir() const;
 	Direction getVineDir() const;
+	Direction getVineDest() const;
 	Vector2 getMousePos() const;
 	Vector3 getOldPos() const;
 	Vector3 getCamPos() const;
@@ -133,16 +143,17 @@ public:
 	int getCamRoll() const;
 	Quaternion getDesireRot() const;
 	int getDesireRoll() const;
-	double getCamSpeed() const;
-	double getFinalSpeed() const;
+	float getBaseSpeed() const;
+	float getFinalSpeed() const;
+	float getTotalSpeed() const;
 	Vector3 getVineOffset() const;
     SpeedControlMode getSpeedControl() const;
-    PlayerLevel getLevel() const;
-	double getTotalElapsed() const;
-	double getTotalDistanceTraveled() const;
-    double getAccuracy() const;
-    double getProgress(Tunnel* tunnel) const;
-    Evaluation getEvaluation(Tunnel* tunnel) const;
+	float getTotalElapsed() const;
+	float getTotalDistanceTraveled() const;
+	float getAnimationTimer() const;
+    float getAccuracy() const;
+    float getProgress(Tunnel* tunnel) const;
+    bool getShowCombo() const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -151,15 +162,17 @@ public:
     void setNumWrongTotal(int value);
     void setNumCorrectCombo(int value);
     void setNumWrongCombo(int value);
-	void setScore(double value);
+	void setScore(float value);
+    void setPoints(int value);
+    void setStars(int value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
 	void setKeyLeft(bool value);
 	void setKeyRight(bool value);
+	void setKeySpace(bool value);
 	
 	void setCamDir(Direction value);
-	void setVineDir(Direction value);
 	bool setVineDirRequest(Direction value, Tunnel* tunnel);
 	void setMousePos(Vector2 value);
 	void setOldPos(Vector3 value);
@@ -170,8 +183,7 @@ public:
     void setCamRoll(int value);
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
-    void setCamSpeed(double value);
-    void setLevel(PlayerLevel value);
+    void setBaseSpeed(float value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -183,25 +195,28 @@ public:
     void playPodSound(int index) const;
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel, bool setmusic, bool resetscore = false);
+    void newTunnel(Tunnel* tunnel, bool setmusic);
     
 	void move(Vector3 delta);
     void changeMovementMode();
+    void setShowCombo(bool value);
 	void addVine(Vine* vine);
 	void checkCollisions(Tunnel* tunnel);
     
     void resetCursorMoved();
     void setCursorMoved();
-    void updateCursorCooldown(double elapsed);
-    void checkCursorMove(double dx, double dy);
+    void updateCursorCooldown(float elapsed);
+    void checkCursorMove(float dx, float dy);
     bool checkPerformLeftMove(bool force);
     bool checkPerformRightMove(bool force);
-	void update(Tunnel* tunnel, Hud* hud, double elapsed);
+    void setStars(Tunnel* tunnel);
+    void performShockwave(Tunnel* tunnel);
+    void testPodGiveFeedback(Tunnel* tunnel, Pod* test);
+	void update(Tunnel* tunnel, Hud* hud, float elapsed);
     
-    void evaluatePlayerLevel(bool pass);
-    bool saveProgress(std::string file);
-    bool saveStage(std::string file, int lastStageID);
-    void setConfigValues();
+    bool saveStage(std::string file);
+    bool saveProgress(std::string file, int lastStageID);
+    bool loadProgress(std::string savePath);
     
     ~Player();
 };

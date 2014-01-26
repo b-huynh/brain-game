@@ -2,8 +2,6 @@
 #include "macUtils.h"
 #include "Util.h"
 
-#include "ExampleLoadingBar.h"
-
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
@@ -56,9 +54,9 @@ OgreFramework::OgreFramework()
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 #if defined(OGRE_IS_IOS)
-bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MultiTouchListener *pMouseListener, Ogre::RenderTargetListener *pRenderTargetListener)
+bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener)
 #else
-bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener, Ogre::RenderTargetListener *pRenderTargetListener)
+bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener, Ogre::RenderTargetListener *pRenderTargetListener)
 #endif
 {
     new Ogre::LogManager();
@@ -77,12 +75,21 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     m_StaticPluginLoader.load();
 #endif
     
-    if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
-        m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
-    else
-        return false;
+    m_pRoot->initialise(false, "");
+    
+    Ogre::NameValuePairList params;
+    params["colourDepth"] = "32";
+    params["contentScalingFactor"] = "2.0";
+    params["FSAA"] = "16";
+    params["Video Mode"] = Ogre::StringConverter::toString(width) + "x" + Ogre::StringConverter::toString(height);
+    params["externalWindowHandle"] = Ogre::StringConverter::toString((unsigned long)uiWindow);
+    params["externalViewHandle"] = Ogre::StringConverter::toString((unsigned long)uiView);
+    
+    m_pRenderWnd = m_pRoot->createRenderWindow("", width, height, false, &params);
+    
     //    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
     //    m_pRenderWnd->setFullscreen(true, 1024, 800);
+    
     globals.screenWidth = m_pRenderWnd->getWidth();
     globals.screenHeight = m_pRenderWnd->getHeight();
     globals.set();
@@ -107,7 +114,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
                                                 0.0,
                                                 float(globals.viewportMainWidth_modeNone) / globals.screenWidth,
                                                 float(globals.viewportMainHeight_modeNone) / globals.screenHeight);
-	m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 	m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
 	m_pViewportMain->setCamera(m_pCameraMain);
     m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
@@ -143,21 +149,23 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	m_pMouse->getMouseState().height = m_pRenderWnd->getHeight();
 	m_pMouse->getMouseState().width	 = m_pRenderWnd->getWidth();
     
-#else
-	m_pMouse = static_cast<OIS::MultiTouch*>(m_pInputMgr->createInputObject(OIS::OISMultiTouch, true));
-#endif
-    
-#if !defined(OGRE_IS_IOS)
 	if(pKeyListener == 0)
 		m_pKeyboard->setEventCallback(this);
 	else
 		m_pKeyboard->setEventCallback(pKeyListener);
-#endif
     
 	if(pMouseListener == 0)
 		m_pMouse->setEventCallback(this);
 	else
 		m_pMouse->setEventCallback(pMouseListener);
+#else
+    //	m_pMouse = static_cast<OIS::MultiTouch*>(m_pInputMgr->createInputObject(OIS::OISMultiTouch, true));
+	//if(pMouseListener == 0)
+	//	m_pMouse->setEventCallback(this);
+	//else
+	//	m_pMouse->setEventCallback(pMouseListener);
+#endif
+    
     
 	Ogre::String secName, typeName, archName;
 	Ogre::ConfigFile cf;
@@ -196,7 +204,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
     
 	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-    m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     m_pTrayMgr->hideCursor();
     m_pTrayMgr->setListener(this);
@@ -243,6 +251,10 @@ OgreFramework::~OgreFramework()
     m_StaticPluginLoader.unload();
 #endif
     if(m_pRoot)     delete m_pRoot;
+    
+    m_pInputMgr = 0;
+    m_pTrayMgr = 0;
+    m_pRoot = 0;
 }
 
 bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEventRef)
@@ -292,61 +304,7 @@ bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEventRef)
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#if defined(OGRE_IS_IOS)
-bool OgreFramework::touchMoved(const OIS::MultiTouchEvent &evt)
-{
-    OIS::MultiTouchState state = evt.state;
-    int origTransX = 0, origTransY = 0;
-#if !OGRE_NO_VIEWPORT_ORIENTATIONMODE
-    switch(m_pCamera->getViewport()->getOrientationMode())
-    {
-        case Ogre::OR_LANDSCAPELEFT:
-            origTransX = state.X.rel;
-            origTransY = state.Y.rel;
-            state.X.rel = -origTransY;
-            state.Y.rel = origTransX;
-            break;
-            
-        case Ogre::OR_LANDSCAPERIGHT:
-            origTransX = state.X.rel;
-            origTransY = state.Y.rel;
-            state.X.rel = origTransY;
-            state.Y.rel = origTransX;
-            break;
-            
-            // Portrait doesn't need any change
-        case Ogre::OR_PORTRAIT:
-        default:
-            break;
-    }
-#endif
-	
-	return true;
-}
-
-//|||||||||||||||||||||||||||||||||||||||||||||||
-
-bool OgreFramework::touchPressed(const OIS:: MultiTouchEvent &evt)
-{
-    float axisY = evt.state.Y.abs;
-    float axisX = evt.state.X.abs;
-    
-	return true;
-}
-
-//|||||||||||||||||||||||||||||||||||||||||||||||
-
-bool OgreFramework::touchReleased(const OIS:: MultiTouchEvent &evt)
-{
-    return true;
-}
-
-bool OgreFramework::touchCancelled(const OIS:: MultiTouchEvent &evt)
-{
-#pragma unused(evt)
-	return true;
-}
-#else
+#if !defined(OGRE_IS_IOS)
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &evt)
 {
 	return true;

@@ -81,33 +81,35 @@ protected:
 #include "Util.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-class DemoApp : public OIS::KeyListener, OIS::MultiTouchListener, public Ogre::RenderTargetListener
+class OgreApp : public Ogre::RenderTargetListener
 #else
-class DemoApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
+class OgreApp : public OIS::KeyListener, public OIS::MouseListener, public Ogre::RenderTargetListener
 #endif
 {
 public:
-	DemoApp();
-	~DemoApp();
+	OgreApp();
+	~OgreApp();
     
     bool setName(const char* name);
-	void startDemo(const char* name, MusicMode musica);
+	void startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica);
     void setSidebar();
     void update(float elapsed);
     void setLevel(int n, int c, Evaluation forced = EVEN);
     
-    bool loadSaveFile(std::string saveFile);
-    bool loadConfig(std::string filepath, int stageID);
+    void setPause(bool value);
+    bool isPaused() const;
+    bool isSessionOver() const;
     
+    void activateTouchPress(float x, float y);
+    void activateTouchRelease(float x, float y);
+    void activateTouchMove(float dx, float dy);
     void activatePerformLeftMove();
     void activatePerformRightMove();
+    void activatePerformDoubleTap(float x, float y);
+    void activatePerformSingleTap(float x, float y);
+    void activatePerformPinch();
     
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-	virtual bool touchMoved(const OIS::MultiTouchEvent &evt);
-	virtual bool touchPressed(const OIS::MultiTouchEvent &evt);
-	virtual bool touchReleased(const OIS::MultiTouchEvent &evt);
-	virtual bool touchCancelled(const OIS::MultiTouchEvent &evt);
-#else
+#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
@@ -128,6 +130,7 @@ private:
     
     unsigned seed;
     bool pause;
+    bool sessionOver;
     Vector3 origin;
     float totalElapsed;
     SceneNode* lightNodeMain;

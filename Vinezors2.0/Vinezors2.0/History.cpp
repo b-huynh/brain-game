@@ -13,9 +13,9 @@ extern Util::ConfigGlobal globals;
 static int seatID = 0;
 static int coverID = 0;
 
-const double PANEL_HEIGHT = 18;
-const double PANEL_X = 0.0;
-const double PANEL_Y = -10.0;
+const float PANEL_HEIGHT = 18;
+const float PANEL_X = 0.0;
+const float PANEL_Y = -10.0;
 
 History::History(Ogre::SceneManager* sceneMgr, int nback)
 : sceneMgr(sceneMgr), nback(nback), seats(), list(), coverNode(NULL), coverDest(),
@@ -34,12 +34,12 @@ void History::initSeats(int nback)
     
     ++seatID;
     
-    double x = panelX;
-    double y = panelY + panelHeight;
+    float x = panelX;
+    float y = panelY + panelHeight;
     for (int i = 0; i < SIZE; ++i)
     {
-        double midx = x;
-        double midy = y + reservedHeight / 2;
+        float midx = x;
+        float midy = y + reservedHeight / 2;
         
         SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode("seatNode" + Util::toStringInt(seatID));
         
@@ -83,7 +83,7 @@ void History::addPod(const PodInfo & podInfo)
     
     Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y + reservedHeight, globals.podStemLength), BASIC, podInfo.podSignal, podInfo.podColor, podInfo.podShape, podInfo.podSound, NO_DIRECTION, globals.podStemRadius, globals.podHeadRadius);
     cpy->setMoveSpeed(5.0);
-    cpy->revealPod();
+    cpy->uncloakPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
     {
@@ -107,13 +107,13 @@ void History::addPod(const PodInfo & podInfo)
     }
 }
 
-void History::revealPod()
+void History::uncloakPod()
 {
     if (list.size() > 0)
-        list[0]->revealPod();
+        list[0]->uncloakPod();
 }
 
-void History::update(double elapsed)
+void History::update(float elapsed)
 {
     for (int i = 0; i < list.size(); ++i)
         list[i]->update(elapsed);
@@ -121,7 +121,7 @@ void History::update(double elapsed)
     Vector3 dist = coverDest - coverNode->getPosition();
     Vector3 move;
     
-    double distlen2 = dist.squaredLength();
+    float distlen2 = dist.squaredLength();
     move = dist * 1.5 * elapsed;
     
     if (move.squaredLength() >= distlen2)

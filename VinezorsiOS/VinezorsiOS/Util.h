@@ -27,10 +27,20 @@ enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST,
 enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
 #define NUM_POD_TYPES 3
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_UNKNOWN };
-enum PodShape { POD_SHAPE_SPHERE, POD_SHAPE_TRIANGLE, POD_SHAPE_DIAMOND, POD_SHAPE_CONE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
+enum PodShape { POD_SHAPE_SPHERE, POD_SHAPE_TRIANGLE, POD_SHAPE_DIAMOND, POD_SHAPE_CONE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
-#define NUM_POD_SIGNALS 5
+struct PodObject
+{
+    PodSignal signal;
+    PodColor color;
+    PodSound sound;
+    PodShape shape;
+    
+    PodObject() : signal(POD_SIGNAL_UNKNOWN), color(POD_COLOR_UNKNOWN), sound(POD_SOUND_UNKNOWN), shape(POD_SHAPE_UNKNOWN) {}
+    PodObject(PodSignal sig, PodColor col, PodSound snd, PodShape shp) : signal(sig), color(col), sound(snd), shape(shp) {}
+};
+#define NUM_POD_SIGNALS 5 // For assigning sounds to each index
 
 // Forward Declarations of main components of the game
 class Tunnel;
@@ -39,15 +49,18 @@ class Hud;
 
 namespace Util
 {
-    static const float EPSILON = 0.0075f;
-    
+    static const float EPSILON = 0.0050f;
+
     struct ConfigGlobal
     {
         int stageID;
         float sessionTime;
         float stageTime;
         int stageTotalSignals;
-        int stageTotalTargets;
+        int stageTotalTargets1;
+        int stageTotalTargets2;
+        int stageTotalTargets3;
+        int stageTotalCollections;
         int stageTotalTargetsVariance;
         float stageProficiencyThreshold1;
         float stageProficiencyThreshold2;
@@ -89,7 +102,11 @@ namespace Util
         float podRotateSpeed;
         float podCollisionMin;
         float podCollisionMax;
-        int podBinSize; // This is for tunnels that pre-generate the pod sequence
+        float distractorCollisionMin;
+        float distractorCollisionMax;
+        int podBinSize1; // This is for tunnels that pre-generate the pod sequence
+        int podBinSize2;
+        int podBinSize3;
         int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int stageTotalDistractorsMin;
         int stageTotalDistractorsMax;
@@ -130,6 +147,10 @@ namespace Util
         int setPodMesh;
         float swipeSensitivity;
         int swipeInverted;
+        int combo1MinA;
+        int combo2MinA;
+        int combo1MinB;
+        int combo2MinB;
         
         int screenWidth;
         int screenHeight;
@@ -157,6 +178,10 @@ namespace Util
         int label5_posY;
         int label6_posX;
         int label6_posY;
+        int label7_posX;
+        int label7_posY;
+        
+        std::vector<std::vector<PodObject> > podObjects;
         
         int currStageID;
         std::string configPath;

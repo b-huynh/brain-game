@@ -18,11 +18,14 @@ Util::ConfigGlobal::ConfigGlobal()
     sessionTime = 1500.00;
     stageTime = 90.0;
     stageTotalSignals = 60;
-    stageTotalTargets = 20;
+    stageTotalTargets1 = 20;
+    stageTotalTargets2 = 35;
+    stageTotalTargets3 = 45;
+    stageTotalCollections = 40;
     stageTotalTargetsVariance = 2;
-    stageProficiencyThreshold1 = 0.60;
-    stageProficiencyThreshold2 = 0.80;
-    stageProficiencyThreshold3 = 0.95;
+    stageProficiencyThreshold1 = 0.50;
+    stageProficiencyThreshold2 = 0.70;
+    stageProficiencyThreshold3 = 0.90;
     stageTimeThreshold1 = 40;
     stageTimeThreshold2 = 50;
     stageTimeThreshold3 = 55;
@@ -58,9 +61,13 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.4;
-    podCollisionMax = 0.6;
-    podBinSize = 10;
+    podCollisionMin = 0.05;
+    podCollisionMax = 0.25;
+    distractorCollisionMin = 0.10;
+    distractorCollisionMax = 0.20;
+    podBinSize1 = 10;
+    podBinSize2 = 5;
+    podBinSize3 = 3;
     podNBackChance = 33;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
@@ -76,8 +83,8 @@ Util::ConfigGlobal::ConfigGlobal()
     HPNegativeWrongAnswer = -1;
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
-    distractorSpeedPenalty = 1.0;
-    distractorTimePenalty = 10.0;
+    distractorSpeedPenalty = 0.0;
+    distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     modifierCamSpeed = 5.0;
@@ -100,9 +107,18 @@ Util::ConfigGlobal::ConfigGlobal()
     setSkyBox = 3;
     setWallPanelTexture = 0;
     setPodMesh = 1;
-    setVineShip = 2;
-    swipeSensitivity = 15.0;
+    setVineShip = 1;
+    swipeSensitivity = 12.0;
     swipeInverted = 0;
+    combo1MinA = 5;
+    combo2MinA = 10;
+    combo1MinB = 3;
+    combo2MinB = 6;
+    podObjects = std::vector<std::vector<PodObject> >(4);
+    podObjects[0].push_back(PodObject(POD_SIGNAL_1, POD_COLOR_BLUE, POD_SOUND_1, POD_SHAPE_CONE));
+    podObjects[1].push_back(PodObject(POD_SIGNAL_2, POD_COLOR_GREEN, POD_SOUND_2, POD_SHAPE_CONE));
+    podObjects[2].push_back(PodObject(POD_SIGNAL_3, POD_COLOR_PINK, POD_SOUND_3, POD_SHAPE_CONE));
+    podObjects[3].push_back(PodObject(POD_SIGNAL_4, POD_COLOR_YELLOW, POD_SOUND_4, POD_SHAPE_CONE));
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -135,6 +151,8 @@ void Util::ConfigGlobal::set()
     label5_posY = 7 * screenHeight / 40;
     label6_posX = screenWidth / 2;
     label6_posY = screenHeight / 2;
+    label7_posX = screenWidth / 10;
+    label7_posY = screenHeight - screenHeight / 10;
 }
 
 void Util::ConfigGlobal::initPaths(const char* name)
@@ -165,8 +183,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageTime;
     else if (paramName == "stageTotalSignals")
         in >> stageTotalSignals;
-    else if (paramName == "stageTotalTargets")
-        in >> stageTotalTargets;
+    else if (paramName == "stageTotalTargets1")
+        in >> stageTotalTargets1;
+    else if (paramName == "stageTotalTargets2")
+        in >> stageTotalTargets2;
+    else if (paramName == "stageTotalTargets3")
+        in >> stageTotalTargets3;
+    else if (paramName == "stageTotalCollections")
+        in >> stageTotalCollections;
     else if (paramName == "stageTotalTargetsVariance")
         in >> stageTotalTargetsVariance;
     else if (paramName == "stageProficiencyThreshold1")
@@ -211,18 +235,28 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerPod;
     else if (paramName == "tunnelSegmentsPerDistractors")
         in >> tunnelSegmentsPerDistractors;
+    else if (paramName == "initialSegmentsFirstPod")
+        in >> initialSegmentsFirstPod;
+    else if (paramName == "initialSegmentsFirstDistractors")
+        in >> initialSegmentsFirstDistractors;
     else if (paramName == "podRotateSpeed")
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
         in >> podAppearance;
-    else if (paramName == "podBinSize")
-        in >> podBinSize;
+    else if (paramName == "podBinSize1")
+        in >> podBinSize1;
+    else if (paramName == "podBinSize2")
+        in >> podBinSize2;
+    else if (paramName == "podBinSize3")
+        in >> podBinSize3;
     else if (paramName == "podCollisionMin")
         in >> podCollisionMin;
     else if (paramName == "podCollisionMax")
         in >> podCollisionMax;
-    else if (paramName == "podBinSize")
-        in >> podBinSize;
+    else if (paramName == "distractorCollisionMin")
+        in >> distractorCollisionMin;
+    else if (paramName == "distractorCollisionMax")
+        in >> distractorCollisionMax;
     else if (paramName == "podNBackChance")
         in >> podNBackChance;
     else if (paramName == "stageTotalDistractorsMin")
@@ -281,6 +315,34 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> swipeSensitivity;
     else if (paramName == "swipeInverted")
         in >> swipeInverted;
+    else if (paramName == "combo1MinA")
+        in >> combo1MinA;
+    else if (paramName == "combo2MinA")
+        in >> combo2MinA;
+    else if (paramName == "combo1MinB")
+        in >> combo1MinB;
+    else if (paramName == "combo2MinB")
+        in >> combo2MinB;
+    else if (paramName == "numPodObjects")
+    {
+        int input;
+        in >> input;
+        podObjects.clear();
+        podObjects = std::vector<std::vector<PodObject> >(input);
+    }
+    else if (paramName == "podObject")
+    {
+        int input1, input2, input3, input4;
+        in >> input1 >> input2 >> input3 >> input4;
+        assert(input1 >= 0 && input1 < podObjects.size());
+        podObjects[input1].push_back(PodObject((PodSignal)input1, (PodColor)input2, (PodSound)input3, (PodShape)input4));
+    }
+    else if (paramName == "combo2MinA")
+        in >> combo2MinA;
+    else if (paramName == "combo1MinB")
+        in >> combo1MinB;
+    else if (paramName == "combo2MinB")
+        in >> combo2MinB;
     else
     {
         std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
@@ -965,8 +1027,8 @@ void Util::createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, fl
 {
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
-    length += EPSILON;
-    depth += EPSILON;
+    length += 2 * Util::EPSILON;
+    depth += 2 * Util::EPSILON;
     
     Vector3 p1 = Vector3(-length / 2, 0, -depth / 2);
     Vector3 p2 = Vector3(length / 2, 0, -depth / 2);

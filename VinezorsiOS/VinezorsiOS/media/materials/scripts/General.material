@@ -294,8 +294,8 @@ material General/Wall5
         pass
 		{
             lighting on
-            scene_blend alpha_blend
-            depth_write off
+//            scene_blend alpha_blend
+//            depth_write off
 
             texture_unit
 			{
@@ -491,6 +491,22 @@ material General/PodUnknown
     }
 }
 
+material General/PodUnknownTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.1 0.1 0.3
+            diffuse 0.5 0.5 0.5 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
 material General/PodWhite
 {
     technique
@@ -501,6 +517,22 @@ material General/PodWhite
  
             ambient 0.1 0.1 0.1 1
             diffuse 0.8 0.8 0.8 1
+        }
+    }
+}
+
+material General/PodWhiteTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.1 0.1 0.3
+            diffuse 0.8 0.8 0.8 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -520,6 +552,22 @@ material General/PodRed
     }
 }
 
+material General/PodRedTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.3 0.1 0.1 0.3
+            diffuse 0.8 0.1 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
 material General/PodGreen
 {
     technique
@@ -531,6 +579,22 @@ material General/PodGreen
             ambient 0.1 0.3 0.1 1
             diffuse 0.2 0.8 0.2 1
             emissive 0.1 0.2 0.1 1
+        }
+    }
+}
+
+material General/PodGreenTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.3 0.1 0.3
+            diffuse 0.1 0.8 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -550,6 +614,22 @@ material General/PodBlue
     }
 }
 
+material General/PodBlueTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.1 0.3 0.3
+            diffuse 0.1 0.1 0.8 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
 material General/PodYellow
 {
     technique
@@ -561,6 +641,22 @@ material General/PodYellow
             ambient 0.3 0.3 0.1 1
             diffuse 0.8 0.8 0.1 1
             emissive 0.2 0.2 0.0 1
+        }
+    }
+}
+
+material General/PodYellowTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.3 0.3 0.1 0.3
+            diffuse 0.8 0.8 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -579,22 +675,14 @@ material General/PodStem
     }
 }
 
-material General/PodShell
+material General/VineShell
 {
     technique
     {
         pass
         {
-//            scene_blend alpha_blend
-//            depth_write off
- 
-//            texture_unit
-//            {
-//                colour_op_ex source1 src_manual src_current 1 0 0
-//                alpha_op_ex source1 src_manual src_current 0.5
-//            }
-            ambient 0.3 0.1 0.1 0.3
-            diffuse 1.0 0.0 0.0 0.3
+            ambient 0.3 0.3 0.3 0.7
+            diffuse 1.0 1.0 1.0 0.7
             scene_blend alpha_blend
             depth_write off
         }
@@ -650,3 +738,57 @@ material General/VineShell
     }
 }
 
+material General/Star
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
+}
+
+material General/SpaceSkyPlane
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture space.jpg
+			}
+		}
+	}
+}
+
+material General/TestSkyPlane0
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture test0.jpg
+			}
+		}
+	}
+}

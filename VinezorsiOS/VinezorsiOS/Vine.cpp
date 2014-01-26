@@ -12,13 +12,25 @@ extern Util::ConfigGlobal globals;
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), vineType(0), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius)
-: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
+: parentNode(parentNode), vineType(1), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
-    switch (globals.setVineShip)
+    loadShip();
+}
+
+void Vine::reloadIfNecessary()
+{
+    if (vineType != globals.setVineShip)
+        loadShip();
+}
+
+void Vine::loadShip()
+{
+    vineType = globals.setVineShip;
+    switch (vineType)
     {
         case 0:
             loadBasicShip();
@@ -67,6 +79,7 @@ void Vine::loadRunnerShip()
     tip->yaw(Degree(180.0));
     
     /*
+     // Transparent shell for maybe a shield look around the ship
     shell = entireVine->createChildSceneNode("shellNode" + Util::toStringInt(vineID));
     Entity* shellEntity = shell->getCreator()->createEntity("vineShellEntity" + Util::toStringInt(vineID), "sphereMesh");
     shellEntity->setMaterialName("General/VineShell");
@@ -77,11 +90,6 @@ void Vine::loadRunnerShip()
         globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer));
     shell->setScale(radius * 2.5, radius * 2.5, radius * 2.5);
     */
-    
-//    tipEntity->getSubEntity(0)->setMaterialName("General/PodYellow");
-//    tipEntity->getSubEntity(1)->setMaterialName("General/PodRed");
-//    tipEntity->getSubEntity(2)->setMaterialName("General/PodBlue");
-//    tipEntity->getSubEntity(3)->setMaterialName("General/PodGreen");
 }
 
 void Vine::loadFlowerShip()
@@ -95,11 +103,29 @@ void Vine::loadFlowerShip()
     tip->attachObject(tipEntity);
     tip->yaw(Degree(180.0));
     tip->scale(0.5, 0.5, 0.5);
+    
+    // Problem with transparency not carrying over... assign custom material
+    tipEntity->getSubEntity(0)->setMaterialName("General/VineShell");
+}
+
+int Vine::getVineType() const
+{
+    return vineType;
+}
+
+SceneNode* Vine::getEntireVine() const
+{
+	return entireVine;
 }
 
 SceneNode* Vine::getTip() const
 {
 	return tip;
+}
+
+SceneNode* Vine::getBase() const
+{
+	return base;
 }
 
 Vector3 Vine::getPos() const
@@ -139,6 +165,15 @@ void Vine::setWobble(bool value)
     wobbleSpeed = 0.0;
 }
 
+void Vine::setShockwave()
+{
+    if (!shockwaveEffect)
+    {
+        shockwaveEffect = parentNode->getCreator()->createParticleSystem("StarShockwave", "General/StarShockwave");
+        entireVine->attachObject(shockwaveEffect);
+    }
+}
+
 void Vine::move(Vector3 delta)
 {
 	entireVine->translate(delta);
@@ -152,9 +187,19 @@ void Vine::update(float elapsed)
         wobbleSpeed += elapsed;
         if (wobbleSpeed > 2.0)
             wobbleSpeed = 2.0;
-        entireVine->roll(15 * Degree(sin(32 * wobbleSpeed * totalElapsed)));
+        entireVine->roll(15 * Degree(sin(64 * wobbleSpeed * totalElapsed)));
         if (totalElapsed >= 0.5)
             setWobble(false);
+    }
+}
+
+void Vine::removeShockwave()
+{
+    if (shockwaveEffect)
+    {
+        entireVine->detachObject(shockwaveEffect);
+        entireVine->getCreator()->destroyParticleSystem(shockwaveEffect);
+        shockwaveEffect = NULL;
     }
 }
 
@@ -181,11 +226,11 @@ void Vine::removeFromScene()
         shell->getCreator()->destroySceneNode(shell);
         shell = NULL;
     }
-    
     if (entireVine)
     {
+        removeShockwave();
         entireVine->removeAndDestroyAllChildren();
-        entireVine->getCreator()->destroySceneNode(base);
+        entireVine->getCreator()->destroySceneNode(entireVine);
         entireVine = NULL;
     }
 }

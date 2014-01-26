@@ -93,8 +93,8 @@ public:
     bool setName(const char* name);
 	void startDemo(const char* name, MusicMode musica);
     void setSidebar();
-    void update(double elapsed);
-    void setLevel(int n, int c, bool init = false);
+    void update(float elapsed);
+    void setLevel(int n, int c, Evaluation forced = EVEN);
     
     bool loadSaveFile(std::string saveFile);
     bool loadConfig(std::string filepath, int stageID);
@@ -124,13 +124,12 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-    ProgressionMode progressionMode;
     MusicMode musicMode;
     
     unsigned seed;
     bool pause;
     Vector3 origin;
-    double totalElapsed;
+    float totalElapsed;
     SceneNode* lightNodeMain;
     SceneNode* lightNodeSide;
     Tunnel* tunnel;

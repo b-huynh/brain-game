@@ -30,7 +30,7 @@ struct History
     
     void initSeats(int nback);
     void addPod(const PodInfo & podInfo);
-    void revealPod();
+    void uncloakPod();
     void update(float elapsed);
     void setCoverDest(int seatInd);
     void determineCoverLoc(bool success);

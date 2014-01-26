@@ -95,7 +95,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	//m_pSceneMgrSide = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerSide");
 	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 	//m_pSceneMgrSide->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    
+    m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO   , 0.0, 300.0, 600.0);
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));

@@ -24,6 +24,7 @@
 #include <OISMouse.h>
 
 #define OGRE_STATIC_OgreOggSound 1
+#define OGRE_STATIC_ParticleFX 1
 
 #ifdef OGRE_STATIC_LIB
 #  define OGRE_STATIC_GL
@@ -76,7 +77,7 @@ using namespace OgreOggSound;
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #ifdef OGRE_IS_IOS
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MultiTouchListener, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>, OgreBites::SdkTrayListener
 #else
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
 #endif
@@ -86,9 +87,9 @@ public:
 	~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MultiTouchListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #else
-	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+	bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
 	void updateOgre(float timeSinceLastFrame);
     
@@ -99,12 +100,7 @@ public:
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
     
-#ifdef OGRE_IS_IOS
-	bool touchMoved(const OIS::MultiTouchEvent &evt);
-	bool touchPressed(const OIS::MultiTouchEvent &evt);
-	bool touchReleased(const OIS::MultiTouchEvent &evt);
-	bool touchCancelled(const OIS::MultiTouchEvent &evt);
-#else
+#ifndef OGRE_IS_IOS
 	bool mouseMoved(const OIS::MouseEvent &evt);
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);

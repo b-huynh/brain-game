@@ -23,28 +23,29 @@ struct SectionInfo
     TunnelType tunnelType;
     Direction tunnelDir; // The direction each segment is turning
     int tunnelDirAngle; // The amount of turning degrees for each segment
-    bool sidesSafe[NUM_DIRECTIONS];
+    Quaternion tunnelRot;
+    bool sidesUsed[NUM_DIRECTIONS];
     
     SectionInfo()
-    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), sidesSafe()
+    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), tunnelRot(), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = true;
+            sidesUsed[i] = false;
     }
     
     SectionInfo(const SectionInfo & info)
-    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), sidesSafe()
+    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), tunnelRot(info.tunnelRot), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = info.sidesSafe[i];
+            sidesUsed[i] = info.sidesUsed[i];
         
     }
     
-    SectionInfo(TunnelType tt, Direction td, int tda, const bool safe[NUM_DIRECTIONS])
-    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda)
+    SectionInfo(TunnelType tt, Direction td, int tda, Quaternion rot, const bool used[NUM_DIRECTIONS])
+    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda), tunnelRot(rot), sidesUsed()
     {
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesSafe[i] = safe[i];
+            sidesUsed[i] = used[i];
     }
 };
 
@@ -58,6 +59,8 @@ private:
     
 	Vector3 center;
     Quaternion rot;
+    Direction dir; // Direction from previous tunnel slice
+    int dirAngle;
 	float width;
 	float depth;
 	
@@ -93,14 +96,12 @@ private:
     float growthT; // Pod Growth Timing animation
     
     bool sidesUsed[NUM_DIRECTIONS];
-    bool sidesSafe[NUM_DIRECTIONS];
     
-    SectionInfo sectionInfo;
     bool podHistory; // Used to avoid saving data multiple times for history panel
     bool infoStored; // Used to avoid saving data multiple times for log files
 public:
 	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, float width, float depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
 	
     void initWalls();
     
@@ -121,7 +122,6 @@ public:
     bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
-    bool hasSafeSide(Direction side) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);
@@ -130,7 +130,6 @@ public:
     Vector3 requestWallMove(Direction dir, float offset) const;
     Vector3 requestWallPosition(Vector3 cur, Direction dir, float offset) const;
     
-    void setSectionInfo(const SectionInfo & value);
     void setPodHistory(bool value);
     void setInfoStored(bool value);
 	void move(Vector3 delta);
@@ -141,7 +140,7 @@ public:
     void clearPods();
     void updateGrowth(float nt);
     
-    void rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, float width, float depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS]);
+    void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
     
 	void removeFromScene();
 };

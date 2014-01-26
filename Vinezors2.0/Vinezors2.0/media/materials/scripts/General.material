@@ -97,7 +97,7 @@ material General/BarColors
         lighting off
         texture_unit
         {
-            texture barcolorsranged.png
+            texture barcolorswinter.png
         }
       } 
     }
@@ -249,72 +249,6 @@ material General/Wall2
 
             texture_unit
 			{
-				texture Cartoon_Texture_Ground.jpg
-			}
-		}
-	}
-}
-
-material General/Wall3
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture Cartoon_Texture_Rock.jpg
-			}
-		}
-	}
-}
-
-material General/Wall4
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture Cartoon_Texture_Stone.jpg
-			}
-		}
-	}
-}
-
-material General/Wall5
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-			{
-				texture Cartoon_Texture_Wood.jpg
-			}
-		}
-	}
-}
-/*
-material General/Wall2
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
 				texture TunnelTile_SpaceStation.png
 			}
 		}
@@ -370,7 +304,7 @@ material General/Wall5
 		}
 	}
 }
-*/
+
 material General/Wall6
 {
     technique
@@ -419,7 +353,7 @@ material General/Wall8
 	}
 }
 
-material General/NatureWall1
+material General/WallCartoon2
 {
     technique
 	{
@@ -429,13 +363,29 @@ material General/NatureWall1
 
             texture_unit
 			{
-				texture Ground_Texture_02.jpg
+				texture Cartoon_Texture_Ground.jpg
+            }
+		}
+	}
+}
+
+material General/WallCartoon3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Cartoon_Texture_Rock.jpg
 			}
 		}
 	}
 }
 
-material General/NatureWall2
+material General/WallCartoon4
 {
     technique
 	{
@@ -445,13 +395,13 @@ material General/NatureWall2
 
             texture_unit
 			{
-				texture Ground_Texture_01.jpg
+				texture Cartoon_Texture_Stone.jpg
 			}
 		}
 	}
 }
 
-material General/NatureWall3
+material General/WallCartoon5
 {
     technique
 	{
@@ -461,23 +411,7 @@ material General/NatureWall3
 
             texture_unit
 			{
-				texture Green_Grass_Texture_01.jpg
-			}
-		}
-	}
-}
-
-material General/NatureWall4
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture Wood_Texture_04.jpg
+				texture Cartoon_Texture_Wood.jpg
 			}
 		}
 	}
@@ -528,6 +462,21 @@ material General/WallCheckpointFail
     }
 }
 
+material General/PodMetal
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.3 0.3 0.3 1
+        }
+    }
+}
+
+
 material General/PodUnknown
 {
     technique
@@ -542,16 +491,18 @@ material General/PodUnknown
     }
 }
 
-material General/PodUnknown
+material General/PodUnknownTransparent
 {
     technique
     {
         pass
         {
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.5 0.5 0.5 1
+            
+            ambient 0.1 0.1 0.1 0.3
+            diffuse 0.5 0.5 0.5 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -564,9 +515,24 @@ material General/PodWhite
         {
             lighting on
  
-            ambient 0.0 0.0 0.0 1
+            ambient 0.1 0.1 0.1 1
             diffuse 0.8 0.8 0.8 1
-            emissive 0.8 0.8 0.8 1
+        }
+    }
+}
+
+material General/PodWhiteTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.1 0.1 0.3
+            diffuse 0.8 0.8 0.8 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -581,7 +547,23 @@ material General/PodRed
  
             ambient 0.3 0.1 0.1 1
             diffuse 0.8 0.1 0.1 1
-            emissive 0.8 0.1 0.1 1
+            emissive 0.2 0.0 0.0 1
+        }
+    }
+}
+
+material General/PodRedTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.3 0.1 0.1 0.3
+            diffuse 0.8 0.1 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -595,8 +577,24 @@ material General/PodGreen
             lighting on
  
             ambient 0.1 0.3 0.1 1
-            diffuse 0.1 0.8 0.1 1
-            emissive 0.1 0.8 0.1 1
+            diffuse 0.2 0.8 0.2 1
+            emissive 0.1 0.2 0.1 1
+        }
+    }
+}
+
+material General/PodGreenTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.3 0.1 0.3
+            diffuse 0.1 0.8 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -609,9 +607,25 @@ material General/PodBlue
         {
             lighting on
  
-            ambient 0.1 0.1 0.3 1
-            diffuse 0.1 0.1 0.8 1
-            emissive 0.1 0.1 0.8 1
+            ambient 0.1 0.2 0.3 1
+            diffuse 0.2 0.3 0.8 1
+            emissive 0.1 0.1 0.2 1
+        }
+    }
+}
+
+material General/PodBlueTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.1 0.1 0.3 0.3
+            diffuse 0.1 0.1 0.8 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -626,7 +640,23 @@ material General/PodYellow
  
             ambient 0.3 0.3 0.1 1
             diffuse 0.8 0.8 0.1 1
-            emissive 0.8 0.8 0.1 1
+            emissive 0.2 0.2 0.0 1
+        }
+    }
+}
+
+material General/PodYellowTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.3 0.3 0.1 0.3
+            diffuse 0.8 0.8 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
         }
     }
 }
@@ -651,14 +681,6 @@ material General/PodShell
     {
         pass
         {
-//            scene_blend alpha_blend
-//            depth_write off
- 
-//            texture_unit
-//            {
-//                colour_op_ex source1 src_manual src_current 1 0 0
-//                alpha_op_ex source1 src_manual src_current 0.5
-//            }
             ambient 0.3 0.1 0.1 0.3
             diffuse 1.0 0.0 0.0 0.3
             scene_blend alpha_blend
@@ -714,5 +736,115 @@ material General/VineShell
             cull_software none
         }
     }
+}
+
+material General/Star
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
+}
+
+material General/SpaceSkyPlane
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture space.jpg
+			}
+		}
+	}
+}
+
+material General/TestSkyPlane0
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture test0.jpg
+			}
+		}
+	}
+}
+
+material General/TestSkyPlane1
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture test1.jpg
+			}
+		}
+	}
+}
+
+material General/TestSkyPlane2
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture test2.jpg
+			}
+		}
+	}
+}
+
+
+material General/TestSkyPlane3
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture test_lowbrow.jpg
+			}
+		}
+	}
 }
 

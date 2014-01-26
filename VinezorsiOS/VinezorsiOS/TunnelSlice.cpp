@@ -18,24 +18,25 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: parentNode(NULL), tunnelSliceID(0), center(), rot(), width(0), depth(0), type(NORMAL), materialName(""), sliceNode(NULL), entireWall(NULL),
+: parentNode(NULL), tunnelSliceID(0), center(), rot(), dir(NO_DIRECTION), dirAngle(0), width(0), depth(0), type(NORMAL), materialName(""), sliceNode(NULL), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = false;
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesSafe[i] = false;
 }
 
-TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, TunnelType type, Vector3 center, Quaternion rot, float width, float depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS])
-: parentNode(parentNode), tunnelSliceID(nid), center(center), rot(rot), width(width), depth(depth), type(type), materialName(material), sliceNode(NULL), entireWall(NULL),
+TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
+: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialName(material), sliceNode(NULL), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
+    Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
+    Vector3 end = start + forward * (depth + globals.tunnelSegmentBuffer);
+    center = (start + end) / 2;
+    rot = info.tunnelRot;
+    
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesUsed[i] = used[i];
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesSafe[i] = safe[i];
+        sidesUsed[i] = info.sidesUsed[i];
     
     initWalls();
 }
@@ -252,7 +253,7 @@ std::vector<Pod*> TunnelSlice::getPods() const
 
 SectionInfo TunnelSlice::getSectionInfo() const
 {
-    return sectionInfo;
+    return SectionInfo(type, dir, dirAngle, rot, sidesUsed);
 }
 
 bool TunnelSlice::isPodHistory() const
@@ -270,13 +271,6 @@ bool TunnelSlice::hasAvailableSide(Direction side) const
     if (side == NO_DIRECTION)
         return false;
     return sidesUsed[side];
-}
-
-bool TunnelSlice::hasSafeSide(Direction side) const
-{
-    if (side == NO_DIRECTION)
-        return false;
-    return sidesSafe[side];
 }
 
 // Finds collisions through bounding boxes
@@ -301,18 +295,38 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
 	for (int i = 0; i < pods.size(); ++i)
 	{
         // Is Vine in same panel as pod?
-        if (!pods[i]->isPodTaken() &&
+        if (pods[i]->getPodTrigger())
+        {
+            if (!pods[i]->isPodTaken() &&
+                ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
+                 (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
+            {
+                // Is vine where pod is in time?
+                //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
+                if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
+                    (vine->previousID == tunnelSliceID && vine->previoust < globals.distractorCollisionMin && (vine->aftert > globals.distractorCollisionMax || vine->afterID > vine->previousID)) ||
+                    (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.distractorCollisionMin && vine->aftert <= globals.distractorCollisionMax) || (vine->aftert > globals.distractorCollisionMax && vine->previousID < vine->afterID))))
+                {
+                    pods[i]->takePod();
+                    ret.push_back(pods[i]);
+                }
+            }
+        }
+        else
+        {
+            if (!pods[i]->isPodTaken() &&
             ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
              (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
-        {
-            // Is vine where pod is in time?
-            //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
-            if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
-                (vine->previousID == tunnelSliceID && vine->previoust < globals.podCollisionMin && (vine->aftert > globals.podCollisionMax || vine->afterID > vine->previousID)) ||
-                (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.podCollisionMin && vine->aftert <= globals.podCollisionMax) || (vine->aftert > globals.podCollisionMax && vine->previousID < vine->afterID))))
             {
-                pods[i]->takePod();
-                ret.push_back(pods[i]);
+                // Is vine where pod is in time?
+                //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
+                if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
+                    (vine->previousID == tunnelSliceID && vine->previoust < globals.podCollisionMin && (vine->aftert > globals.podCollisionMax || vine->afterID > vine->previousID)) ||
+                    (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.podCollisionMin && vine->aftert <= globals.podCollisionMax) || (vine->aftert > globals.podCollisionMax && vine->previousID < vine->afterID))))
+                {
+                    pods[i]->takePod();
+                    ret.push_back(pods[i]);
+                }
             }
         }
 	}
@@ -409,11 +423,6 @@ Vector3 TunnelSlice::requestWallPosition(Vector3 cur, Direction dir, float offse
     return cur + requestWallMove(dir, offset);
 }
 
-void TunnelSlice::setSectionInfo(const SectionInfo & value)
-{
-    sectionInfo = value;
-}
-
 void TunnelSlice::setPodHistory(bool value)
 {
     podHistory = value;
@@ -468,21 +477,23 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, ManualOb
 {
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
-    Vector3 n = (p2 - p1).crossProduct(p4 - p1).normalisedCopy();
+    Vector3 d1 = (p2 - p1).normalisedCopy();
+    Vector3 d2 = (p4 - p1).normalisedCopy();
+    Vector3 n = d1.crossProduct(d2);
     
-    Vector3 d1 = (p1 - p3).normalisedCopy();
-    Vector3 d2 = (p2 - p4).normalisedCopy();
+    d1 *= 32 * Util::EPSILON;
+    d2 *= 32 * Util::EPSILON;
     
-    manual->position(p1 + d1 * Util::EPSILON);
+    manual->position(p1 - d1 - d2);
     manual->normal(n);
     manual->textureCoord(1, 1);
-    manual->position(p2 + d2 * Util::EPSILON);
+    manual->position(p2 + d1 - d2);
     manual->normal(n);
     manual->textureCoord(1, 0);
-    manual->position(p3 + d1 * -Util::EPSILON);
+    manual->position(p3 + d1 + d2);
     manual->normal(n);
     manual->textureCoord(0, 0);
-    manual->position(p4 + d2 * -Util::EPSILON);
+    manual->position(p4 - d1 + d2);
     manual->normal(n);
     manual->textureCoord(0, 1);
     manual->quad(0, 1, 2, 3);
@@ -537,7 +548,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 / 2, wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[NORTHWEST] && sidesSafe[NORTHWEST])
+    if (sidesUsed[NORTHWEST])
         setIntermediateWall(entireIntermediate, NORTHWEST, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -548,7 +559,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 / 2, wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[NORTH] && sidesSafe[NORTH])
+    if (sidesUsed[NORTH])
         setIntermediateWall(entireIntermediate, NORTH, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -559,7 +570,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[NORTHEAST] && sidesSafe[NORTHEAST])
+    if (sidesUsed[NORTHEAST])
         setIntermediateWall(entireIntermediate, NORTHEAST, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -570,7 +581,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[EAST] && sidesSafe[EAST])
+    if (sidesUsed[EAST])
         setIntermediateWall(entireIntermediate, EAST, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -581,7 +592,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(wallLength1 / 2, -wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[SOUTHEAST] && sidesSafe[SOUTHEAST])
+    if (sidesUsed[SOUTHEAST])
         setIntermediateWall(entireIntermediate, SOUTHEAST, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -592,7 +603,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 / 2, -wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[SOUTH] && sidesSafe[SOUTH])
+    if (sidesUsed[SOUTH])
         setIntermediateWall(entireIntermediate, SOUTH, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -603,7 +614,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[SOUTHWEST] && sidesSafe[SOUTHWEST])
+    if (sidesUsed[SOUTHWEST])
         setIntermediateWall(entireIntermediate, SOUTHWEST, manual, p1, p2, p3, p4, bl, tr);
     
     p1 = p4;
@@ -614,7 +625,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     move = Vector3(-wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength2 / 2, 0);
     move = q1 * move;
     p4 = start + move;
-    if (sidesUsed[WEST] && sidesSafe[WEST])
+    if (sidesUsed[WEST])
         setIntermediateWall(entireIntermediate, WEST, manual, p1, p2, p3, p4, bl, tr);
     
     MeshPtr mesh = manual->convertToMesh(meshName);
@@ -699,19 +710,19 @@ void TunnelSlice::updateGrowth(float nt)
         pods[i]->setToGrowth(growthT);
 }
 
-void TunnelSlice::rejuvenate(int nid, TunnelType type, Vector3 center, Quaternion rot, float width, float depth, const std::string & material, const bool used[NUM_DIRECTIONS], const bool safe[NUM_DIRECTIONS])
+void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
 {
     this->tunnelSliceID = nid;
     this->type = type;
-    this->center = center;
-    this->rot = rot;
+    Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
+    Vector3 end = start + forward * (depth + globals.tunnelSegmentBuffer);
+    this->center = (start + end) / 2;
+    this->rot = info.tunnelRot;
     this->width = width;
     this->depth = depth;
     this->materialName = material;
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesUsed[i] = used[i];
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesSafe[i] = safe[i];
+        sidesUsed[i] = info.sidesUsed[i];
     growthT = 0;
     infoStored = false;
     

@@ -83,7 +83,7 @@ void History::addPod(const PodInfo & podInfo)
     
     Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y + reservedHeight, globals.podStemLength), BASIC, podInfo.podSignal, podInfo.podColor, podInfo.podShape, podInfo.podSound, NO_DIRECTION, globals.podStemRadius, globals.podHeadRadius);
     cpy->setMoveSpeed(5.0);
-    cpy->revealPod();
+    cpy->uncloakPod();
     list.insert(list.begin(), cpy);
     if (list.size() > seats.size() + 1)
     {
@@ -107,10 +107,10 @@ void History::addPod(const PodInfo & podInfo)
     }
 }
 
-void History::revealPod()
+void History::uncloakPod()
 {
     if (list.size() > 0)
-        list[0]->revealPod();
+        list[0]->uncloakPod();
 }
 
 void History::update(float elapsed)

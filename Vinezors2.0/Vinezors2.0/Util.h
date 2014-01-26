@@ -19,7 +19,6 @@
 
 enum Evaluation { PASS, FAIL, EVEN };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
-enum ProgressionMode { SIMPLE_PROGRESSIVE, SIMPLE_MULTISENSORY, DISTRIBUTIVE_ADAPTIVE };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
@@ -40,28 +39,30 @@ class Hud;
 
 namespace Util
 {
-    static const double EPSILON = 0.001;
-    
+    static const float EPSILON = 0.0025f;
+
     struct ConfigGlobal
     {
         int stageID;
-        double sessionTime;
-        double stageTime;
+        float sessionTime;
+        float stageTime;
         int stageTotalSignals;
-        int stageTotalTargets;
+        int stageTotalTargets1;
+        int stageTotalTargets2;
+        int stageTotalTargets3;
+        int stageTotalCollections;
         int stageTotalTargetsVariance;
-        double stageProficiencyThreshold1;
-        double stageProficiencyThreshold2;
-        double stageProficiencyThreshold3;
-        double stageTimeThreshold1;
-        double stageTimeThreshold2;
-        double stageTimeThreshold3;
-        double stageNavigationThreshold1;
-        double stageNavigationThreshold2;
-        double stageNavigationThreshold3;
-        int progressionMode;
+        float stageProficiencyThreshold1;
+        float stageProficiencyThreshold2;
+        float stageProficiencyThreshold3;
+        int stageTimeThreshold1;
+        int stageTimeThreshold2;
+        int stageTimeThreshold3;
+        int stageNavigationThreshold1;
+        int stageNavigationThreshold2;
+        int stageNavigationThreshold3;
+        int stageStarPassThreshold;
         int gameMode;
-        int podTestType;
         int revealColor;
         int revealSound;
         int revealShape;
@@ -70,10 +71,10 @@ namespace Util
         Vector3 tunnelReferenceRight;
         int tunnelMinAngleTurn;
         int tunnelMaxAngleTurn;
-        double tunnelSegmentWidth;
-        double tunnelSegmentDepth;
-        double tunnelSegmentBuffer;
-        double tunnelWallLength;
+        float tunnelSegmentWidth;
+        float tunnelSegmentDepth;
+        float tunnelSegmentBuffer;
+        float tunnelWallLength;
         int tunnelSegmentsPerSection;
         int tunnelSegmentsPerPod;
         int tunnelSegmentsPerDistractors;
@@ -81,17 +82,23 @@ namespace Util
         int initialSegmentsFirstPod;
         int initialSegmentsFirstDistractors;
         int initiationSections;
-        double vineTOffset;
-        double vineRadius;
+        float vineTOffset;
+        float vineRadius;
+        float vineTransitionSpeed;
         int podAppearance;
-        double podHeadRadius;
-        double podStemRadius;
-        double podStemLength;
-        int podBinSize; // This is for tunnels that pre-generate the pod sequence
+        float podHeadRadius;
+        float podStemRadius;
+        float podStemLength;
+        float podRotateSpeed;
+        float podCollisionMin;
+        float podCollisionMax;
+        int podBinSize1; // This is for tunnels that pre-generate the pod sequence
+        int podBinSize2;
+        int podBinSize3;
         int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int stageTotalDistractorsMin;
         int stageTotalDistractorsMax;
-        double seatLength;
+        float seatLength;
         int tunnelSections;
         int nback;
         int control;
@@ -103,29 +110,36 @@ namespace Util
         int HPNegativeWrongAnswer;
         int HPPositiveCorrectAnswer;
         int HPPositiveWrongAnswer;
-        double drainSpeed;
-        double initCamSpeed;
-        double startupCamSpeed;
-        double modifierCamSpeed;
-        double minCamSpeed;
-        double maxCamSpeed;
-        double nlevelSpeedModifier;
+        float distractorSpeedPenalty;
+        float distractorTimePenalty;
+        float initCamSpeed;
+        float startupCamSpeed;
+        float modifierCamSpeed;
+        float minCamSpeed;
+        float maxCamSpeed;
+        float nlevelSpeedModifier;
         int numToSpeedUp;
         int numToSpeedDown;
-        double stepsizeSpeedUp;
-        double stepsizeSpeedDown;
-        double HPBarXRef;
-        double HPBarYRef;
-        double HPBarWidth;
-        double HPBarHeight;
-        double timedRunControlUpDist1;
-        double timedRunControlUpDist2;
-        double timedRunControlUpDist3;
-        int timedRunControlUpSignal1;
-        int timedRunControlUpSignal2;
-        int timedRunControlUpSignal3;
-        int timedRunNMax;
-        double swipeSensitivity;
+        float stepsizeSpeedUp;
+        float stepsizeSpeedDown;
+        float HPBarXRef;
+        float HPBarYRef;
+        float HPBarWidth;
+        float HPBarHeight;
+        float timedRunControlUpDist1;
+        float timedRunControlUpDist2;
+        float timedRunControlUpDist3;
+        int setSkyBox;
+        int setWallPanelTexture;
+        int setVineShip;
+        int setPodMesh;
+        float swipeSensitivity;
+        int swipeInverted;
+        int combo1MinA;
+        int combo2MinA;
+        int combo1MinB;
+        int combo2MinB;
+        
         int screenWidth;
         int screenHeight;
         int viewportMainWidth_modeRight;
@@ -152,6 +166,8 @@ namespace Util
         int label5_posY;
         int label6_posX;
         int label6_posY;
+        int label7_posX;
+        int label7_posY;
         
         int currStageID;
         std::string configPath;
@@ -168,7 +184,6 @@ namespace Util
         void initPaths(const char* name);
         void setConfigValue(std::istream& in, std::string paramName);
         bool loadConfig(int stageID);
-        bool loadSaveFile(std::string savePath);
         
         void setMessage(std::string msg, MessageType type);
         void clearMessage();
@@ -176,7 +191,7 @@ namespace Util
         std::string buildLogPath(std::string playerName);
     };
     
-    double clamp(double val, double min, double max);
+    float clamp(float val, float min, float max);
     int getDegrees(Direction dir);
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
@@ -187,19 +202,23 @@ namespace Util
     Vector3 randVector3();
     
     int randRangeInt(int min, int max);
-    double randRangeDouble(double min, double max);
+    float randRangeFloat(float min, float max);
     std::string toStringInt(int value);
-    std::string toStringDouble(double value);
+    std::string toStringFloat(float value);
     std::string getOSXDir();
     std::string getIOSDir();
     
-    void drawRect(ManualObject* obj, double x, double y, double width, double height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
+    void drawRect(ManualObject* obj, float x, float y, float width, float height, const ColourValue & col = ColourValue(1.0, 1.0, 1.0, 0.0), bool filled = false); // (x, y) is bottom left in this function
     
     void createSphere(Ogre::SceneManager* sceneMgr, const std::string& strName, float r, int nRings = 16, int nSegments = 16);
     void createCylinder(Ogre::SceneManager* sceneMgr, const std::string& strName, float r,  float h, int nSegments = 16);
     void createDiamond(Ogre::SceneManager* sceneMgr, const std::string& strName, float w, float h);
     void createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, float l, float w, float h);
     void createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth);
+    void createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, float length, float depth, Vector3 loc, Quaternion rot, Vector3 & bl, Vector3 & tr);
+    void createSegment(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth,  const bool sides[NUM_DIRECTIONS]);
+    void createDefaultSegments(Ogre::SceneManager* sceneMgr);
+    
     
     void generateMaterials();
 };

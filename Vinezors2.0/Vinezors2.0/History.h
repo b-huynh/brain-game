@@ -30,17 +30,17 @@ struct History
     
     void initSeats(int nback);
     void addPod(const PodInfo & podInfo);
-    void revealPod();
-    void update(double elapsed);
+    void uncloakPod();
+    void update(float elapsed);
     void setCoverDest(int seatInd);
     void determineCoverLoc(bool success);
     
-    double panelHeight;
-    double panelX;
-    double panelY;
-    double reservedHeight;
-    double coverHeight;
-    double coverOffsetY;
+    float panelHeight;
+    float panelX;
+    float panelY;
+    float reservedHeight;
+    float coverHeight;
+    float coverOffsetY;
     
     int saveInd;
     int coverInd;

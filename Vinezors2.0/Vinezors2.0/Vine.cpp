@@ -12,13 +12,36 @@ extern Util::ConfigGlobal globals;
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), radius(0.0), speed(0.0), loc(NO_DIRECTION), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), vineType(0), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
-Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, double radius)
-: parentNode(parentNode), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), dest(), forward(), radius(radius), speed(0.0), loc(NO_DIRECTION), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
+Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius)
+: parentNode(parentNode), vineType(0), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
-    loadFlowerShip();
+    loadShip();
+}
+
+void Vine::reloadIfNecessary()
+{
+    if (vineType != globals.setVineShip)
+        loadShip();
+}
+
+void Vine::loadShip()
+{
+    vineType = globals.setVineShip;
+    switch (vineType)
+    {
+        case 0:
+            loadBasicShip();
+            break;
+        case 1:
+            loadFlowerShip();
+            break;
+        default:
+            loadRunnerShip();
+            break;
+    }
     ++vineID;
 }
 
@@ -86,9 +109,24 @@ void Vine::loadFlowerShip()
     tip->scale(0.5, 0.5, 0.5);
 }
 
+int Vine::getVineType() const
+{
+    return vineType;
+}
+
+SceneNode* Vine::getEntireVine() const
+{
+	return entireVine;
+}
+
 SceneNode* Vine::getTip() const
 {
 	return tip;
+}
+
+SceneNode* Vine::getBase() const
+{
+	return base;
 }
 
 Vector3 Vine::getPos() const
@@ -101,19 +139,9 @@ void Vine::setPos(Vector3 value)
 	entireVine->setPosition(value);
 }
 
-Vector3 Vine::getDest() const
-{
-	return dest;
-}
-
 Vector3 Vine::getForward() const
 {
 	return forward;
-}
-
-void Vine::setDest(Vector3 value)
-{
-	dest = value;
 }
 
 void Vine::setForward(Vector3 value)
@@ -121,7 +149,7 @@ void Vine::setForward(Vector3 value)
 	forward = value;
 }
 
-double Vine::getRadius() const
+float Vine::getRadius() const
 {
     return radius;
 }
@@ -138,12 +166,21 @@ void Vine::setWobble(bool value)
     wobbleSpeed = 0.0;
 }
 
+void Vine::setShockwave()
+{
+    if (!shockwaveEffect)
+    {
+        shockwaveEffect = parentNode->getCreator()->createParticleSystem("StarShockwave", "General/StarShockwave");
+        entireVine->attachObject(shockwaveEffect);
+    }
+}
+
 void Vine::move(Vector3 delta)
 {
 	entireVine->translate(delta);
 }
 
-void Vine::update(double elapsed)
+void Vine::update(float elapsed)
 {
     if (wobbling)
     {
@@ -151,35 +188,20 @@ void Vine::update(double elapsed)
         wobbleSpeed += elapsed;
         if (wobbleSpeed > 2.0)
             wobbleSpeed = 2.0;
-        entireVine->roll(15 * Degree(sin(32 * wobbleSpeed * totalElapsed)));
+        entireVine->roll(15 * Degree(sin(64 * wobbleSpeed * totalElapsed)));
         if (totalElapsed >= 0.5)
             setWobble(false);
     }
-    
-    /*
-    double moveSpeed = speed;
-    
-	Vector3 dist = dest - entireVine->getPosition();
-    // This should never happen, but we will ensure the player will never fall behind
-    if (dist.length() > 1.1 * speed) {
-        moveSpeed = dist.length();
+}
+
+void Vine::removeShockwave()
+{
+    if (shockwaveEffect)
+    {
+        entireVine->detachObject(shockwaveEffect);
+        entireVine->getCreator()->destroyParticleSystem(shockwaveEffect);
+        shockwaveEffect = NULL;
     }
-    
-	Vector3 norm = dist;
-	norm.normalise();
-	Vector3 delta = dist * moveSpeed * elapsed;
-    
-    // Ensure going forward at moveSpeed
-    Vector3 forwardLim = forward * moveSpeed * elapsed;
-    double missingDist = delta.dotProduct(forwardLim) / forwardLim.length();
-    delta += forward * missingDist;
-    
-    if (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z >
-        dist.x * dist.x + dist.y * dist.y + dist.z * dist.z)
-		delta = dist;
-    
-	move(delta);
-     */
 }
 
 void Vine::removeFromScene()
@@ -205,11 +227,11 @@ void Vine::removeFromScene()
         shell->getCreator()->destroySceneNode(shell);
         shell = NULL;
     }
-    
     if (entireVine)
     {
+        removeShockwave();
         entireVine->removeAndDestroyAllChildren();
-        entireVine->getCreator()->destroySceneNode(base);
+        entireVine->getCreator()->destroySceneNode(entireVine);
         entireVine = NULL;
     }
 }

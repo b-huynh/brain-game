@@ -45,23 +45,30 @@ private:
     Ogre::SceneNode* parentNode;
     
     MeshType mtype;
+    std::string materialName;
+    
+    Entity* headContentEntity;
+    SceneNode* glowNode;
+    ParticleSystem* glowEffect;
+    
     Vector3 base;
     Vector3 tip;
     PodSignal podSignal;
 	PodColor podColor;
 	PodShape podShape;
 	PodSound podSound;
-    double stemRadius;
-    double stemLength;
-    double headRadius;
+    float stemRadius;
+    float stemLength;
+    float headRadius;
     SceneNode* entirePod;
 	SceneNode* stem;
 	SceneNode* head;
 	SceneNode* shell;
-    double moveSpeed;
+    float moveSpeed;
     Vector3 rotateSpeed;
     
     Direction loc;
+    bool podTested;
     bool podTaken;
     bool podTrigger;
     bool podGood;
@@ -70,7 +77,7 @@ private:
 public:
 	Pod();
     
-	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, double stemRadius, double headRadius);
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius);
 	
     void loadBasicShape();
     void loadFuelCell();
@@ -82,35 +89,42 @@ public:
 	PodColor getPodColor() const;
 	PodShape getPodShape() const;
 	PodSound getPodSound() const;
+    SceneNode* getEntirePod() const;
 	SceneNode* getStem() const;
 	SceneNode* getHead() const;
 	Vector3 getDest() const;
 	Vector3 getPosition() const;
 	Direction getLoc() const;
     PodInfo getPodInfo() const;
-	double getStemRadius() const;
-	double getStemLength() const;
-	double getHeadRadius() const;
+	float getStemRadius() const;
+	float getStemLength() const;
+	float getHeadRadius() const;
+    SceneNode* getGlowNode() const;
     
+    bool isPodTested() const;
     bool isPodTaken() const;
     bool getPodTrigger() const;
     bool isPodGood() const;
     
 	void move(Vector3 delta);
 	
-    void setToGrowth(double t);
+    void setToGrowth(float t);
+    void setSkin();
 	void takePod();
     void hidePod();
     void revealPod();
+    void uncloakPod();
+    void generateGlow();
     void setDest(Vector3 value);
-	void setMoveSpeed(double value);
+	void setMoveSpeed(float value);
 	void setRotateSpeed(Vector3 value);
+    void setPodTested(bool value);
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     
 	void removeFromScene();
     
-	void update(double elapsed);
+	void update(float elapsed);
     
     PodColor getPodType() const;
     

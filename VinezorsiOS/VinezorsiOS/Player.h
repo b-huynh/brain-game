@@ -47,10 +47,13 @@ private:
 	bool keyDown;
 	bool keyLeft;
 	bool keyRight;
+	bool keySpace;
 	
     std::vector<Vine*> vines;
     
     MovementMode movementMode;
+    bool showCombo;
+    
 	Direction camDir; // direction offset on tunnel for player camera
 	Vector2 mousePos;
     Vector3 oldPos;
@@ -61,11 +64,13 @@ private:
     int camRoll;
     Quaternion desireRot;
     int desireRoll;
-    float camSpeed;
+    float baseSpeed;
     float finalSpeed;
     
 	float vineOffset; // offset to camPos in direction of forward
     TunnelSlice* lookback;
+    Pod* earlySelect;
+    float glowSpeed;
     
     SpeedControlMode speedControl;
     
@@ -85,6 +90,9 @@ private:
     float totalElapsed;
     float totalDistanceTraveled;
     float animationTimer;
+    float speedTimer;
+    float glowTimer;
+    float startMusicTimer;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -123,6 +131,7 @@ public:
 	bool getKeyDown() const;
 	bool getKeyLeft() const;
 	bool getKeyRight() const;
+	bool getKeySpace() const;
 	Direction getCamDir() const;
 	Direction getVineDir() const;
 	Direction getVineDest() const;
@@ -135,8 +144,9 @@ public:
 	int getCamRoll() const;
 	Quaternion getDesireRot() const;
 	int getDesireRoll() const;
-	float getCamSpeed() const;
+	float getBaseSpeed() const;
 	float getFinalSpeed() const;
+	float getTotalSpeed() const;
 	Vector3 getVineOffset() const;
     SpeedControlMode getSpeedControl() const;
 	float getTotalElapsed() const;
@@ -144,6 +154,7 @@ public:
 	float getAnimationTimer() const;
     float getAccuracy() const;
     float getProgress(Tunnel* tunnel) const;
+    bool getShowCombo() const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -160,6 +171,7 @@ public:
 	void setKeyDown(bool value);
 	void setKeyLeft(bool value);
 	void setKeyRight(bool value);
+	void setKeySpace(bool value);
 	
 	void setCamDir(Direction value);
 	bool setVineDirRequest(Direction value, Tunnel* tunnel);
@@ -172,7 +184,7 @@ public:
     void setCamRoll(int value);
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
-    void setCamSpeed(float value);
+    void setBaseSpeed(float value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -182,12 +194,15 @@ public:
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
+    void unpause();
+    void pause();
     
     void setSounds(bool mode);
     void newTunnel(Tunnel* tunnel, bool setmusic);
     
 	void move(Vector3 delta);
     void changeMovementMode();
+    void setShowCombo(bool value);
 	void addVine(Vine* vine);
 	void checkCollisions(Tunnel* tunnel);
     
@@ -198,6 +213,8 @@ public:
     bool checkPerformLeftMove(bool force);
     bool checkPerformRightMove(bool force);
     void setStars(Tunnel* tunnel);
+    void performShockwave(Tunnel* tunnel);
+    void testPodGiveFeedback(Tunnel* tunnel, Pod* test);
 	void update(Tunnel* tunnel, Hud* hud, float elapsed);
     
     bool saveStage(std::string file);
