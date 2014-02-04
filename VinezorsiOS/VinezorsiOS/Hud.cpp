@@ -14,6 +14,9 @@ extern Util::ConfigGlobal globals;
 
 Hud::Hud()
 {
+    player = NULL;
+    tunnel = NULL;
+    
     // The code snippet below is used to output text
     // create a font resource
     ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -80,8 +83,22 @@ Hud::Hud()
     overlays.push_back(overlay2);
 }
 
+void Hud::unlink()
+{
+    this->tunnel = NULL;
+    this->player = NULL;
+}
+
+void Hud::link(Tunnel* tunnel, Player* player)
+{
+    this->tunnel = tunnel;
+    this->player = player;
+}
+
 void Hud::init(Tunnel* tunnel, Player* player)
 {
+    link(tunnel, player);
+    
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
     panelText->setDimensions(10, 10);
@@ -183,7 +200,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
         overlays[i]->show();
 }
 
-void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
+void Hud::update(float elapsed)
 {
     float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     
@@ -211,7 +228,11 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
     if (tunnel->getMode() == GAME_TIMED)
         label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
     else if (tunnel->getMode() == GAME_NAVIGATION)
-        label5->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
+    {
+        float val = player->getScore();
+        if (val < 0.0) val = 0.0;
+        label5->setCaption("Score: " + Util::toStringInt(val));
+    }
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
@@ -229,7 +250,7 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);
-        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(tunnel), indicator->getTop());
+        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
         
         threshold1->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold1, barHP->getTop() - 0.005);
         threshold2->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold2, barHP->getTop() - 0.005);

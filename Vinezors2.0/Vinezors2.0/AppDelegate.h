@@ -28,7 +28,7 @@
 #endif
 {
     NSTimer *mTimer;
-    DemoApp demo;
+    OgreApp demo;
     
     NSDate *mDate;
     double mFrameInterval;

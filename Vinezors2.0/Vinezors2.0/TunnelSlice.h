@@ -16,39 +16,6 @@
 
 #include <vector>
 
-enum TunnelType { NORMAL, BLANK, CHECKPOINT_PASS, CHECKPOINT_FAIL, CHECKPOINT_EVEN };
-
-struct SectionInfo
-{
-    TunnelType tunnelType;
-    Direction tunnelDir; // The direction each segment is turning
-    int tunnelDirAngle; // The amount of turning degrees for each segment
-    Quaternion tunnelRot;
-    bool sidesUsed[NUM_DIRECTIONS];
-    
-    SectionInfo()
-    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), tunnelRot(), sidesUsed()
-    {
-        for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesUsed[i] = false;
-    }
-    
-    SectionInfo(const SectionInfo & info)
-    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), tunnelRot(info.tunnelRot), sidesUsed()
-    {
-        for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesUsed[i] = info.sidesUsed[i];
-        
-    }
-    
-    SectionInfo(TunnelType tt, Direction td, int tda, Quaternion rot, const bool used[NUM_DIRECTIONS])
-    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda), tunnelRot(rot), sidesUsed()
-    {
-        for (int i = 0; i < NUM_DIRECTIONS; ++i)
-            sidesUsed[i] = used[i];
-    }
-};
-
 // Contains the components of a segment of a tunnel which include the wall and pod information
 class TunnelSlice
 {

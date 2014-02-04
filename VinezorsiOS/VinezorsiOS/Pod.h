@@ -12,31 +12,6 @@
 #include "OgreFramework.h"
 #include "Util.h"
 
-// This is here tempoarily until we figure out how to change colors of specific parts of mesh
-enum MeshType { BASIC, FUEL };
-
-struct PodInfo
-{
-    MeshType meshType;
-    PodSignal podSignal;
-    PodColor podColor;
-    PodShape podShape;
-    PodSound podSound;
-    Direction podLoc;
-    bool goodPod; // is the pod good to take?
-    bool podTrigger; // trigger on: false = after pod has past, true = on collision
-    bool podTaken; // is the pod gone?
-    
-    PodInfo()
-    : meshType(BASIC), podSignal(POD_SIGNAL_UNKNOWN), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
-    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false)
-    {}
-    
-    PodInfo(MeshType mtype, PodSignal psig, PodColor pcol, PodShape pshp, PodSound psod, Direction pl, bool good, bool trigger = false, bool taken = false)
-    : meshType(mtype), podSignal(psig), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
-    {}
-};
-
 // These are objects which are attached to the walls and may act as hints, boosters, or penalties.
 // They are comprised of a stem (cylinder) and a head (sphere)
 class Pod
@@ -44,7 +19,7 @@ class Pod
 private:
     Ogre::SceneNode* parentNode;
     
-    MeshType mtype;
+    PodMeshType mtype;
     std::string materialName;
     
     Entity* headContentEntity;
@@ -77,12 +52,14 @@ private:
 public:
 	Pod();
     
-	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius);
+	Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius);
 	
+    void loadPod();
     void loadBasicShape();
     void loadFuelCell();
+    void loadHazard();
     
-    MeshType getMeshType() const;
+    PodMeshType getMeshType() const;
     Vector3 getBase() const;
     Vector3 getTip() const;
 	PodSignal getPodSignal() const;
@@ -114,7 +91,7 @@ public:
     void hidePod();
     void revealPod();
     void uncloakPod();
-    void generateGlow();
+    void generateGlow(PodColor color, PodShape shape);
     void setDest(Vector3 value);
 	void setMoveSpeed(float value);
 	void setRotateSpeed(Vector3 value);
@@ -122,6 +99,7 @@ public:
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     
+    void removeGlow();
 	void removeFromScene();
     
 	void update(float elapsed);

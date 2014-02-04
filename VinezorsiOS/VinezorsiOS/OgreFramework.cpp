@@ -219,6 +219,7 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
+//    m_pSoundMgr->createSound("Music4", "VideoGameSong4.ogg", false, true, true);
     m_pSoundMgr->createSound("SoundAmazingFeedback", "dingupenough.wav", false, false, true);
     m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundGoodFeedback", "VinezorsFeedbackLight2.wav", false, false, true);

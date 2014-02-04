@@ -16,12 +16,12 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     sessionTime = 1500.00;
-    stageTime = 90.0;
+    stageTime = 120.0;
     stageTotalSignals = 60;
     stageTotalTargets1 = 20;
     stageTotalTargets2 = 35;
     stageTotalTargets3 = 45;
-    stageTotalCollections = 30;
+    stageTotalCollections = 40;
     stageTotalTargetsVariance = 2;
     stageProficiencyThreshold1 = 0.50;
     stageProficiencyThreshold2 = 0.70;
@@ -29,9 +29,9 @@ Util::ConfigGlobal::ConfigGlobal()
     stageTimeThreshold1 = 40;
     stageTimeThreshold2 = 50;
     stageTimeThreshold3 = 55;
-    stageNavigationThreshold1 = 20;
-    stageNavigationThreshold2 = 25;
-    stageNavigationThreshold3 = 30;
+    stageNavigationThreshold1 = 25;
+    stageNavigationThreshold2 = 35;
+    stageNavigationThreshold3 = 40;
     stageStarPassThreshold = 2;
     gameMode = 1;
     revealColor = 1;
@@ -50,8 +50,8 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    initialSegmentsFirstPod = 0;
-    initialSegmentsFirstDistractors = -2;
+    initialSegmentsFirstPod = 1;
+    initialSegmentsFirstDistractors = 3;
     initiationSections = 1;
     vineTOffset = 1.0;
     vineRadius = tunnelSegmentWidth / 15.0;
@@ -61,8 +61,10 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.4;
-    podCollisionMax = 0.6;
+    podCollisionMin = 0.10;
+    podCollisionMax = 0.50;
+    distractorCollisionMin = 0.30;
+    distractorCollisionMax = 0.40;
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
@@ -81,17 +83,17 @@ Util::ConfigGlobal::ConfigGlobal()
     HPNegativeWrongAnswer = -1;
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
-    distractorSpeedPenalty = 1.0;
+    distractorSpeedPenalty = 0.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     modifierCamSpeed = 5.0;
     minCamSpeed = 10.0;
-    maxCamSpeed = 25.0;
+    maxCamSpeed = 30.0;
     nlevelSpeedModifier = 0.8;
-    numToSpeedUp = 3;
-    numToSpeedDown = 1;
-    stepsizeSpeedUp = 3.0;
+    numToSpeedUp = 2;
+    numToSpeedDown = 2;
+    stepsizeSpeedUp = 1.0;
     stepsizeSpeedDown = -1.0;
     HPBarXRef = 0.05;
     HPBarYRef = 0.05;
@@ -99,19 +101,44 @@ Util::ConfigGlobal::ConfigGlobal()
     HPBarHeight = 0.05;
     screenWidth = 1024;
     screenHeight = 800;
-    timedRunControlUpDist1 = 3000.0;
-    timedRunControlUpDist2 = 7500.0;
-    timedRunControlUpDist3 = 20000.0;
     setSkyBox = 3;
     setWallPanelTexture = 0;
-    setPodMesh = 1;
-    setVineShip = 2;
-    swipeSensitivity = 15.0;
+    setVineShip = VINE_RUNNER_SHIP;
+    swipeSensitivity = 12.0;
     swipeInverted = 0;
     combo1MinA = 5;
     combo2MinA = 10;
     combo1MinB = 3;
     combo2MinB = 6;
+    signalTypes = std::vector<std::vector<PodInfo> >(4);
+    signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
+    signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
+    signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
+    signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
+    navMap = std::vector<NavigationLevel>(23);
+    navMap[0] = NavigationLevel(1, 0);
+    navMap[1] = NavigationLevel(2, 0);
+    navMap[2] = NavigationLevel(2, 1);
+    navMap[3] = NavigationLevel(1, 1);
+    navMap[4] = NavigationLevel(3, 0);
+    navMap[5] = NavigationLevel(4, 0);
+    navMap[6] = NavigationLevel(4, 1);
+    navMap[7] = NavigationLevel(3, 1);
+    navMap[8] = NavigationLevel(2, 2);
+    navMap[9] = NavigationLevel(4, 2);
+    navMap[10] = NavigationLevel(3, 2);
+    navMap[11] = NavigationLevel(1, 2);
+    navMap[12] = NavigationLevel(4, 3);
+    navMap[13] = NavigationLevel(2, 3);
+    navMap[14] = NavigationLevel(3, 3);
+    navMap[15] = NavigationLevel(4, 4);
+    navMap[16] = NavigationLevel(3, 4);
+    navMap[17] = NavigationLevel(2, 4);
+    navMap[18] = NavigationLevel(4, 5);
+    navMap[19] = NavigationLevel(3, 5);
+    navMap[20] = NavigationLevel(4, 6);
+    navMap[21] = NavigationLevel(3, 6);
+    navMap[22] = NavigationLevel(4, 7);
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -228,6 +255,10 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerPod;
     else if (paramName == "tunnelSegmentsPerDistractors")
         in >> tunnelSegmentsPerDistractors;
+    else if (paramName == "initialSegmentsFirstPod")
+        in >> initialSegmentsFirstPod;
+    else if (paramName == "initialSegmentsFirstDistractors")
+        in >> initialSegmentsFirstDistractors;
     else if (paramName == "podRotateSpeed")
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
@@ -242,6 +273,10 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> podCollisionMin;
     else if (paramName == "podCollisionMax")
         in >> podCollisionMax;
+    else if (paramName == "distractorCollisionMin")
+        in >> distractorCollisionMin;
+    else if (paramName == "distractorCollisionMax")
+        in >> distractorCollisionMax;
     else if (paramName == "podNBackChance")
         in >> podNBackChance;
     else if (paramName == "stageTotalDistractorsMin")
@@ -282,26 +317,42 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stepsizeSpeedUp;
     else if (paramName == "stepsizeSpeedDown")
         in >> stepsizeSpeedDown;
-    else if (paramName == "timedRunControlUpDist1")
-        in >> timedRunControlUpDist1;
-    else if (paramName == "timedRunControlUpDist2")
-        in >> timedRunControlUpDist2;
-    else if (paramName == "timedRunControlUpDist3")
-        in >> timedRunControlUpDist3;
     else if (paramName == "setSkyBox")
         in >> setSkyBox;
     else if (paramName == "setWallPanelTexture")
         in >> setWallPanelTexture;
     else if (paramName == "setVineShip")
-        in >> setVineShip;
-    else if (paramName == "setPodMesh")
-        in >> setPodMesh;
+    {
+        int input;
+        in >> input;
+        setVineShip = (VineMeshType)input;
+    }
     else if (paramName == "swipeSensitivity")
         in >> swipeSensitivity;
     else if (paramName == "swipeInverted")
         in >> swipeInverted;
     else if (paramName == "combo1MinA")
         in >> combo1MinA;
+    else if (paramName == "combo2MinA")
+        in >> combo2MinA;
+    else if (paramName == "combo1MinB")
+        in >> combo1MinB;
+    else if (paramName == "combo2MinB")
+        in >> combo2MinB;
+    else if (paramName == "numSignalTypes")
+    {
+        int input;
+        in >> input;
+        signalTypes.clear();
+        signalTypes = std::vector<std::vector<PodInfo> >(input);
+    }
+    else if (paramName == "signalType")
+    {
+        int input1, input2, input3, input4, input5;
+        in >> input1 >> input2 >> input3 >> input4 >> input5;
+        assert(input1 >= 0 && input1 < signalTypes.size());
+        signalTypes[input1].push_back(PodInfo((PodSignal)input1, (PodMeshType)input2, (PodColor)input3, (PodShape)input4, (PodSound)input5));
+    }
     else if (paramName == "combo2MinA")
         in >> combo2MinA;
     else if (paramName == "combo1MinB")
@@ -992,8 +1043,8 @@ void Util::createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, fl
 {
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
-    length += Util::EPSILON * 2;
-    depth += Util::EPSILON * 2;
+    length += 2 * Util::EPSILON;
+    depth += 2 * Util::EPSILON;
     
     Vector3 p1 = Vector3(-length / 2, 0, -depth / 2);
     Vector3 p2 = Vector3(length / 2, 0, -depth / 2);
@@ -1135,6 +1186,20 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
     
     sides[NORTH] = true;
     Util::createSegment(sceneMgr, "segmentMesh8", 1.0, 1.0, sides);
+}
+
+float Util::computeTotalPossibleOpportunities(float startSpeed, float maxSpeed, float lengthPerPod, float totalTime)
+{
+    // Note: assumes it reaches maxSpeed  under totalTime
+    float minTargetsToMaxSpeed = 2 * (maxSpeed - startSpeed);
+    float averageSpeed = (startSpeed + maxSpeed) / 2;
+    float ts = (lengthPerPod * minTargetsToMaxSpeed) / averageSpeed;
+    
+    float tm = totalTime - ts;
+    
+    std::cout << minTargetsToMaxSpeed << " " << averageSpeed << " " << ts << " " << tm << std::endl;
+    
+    return maxSpeed * (tm - ts) / lengthPerPod + minTargetsToMaxSpeed;
 }
 
 void Util::generateMaterials()

@@ -16,12 +16,13 @@ struct Vine
 {
     Ogre::SceneNode* parentNode;
     
-    int vineType;
+    VineMeshType meshType;
     SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
 	SceneNode *shell;
     ParticleSystem* shockwaveEffect;
+    ParticleSystem* boostEffect;
     Vector3 forward;
     float radius;
     
@@ -41,12 +42,12 @@ struct Vine
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
 	
-    void reloadIfNecessary();
+    void reloadIfNecessary(VineMeshType newMeshType);
     void loadShip();
     void loadBasicShip();
     void loadRunnerShip();
     void loadFlowerShip();
-    int getVineType() const;
+    VineMeshType getMeshType() const;
     SceneNode* getEntireVine() const;
 	SceneNode* getTip() const;
     SceneNode* getBase() const;
@@ -58,12 +59,14 @@ struct Vine
     void setQuaternion(Quaternion rot);
     void setWobble(bool value);
     void setShockwave();
+    void setBoost();
     
 	void move(Vector3 delta);
 	
 	void update(float elapsed);
     
     void removeShockwave();
+    void removeBoost();
 	void removeFromScene();
 };
 

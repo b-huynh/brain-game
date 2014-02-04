@@ -14,6 +14,9 @@ extern Util::ConfigGlobal globals;
 
 Hud::Hud()
 {
+    player = NULL;
+    tunnel = NULL;
+    
     // The code snippet below is used to output text
     // create a font resource
     ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -80,8 +83,22 @@ Hud::Hud()
     overlays.push_back(overlay2);
 }
 
+void Hud::unlink()
+{
+    this->tunnel = NULL;
+    this->player = NULL;
+}
+
+void Hud::link(Tunnel* tunnel, Player* player)
+{
+    this->tunnel = tunnel;
+    this->player = player;
+}
+
 void Hud::init(Tunnel* tunnel, Player* player)
 {
+    link(tunnel, player);
+    
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
     panelText->setDimensions(10, 10);
@@ -131,7 +148,6 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label3->setAlignment(TextAreaOverlayElement::Right);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
     label3->setCharHeight(globals.screenHeight / 50);
-    label3->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_PIXELS);
@@ -144,6 +160,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label5->setAlignment(TextAreaOverlayElement::Right);
     label5->setPosition(globals.label5_posX, globals.label5_posY);
     label5->setCharHeight(globals.screenHeight / 50);
+    label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label5->setFontName("Arial");
     
     label6->setMetricsMode(GMM_PIXELS);
@@ -183,7 +200,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
         overlays[i]->show();
 }
 
-void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
+void Hud::update(float elapsed)
 {
     float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     
@@ -204,17 +221,23 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()) + " + " + Util::toStringInt(player->getNumCorrectBonus()));
     }
     if (tunnel->getMode() != GAME_NAVIGATION)
-        label3->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+        label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     else
-        label3->setCaption("Gathered: " + Util::toStringInt(player->getNumCorrectTotal()) + "/" + Util::toStringInt(tunnel->getNumTargets()));
+        label3->setCaption("");
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
-    if (tunnel->getMode() != GAME_NAVIGATION)
-        label5->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    if (tunnel->getMode() == GAME_TIMED)
+        label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    else if (tunnel->getMode() == GAME_NAVIGATION)
+    {
+        float val = player->getScore();
+        if (val < 0.0) val = 0.0;
+        label5->setCaption("Score: " + Util::toStringInt(val));
+    }
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
     label7->setCaption("");
-    if (tunnel->getMode() == GAME_PROFICIENCY && player->getShowCombo())
+    if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
     {
         if (tunnel->getSpawnCombo() > 1)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
@@ -227,7 +250,7 @@ void Hud::update(Tunnel* tunnel, Player* player, float elapsed)
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);
-        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(tunnel), indicator->getTop());
+        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
         
         threshold1->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold1, barHP->getTop() - 0.005);
         threshold2->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold2, barHP->getTop() - 0.005);

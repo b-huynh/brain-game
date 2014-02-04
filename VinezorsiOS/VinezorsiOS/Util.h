@@ -22,30 +22,90 @@ enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
+
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
+
+// Tunnel Section/Segment Info
+enum TunnelType { NORMAL, BLANK, CHECKPOINT_PASS, CHECKPOINT_FAIL, CHECKPOINT_EVEN };
+struct SectionInfo
+{
+    TunnelType tunnelType;
+    Direction tunnelDir; // The direction each segment is turning
+    int tunnelDirAngle; // The amount of turning degrees for each segment
+    Quaternion tunnelRot;
+    bool sidesUsed[NUM_DIRECTIONS];
+    
+    SectionInfo()
+    : tunnelType(NORMAL), tunnelDir(NO_DIRECTION), tunnelDirAngle(0), tunnelRot(), sidesUsed()
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = false;
+    }
+    
+    SectionInfo(const SectionInfo & info)
+    : tunnelType(info.tunnelType), tunnelDir(info.tunnelDir), tunnelDirAngle(info.tunnelDirAngle), tunnelRot(info.tunnelRot), sidesUsed()
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = info.sidesUsed[i];
+        
+    }
+    
+    SectionInfo(TunnelType tt, Direction td, int tda, Quaternion rot, const bool used[NUM_DIRECTIONS])
+    : tunnelType(tt), tunnelDir(td), tunnelDirAngle(tda), tunnelRot(rot), sidesUsed()
+    {
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = used[i];
+    }
+};
+
+// Pod Info
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_HAZARD };
 enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
 #define NUM_POD_TYPES 3
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_SPHERE, POD_SHAPE_TRIANGLE, POD_SHAPE_DIAMOND, POD_SHAPE_CONE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
-struct PodObject
-{
-    PodSignal signal;
-    PodColor color;
-    PodSound sound;
-    PodShape shape;
-    
-    PodObject() : signal(POD_SIGNAL_UNKNOWN), color(POD_COLOR_UNKNOWN), sound(POD_SOUND_UNKNOWN), shape(POD_SHAPE_UNKNOWN) {}
-    PodObject(PodSignal sig, PodColor col, PodSound snd, PodShape shp) : signal(sig), color(col), sound(snd), shape(shp) {}
-};
 #define NUM_POD_SIGNALS 5 // For assigning sounds to each index
+struct PodInfo
+{
+    PodSignal podSignal;
+    PodMeshType meshType;
+    PodColor podColor;
+    PodShape podShape;
+    PodSound podSound;
+    Direction podLoc;
+    bool goodPod; // is the pod good to take?
+    bool podTrigger; // trigger on: false = after pod has past, true = on collision
+    bool podTaken; // is the pod gone?
+    
+    PodInfo()
+    : podSignal(POD_SIGNAL_UNKNOWN), meshType(POD_BASIC), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
+    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false)
+    {}
+    
+    PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false)
+    : podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
+    {}
+};
+
+// Vine Info
+enum VineMeshType { VINE_BASIC_SHIP, VINE_RUNNER_SHIP, VINE_FLOWER_SHIP };
+
+struct NavigationLevel
+{
+    int control;
+    int obstacles;
+    
+    NavigationLevel(int c = 0, int o = 0) : control(c), obstacles(o) {}
+};
 
 // Forward Declarations of main components of the game
 class Tunnel;
 class Player;
 class Hud;
+class LevelManager;
 
 namespace Util
 {
@@ -138,12 +198,9 @@ namespace Util
         float HPBarYRef;
         float HPBarWidth;
         float HPBarHeight;
-        float timedRunControlUpDist1;
-        float timedRunControlUpDist2;
-        float timedRunControlUpDist3;
         int setSkyBox;
         int setWallPanelTexture;
-        int setVineShip;
+        VineMeshType setVineShip;
         int setPodMesh;
         float swipeSensitivity;
         int swipeInverted;
@@ -181,7 +238,8 @@ namespace Util
         int label7_posX;
         int label7_posY;
         
-        std::vector<std::vector<PodObject> > podObjects;
+        std::vector<std::vector<PodInfo> > signalTypes;
+        std::vector<NavigationLevel> navMap;
         
         int currStageID;
         std::string configPath;
@@ -233,6 +291,7 @@ namespace Util
     void createSegment(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth,  const bool sides[NUM_DIRECTIONS]);
     void createDefaultSegments(Ogre::SceneManager* sceneMgr);
     
+    float computeTotalPossibleOpportunities(float startSpeed, float maxSpeed, float lengthPerPod, float totalTime);
     
     void generateMaterials();
 };

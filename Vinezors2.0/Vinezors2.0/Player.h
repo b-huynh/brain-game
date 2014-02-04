@@ -22,11 +22,31 @@ struct PlayerStagePerformance
     
     PlayerStagePerformance() : stageID(0), stars(0) {}
 };
+struct PlayerLevel {
+    int set1; // Color/Sound
+    int set2; // Shape/Sound
+    int set3; // Sound only
+    int navigation;
+    int trial;
+    float bestNavigationScore;
+    float minSpeed;
+    float averageSpeed;
+    float maxSpeed;
+    int getMasteredNBack() const
+    {
+        return std::min(set1, std::min(set2, set3));
+    }
+    
+    PlayerLevel() : set1(2), set2(2), set3(2), navigation(3), trial(0), bestNavigationScore(0.0), minSpeed(10.0), averageSpeed(15.0), maxSpeed(25.0) {}
+};
 
 class Player
 {
 private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
+    
+    Tunnel* tunnel;
+    Hud* hud;
     
     unsigned seed;
     
@@ -65,11 +85,14 @@ private:
     Quaternion desireRot;
     int desireRoll;
     float baseSpeed;
+    float bonusSpeed;
     float finalSpeed;
+    float minSpeed;
+    float maxSpeed;
     
 	float vineOffset; // offset to camPos in direction of forward
     TunnelSlice* lookback;
-    Pod* earlySelect;
+    Pod* selectedTarget;
     float glowSpeed;
     
     SpeedControlMode speedControl;
@@ -86,12 +109,16 @@ private:
     };
     std::vector<Result> results;
     std::vector<PlayerStagePerformance> performances;
+    PlayerLevel skillLevel;
     
     float totalElapsed;
     float totalDistanceTraveled;
     float animationTimer;
     float speedTimer;
-    float glowTimer;
+    float shockwaveTimer;
+    float boostTimer;
+    float selectTimer;
+    float startMusicTimer;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -102,7 +129,7 @@ private:
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
-    // iOS Swipe Capabilities
+    // Swipe Capabilities (Note: iOS now uses the ViewController on top of ogre, this is more for the OS X version now
     float inputTotalX;
     bool inputMoved;
     float inputLeftBound;
@@ -152,8 +179,9 @@ public:
 	float getTotalDistanceTraveled() const;
 	float getAnimationTimer() const;
     float getAccuracy() const;
-    float getProgress(Tunnel* tunnel) const;
+    float getProgress() const;
     bool getShowCombo() const;
+    PlayerLevel getSkillLevel() const;
     
     void setSeed(unsigned value);
     void setName(const std::string & name);
@@ -173,7 +201,7 @@ public:
 	void setKeySpace(bool value);
 	
 	void setCamDir(Direction value);
-	bool setVineDirRequest(Direction value, Tunnel* tunnel);
+	bool setVineDirRequest(Direction value, bool force = false);
 	void setMousePos(Vector2 value);
 	void setOldPos(Vector3 value);
 	void setCamPos(Vector3 value);
@@ -184,6 +212,7 @@ public:
 	void setDesireRot(Quaternion value);
     void setDesireRoll(int value);
     void setBaseSpeed(float value);
+    void setSkillLevel(PlayerLevel value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -193,15 +222,20 @@ public:
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
+    void unpause();
+    void pause();
     
     void setSounds(bool mode);
-    void newTunnel(Tunnel* tunnel, bool setmusic);
+    
+    void unlink();
+    void link(Tunnel* tunnel, Hud* hud);
+    void newTunnel(bool setmusic);
     
 	void move(Vector3 delta);
     void changeMovementMode();
     void setShowCombo(bool value);
 	void addVine(Vine* vine);
-	void checkCollisions(Tunnel* tunnel);
+	void checkCollisions();
     
     void resetCursorMoved();
     void setCursorMoved();
@@ -209,10 +243,16 @@ public:
     void checkCursorMove(float dx, float dy);
     bool checkPerformLeftMove(bool force);
     bool checkPerformRightMove(bool force);
-    void setStars(Tunnel* tunnel);
-    void performShockwave(Tunnel* tunnel);
-    void testPodGiveFeedback(Tunnel* tunnel, Pod* test);
-	void update(Tunnel* tunnel, Hud* hud, float elapsed);
+    void setStars();
+    void updateGlowExtraction(float elapsed);
+    void setGlowGrabParameters();
+    void performShockwave();
+    void updateShockwave(float elapsed);
+    void performBoost();
+    void updateBoost(float elapsed);
+    void testPodGiveFeedback(Pod* test);
+    void determineSpawnCombo();
+	void update(float elapsed);
     
     bool saveStage(std::string file);
     bool saveProgress(std::string file, int lastStageID);

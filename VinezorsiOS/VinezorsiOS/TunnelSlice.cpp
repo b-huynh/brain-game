@@ -518,7 +518,6 @@ void TunnelSlice::connect(TunnelSlice* next)
     int tempID = intermediateMeshID;
     entireIntermediate = parentNode->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
     
-    
     std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
     ManualObject* manual = parentNode->getCreator()->createManualObject(meshName);
     

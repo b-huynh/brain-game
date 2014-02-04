@@ -20,9 +20,12 @@ struct History
 {
     Ogre::SceneManager* sceneMgr;
     
+    SidebarLocation sidebarMode;
+    
     int nback;
     std::vector<SceneNode*> seats;
     std::vector<Pod*> list;
+    SceneNode* lightNodeSide;
     SceneNode* coverNode;
     Vector3 coverDest;
     
@@ -34,6 +37,7 @@ struct History
     void update(float elapsed);
     void setCoverDest(int seatInd);
     void determineCoverLoc(bool success);
+    void setSidebar();
     
     float panelHeight;
     float panelX;
