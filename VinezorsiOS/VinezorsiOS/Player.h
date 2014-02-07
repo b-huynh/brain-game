@@ -15,29 +15,70 @@
 #include "Vine.h"
 #include "Tunnel.h"
 
-struct PlayerStagePerformance
+struct Score
 {
-    int stageID;
-    int stars;
+    int right;
+    int wrong;
+    float score;
     
-    PlayerStagePerformance() : stageID(0), stars(0) {}
+    Score() : right(0), wrong(0), score(0.0) {}
 };
 struct PlayerLevel {
+    // Reps
+    int set1Rep;
+    int set2Rep;
+    int set3Rep;
+    
+    // Ranks
     int set1; // Color/Sound
     int set2; // Shape/Sound
     int set3; // Sound only
     int navigation;
-    int trial;
-    float bestNavigationScore;
-    float minSpeed;
-    float averageSpeed;
-    float maxSpeed;
+    
+    int minSpeed;
+    int averageSpeed;
+    int maxSpeed;
+    std::map<int, Score> navigationScores;
+    std::map<int, Score> speedScores;
     int getMasteredNBack() const
     {
         return std::min(set1, std::min(set2, set3));
     }
     
-    PlayerLevel() : set1(2), set2(2), set3(2), navigation(3), trial(0), bestNavigationScore(0.0), minSpeed(10.0), averageSpeed(15.0), maxSpeed(25.0) {}
+    PlayerLevel() : set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), navigation(3), minSpeed(10.0), averageSpeed(15.0), maxSpeed(25.0), navigationScores(), speedScores() {}
+    
+    int findBest(const std::map<int, Score> & scores, int defaultBest, float Zoffset, float lowLimit) const
+    {
+        float lacksum = 0.0;
+        int best = defaultBest;
+        for (std::map<int, Score>::const_iterator it = scores.begin(); it != scores.end(); ++it)
+        {
+            lacksum += (Zoffset - it->second.score);
+            if (lacksum <= lowLimit)
+                best = it->first;
+        }
+        return best;
+    }
+    
+    void calculateNavigationScores()
+    {
+        for (std::map<int, Score>::iterator it = navigationScores.begin(); it != navigationScores.end(); ++it)
+            it->second.score = static_cast<float>(it->second.right) / (it->second.wrong + it->second.right);
+        navigation = findBest(navigationScores, 0, 0.90, 0.20) * 2; // Phases in navigation test are packed into 2.
+    }
+    
+    void calculateSpeedScores()
+    {
+        for (std::map<int, Score>::iterator it = speedScores.begin(); it != speedScores.end(); ++it)
+            it->second.score = static_cast<float>(it->second.right) / (it->second.wrong + it->second.right);
+        
+        averageSpeed = findBest(speedScores, minSpeed, 0.95, 0.20);
+        minSpeed = averageSpeed - (averageSpeed - 6) / 2; // From excel chart on google doc with a little more range
+        maxSpeed = findBest(speedScores, 20, 0.90, 0.30);
+        if (averageSpeed <= 0) averageSpeed = 1;
+        if (minSpeed <= 0) minSpeed = 1;
+        if (maxSpeed <= 0) maxSpeed = 1;
+    }
 };
 
 class Player
@@ -59,9 +100,6 @@ private:
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
-	float score; // a value of pride
-    int points; // money to buy
-    int stars;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -105,10 +143,8 @@ private:
         int nback;
         float speed;
         GameMode gameMode;
-        float score;
     };
     std::vector<Result> results;
-    std::vector<PlayerStagePerformance> performances;
     PlayerLevel skillLevel;
     
     float totalElapsed;
@@ -149,9 +185,6 @@ public:
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
-	float getScore() const;
-	int getPoints() const;
-    int getStars() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -190,9 +223,6 @@ public:
     void setNumWrongTotal(int value);
     void setNumCorrectCombo(int value);
     void setNumWrongCombo(int value);
-	void setScore(float value);
-    void setPoints(int value);
-    void setStars(int value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
@@ -243,7 +273,6 @@ public:
     void checkCursorMove(float dx, float dy);
     bool checkPerformLeftMove(bool force);
     bool checkPerformRightMove(bool force);
-    void setStars();
     void updateGlowExtraction(float elapsed);
     void setGlowGrabParameters();
     void performShockwave();
@@ -254,6 +283,8 @@ public:
     void determineSpawnCombo();
 	void update(float elapsed);
     
+    void calculateNavigationScores();
+    void calculateSpeedScores();
     bool saveStage(std::string file);
     bool saveProgress(std::string file, int lastStageID);
     bool loadProgress(std::string savePath);

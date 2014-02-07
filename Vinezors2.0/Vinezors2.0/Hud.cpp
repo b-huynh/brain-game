@@ -205,7 +205,11 @@ void Hud::update(float elapsed)
     float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     
     if (tunnel->getMode() == GAME_TIMED)
+    {
+        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue::Red : ColourValue::Green;
+        label1->setColour(timeLeftCol);
         label1->setCaption(Util::toStringInt(timeLeft));
+    }
     else
         label1->setCaption("");
     if (tunnel->getMode() == GAME_TIMED)
@@ -213,8 +217,11 @@ void Hud::update(float elapsed)
         label2->setCaption("");
     else if (globals.stageTime)
     {
+        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue::Red : ColourValue::White;
+        label2->setColour(timeLeftCol);
         label2->setCaption("Time: " + Util::toStringInt(timeLeft));
-        // Not for the January deadline
+        
+        // Not for the January deadline, bonus points
         //if (player->getNumCorrectBonus() <= 0)
         //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()));
         //else
@@ -223,13 +230,16 @@ void Hud::update(float elapsed)
     if (tunnel->getMode() != GAME_NAVIGATION)
         label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     else
-        label3->setCaption("");
+    {
+        label3->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
+        label3->setCaption("Chances: " + Util::toStringInt(player->getHP()));
+    }
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
     if (tunnel->getMode() == GAME_TIMED)
         label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
     else if (tunnel->getMode() == GAME_NAVIGATION)
     {
-        float val = player->getScore();
+        float val = player->getNumCorrectTotal();
         if (val < 0.0) val = 0.0;
         label5->setCaption("Score: " + Util::toStringInt(val));
     }
@@ -243,25 +253,18 @@ void Hud::update(float elapsed)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
     }
     
-    
     float indicatorRange = barHP->getWidth();
     float barWidth = globals.HPBarWidth;
     // Set UI positions depending on game mode
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         barHP->setDimensions(barWidth, globals.HPBarHeight);
-        indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
-        
-        threshold1->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold1, barHP->getTop() - 0.005);
-        threshold2->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold2, barHP->getTop() - 0.005);
-        threshold3->setPosition(barHP->getLeft() + globals.HPBarWidth * globals.stageProficiencyThreshold3, barHP->getTop() - 0.005);
+        float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit;
+        //indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
+        indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
     }
     else if (tunnel->getMode() == GAME_TIMED)
     {
-        threshold1->setPosition(0.40, 0.15);
-        threshold2->setPosition(0.45, 0.15);
-        threshold3->setPosition(0.50, 0.15);
-        
         label1->setCaption(Util::toStringInt(timeLeft));
     }
     else //if (tunnel->getMode() == GAME_NAVIGATION)
@@ -271,41 +274,9 @@ void Hud::update(float elapsed)
         threshold3->setPosition(0.50, 0.15);
     }
     
-    // Set color of stars
-    if (player->getStars() >= 3)
-    {
-        threshold1->setMaterialName("General/StarGold");
-        threshold2->setMaterialName("General/StarGold");
-        threshold3->setMaterialName("General/StarGold");
-    }
-    else if (player->getStars() == 2)
-    {
-        threshold1->setMaterialName("General/StarGold");
-        threshold2->setMaterialName("General/StarGold");
-        threshold3->setMaterialName("General/StarGray");
-    }
-    else if (player->getStars() == 1)
-    {
-        threshold1->setMaterialName("General/StarGold");
-        threshold2->setMaterialName("General/StarGray");
-        threshold3->setMaterialName("General/StarGray");
-    }
-    else
-    {
-        threshold1->setMaterialName("General/StarGray");
-        threshold2->setMaterialName("General/StarGray");
-        threshold3->setMaterialName("General/StarGray");
-    }
-    /*
-    // As HP Bar
-    if (tunnel->getMode() != GAME_TIMED)
-    {
-        barHP->setDimensions(barWidth, globals.HPBarHeight);
-        int hpRange = globals.HPPositiveLimit - globals.HPNegativeLimit;
-        indicatorRange *= (player->getHP() - globals.HPNegativeLimit) / (float)(hpRange);
-        indicator->setPosition(barHP->getLeft() + indicatorRange, indicator->getTop());
-    }
-     */
+    threshold1->setMaterialName("General/StarGold");
+    threshold2->setMaterialName("General/StarGold");
+    threshold3->setMaterialName("General/StarGold");
 }
 
 void Hud::hideOverlays()

@@ -23,16 +23,12 @@ Util::ConfigGlobal::ConfigGlobal()
     stageTotalTargets3 = 45;
     stageTotalCollections = 40;
     stageTotalTargetsVariance = 2;
-    stageProficiencyThreshold1 = 0.50;
-    stageProficiencyThreshold2 = 0.70;
-    stageProficiencyThreshold3 = 0.90;
-    stageTimeThreshold1 = 40;
+    stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
-    stageTimeThreshold3 = 55;
-    stageNavigationThreshold1 = 25;
-    stageNavigationThreshold2 = 35;
-    stageNavigationThreshold3 = 40;
-    stageStarPassThreshold = 2;
+    stageTimeThreshold3 = 75;
+    set1Repetitions = 3;
+    set2Repetitions = 3;
+    set3Repetitions = 3;
     gameMode = 1;
     revealColor = 1;
     revealSound = 1;
@@ -50,6 +46,7 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
+    tunnelSectionsPerNavigationUpgrade = 3;
     initialSegmentsFirstPod = 1;
     initialSegmentsFirstDistractors = 3;
     initiationSections = 1;
@@ -76,18 +73,21 @@ Util::ConfigGlobal::ConfigGlobal()
     nback = 2;
     control = 1;
     historyMode = -1;
-    startingHP = 2;
-    HPNegativeLimit = 0;
-    HPPositiveLimit = 3;
-    HPNegativeCorrectAnswer = 0;
+    startingHP = 0;
+    HPNegativeLimit = -10;
+    HPPositiveLimit = 10;
+    HPNegativeCorrectAnswer = 2;
     HPNegativeWrongAnswer = -1;
-    HPPositiveCorrectAnswer = 0;
-    HPPositiveWrongAnswer = -1;
+    HPNegativeDistractor = -1;
+    HPPositiveCorrectAnswer = 1;
+    HPPositiveWrongAnswer = -2;
+    HPPositiveDistractor = -1;
     distractorSpeedPenalty = 0.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
-    modifierCamSpeed = 5.0;
+    globalModifierCamSpeed = 5.0;
+    boostModifierCamSpeed = 1.5;
     minCamSpeed = 10.0;
     maxCamSpeed = 30.0;
     nlevelSpeedModifier = 0.8;
@@ -101,7 +101,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPBarHeight = 0.05;
     screenWidth = 1024;
     screenHeight = 800;
-    setSkyBox = 3;
+    setSkyBox = 2;
     setWallPanelTexture = 0;
     setVineShip = VINE_RUNNER_SHIP;
     swipeSensitivity = 12.0;
@@ -213,26 +213,18 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageTotalCollections;
     else if (paramName == "stageTotalTargetsVariance")
         in >> stageTotalTargetsVariance;
-    else if (paramName == "stageProficiencyThreshold1")
-        in >> stageProficiencyThreshold1;
-    else if (paramName == "stageProficiencyThreshold2")
-        in >> stageProficiencyThreshold2;
-    else if (paramName == "stageProficiencyThreshold3")
-        in >> stageProficiencyThreshold3;
     else if (paramName == "stageTimeThreshold1")
         in >> stageTimeThreshold1;
     else if (paramName == "stageTimeThreshold2")
         in >> stageTimeThreshold2;
     else if (paramName == "stageTimeThreshold3")
         in >> stageTimeThreshold3;
-    else if (paramName == "stageNavigationThreshold1")
-        in >> stageNavigationThreshold1;
-    else if (paramName == "stageNavigationThreshold2")
-        in >> stageNavigationThreshold2;
-    else if (paramName == "stageNavigationThreshold3")
-        in >> stageNavigationThreshold3;
-    else if (paramName == "stageStarPassThreshold")
-        in >> stageStarPassThreshold;
+    else if (paramName == "set1Repetitions")
+        in >> set1Repetitions;
+    else if (paramName == "set2Repetitions")
+        in >> set2Repetitions;
+    else if (paramName == "set3Repetitions")
+        in >> set3Repetitions;
     else if (paramName == "nback")
         in >> nback;
     else if (paramName == "control")
@@ -291,18 +283,24 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> HPPositiveCorrectAnswer;
     else if (paramName == "HPPositiveWrongAnswer")
         in >> HPPositiveWrongAnswer;
+    else if (paramName == "HPPositiveDistractor")
+        in >> HPPositiveDistractor;
     else if (paramName == "HPNegativeCorrectAnswer")
         in >> HPNegativeCorrectAnswer;
     else if (paramName == "HPNegativeWrongAnswer")
         in >> HPNegativeWrongAnswer;
+    else if (paramName == "HPNegativeDistractor")
+        in >> HPNegativeDistractor;
     else if (paramName == "distractorSpeedPenalty")
         in >> distractorSpeedPenalty;
     else if (paramName == "distractorTimePenalty")
         in >> distractorTimePenalty;
     else if (paramName == "initCamSpeed")
         in >> initCamSpeed;
-    else if (paramName == "modifierCamSpeed")
-        in >> modifierCamSpeed;
+    else if (paramName == "globalModifierCamSpeed")
+        in >> globalModifierCamSpeed;
+    else if (paramName == "boostModifierCamSpeed")
+        in >> boostModifierCamSpeed;
     else if (paramName == "minCamSpeed")
         in >> minCamSpeed;
     else if (paramName == "maxCamSpeed")
@@ -1188,18 +1186,46 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
     Util::createSegment(sceneMgr, "segmentMesh8", 1.0, 1.0, sides);
 }
 
-float Util::computeTotalPossibleOpportunities(float startSpeed, float maxSpeed, float lengthPerPod, float totalTime)
+// Step function to increase speed by 1 or decrease by 1 is not included but could be.
+void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime)
 {
-    // Note: assumes it reaches maxSpeed  under totalTime
-    float minTargetsToMaxSpeed = 2 * (maxSpeed - startSpeed);
-    float averageSpeed = (startSpeed + maxSpeed) / 2;
-    float ts = (lengthPerPod * minTargetsToMaxSpeed) / averageSpeed;
+    // (NumTargets * LengthPerTarget) / Speed = TimeTaken
+    // NumTargets = TimeTaken * Speed / LengthPerTarget
+    // NumTargets = 90 * 20 / 60
+    //
+    // NumTargets = TimeTaken * (InitSpeed + NumTargets / 2) / LengthPerTarget
+    //
+    // (NumTargets * LengthPerTarget) / (InitSpeed + NumTargets / 2) = TimeTaken
+    //
+    // NumTargets = 2 * TimeTaken * InitSpeed / (2 * LengthPerTarget - TimeTaken)
+    //
+    //
+    // At tbuff = 30 and Si = 15, then N = 10,
+    globals.initCamSpeed = initSpeed;
     
-    float tm = totalTime - ts;
+    globals.HPPositiveLimit = (2*bestTime*globals.initCamSpeed)/(2*lengthPerTarget-bestTime);
+    globals.HPNegativeLimit = -globals.HPPositiveLimit / 3;
     
-    std::cout << minTargetsToMaxSpeed << " " << averageSpeed << " " << ts << " " << tm << std::endl;
+    globals.minCamSpeed = globals.initCamSpeed + globals.HPNegativeLimit / 2;
+    globals.maxCamSpeed = globals.initCamSpeed + globals.HPPositiveLimit / 2;
+    globals.stageTime = approxTotalTime - bestTime;
     
-    return maxSpeed * (tm - ts) / lengthPerPod + minTargetsToMaxSpeed;
+    std::cout << "HP Positive: " << globals.HPPositiveLimit << std::endl;
+    std::cout << "Speeda: " << globals.maxCamSpeed << std::endl;
+    
+    globals.stageTotalSignals = 180; // Enough for constant speed of 30
+    globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
+    globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
+    globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+    globals.stageTotalTargetsVariance = 0;
+    
+    globals.startingHP = 0;
+    globals.HPPositiveCorrectAnswer = 1;
+    globals.HPNegativeCorrectAnswer = 1;
+    globals.HPPositiveWrongAnswer = -1;
+    globals.HPNegativeWrongAnswer = -1;
+    globals.HPPositiveDistractor = 0;
+    globals.HPNegativeDistractor = 0;
 }
 
 void Util::generateMaterials()

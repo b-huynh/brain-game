@@ -14,14 +14,14 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0), points(0), stars(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), performances(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0), points(0), stars(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), performances(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -75,21 +75,6 @@ int Player::getNumCorrectCombo() const
 int Player::getNumWrongCombo() const
 {
     return numWrongCombo;
-}
-
-float Player::getScore() const
-{
-	return score;
-}
-
-int Player::getPoints() const
-{
-	return points;
-}
-
-int Player::getStars() const
-{
-	return stars;
 }
 
 Direction Player::getCamDir() const
@@ -222,7 +207,7 @@ float Player::getTotalSpeed() const
     float timeRange = 1.0;
     if (boostTimer >= 0.0)
     {
-        float speedRange = currentTotal * 1.5 - currentTotal;
+        float speedRange = currentTotal * globals.boostModifierCamSpeed - currentTotal;
         if (boostTimer >= timeRange)
             return currentTotal + speedRange;
         else
@@ -314,21 +299,6 @@ void Player::setNumCorrectCombo(int value)
 void Player::setNumWrongCombo(int value)
 {
     numWrongCombo = value;
-}
-
-void Player::setScore(float value)
-{
-	score = value;
-}
-
-void Player::setPoints(int value)
-{
-	points = value;
-}
-
-void Player::setStars(int value)
-{
-	stars = value;
 }
 
 void Player::updateGlowExtraction(float elapsed)
@@ -446,6 +416,15 @@ void Player::testPodGiveFeedback(Pod* test)
     
     // Determine whether the player got it right or not
     if (test->isPodGood() && test->isPodTaken()) {
+        if (tunnel->getMode() == GAME_TIMED)
+        {
+            skillLevel.speedScores[baseSpeed].right++;
+        }
+        else if (tunnel->getMode() == GAME_NAVIGATION)
+        {
+            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].right++;
+        }
+        
         if (tunnel->getMode() == GAME_NAVIGATION)
         {
             if (soundFeedbackGood)
@@ -466,14 +445,28 @@ void Player::testPodGiveFeedback(Pod* test)
         ++numCorrectCombo;
         numWrongCombo = 0;
 
-        if (tunnel->getMode() == GAME_PROFICIENCY)
-            bonusSpeed += 1.0;
-        score += 5;
+        // Combo Speed
+        //if (tunnel->getMode() == GAME_PROFICIENCY)
+        //    bonusSpeed += 1.0;
         
-        if (numCorrectCombo % globals.numToSpeedUp == 0)
+        if (numCorrectCombo % globals.numToSpeedUp == 0 && tunnel->getMode() != GAME_NAVIGATION)
         {
             baseSpeed += globals.stepsizeSpeedUp;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+        }
+        
+        if (hp >= 0)
+            hp += globals.HPPositiveCorrectAnswer;
+        else
+            hp += globals.HPNegativeCorrectAnswer;
+        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        
+        // For proficiency tests, need its own checkIfDone function so stage doesn't end when time is out
+        if (tunnel->getMode() == GAME_PROFICIENCY)
+        {
+            // Only check if player has passed the proficiency test
+            if (getHP() >= globals.HPPositiveLimit)
+                tunnel->setDone(PASS);
         }
         
         if (history) history->determineCoverLoc(true);
@@ -485,7 +478,17 @@ void Player::testPodGiveFeedback(Pod* test)
     }
     else if ((test->isPodGood() && !test->isPodTaken()) ||
              (!test->isPodGood() && test->isPodTaken())) {
-        if (soundFeedbackBad && tunnel->getMode() != GAME_NAVIGATION)
+        
+        if (tunnel->getMode() == GAME_TIMED)
+        {
+            skillLevel.speedScores[baseSpeed].wrong++;
+        }
+        else if (tunnel->getMode() == GAME_NAVIGATION)
+        {
+            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
+        }
+        
+        if (soundFeedbackBad)
         {
             soundFeedbackBad->stop();
             soundFeedbackBad->play();
@@ -501,13 +504,14 @@ void Player::testPodGiveFeedback(Pod* test)
             numCorrectCombo -= 3;
             if (numCorrectCombo < 0) numCorrectCombo = 0;
         }
-        if (tunnel->getMode() == GAME_PROFICIENCY)
-        {
-            bonusSpeed -= 3.0;
-            if (bonusSpeed < 0.0) bonusSpeed = 0.0;
-        }
+        // Combo Speed reduction
+        //if (tunnel->getMode() == GAME_PROFICIENCY)
+        //{
+        //    bonusSpeed -= 3.0;
+        //    if (bonusSpeed < 0.0) bonusSpeed = 0.0;
+        //}
         
-        if (numWrongCombo % globals.numToSpeedDown == 0)
+        if (numWrongCombo % globals.numToSpeedDown == 0 && tunnel->getMode() != GAME_NAVIGATION)
         {
             baseSpeed += globals.stepsizeSpeedDown;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
@@ -515,9 +519,22 @@ void Player::testPodGiveFeedback(Pod* test)
         
         numCorrectBonus = 0;
         
+        if (hp >= 0)
+            hp += globals.HPPositiveWrongAnswer;
+        else
+            hp += globals.HPNegativeWrongAnswer;
+        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+
+        if (tunnel->getMode() == GAME_PROFICIENCY)
+        {
+            if (globals.stageTime > 0 && tunnel->getTimeLeft() <= 0)
+                tunnel->setDone(EVEN);
+        }
+        
         if (history) history->determineCoverLoc(false);
     }
-    if (tunnel->getMode() == GAME_PROFICIENCY) determineSpawnCombo();
+    // Check for combo mode
+    //if (tunnel->getMode() == GAME_PROFICIENCY) determineSpawnCombo();
 }
 
 void Player::determineSpawnCombo()
@@ -701,8 +718,6 @@ void Player::newTunnel(bool setmusic)
     numCorrectBonus = 0;
     numCorrectCombo = 0;
     numWrongCombo = 0;
-    score = 0.0;
-    stars = 0.0;
     camDir = SOUTH;
     lookback = NULL;
     selectedTarget = NULL;
@@ -760,7 +775,6 @@ void Player::newTunnel(bool setmusic)
             desireRoll = camRoll;
         }
     }
-    setStars();
     tunnel->setSpawnCombo(1);
     triggerStartup = true;
     results.clear();
@@ -866,19 +880,33 @@ void Player::checkCollisions()
                 {
                     if (hits[i]->getPodTrigger())
                     {
-                        hp += globals.HPPositiveWrongAnswer;
-                        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                        if (tunnel->getMode() == GAME_NAVIGATION)
+                        {
+                            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
+                        }
                         if (soundCollision)
                         {
                             soundCollision->stop();
                             soundCollision->play();
                         }
+                        if (hp >= 0)
+                            hp += globals.HPPositiveDistractor;
+                        else
+                            hp += globals.HPNegativeDistractor;
+                        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                        
                         baseSpeed -= globals.distractorSpeedPenalty;
                         baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
                         tunnel->addToTimePenalty(globals.distractorTimePenalty);
                         speedTimer = 5.0;
                         
                         vines[i]->setWobble(true);
+                        
+                        if (tunnel->getMode() == GAME_PROFICIENCY)
+                        {
+                            if (globals.stageTime > 0 && tunnel->getTimeLeft() <= 0)
+                                tunnel->setDone(EVEN);
+                        }
                     }
                 }
         }
@@ -952,44 +980,6 @@ bool Player::checkPerformRightMove(bool force)
     else return false;
 }
 
-void Player::setStars()
-{
-    int earned = 0;
-    if (tunnel->getMode() == GAME_PROFICIENCY)
-    {
-        float progress = getProgress();
-        if (progress >= globals.stageProficiencyThreshold1)
-            ++earned;
-        if (progress >= globals.stageProficiencyThreshold2)
-            ++earned;
-        if (progress >= globals.stageProficiencyThreshold3)
-            ++earned;
-        
-    }
-    else if (tunnel->getMode() == GAME_TIMED)
-    {
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold1 + tunnel->getNBack())
-            ++earned;
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold2 + tunnel->getNBack())
-            ++earned;
-        if (tunnel->getPodIndex() >= globals.stageTimeThreshold3 + tunnel->getNBack())
-            ++earned;
-    }
-    else //if (tunnel->getMode() == GAME_NAVIGATION)
-    {
-        if (getNumCorrectTotal() >= globals.stageNavigationThreshold1)
-            ++earned;
-        if (getNumCorrectTotal() >= globals.stageNavigationThreshold2)
-            ++earned;
-        if (getNumCorrectTotal() >= globals.stageNavigationThreshold3)
-            ++earned;
-    }
-    if (globals.currStageID - 1 < performances.size())
-        stars = max(earned, performances[globals.currStageID - 1].stars);
-    else
-        stars = earned;
-}
-
 void Player::update(float elapsed)
 {
     totalElapsed += elapsed;
@@ -1059,7 +1049,7 @@ void Player::update(float elapsed)
     {
         Vector3 endOfSlice = next->getEnd();
         Vector3 dir = (endOfSlice - camPos).normalisedCopy();
-        Vector3 delta = dir * (globals.modifierCamSpeed * finalSpeed * elapsed);
+        Vector3 delta = dir * (globals.globalModifierCamSpeed * finalSpeed * elapsed);
         move(delta);
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
@@ -1192,7 +1182,6 @@ void Player::update(float elapsed)
                     result.podInfo = test->getPodInfo();
                     result.nback = tunnel->getNBack();
                     result.gameMode = tunnel->getMode();
-                    result.score = score;
                     result.speed = baseSpeed;
                     results.push_back(result);
                     
@@ -1216,11 +1205,20 @@ void Player::update(float elapsed)
                 }
             }
         }
-        setStars();
     }
     updateGlowExtraction(elapsed);
     updateShockwave(elapsed);
     updateBoost(elapsed);
+}
+
+void Player::calculateNavigationScores()
+{
+    skillLevel.calculateNavigationScores();
+}
+
+void Player::calculateSpeedScores()
+{
+    skillLevel.calculateSpeedScores();
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -1256,7 +1254,6 @@ bool Player::saveStage(std::string file)
             out << "% PlayerTookPod {no, yes}" << endl;
             out << "% Speed {-inf, inf}" << endl;
             out << "% GameMode { TIMED, NORMAL }" << endl;
-            out << "% Score {0, inf}" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "%" << endl;
             out << "% StageID PodLocation PodColor Nback IsNBackPod PlayerTookPod Speed GameMode Score Timestamp" << endl;
@@ -1272,7 +1269,6 @@ bool Player::saveStage(std::string file)
             << results[i].podInfo.podTaken << " "
             << results[i].speed << " "
             << results[i].gameMode << " "
-            << results[i].score << " "
             << results[i].timestamp << endl;
         }
         out.close();
@@ -1291,34 +1287,14 @@ bool Player::saveProgress(std::string file, int lastStageID)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = false;
     
-    /*
-    int stageIndex = lastStageID - 1;
-    if (stageIndex < performances.size())
-    {
-        if (performances[stageIndex].stars < stars)
-            performances[stageIndex].stars = stars;
-    }
-    else
-    {
-        PlayerStagePerformance res;
-        res.stageID = globals.currStageID;
-        res.stars = stars;
-        performances.push_back(res);
-    }
-    
-    out << performances.size() << std::endl;
-    for (int i = 0; i < performances.size(); ++i)
-    {
-        out << performances[i].stageID << " " << performances[i].stars << std::endl;
-    }
-    */
     out << 0 << std::endl;
     out << skillLevel.set1 << std::endl;
     out << skillLevel.set2 << std::endl;
     out << skillLevel.set3 << std::endl;
+    out << skillLevel.set1Rep << std::endl;
+    out << skillLevel.set2Rep << std::endl;
+    out << skillLevel.set3Rep << std::endl;
     out << skillLevel.navigation << std::endl;
-    out << skillLevel.trial << std::endl;
-    out << skillLevel.bestNavigationScore << std::endl;
     out << skillLevel.minSpeed << std::endl;
     out << skillLevel.averageSpeed << std::endl;
     out << skillLevel.maxSpeed << std::endl;
@@ -1333,38 +1309,16 @@ bool Player::loadProgress(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
     bool ret = false;
-    /*
-    int input;
-    std::cout << "Loading player save: " << savePath << std::endl;
-    if (saveFile.good()) {
-        saveFile >> input;
-        performances = std::vector<PlayerStagePerformance>(input);
-        
-        for (int i = 0; i < performances.size(); ++i)
-        {
-            saveFile >> performances[i].stageID;
-            saveFile >> performances[i].stars;
-        }
-        globals.currStageID = performances.size();
-        
-        std::cout << "Starting from last session StageID " << globals.currStageID << std::endl;
-        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        globals.currStageID = 1;
-        std::cout << "Starting from StageID " << globals.currStageID << std::endl;
-        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    */
+    
     if (saveFile.good()) {
         saveFile >> globals.currStageID;
         saveFile >> skillLevel.set1;
         saveFile >> skillLevel.set2;
         saveFile >> skillLevel.set3;
+        saveFile >> skillLevel.set1Rep;
+        saveFile >> skillLevel.set2Rep;
+        saveFile >> skillLevel.set3Rep;
         saveFile >> skillLevel.navigation;
-        saveFile >> skillLevel.trial;
-        saveFile >> skillLevel.bestNavigationScore;
         saveFile >> skillLevel.minSpeed;
         saveFile >> skillLevel.averageSpeed;
         saveFile >> skillLevel.maxSpeed;

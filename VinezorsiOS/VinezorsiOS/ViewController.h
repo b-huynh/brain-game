@@ -12,7 +12,7 @@
 
 @interface ViewController : UIViewController  <UIGestureRecognizerDelegate>
 
-- (void)startWithWindow:(UIWindow*) window;
+- (void)startWithWindow:(UIWindow*) window:(NSString*)str :(BOOL)isOn;
 - (void)update:(id)sender;
 - (void)stop;
 

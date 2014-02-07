@@ -209,7 +209,7 @@ void OgreApp::setupDemoScene()
     
     tunnel = NULL;
     hud = new Hud();
-    levelMgr = new LevelManager(player, "ABCDE");
+    levelMgr = new LevelManager(player, "EDABC");
     
     setLevel(EVEN);
     
@@ -444,7 +444,7 @@ void OgreApp::activatePerformRightMove()
 
 void OgreApp::activatePerformDoubleTap(float x, float y)
 {
-    if (!pause) player->performShockwave();
+    //if (!pause) player->performShockwave();
 }
 
 void OgreApp::activatePerformSingleTap(float x, float y)

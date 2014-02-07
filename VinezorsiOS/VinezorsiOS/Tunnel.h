@@ -85,9 +85,11 @@ public:
     Evaluation eval;
     
     std::vector<std::vector<PodInfo> > signalTypes;
+    int catchupPhase; // Used to update distractors at navPhase
     int navPhase; // Put in navigation class later...
+    int navCheckpoint; // Counter to tell when to upgrade tunnel when changing sections
     std::vector<NavigationLevel> navLevels;
-    int propagateCounter;
+    std::list<int> propagateCounters;
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
@@ -148,6 +150,9 @@ public:
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
     std::string determineMaterial() const;
+    int getNumNavLevels() const;
+    int getBuildingNavLevel() const;    // The nav level the tunnel is building
+    int getCurrentNavLevel() const;     // The nav level the player is still on
     
     virtual void checkIfDone();
     bool isDone() const;

@@ -297,6 +297,7 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
         // Is Vine in same panel as pod?
         if (pods[i]->getPodTrigger())
         {
+            // Distractors
             if (!pods[i]->isPodTaken() &&
                 ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
                  (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
@@ -314,6 +315,7 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
         }
         else
         {
+            // Pod Signals
             if (!pods[i]->isPodTaken() &&
             ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
              (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))

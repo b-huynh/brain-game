@@ -122,16 +122,12 @@ namespace Util
         int stageTotalTargets3;
         int stageTotalCollections;
         int stageTotalTargetsVariance;
-        float stageProficiencyThreshold1;
-        float stageProficiencyThreshold2;
-        float stageProficiencyThreshold3;
         int stageTimeThreshold1;
         int stageTimeThreshold2;
         int stageTimeThreshold3;
-        int stageNavigationThreshold1;
-        int stageNavigationThreshold2;
-        int stageNavigationThreshold3;
-        int stageStarPassThreshold;
+        int set1Repetitions;
+        int set2Repetitions;
+        int set3Repetitions;
         int gameMode;
         int revealColor;
         int revealSound;
@@ -149,6 +145,7 @@ namespace Util
         int tunnelSegmentsPerPod;
         int tunnelSegmentsPerDistractors;
         int tunnelSegmentsBeforeRefresh;
+        int tunnelSectionsPerNavigationUpgrade;
         int initialSegmentsFirstPod;
         int initialSegmentsFirstDistractors;
         int initiationSections;
@@ -180,13 +177,16 @@ namespace Util
         int HPPositiveLimit;
         int HPNegativeCorrectAnswer;
         int HPNegativeWrongAnswer;
+        int HPNegativeDistractor;
         int HPPositiveCorrectAnswer;
         int HPPositiveWrongAnswer;
+        int HPPositiveDistractor;
         float distractorSpeedPenalty;
         float distractorTimePenalty;
         float initCamSpeed;
         float startupCamSpeed;
-        float modifierCamSpeed;
+        float globalModifierCamSpeed;
+        float boostModifierCamSpeed;
         float minCamSpeed;
         float maxCamSpeed;
         float nlevelSpeedModifier;
@@ -291,7 +291,7 @@ namespace Util
     void createSegment(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth,  const bool sides[NUM_DIRECTIONS]);
     void createDefaultSegments(Ogre::SceneManager* sceneMgr);
     
-    float computeTotalPossibleOpportunities(float startSpeed, float maxSpeed, float lengthPerPod, float totalTime);
+    void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
     
     void generateMaterials();
 };

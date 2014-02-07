@@ -100,10 +100,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*) window
+- (void)startWithWindow:(UIWindow*) window:(NSString*)str :(BOOL)isOn
 {
-    unsigned int width  = self.view.frame.size.width;
-    unsigned int height = self.view.frame.size.height;
+    // Dividing by 2 cause of storyboard...
+    unsigned int width  = self.view.frame.size.width / 2;
+    unsigned int height = self.view.frame.size.height / 2;
     
     mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     [self.view addSubview:mOgreView];
@@ -125,7 +126,9 @@
     try
     {
         mApplication = new OgreApp();
-        mApplication->startDemo(window, mOgreView, width, height, [@"subject149" UTF8String], MUSIC_ENABLED);
+        if (isOn) mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
+        else mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times
 		Ogre::Root::getSingleton().clearEventTimes();
