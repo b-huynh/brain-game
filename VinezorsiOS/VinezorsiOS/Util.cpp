@@ -16,23 +16,19 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     sessionTime = 1500.00;
-    stageTime = 90.0;
+    stageTime = 120.0;
     stageTotalSignals = 60;
     stageTotalTargets1 = 20;
     stageTotalTargets2 = 35;
     stageTotalTargets3 = 45;
     stageTotalCollections = 40;
     stageTotalTargetsVariance = 2;
-    stageProficiencyThreshold1 = 0.50;
-    stageProficiencyThreshold2 = 0.70;
-    stageProficiencyThreshold3 = 0.90;
-    stageTimeThreshold1 = 40;
+    stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
-    stageTimeThreshold3 = 55;
-    stageNavigationThreshold1 = 20;
-    stageNavigationThreshold2 = 25;
-    stageNavigationThreshold3 = 30;
-    stageStarPassThreshold = 2;
+    stageTimeThreshold3 = 75;
+    set1Repetitions = 3;
+    set2Repetitions = 3;
+    set3Repetitions = 3;
     gameMode = 1;
     revealColor = 1;
     revealSound = 1;
@@ -50,8 +46,9 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    initialSegmentsFirstPod = 0;
-    initialSegmentsFirstDistractors = -2;
+    tunnelSectionsPerNavigationUpgrade = 3;
+    initialSegmentsFirstPod = 1;
+    initialSegmentsFirstDistractors = 3;
     initiationSections = 1;
     vineTOffset = 1.0;
     vineRadius = tunnelSegmentWidth / 15.0;
@@ -61,10 +58,10 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.05;
-    podCollisionMax = 0.25;
-    distractorCollisionMin = 0.10;
-    distractorCollisionMax = 0.20;
+    podCollisionMin = 0.10;
+    podCollisionMax = 0.50;
+    distractorCollisionMin = 0.30;
+    distractorCollisionMax = 0.40;
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
@@ -76,24 +73,27 @@ Util::ConfigGlobal::ConfigGlobal()
     nback = 2;
     control = 1;
     historyMode = -1;
-    startingHP = 2;
-    HPNegativeLimit = 0;
-    HPPositiveLimit = 3;
-    HPNegativeCorrectAnswer = 0;
+    startingHP = 0;
+    HPNegativeLimit = -10;
+    HPPositiveLimit = 10;
+    HPNegativeCorrectAnswer = 2;
     HPNegativeWrongAnswer = -1;
-    HPPositiveCorrectAnswer = 0;
-    HPPositiveWrongAnswer = -1;
+    HPNegativeDistractor = -1;
+    HPPositiveCorrectAnswer = 1;
+    HPPositiveWrongAnswer = -2;
+    HPPositiveDistractor = -1;
     distractorSpeedPenalty = 0.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
-    modifierCamSpeed = 5.0;
+    globalModifierCamSpeed = 5.0;
+    boostModifierCamSpeed = 1.5;
     minCamSpeed = 10.0;
-    maxCamSpeed = 25.0;
+    maxCamSpeed = 30.0;
     nlevelSpeedModifier = 0.8;
-    numToSpeedUp = 3;
-    numToSpeedDown = 1;
-    stepsizeSpeedUp = 3.0;
+    numToSpeedUp = 2;
+    numToSpeedDown = 2;
+    stepsizeSpeedUp = 1.0;
     stepsizeSpeedDown = -1.0;
     HPBarXRef = 0.05;
     HPBarYRef = 0.05;
@@ -101,24 +101,44 @@ Util::ConfigGlobal::ConfigGlobal()
     HPBarHeight = 0.05;
     screenWidth = 1024;
     screenHeight = 800;
-    timedRunControlUpDist1 = 3000.0;
-    timedRunControlUpDist2 = 7500.0;
-    timedRunControlUpDist3 = 20000.0;
-    setSkyBox = 3;
+    setSkyBox = 2;
     setWallPanelTexture = 0;
-    setPodMesh = 1;
-    setVineShip = 1;
+    setVineShip = VINE_RUNNER_SHIP;
     swipeSensitivity = 12.0;
     swipeInverted = 0;
     combo1MinA = 5;
     combo2MinA = 10;
     combo1MinB = 3;
     combo2MinB = 6;
-    podObjects = std::vector<std::vector<PodObject> >(4);
-    podObjects[0].push_back(PodObject(POD_SIGNAL_1, POD_COLOR_BLUE, POD_SOUND_1, POD_SHAPE_CONE));
-    podObjects[1].push_back(PodObject(POD_SIGNAL_2, POD_COLOR_GREEN, POD_SOUND_2, POD_SHAPE_CONE));
-    podObjects[2].push_back(PodObject(POD_SIGNAL_3, POD_COLOR_PINK, POD_SOUND_3, POD_SHAPE_CONE));
-    podObjects[3].push_back(PodObject(POD_SIGNAL_4, POD_COLOR_YELLOW, POD_SOUND_4, POD_SHAPE_CONE));
+    signalTypes = std::vector<std::vector<PodInfo> >(4);
+    signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
+    signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
+    signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
+    signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
+    navMap = std::vector<NavigationLevel>(23);
+    navMap[0] = NavigationLevel(1, 0);
+    navMap[1] = NavigationLevel(2, 0);
+    navMap[2] = NavigationLevel(2, 1);
+    navMap[3] = NavigationLevel(1, 1);
+    navMap[4] = NavigationLevel(3, 0);
+    navMap[5] = NavigationLevel(4, 0);
+    navMap[6] = NavigationLevel(4, 1);
+    navMap[7] = NavigationLevel(3, 1);
+    navMap[8] = NavigationLevel(2, 2);
+    navMap[9] = NavigationLevel(4, 2);
+    navMap[10] = NavigationLevel(3, 2);
+    navMap[11] = NavigationLevel(1, 2);
+    navMap[12] = NavigationLevel(4, 3);
+    navMap[13] = NavigationLevel(2, 3);
+    navMap[14] = NavigationLevel(3, 3);
+    navMap[15] = NavigationLevel(4, 4);
+    navMap[16] = NavigationLevel(3, 4);
+    navMap[17] = NavigationLevel(2, 4);
+    navMap[18] = NavigationLevel(4, 5);
+    navMap[19] = NavigationLevel(3, 5);
+    navMap[20] = NavigationLevel(4, 6);
+    navMap[21] = NavigationLevel(3, 6);
+    navMap[22] = NavigationLevel(4, 7);
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -193,26 +213,18 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageTotalCollections;
     else if (paramName == "stageTotalTargetsVariance")
         in >> stageTotalTargetsVariance;
-    else if (paramName == "stageProficiencyThreshold1")
-        in >> stageProficiencyThreshold1;
-    else if (paramName == "stageProficiencyThreshold2")
-        in >> stageProficiencyThreshold2;
-    else if (paramName == "stageProficiencyThreshold3")
-        in >> stageProficiencyThreshold3;
     else if (paramName == "stageTimeThreshold1")
         in >> stageTimeThreshold1;
     else if (paramName == "stageTimeThreshold2")
         in >> stageTimeThreshold2;
     else if (paramName == "stageTimeThreshold3")
         in >> stageTimeThreshold3;
-    else if (paramName == "stageNavigationThreshold1")
-        in >> stageNavigationThreshold1;
-    else if (paramName == "stageNavigationThreshold2")
-        in >> stageNavigationThreshold2;
-    else if (paramName == "stageNavigationThreshold3")
-        in >> stageNavigationThreshold3;
-    else if (paramName == "stageStarPassThreshold")
-        in >> stageStarPassThreshold;
+    else if (paramName == "set1Repetitions")
+        in >> set1Repetitions;
+    else if (paramName == "set2Repetitions")
+        in >> set2Repetitions;
+    else if (paramName == "set3Repetitions")
+        in >> set3Repetitions;
     else if (paramName == "nback")
         in >> nback;
     else if (paramName == "control")
@@ -271,18 +283,24 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> HPPositiveCorrectAnswer;
     else if (paramName == "HPPositiveWrongAnswer")
         in >> HPPositiveWrongAnswer;
+    else if (paramName == "HPPositiveDistractor")
+        in >> HPPositiveDistractor;
     else if (paramName == "HPNegativeCorrectAnswer")
         in >> HPNegativeCorrectAnswer;
     else if (paramName == "HPNegativeWrongAnswer")
         in >> HPNegativeWrongAnswer;
+    else if (paramName == "HPNegativeDistractor")
+        in >> HPNegativeDistractor;
     else if (paramName == "distractorSpeedPenalty")
         in >> distractorSpeedPenalty;
     else if (paramName == "distractorTimePenalty")
         in >> distractorTimePenalty;
     else if (paramName == "initCamSpeed")
         in >> initCamSpeed;
-    else if (paramName == "modifierCamSpeed")
-        in >> modifierCamSpeed;
+    else if (paramName == "globalModifierCamSpeed")
+        in >> globalModifierCamSpeed;
+    else if (paramName == "boostModifierCamSpeed")
+        in >> boostModifierCamSpeed;
     else if (paramName == "minCamSpeed")
         in >> minCamSpeed;
     else if (paramName == "maxCamSpeed")
@@ -297,20 +315,16 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stepsizeSpeedUp;
     else if (paramName == "stepsizeSpeedDown")
         in >> stepsizeSpeedDown;
-    else if (paramName == "timedRunControlUpDist1")
-        in >> timedRunControlUpDist1;
-    else if (paramName == "timedRunControlUpDist2")
-        in >> timedRunControlUpDist2;
-    else if (paramName == "timedRunControlUpDist3")
-        in >> timedRunControlUpDist3;
     else if (paramName == "setSkyBox")
         in >> setSkyBox;
     else if (paramName == "setWallPanelTexture")
         in >> setWallPanelTexture;
     else if (paramName == "setVineShip")
-        in >> setVineShip;
-    else if (paramName == "setPodMesh")
-        in >> setPodMesh;
+    {
+        int input;
+        in >> input;
+        setVineShip = (VineMeshType)input;
+    }
     else if (paramName == "swipeSensitivity")
         in >> swipeSensitivity;
     else if (paramName == "swipeInverted")
@@ -323,19 +337,19 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> combo1MinB;
     else if (paramName == "combo2MinB")
         in >> combo2MinB;
-    else if (paramName == "numPodObjects")
+    else if (paramName == "numSignalTypes")
     {
         int input;
         in >> input;
-        podObjects.clear();
-        podObjects = std::vector<std::vector<PodObject> >(input);
+        signalTypes.clear();
+        signalTypes = std::vector<std::vector<PodInfo> >(input);
     }
-    else if (paramName == "podObject")
+    else if (paramName == "signalType")
     {
-        int input1, input2, input3, input4;
-        in >> input1 >> input2 >> input3 >> input4;
-        assert(input1 >= 0 && input1 < podObjects.size());
-        podObjects[input1].push_back(PodObject((PodSignal)input1, (PodColor)input2, (PodSound)input3, (PodShape)input4));
+        int input1, input2, input3, input4, input5;
+        in >> input1 >> input2 >> input3 >> input4 >> input5;
+        assert(input1 >= 0 && input1 < signalTypes.size());
+        signalTypes[input1].push_back(PodInfo((PodSignal)input1, (PodMeshType)input2, (PodColor)input3, (PodShape)input4, (PodSound)input5));
     }
     else if (paramName == "combo2MinA")
         in >> combo2MinA;
@@ -1170,6 +1184,48 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
     
     sides[NORTH] = true;
     Util::createSegment(sceneMgr, "segmentMesh8", 1.0, 1.0, sides);
+}
+
+// Step function to increase speed by 1 or decrease by 1 is not included but could be.
+void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime)
+{
+    // (NumTargets * LengthPerTarget) / Speed = TimeTaken
+    // NumTargets = TimeTaken * Speed / LengthPerTarget
+    // NumTargets = 90 * 20 / 60
+    //
+    // NumTargets = TimeTaken * (InitSpeed + NumTargets / 2) / LengthPerTarget
+    //
+    // (NumTargets * LengthPerTarget) / (InitSpeed + NumTargets / 2) = TimeTaken
+    //
+    // NumTargets = 2 * TimeTaken * InitSpeed / (2 * LengthPerTarget - TimeTaken)
+    //
+    //
+    // At tbuff = 30 and Si = 15, then N = 10,
+    globals.initCamSpeed = initSpeed;
+    
+    globals.HPPositiveLimit = (2*bestTime*globals.initCamSpeed)/(2*lengthPerTarget-bestTime);
+    globals.HPNegativeLimit = -globals.HPPositiveLimit / 3;
+    
+    globals.minCamSpeed = globals.initCamSpeed + globals.HPNegativeLimit / 2;
+    globals.maxCamSpeed = globals.initCamSpeed + globals.HPPositiveLimit / 2;
+    globals.stageTime = approxTotalTime - bestTime;
+    
+    std::cout << "HP Positive: " << globals.HPPositiveLimit << std::endl;
+    std::cout << "Speeda: " << globals.maxCamSpeed << std::endl;
+    
+    globals.stageTotalSignals = 180; // Enough for constant speed of 30
+    globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
+    globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
+    globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+    globals.stageTotalTargetsVariance = 0;
+    
+    globals.startingHP = 0;
+    globals.HPPositiveCorrectAnswer = 1;
+    globals.HPNegativeCorrectAnswer = 1;
+    globals.HPPositiveWrongAnswer = -1;
+    globals.HPNegativeWrongAnswer = -1;
+    globals.HPPositiveDistractor = 0;
+    globals.HPNegativeDistractor = 0;
 }
 
 void Util::generateMaterials()

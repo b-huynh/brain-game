@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
+		5D299E3C18A01EE00014CFA9 /* General.particle in Resources */ = {isa = PBXBuildFile; fileRef = 5D299E3B18A01EE00014CFA9 /* General.particle */; };
+		5D299E3F18A061D60014CFA9 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D299E3D18A061D60014CFA9 /* LevelManager.cpp */; };
 		5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D3041C318431C3800BD26C0 /* Hud.cpp */; };
 		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB9F50180BE8A300C7F23F /* History.cpp */; };
@@ -15,6 +17,7 @@
 		5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DB17F0DC6700E49916 /* Tunnel.cpp */; };
 		5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DF17F0DC7B00E49916 /* TunnelSlice.cpp */; };
 		5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122E117F0DC7B00E49916 /* Vine.cpp */; };
+		5DEB28601899AECB003A90EB /* OgreApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB285E1899AECB003A90EB /* OgreApp.cpp */; };
 		5DF9415E17F4D52E0082C239 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415C17F4D4FC0082C239 /* Ogre.framework */; };
 		5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415017F4D4E70082C239 /* RenderSystem_GL.dylib */; };
 		B63D37F617DE87EB001A7191 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F517DE87EB001A7191 /* Carbon.framework */; };
@@ -25,7 +28,6 @@
 		B6C64C2217DE8C5B0092CA8E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6C64BEA17DE8C5B0092CA8E /* InfoPlist.strings */; };
 		B6C64C2317DE8C5B0092CA8E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6C64BED17DE8C5B0092CA8E /* main.mm */; };
 		B6C64C4417DE8C5B0092CA8E /* ogre.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B6C64C1517DE8C5B0092CA8E /* ogre.cfg */; };
-		B6C64C4517DE8C5B0092CA8E /* OgreDemoApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1617DE8C5B0092CA8E /* OgreDemoApp.cpp */; };
 		B6C64C4617DE8C5B0092CA8E /* OgreFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1817DE8C5B0092CA8E /* OgreFramework.cpp */; };
 		B6C64C4717DE8C5B0092CA8E /* plugins.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B6C64C1A17DE8C5B0092CA8E /* plugins.cfg */; };
 		B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1B17DE8C5B0092CA8E /* Pod.cpp */; };
@@ -69,59 +71,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5D11B17E18170E730052AF40 /* craze.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = craze.png; sourceTree = "<group>"; };
-		5D11B17F18170E730052AF40 /* smiley.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiley.png; sourceTree = "<group>"; };
-		5D11B18018170E730052AF40 /* TunnelTile_pipes_R.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_pipes_R.png; sourceTree = "<group>"; };
-		5D11B18118170E730052AF40 /* white_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = white_fixed.png; sourceTree = "<group>"; };
-		5D15DF431825B36D00DF0F99 /* TunnelTile_FluidPipes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_FluidPipes.png; sourceTree = "<group>"; };
-		5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_FluidPipes2.png; sourceTree = "<group>"; };
-		5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_pipes_D.png; sourceTree = "<group>"; };
-		5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_Wires.png; sourceTree = "<group>"; };
-		5D3041C11842B76F00BD26C0 /* runnerShip.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = runnerShip.mesh; sourceTree = "<group>"; };
+		5D299E3B18A01EE00014CFA9 /* General.particle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.particle; sourceTree = "<group>"; };
+		5D299E3D18A061D60014CFA9 /* LevelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelManager.cpp; sourceTree = "<group>"; };
+		5D299E3E18A061D60014CFA9 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
 		5D3041C318431C3800BD26C0 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
 		5D3041C418431C3800BD26C0 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
-		5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TunnelTile_SpaceStation.png; sourceTree = "<group>"; };
 		5DBB9F50180BE8A300C7F23F /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		5DBB9F51180BE8A300C7F23F /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
-		5DE1228117F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.eot"; sourceTree = "<group>"; };
-		5DE1228217F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
-		5DE1228317F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Elite_Mono_v1.0-STYLE.woff"; sourceTree = "<group>"; };
-		5DE1228417F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono_v1.0-STYLE.eot"; sourceTree = "<group>"; };
-		5DE1228517F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
-		5DE1228617F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono_v1.0-STYLE.woff"; sourceTree = "<group>"; };
-		5DE1228717F0DA8200E49916 /* C64_Pro_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_v1.0-STYLE.eot"; sourceTree = "<group>"; };
-		5DE1228817F0DA8200E49916 /* C64_Pro_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
-		5DE1228917F0DA8200E49916 /* C64_Pro_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_v1.0-STYLE.woff"; sourceTree = "<group>"; };
-		5DE1228A17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_Mono_v1.0-STYLE.eot"; sourceTree = "<group>"; };
-		5DE1228B17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_Mono_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
-		5DE1228C17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_Mono_v1.0-STYLE.woff"; sourceTree = "<group>"; };
-		5DE1228D17F0DA8200E49916 /* C64_User_v1.0-STYLE.eot */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_v1.0-STYLE.eot"; sourceTree = "<group>"; };
-		5DE1228E17F0DA8200E49916 /* C64_User_v1.0-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_v1.0-STYLE.ttf"; sourceTree = "<group>"; };
-		5DE1228F17F0DA8200E49916 /* C64_User_v1.0-STYLE.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_User_v1.0-STYLE.woff"; sourceTree = "<group>"; };
-		5DE1229017F0DA8200E49916 /* test-eot.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "test-eot.html"; sourceTree = "<group>"; };
-		5DE1229117F0DA8200E49916 /* test-ttf.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "test-ttf.html"; sourceTree = "<group>"; };
-		5DE1229217F0DA8200E49916 /* test-woff.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "test-woff.html"; sourceTree = "<group>"; };
 		5DE1229517F0DA8200E49916 /* Examples.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examples.material; sourceTree = "<group>"; };
 		5DE1229617F0DA8200E49916 /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
 		5DE1229717F0DA8200E49916 /* Ogre.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ogre.material; sourceTree = "<group>"; };
-		5DE1229A17F0DA8200E49916 /* black_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black_fixed.png; sourceTree = "<group>"; };
-		5DE1229B17F0DA8200E49916 /* blue_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_fixed.png; sourceTree = "<group>"; };
-		5DE1229C17F0DA8200E49916 /* glass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glass.png; sourceTree = "<group>"; };
-		5DE1229D17F0DA8200E49916 /* green_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_fixed.png; sourceTree = "<group>"; };
-		5DE1229E17F0DA8200E49916 /* GreenSkin.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = GreenSkin.jpg; sourceTree = "<group>"; };
-		5DE1229F17F0DA8200E49916 /* metal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = metal.png; sourceTree = "<group>"; };
-		5DE122A017F0DA8200E49916 /* red_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = red_fixed.png; sourceTree = "<group>"; };
-		5DE122A117F0DA8200E49916 /* spheremap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spheremap.png; sourceTree = "<group>"; };
-		5DE122A217F0DA8200E49916 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
-		5DE122A317F0DA8200E49916 /* star2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star2.png; sourceTree = "<group>"; };
-		5DE122A417F0DA8200E49916 /* tusk.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tusk.jpg; sourceTree = "<group>"; };
-		5DE122A517F0DA8200E49916 /* yellow_fixed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yellow_fixed.png; sourceTree = "<group>"; };
-		5DE122A717F0DA8200E49916 /* ogrehead.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = ogrehead.mesh; sourceTree = "<group>"; };
-		5DE122A917F0DA8200E49916 /* cubemap.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = cubemap.zip; sourceTree = "<group>"; };
-		5DE122AA17F0DA8200E49916 /* cubemapsJS.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = cubemapsJS.zip; sourceTree = "<group>"; };
-		5DE122AB17F0DA8200E49916 /* SdkTrays.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = SdkTrays.zip; sourceTree = "<group>"; };
-		5DE122AC17F0DA8200E49916 /* skybox.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = skybox.zip; sourceTree = "<group>"; };
-		5DE122AF17F0DA8200E49916 /* FrozenHillside.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = FrozenHillside.ogg; sourceTree = "<group>"; };
 		5DE122D917F0DC6700E49916 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		5DE122DA17F0DC6700E49916 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
 		5DE122DB17F0DC6700E49916 /* Tunnel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tunnel.cpp; sourceTree = "<group>"; };
@@ -130,6 +89,8 @@
 		5DE122E017F0DC7B00E49916 /* TunnelSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TunnelSlice.h; sourceTree = "<group>"; };
 		5DE122E117F0DC7B00E49916 /* Vine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vine.cpp; sourceTree = "<group>"; };
 		5DE122E217F0DC7B00E49916 /* Vine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vine.h; sourceTree = "<group>"; };
+		5DEB285E1899AECB003A90EB /* OgreApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreApp.cpp; sourceTree = "<group>"; };
+		5DEB285F1899AECB003A90EB /* OgreApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreApp.h; sourceTree = "<group>"; };
 		5DF9414617F4D4E70082C239 /* libOgrePaging.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOgrePaging.dylib; path = ../../../../OgreSDKOSX/lib/libOgrePaging.dylib; sourceTree = "<group>"; };
 		5DF9414717F4D4E70082C239 /* libOgreProperty.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOgreProperty.dylib; path = ../../../../OgreSDKOSX/lib/libOgreProperty.dylib; sourceTree = "<group>"; };
 		5DF9414817F4D4E70082C239 /* libOgreRTShaderSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOgreRTShaderSystem.dylib; path = ../../../../OgreSDKOSX/lib/libOgreRTShaderSystem.dylib; sourceTree = "<group>"; };
@@ -153,8 +114,6 @@
 		B6C64BEB17DE8C5B0092CA8E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B6C64BED17DE8C5B0092CA8E /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		B6C64C1517DE8C5B0092CA8E /* ogre.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ogre.cfg; sourceTree = "<group>"; };
-		B6C64C1617DE8C5B0092CA8E /* OgreDemoApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreDemoApp.cpp; sourceTree = "<group>"; };
-		B6C64C1717DE8C5B0092CA8E /* OgreDemoApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreDemoApp.h; sourceTree = "<group>"; };
 		B6C64C1817DE8C5B0092CA8E /* OgreFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreFramework.cpp; sourceTree = "<group>"; };
 		B6C64C1917DE8C5B0092CA8E /* OgreFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreFramework.h; sourceTree = "<group>"; };
 		B6C64C1A17DE8C5B0092CA8E /* plugins.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plugins.cfg; sourceTree = "<group>"; };
@@ -186,45 +145,15 @@
 		5DE1227F17F0DA8200E49916 /* media */ = {
 			isa = PBXGroup;
 			children = (
-				5DE1228017F0DA8200E49916 /* fonts */,
 				5DE1229317F0DA8200E49916 /* materials */,
-				5DE122A617F0DA8200E49916 /* models */,
-				5DE122A817F0DA8200E49916 /* packs */,
-				5DE122AD17F0DA8200E49916 /* sounds */,
 			);
 			path = media;
-			sourceTree = "<group>";
-		};
-		5DE1228017F0DA8200E49916 /* fonts */ = {
-			isa = PBXGroup;
-			children = (
-				5DE1228117F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.eot */,
-				5DE1228217F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.ttf */,
-				5DE1228317F0DA8200E49916 /* C64_Elite_Mono_v1.0-STYLE.woff */,
-				5DE1228417F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.eot */,
-				5DE1228517F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.ttf */,
-				5DE1228617F0DA8200E49916 /* C64_Pro_Mono_v1.0-STYLE.woff */,
-				5DE1228717F0DA8200E49916 /* C64_Pro_v1.0-STYLE.eot */,
-				5DE1228817F0DA8200E49916 /* C64_Pro_v1.0-STYLE.ttf */,
-				5DE1228917F0DA8200E49916 /* C64_Pro_v1.0-STYLE.woff */,
-				5DE1228A17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.eot */,
-				5DE1228B17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.ttf */,
-				5DE1228C17F0DA8200E49916 /* C64_User_Mono_v1.0-STYLE.woff */,
-				5DE1228D17F0DA8200E49916 /* C64_User_v1.0-STYLE.eot */,
-				5DE1228E17F0DA8200E49916 /* C64_User_v1.0-STYLE.ttf */,
-				5DE1228F17F0DA8200E49916 /* C64_User_v1.0-STYLE.woff */,
-				5DE1229017F0DA8200E49916 /* test-eot.html */,
-				5DE1229117F0DA8200E49916 /* test-ttf.html */,
-				5DE1229217F0DA8200E49916 /* test-woff.html */,
-			);
-			path = fonts;
 			sourceTree = "<group>";
 		};
 		5DE1229317F0DA8200E49916 /* materials */ = {
 			isa = PBXGroup;
 			children = (
 				5DE1229417F0DA8200E49916 /* scripts */,
-				5DE1229917F0DA8200E49916 /* textures */,
 			);
 			path = materials;
 			sourceTree = "<group>";
@@ -232,6 +161,7 @@
 		5DE1229417F0DA8200E49916 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
+				5D299E3B18A01EE00014CFA9 /* General.particle */,
 				5DE1229517F0DA8200E49916 /* Examples.material */,
 				5DE1229617F0DA8200E49916 /* General.material */,
 				5DE1229717F0DA8200E49916 /* Ogre.material */,
@@ -239,67 +169,11 @@
 			path = scripts;
 			sourceTree = "<group>";
 		};
-		5DE1229917F0DA8200E49916 /* textures */ = {
-			isa = PBXGroup;
-			children = (
-				5D15DF431825B36D00DF0F99 /* TunnelTile_FluidPipes.png */,
-				5D15DF441825B36D00DF0F99 /* TunnelTile_FluidPipes2.png */,
-				5D15DF451825B36D00DF0F99 /* TunnelTile_pipes_D.png */,
-				5D15DF461825B36D00DF0F99 /* TunnelTile_Wires.png */,
-				5D77CC58181B06A2001D4461 /* TunnelTile_SpaceStation.png */,
-				5D11B17E18170E730052AF40 /* craze.png */,
-				5D11B17F18170E730052AF40 /* smiley.png */,
-				5D11B18018170E730052AF40 /* TunnelTile_pipes_R.png */,
-				5D11B18118170E730052AF40 /* white_fixed.png */,
-				5DE1229A17F0DA8200E49916 /* black_fixed.png */,
-				5DE1229B17F0DA8200E49916 /* blue_fixed.png */,
-				5DE1229C17F0DA8200E49916 /* glass.png */,
-				5DE1229D17F0DA8200E49916 /* green_fixed.png */,
-				5DE1229E17F0DA8200E49916 /* GreenSkin.jpg */,
-				5DE1229F17F0DA8200E49916 /* metal.png */,
-				5DE122A017F0DA8200E49916 /* red_fixed.png */,
-				5DE122A117F0DA8200E49916 /* spheremap.png */,
-				5DE122A217F0DA8200E49916 /* star.png */,
-				5DE122A317F0DA8200E49916 /* star2.png */,
-				5DE122A417F0DA8200E49916 /* tusk.jpg */,
-				5DE122A517F0DA8200E49916 /* yellow_fixed.png */,
-			);
-			path = textures;
-			sourceTree = "<group>";
-		};
-		5DE122A617F0DA8200E49916 /* models */ = {
-			isa = PBXGroup;
-			children = (
-				5D3041C11842B76F00BD26C0 /* runnerShip.mesh */,
-				5DE122A717F0DA8200E49916 /* ogrehead.mesh */,
-			);
-			path = models;
-			sourceTree = "<group>";
-		};
-		5DE122A817F0DA8200E49916 /* packs */ = {
-			isa = PBXGroup;
-			children = (
-				5DE122A917F0DA8200E49916 /* cubemap.zip */,
-				5DE122AA17F0DA8200E49916 /* cubemapsJS.zip */,
-				5DE122AB17F0DA8200E49916 /* SdkTrays.zip */,
-				5DE122AC17F0DA8200E49916 /* skybox.zip */,
-			);
-			path = packs;
-			sourceTree = "<group>";
-		};
-		5DE122AD17F0DA8200E49916 /* sounds */ = {
-			isa = PBXGroup;
-			children = (
-				5DE122AF17F0DA8200E49916 /* FrozenHillside.ogg */,
-			);
-			path = sounds;
-			sourceTree = "<group>";
-		};
 		5DE122E517F0DC8400E49916 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				B6C64C1617DE8C5B0092CA8E /* OgreDemoApp.cpp */,
-				B6C64C1717DE8C5B0092CA8E /* OgreDemoApp.h */,
+				5DEB285E1899AECB003A90EB /* OgreApp.cpp */,
+				5DEB285F1899AECB003A90EB /* OgreApp.h */,
 				B6C64C1817DE8C5B0092CA8E /* OgreFramework.cpp */,
 				B6C64C1917DE8C5B0092CA8E /* OgreFramework.h */,
 				B6C64C1B17DE8C5B0092CA8E /* Pod.cpp */,
@@ -318,6 +192,8 @@
 				5DBB9F51180BE8A300C7F23F /* History.h */,
 				5D3041C318431C3800BD26C0 /* Hud.cpp */,
 				5D3041C418431C3800BD26C0 /* Hud.h */,
+				5D299E3D18A061D60014CFA9 /* LevelManager.cpp */,
+				5D299E3E18A061D60014CFA9 /* LevelManager.h */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -445,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6C64C2217DE8C5B0092CA8E /* InfoPlist.strings in Resources */,
+				5D299E3C18A01EE00014CFA9 /* General.particle in Resources */,
 				B6C64C4417DE8C5B0092CA8E /* ogre.cfg in Resources */,
 				B6C64C4717DE8C5B0092CA8E /* plugins.cfg in Resources */,
 				B6C64C4917DE8C5B0092CA8E /* resources.cfg in Resources */,
@@ -475,7 +352,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6C64C2317DE8C5B0092CA8E /* main.mm in Sources */,
-				B6C64C4517DE8C5B0092CA8E /* OgreDemoApp.cpp in Sources */,
 				B6C64C4617DE8C5B0092CA8E /* OgreFramework.cpp in Sources */,
 				5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */,
 				B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */,
@@ -483,7 +359,9 @@
 				5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */,
 				5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */,
 				5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */,
+				5D299E3F18A061D60014CFA9 /* LevelManager.cpp in Sources */,
 				5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */,
+				5DEB28601899AECB003A90EB /* OgreApp.cpp in Sources */,
 				5DBB9F52180BE8A300C7F23F /* History.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -529,7 +407,7 @@
 					"\"$(OGRE_SDK_ROOT)/Dependencies\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/Release\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
 				OGRE_SDK_ROOT = "~/OgreSDKOSX";
 				OTHER_LDFLAGS = (
@@ -572,7 +450,7 @@
 					"\"$(OGRE_SDK_ROOT)/Dependencies\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/Release\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
 				OGRE_SDK_ROOT = "~/OgreSDKOSX";
 				OTHER_LDFLAGS = (

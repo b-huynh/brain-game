@@ -295,18 +295,40 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
 	for (int i = 0; i < pods.size(); ++i)
 	{
         // Is Vine in same panel as pod?
-        if (!pods[i]->isPodTaken() &&
+        if (pods[i]->getPodTrigger())
+        {
+            // Distractors
+            if (!pods[i]->isPodTaken() &&
+                ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
+                 (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
+            {
+                // Is vine where pod is in time?
+                //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
+                if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
+                    (vine->previousID == tunnelSliceID && vine->previoust < globals.distractorCollisionMin && (vine->aftert > globals.distractorCollisionMax || vine->afterID > vine->previousID)) ||
+                    (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.distractorCollisionMin && vine->aftert <= globals.distractorCollisionMax) || (vine->aftert > globals.distractorCollisionMax && vine->previousID < vine->afterID))))
+                {
+                    pods[i]->takePod();
+                    ret.push_back(pods[i]);
+                }
+            }
+        }
+        else
+        {
+            // Pod Signals
+            if (!pods[i]->isPodTaken() &&
             ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
              (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
-        {
-            // Is vine where pod is in time?
-            //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
-            if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
-                (vine->previousID == tunnelSliceID && vine->previoust < globals.podCollisionMin && (vine->aftert > globals.podCollisionMax || vine->afterID > vine->previousID)) ||
-                (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.podCollisionMin && vine->aftert <= globals.podCollisionMax) || (vine->aftert > globals.podCollisionMax && vine->previousID < vine->afterID))))
             {
-                pods[i]->takePod();
-                ret.push_back(pods[i]);
+                // Is vine where pod is in time?
+                //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
+                if ((vine->previousID < tunnelSliceID && vine->afterID > tunnelSliceID) ||
+                    (vine->previousID == tunnelSliceID && vine->previoust < globals.podCollisionMin && (vine->aftert > globals.podCollisionMax || vine->afterID > vine->previousID)) ||
+                    (vine->afterID == tunnelSliceID && ((vine->aftert >= globals.podCollisionMin && vine->aftert <= globals.podCollisionMax) || (vine->aftert > globals.podCollisionMax && vine->previousID < vine->afterID))))
+                {
+                    pods[i]->takePod();
+                    ret.push_back(pods[i]);
+                }
             }
         }
 	}
@@ -457,13 +479,12 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, ManualOb
 {
     manual->begin("BaseWhiteNoLighting", RenderOperation::OT_TRIANGLE_LIST);
     
-    
     Vector3 d1 = (p2 - p1).normalisedCopy();
     Vector3 d2 = (p4 - p1).normalisedCopy();
     Vector3 n = d1.crossProduct(d2);
     
-    d1 *= Util::EPSILON;
-    d2 *= Util::EPSILON;
+    d1 *= 32 * Util::EPSILON;
+    d2 *= 32 * Util::EPSILON;
     
     manual->position(p1 - d1 - d2);
     manual->normal(n);
@@ -498,7 +519,6 @@ void TunnelSlice::connect(TunnelSlice* next)
     
     int tempID = intermediateMeshID;
     entireIntermediate = parentNode->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
-    
     
     std::string meshName = "intermediateMesh" + Util::toStringInt(intermediateMeshID);
     ManualObject* manual = parentNode->getCreator()->createManualObject(meshName);

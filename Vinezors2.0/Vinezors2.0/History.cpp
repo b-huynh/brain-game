@@ -18,10 +18,22 @@ const float PANEL_X = 0.0;
 const float PANEL_Y = -10.0;
 
 History::History(Ogre::SceneManager* sceneMgr, int nback)
-: sceneMgr(sceneMgr), nback(nback), seats(), list(), coverNode(NULL), coverDest(),
+: sceneMgr(sceneMgr), sidebarMode(SIDEBAR_NONE), nback(nback), seats(), list(), lightNodeSide(NULL), coverNode(NULL), coverDest(),
 panelHeight(PANEL_HEIGHT), panelX(PANEL_X), panelY(PANEL_Y), reservedHeight(), coverHeight(), coverOffsetY(), coverInd(), mode(FIRST_TIME)
 {
     initSeats(nback);
+    
+    //Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "sphereMesh", 1.0, 16, 16);
+    //Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "cylinderMesh", 1.0, 1.0, 16);
+    //Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "diamondMesh", 1.0, 1.0);
+    //Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, "planeMesh", 1.0, 1.0);
+     Light* lightSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->createLight("Light");
+     lightSide->setDiffuseColour(1.0, 1.0, 1.0);
+     lightSide->setSpecularColour(1.0, 1.0, 1.0);
+     lightNodeSide = OgreFramework::getSingletonPtr()->m_pSceneMgrSide->getRootSceneNode()->createChildSceneNode("lightNode");
+     lightNodeSide->attachObject(lightSide);
+     lightNodeSide->setPosition(OgreFramework::getSingletonPtr()->m_pCameraSide->getPosition());
+    setSidebar();
 }
 
 void History::initSeats(int nback)
@@ -81,7 +93,7 @@ void History::addPod(const PodInfo & podInfo)
 {
     Vector3 loc = seats[0]->getPosition();
     
-    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y + reservedHeight, globals.podStemLength), BASIC, podInfo.podSignal, podInfo.podColor, podInfo.podShape, podInfo.podSound, NO_DIRECTION, globals.podStemRadius, globals.podHeadRadius);
+    Pod* cpy = new Pod(sceneMgr->getRootSceneNode(), Vector3(loc.x, loc.y + reservedHeight, 0), Vector3(globals.podStemLength, loc.y + reservedHeight, globals.podStemLength), POD_BASIC, podInfo.podSignal, podInfo.podColor, podInfo.podShape, podInfo.podSound, NO_DIRECTION, globals.podStemRadius, globals.podHeadRadius);
     cpy->setMoveSpeed(5.0);
     cpy->uncloakPod();
     list.insert(list.begin(), cpy);
@@ -172,6 +184,98 @@ void History::determineCoverLoc(bool success)
             }
             break;
         }
+    }
+}
+
+void History::setSidebar()
+{
+    Camera* m_pCameraMain = OgreFramework::getSingletonPtr()->m_pCameraMain;
+    Camera* m_pCameraSide = OgreFramework::getSingletonPtr()->m_pCameraSide;
+    
+    Viewport* m_pViewportMain = OgreFramework::getSingletonPtr()->m_pViewportMain;
+    Viewport* m_pViewportSide = OgreFramework::getSingletonPtr()->m_pViewportSide;
+    
+    switch (sidebarMode)
+    {
+        case SIDEBAR_NONE:
+            m_pViewportMain->setDimensions(
+                                           0.0,
+                                           0.0,
+                                           float(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeNone) / globals.screenHeight);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setOrthoWindow(0.0, 0.0);
+            m_pViewportSide->setDimensions(
+                                           float(globals.viewportMainWidth_modeNone) / globals.screenWidth,
+                                           0.0,
+                                           float(globals.viewportSideWidth_modeNone) / globals.screenWidth,
+                                           float(globals.viewportSideHeight_modeNone) / globals.screenHeight);
+            m_pCameraSide->setAspectRatio(Real(0.0));
+            
+            break;
+        case SIDEBAR_RIGHT:
+            m_pViewportMain->setDimensions(
+                                           0.0,
+                                           0.0,
+                                           float(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeRight) / globals.screenHeight);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setPosition(Vector3(0, 0, 30));
+            m_pCameraSide->lookAt(Vector3(0, 0, 0));
+            m_pCameraSide->setNearClipDistance(1);
+            m_pCameraSide->setOrthoWindow(10.0, 25.0);
+            m_pViewportSide->setDimensions(
+                                           float(globals.viewportMainWidth_modeRight) / globals.screenWidth,
+                                           0.0,
+                                           float(globals.viewportSideWidth_modeRight) / globals.screenWidth,
+                                           float(globals.viewportSideHeight_modeRight) / globals.screenHeight);
+            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+            
+            break;
+        case SIDEBAR_BOTTOM_LTR:
+            m_pViewportMain->setDimensions(
+                                           0.0,
+                                           0.0,
+                                           float(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setPosition(Vector3(0, 0, 30));
+            m_pCameraSide->lookAt(Vector3(0, 0, 0));
+            m_pCameraSide->setNearClipDistance(1);
+            m_pCameraSide->roll(Degree(-90));
+            m_pCameraSide->setOrthoWindow(5, 2.5);
+            m_pViewportSide->setDimensions(
+                                           0.0,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
+                                           float(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
+            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+            
+            break;
+        case SIDEBAR_BOTTOM_RTL:
+            m_pViewportMain->setDimensions(
+                                           0.0,
+                                           0.0,
+                                           float(globals.viewportMainWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight);
+            m_pCameraMain->setAspectRatio(Real(m_pViewportMain->getActualWidth()) / Real(m_pViewportMain->getActualHeight()));
+            
+            m_pCameraSide->setPosition(Vector3(0, 0, 30));
+            m_pCameraSide->lookAt(Vector3(0, 0, 0));
+            m_pCameraSide->setNearClipDistance(1);
+            m_pCameraSide->roll(Degree(90));
+            m_pCameraSide->setOrthoWindow(5, 2.5);
+            m_pViewportSide->setDimensions(
+                                           0.0,
+                                           float(globals.viewportMainHeight_modeBottom) / globals.screenHeight,
+                                           float(globals.viewportSideWidth_modeBottom) / globals.screenWidth,
+                                           float(globals.viewportSideHeight_modeBottom) / globals.screenHeight);
+            m_pCameraSide->setAspectRatio(Real(m_pViewportSide->getActualWidth()) / Real(m_pViewportSide->getActualHeight()));
+            
+            break;
     }
 }
 

@@ -82,12 +82,16 @@
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
     
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    [self.view addGestureRecognizer:longPressRecognizer];
+    
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     
     singleTapRecognizer.delegate = self;
     doubleTapRecognizer.delegate = self;
     panRecognizer.delegate = self;
     pinchRecognizer.delegate = self;
+    longPressRecognizer.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -96,10 +100,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*) window
+- (void)startWithWindow:(UIWindow*) window:(NSString*)str :(BOOL)isOn
 {
-    unsigned int width  = self.view.frame.size.width;
-    unsigned int height = self.view.frame.size.height;
+    // Dividing by 2 cause of storyboard...
+    unsigned int width  = self.view.frame.size.width / 2;
+    unsigned int height = self.view.frame.size.height / 2;
     
     mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     [self.view addSubview:mOgreView];
@@ -121,7 +126,9 @@
     try
     {
         mApplication = new OgreApp();
-        mApplication->startDemo(window, mOgreView, width, height, [@"subject100" UTF8String], MUSIC_ENABLED);
+        if (isOn) mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
+        else mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times
 		Ogre::Root::getSingleton().clearEventTimes();
@@ -216,6 +223,7 @@
     }
 }
 
+/*
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
     UITouch *touch = [[event allTouches] anyObject];
@@ -254,34 +262,30 @@
 
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender
 {
-    /*
     CGFloat dx = end.x - start.x;
     mApplication->activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
         mApplication->activatePerformLeftMove();
     else if (dx > 1.0)
         mApplication->activatePerformRightMove();
-    */
 }
 
 - (IBAction)handleSwipeUp:(UISwipeGestureRecognizer*)sender
 {
-    /*
     CGFloat dx = end.x - start.x;
     mApplication->activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
         mApplication->activatePerformLeftMove();
     else if (dx > 1.0)
         mApplication->activatePerformRightMove();
-     */
 }
+*/
 
 - (IBAction)handleDoubleTap:(UITapGestureRecognizer*)sender
 {
     CGPoint loc = [sender locationInView:self.view];
     if (sender.state == UIGestureRecognizerStateEnded)
         mApplication->activatePerformDoubleTap(loc.x, loc.y);
-    NSLog(@"Meep...");
 }
 
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender
@@ -299,7 +303,7 @@
 
 - (IBAction)handlePan:(UIPanGestureRecognizer*)sender
 {
-    CGFloat initialThreshold = 25.0;
+    CGFloat initialThreshold = 50.0;
     CGFloat swipeThreshold = 50.0;
     CGPoint dp = [sender translationInView:sender.view];
     CGPoint v = [sender velocityInView:sender.view];
@@ -326,6 +330,14 @@
     {
         totalX = 0.0;
     }
+}
+
+- (IBAction)handleLongPress:(UILongPressGestureRecognizer*)sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan)
+        mApplication->activatePerformBeginLongPress();
+    else if (sender.state == UIGestureRecognizerStateEnded)
+        mApplication->activatePerformEndLongPress();
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer

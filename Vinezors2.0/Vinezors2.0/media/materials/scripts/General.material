@@ -281,7 +281,7 @@ material General/Wall4
 
             texture_unit
 			{
-				texture TunnelTile_FluidPipes.png
+				texture TunnelTile_FluidPipes2.png
 			}
 		}
 	}
@@ -315,7 +315,7 @@ material General/Wall6
 
             texture_unit
 			{
-				texture TunnelTile_SpaceStation2.png
+				texture TunnelTile_CircuitBoard.png
 			}
 		}
 	}
@@ -328,10 +328,12 @@ material General/Wall7
         pass
 		{
             lighting on
+            scene_blend alpha_blend
+            depth_write off
 
             texture_unit
 			{
-				texture TunnelTile_FluidPipes2.png
+				texture TunnelTile_GoldPipes.png
 			}
 		}
 	}
@@ -347,7 +349,107 @@ material General/Wall8
 
             texture_unit
 			{
-				texture grass.jpg
+				texture TunnelTile_FluidPipes_v2.png
+			}
+		}
+	}
+}
+
+material General/Wall9
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_Boards.png
+			}
+		}
+	}
+}
+
+material General/Wall10
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_SpacePlatForms.png
+			}
+		}
+	}
+}
+
+material General/Wall11
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture TunnelTile_Simple.png
+			}
+		}
+	}
+}
+
+material General/Wall12
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_AlienPipes.png
+			}
+		}
+	}
+}
+
+material General/Wall13
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_GoldFire.png
+			}
+		}
+	}
+}
+
+material General/Wall14
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture TunnelTile_Window.png
 			}
 		}
 	}
@@ -608,7 +710,7 @@ material General/PodBlue
             lighting on
  
             ambient 0.1 0.2 0.3 1
-            diffuse 0.2 0.3 0.8 1
+            diffuse 0.2 0.4 0.8 1
             emissive 0.1 0.1 0.2 1
         }
     }
@@ -622,8 +724,8 @@ material General/PodBlueTransparent
         {
             lighting on
             
-            ambient 0.1 0.1 0.3 0.3
-            diffuse 0.1 0.1 0.8 0.3
+            ambient 0.1 0.2 0.3 0.3
+            diffuse 0.4 0.4 0.8 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -675,14 +777,14 @@ material General/PodStem
     }
 }
 
-material General/PodShell
+material General/VineShell
 {
     technique
     {
         pass
         {
-            ambient 0.3 0.1 0.1 0.3
-            diffuse 1.0 0.0 0.0 0.3
+            ambient 0.3 0.3 0.3 0.7
+            diffuse 1.0 1.0 1.0 0.7
             scene_blend alpha_blend
             depth_write off
         }
@@ -792,59 +894,3 @@ material General/TestSkyPlane0
 		}
 	}
 }
-
-material General/TestSkyPlane1
-{
-	technique
-	{
-		pass
-        {
-			lighting off
-			depth_write off
-            fog_override true
-
-			texture_unit
-			{
-				texture test1.jpg
-			}
-		}
-	}
-}
-
-material General/TestSkyPlane2
-{
-	technique
-	{
-		pass
-        {
-			lighting off
-			depth_write off
-            fog_override true
-
-			texture_unit
-			{
-				texture test2.jpg
-			}
-		}
-	}
-}
-
-
-material General/TestSkyPlane3
-{
-	technique
-	{
-		pass
-        {
-			lighting off
-			depth_write off
-            fog_override true
-
-			texture_unit
-			{
-				texture test_lowbrow.jpg
-			}
-		}
-	}
-}
-

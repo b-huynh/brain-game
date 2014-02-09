@@ -1,6 +1,6 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#include "OgreDemoApp.h"
+#include "OgreApp.h"
 #include "AppDelegate.h"
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
@@ -35,8 +35,8 @@ int main(int argc, char **argv)
     
 	try
     {
-		DemoApp demo;
-		demo.startDemo("subject100", MUSIC_ENABLED);
+		OgreApp demo;
+		demo.startDemo("subject102", MUSIC_ENABLED);
     }
 	catch(std::exception& e)
     {

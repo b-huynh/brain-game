@@ -12,6 +12,8 @@
 @property (strong, nonatomic) UIWindow* mWindow;
 @property (strong, nonatomic) ViewController* mViewController;
 
+- (void)go:(NSString*)str :(BOOL)isOn;
+
 @end
 
 #endif

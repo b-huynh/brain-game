@@ -15,6 +15,9 @@
 class Hud
 {
 private:
+    Player* player;
+    Tunnel* tunnel;
+    
     std::vector<Ogre::Overlay*> overlays;
     
     OverlayContainer* panelText;
@@ -33,9 +36,11 @@ private:
     TextAreaOverlayElement* label7;
 public:
     Hud();
+    void unlink();
+    void link(Tunnel* tunnel, Player* player);
     void init(Tunnel* tunnel, Player* player);
     
-    void update(Tunnel* tunnel, Player* player, float elapsed);
+    void update(float elapsed);
     
     void hideOverlays();
     void showOverlays();

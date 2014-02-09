@@ -1,10 +1,37 @@
+particle_system General/StarBoost
+ {
+    material        General/Star    
+    particle_width  5.0
+    particle_height 5.0
+    cull_each       true
+    quota           100
+    billboard_type  point
+    local_space	    true
+ 
+    // Area emitter
+    emitter Ellipsoid
+    {
+        angle           5
+        emission_rate   100
+        time_to_live_min 0.1
+        time_to_live_max 0.5
+        direction       0 0 1
+        velocity_min    30
+	velocity_max	 50
+        colour 0.0 0.7 1.0
+        width           1
+        height          1
+        depth           1
+    }
+ }
+
 particle_system General/StarShockwave
  {
     material        General/Star
-    particle_width  2.5
-    particle_height 2.5
+    particle_width  5.0
+    particle_height 5.0
     cull_each       true
-    quota           50
+    quota           25
     billboard_type  point
     local_space	    true
  
@@ -25,65 +52,65 @@ particle_system General/StarShockwave
     }
  }
 
-particle_system General/GlowRed
+particle_system General/GlowPodCylinder
  {
     material        General/Star
-    particle_width  10
-    particle_height 10
+    particle_width  4
+    particle_height 4
     cull_each       true
-    quota           20
+    quota           50
     billboard_type  point
     local_space	    true
  
     // Area emitter
-    emitter Ellipsoid
+    emitter Cylinder
     {
         angle           30
-        emission_rate   20
-        time_to_live_min 1
-        time_to_live_max 1
+        emission_rate   200
+        time_to_live_min 0.5
+        time_to_live_max 0.5
         direction       0 1 0
         velocity       0.001
-        colour 1.0 0.0 0.0
-        width           3
-        height          3
+        colour 0.0 0.0 0.0
+        width           1
+        height          1
         depth           3
     }
  }
 
-particle_system General/GlowGreen
+particle_system General/GlowPodBox
  {
     material        General/Star
-    particle_width  10
-    particle_height 10
+    particle_width  4
+    particle_height 4
     cull_each       true
-    quota           20
+    quota           50
     billboard_type  point
     local_space	    true
  
     // Area emitter
-    emitter Ellipsoid
+    emitter Box
     {
         angle           30
-        emission_rate   20
-        time_to_live_min 1
-        time_to_live_max 1
+        emission_rate   200
+        time_to_live_min 0.5
+        time_to_live_max 0.5
         direction       0 1 0
         velocity       0.001
-        colour 0.0 1.0 0.0
-        width           3
-        height          3
-        depth           3
+        colour 0.0 0.0 0.0
+        width           2
+        height          2
+        depth           2
     }
  }
 
-particle_system General/GlowBlue
+particle_system General/GlowPodEllipsoid
  {
     material        General/Star
-    particle_width  10
-    particle_height 10
+    particle_width  4
+    particle_height 4
     cull_each       true
-    quota           20
+    quota           50
     billboard_type  point
     local_space	    true
  
@@ -91,65 +118,14 @@ particle_system General/GlowBlue
     emitter Ellipsoid
     {
         angle           30
-        emission_rate   20
-        time_to_live_min 1
-        time_to_live_max 1
+        emission_rate   200
+        time_to_live_min 0.5
+        time_to_live_max 0.5
         direction       0 1 0
         velocity       0.001
-        colour 0.0 0.0 1.0
-        width           3
-        height          3
-        depth           3    }
- }
-
-particle_system General/GlowYellow
- {
-    material        General/Star
-    particle_width  10
-    particle_height 10
-    cull_each       true
-    quota           20
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Ellipsoid
-    {
-        angle           30
-        emission_rate   20
-        time_to_live_min 1
-        time_to_live_max 1
-        direction       0 1 0
-        velocity       0.001
-        colour 1.0 1.0 0.0
-        width           3
-        height          3
-        depth           3
-    }
- }
-
-particle_system General/GlowWhite
- {
-    material        General/Star
-    particle_width  10
-    particle_height 10
-    cull_each       true
-    quota           20
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Ellipsoid
-    {
-        angle           30
-        emission_rate   20
-        time_to_live_min 1
-        time_to_live_max 1
-        direction       0 1 0
-        velocity       0.001
-        colour 1.0 1.0 1.0
-        width           3
-        height          3
-        depth           3
+        colour 0.0 0.0 0.0
+        width           2
+        height          2
+        depth           2
     }
  }

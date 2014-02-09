@@ -20,13 +20,28 @@ Pod::Pod()
 {
 }
 
-Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, MeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
 : parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest()
 {
-    if (mtype == BASIC) loadBasicShape();
-    else if (mtype == FUEL) loadFuelCell();
-    
+    loadPod();
+}
+
+void Pod::loadPod()
+{
+    switch (mtype)
+    {
+        case POD_BASIC:
+            loadBasicShape();
+            break;
+        case POD_FUEL:
+            loadFuelCell();
+            break;
+        default:
+            loadHazard();
+            break;
+    }
     ++podID;
+
 }
 
 void Pod::loadBasicShape()
@@ -57,7 +72,6 @@ void Pod::loadBasicShape()
         case POD_SHAPE_SPHERE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
             head->scale(headRadius, headRadius, headRadius);
-            
 //            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "column.mesh");
 //            head->scale(0.1, 0.1, 0.1);
             break;
@@ -117,7 +131,6 @@ void Pod::loadFuelCell()
     headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
-    head->scale(headRadius / 1.5, 0.05, headRadius / 1.5);
     head->setPosition(base);
     head->translate(v / 2);
     setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
@@ -125,7 +138,27 @@ void Pod::loadFuelCell()
     setToGrowth(0.0);
 }
 
-MeshType Pod::getMeshType() const
+void Pod::loadHazard()
+{
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "singleDoubleNoLight.mesh");
+
+    head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v / 2);
+    
+    setToGrowth(0.0);
+    
+}
+
+PodMeshType Pod::getMeshType() const
 {
     return mtype;
 }
@@ -142,15 +175,19 @@ Vector3 Pod::getTip() const
 
 void Pod::setToGrowth(float t)
 {
-    if (mtype == BASIC)
+    if (mtype == POD_BASIC)
     {
         entirePod->setPosition(tip);
         entirePod->translate((base - tip) * (1 - t));
         stem->setScale(Vector3(t * stemRadius, t * stemLength, t * stemRadius));
     }
-    else
+    else if (mtype == POD_FUEL)
     {
         head->setScale(Vector3(headRadius / 1.5, t * headRadius / 1.5, headRadius / 1.5));
+    }
+    else
+    {
+        head->setScale(Vector3(1, t, 1));
     }
 }
 
@@ -206,7 +243,7 @@ Direction Pod::getLoc() const
 
 PodInfo Pod::getPodInfo() const
 {
-    return PodInfo(mtype, podSignal, podColor, podShape, podSound, loc, podGood, podTrigger, podTaken);
+    return PodInfo(podSignal, mtype, podColor, podShape, podSound, loc, podGood, podTrigger, podTaken);
 }
 
 float Pod::getStemRadius() const
@@ -256,7 +293,7 @@ void Pod::move(Vector3 delta)
 
 void Pod::setSkin()
 {
-    if (mtype == BASIC)
+    if (mtype == POD_BASIC)
         headContentEntity->setMaterialName(materialName);
     else {
         // Based on Maya model, SubEntity1 is the content in the fuel cell
@@ -287,6 +324,8 @@ void Pod::revealPod()
 
 void Pod::uncloakPod()
 {
+    if (mtype == POD_HAZARD)
+        return;
     switch (podColor)
     {
         case POD_COLOR_BLUE:
@@ -308,35 +347,72 @@ void Pod::uncloakPod()
     if (podTaken)
         materialName += "Transparent";
     setSkin();
+    if (!podTrigger) generateGlow(podColor, podShape);
 }
 
-void Pod::generateGlow()
+void Pod::generateGlow(PodColor color, PodShape shape)
 {
-    std::string particleName;
-    switch (podColor)
-    {
-        case POD_COLOR_BLUE:
-            particleName = "General/GlowBlue";
-            break;
-        case POD_COLOR_GREEN:
-            particleName = "General/GlowGreen";
-            break;
-        case POD_COLOR_PINK:
-            particleName = "General/GlowRed";
-            break;
-        case POD_COLOR_YELLOW:
-            particleName = "General/GlowYellow";
-            break;
-        default:
-            particleName = "General/GlowWhite";
-            break;
-    }
     if (!glowNode)
     {
-        glowNode = parentNode->createChildSceneNode("GlowNode" + Util::toStringInt(glowID));
+        std::string particleName = "General/GlowPod";
+        Ogre::ColourValue particleValue;
+        switch (color)
+        {
+            case POD_COLOR_BLUE:
+                particleValue.r = 0.1;
+                particleValue.g = 0.3;
+                particleValue.b = 1.0;
+                break;
+            case POD_COLOR_GREEN:
+                particleValue.r = 0.0;
+                particleValue.g = 1.0;
+                particleValue.b = 0.0;
+                break;
+            case POD_COLOR_PINK:
+                particleValue.r = 1.0;
+                particleValue.g = 0.0;
+                particleValue.b = 0.0;
+                break;
+            case POD_COLOR_YELLOW:
+                particleValue.r = 1.0;
+                particleValue.g = 1.0;
+                particleValue.b = 0.0;
+                break;
+            default:
+                particleValue.r = 0.5;
+                particleValue.g = 0.5;
+                particleValue.b = 1.0;
+                break;
+        }
+        
+        switch (shape)
+        {
+            case POD_SHAPE_CONE:
+                particleName += "Cylinder";
+                break;
+            case POD_SHAPE_DIAMOND:
+                particleName += "Box";
+                break;
+            case POD_SHAPE_SPHERE:
+                particleName += "Ellipsoid";
+                break;
+            case POD_SHAPE_TRIANGLE:
+                particleName += "Ellipsoid";
+                break;
+            default:
+                particleName += "Cylinder";
+                break;
+        }
+        
+        // Make independent to avoid rotation orientions when translating.
+        glowNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("GlowNode" + Util::toStringInt(glowID));
         glowEffect = glowNode->getCreator()->createParticleSystem("GlowEffect" + Util::toStringInt(glowID), particleName);
+        ParticleEmitter* glowEmitter = glowEffect->getEmitter(0); // Assuming only one emitter
+        
+        glowEmitter->setColour(particleValue);
+        
         glowNode->attachObject(glowEffect);
-        glowNode->setPosition((base + tip) / 2);
+        glowNode->setPosition(head->_getDerivedPosition());
         ++glowID;
     }
 }
@@ -371,8 +447,21 @@ void Pod::setPodTrigger(bool value)
     podTrigger = value;
 }
 
+void Pod::removeGlow()
+{
+    if (glowNode)
+    {
+        glowNode->getCreator()->destroyParticleSystem(glowEffect);
+        glowNode->removeAndDestroyAllChildren();
+        glowNode->getCreator()->destroySceneNode(glowNode);
+        glowNode = NULL;
+        glowEffect = NULL;
+    }
+}
+
 void Pod::removeFromScene()
 {
+    removeGlow();
     if (stem)
     {
         stem->getCreator()->destroyMovableObject(stem->getAttachedObject(0)); // Assuming only one entity
@@ -389,15 +478,6 @@ void Pod::removeFromScene()
         shell->getCreator()->destroyMovableObject(shell->getAttachedObject(0));
         shell = NULL;
     }
-    if (glowNode)
-    {
-        glowNode->getCreator()->destroyParticleSystem(glowEffect);
-        glowNode->removeAndDestroyAllChildren();
-        glowNode->getCreator()->destroySceneNode(glowNode);
-        glowNode = NULL;
-        glowEffect = NULL;
-        
-    }
     if (entirePod)
     {
         entirePod->removeAndDestroyAllChildren();
@@ -408,6 +488,10 @@ void Pod::removeFromScene()
 
 void Pod::update(float elapsed)
 {
+    if (glowNode)
+    {
+        glowNode->setOrientation(head->_getDerivedOrientation());
+    }
     if (moveSpeed != 0.0)
     {
         Vector3 dist = dest - entirePod->getPosition();

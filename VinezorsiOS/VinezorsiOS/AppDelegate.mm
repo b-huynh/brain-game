@@ -8,13 +8,10 @@
 {
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    // Override point for customization after application launch.
-    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    
-    self.mWindow.rootViewController = self.mViewController;
-    
-    [self.mViewController startWithWindow:self.mWindow];
-    
+    // Tempoary... causes leaks
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+    UIViewController* viewcontroller = [storyboard instantiateViewControllerWithIdentifier:@"StoryboardViewController"];
+    self.mWindow.rootViewController = viewcontroller;
     [self.mWindow makeKeyAndVisible];
 }
 
@@ -32,6 +29,15 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+}
+
+- (void)go:(NSString*)str :(BOOL)isOn
+{
+    // Override point for customization after application launch.
+    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    self.mWindow.rootViewController = self.mViewController;
+    [self.mViewController startWithWindow:self.mWindow:str:isOn];
+    [self.mWindow makeKeyAndVisible];
 }
 
 @end

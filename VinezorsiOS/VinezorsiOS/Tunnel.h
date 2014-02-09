@@ -23,6 +23,9 @@ class Tunnel
 public:
     enum SetPodTarget { UNKNOWN, BAD_TARGET, GOOD_TARGET };
     
+    Player* player;
+    Hud* hud;
+    
     SceneNode* parentNode;
     
     SceneNode* mainTunnelNode;
@@ -81,14 +84,19 @@ public:
     bool sidesUsed[NUM_DIRECTIONS];
     Evaluation eval;
     
-    std::vector<std::vector<PodObject> > podObjects;
+    std::vector<std::vector<PodInfo> > signalTypes;
+    int catchupPhase; // Used to update distractors at navPhase
+    int navPhase; // Put in navigation class later...
+    int navCheckpoint; // Counter to tell when to upgrade tunnel when changing sections
+    std::vector<NavigationLevel> navLevels;
+    std::list<int> propagateCounters;
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodObject> > & podObjects);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -136,21 +144,27 @@ public:
     GameMode getMode() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
+    float getTimeLeft() const;
     int getNBack() const;
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
     std::string determineMaterial() const;
+    int getNumNavLevels() const;
+    int getBuildingNavLevel() const;    // The nav level the tunnel is building
+    int getCurrentNavLevel() const;     // The nav level the player is still on
     
-    void checkIfDone(Player* player);
+    virtual void checkIfDone();
     bool isDone() const;
-    void setDone(int stars);
+    void setDone(Evaluation eval);
     void setSpawnCombo(int level);
     void upgradeControl();
     void addToTimePenalty(float value);
     bool needsCleaning() const;
     
     void setNewControl(int control);
+    void updateNavigationLevel();
+    void setNavigationLevels();
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
@@ -170,10 +184,12 @@ public:
     
     std::vector<Pod *> findPodCollisions(SceneNode* ent);
     
+    void unlink();
+    void link(Player* player, Hud* hud);
     void presetTargets(int level);
-    void constructTunnel(int size, Quaternion q = Quaternion(1, 0, 0, 0), bool pregenPods = false);
+    void constructTunnel(int size, bool pregenPods = false);
     
-    void update(Player* player, Hud* hud, float elapsed);
+    void update(float elapsed);
     
 	~Tunnel();
 };

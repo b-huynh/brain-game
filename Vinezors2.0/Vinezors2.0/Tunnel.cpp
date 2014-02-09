@@ -20,14 +20,14 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-: parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(GAME_PROFICIENCY), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), eval(EVEN), setColors(false), setSounds(false), setShapes(false), done(false), cleanup(false)
+:  player(NULL), hud(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(GAME_PROFICIENCY), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
-Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, bool setColors, bool setSounds, bool setShapes)
-: parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(mode), totalElapsed(0.0), timePenalty(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), eval(EVEN), setColors(setColors), setSounds(setSounds), setShapes(setShapes), done(false), cleanup(false)
+Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes)
+:  player(NULL), hud(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(mode), totalElapsed(0.0), timePenalty(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
@@ -289,7 +289,7 @@ Pod* Tunnel::getNearestPod(int numSlices) const
         {
             std::vector<Pod*> pods = (*it)->getPods();
             for (int i = 0; i < pods.size(); ++i)
-                if (!pods[i]->getPodTrigger() && !pods[i]->isPodTaken())
+                if (!pods[i]->getPodTrigger())
                     return pods[i];
         }
         ++count;
@@ -394,6 +394,11 @@ float Tunnel::getTimePenalty() const
     return timePenalty;
 }
 
+float Tunnel::getTimeLeft() const
+{
+    return globals.stageTime - getTotalElapsed() - getTimePenalty();
+}
+
 int Tunnel::getNBack() const
 {
     return nback;
@@ -439,7 +444,7 @@ std::string Tunnel::determineMaterial() const
     }
     else
     {
-        switch ((nback - 2) % 6)
+        switch ((nback - 2) % 12)
         {
             case 0:
                 return "General/Wall2";
@@ -454,43 +459,65 @@ std::string Tunnel::determineMaterial() const
             case 5:
                 return "General/Wall7";
             case 6:
-                return "General/Wall8";
+                return "General/Wall9";
+            case 7:
+                return "General/Wall10";
+            case 8:
+                return "General/Wall11";
+            case 9:
+                return "General/Wall12";
+            case 10:
+                return "General/Wall13";
+            case 11:
+                return "General/Wall14";
             default:
                 return "General/Wall0";
         }
     }
 }
 
-void Tunnel::checkIfDone(Player* player)
+int Tunnel::getNumNavLevels() const
+{
+    return navLevels.size();
+}
+
+int Tunnel::getBuildingNavLevel() const
+{
+    return navPhase;
+}
+
+int Tunnel::getCurrentNavLevel() const
+{
+    return catchupPhase;
+}
+
+void Tunnel::checkIfDone()
 {
     // Determine whether a stage has completed
     if (!isDone())
     {
         if (getMode() == GAME_PROFICIENCY)
         {
-            double progress = player->getProgress(this);
-            if (progress >= 1.0)
-                setDone(3);
+            if (player->getHP() >= globals.HPPositiveLimit)
+                setDone(PASS);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
-                setDone(progress >= globals.stageProficiencyThreshold2 ? 2 : 1);
-            else if (globals.stageTime > 0 && getTotalElapsed() + getTimePenalty() > globals.stageTime)
-                setDone(progress >= globals.stageProficiencyThreshold2 ? 2 : 1);
+                setDone(EVEN);
+            else if (globals.stageTime > 0 && getTimeLeft() <= 0)
+                setDone(EVEN);
         }
         else if (getMode() == GAME_TIMED)
         {
             if (spawnLimit > 0 && getSignalsLeft() <= 0)
-                setDone(player->getStars());
-            else if (globals.stageTime > 0 && getTotalElapsed() + getTimePenalty() > globals.stageTime)
-                setDone(player->getStars());
+                setDone(PASS);
+            else if (globals.stageTime > 0 && getTimeLeft() <= 0)
+                setDone(EVEN);
         }
         else //if (getMode() == GAME_NAVIGATION)
         {
-            if (numTargets > 0 && player->getNumCorrectTotal() >= globals.stageTotalTargets1)
-                setDone(player->getStars());
-            else if (globals.stageTime > 0 && getTotalElapsed() + getTimePenalty() > globals.stageTime)
-                setDone(player->getStars());
+            if (globals.stageTime > 0 && getTimeLeft() <= 0)
+                setDone(PASS);
             else if (player->getHP() <= globals.HPNegativeLimit)
-                setDone(player->getStars());
+                setDone(EVEN);
         }
     }
 }
@@ -500,9 +527,8 @@ bool Tunnel::isDone() const
     return done;
 }
 
-void Tunnel::setDone(int stars)
+void Tunnel::setDone(Evaluation eval)
 {
-    eval = stars >= globals.stageStarPassThreshold ? PASS : EVEN;
     for (int i = 0; i < globals.initiationSections; ++i) {
         SectionInfo info = SectionInfo(BLANK, NO_DIRECTION, 0, endRot, sidesUsed);
         this->eval = eval;
@@ -522,14 +548,40 @@ void Tunnel::setSpawnCombo(int level)
     spawnCombo = level;
 }
 
+// Used in Time/Speed Trial and is called everytime a new section is added
 void Tunnel::upgradeControl()
 {
-    // Measure by num signals
-    if ((control == 1 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold1 - nback) ||
-        (control == 2 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold2 - nback) ||
-        (control == 3 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold3 - nback))
+    if (getMode() == GAME_NAVIGATION)
     {
-        setNewControl(control + 1);
+        ++navCheckpoint;
+        if (navCheckpoint >= globals.tunnelSectionsPerNavigationUpgrade)
+        {
+            if (navPhase + 1 < navLevels.size())
+            {
+                navCheckpoint = 0;
+                ++navPhase;
+            
+                // Counter to notify when new set of distractors obtained from new control level should be generated
+                int propagateCounter = segments.size();// - renewalSectionCounter;
+                for (std::list<int>::const_iterator it = propagateCounters.begin(); it != propagateCounters.end(); ++it)
+                    propagateCounter -= (*it);
+                propagateCounters.push_back(propagateCounter);
+                setNewControl(navLevels[navPhase].control);
+            }
+        }
+    }
+    else if (getMode() == GAME_TIMED)
+    {
+        // Measure the distance traveled by the number of signals passed, if enough passed, upgrade the controls
+        //
+        // Assumed to be 4 phases in these stages
+        if ((navPhase == 0 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold1 - nback) ||
+            (navPhase == 1 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold2 - nback) ||
+            (navPhase == 2 && getSignalsLeft() <= spawnLimit - globals.stageTimeThreshold3 - nback))
+        {
+            navPhase++;
+            setNewControl(navLevels[navPhase].control);
+        }
     }
 }
 
@@ -549,6 +601,63 @@ void Tunnel::setNewControl(int control)
     //SectionInfo info = SectionInfo(CHECKPOINT_PASS, NO_DIRECTION, 0, sidesUsed);
     //addSegment(info);
     Util::setSides(sidesUsed, control, basis);
+}
+
+void Tunnel::setNavigationLevels()
+{
+    navLevels.clear();
+    
+    int playerNavLevel = player->getSkillLevel().navigation;
+    if (getMode() == GAME_PROFICIENCY)
+    {
+        int tunnelNavLevel = playerNavLevel + Util::randRangeInt(-2, 2);
+        tunnelNavLevel = Util::clamp(tunnelNavLevel, 0, globals.navMap.size() - 1);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+    }
+    else if (getMode() == GAME_TIMED)
+    {
+        navLevels.push_back(NavigationLevel(1, 0));
+        navLevels.push_back(NavigationLevel(2, 0));
+        navLevels.push_back(NavigationLevel(3, 0));
+        navLevels.push_back(NavigationLevel(4, 0));
+    }
+    else
+    {
+        int tunnelNavLevel;
+        
+        tunnelNavLevel = 0;
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(1, 2);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(3, 4);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(5, 6);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(7, 8);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(9, 10);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(11, 12);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(12, 13);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(13, 14);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(15, 16);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(17, 18);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(19, 20);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        tunnelNavLevel = Util::randRangeInt(21, 22);
+        navLevels.push_back(globals.navMap[tunnelNavLevel]);
+    }
+    navPhase = 0;
+    catchupPhase = 0;
+    navCheckpoint = 0;
+    setNewControl(navLevels[navPhase].control);
+    globals.stageTotalDistractorsMin = navLevels[navPhase].obstacles;
+    globals.stageTotalDistractorsMax = navLevels[navPhase].obstacles;
 }
 
 void Tunnel::removeSegment()
@@ -573,16 +682,8 @@ SectionInfo Tunnel::getNextSectionInfo() const
 
 SectionInfo Tunnel::getNextSegmentInfo(SectionInfo sectionInfo) const
 {
+    // Segment info is same as section
     SectionInfo ret = sectionInfo;
-    
-    /*
-     // Empty Panels
-    std::vector<int> availDirs;
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        if (sectionInfo.sidesSafe[i]) availDirs.push_back(i);
-    ret.sidesSafe[availDirs[rand() % availDirs.size()]] = false;
-    */
-    
     return ret;
 }
 
@@ -590,19 +691,11 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
 {
     PodInfo ret;
     
-    switch (globals.setPodMesh)
-    {
-        case 0:
-            ret.meshType = BASIC;
-            break;
-        default:
-            ret.meshType = FUEL;
-            break;
-    }
     int index = types.size();
     if (getMode() == GAME_NAVIGATION)
     {
         ret.podSignal = POD_SIGNAL_UNKNOWN;
+        ret.meshType = POD_FUEL;
         ret.podColor = POD_COLOR_YELLOW;
         ret.podSound = POD_SOUND_UNKNOWN;
         ret.podShape = POD_SHAPE_SPHERE;
@@ -614,10 +707,9 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
     else if (nback <= 0)
     {
         Direction podLoc = Util::randDirection(segmentInfo.sidesUsed);
-        PodSignal final = (PodSignal)(rand() % 4);
-        if (setColors) ret.podColor = (PodColor)final;
-        if (setSounds) ret.podSound = (PodSound)final;
-        if (setShapes) ret.podShape = (PodShape)final;
+        int signalIndex = rand() % signalTypes.size();
+        
+        ret = signalTypes[signalIndex][rand() % signalTypes[signalIndex].size()];
         ret.podLoc = podLoc;
         ret.goodPod = true;
         ret.podTrigger = false;
@@ -646,8 +738,8 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         if (setting == BAD_TARGET)
         {
             std::vector<PodSignal> candidates;
-            for (int i = 0; i < 4; ++i)
-                if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || nback > 2) && // Prevent repeated signals for nbacks less than 2
+            for (int i = 0; i < signalTypes.size(); ++i)
+                if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || (signalTypes.size() < 3 || nback > 2)) && // Prevent repeated signals for nbacks less than 2 unless theres not enough supported signals
                     ((PodSignal)i != repeat1 || nback > 3) && // If there's two in a row already, don't allow possibly three for nback 3
                     (PodSignal)i != repeat2 && // If there's already three in a row... don't even try 4
                     (PodSignal)i != guarantee) // This is supposed to be bad, it shouldn't be a target
@@ -683,7 +775,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                 if (final == POD_SIGNAL_UNKNOWN)
                 {
                     std::vector<PodSignal> candidates;
-                    for (int i = 0; i < 4; ++i)
+                    for (int i = 0; i < signalTypes.size(); ++i)
                         if ((PodSignal)i != repeat2 && (PodSignal)i != guarantee)
                             candidates.push_back((PodSignal)i);
         
@@ -699,23 +791,11 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                 }
             }
         }
-        
-        ret.podSignal = final;
     
-        // Match Color to signal
-        if (setColors) ret.podColor = (PodColor)final;
-    
-        // Match Sound to signal
-        if (setSounds) ret.podSound = (PodSound)final;
-        
-        // Match Shape to signal
-        if (setShapes) ret.podShape = (PodShape)final;
-        
+        ret = signalTypes[final][rand() % signalTypes[final].size()];
         ret.podLoc = podLoc;
-    
         // Determine NBack of next pod is good
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
-        
         ret.podTrigger = false;
         
         types.push_back(ret);
@@ -734,12 +814,10 @@ std::vector<PodInfo> Tunnel::getNextDistractorInfo(SectionInfo segment, PodInfo 
         if (segment.sidesUsed[i] && (Direction)(i) != signal.podLoc) availDirs.push_back(i);
     
     int count = Util::randRangeInt(globals.stageTotalDistractorsMin, globals.stageTotalDistractorsMax);
-    while (count > 0 && availDirs.size() > 0)
+    while (count > 0 && availDirs.size() > 1)
     {
-        MeshType mtype = BASIC;
-        
         int rind = rand() % availDirs.size();
-        PodInfo newDistractor = PodInfo(mtype, POD_SIGNAL_UNKNOWN, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_UNKNOWN, (Direction)availDirs[rind], false, true, false);
+        PodInfo newDistractor = PodInfo(POD_SIGNAL_UNKNOWN, POD_BASIC, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_UNKNOWN, (Direction)availDirs[rind], false, true, false);
         ret.push_back(newDistractor);
         
         availDirs[rind] = availDirs[availDirs.size() - 1];
@@ -857,8 +935,8 @@ void Tunnel::addSection(SectionInfo newSection)
     {
         addSegment(getNextSegmentInfo(newSection));
     }
-    if (mode == GAME_TIMED) upgradeControl();
     sections.push_back(newSection);
+    upgradeControl();
 }
 
 void Tunnel::renewSection(SectionInfo newSection)
@@ -874,7 +952,7 @@ void Tunnel::renewSection(SectionInfo newSection)
         renewSegment(getNextSegmentInfo(newSection));
     }
     sections.push_back(newSection);
-    if (mode == GAME_TIMED) upgradeControl();
+    upgradeControl();
 }
 
 bool Tunnel::updateIterators(Vector3 checkPos)
@@ -896,7 +974,20 @@ bool Tunnel::updateIterators(Vector3 checkPos)
         ++current;
         
         if (!done)
+        {
             ++renewalSectionCounter;
+            if (propagateCounters.size() > 0)
+            {
+                propagateCounters.front()--;
+                while (propagateCounters.size() > 0 && propagateCounters.front() <= 0)
+                {
+                    propagateCounters.pop_front();
+                    ++catchupPhase; // Guaranteed to be less than navPhase
+                    globals.stageTotalDistractorsMin = navLevels[catchupPhase].obstacles;
+                    globals.stageTotalDistractorsMax = navLevels[catchupPhase].obstacles;
+                }
+            }
+        }
         t = (*current)->getT(checkPos);
     }
     tLeftCurrent = t;
@@ -924,6 +1015,18 @@ bool Tunnel::renewIfNecessary()
         }
     }
     return renewed;
+}
+
+void Tunnel::unlink()
+{
+    this->player = NULL;
+    this->hud = NULL;
+}
+
+void Tunnel::link(Player* player, Hud* hud)
+{
+    this->player = player;
+    this->hud = hud;
 }
 
 void Tunnel::presetTargets(int level)
@@ -1025,7 +1128,7 @@ void Tunnel::presetTargets(int level)
     numTargets = globals.stageTotalCollections;
     
     /*
-    // Plague spreading method
+    // Plague spuading method
     for (int i = 0; i < signalTargets.size(); ++i)
     {
         TargetInfo tinfo;
@@ -1040,10 +1143,8 @@ void Tunnel::presetTargets(int level)
      */
 }
 
-void Tunnel::constructTunnel(int size, Quaternion q, bool pregenPods)
+void Tunnel::constructTunnel(int size, bool pregenPods)
 {
-    this->endRot = q;
-    
     // Pregenerate some targets
     if (nback > 0 && pregenPods)
     {
@@ -1154,7 +1255,7 @@ std::vector<Pod *> Tunnel::findPodCollisions(SceneNode *ent)
     return collisions;
 }
 
-void Tunnel::update(Player* player, Hud* hud, float elapsed)
+void Tunnel::update(float elapsed)
 {
     totalElapsed += elapsed;
     // Animate Pod Growing outwards or Growing inwards
@@ -1228,7 +1329,7 @@ void Tunnel::update(Player* player, Hud* hud, float elapsed)
         (*it)->update(elapsed);
     }
     
-    checkIfDone(player);
+    checkIfDone();
 
     if (history) history->update(elapsed);
     
