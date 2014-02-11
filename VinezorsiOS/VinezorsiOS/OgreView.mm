@@ -1,5 +1,5 @@
 //
-//  OgreView.m
+//  OgreView.mm
 //  VinezorsiOS
 //
 //  Created by Calvin Phung on 1/14/14.

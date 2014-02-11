@@ -43,7 +43,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "254"
             endingLineNumber = "254"
-            landmarkName = "Player::getProgress()"
+            landmarkName = "Player::getAccuracy()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -75,7 +75,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "825"
             endingLineNumber = "825"
-            landmarkName = "Player::playPodSound(int index)"
+            landmarkName = "Player::getCombinedRotAndRoll()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

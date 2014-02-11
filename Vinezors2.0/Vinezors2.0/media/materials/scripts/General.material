@@ -233,79 +233,13 @@ material General/Wall1
 
             texture_unit
 			{
-				texture metal.png
+				texture Level1/metal.png
 			}
         }
     }
 }
 
-material General/Wall2
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture TunnelTile_SpaceStation.png
-			}
-		}
-	}
-}
-
-material General/Wall3
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture TunnelTile_Wires.png
-			}
-		}
-	}
-}
-
-material General/Wall4
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture TunnelTile_FluidPipes2.png
-			}
-		}
-	}
-}
-
-material General/Wall5
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-			{
-				texture TunnelTile_pipes_D.png
-			}
-		}
-	}
-}
-
-material General/Wall6
+material General/Wall2a
 {
     technique
 	{
@@ -321,7 +255,55 @@ material General/Wall6
 	}
 }
 
-material General/Wall7
+material General/Wall2b
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture TunnelTile_SpaceStation.png
+			}
+		}
+	}
+}
+
+material General/Wall3a
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Level3/TunnelTile_FluidPipes.png
+			}
+		}
+	}
+}
+
+material General/Wall3b
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Level3/TunnelTile_FluidPipes2.png
+			}
+		}
+	}
+}
+
+material General/Wall4a
 {
     technique
 	{
@@ -333,13 +315,31 @@ material General/Wall7
 
             texture_unit
 			{
-				texture TunnelTile_GoldPipes.png
+				texture Level4/TunnelTile_Simple.png
 			}
 		}
 	}
 }
 
-material General/Wall8
+material General/Wall4b
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level4/TunnelTile_Window.png
+			}
+        }
+	}
+}
+
+material General/Wall5a
 {
     technique
 	{
@@ -349,13 +349,14 @@ material General/Wall8
 
             texture_unit
 			{
-				texture TunnelTile_FluidPipes_v2.png
+				texture Level5/TunnelTile_FluidPipes_v2.png
+
 			}
 		}
 	}
 }
 
-material General/Wall9
+material General/Wall5b
 {
     technique
 	{
@@ -365,13 +366,151 @@ material General/Wall9
 
             texture_unit
 			{
-				texture TunnelTile_Boards.png
+				texture Level5/TunnelTile_GoldFire.png
 			}
 		}
 	}
 }
 
-material General/Wall10
+material General/Wall5c
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Level5/TunnelTile_Wires.png
+			}
+		}
+	}
+}
+
+material General/Wall6a1
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_AlienPipes.png
+			}
+		}
+	}
+}
+
+material General/Wall6a2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_AlienPipe_S_A.png
+			}
+		}
+	}
+}
+
+material General/Wall6a3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_AlienPipe_F_A.png
+			}
+		}
+	}
+}
+
+material General/Wall6b
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_Boards.png
+			}
+		}
+	}
+}
+
+material General/Wall6b1
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_GSP_S_A.png
+			}
+		}
+	}
+}
+
+material General/Wall6b2
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_GSP_M_A.png
+			}
+		}
+	}
+}
+
+material General/Wall6b3
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture Level6/TunnelTile_GSP_F_A.png
+			}
+		}
+	}
+}
+
+material General/Wall6c
 {
     technique
 	{
@@ -387,7 +526,7 @@ material General/Wall10
 	}
 }
 
-material General/Wall11
+material General/Wall7a
 {
     technique
 	{
@@ -399,45 +538,13 @@ material General/Wall11
 
             texture_unit
 			{
-				texture TunnelTile_Simple.png
+				texture Level7/TunnelTile_GoldPipes.png
 			}
 		}
 	}
 }
 
-material General/Wall12
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture TunnelTile_AlienPipes.png
-			}
-		}
-	}
-}
-
-material General/Wall13
-{
-    technique
-	{
-        pass
-		{
-            lighting on
-
-            texture_unit
-			{
-				texture TunnelTile_GoldFire.png
-			}
-		}
-	}
-}
-
-material General/Wall14
+material General/Wall7b
 {
     technique
 	{
@@ -449,7 +556,7 @@ material General/Wall14
 
             texture_unit
 			{
-				texture TunnelTile_Window.png
+				texture Level7/TunnelTile_pipes_D.png
 			}
 		}
 	}

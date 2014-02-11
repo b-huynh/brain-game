@@ -32,7 +32,7 @@ private:
 	float depth;
 	
 	TunnelType type;
-    std::string materialName;
+    std::vector<std::string> materialNames;
     
     // This segment's mesh
     SceneNode* sliceNode;
@@ -69,6 +69,7 @@ private:
 public:
 	TunnelSlice();
 	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
+	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
 	
     void initWalls();
     
@@ -89,6 +90,7 @@ public:
     bool isPodHistory() const;
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
+    std::string getMaterialName() const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);
@@ -108,6 +110,7 @@ public:
     void updateGrowth(float nt);
     
     void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
+    void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
     
 	void removeFromScene();
 };

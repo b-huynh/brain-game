@@ -267,14 +267,22 @@ void OgreApp::setLevel(Evaluation forced)
     
     if (tunnel)
     {
-        levelMgr->levelFinishedB(tunnel, forced);
+        if (player->getName() == "subject999")
+            levelMgr->levelFinishedC(tunnel, forced);
+        else
+            levelMgr->levelFinishedB(tunnel, forced);
         player->unlink();
         tunnel->unlink();
         hud->unlink();
     }
     // Don't gen a new tunnel if our schedule is over
     if (levelMgr->getCurrentPhase() != PHASE_DONE)
-        tunnel = levelMgr->getNextLevelB(tunnel);
+    {
+        if (player->getName() == "subject999")
+            tunnel = levelMgr->getNextLevelC(tunnel);
+        else
+            tunnel = levelMgr->getNextLevelB(tunnel);
+    }
     // Link/Relink Pointers
     tunnel->link(player, hud);
     player->link(tunnel, hud);
@@ -336,8 +344,6 @@ void OgreApp::setPause(bool value)
             globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
             sessionOver = true;
         }
-        else
-            globals.setMessage("Swipe to Continue - Stage " + Util::toStringInt(globals.currStageID), MESSAGE_NORMAL);
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }
     else if (!sessionOver)
@@ -449,9 +455,9 @@ void OgreApp::activatePerformDoubleTap(float x, float y)
 
 void OgreApp::activatePerformSingleTap(float x, float y)
 {
-    if (y <= 300 && x <= globals.screenWidth / 2) {
+    if (y <= 100 && x <= globals.screenWidth / 2) {
         setLevel(FAIL);
-    } else if (y <= 300 && x > globals.screenWidth / 2) {
+    } else if (y <= 100 && x > globals.screenWidth / 2) {
         setLevel(PASS);
     }
 }
@@ -463,7 +469,7 @@ void OgreApp::activatePerformPinch()
 
 void OgreApp::activatePerformBeginLongPress()
 {
-    if (!pause) player->performBoost();
+    if (!pause && player->getName() != "subject999") player->performBoost();
 }
 
 void OgreApp::activatePerformEndLongPress()

@@ -82,6 +82,7 @@ public:
     History* history;
     Direction basis;
     bool sidesUsed[NUM_DIRECTIONS];
+    std::vector<std::string> materialNames;
     Evaluation eval;
     
     std::vector<std::vector<PodInfo> > signalTypes;
@@ -149,7 +150,8 @@ public:
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
-    std::string determineMaterial() const;
+    void determineMaterial();
+    std::string getMaterialName() const;
     int getNumNavLevels() const;
     int getBuildingNavLevel() const;    // The nav level the tunnel is building
     int getCurrentNavLevel() const;     // The nav level the player is still on

@@ -60,7 +60,7 @@ struct SectionInfo
 };
 
 // Pod Info
-enum PodMeshType { POD_BASIC, POD_FUEL, POD_HAZARD };
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD };
 enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
 #define NUM_POD_TYPES 3
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_UNKNOWN };
@@ -240,6 +240,9 @@ namespace Util
         
         std::vector<std::vector<PodInfo> > signalTypes;
         std::vector<NavigationLevel> navMap;
+        int navIndex;
+        int numSegmentsWithObstacles;
+        int previousNumSegmentsWithObstacles;
         
         int currStageID;
         std::string configPath;
@@ -268,7 +271,9 @@ namespace Util
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
     Direction oppositeOf(Direction dir);
+    bool doSidesMatch(bool sides1[NUM_DIRECTIONS], bool sides2[NUM_DIRECTIONS]);
     void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
+    int getNumSides(int level);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();

@@ -36,6 +36,9 @@ void Pod::loadPod()
         case POD_FUEL:
             loadFuelCell();
             break;
+        case POD_FLOWER:
+            loadFlower();
+            break;
         default:
             loadHazard();
             break;
@@ -111,24 +114,43 @@ void Pod::loadFuelCell()
     switch (podShape)
     {
         case POD_SHAPE_CONE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCylinder.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCylinder.mesh");
             break;
         case POD_SHAPE_SPHERE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelSphere.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelSphere.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCube.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCube.mesh");
             break;
         case POD_SHAPE_TRIANGLE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelTri.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
             break;
         default:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "fuelCylinder.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCylinder.mesh");
             break;
     }
     headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal");
     materialName = "General/PodUnknown";
     headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+    head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v / 2);
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
+void Pod::loadFlower()
+{
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Flowers/rose.mesh");
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
@@ -147,12 +169,13 @@ void Pod::loadHazard()
     Vector3 v = tip - base;
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
-    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "singleDoubleNoLight.mesh");
+    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/barrier.mesh");
 
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
-    head->translate(v / 2);
+    //head->translate(v / 2);
+    head->yaw(Degree(180.0)); // Correction for model which faces opposite direction
     
     setToGrowth(0.0);
     
@@ -185,9 +208,14 @@ void Pod::setToGrowth(float t)
     {
         head->setScale(Vector3(headRadius / 1.5, t * headRadius / 1.5, headRadius / 1.5));
     }
+    else if (mtype == POD_FLOWER)
+    {
+        head->setScale(Vector3(headRadius / 20, t * headRadius / 20, headRadius / 20));
+    }
     else
     {
-        head->setScale(Vector3(1, t, 1));
+        //head->setScale(Vector3(0.5, 0.5 * t, 0.5));
+        head->setScale(Vector3(0.7, 0.7 * t, 0.7));
     }
 }
 
@@ -295,10 +323,9 @@ void Pod::setSkin()
 {
     if (mtype == POD_BASIC)
         headContentEntity->setMaterialName(materialName);
-    else {
+    else if (mtype == POD_FUEL)
         // Based on Maya model, SubEntity1 is the content in the fuel cell
         headContentEntity->getSubEntity(1)->setMaterialName(materialName);
-    }
 }
 
 void Pod::takePod()
@@ -397,7 +424,7 @@ void Pod::generateGlow(PodColor color, PodShape shape)
                 particleName += "Ellipsoid";
                 break;
             case POD_SHAPE_TRIANGLE:
-                particleName += "Ellipsoid";
+                particleName += "Ellipsoid"; // No ogre particle shape for tris
                 break;
             default:
                 particleName += "Cylinder";

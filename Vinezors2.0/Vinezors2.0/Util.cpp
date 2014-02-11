@@ -58,8 +58,8 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.10;
-    podCollisionMax = 0.50;
+    podCollisionMin = 0.15;
+    podCollisionMax = 0.45;
     distractorCollisionMin = 0.30;
     distractorCollisionMax = 0.40;
     podBinSize1 = 10;
@@ -110,6 +110,9 @@ Util::ConfigGlobal::ConfigGlobal()
     combo2MinA = 10;
     combo1MinB = 3;
     combo2MinB = 6;
+    numSegmentsWithObstacles = 0;
+    previousNumSegmentsWithObstacles = 0;
+    
     signalTypes = std::vector<std::vector<PodInfo> >(4);
     signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
@@ -139,6 +142,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[20] = NavigationLevel(4, 6);
     navMap[21] = NavigationLevel(3, 6);
     navMap[22] = NavigationLevel(4, 7);
+    navIndex = 0;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -171,7 +175,7 @@ void Util::ConfigGlobal::set()
     label5_posY = 7 * screenHeight / 40;
     label6_posX = screenWidth / 2;
     label6_posY = screenHeight / 2;
-    label7_posX = screenWidth / 10;
+    label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
 }
 
@@ -599,6 +603,14 @@ Direction Util::oppositeOf(Direction dir)
 	}
 }
 
+bool Util::doSidesMatch(bool sides1[NUM_DIRECTIONS], bool sides2[NUM_DIRECTIONS])
+{
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        if (sides1[i] != sides2[i])
+            return false;
+    return true;
+}
+
 void Util::setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -638,6 +650,23 @@ void Util::setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir)
             break;
     }
     
+}
+
+int Util::getNumSides(int level)
+{
+    switch (level)
+    {
+        case 1:
+            return 3;
+        case 2:
+            return 5;
+        case 3:
+            return 7;
+        case 4:
+            return 8;
+        default:
+            return 8;
+    }
 }
 
 Direction Util::randDirection()

@@ -18,7 +18,7 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: parentNode(NULL), tunnelSliceID(0), center(), rot(), dir(NO_DIRECTION), dirAngle(0), width(0), depth(0), type(NORMAL), materialName(""), sliceNode(NULL), entireWall(NULL),
+: parentNode(NULL), tunnelSliceID(0), center(), rot(), dir(NO_DIRECTION), dirAngle(0), width(0), depth(0), type(NORMAL), materialNames(), sliceNode(NULL), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
 pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
@@ -27,9 +27,27 @@ pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 }
 
 TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
-: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialName(material), sliceNode(NULL), entireWall(NULL),
+: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(), sliceNode(NULL), entireWall(NULL),
 topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
+    
+    Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
+    Vector3 end = start + forward * (depth + globals.tunnelSegmentBuffer);
+    center = (start + end) / 2;
+    rot = info.tunnelRot;
+    
+    materialNames.push_back(material);
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = info.sidesUsed[i];
+    
+    initWalls();
+}
+
+TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
+: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(materials), sliceNode(NULL), entireWall(NULL),
+topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
+{
+    
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
     Vector3 end = start + forward * (depth + globals.tunnelSegmentBuffer);
     center = (start + end) / 2;
@@ -50,13 +68,6 @@ void TunnelSlice::initWalls()
     sliceNode = parentNode->createChildSceneNode("tunnelSliceNode" + Util::toStringInt(wallID));
     entireWall = sliceNode->createChildSceneNode("entireWallNode" + Util::toStringInt(wallID));
     
-    if (type == CHECKPOINT_PASS)
-        materialName = "General/WallCheckpointPass";
-    else if (type == CHECKPOINT_FAIL)
-        materialName = "General/WallCheckpointFail";
-    else if (type == CHECKPOINT_EVEN)
-        materialName = "General/WallCheckpointEven";
-    
     Entity* entireWallEntity = NULL;
     int countSides = 0;
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -64,23 +75,26 @@ void TunnelSlice::initWalls()
     switch (countSides)
     {
         case 3:
-            entireWallEntity = parentNode->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "segmentMesh3");
+            entireWallEntity = parentNode->getCreator()->createEntity("entireWallEntity" + Util::toStringInt(wallID), "segmentMesh3");
             break;
         case 5:
-            entireWallEntity = parentNode->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "segmentMesh5");
+            entireWallEntity = parentNode->getCreator()->createEntity("entireWallEntity" + Util::toStringInt(wallID), "segmentMesh5");
             break;
         case 7:
-            entireWallEntity = parentNode->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "segmentMesh7");
+            entireWallEntity = parentNode->getCreator()->createEntity("entireWallEntity" + Util::toStringInt(wallID), "segmentMesh7");
             break;
         default:
-            entireWallEntity = parentNode->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "segmentMesh8");
+            entireWallEntity = parentNode->getCreator()->createEntity("entireWallEntity" + Util::toStringInt(wallID), "segmentMesh8");
             break;
     }
-    entireWallEntity->setMaterialName(materialName);
+    //entireWallEntity->setMaterialName(getMaterialName());
+    for (int i = 0; i < entireWallEntity->getNumSubEntities(); ++i)
+        entireWallEntity->getSubEntity(i)->setMaterialName(getMaterialName());
     entireWall->attachObject(entireWallEntity);
     entireWall->scale(width, width, depth);
     
     /*
+     // The bottom initializes a node for each direction and attaches a plane mesh to them
     float wallLength = getWallLength();
      
     if (sidesUsed[NORTHWEST]) {
@@ -271,6 +285,20 @@ bool TunnelSlice::hasAvailableSide(Direction side) const
     if (side == NO_DIRECTION)
         return false;
     return sidesUsed[side];
+}
+
+std::string TunnelSlice::getMaterialName() const
+{
+    std::string materialName;
+    if (type == CHECKPOINT_PASS)
+        materialName = "General/WallCheckpointPass";
+    else if (type == CHECKPOINT_FAIL)
+        materialName = "General/WallCheckpointFail";
+    else if (type == CHECKPOINT_EVEN)
+        materialName = "General/WallCheckpointEven";
+    else if (materialNames.size() > 0)
+        materialName = materialNames[rand() % materialNames.size()];
+    return materialName;
 }
 
 // Finds collisions through bounding boxes
@@ -641,7 +669,9 @@ void TunnelSlice::connect(TunnelSlice* next)
     }
     
     Entity* intermediateSegmentEntity = entireIntermediate->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
-    intermediateSegmentEntity->setMaterialName(materialName);
+    //intermediateSegmentEntity->setMaterialName(getMaterialName());
+    for (int i = 0; i < intermediateSegmentEntity->getNumSubEntities(); ++i)
+        intermediateSegmentEntity->getSubEntity(i)->setMaterialName(getMaterialName());
     entireIntermediate->attachObject(intermediateSegmentEntity);
     
     meshes.push_back(mesh);
@@ -721,14 +751,49 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
     this->rot = info.tunnelRot;
     this->width = width;
     this->depth = depth;
-    this->materialName = material;
+    this->materialNames.clear();
+    this->materialNames.push_back(material);
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = info.sidesUsed[i];
     growthT = 0;
     infoStored = false;
     
-    removeFromScene(); //also clears pods and disconnects
-    initWalls();
+    // Reset orientation and position, remove pods from scene
+    sliceNode->setPosition(center);
+    sliceNode->setOrientation(rot);
+	for (int i = 0; i < pods.size(); ++i)
+		pods[i]->removeFromScene();
+	for (int i = 0; i < pods.size(); ++i)
+        delete pods[i];
+    pods.clear();
+    disconnect(); //also clears pods and disconnects
+}
+
+void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
+{
+    this->tunnelSliceID = nid;
+    this->type = type;
+    Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
+    Vector3 end = start + forward * (depth + globals.tunnelSegmentBuffer);
+    this->center = (start + end) / 2;
+    this->rot = info.tunnelRot;
+    this->width = width;
+    this->depth = depth;
+    this->materialNames = materials;
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        sidesUsed[i] = info.sidesUsed[i];
+    growthT = 0;
+    infoStored = false;
+    
+    // Reset orientation and position, remove pods from scene
+    sliceNode->setPosition(center);
+    sliceNode->setOrientation(rot);
+	for (int i = 0; i < pods.size(); ++i)
+		pods[i]->removeFromScene();
+	for (int i = 0; i < pods.size(); ++i)
+        delete pods[i];
+    pods.clear();
+    disconnect(); //also clears pods and disconnects
 }
 
 void TunnelSlice::removeFromScene()

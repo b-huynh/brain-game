@@ -35,6 +35,8 @@ public:
     void levelFinishedB(Tunnel* tunnel, Evaluation forced);
     Tunnel* getNextLevelB(Tunnel* previousTunnel);
     
+    void levelFinishedC(Tunnel* tunnel, Evaluation forced);
+    Tunnel* getNextLevelC(Tunnel* previousTunnel);
 };
 
 #endif /* defined(__Vinezors2_0__LevelManager__) */

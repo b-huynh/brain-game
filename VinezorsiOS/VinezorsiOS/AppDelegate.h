@@ -5,12 +5,14 @@
 
 #import <UIKit/UIKit.h>
 
-@class ViewController;
+@class SimpleMenuViewController;
+@class MainViewController;
 
 @interface AppDelegate : NSObject <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow* mWindow;
-@property (strong, nonatomic) ViewController* mViewController;
+@property (strong, nonatomic) SimpleMenuViewController* mViewControllerMenu;
+@property (strong, nonatomic) MainViewController* mViewControllerMain;
 
 - (void)go:(NSString*)str :(BOOL)isOn;
 

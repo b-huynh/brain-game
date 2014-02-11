@@ -20,14 +20,14 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-:  player(NULL), hud(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(GAME_PROFICIENCY), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
+:  player(NULL), hud(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(GAME_PROFICIENCY), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), history(NULL), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, GameMode mode, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes)
-:  player(NULL), hud(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(mode), totalElapsed(0.0), timePenalty(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
+:  player(NULL), hud(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), spawnLimit(-1), numTargets(0), activePods(), mode(mode), totalElapsed(0.0), timePenalty(0.0), nback(nback), control(control), history(NULL), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
     //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
@@ -421,59 +421,120 @@ bool Tunnel::hasAvailableSide(Direction side) const
     return sidesUsed[side];
 }
 
-std::string Tunnel::determineMaterial() const
+void Tunnel::determineMaterial()
 {
+    materialNames.clear();
     if (nback <= 1)
-        return "General/Wall1";
+    {
+        materialNames.push_back("General/Wall1");
+        return;
+    }
 
     if (globals.setWallPanelTexture)
     {
         switch ((nback - 2) % 4)
         {
             case 0:
-                return "General/WallCartoon2";
+                materialNames.push_back("General/WallCartoon2");
+                break;
             case 1:
-                return "General/WallCartoon3";
+                materialNames.push_back("General/WallCartoon3");
+                break;
             case 2:
-                return "General/WallCartoon4";
+                materialNames.push_back("General/WallCartoon4");
+                break;
             case 3:
-                return "General/WallCartoon5";
+                materialNames.push_back("General/WallCartoon5");
+                break;
             default:
-                return "General/Wall0";
+                materialNames.push_back("General/Wall1");
+                break;
         }
     }
     else
     {
-        switch ((nback - 2) % 12)
+        switch ((nback - 2) % 6)
         {
             case 0:
-                return "General/Wall2";
+            {
+                std::string materialName;
+                int r = rand() % 2;
+                materialName = "General/Wall2";
+                materialName += char('a' + r);
+                materialNames.push_back(materialName);
+                break;
+            }
             case 1:
-                return "General/Wall3";
+            {
+                std::string materialName;
+                int r = rand() % 2;
+                materialName = "General/Wall3";
+                materialName += char('a' + r);
+                materialNames.push_back(materialName);
+                break;
+            }
             case 2:
-                return "General/Wall4";
+            {
+                std::string materialName;
+                int r = rand() % 2;
+                materialName = "General/Wall4";
+                materialName += char('a' + r);
+                materialNames.push_back(materialName);
+                break;
+            }
             case 3:
-                return "General/Wall5";
+            {
+                std::string materialName;
+                int r = rand() % 3;
+                materialName = "General/Wall5";
+                materialName += char('a' + r);
+                materialNames.push_back(materialName);
+                break;
+            }
             case 4:
-                return "General/Wall6";
+            {
+                std::string materialName;
+            
+                int r = rand() % 3;
+                materialName = "General/Wall6";
+                materialName += char('a' + r);
+                if (materialName == "General/Wall6a")
+                {
+                    materialNames.push_back(materialName + "1");
+                    materialNames.push_back(materialName + "2");
+                    materialNames.push_back(materialName + "3");
+                }
+                else if (materialName == "General/Wall6b")
+                {
+                    materialNames.push_back(materialName + "1");
+                    materialNames.push_back(materialName + "2");
+                    materialNames.push_back(materialName + "3");
+                }
+                else
+                    materialNames.push_back(materialName);
+                break;
+            }
             case 5:
-                return "General/Wall7";
-            case 6:
-                return "General/Wall9";
-            case 7:
-                return "General/Wall10";
-            case 8:
-                return "General/Wall11";
-            case 9:
-                return "General/Wall12";
-            case 10:
-                return "General/Wall13";
-            case 11:
-                return "General/Wall14";
+            {
+                std::string materialName;
+                int r = rand() % 2;
+                materialName = "General/Wall7";
+                materialName += char('a' + r);
+                materialNames.push_back(materialName);
+                break;
+            }
             default:
-                return "General/Wall0";
+                materialNames.push_back("General/Wall1");
+                break;
         }
     }
+}
+
+std::string Tunnel::getMaterialName() const
+{
+    if (materialNames.size() <= 0)
+        return "General/Wall0";
+    return materialNames[rand() % materialNames.size()];
 }
 
 int Tunnel::getNumNavLevels() const
@@ -623,6 +684,8 @@ void Tunnel::setNavigationLevels()
     }
     else
     {
+        if (globals.tunnelSectionsPerNavigationUpgrade > 0)
+        {
         int tunnelNavLevel;
         
         tunnelNavLevel = 0;
@@ -651,6 +714,12 @@ void Tunnel::setNavigationLevels()
         navLevels.push_back(globals.navMap[tunnelNavLevel]);
         tunnelNavLevel = Util::randRangeInt(21, 22);
         navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        }
+        else
+        {
+            int tunnelNavLevel = globals.navIndex;;
+            navLevels.push_back(globals.navMap[tunnelNavLevel]);
+        }
     }
     navPhase = 0;
     catchupPhase = 0;
@@ -814,17 +883,18 @@ std::vector<PodInfo> Tunnel::getNextDistractorInfo(SectionInfo segment, PodInfo 
         if (segment.sidesUsed[i] && (Direction)(i) != signal.podLoc) availDirs.push_back(i);
     
     int count = Util::randRangeInt(globals.stageTotalDistractorsMin, globals.stageTotalDistractorsMax);
+    if (count > 0)
+        globals.numSegmentsWithObstacles++;
     while (count > 0 && availDirs.size() > 1)
     {
         int rind = rand() % availDirs.size();
-        PodInfo newDistractor = PodInfo(POD_SIGNAL_UNKNOWN, POD_BASIC, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_UNKNOWN, (Direction)availDirs[rind], false, true, false);
+        PodInfo newDistractor = PodInfo(POD_SIGNAL_UNKNOWN, POD_HAZARD, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_UNKNOWN, (Direction)availDirs[rind], false, true, false);
         ret.push_back(newDistractor);
         
         availDirs[rind] = availDirs[availDirs.size() - 1];
         availDirs.pop_back();
         --count;
     }
-    
     return ret;
 }
 
@@ -879,7 +949,7 @@ void Tunnel::setPods(TunnelSlice* segment, const std::vector<PodInfo> & podInfos
 
 void Tunnel::addSegment(SectionInfo sectionInfo)
 {
-	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, determineMaterial());
+	TunnelSlice* nsegment = new TunnelSlice(mainTunnelNode, segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, getMaterialName());
     ++segmentCounter;
     
 	end = end + nsegment->getForward() * (segmentDepth + globals.tunnelSegmentBuffer);
@@ -909,7 +979,7 @@ void Tunnel::renewSegment(SectionInfo sectionInfo)
     for (int i = 0; i < oldNumPods && activePods.size() > 0; ++i)
         activePods.pop_front();
     
-    nsegment->rejuvenate(segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, determineMaterial());
+    nsegment->rejuvenate(segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, getMaterialName());
     ++segmentCounter;
     
     end = end + nsegment->getForward() * (segmentDepth + globals.tunnelSegmentBuffer);
@@ -1208,6 +1278,8 @@ void Tunnel::constructTunnel(int size, bool pregenPods)
             spawnLimit = nback + globals.stageTotalSignals;
         numTargets = globals.stageTotalCollections;
     }
+    
+    determineMaterial();
     
     // Output strands
     for (int i = 0; i < globals.initiationSections; ++i) {

@@ -59,13 +59,21 @@ void LevelManager::levelFinishedA(Tunnel* tunnel, Evaluation forced)
     PlayerLevel skillLevel = player->getSkillLevel();
     if (eval == PASS || forced == PASS)
     {
-        skillLevel.set1++;
-        skillLevel.navigation++;
+        skillLevel.navigation += Util::randRangeInt(4, 6);
+        if (skillLevel.navigation >= globals.navMap.size())
+        {
+            skillLevel.set1++;
+            skillLevel.navigation -= globals.navMap.size();
+        }
     }
     else if (eval == FAIL || forced == FAIL)
     {
-        skillLevel.set1--;
-        skillLevel.navigation--;
+        skillLevel.navigation -= Util::randRangeInt(4, 6);
+        if (skillLevel.navigation < 0)
+        {
+            skillLevel.set1--;
+            skillLevel.navigation += globals.navMap.size();
+        }
     }
     player->setSkillLevel(skillLevel);
     
@@ -172,7 +180,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
         case PHASE_NAVIGATION:
         {
             // Don't record cheats
-            if (forced != EVEN)
+            if (forced == EVEN)
             {
                 skillLevel.calculateNavigationScores();
                 skillLevel.navigation = Util::clamp(skillLevel.navigation, 0, globals.navMap.size() - 1);
@@ -183,7 +191,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
         case PHASE_TIMED:
         {
             // Don't record cheats
-            if (forced != EVEN)
+            if (forced == EVEN)
             {
                 skillLevel.calculateSpeedScores();
             }
@@ -241,7 +249,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.initCamSpeed = skillLevel.averageSpeed;;
             globals.minCamSpeed = skillLevel.minSpeed;
             globals.maxCamSpeed = skillLevel.maxSpeed;
-            globals.stageTime = globals.stageTime;
+            globals.stageTime = 120.0;
             globals.stageTotalSignals = 300; // Enough for constant speed of 50
             globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
             globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
@@ -268,6 +276,8 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
+            
+            globals.setMessage("Color and Sound Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET2:
@@ -279,7 +289,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.initCamSpeed = skillLevel.averageSpeed;;
             globals.minCamSpeed = skillLevel.minSpeed;
             globals.maxCamSpeed = skillLevel.maxSpeed;
-            globals.stageTime = globals.stageTime;
+            globals.stageTime = 120.0;
             globals.stageTotalSignals = 300; // Enough for constant speed of 50
             globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
             globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
@@ -306,6 +316,8 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
+            
+            globals.setMessage("Shape and Sound Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET3:
@@ -317,7 +329,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.initCamSpeed = skillLevel.averageSpeed;;
             globals.minCamSpeed = skillLevel.minSpeed;
             globals.maxCamSpeed = skillLevel.maxSpeed;
-            globals.stageTime = globals.stageTime;
+            globals.stageTime = 120.0;
             globals.stageTotalSignals = 300; // Enough for constant speed of 50
             globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
             globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
@@ -344,6 +356,8 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_4));
+            
+            globals.setMessage("Sound Only Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_NAVIGATION:
@@ -358,8 +372,8 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.stageTotalTargets3 = 0;
             globals.stageTotalTargetsVariance = 0;
             globals.initCamSpeed = skillLevel.averageSpeed;
-            globals.minCamSpeed = 10;
-            globals.maxCamSpeed = 100;
+            globals.minCamSpeed = 5.0;
+            globals.maxCamSpeed = 100.0;
             globals.stageTime = 120.0;
             
             globals.startingHP = 3;
@@ -373,7 +387,11 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.HPNegativeDistractor = -1;
             
             globals.tunnelSectionsPerNavigationUpgrade = ((globals.initCamSpeed * (1 + globals.boostModifierCamSpeed) / 2) * globals.stageTime / (globals.tunnelSegmentsPerSection * (globals.tunnelSegmentBuffer + globals.tunnelSegmentDepth) / globals.globalModifierCamSpeed) / (globals.navMap.size() / 2));
+            if (globals.tunnelSectionsPerNavigationUpgrade <= 0)
+                globals.tunnelSectionsPerNavigationUpgrade = 1;
             std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
+            
+            globals.setMessage("Navigation Test!\nAvoid obstacles, grab fuel cells!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_TIMED:
@@ -390,7 +408,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.stageTotalDistractorsMin = 0;
             globals.stageTotalDistractorsMax = 0;
             globals.initCamSpeed = skillLevel.averageSpeed;
-            globals.minCamSpeed = 10.0;
+            globals.minCamSpeed = 5.0;
             globals.maxCamSpeed = 100.0;
             globals.stageTime = 180.0;
             
@@ -399,11 +417,108 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_DIAMOND, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_SPHERE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
+            
+            globals.setMessage("Speed Test!\nMatch as many as you can!\n\nSwipe to Continue\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         default:
             break;
     }
+    
+    Tunnel* ret = new Tunnel(
+                             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
+                             newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
+                             newRot,
+                             globals.tunnelSegmentWidth,
+                             globals.tunnelSegmentDepth,
+                             globals.tunnelMinAngleTurn,
+                             globals.tunnelMaxAngleTurn,
+                             nmode,
+                             nlevel,
+                             ncontrol,
+                             SOUTH,
+                             globals.tunnelSegmentsPerSection,
+                             globals.tunnelSegmentsPerPod,
+                             globals.tunnelSegmentsPerDistractors,
+                             globals.signalTypes);
+    
+    return ret;
+}
+
+void LevelManager::levelFinishedC(Tunnel* tunnel, Evaluation forced)
+{
+    Evaluation eval = tunnel->getEval();
+    int signals = tunnel->getTotalCollections();
+    int timeLeft = tunnel->getTimeLeft();
+    
+    player->saveStage(globals.logPath);
+    player->saveProgress(globals.savePath, globals.currStageID);
+    
+    ++globals.navIndex;
+}
+
+Tunnel* LevelManager::getNextLevelC(Tunnel* previousTunnel)
+{
+    // Extract previous information as the previous tunnel still exists
+    Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
+    Quaternion newRot = Quaternion(1, 0, 0, 0);
+    Vector3 newForward = globals.tunnelReferenceForward;
+    int oldNBack = previousTunnel ? previousTunnel->getNBack() : 0;
+    GameMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_TIMED;
+    if (previousTunnel)
+    {
+        globals.previousNumSegmentsWithObstacles = globals.numSegmentsWithObstacles;
+        globals.numSegmentsWithObstacles = 0;
+        delete previousTunnel;
+    }
+    
+    GameMode nmode = GAME_PROFICIENCY;
+    int nlevel = 0;
+    int ncontrol = 1;
+    
+    // Load configuration
+    if (!globals.loadConfig(globals.currStageID))
+    {
+        std::cout << "WARNING: Config File could not be loaded correctly" << std::endl;
+        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    }
+    
+    PlayerLevel skillLevel = player->getSkillLevel(); // Updated in previous tunnel and referenced for new tunnel
+    if (globals.navIndex < globals.navMap.size())
+    {
+        nlevel = std::max(0, skillLevel.getMasteredNBack() - 1);
+        ncontrol = 1;
+        nmode = GAME_NAVIGATION;
+        
+        globals.stageTotalSignals = 0;
+        globals.stageTotalTargets1 = 0;
+        globals.stageTotalTargets2 = 0;
+        globals.stageTotalTargets3 = 0;
+        globals.stageTotalTargetsVariance = 0;
+        globals.initCamSpeed = skillLevel.averageSpeed;
+        globals.minCamSpeed = 5;
+        globals.maxCamSpeed = 100;
+        globals.stageTime = globals.stageTime;
+        
+        globals.startingHP = 3;
+        if (player->getName() == "subject999")
+            globals.startingHP = 30;
+        globals.HPPositiveLimit = 30;
+        globals.HPNegativeLimit = 0;
+        globals.HPPositiveCorrectAnswer = 0;
+        globals.HPNegativeCorrectAnswer = 0;
+        globals.HPPositiveWrongAnswer = -1;
+        globals.HPNegativeWrongAnswer = -1;
+        globals.HPPositiveDistractor = -1;
+        globals.HPNegativeDistractor = -1;
+        
+        globals.tunnelSectionsPerNavigationUpgrade = 0;
+        
+        std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
+        globals.setMessage("Navigation Level: " + Util::toStringInt(globals.navIndex) + "\n(" + Util::toStringInt(Util::getNumSides(globals.navMap[globals.navIndex].control)) + " panels, " + Util::toStringInt(globals.navMap[globals.navIndex].obstacles) + " obstacles)\nSwipe to Continue", MESSAGE_NORMAL);
+    }
+    else
+        schedIndex = 100; // greater value than schedule signals session is over
     
     Tunnel* ret = new Tunnel(
                              OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),

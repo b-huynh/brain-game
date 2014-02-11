@@ -72,12 +72,25 @@ struct PlayerLevel {
         for (std::map<int, Score>::iterator it = speedScores.begin(); it != speedScores.end(); ++it)
             it->second.score = static_cast<float>(it->second.right) / (it->second.wrong + it->second.right);
         
-        averageSpeed = findBest(speedScores, minSpeed, 0.95, 0.20);
-        minSpeed = averageSpeed - (averageSpeed - 6) / 2; // From excel chart on google doc with a little more range
         maxSpeed = findBest(speedScores, 20, 0.90, 0.30);
+        //averageSpeed = findBest(speedScores, minSpeed, 0.95, 0.20);
+        averageSpeed = maxSpeed - (maxSpeed / 4 + 1);
+        minSpeed = averageSpeed - (averageSpeed - 6) / 2; // From excel chart on google doc with a little more range
         if (averageSpeed <= 0) averageSpeed = 1;
         if (minSpeed <= 0) minSpeed = 1;
         if (maxSpeed <= 0) maxSpeed = 1;
+    }
+    
+    std::string getCurrentStats() const
+    {
+        return
+        "Color/Sound " + Util::toStringInt(set1) + "\n" +
+        "Shape/Sound " + Util::toStringInt(set2) + "\n" +
+        " Sound Only " + Util::toStringInt(set3) + "\n" +
+        " Navigation " + Util::toStringInt(navigation) + "\n" +
+        "  Min Speed " + Util::toStringInt(minSpeed) + "\n" +
+        " Init Speed " + Util::toStringInt(averageSpeed) + "\n" +
+        "  Max Speed " + Util::toStringInt(maxSpeed);
     }
 };
 
@@ -100,6 +113,7 @@ private:
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
+    int numCollisionsTotal;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -170,6 +184,10 @@ private:
     bool inputMoved;
     float inputLeftBound;
     float inputRightBound;
+    
+    int previousNumCorrectTotal;
+    int previousNumMissedTotal;
+    int previousNumCollisionsTotal;
 public:
     
 	Player();
@@ -185,6 +203,7 @@ public:
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
+    int getNumCollisionsTotal() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -285,6 +304,10 @@ public:
     
     void calculateNavigationScores();
     void calculateSpeedScores();
+    std::string getCurrentStats() const;
+    int getPreviousNumCorrectTotal() const;
+    int getPreviousNumMissesTotal() const;
+    int getPreviousNumCollisionsTotal() const;
     bool saveStage(std::string file);
     bool saveProgress(std::string file, int lastStageID);
     bool loadProgress(std::string savePath);

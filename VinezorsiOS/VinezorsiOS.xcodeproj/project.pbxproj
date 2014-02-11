@@ -9,13 +9,12 @@
 /* Begin PBXBuildFile section */
 		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
 		5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EAEB11864D54B004C9756 /* Hud.cpp */; };
-		5D39FA2F182741C0009C8A4C /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */; };
+		5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */; };
 		5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */; };
-		5D39FA341827528A009C8A4C /* SimpleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleViewController.m */; };
+		5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
 		5DF598A918852ADD00F85646 /* OgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598A818852ADD00F85646 /* OgreView.mm */; };
-		5DF598AF188537FD00F85646 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598AD188537FD00F85646 /* ViewController.mm */; };
-		5DF598B0188537FD00F85646 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DF598AE188537FD00F85646 /* ViewController.xib */; };
+		5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598AD188537FD00F85646 /* MainViewController.mm */; };
 		5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407617F4AF360082C239 /* CoreGraphics.framework */; };
 		5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407817F4AF360082C239 /* Foundation.framework */; };
 		5DF9407B17F4AF360082C239 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407A17F4AF360082C239 /* OpenGLES.framework */; };
@@ -36,6 +35,7 @@
 		5DF940F317F4B1500082C239 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EC17F4B1500082C239 /* Vine.cpp */; };
 		5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF940F417F4B4A40082C239 /* OpenAL.framework */; };
 		5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB00CD18A15D27005452C6 /* LevelManager.cpp */; };
+		5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB00D418A4F057005452C6 /* MainView.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,16 +43,15 @@
 		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		5D1EAEB11864D54B004C9756 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
 		5D1EAEB21864D54B004C9756 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
-		5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SimpleMenu.storyboard; sourceTree = "<group>"; };
 		5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		5D39FA321827528A009C8A4C /* SimpleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleViewController.h; sourceTree = "<group>"; };
-		5D39FA331827528A009C8A4C /* SimpleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleViewController.m; sourceTree = "<group>"; };
+		5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMenuViewController.h; sourceTree = "<group>"; };
+		5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleMenuViewController.mm; sourceTree = "<group>"; };
 		5DF597A718848E0100F85646 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		5DF598A718852ADD00F85646 /* OgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreView.h; sourceTree = "<group>"; };
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
-		5DF598AC188537FD00F85646 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		5DF598AD188537FD00F85646 /* ViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
-		5DF598AE188537FD00F85646 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
+		5DF598AC188537FD00F85646 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		5DF598AD188537FD00F85646 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
 		5DF9407317F4AF360082C239 /* VinezorsiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VinezorsiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -69,66 +68,6 @@
 		5DF9408E17F4AF360082C239 /* OgreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OgreFramework.cpp; sourceTree = "<group>"; };
 		5DF9409017F4AF360082C239 /* OgreFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OgreFramework.h; sourceTree = "<group>"; };
 		5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OgreStaticPluginLoader.h; sourceTree = "<group>"; };
-		5DF9409617F4AF370082C239 /* Examples.material */ = {isa = PBXFileReference; lastKnownFileType = text; path = Examples.material; sourceTree = "<group>"; };
-		5DF9409717F4AF370082C239 /* Ogre.material */ = {isa = PBXFileReference; lastKnownFileType = text; path = Ogre.material; sourceTree = "<group>"; };
-		5DF9409917F4AF370082C239 /* GreenSkin.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = GreenSkin.jpg; sourceTree = "<group>"; };
-		5DF9409A17F4AF370082C239 /* spheremap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spheremap.png; sourceTree = "<group>"; };
-		5DF9409B17F4AF370082C239 /* tusk.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tusk.jpg; sourceTree = "<group>"; };
-		5DF9409D17F4AF370082C239 /* ogrehead.mesh */ = {isa = PBXFileReference; lastKnownFileType = file; path = ogrehead.mesh; sourceTree = "<group>"; };
-		5DF9409F17F4AF370082C239 /* cubemap.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = cubemap.zip; sourceTree = "<group>"; };
-		5DF940A017F4AF370082C239 /* cubemapsJS.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = cubemapsJS.zip; sourceTree = "<group>"; };
-		5DF940A117F4AF370082C239 /* SdkTrays.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = SdkTrays.zip; sourceTree = "<group>"; };
-		5DF940A217F4AF370082C239 /* skybox.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = skybox.zip; sourceTree = "<group>"; };
-		5DF940A417F4AF370082C239 /* FFPLib_Common.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Common.cg; sourceTree = "<group>"; };
-		5DF940A517F4AF370082C239 /* FFPLib_Common.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Common.glsl; sourceTree = "<group>"; };
-		5DF940A617F4AF370082C239 /* FFPLib_Common.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Common.glsles; sourceTree = "<group>"; };
-		5DF940A717F4AF370082C239 /* FFPLib_Common.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Common.hlsl; sourceTree = "<group>"; };
-		5DF940A817F4AF370082C239 /* FFPLib_Fog.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Fog.cg; sourceTree = "<group>"; };
-		5DF940A917F4AF370082C239 /* FFPLib_Fog.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Fog.glsl; sourceTree = "<group>"; };
-		5DF940AA17F4AF370082C239 /* FFPLib_Fog.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Fog.glsles; sourceTree = "<group>"; };
-		5DF940AB17F4AF370082C239 /* FFPLib_Fog.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Fog.hlsl; sourceTree = "<group>"; };
-		5DF940AC17F4AF370082C239 /* FFPLib_Lighting.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Lighting.cg; sourceTree = "<group>"; };
-		5DF940AD17F4AF370082C239 /* FFPLib_Lighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Lighting.glsl; sourceTree = "<group>"; };
-		5DF940AE17F4AF370082C239 /* FFPLib_Lighting.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Lighting.glsles; sourceTree = "<group>"; };
-		5DF940AF17F4AF370082C239 /* FFPLib_Lighting.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Lighting.hlsl; sourceTree = "<group>"; };
-		5DF940B017F4AF370082C239 /* FFPLib_Texturing.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Texturing.cg; sourceTree = "<group>"; };
-		5DF940B117F4AF370082C239 /* FFPLib_Texturing.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Texturing.glsl; sourceTree = "<group>"; };
-		5DF940B217F4AF370082C239 /* FFPLib_Texturing.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Texturing.glsles; sourceTree = "<group>"; };
-		5DF940B317F4AF370082C239 /* FFPLib_Texturing.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Texturing.hlsl; sourceTree = "<group>"; };
-		5DF940B417F4AF370082C239 /* FFPLib_Transform.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Transform.cg; sourceTree = "<group>"; };
-		5DF940B517F4AF370082C239 /* FFPLib_Transform.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Transform.glsl; sourceTree = "<group>"; };
-		5DF940B617F4AF370082C239 /* FFPLib_Transform.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Transform.glsles; sourceTree = "<group>"; };
-		5DF940B717F4AF370082C239 /* FFPLib_Transform.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FFPLib_Transform.hlsl; sourceTree = "<group>"; };
-		5DF940B917F4AF370082C239 /* HardwareSkinningShadow.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = HardwareSkinningShadow.cg; sourceTree = "<group>"; };
-		5DF940BA17F4AF370082C239 /* HardwareSkinningShadow.material */ = {isa = PBXFileReference; lastKnownFileType = text; path = HardwareSkinningShadow.material; sourceTree = "<group>"; };
-		5DF940BB17F4AF370082C239 /* RTShaderSystem.material */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTShaderSystem.material; sourceTree = "<group>"; };
-		5DF940BC17F4AF370082C239 /* SampleLib_InstancedViewports.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_InstancedViewports.cg; sourceTree = "<group>"; };
-		5DF940BD17F4AF370082C239 /* SampleLib_InstancedViewports.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_InstancedViewports.glsl; sourceTree = "<group>"; };
-		5DF940BE17F4AF370082C239 /* SampleLib_InstancedViewports.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_InstancedViewports.hlsl; sourceTree = "<group>"; };
-		5DF940BF17F4AF370082C239 /* SampleLib_ReflectionMap.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_ReflectionMap.cg; sourceTree = "<group>"; };
-		5DF940C017F4AF370082C239 /* SampleLib_ReflectionMap.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_ReflectionMap.glsl; sourceTree = "<group>"; };
-		5DF940C117F4AF370082C239 /* SampleLib_ReflectionMap.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_ReflectionMap.glsles; sourceTree = "<group>"; };
-		5DF940C217F4AF370082C239 /* SampleLib_ReflectionMap.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleLib_ReflectionMap.hlsl; sourceTree = "<group>"; };
-		5DF940C317F4AF370082C239 /* SGXLib_IntegratedPSSM.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_IntegratedPSSM.cg; sourceTree = "<group>"; };
-		5DF940C417F4AF370082C239 /* SGXLib_IntegratedPSSM.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_IntegratedPSSM.glsl; sourceTree = "<group>"; };
-		5DF940C517F4AF370082C239 /* SGXLib_IntegratedPSSM.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_IntegratedPSSM.glsles; sourceTree = "<group>"; };
-		5DF940C617F4AF370082C239 /* SGXLib_IntegratedPSSM.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_IntegratedPSSM.hlsl; sourceTree = "<group>"; };
-		5DF940C717F4AF370082C239 /* SGXLib_LayeredBlending.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_LayeredBlending.cg; sourceTree = "<group>"; };
-		5DF940C817F4AF370082C239 /* SGXLib_LayeredBlending.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_LayeredBlending.glsl; sourceTree = "<group>"; };
-		5DF940C917F4AF370082C239 /* SGXLib_LayeredBlending.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_LayeredBlending.glsles; sourceTree = "<group>"; };
-		5DF940CA17F4AF370082C239 /* SGXLib_LayeredBlending.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_LayeredBlending.hlsl; sourceTree = "<group>"; };
-		5DF940CB17F4AF370082C239 /* SGXLib_NormalMapLighting.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_NormalMapLighting.cg; sourceTree = "<group>"; };
-		5DF940CC17F4AF370082C239 /* SGXLib_NormalMapLighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_NormalMapLighting.glsl; sourceTree = "<group>"; };
-		5DF940CD17F4AF370082C239 /* SGXLib_NormalMapLighting.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_NormalMapLighting.glsles; sourceTree = "<group>"; };
-		5DF940CE17F4AF370082C239 /* SGXLib_NormalMapLighting.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_NormalMapLighting.hlsl; sourceTree = "<group>"; };
-		5DF940CF17F4AF370082C239 /* SGXLib_PerPixelLighting.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_PerPixelLighting.cg; sourceTree = "<group>"; };
-		5DF940D017F4AF370082C239 /* SGXLib_PerPixelLighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_PerPixelLighting.glsl; sourceTree = "<group>"; };
-		5DF940D117F4AF370082C239 /* SGXLib_PerPixelLighting.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_PerPixelLighting.glsles; sourceTree = "<group>"; };
-		5DF940D217F4AF370082C239 /* SGXLib_PerPixelLighting.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_PerPixelLighting.hlsl; sourceTree = "<group>"; };
-		5DF940D317F4AF370082C239 /* SGXLib_TextureAtlas.cg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_TextureAtlas.cg; sourceTree = "<group>"; };
-		5DF940D417F4AF370082C239 /* SGXLib_TextureAtlas.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_TextureAtlas.glsl; sourceTree = "<group>"; };
-		5DF940D517F4AF370082C239 /* SGXLib_TextureAtlas.glsles */ = {isa = PBXFileReference; lastKnownFileType = text; path = SGXLib_TextureAtlas.glsles; sourceTree = "<group>"; };
-		5DF940D617F4AF370082C239 /* SGXLib_TextureAtlas.hlsl */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SGXLib_TextureAtlas.hlsl; path = ..; sourceTree = "<group>"; };
 		5DF940D717F4AF370082C239 /* ogre.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = ogre.cfg; sourceTree = "<group>"; };
 		5DF940D917F4AF370082C239 /* plugins.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = plugins.cfg; sourceTree = "<group>"; };
 		5DF940DB17F4AF370082C239 /* resources.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = resources.cfg; sourceTree = "<group>"; };
@@ -145,9 +84,9 @@
 		5DF940EC17F4B1500082C239 /* Vine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vine.cpp; sourceTree = "<group>"; };
 		5DF940ED17F4B1500082C239 /* Vine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vine.h; sourceTree = "<group>"; };
 		5DF940F417F4B4A40082C239 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		5DF940F717F4B5D20082C239 /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
 		5DFB00CD18A15D27005452C6 /* LevelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelManager.cpp; sourceTree = "<group>"; };
 		5DFB00CE18A15D27005452C6 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		5DFB00D418A4F057005452C6 /* MainView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainView.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +106,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D260D6D18A9CCC6006C91AC /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */,
+				5DF9408E17F4AF360082C239 /* OgreFramework.cpp */,
+				5DF9409017F4AF360082C239 /* OgreFramework.h */,
+				5DF597A718848E0100F85646 /* AppDelegate.mm */,
+				5DF9408A17F4AF360082C239 /* AppDelegate.h */,
+				5DF598A818852ADD00F85646 /* OgreView.mm */,
+				5DF598A718852ADD00F85646 /* OgreView.h */,
+				5DF598AD188537FD00F85646 /* MainViewController.mm */,
+				5DF598AC188537FD00F85646 /* MainViewController.h */,
+				5DFB00D418A4F057005452C6 /* MainView.storyboard */,
+				5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */,
+				5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */,
+				5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		5D260D6E18A9CD85006C91AC /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
+				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
+				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
+				5D1EAEB21864D54B004C9756 /* Hud.h */,
+				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
+				5D15DF4C1825CCFB00DF0F99 /* History.h */,
+				5DF940E217F4B14F0082C239 /* Player.cpp */,
+				5DF940E317F4B14F0082C239 /* Player.h */,
+				5DF940E417F4B14F0082C239 /* Pod.cpp */,
+				5DF940E517F4B14F0082C239 /* Pod.h */,
+				5DF940E617F4B14F0082C239 /* Tunnel.cpp */,
+				5DF940E717F4B14F0082C239 /* Tunnel.h */,
+				5DF940E817F4B14F0082C239 /* TunnelSlice.cpp */,
+				5DF940E917F4B14F0082C239 /* TunnelSlice.h */,
+				5DF940EC17F4B1500082C239 /* Vine.cpp */,
+				5DF940ED17F4B1500082C239 /* Vine.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
 		5DF9406917F4AF360082C239 = {
 			isa = PBXGroup;
 			children = (
@@ -202,8 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				5DF9408417F4AF360082C239 /* InfoPlist.strings */,
-				5DF9408717F4AF360082C239 /* main.mm */,
-				5DF9408917F4AF360082C239 /* Basic Ogre Framework */,
+				5DF9408917F4AF360082C239 /* Source */,
 				5DF9409217F4AF370082C239 /* Resources */,
 				5DF9408117F4AF360082C239 /* Supporting Files */,
 			);
@@ -219,44 +200,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5DF9408917F4AF360082C239 /* Basic Ogre Framework */ = {
+		5DF9408917F4AF360082C239 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
-				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
-				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
-				5D1EAEB21864D54B004C9756 /* Hud.h */,
-				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
-				5D15DF4C1825CCFB00DF0F99 /* History.h */,
-				5DF940E217F4B14F0082C239 /* Player.cpp */,
-				5DF940E317F4B14F0082C239 /* Player.h */,
-				5DF940E417F4B14F0082C239 /* Pod.cpp */,
-				5DF940E517F4B14F0082C239 /* Pod.h */,
-				5DF940E617F4B14F0082C239 /* Tunnel.cpp */,
-				5DF940E717F4B14F0082C239 /* Tunnel.h */,
-				5DF940E817F4B14F0082C239 /* TunnelSlice.cpp */,
-				5DF940E917F4B14F0082C239 /* TunnelSlice.h */,
-				5DF940EA17F4B14F0082C239 /* Util.cpp */,
-				5DF940EB17F4B14F0082C239 /* Util.h */,
-				5DF940EC17F4B1500082C239 /* Vine.cpp */,
-				5DF940ED17F4B1500082C239 /* Vine.h */,
-				5DF9408A17F4AF360082C239 /* AppDelegate.h */,
-				5DF597A718848E0100F85646 /* AppDelegate.mm */,
+				5DF9408717F4AF360082C239 /* main.mm */,
 				5DF9408B17F4AF360082C239 /* OgreApp.cpp */,
 				5DF9408D17F4AF360082C239 /* OgreApp.h */,
-				5DF9408E17F4AF360082C239 /* OgreFramework.cpp */,
-				5DF9409017F4AF360082C239 /* OgreFramework.h */,
-				5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */,
-				5D39FA2E182741C0009C8A4C /* Storyboard.storyboard */,
-				5D39FA321827528A009C8A4C /* SimpleViewController.h */,
-				5D39FA331827528A009C8A4C /* SimpleViewController.m */,
-				5DF598A718852ADD00F85646 /* OgreView.h */,
-				5DF598A818852ADD00F85646 /* OgreView.mm */,
-				5DF598AC188537FD00F85646 /* ViewController.h */,
-				5DF598AD188537FD00F85646 /* ViewController.mm */,
-				5DF598AE188537FD00F85646 /* ViewController.xib */,
+				5DF940EA17F4B14F0082C239 /* Util.cpp */,
+				5DF940EB17F4B14F0082C239 /* Util.h */,
+				5D260D6E18A9CD85006C91AC /* Classes */,
+				5D260D6D18A9CCC6006C91AC /* Framework */,
 			);
-			name = "Basic Ogre Framework";
+			name = Source;
 			sourceTree = "<group>";
 		};
 		5DF9409217F4AF370082C239 /* Resources */ = {
@@ -265,133 +220,8 @@
 				5DF940D717F4AF370082C239 /* ogre.cfg */,
 				5DF940D917F4AF370082C239 /* plugins.cfg */,
 				5DF940DB17F4AF370082C239 /* resources.cfg */,
-				5DF9409317F4AF370082C239 /* media */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
-		};
-		5DF9409317F4AF370082C239 /* media */ = {
-			isa = PBXGroup;
-			children = (
-				5DF9409417F4AF370082C239 /* materials */,
-				5DF9409C17F4AF370082C239 /* models */,
-				5DF9409E17F4AF370082C239 /* packs */,
-				5DF940A317F4AF370082C239 /* RTShaderLib */,
-			);
-			path = media;
-			sourceTree = "<group>";
-		};
-		5DF9409417F4AF370082C239 /* materials */ = {
-			isa = PBXGroup;
-			children = (
-				5DF9409517F4AF370082C239 /* scripts */,
-				5DF9409817F4AF370082C239 /* textures */,
-			);
-			path = materials;
-			sourceTree = "<group>";
-		};
-		5DF9409517F4AF370082C239 /* scripts */ = {
-			isa = PBXGroup;
-			children = (
-				5DF940F717F4B5D20082C239 /* General.material */,
-				5DF9409617F4AF370082C239 /* Examples.material */,
-				5DF9409717F4AF370082C239 /* Ogre.material */,
-			);
-			path = scripts;
-			sourceTree = "<group>";
-		};
-		5DF9409817F4AF370082C239 /* textures */ = {
-			isa = PBXGroup;
-			children = (
-				5DF9409917F4AF370082C239 /* GreenSkin.jpg */,
-				5DF9409A17F4AF370082C239 /* spheremap.png */,
-				5DF9409B17F4AF370082C239 /* tusk.jpg */,
-			);
-			path = textures;
-			sourceTree = "<group>";
-		};
-		5DF9409C17F4AF370082C239 /* models */ = {
-			isa = PBXGroup;
-			children = (
-				5DF9409D17F4AF370082C239 /* ogrehead.mesh */,
-			);
-			path = models;
-			sourceTree = "<group>";
-		};
-		5DF9409E17F4AF370082C239 /* packs */ = {
-			isa = PBXGroup;
-			children = (
-				5DF9409F17F4AF370082C239 /* cubemap.zip */,
-				5DF940A017F4AF370082C239 /* cubemapsJS.zip */,
-				5DF940A117F4AF370082C239 /* SdkTrays.zip */,
-				5DF940A217F4AF370082C239 /* skybox.zip */,
-			);
-			path = packs;
-			sourceTree = "<group>";
-		};
-		5DF940A317F4AF370082C239 /* RTShaderLib */ = {
-			isa = PBXGroup;
-			children = (
-				5DF940A417F4AF370082C239 /* FFPLib_Common.cg */,
-				5DF940A517F4AF370082C239 /* FFPLib_Common.glsl */,
-				5DF940A617F4AF370082C239 /* FFPLib_Common.glsles */,
-				5DF940A717F4AF370082C239 /* FFPLib_Common.hlsl */,
-				5DF940A817F4AF370082C239 /* FFPLib_Fog.cg */,
-				5DF940A917F4AF370082C239 /* FFPLib_Fog.glsl */,
-				5DF940AA17F4AF370082C239 /* FFPLib_Fog.glsles */,
-				5DF940AB17F4AF370082C239 /* FFPLib_Fog.hlsl */,
-				5DF940AC17F4AF370082C239 /* FFPLib_Lighting.cg */,
-				5DF940AD17F4AF370082C239 /* FFPLib_Lighting.glsl */,
-				5DF940AE17F4AF370082C239 /* FFPLib_Lighting.glsles */,
-				5DF940AF17F4AF370082C239 /* FFPLib_Lighting.hlsl */,
-				5DF940B017F4AF370082C239 /* FFPLib_Texturing.cg */,
-				5DF940B117F4AF370082C239 /* FFPLib_Texturing.glsl */,
-				5DF940B217F4AF370082C239 /* FFPLib_Texturing.glsles */,
-				5DF940B317F4AF370082C239 /* FFPLib_Texturing.hlsl */,
-				5DF940B417F4AF370082C239 /* FFPLib_Transform.cg */,
-				5DF940B517F4AF370082C239 /* FFPLib_Transform.glsl */,
-				5DF940B617F4AF370082C239 /* FFPLib_Transform.glsles */,
-				5DF940B717F4AF370082C239 /* FFPLib_Transform.hlsl */,
-				5DF940B817F4AF370082C239 /* materials */,
-				5DF940BC17F4AF370082C239 /* SampleLib_InstancedViewports.cg */,
-				5DF940BD17F4AF370082C239 /* SampleLib_InstancedViewports.glsl */,
-				5DF940BE17F4AF370082C239 /* SampleLib_InstancedViewports.hlsl */,
-				5DF940BF17F4AF370082C239 /* SampleLib_ReflectionMap.cg */,
-				5DF940C017F4AF370082C239 /* SampleLib_ReflectionMap.glsl */,
-				5DF940C117F4AF370082C239 /* SampleLib_ReflectionMap.glsles */,
-				5DF940C217F4AF370082C239 /* SampleLib_ReflectionMap.hlsl */,
-				5DF940C317F4AF370082C239 /* SGXLib_IntegratedPSSM.cg */,
-				5DF940C417F4AF370082C239 /* SGXLib_IntegratedPSSM.glsl */,
-				5DF940C517F4AF370082C239 /* SGXLib_IntegratedPSSM.glsles */,
-				5DF940C617F4AF370082C239 /* SGXLib_IntegratedPSSM.hlsl */,
-				5DF940C717F4AF370082C239 /* SGXLib_LayeredBlending.cg */,
-				5DF940C817F4AF370082C239 /* SGXLib_LayeredBlending.glsl */,
-				5DF940C917F4AF370082C239 /* SGXLib_LayeredBlending.glsles */,
-				5DF940CA17F4AF370082C239 /* SGXLib_LayeredBlending.hlsl */,
-				5DF940CB17F4AF370082C239 /* SGXLib_NormalMapLighting.cg */,
-				5DF940CC17F4AF370082C239 /* SGXLib_NormalMapLighting.glsl */,
-				5DF940CD17F4AF370082C239 /* SGXLib_NormalMapLighting.glsles */,
-				5DF940CE17F4AF370082C239 /* SGXLib_NormalMapLighting.hlsl */,
-				5DF940CF17F4AF370082C239 /* SGXLib_PerPixelLighting.cg */,
-				5DF940D017F4AF370082C239 /* SGXLib_PerPixelLighting.glsl */,
-				5DF940D117F4AF370082C239 /* SGXLib_PerPixelLighting.glsles */,
-				5DF940D217F4AF370082C239 /* SGXLib_PerPixelLighting.hlsl */,
-				5DF940D317F4AF370082C239 /* SGXLib_TextureAtlas.cg */,
-				5DF940D417F4AF370082C239 /* SGXLib_TextureAtlas.glsl */,
-				5DF940D517F4AF370082C239 /* SGXLib_TextureAtlas.glsles */,
-				5DF940D617F4AF370082C239 /* SGXLib_TextureAtlas.hlsl */,
-			);
-			path = RTShaderLib;
-			sourceTree = "<group>";
-		};
-		5DF940B817F4AF370082C239 /* materials */ = {
-			isa = PBXGroup;
-			children = (
-				5DF940B917F4AF370082C239 /* HardwareSkinningShadow.cg */,
-				5DF940BA17F4AF370082C239 /* HardwareSkinningShadow.material */,
-				5DF940BB17F4AF370082C239 /* RTShaderSystem.material */,
-			);
-			path = materials;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -447,10 +277,10 @@
 			files = (
 				5DF9408617F4AF360082C239 /* InfoPlist.strings in Resources */,
 				5DF940D817F4AF370082C239 /* ogre.cfg in Resources */,
-				5DF598B0188537FD00F85646 /* ViewController.xib in Resources */,
+				5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */,
 				5DF940DA17F4AF370082C239 /* plugins.cfg in Resources */,
 				5DF940DC17F4AF370082C239 /* resources.cfg in Resources */,
-				5D39FA2F182741C0009C8A4C /* Storyboard.storyboard in Resources */,
+				5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */,
 				5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,7 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
-				5D39FA341827528A009C8A4C /* SimpleViewController.m in Sources */,
+				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
 				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
@@ -489,7 +319,7 @@
 				5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */,
 				5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */,
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
-				5DF598AF188537FD00F85646 /* ViewController.mm in Sources */,
+				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
 				5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */,
 				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
@@ -593,6 +423,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
@@ -619,6 +450,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (

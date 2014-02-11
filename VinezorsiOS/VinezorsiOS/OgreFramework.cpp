@@ -78,14 +78,12 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
     m_pRoot->initialise(false, "");
     
     Ogre::NameValuePairList params;
-    params["colourDepth"] = "32";
-    params["contentScalingFactor"] = "2.0";
-    params["FSAA"] = "16";
-    params["Video Mode"] = Ogre::StringConverter::toString(width) + "x" + Ogre::StringConverter::toString(height);
     params["externalWindowHandle"] = Ogre::StringConverter::toString((unsigned long)uiWindow);
     params["externalViewHandle"] = Ogre::StringConverter::toString((unsigned long)uiView);
+    params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
     
     m_pRenderWnd = m_pRoot->createRenderWindow("", width, height, false, &params);
+    m_pRenderWnd->windowMovedOrResized();
     
     //    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
     //    m_pRenderWnd->setFullscreen(true, 1024, 800);

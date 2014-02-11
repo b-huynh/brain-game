@@ -240,6 +240,9 @@ namespace Util
         
         std::vector<std::vector<PodInfo> > signalTypes;
         std::vector<NavigationLevel> navMap;
+        int navIndex;
+        int numSegmentsWithObstacles;
+        int previousNumSegmentsWithObstacles;
         
         int currStageID;
         std::string configPath;
@@ -269,6 +272,7 @@ namespace Util
     Direction rightOf(Direction dir);
     Direction oppositeOf(Direction dir);
     void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
+    int getNumSides(int level);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();

@@ -14,14 +14,14 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -75,6 +75,11 @@ int Player::getNumCorrectCombo() const
 int Player::getNumWrongCombo() const
 {
     return numWrongCombo;
+}
+
+int Player::getNumCollisionsTotal() const
+{
+    return numCollisionsTotal;
 }
 
 Direction Player::getCamDir() const
@@ -708,6 +713,10 @@ void Player::newTunnel(bool setmusic)
         baseSpeed = globals.initCamSpeed;
     baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
     
+    previousNumCorrectTotal = numCorrectTotal;
+    previousNumMissedTotal = numMissedTotal;
+    previousNumCollisionsTotal = numCollisionsTotal;
+    
     totalDistanceTraveled = 0.0;
     animationTimer = 5.0;
     speedTimer = 0.0;
@@ -718,6 +727,7 @@ void Player::newTunnel(bool setmusic)
     numCorrectBonus = 0;
     numCorrectCombo = 0;
     numWrongCombo = 0;
+    numCollisionsTotal = 0;
     camDir = SOUTH;
     lookback = NULL;
     selectedTarget = NULL;
@@ -889,6 +899,9 @@ void Player::checkCollisions()
                             soundCollision->stop();
                             soundCollision->play();
                         }
+                        
+                        numCollisionsTotal++;
+                        
                         if (hp >= 0)
                             hp += globals.HPPositiveDistractor;
                         else
@@ -1221,6 +1234,26 @@ void Player::calculateSpeedScores()
     skillLevel.calculateSpeedScores();
 }
 
+std::string Player::getCurrentStats() const
+{
+    return skillLevel.getCurrentStats();
+}
+
+int Player::getPreviousNumCorrectTotal() const
+{
+    return previousNumCorrectTotal;
+}
+
+int Player::getPreviousNumMissesTotal() const
+{
+    return previousNumMissedTotal;
+}
+
+int Player::getPreviousNumCollisionsTotal() const
+{
+    return previousNumCollisionsTotal;
+}
+
 //Returns false if failed to save to file, true otherwise
 bool Player::saveStage(std::string file)
 {
@@ -1256,7 +1289,7 @@ bool Player::saveStage(std::string file)
             out << "% GameMode { TIMED, NORMAL }" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "%" << endl;
-            out << "% StageID PodLocation PodColor Nback IsNBackPod PlayerTookPod Speed GameMode Score Timestamp" << endl;
+            out << "% StageID PodLocation PodColor Nback IsNBackPod PlayerTookPod Speed GameMode Timestamp Rights Wrongs Misses Collisions" << endl;
         }
         
         for (int i = 0; i < results.size(); ++i) {
@@ -1269,7 +1302,12 @@ bool Player::saveStage(std::string file)
             << results[i].podInfo.podTaken << " "
             << results[i].speed << " "
             << results[i].gameMode << " "
-            << results[i].timestamp << endl;
+            << results[i].timestamp << " "
+            << numCorrectTotal << " "
+            << numWrongTotal << " "
+            << numMissedTotal << " "
+            << numCollisionsTotal << " "
+            << endl;
         }
         out.close();
     }

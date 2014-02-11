@@ -173,7 +173,7 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label7->setMetricsMode(GMM_PIXELS);
     label7->setAlignment(TextAreaOverlayElement::Center);
     label7->setPosition(globals.label7_posX, globals.label7_posY);
-    label7->setCharHeight(globals.screenHeight / 30);
+    label7->setCharHeight(globals.screenHeight / 50);
     label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label7->setFontName("Arial");
     
@@ -231,23 +231,33 @@ void Hud::update(float elapsed)
         label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
     else
     {
-        label3->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
-        label3->setCaption("Chances: " + Util::toStringInt(player->getHP()));
+        float val = player->getNumCorrectTotal();
+        if (val < 0.0) val = 0.0;
+        label3->setCaption("Score: " + Util::toStringInt(val));
     }
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
     if (tunnel->getMode() == GAME_TIMED)
         label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
     else if (tunnel->getMode() == GAME_NAVIGATION)
     {
-        float val = player->getNumCorrectTotal();
-        if (val < 0.0) val = 0.0;
-        label5->setCaption("Score: " + Util::toStringInt(val));
+        if (player->getHP() <= globals.HPNegativeLimit)
+            label5->setColour(Ogre::ColourValue(1.0, 0.0, 0.0));
+        else
+            label5->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
+        label5->setCaption("Chances: " + Util::toStringInt(player->getHP()));
     }
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
     label7->setCaption("");
-    if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
+    if (player->getName() == "subject999")
+    {
+        label7->setCaption("Pickups: " + Util::toStringInt(player->getPreviousNumCorrectTotal()) +
+                           "\nMisses: " + Util::toStringInt(player->getPreviousNumMissesTotal()) +
+                           "\nCollisions: " + Util::toStringInt(player->getPreviousNumCollisionsTotal()) +
+                           "\nObstacles: " + Util::toStringInt(globals.previousNumSegmentsWithObstacles));
+    }
+    else if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
     {
         if (tunnel->getSpawnCombo() > 1)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));

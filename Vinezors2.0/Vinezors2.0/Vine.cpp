@@ -75,7 +75,7 @@ void Vine::loadRunnerShip()
     
     tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
-    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "runnerShip.mesh");
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/runnerShip.mesh");
     tip->attachObject(tipEntity);
     tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
     tip->yaw(Degree(180.0));
@@ -101,7 +101,7 @@ void Vine::loadFlowerShip()
     
     tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
-    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "flowerVehicle.mesh");
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/flowerVehicle.mesh");
     tip->attachObject(tipEntity);
     tip->yaw(Degree(180.0));
     tip->scale(0.5, 0.5, 0.5);
