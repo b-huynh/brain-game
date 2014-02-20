@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "413155952.362449"
+            timestampString = "414375262.395272"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69">
+            startingLineNumber = "70"
+            endingLineNumber = "70">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -54,11 +54,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Hud.cpp"
-            timestampString = "413439582.529316"
+            timestampString = "414402380.119772"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "271"
-            endingLineNumber = "271"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
             landmarkName = "Hud::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -70,12 +70,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "413436167.178899"
+            timestampString = "414629335.081603"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "825"
-            endingLineNumber = "825"
-            landmarkName = "Player::getCombinedRotAndRoll()"
+            startingLineNumber = "835"
+            endingLineNumber = "835"
+            landmarkName = "Player::changeMovementMode()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -86,11 +86,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "413438762.009757"
+            timestampString = "414375262.395272"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241">
+            startingLineNumber = "246"
+            endingLineNumber = "246">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -100,27 +100,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/OgreApp.cpp"
-            timestampString = "413448812.861441"
+            timestampString = "414538992.219615"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
-            landmarkName = "OgreApp::setLevel(Evaluation forced)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/OgreApp.cpp"
-            timestampString = "413181351.849564"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "267"
-            endingLineNumber = "267"
+            startingLineNumber = "299"
+            endingLineNumber = "299"
             landmarkName = "OgreApp::setLevel(Evaluation forced)"
             landmarkType = "5">
          </BreakpointContent>

@@ -209,7 +209,7 @@ float Player::getFinalSpeed() const
 float Player::getTotalSpeed() const
 {
     float currentTotal = baseSpeed + bonusSpeed;
-    float timeRange = 1.0;
+    float timeRange = 0.5;
     if (boostTimer >= 0.0)
     {
         float speedRange = currentTotal * globals.boostModifierCamSpeed - currentTotal;
@@ -344,13 +344,16 @@ void Player::updateGlowExtraction(float elapsed)
 void Player::setGlowGrabParameters()
 {
     // Extract a glow that is in the form of a sphere always, not shape of pod.
-    selectedTarget->removeGlow();
-    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    //selectedTarget->removeGlow();
+    //selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
     
     // Assign a glow speed towards the player
-    glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
-    if (finalSpeed > minSpeed)
-        glowSpeed *= (finalSpeed / minSpeed);
+    if (selectedTarget->getGlowNode())
+    {
+        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->    getGlowNode()->_getDerivedPosition()).length();
+        if (finalSpeed > minSpeed)
+            glowSpeed *= (finalSpeed / minSpeed);
+    }
 }
 
 void Player::performShockwave()
@@ -390,24 +393,32 @@ void Player::updateShockwave(float elapsed)
 
 void Player::performBoost()
 {
-    float timeRange = 1.0; // Range to linearly decrease back to normal speed
+    float timeRange = 0.5; // Range to linearly decrease back to normal speed
     if (boostTimer <= timeRange)
     {
-        boostTimer = 5.0;
+        boostTimer = 2.5;
         vines[0]->setBoost();
+        if (soundBoost)
+        {
+            soundBoost->stop();
+            soundBoost->play();
+        }
     }
 }
 
 void Player::updateBoost(float elapsed)
 {
-    float timeRange = 1.0;
+    float timeRange = 0.5;
     if (boostTimer > 0.0)
     {
         boostTimer -= elapsed;
         if (boostTimer <= 0.0)
             boostTimer = 0.0;
         else if (boostTimer <= timeRange)
+        {
+            soundBoost->stop();
             vines[0]->removeBoost();
+        }
     }
 }
 
@@ -735,6 +746,25 @@ void Player::newTunnel(bool setmusic)
     if (setmusic)
     {
         OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
+        switch (tunnel->getPhase())
+        {
+            case 'A':
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music2");
+                break;
+            case 'B':
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
+                break;
+            case 'C':
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music5");
+                break;
+            case 'D':
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
+                break;
+            case 'E':
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
+                break;
+        }
+        /*
         if (tunnel->getNBack() <= 1)
             soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
         else
@@ -755,6 +785,7 @@ void Player::newTunnel(bool setmusic)
                     break;
             }
         }
+         */
         if (soundMusic != soundMusicTemp)
         {
             if (soundMusic) soundMusic->stop();
@@ -858,6 +889,7 @@ void Player::setSounds(bool mode)
         soundPods[POD_SIGNAL_UNKNOWN] = NULL;
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
+        soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
     }
     else // false means no pod sounds
     {
@@ -868,6 +900,7 @@ void Player::setSounds(bool mode)
             soundPods[i] = NULL;
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
+        soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
     }
 }
 
@@ -890,10 +923,6 @@ void Player::checkCollisions()
                 {
                     if (hits[i]->getPodTrigger())
                     {
-                        if (tunnel->getMode() == GAME_NAVIGATION)
-                        {
-                            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
-                        }
                         if (soundCollision)
                         {
                             soundCollision->stop();
@@ -1088,12 +1117,12 @@ void Player::update(float elapsed)
         }
         
         closest = tunnel->getCurrentOffset();
-        vines[i]->previousID = vines[i]->afterID;
-        vines[i]->previoust = vines[i]->aftert;
-        vines[i]->afterID = closest->getTunnelSliceID();
-        vines[i]->aftert = tunnel->getTLeftOffsetCurrent();
-        vines[i]->setQuaternion(getCombinedRotAndRoll());
         if (closest) {
+            vines[i]->previousID = vines[i]->afterID;
+            vines[i]->previoust = vines[i]->aftert;
+            vines[i]->afterID = closest->getTunnelSliceID();
+            vines[i]->aftert = tunnel->getTLeftOffsetCurrent();
+            vines[i]->setQuaternion(getCombinedRotAndRoll());
             Vector3 centerPos = closest->getCenter(tunnel->getTLeftOffsetCurrent());
             Vector3 targetPos1;
             Vector3 targetPos2;
@@ -1226,12 +1255,12 @@ void Player::update(float elapsed)
 
 void Player::calculateNavigationScores()
 {
-    skillLevel.calculateNavigationScores();
+    skillLevel.calculateNavigation();
 }
 
 void Player::calculateSpeedScores()
 {
-    skillLevel.calculateSpeedScores();
+    skillLevel.calculateSpeed();
 }
 
 std::string Player::getCurrentStats() const

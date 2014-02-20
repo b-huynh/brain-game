@@ -26,15 +26,25 @@ GamePhase LevelManager::getPhaseAt(int index) const
         switch (schedule[index])
         {
             case 'A':
-            return PHASE_SET1;
+                return PHASE_SET1;
             case 'B':
-            return PHASE_SET2;
+                return PHASE_SET2;
             case 'C':
-            return PHASE_SET3;
+                return PHASE_SET3;
             case 'D':
-            return PHASE_NAVIGATION;
+                return PHASE_NAVIGATION;
             case 'E':
-            return PHASE_TIMED;
+                return PHASE_TIMED;
+            case 'a':
+                return PHASE_SET1;
+            case 'b':
+                return PHASE_SET2;
+            case 'c':
+                return PHASE_SET3;
+            case 'd':
+                return PHASE_NAVIGATION;
+            case 'e':
+                return PHASE_TIMED;
             default:
             return PHASE_SET1;
         }
@@ -52,7 +62,24 @@ GamePhase LevelManager::getNextPhase() const
     return getPhaseAt(schedIndex + 1);
 }
 
-void LevelManager::levelFinishedA(Tunnel* tunnel, Evaluation forced)
+char LevelManager::getScheduleValue() const
+{
+    if (schedIndex >= 0 && schedIndex < schedule.size())
+        return schedule[schedIndex];
+    else
+        return 'x';
+}
+
+void LevelManager::repeatPreviousPhase()
+{
+    if (schedIndex - 1 >= 0)
+        schedule =
+            schedule.substr(0, schedIndex) +
+            char(schedule[schedIndex - 1] + ('a' - 'A')) +
+            schedule.substr(schedIndex);
+}
+
+bool LevelManager::levelFinishedA(Tunnel* tunnel, Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
     
@@ -81,6 +108,7 @@ void LevelManager::levelFinishedA(Tunnel* tunnel, Evaluation forced)
     //if (eval == PASS || forced == PASS) globals.currStageID++;
     //else if (eval == FAIL || forced == FAIL) globals.currStageID--;
     //if (globals.currStageID < 1) globals.currStageID = 1;
+    return false;
 }
 
 // This version does not follow any schedule, it is good for debugging and for testing easy configurations
@@ -128,13 +156,14 @@ Tunnel* LevelManager::getNextLevelA(Tunnel* previousTunnel)
     return ret;
 }
 
-void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
+bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
     int signals = tunnel->getTotalCollections();
     int timeLeft = tunnel->getTimeLeft();
     
     // Update Skill Level Here
+    bool allowRetry = false;
     PlayerLevel skillLevel = player->getSkillLevel();
     switch (getCurrentPhase())
     {
@@ -149,6 +178,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set1++;
                 }
             }
+            else allowRetry = forced == EVEN && schedule[schedIndex] == 'A';
             break;
         }
         case PHASE_SET2:
@@ -162,6 +192,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set2++;
                 }
             }
+            else allowRetry = forced == EVEN && schedule[schedIndex] == 'B';
             break;
         }
         case PHASE_SET3:
@@ -175,6 +206,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set3++;
                 }
             }
+            else allowRetry = forced == EVEN && schedule[schedIndex] == 'C';
             break;
         }
         case PHASE_NAVIGATION:
@@ -182,7 +214,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
             // Don't record cheats
             if (forced == EVEN)
             {
-                skillLevel.calculateNavigationScores();
+                skillLevel.calculateNavigation();
                 skillLevel.navigation = Util::clamp(skillLevel.navigation, 0, globals.navMap.size() - 1);
             }
             std::cout << "Navigation Score: " << skillLevel.navigation << std::endl;
@@ -193,7 +225,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
             // Don't record cheats
             if (forced == EVEN)
             {
-                skillLevel.calculateSpeedScores();
+                skillLevel.calculateSpeed();
             }
             std::cout << "Speed Score: " << skillLevel.minSpeed << " " << skillLevel.averageSpeed << " " << skillLevel.maxSpeed << std::endl;
             break;
@@ -206,6 +238,7 @@ void LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
     player->saveProgress(globals.savePath, globals.currStageID);
     
     ++schedIndex;
+    return allowRetry;
 }
 
 // This version follows a schedule specified when LevelManager was initialized
@@ -277,7 +310,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             
-            globals.setMessage("Color and Sound Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
+            globals.setMessage("Match by Color!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET2:
@@ -317,7 +350,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
-            globals.setMessage("Shape and Sound Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
+            globals.setMessage("Match by Shape!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET3:
@@ -357,7 +390,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             
-            globals.setMessage("Sound Only Test!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
+            globals.setMessage("Match by Only Sound!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_NAVIGATION:
@@ -371,13 +404,14 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.stageTotalTargets2 = 0;
             globals.stageTotalTargets3 = 0;
             globals.stageTotalTargetsVariance = 0;
-            globals.initCamSpeed = skillLevel.averageSpeed;
+            //globals.initCamSpeed = skillLevel.averageSpeed;
+            globals.initCamSpeed = (skillLevel.averageSpeed + skillLevel.maxSpeed) / 2;
             globals.minCamSpeed = 5.0;
             globals.maxCamSpeed = 100.0;
             globals.stageTime = 120.0;
             
-            globals.startingHP = 3;
-            globals.HPPositiveLimit = 3;
+            globals.startingHP = 5;
+            globals.HPPositiveLimit = 5;
             globals.HPNegativeLimit = 0;
             globals.HPPositiveCorrectAnswer = 0;
             globals.HPNegativeCorrectAnswer = 0;
@@ -385,13 +419,16 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.HPNegativeWrongAnswer = -1;
             globals.HPPositiveDistractor = -1;
             globals.HPNegativeDistractor = -1;
-            
-            globals.tunnelSectionsPerNavigationUpgrade = ((globals.initCamSpeed * (1 + globals.boostModifierCamSpeed) / 2) * globals.stageTime / (globals.tunnelSegmentsPerSection * (globals.tunnelSegmentBuffer + globals.tunnelSegmentDepth) / globals.globalModifierCamSpeed) / (globals.navMap.size() / 2));
+            /*
+            float speedMeasure = globals.initCamSpeed * (1 + globals.boostModifierCamSpeed) / 2; // Mid-value of start and boost speed
+            globals.tunnelSectionsPerNavigationUpgrade = (speedMeasure * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerSection) / globals.numNavPhases);
             if (globals.tunnelSectionsPerNavigationUpgrade <= 0)
                 globals.tunnelSectionsPerNavigationUpgrade = 1;
+            */
+            globals.tunnelSectionsPerNavigationUpgrade = 12;
             std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
             
-            globals.setMessage("Navigation Test!\nAvoid obstacles, grab fuel cells!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
+            globals.setMessage("Avoid Obstacles, Grab Fuel Cells!\nSwipe to Continue\n\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         case PHASE_TIMED:
@@ -400,17 +437,20 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             ncontrol = 1;
             nmode = GAME_TIMED;
             
-            globals.stageTotalSignals = 120;
-            globals.stageTotalTargets1 = 40;
-            globals.stageTotalTargets2 = 60;
-            globals.stageTotalTargets3 = 80 ;
-            globals.stageTotalTargetsVariance = 2;
             globals.stageTotalDistractorsMin = 0;
             globals.stageTotalDistractorsMax = 0;
             globals.initCamSpeed = skillLevel.averageSpeed;
             globals.minCamSpeed = 5.0;
             globals.maxCamSpeed = 100.0;
             globals.stageTime = 180.0;
+            globals.stageTotalSignals = skillLevel.averageSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+            globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
+            globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
+            globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+            globals.stageTotalTargetsVariance = 2;
+            
+            // Divide by 4 because there are 4 nav levels in time trial
+            globals.tunnelSectionsPerNavigationUpgrade = (globals.initCamSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerSection) / globals.numTimePhases);
             
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
@@ -418,7 +458,9 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_SPHERE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
-            globals.setMessage("Speed Test!\nMatch as many as you can!\n\nSwipe to Continue\n" + player->getCurrentStats(), MESSAGE_NORMAL);
+            std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
+            
+            globals.setMessage("Grab Matching Fuel Cells!\n\nSwipe to Continue\n" + player->getCurrentStats(), MESSAGE_NORMAL);
             break;
         }
         default:
@@ -445,7 +487,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
     return ret;
 }
 
-void LevelManager::levelFinishedC(Tunnel* tunnel, Evaluation forced)
+bool LevelManager::levelFinishedC(Tunnel* tunnel, Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
     int signals = tunnel->getTotalCollections();
@@ -455,6 +497,7 @@ void LevelManager::levelFinishedC(Tunnel* tunnel, Evaluation forced)
     player->saveProgress(globals.savePath, globals.currStageID);
     
     ++globals.navIndex;
+    return false;
 }
 
 Tunnel* LevelManager::getNextLevelC(Tunnel* previousTunnel)

@@ -39,7 +39,10 @@
     
     CGFloat initialThreshold;
     CGFloat swipeThreshold;
+    CGPoint startP;
     CGFloat totalX;
+    CGFloat totalY;
+    int swipeState;
 }
 
 @property (retain) NSTimer *mTimer;
@@ -82,6 +85,7 @@
     [self.view addGestureRecognizer:pinchRecognizer];
     
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    longPressRecognizer.minimumPressDuration = 0.20;
     [self.view addGestureRecognizer:longPressRecognizer];
     
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
@@ -92,8 +96,11 @@
     pinchRecognizer.delegate = self;
     longPressRecognizer.delegate = self;
     
-    initialThreshold = self.view.frame.size.width / 60.0f;
-    swipeThreshold = self.view.frame.size.width / 25.0f;
+    initialThreshold = 12.50; //self.view.frame.size.width / 60.0f;
+    swipeThreshold = 30.00; //self.view.frame.size.width / 25.0f;
+    swipeState = 0;
+    
+    NSLog(@"this is a double: %.2f %.2f", initialThreshold, swipeThreshold);
 }
 
 - (void)didReceiveMemoryWarning
@@ -104,7 +111,6 @@
 
 - (void)startWithWindow:(UIWindow*) window:(NSString*)str :(BOOL)isOn
 {
-    // Dividing by 2 cause of storyboard...
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
     
@@ -305,22 +311,78 @@
 
 - (IBAction)handlePan:(UIPanGestureRecognizer*)sender
 {
+    CGPoint p = [sender locationInView:sender.view];
     CGPoint dp = [sender translationInView:sender.view];
     CGPoint v = [sender velocityInView:sender.view];
     
     if (sender.state == UIGestureRecognizerStateBegan)
     {
+        startP = p;
         totalX = 0.0;
+        totalY = 0.0;
+        swipeState = 0;
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
         CGFloat dx = dp.x - totalX;
-        if (fabs(v.x * 2) > fabs(v.y) && ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold)))
+        CGFloat dy = dp.y - totalY;
+        /*
+        if (fabs(v.x) <= fabs(v.y) && (swipeState == 0 || swipeState == 2))
+        {
+            if (startP.x < sender.view.frame.size.width / 2)
+            {
+                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+            }
+            else if (startP.x > sender.view.frame.size.width / 2)
+            {
+                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+            }
+        }
+        else if (fabs(v.x) >= fabs(v.y) && (swipeState == 0 || swipeState == 1))
+        {
+                if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalX = dp.x;
+                    swipeState = 1;
+                }
+                if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalX = dp.x;
+                    swipeState = 1;
+                }
+        }
+         */
+        
+        if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
         {
             mApplication->activatePerformLeftMove();
             totalX = dp.x;
         }
-        if (fabs(v.x * 2) > fabs(v.y) && ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold)))
+        if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
         {
             mApplication->activatePerformRightMove();
             totalX = dp.x;
@@ -329,6 +391,8 @@
     else
     {
         totalX = 0.0;
+        totalY = 0.0;
+        swipeState = 0;
     }
 }
 

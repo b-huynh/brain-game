@@ -17,6 +17,7 @@
 
 #include <string>
 
+enum GameState { STATE_PLAY, STATE_PROMPT };
 enum Evaluation { PASS, FAIL, EVEN };
 enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
@@ -63,7 +64,7 @@ struct SectionInfo
 enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD };
 enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
 #define NUM_POD_TYPES 3
-enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_UNKNOWN };
+enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_SPHERE, POD_SHAPE_TRIANGLE, POD_SHAPE_DIAMOND, POD_SHAPE_CONE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
@@ -95,10 +96,12 @@ enum VineMeshType { VINE_BASIC_SHIP, VINE_RUNNER_SHIP, VINE_FLOWER_SHIP };
 
 struct NavigationLevel
 {
+    int level;
     int control;
     int obstacles;
     
-    NavigationLevel(int c = 0, int o = 0) : control(c), obstacles(o) {}
+    NavigationLevel() : level(0), control(0), obstacles(0) {}
+    NavigationLevel(int l, int c, int o) : level(l), control(c), obstacles(o) {}
 };
 
 // Forward Declarations of main components of the game
@@ -208,6 +211,8 @@ namespace Util
         int combo2MinA;
         int combo1MinB;
         int combo2MinB;
+        int numNavPhases;
+        int numTimePhases;
         
         int screenWidth;
         int screenHeight;
@@ -252,6 +257,7 @@ namespace Util
         std::string playerName;
         std::string message;
         MessageType messageType;
+        int messageSize;
         
         ConfigGlobal();
         void set();
@@ -260,7 +266,7 @@ namespace Util
         void setConfigValue(std::istream& in, std::string paramName);
         bool loadConfig(int stageID);
         
-        void setMessage(std::string msg, MessageType type);
+        void setMessage(std::string msg, MessageType type, int size = 50);
         void clearMessage();
         bool setName(const char* name);
         std::string buildLogPath(std::string playerName);
@@ -274,6 +280,7 @@ namespace Util
     bool doSidesMatch(bool sides1[NUM_DIRECTIONS], bool sides2[NUM_DIRECTIONS]);
     void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
     int getNumSides(int level);
+    int getNumSides(bool sides[NUM_DIRECTIONS]);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();
@@ -297,6 +304,7 @@ namespace Util
     void createDefaultSegments(Ogre::SceneManager* sceneMgr);
     
     void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
+    float getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments);
     
     void generateMaterials();
 };

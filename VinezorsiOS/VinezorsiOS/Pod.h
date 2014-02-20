@@ -56,6 +56,7 @@ public:
 	
     void loadPod();
     void loadBasicShape();
+    void loadFlower();
     void loadFuelCell();
     void loadHazard();
     

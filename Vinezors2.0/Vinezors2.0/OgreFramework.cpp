@@ -221,6 +221,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundPod3", "podspacechime.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod4", "podspacetone.wav", false, false, true);
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();

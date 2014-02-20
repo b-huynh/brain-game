@@ -39,7 +39,7 @@ Hud::Hud()
     indicator = static_cast<PanelOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Indicator"));
     threshold1 = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold1"));
+                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold1"));
     threshold2 = static_cast<PanelOverlayElement*>(
                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold2"));
     threshold3 = static_cast<PanelOverlayElement*>(
@@ -47,15 +47,15 @@ Hud::Hud()
     
     // Create text area
     label1 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel1"));
     label2 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel2"));
     label3 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel3"));
     label4 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel4"));
     label5 = static_cast<TextAreaOverlayElement*>(
-                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel5"));
     label6 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel6"));
     label7 = static_cast<TextAreaOverlayElement*>(
@@ -106,13 +106,25 @@ void Hud::init(Tunnel* tunnel, Player* player)
     healthArea->setMetricsMode(GMM_RELATIVE);
     healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
     healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
-    healthArea->setMaterialName("General/BarColors");
-    //healthArea->setMaterialName("General/BaseBlack");
-    
     barHP->setMetricsMode(GMM_RELATIVE);
     barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
     barHP->setDimensions(0.0, globals.HPBarHeight);
     barHP->setMaterialName("General/BarColors");
+    if (globals.HPPositiveLimit >= 8)
+    {
+        healthArea->setMaterialName("General/BarColors3");
+        barHP->setDimensions(healthArea->getWidth() * (14.0 / 14.0), healthArea->getHeight());
+    }
+    else if (globals.HPPositiveLimit >= 5)
+    {
+        healthArea->setMaterialName("General/BarColors2");
+        barHP->setDimensions(healthArea->getWidth() * (11.0 / 14.0), healthArea->getHeight());
+    }
+    else //if (globals.HPPositiveLimit >= 3)
+    {
+        healthArea->setMaterialName("General/BarColors1");
+        barHP->setDimensions(healthArea->getWidth() * (9.0 / 14.0), healthArea->getHeight());
+    }
     
     indicator->setMetricsMode(GMM_RELATIVE);
     indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
@@ -136,30 +148,31 @@ void Hud::init(Tunnel* tunnel, Player* player)
     label1->setPosition(globals.label1_posX, globals.label1_posY);
     label1->setCharHeight(globals.screenHeight / 30);
     label1->setFontName("Arial");
-    label1->setColour(ColourValue::Green);
+    label1->setColour(ColourValue::ColourValue(0.0, 0.5, 0.5));
     
     label2->setMetricsMode(GMM_PIXELS);
     label2->setPosition(globals.label2_posX, globals.label2_posY);
     label2->setCharHeight(globals.screenHeight / 50);
-    label2->setColour(ColourValue::White);
+    label2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label2->setFontName("Arial");
     
     label3->setMetricsMode(GMM_PIXELS);
     label3->setAlignment(TextAreaOverlayElement::Right);
     label3->setPosition(globals.label3_posX, globals.label3_posY);
     label3->setCharHeight(globals.screenHeight / 50);
+    label3->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_PIXELS);
     label4->setPosition(globals.label4_posX, globals.label4_posY);
     label4->setCharHeight(globals.screenHeight / 50);
-    label4->setColour(ColourValue::White);
+    label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("Arial");
     
     label5->setMetricsMode(GMM_PIXELS);
     label5->setAlignment(TextAreaOverlayElement::Right);
     label5->setPosition(globals.label5_posX, globals.label5_posY);
-    label5->setCharHeight(globals.screenHeight / 50);
+    label5->setCharHeight(globals.screenHeight / globals.messageSize);
     label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label5->setFontName("Arial");
     
@@ -206,7 +219,7 @@ void Hud::update(float elapsed)
     
     if (tunnel->getMode() == GAME_TIMED)
     {
-        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue::Red : ColourValue::Green;
+        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue(1.0, 1.0, 0.0) : ColourValue(0.0, 1.0, 0.0);
         label1->setColour(timeLeftCol);
         label1->setCaption(Util::toStringInt(timeLeft));
     }
@@ -217,7 +230,7 @@ void Hud::update(float elapsed)
         label2->setCaption("");
     else if (globals.stageTime)
     {
-        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue::Red : ColourValue::White;
+        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
         label2->setColour(timeLeftCol);
         label2->setCaption("Time: " + Util::toStringInt(timeLeft));
         
@@ -243,12 +256,13 @@ void Hud::update(float elapsed)
         if (player->getHP() <= globals.HPNegativeLimit)
             label5->setColour(Ogre::ColourValue(1.0, 0.0, 0.0));
         else
-            label5->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
+            label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
         label5->setCaption("Chances: " + Util::toStringInt(player->getHP()));
     }
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
+    label6->setCharHeight(globals.screenHeight / globals.messageSize);
     label7->setCaption("");
     if (player->getName() == "subject999")
     {
@@ -263,13 +277,11 @@ void Hud::update(float elapsed)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
     }
     
-    float indicatorRange = barHP->getWidth();
-    float barWidth = globals.HPBarWidth;
+    float barWidth = barHP->getWidth();
     // Set UI positions depending on game mode
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
-        barHP->setDimensions(barWidth, globals.HPBarHeight);
-        float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit;
+        float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit + 1;
         //indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
         indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
     }

@@ -103,6 +103,51 @@ material General/BarColors
     }
 }
 
+material General/BarColors1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_green_gray.png
+        }
+      } 
+    }
+}
+
+material General/BarColors2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_blue_gray.png
+        }
+      } 
+    }
+}
+
+material General/BarColors3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_purple_size.png
+        }
+      } 
+    }
+}
+
 material General/Indicator
 {
     technique
@@ -203,6 +248,90 @@ material General/Smiley
             texture_unit
 			{
 				texture smiley.png
+			}
+		}
+	}
+}
+
+material General/WallBindingA
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture LevelBinding/TunnelTile_AlienPipes.png
+			}
+		}
+	}
+}
+
+material General/WallBindingB
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture LevelBinding/TunnelTile_R_Windows.png
+			}
+		}
+	}
+}
+
+material General/WallBindingC
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture LevelBinding/TunnelTile_ice4.png
+			}
+		}
+	}
+}
+
+material General/WallBindingD
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+
+            texture_unit
+			{
+				texture LevelBinding/TunnelTile_SpacePlatForms.png
+			}
+		}
+	}
+}
+
+material General/WallBindingE
+{
+    technique
+	{
+        pass
+		{
+            lighting on
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+			{
+				texture LevelBinding/TunnelTile_GoldPipes.png
 			}
 		}
 	}
@@ -695,7 +824,7 @@ material General/PodUnknown
             lighting on
  
             ambient 0.1 0.1 0.1 1
-            diffuse 0.5 0.5 0.5 1
+            diffuse 0.7 0.7 0.7 1
         }
     }
 }
@@ -771,6 +900,37 @@ material General/PodRedTransparent
             
             ambient 0.3 0.1 0.1 0.3
             diffuse 0.8 0.1 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material General/PodPurple
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.3 0.1 0.3 1
+            diffuse 0.8 0.1 0.8 1
+            emissive 0.2 0.0 0.2 1
+        }
+    }
+}
+
+material General/PodPurpleTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            
+            ambient 0.3 0.1 0.3 1
+            diffuse 0.8 0.1 0.8 1
             scene_blend alpha_blend
             depth_write off
         }

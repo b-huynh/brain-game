@@ -135,6 +135,7 @@ public:
     History* getHistory() const;
     Evaluation getEval() const;
     Pod* getNearestPod(int numSlices) const;
+    Direction getRandPossibleDirection(SectionInfo segmentInfo) const;
     
 	float getSegmentWidth() const;
 	float getSegmentDepth() const;
@@ -150,8 +151,10 @@ public:
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
+    char getPhase() const;
     void determineMaterial();
     std::string getMaterialName() const;
+    std::vector<NavigationLevel> getNavLevels() const;
     int getNumNavLevels() const;
     int getBuildingNavLevel() const;    // The nav level the tunnel is building
     int getCurrentNavLevel() const;     // The nav level the player is still on
@@ -167,6 +170,7 @@ public:
     void setNewControl(int control);
     void updateNavigationLevel();
     void setNavigationLevels();
+    void setNavigationLevels(const std::vector<NavigationLevel> & preset);
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;

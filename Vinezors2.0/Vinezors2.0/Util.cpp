@@ -15,7 +15,7 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
-    sessionTime = 1500.00;
+    sessionTime = 3000.00;
     stageTime = 120.0;
     stageTotalSignals = 60;
     stageTotalTargets1 = 20;
@@ -58,10 +58,10 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.15;
-    podCollisionMax = 0.45;
-    distractorCollisionMin = 0.30;
-    distractorCollisionMax = 0.40;
+    podCollisionMin = 0.20;
+    podCollisionMax = 0.40;
+    distractorCollisionMin = 0.25;
+    distractorCollisionMax = 0.35;
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
@@ -87,7 +87,7 @@ Util::ConfigGlobal::ConfigGlobal()
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
-    boostModifierCamSpeed = 1.5;
+    boostModifierCamSpeed = 1.25;
     minCamSpeed = 10.0;
     maxCamSpeed = 30.0;
     nlevelSpeedModifier = 0.8;
@@ -110,6 +110,8 @@ Util::ConfigGlobal::ConfigGlobal()
     combo2MinA = 10;
     combo1MinB = 3;
     combo2MinB = 6;
+    numNavPhases = 23;
+    numTimePhases = 4;
     numSegmentsWithObstacles = 0;
     previousNumSegmentsWithObstacles = 0;
     
@@ -118,30 +120,30 @@ Util::ConfigGlobal::ConfigGlobal()
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
     signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
     signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-    navMap = std::vector<NavigationLevel>(23);
-    navMap[0] = NavigationLevel(1, 0);
-    navMap[1] = NavigationLevel(2, 0);
-    navMap[2] = NavigationLevel(2, 1);
-    navMap[3] = NavigationLevel(1, 1);
-    navMap[4] = NavigationLevel(3, 0);
-    navMap[5] = NavigationLevel(4, 0);
-    navMap[6] = NavigationLevel(4, 1);
-    navMap[7] = NavigationLevel(3, 1);
-    navMap[8] = NavigationLevel(2, 2);
-    navMap[9] = NavigationLevel(4, 2);
-    navMap[10] = NavigationLevel(3, 2);
-    navMap[11] = NavigationLevel(1, 2);
-    navMap[12] = NavigationLevel(4, 3);
-    navMap[13] = NavigationLevel(2, 3);
-    navMap[14] = NavigationLevel(3, 3);
-    navMap[15] = NavigationLevel(4, 4);
-    navMap[16] = NavigationLevel(3, 4);
-    navMap[17] = NavigationLevel(2, 4);
-    navMap[18] = NavigationLevel(4, 5);
-    navMap[19] = NavigationLevel(3, 5);
-    navMap[20] = NavigationLevel(4, 6);
-    navMap[21] = NavigationLevel(3, 6);
-    navMap[22] = NavigationLevel(4, 7);
+    navMap = std::vector<NavigationLevel>(numNavPhases);
+    navMap[0] = NavigationLevel(0, 1, 0);
+    navMap[1] = NavigationLevel(1, 2, 0);
+    navMap[2] = NavigationLevel(2, 2, 1);
+    navMap[3] = NavigationLevel(3, 1, 1);
+    navMap[4] = NavigationLevel(4, 3, 0);
+    navMap[5] = NavigationLevel(5, 4, 0);
+    navMap[6] = NavigationLevel(6, 4, 1);
+    navMap[7] = NavigationLevel(7, 3, 1);
+    navMap[8] = NavigationLevel(8, 2, 2);
+    navMap[9] = NavigationLevel(9, 4, 2);
+    navMap[10] = NavigationLevel(10, 3, 2);
+    navMap[11] = NavigationLevel(11, 1, 2);
+    navMap[12] = NavigationLevel(12, 4, 3);
+    navMap[13] = NavigationLevel(13, 2, 3);
+    navMap[14] = NavigationLevel(14, 3, 3);
+    navMap[15] = NavigationLevel(15, 4, 4);
+    navMap[16] = NavigationLevel(16, 3, 4);
+    navMap[17] = NavigationLevel(17, 2, 4);
+    navMap[18] = NavigationLevel(18, 4, 5);
+    navMap[19] = NavigationLevel(19, 3, 5);
+    navMap[20] = NavigationLevel(20, 4, 6);
+    navMap[21] = NavigationLevel(21, 3, 6);
+    navMap[22] = NavigationLevel(22, 4, 7);
     navIndex = 0;
 }
 
@@ -174,7 +176,7 @@ void Util::ConfigGlobal::set()
     label5_posX = screenWidth - screenWidth / 40;
     label5_posY = 7 * screenHeight / 40;
     label6_posX = screenWidth / 2;
-    label6_posY = screenHeight / 2;
+    label6_posY = screenHeight / 2 - screenHeight / 5;
     label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
 }
@@ -355,12 +357,6 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         assert(input1 >= 0 && input1 < signalTypes.size());
         signalTypes[input1].push_back(PodInfo((PodSignal)input1, (PodMeshType)input2, (PodColor)input3, (PodShape)input4, (PodSound)input5));
     }
-    else if (paramName == "combo2MinA")
-        in >> combo2MinA;
-    else if (paramName == "combo1MinB")
-        in >> combo1MinB;
-    else if (paramName == "combo2MinB")
-        in >> combo2MinB;
     else
     {
         std::cout << "WARNING: UNKNOWN PARAMETER... " << paramName << " IGNORED" << std::endl;
@@ -431,12 +427,13 @@ bool Util::ConfigGlobal::loadConfig(int sid)
     return false;
 }
 
-void Util::ConfigGlobal::setMessage(std::string msg, MessageType type)
+void Util::ConfigGlobal::setMessage(std::string msg, MessageType type, int size)
 {
     if (type > messageType)
     {
         message = msg;
         messageType = type;
+        messageSize = size;
     }
 }
 
@@ -667,6 +664,14 @@ int Util::getNumSides(int level)
         default:
             return 8;
     }
+}
+
+int Util::getNumSides(bool sides[NUM_DIRECTIONS])
+{
+    int count = 0;
+    for (int i = 0; i < NUM_DIRECTIONS; ++i)
+        if (sides[i]) ++count;
+    return count;
 }
 
 Direction Util::randDirection()
@@ -1255,6 +1260,11 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.HPNegativeWrongAnswer = -1;
     globals.HPPositiveDistractor = 0;
     globals.HPNegativeDistractor = 0;
+}
+
+float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments)
+{
+    return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
 void Util::generateMaterials()

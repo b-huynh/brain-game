@@ -252,6 +252,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					5DF9407217F4AF360082C239 = {
+						DevelopmentTeam = 9GN2WT7Q58;
+					};
+				};
 			};
 			buildConfigurationList = 5DF9406D17F4AF360082C239 /* Build configuration list for PBXProject "VinezorsiOS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -422,6 +427,8 @@
 		5DF940E017F4AF370082C239 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -443,12 +450,15 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
 		5DF940E117F4AF370082C239 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -470,6 +480,7 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

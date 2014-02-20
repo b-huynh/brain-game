@@ -26,16 +26,19 @@ public:
     GamePhase getPhaseAt(int index) const;
     GamePhase getCurrentPhase() const;
     GamePhase getNextPhase() const;
+    char getScheduleValue() const;
+    
+    void repeatPreviousPhase();
     
     // Simple progressive model, good for debugging different stages
-    void levelFinishedA(Tunnel* tunnel, Evaluation forced);
+    bool levelFinishedA(Tunnel* tunnel, Evaluation forced);
     Tunnel* getNextLevelA(Tunnel* previousTunnel);
     
     // Follows a special schedule of game modes
-    void levelFinishedB(Tunnel* tunnel, Evaluation forced);
+    bool levelFinishedB(Tunnel* tunnel, Evaluation forced);
     Tunnel* getNextLevelB(Tunnel* previousTunnel);
     
-    void levelFinishedC(Tunnel* tunnel, Evaluation forced);
+    bool levelFinishedC(Tunnel* tunnel, Evaluation forced);
     Tunnel* getNextLevelC(Tunnel* previousTunnel);
 };
 

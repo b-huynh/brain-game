@@ -97,6 +97,7 @@ public:
 	void startDemo(const char* name, MusicMode musica);
 #endif
     void update(float elapsed);
+    void endLevel(Evaluation forced = EVEN);
     void setLevel(Evaluation forced = EVEN);
     
     void setPause(bool value);
@@ -128,6 +129,7 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
+    GameState gameState;
     MusicMode musicMode;
     
     unsigned seed;

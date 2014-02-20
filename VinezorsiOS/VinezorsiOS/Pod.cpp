@@ -36,6 +36,9 @@ void Pod::loadPod()
         case POD_FUEL:
             loadFuelCell();
             break;
+        case POD_FLOWER:
+            loadFlower();
+            break;
         default:
             loadHazard();
             break;
@@ -126,9 +129,28 @@ void Pod::loadFuelCell()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCylinder.mesh");
             break;
     }
-    headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal");
+    headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
     materialName = "General/PodUnknown";
     headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+    head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v / 2);
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
+void Pod::loadFlower()
+{
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Flowers/rose.mesh");
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
@@ -148,6 +170,8 @@ void Pod::loadHazard()
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
     headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/barrier.mesh");
+    headContentEntity->getSubEntity(2)->setMaterialName("General/PodUnknown"); // Reassign
+    headContentEntity->getSubEntity(3)->setMaterialName("General/PodUnknown");
 
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
@@ -186,10 +210,14 @@ void Pod::setToGrowth(float t)
     {
         head->setScale(Vector3(headRadius / 1.5, t * headRadius / 1.5, headRadius / 1.5));
     }
+    else if (mtype == POD_FLOWER)
+    {
+        head->setScale(Vector3(headRadius / 20, t * headRadius / 20, headRadius / 20));
+    }
     else
     {
-        //head->setScale(Vector3(0.5, 0.5 * t, 0.5));
-        head->setScale(Vector3(0.7, 0.7 * t, 0.7));
+        head->setScale(Vector3(0.5, 0.5 * t, 0.5));
+        //head->setScale(Vector3(0.7, 0.7 * t, 0.7));
     }
 }
 
@@ -341,6 +369,9 @@ void Pod::uncloakPod()
         case POD_COLOR_YELLOW:
             materialName = "General/PodYellow";
             break;
+        case POD_COLOR_PURPLE:
+            materialName = "General/PodPurple";
+            break;
         default:
             materialName = "General/PodWhite";
             break;
@@ -348,7 +379,7 @@ void Pod::uncloakPod()
     if (podTaken)
         materialName += "Transparent";
     setSkin();
-    if (!podTrigger) generateGlow(podColor, podShape);
+    //if (!podTrigger) generateGlow(podColor, podShape);
 }
 
 void Pod::generateGlow(PodColor color, PodShape shape)

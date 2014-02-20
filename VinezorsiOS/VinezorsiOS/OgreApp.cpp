@@ -118,6 +118,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 {
     totalElapsed = 0.0;
     globals.initPaths(name);
+    gameState = STATE_PLAY;
     musicMode = musica;
     
 	new OgreFramework();
@@ -209,7 +210,7 @@ void OgreApp::setupDemoScene()
     
     tunnel = NULL;
     hud = new Hud();
-    levelMgr = new LevelManager(player, "EDABC");
+    levelMgr = new LevelManager(player, "DEABC");
     
     setLevel(EVEN);
     
@@ -227,61 +228,86 @@ void OgreApp::update(float elapsed)
     totalElapsed += elapsed;
     
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-        
-    // Update the game state
-    if (!pause) {
-        player->update(elapsed);
-        if (tunnel->needsCleaning())
+    
+    switch (gameState)
+    {
+        case STATE_PLAY:
         {
-            // Generate a new tunnel because we are done with current one
-            setLevel();
-        }
-    } else {
+            // Update the game state
+            if (!pause) {
+                player->update(elapsed);
+                if (tunnel->needsCleaning())
+                {
+                    endLevel();
+                    //// Generate a new tunnel because we are done with current one
+                    if (gameState == STATE_PLAY)
+                        setLevel();
+                }
+            } else {
 #if !defined(OGRE_IS_IOS)
-         // Navigation Debug Keys
-         if (player->getKeyUp())
-         player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
-         if (player->getKeyDown())
-         player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
-         if (player->getKeyLeft())
-         player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
-         if (player->getKeyRight())
-         player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+                // Navigation Debug Keys
+                if (player->getKeyUp())
+                    player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+                if (player->getKeyDown())
+                    player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+                if (player->getKeyLeft())
+                    player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+                if (player->getKeyRight())
+                    player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
 #endif
+            }
+            hud->update(elapsed);
+            
+            // Graphical view changes
+            lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+            
+            Quaternion camRot = player->getCombinedRotAndRoll();
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
+            
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
+            break;
+        }
+        case STATE_PROMPT:
+        {
+            break;
+        }
     }
-    hud->update(elapsed);
+}
+
+void OgreApp::endLevel(Evaluation forced)
+{
+    globals.clearMessage();
     
-    // Graphical view changes
-    lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-    
-    Quaternion camRot = player->getCombinedRotAndRoll();
-    OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
-    OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
-    
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
+    if (tunnel)
+    {
+        if (levelMgr->levelFinishedB(tunnel, forced))
+        {
+            gameState = STATE_PROMPT;
+            globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<---     --->", MESSAGE_NORMAL, 50);
+        }
+        else
+            gameState = STATE_PLAY;
+    }
 }
 
 void OgreApp::setLevel(Evaluation forced)
 {
     globals.clearMessage();
     
+    std::vector<NavigationLevel> navLevels;
     if (tunnel)
     {
-        if (player->getName() == "subject999")
-            levelMgr->levelFinishedC(tunnel, forced);
-        else
-            levelMgr->levelFinishedB(tunnel, forced);
+        navLevels = tunnel->getNavLevels();
         player->unlink();
         tunnel->unlink();
         hud->unlink();
     }
+    
     // Don't gen a new tunnel if our schedule is over
     if (levelMgr->getCurrentPhase() != PHASE_DONE)
     {
-        if (player->getName() == "subject999")
-            tunnel = levelMgr->getNextLevelC(tunnel);
-        else
-            tunnel = levelMgr->getNextLevelB(tunnel);
+        tunnel = levelMgr->getNextLevelB(tunnel);
     }
     // Link/Relink Pointers
     tunnel->link(player, hud);
@@ -290,7 +316,10 @@ void OgreApp::setLevel(Evaluation forced)
     
     if (levelMgr->getCurrentPhase() != PHASE_DONE)
     {
-        tunnel->setNavigationLevels();
+        if (levelMgr->getScheduleValue() >= 'a' && levelMgr->getScheduleValue() <= 'z')
+            tunnel->setNavigationLevels(navLevels);
+        else
+            tunnel->setNavigationLevels();
         tunnel->constructTunnel(globals.tunnelSections, tunnel->getMode() != GAME_NAVIGATION);
         // If nback is same then panels are changing, keep speed same
         player->setCamPos(tunnel->getStart() + tunnel->getCurrent()->getForward() * globals.tunnelSegmentDepth);
@@ -341,7 +370,7 @@ void OgreApp::setPause(bool value)
         player->pause();
         if (player->getTotalElapsed() > globals.sessionTime || levelMgr->getCurrentPhase() == PHASE_DONE)
         {
-            globals.setMessage("Times Up for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
+            globals.setMessage("That's it for Today!\nPlease check in before you leave.", MESSAGE_FINAL);
             sessionOver = true;
         }
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
@@ -418,46 +447,75 @@ void OgreApp::runDemo()
 
 void OgreApp::activatePerformLeftMove()
 {
-    if (pause)
+    switch (gameState)
     {
-        setPause(false);
-    }
-    else
-    {
-        if (player->setVineDirRequest(Util::rightOf(player->getVineDest())) && !tunnel->isDone())
+        case STATE_PLAY:
         {
-            float val = player->getDesireRoll();
-            player->setDesireRoll(val + 45);
+            if (pause)
+            {
+                setPause(false);
+            }
+            else
+            {
+                if (player->setVineDirRequest(Util::rightOf(player->getVineDest())) && !tunnel->isDone())
+                {
+                    float val = player->getDesireRoll();
+                    player->setDesireRoll(val + 45);
+                }
+            }
+            break;
+        }
+        case STATE_PROMPT:
+        {
+            gameState = STATE_PLAY;
+            levelMgr->repeatPreviousPhase();
+            setLevel();
+            break;
         }
     }
 }
 
 void OgreApp::activatePerformRightMove()
 {
-    if (pause)
+    switch (gameState)
     {
-        setPause(false);
-    }
-    else
-    {
-        if (player->setVineDirRequest(Util::leftOf(player->getVineDest())) && !tunnel->isDone())
+        case STATE_PLAY:
         {
-            float val = player->getDesireRoll();
-            player->setDesireRoll(val - 45);
+            if (pause)
+            {
+                setPause(false);
+            }
+            else
+            {
+                if (player->setVineDirRequest(Util::leftOf(player->getVineDest())) && !tunnel->isDone())
+                {
+                    float val = player->getDesireRoll();
+                    player->setDesireRoll(val - 45);
+                }
+            }
+            break;
+        }
+        case STATE_PROMPT:
+        {
+            gameState = STATE_PLAY;
+            setLevel();
+            break;
         }
     }
 }
 
 void OgreApp::activatePerformDoubleTap(float x, float y)
 {
-    //if (!pause) player->performShockwave();
+    //if (gameState == STATE_PLAY && !pause) player->performShockwave();
 }
 
 void OgreApp::activatePerformSingleTap(float x, float y)
 {
     if (y <= 100 && x <= globals.screenWidth / 2) {
+        endLevel(FAIL);
         setLevel(FAIL);
     } else if (y <= 100 && x > globals.screenWidth / 2) {
+        endLevel(PASS);
         setLevel(PASS);
     }
 }
@@ -469,7 +527,7 @@ void OgreApp::activatePerformPinch()
 
 void OgreApp::activatePerformBeginLongPress()
 {
-    if (!pause && player->getName() != "subject999") player->performBoost();
+    if (gameState == STATE_PLAY && !pause) player->performBoost();
 }
 
 void OgreApp::activatePerformEndLongPress()
@@ -601,11 +659,13 @@ bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_MINUS:
         {
+            endLevel(FAIL);
             setLevel(FAIL);
             break;
         }
         case OIS::KC_EQUALS:
         {
+            endLevel(PASS);
             setLevel(PASS);
             break;
         }

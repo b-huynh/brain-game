@@ -129,7 +129,7 @@ void Pod::loadFuelCell()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCylinder.mesh");
             break;
     }
-    headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal");
+    headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
     materialName = "General/PodUnknown";
     headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     head->attachObject(headContentEntity);
@@ -170,6 +170,8 @@ void Pod::loadHazard()
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
     headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/barrier.mesh");
+    headContentEntity->getSubEntity(2)->setMaterialName("General/PodUnknown"); // Reassign
+    headContentEntity->getSubEntity(3)->setMaterialName("General/PodUnknown");
 
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
@@ -214,8 +216,8 @@ void Pod::setToGrowth(float t)
     }
     else
     {
-        //head->setScale(Vector3(0.5, 0.5 * t, 0.5));
-        head->setScale(Vector3(0.7, 0.7 * t, 0.7));
+        head->setScale(Vector3(0.5, 0.5 * t, 0.5));
+        //head->setScale(Vector3(0.7, 0.7 * t, 0.7));
     }
 }
 
@@ -367,6 +369,9 @@ void Pod::uncloakPod()
         case POD_COLOR_YELLOW:
             materialName = "General/PodYellow";
             break;
+        case POD_COLOR_PURPLE:
+            materialName = "General/PodPurple";
+            break;
         default:
             materialName = "General/PodWhite";
             break;
@@ -374,7 +379,7 @@ void Pod::uncloakPod()
     if (podTaken)
         materialName += "Transparent";
     setSkin();
-    if (!podTrigger) generateGlow(podColor, podShape);
+    //if (!podTrigger) generateGlow(podColor, podShape);
 }
 
 void Pod::generateGlow(PodColor color, PodShape shape)

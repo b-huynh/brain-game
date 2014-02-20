@@ -753,20 +753,28 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
     this->depth = depth;
     this->materialNames.clear();
     this->materialNames.push_back(material);
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesUsed[i] = info.sidesUsed[i];
     growthT = 0;
     infoStored = false;
     
-    // Reset orientation and position, remove pods from scene
-    sliceNode->setPosition(center);
-    sliceNode->setOrientation(rot);
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->removeFromScene();
-	for (int i = 0; i < pods.size(); ++i)
-        delete pods[i];
-    pods.clear();
-    disconnect(); //also clears pods and disconnects
+    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed))
+    {
+        removeFromScene();
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+            sidesUsed[i] = info.sidesUsed[i];
+        initWalls();
+    }
+    else
+    {
+        // Reset orientation and position, remove pods from scene
+        sliceNode->setPosition(center);
+        sliceNode->setOrientation(rot);
+        for (int i = 0; i < pods.size(); ++i)
+            pods[i]->removeFromScene();
+        for (int i = 0; i < pods.size(); ++i)
+            delete pods[i];
+        pods.clear();
+        disconnect(); //also clears pods and disconnects
+    }
 }
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
@@ -780,20 +788,28 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
     this->width = width;
     this->depth = depth;
     this->materialNames = materials;
-    for (int i = 0; i < NUM_DIRECTIONS; ++i)
-        sidesUsed[i] = info.sidesUsed[i];
     growthT = 0;
     infoStored = false;
     
-    // Reset orientation and position, remove pods from scene
-    sliceNode->setPosition(center);
-    sliceNode->setOrientation(rot);
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->removeFromScene();
-	for (int i = 0; i < pods.size(); ++i)
-        delete pods[i];
-    pods.clear();
-    disconnect(); //also clears pods and disconnects
+    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed))
+    {
+        removeFromScene();
+        for (int i = 0; i < NUM_DIRECTIONS; ++i)
+            sidesUsed[i] = info.sidesUsed[i];
+        initWalls();
+    }
+    else
+    {
+        // Reset orientation and position, remove pods from scene
+        sliceNode->setPosition(center);
+        sliceNode->setOrientation(rot);
+        for (int i = 0; i < pods.size(); ++i)
+            pods[i]->removeFromScene();
+        for (int i = 0; i < pods.size(); ++i)
+            delete pods[i];
+        pods.clear();
+        disconnect(); //also clears pods and disconnects
+    }
 }
 
 void TunnelSlice::removeFromScene()
