@@ -232,7 +232,7 @@ struct PlayerLevel {
         return std::min(set1, std::min(set2, set3));
     }
     
-    PlayerLevel() : set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), navigation(1), minSpeed(5.0), averageSpeed(15.0), maxSpeed(25.0), navigationScores(), speedScores() {}
+    PlayerLevel() : set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), navigation(2), minSpeed(5.0), averageSpeed(15.0), maxSpeed(25.0), navigationScores(), speedScores() {}
     
     void calculateNavigation()
     {
@@ -253,7 +253,10 @@ struct PlayerLevel {
                navigationScores[nextNavLevel].accuracy < THRESHOLD_DROP)
             --nextNavLevel;
         nextNavLevel = Util::clamp(nextNavLevel, navigationScores.findMin(), navigationScores.findMax());
-        navigation = nextNavLevel;
+        if (nextNavLevel > navigation + 2)
+            navigation = navigation + 2;
+        else
+            navigation = nextNavLevel;
     }
     
     void calculateSpeed()

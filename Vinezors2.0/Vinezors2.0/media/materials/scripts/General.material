@@ -276,8 +276,6 @@ material General/WallBindingB
         pass
 		{
             lighting on
-            scene_blend alpha_blend
-            depth_write off
 
             texture_unit
 			{
@@ -297,7 +295,7 @@ material General/WallBindingC
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_ice4.png
+				texture LevelBinding/blueice.png
 			}
 		}
 	}
@@ -326,12 +324,10 @@ material General/WallBindingE
         pass
 		{
             lighting on
-            scene_blend alpha_blend
-            depth_write off
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_GoldPipes.png
+				texture LevelBinding/TunnelTile_GoldFire.png
 			}
 		}
 	}

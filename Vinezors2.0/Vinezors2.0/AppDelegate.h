@@ -77,11 +77,11 @@ static id mAppDelegate;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     mFrameInterval = 1;
-    mDeltaTime = 1.0f / 25.0f;
+    mDeltaTime = 1.0f / 30.0F;
     mTimer = nil;
     
     try {
-        demo.startDemo("subject101", MUSIC_ENABLED);
+        demo.startDemo("subject999", MUSIC_ENABLED);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         
@@ -102,7 +102,7 @@ static id mAppDelegate;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)application {
     mFrameInterval = 1;
-    mDeltaTime = 1.0f / 25.0f;
+    mDeltaTime = 1.0f / 30.0f;
     mTimer = nil;
     
     [self go];

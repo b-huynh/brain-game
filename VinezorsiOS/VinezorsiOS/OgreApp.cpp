@@ -320,7 +320,7 @@ void OgreApp::setLevel(Evaluation forced)
             tunnel->setNavigationLevels(navLevels);
         else
             tunnel->setNavigationLevels();
-        tunnel->constructTunnel(globals.tunnelSections, tunnel->getMode() != GAME_NAVIGATION);
+        tunnel->constructTunnel(globals.tunnelSections);
         // If nback is same then panels are changing, keep speed same
         player->setCamPos(tunnel->getStart() + tunnel->getCurrent()->getForward() * globals.tunnelSegmentDepth);
         player->setCamRot(tunnel->getCurrent()->getQuaternion());
@@ -339,7 +339,7 @@ void OgreApp::setLevel(Evaluation forced)
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
                 break;
             case 1:
-                plane.d = 160;
+                plane.d = 190;
                 plane.normal = Ogre::Vector3(0, 0, 1);
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/TestSkyPlane0", 1, 1, true);
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(1.0, 1.0, 1.0, 0.0), 0.0, 300.0,  600.0);
@@ -366,7 +366,7 @@ void OgreApp::setPause(bool value)
     if (value)
     {
         pause = value;
-        //OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
         if (player->getTotalElapsed() > globals.sessionTime || levelMgr->getCurrentPhase() == PHASE_DONE)
         {
@@ -379,6 +379,7 @@ void OgreApp::setPause(bool value)
     {
         pause = value;
         player->unpause();
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
             
         globals.clearMessage();
         Ogre::ControllerManager::getSingleton().setTimeFactor(1);

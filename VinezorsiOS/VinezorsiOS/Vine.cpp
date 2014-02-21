@@ -192,13 +192,16 @@ void Vine::move(Vector3 delta)
 
 void Vine::update(float elapsed)
 {
+    tip->resetOrientation();
+    tip->yaw(Degree(180.0));
     if (wobbling)
     {
         totalElapsed += elapsed;
         wobbleSpeed += elapsed;
         if (wobbleSpeed > 2.0)
             wobbleSpeed = 2.0;
-        entireVine->roll(15 * Degree(sin(64 * wobbleSpeed * totalElapsed)));
+        
+        tip->roll(15 * Degree(sin(64 * wobbleSpeed * totalElapsed)));
         if (totalElapsed >= 0.5)
             setWobble(false);
     }

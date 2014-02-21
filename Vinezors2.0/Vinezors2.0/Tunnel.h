@@ -15,7 +15,8 @@
 #include "TunnelSlice.h"
 #include "History.h"
 
-enum GameMode { GAME_PROFICIENCY, GAME_TIMED, GAME_NAVIGATION };
+// Added GAME_TEACHING C.P.
+enum GameMode { GAME_PROFICIENCY, GAME_TIMED, GAME_NAVIGATION, GAME_TEACHING };
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -91,6 +92,7 @@ public:
     int navCheckpoint; // Counter to tell when to upgrade tunnel when changing sections
     std::vector<NavigationLevel> navLevels;
     std::list<int> propagateCounters;
+    Direction guide; // C.P.
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
@@ -135,7 +137,7 @@ public:
     History* getHistory() const;
     Evaluation getEval() const;
     Pod* getNearestPod(int numSlices) const;
-    Direction getRandPossibleDirection(SectionInfo segmentInfo) const;
+    Direction getRandPossibleDirection(SectionInfo segmentInfo);
     
 	float getSegmentWidth() const;
 	float getSegmentDepth() const;
@@ -193,7 +195,7 @@ public:
     void unlink();
     void link(Player* player, Hud* hud);
     void presetTargets(int level);
-    void constructTunnel(int size, bool pregenPods = false);
+    void constructTunnel(int size); // Removed preset param C.P.
     
     void update(float elapsed);
     

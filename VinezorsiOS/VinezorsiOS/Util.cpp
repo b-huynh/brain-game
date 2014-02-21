@@ -30,9 +30,6 @@ Util::ConfigGlobal::ConfigGlobal()
     set2Repetitions = 3;
     set3Repetitions = 3;
     gameMode = 1;
-    revealColor = 1;
-    revealSound = 1;
-    revealShape = 1;
     tunnelReferenceForward = Vector3(0, 0, -1);
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
@@ -237,12 +234,6 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> control;
     else if (paramName == "gameMode")
         in >> gameMode;
-    else if (paramName == "revealColor")
-        in >> revealColor;
-    else if (paramName == "revealSound")
-        in >> revealSound;
-    else if (paramName == "revealShape")
-        in >> revealShape;
     else if (paramName == "tunnelMinAngleTurn")
         in >> tunnelMinAngleTurn;
     else if (paramName == "tunnelMaxAngleTurn")
@@ -647,6 +638,11 @@ void Util::setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir)
             break;
     }
     
+}
+
+void Util::copySides(bool dest[NUM_DIRECTIONS], bool src[NUM_DIRECTIONS]) // C.P.
+{
+    memcpy(dest, src, NUM_DIRECTIONS);
 }
 
 int Util::getNumSides(int level)

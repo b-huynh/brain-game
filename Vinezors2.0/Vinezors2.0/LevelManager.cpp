@@ -35,6 +35,8 @@ GamePhase LevelManager::getPhaseAt(int index) const
                 return PHASE_NAVIGATION;
             case 'E':
                 return PHASE_TIMED;
+            case 'F':
+                return PHASE_TEACHING;
             case 'a':
                 return PHASE_SET1;
             case 'b':
@@ -45,6 +47,8 @@ GamePhase LevelManager::getPhaseAt(int index) const
                 return PHASE_NAVIGATION;
             case 'e':
                 return PHASE_TIMED;
+            case 'f':
+                return PHASE_TEACHING;
             default:
             return PHASE_SET1;
         }
@@ -230,6 +234,14 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
             std::cout << "Speed Score: " << skillLevel.minSpeed << " " << skillLevel.averageSpeed << " " << skillLevel.maxSpeed << std::endl;
             break;
         }
+        case PHASE_TEACHING: // C.P.
+        {
+            if (eval == PASS || forced == PASS)
+            {
+            }
+            else allowRetry = forced == EVEN && schedule[schedIndex] == 'F';
+            break;
+        }
         case PHASE_DONE:
         break;
     }
@@ -310,7 +322,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             
-            globals.setMessage("Match by Color!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.setMessage(Util::toStringInt(nlevel) + "-Back. Match by Color!\n\nSwipe to Continue", MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET2:
@@ -350,7 +362,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
-            globals.setMessage("Match by Shape!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.setMessage(Util::toStringInt(nlevel) + "-Back. Match by Shape!\n\nSwipe to Continue", MESSAGE_NORMAL);
             break;
         }
         case PHASE_SET3:
@@ -390,7 +402,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             
-            globals.setMessage("Match by Only Sound!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.setMessage(Util::toStringInt(nlevel) + "-Back. Match by Only Sound!\n\nSwipe to Continue", MESSAGE_NORMAL);
             break;
         }
         case PHASE_NAVIGATION:
@@ -428,7 +440,7 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             globals.tunnelSectionsPerNavigationUpgrade = 12;
             std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
             
-            globals.setMessage("Avoid Obstacles, Grab Fuel Cells!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.setMessage("Avoid Obstacles. Grab Fuel Cells!\n\nSwipe to Continue", MESSAGE_NORMAL);
             break;
         }
         case PHASE_TIMED:
@@ -460,13 +472,78 @@ Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
             
             std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
             
-            globals.setMessage("Grab Matching Fuel Cells!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.setMessage(Util::toStringInt(nlevel) + "-Back. Grab Matching Fuel Cells!\n\nSwipe to Continue", MESSAGE_NORMAL);
+            break;
+        }
+        case PHASE_TEACHING: // Added this case C.P.
+        {
+            nlevel = 1;
+            ncontrol = 1;
+            nmode = GAME_TEACHING;
+            
+            globals.stageTotalCollections = 10;
+            globals.stageTotalSignals = 0;
+            globals.stageTotalTargets1 = 0;
+            globals.stageTotalTargets2 = 0;
+            globals.stageTotalTargets3 = 0;
+            globals.stageTotalTargetsVariance = 0;
+            globals.initCamSpeed = 10.0;
+            globals.minCamSpeed = 10.0;
+            globals.maxCamSpeed = 10.0;
+            globals.stageTime = 60.0;
+            
+            globals.startingHP = 1;
+            globals.HPPositiveLimit = 1;
+            globals.HPNegativeLimit = 0;
+            globals.HPPositiveCorrectAnswer = 0;
+            globals.HPNegativeCorrectAnswer = 0;
+            globals.HPPositiveWrongAnswer = 0;
+            globals.HPNegativeWrongAnswer = 0;
+            globals.HPPositiveDistractor = 0;
+            globals.HPNegativeDistractor = 0;
+            
+            globals.setMessage("Move to Grab Fuel Cells!\n\nSwipe to Continue", MESSAGE_NORMAL);
             break;
         }
         default:
             break;
     }
-    
+    // Special Session
+    if (player->getName() == "subject999")
+    {
+        switch (getCurrentPhase())
+        {
+            case PHASE_SET1:
+            {
+                nlevel = 1;
+                globals.HPPositiveLimit = 3;
+                break;
+            }
+            case PHASE_SET2:
+            {
+                nlevel = 1;
+                globals.HPPositiveLimit = 5;
+                break;
+            }
+            case PHASE_SET3:
+            {
+                nlevel = 1;
+                globals.HPPositiveLimit = 8;
+                break;
+            }
+            case PHASE_NAVIGATION:
+            {
+                break;
+            }
+            case PHASE_TIMED:
+            {
+                nlevel = 1;
+                break;
+            }
+            default:
+                break;
+        }
+    }
     Tunnel* ret = new Tunnel(
                              OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
                              newOrigin + newForward * (globals.tunnelSegmentWidth / 2),

@@ -396,7 +396,7 @@ void Player::performBoost()
     float timeRange = 0.5; // Range to linearly decrease back to normal speed
     if (boostTimer <= timeRange)
     {
-        boostTimer = 2.5;
+        boostTimer = 2.0;
         vines[0]->setBoost();
         if (soundBoost)
         {
@@ -441,7 +441,7 @@ void Player::testPodGiveFeedback(Pod* test)
             skillLevel.navigationScores[tunnel->getCurrentNavLevel()].right++;
         }
         
-        if (tunnel->getMode() == GAME_NAVIGATION)
+        if (tunnel->getMode() == GAME_NAVIGATION || tunnel->getMode() == GAME_TEACHING) // Added C.P.
         {
             if (soundFeedbackGood)
             {
@@ -762,6 +762,9 @@ void Player::newTunnel(bool setmusic)
                 break;
             case 'E':
                 soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
+                break;
+            case 'F': // Added PHASE_TEACHING case
+                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
                 break;
         }
         /*

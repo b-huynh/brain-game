@@ -209,6 +209,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
+    m_pSoundMgr->createSound("Music5", "SoundOfWind.ogg", false, true, true);
     m_pSoundMgr->createSound("SoundAmazingFeedback", "dingupenough.wav", false, false, true);
     m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundGoodFeedback", "VinezorsFeedbackLight2.wav", false, false, true);
@@ -216,10 +217,10 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     //m_pSoundMgr->createSound("SoundBadFeedback", "chimedown.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod1", "podspacebleep.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod2", "podspaceblip.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod3", "podspacechime.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod4", "podspacetone.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod1", "spacePodBalance.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod2", "spacePodDisorient.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod3", "spacePodWobble.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod4", "spacePodWub.wav", false, false, true);
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     

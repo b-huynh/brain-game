@@ -216,7 +216,8 @@ void Hud::init(Tunnel* tunnel, Player* player)
 void Hud::update(float elapsed)
 {
     float timeLeft = fmax(globals.stageTime - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
-    
+    /*
+     // Big Timer
     if (tunnel->getMode() == GAME_TIMED)
     {
         Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue(1.0, 1.0, 0.0) : ColourValue(0.0, 1.0, 0.0);
@@ -224,54 +225,79 @@ void Hud::update(float elapsed)
         label1->setCaption(Util::toStringInt(timeLeft));
     }
     else
-        label1->setCaption("");
-    if (tunnel->getMode() == GAME_TIMED)
-        //label2->setCaption("Distance: " + Util::toStringInt(player->getScore()));
-        label2->setCaption("");
-    else if (globals.stageTime)
+     */
+    label1->setCaption("");
+    if (tunnel->getMode() == GAME_PROFICIENCY || tunnel->getMode() == GAME_TIMED)
     {
-        Ogre::ColourValue timeLeftCol = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
-        label2->setColour(timeLeftCol);
+        Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
+        label2->setColour(fontColor);
         label2->setCaption("Time: " + Util::toStringInt(timeLeft));
-        
-        // Not for the January deadline, bonus points
-        //if (player->getNumCorrectBonus() <= 0)
-        //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()));
-        //else
-        //    label2->setCaption("Points: " + Util::toStringInt(player->getPoints()) + " + " + Util::toStringInt(player->getNumCorrectBonus()));
     }
-    if (tunnel->getMode() != GAME_NAVIGATION)
-        label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
-    else
+    else if (tunnel->getMode() == GAME_NAVIGATION)
+    {
+        Ogre::ColourValue fontColor = player->getHP() <= globals.HPNegativeLimit ? Ogre::ColourValue(1.0, 0.0, 0.0) : Ogre::ColourValue(1.0, 1.0, 1.0);
+        label2->setColour(fontColor);
+        label2->setCaption("Chances: " + Util::toStringInt(player->getHP()));
+    }
+    switch (tunnel->getPhase())
+    {
+        case 'A':
+            label3->setCaption("Color/Sound " + Util::toStringInt(tunnel->getNBack()) + "-Back");
+            break;
+        case 'B':
+            label3->setCaption("Shape/Sound " + Util::toStringInt(tunnel->getNBack()) + "-Back");
+            break;
+        case 'C':
+            label3->setCaption("Sound " + Util::toStringInt(tunnel->getNBack()) + "-Back");
+            break;
+        case 'D':
+            label3->setCaption("Navigation");
+            break;
+        case 'E':
+            label3->setCaption("Color/Shape/Sound " + Util::toStringInt(tunnel->getNBack()) + "-Back");
+            break;
+        case 'F':
+            label3->setCaption("Tutorial");
+            break;
+        default:
+            label3->setCaption("");
+            break;
+    }
+    //label3->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    /*
+    else if (tunnel->getMode() == GAME_NAVIGATION)
     {
         float val = player->getNumCorrectTotal();
         if (val < 0.0) val = 0.0;
         label3->setCaption("Score: " + Util::toStringInt(val));
     }
+    */
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
     if (tunnel->getMode() == GAME_TIMED)
-        label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    {
+        float percentComplete = static_cast<float>((tunnel->getSpawnLimit() - tunnel->getSignalsLeft())) / tunnel->getSpawnLimit() * 100;
+        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
+        label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
+        //label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
+    }
+    else if (tunnel->getMode() == GAME_TEACHING) // Added Teach Mode C.P.
+    {
+        float percentComplete = static_cast<float>(player->getNumCorrectTotal()) / tunnel->getNumTargets() * 100;
+        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
+        label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
+    }
     else if (tunnel->getMode() == GAME_NAVIGATION)
     {
-        if (player->getHP() <= globals.HPNegativeLimit)
-            label5->setColour(Ogre::ColourValue(1.0, 0.0, 0.0));
-        else
-            label5->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-        label5->setCaption("Chances: " + Util::toStringInt(player->getHP()));
+        float percentComplete = static_cast<float>(player->getTotalElapsed()) / globals.stageTime * 100;
+        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
+        label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
     }
     else
         label5->setCaption("");
     label6->setCaption(globals.message);
     label6->setCharHeight(globals.screenHeight / globals.messageSize);
     label7->setCaption("");
-    if (player->getName() == "subject999")
-    {
-        label7->setCaption("Pickups: " + Util::toStringInt(player->getPreviousNumCorrectTotal()) +
-                           "\nMisses: " + Util::toStringInt(player->getPreviousNumMissesTotal()) +
-                           "\nCollisions: " + Util::toStringInt(player->getPreviousNumCollisionsTotal()) +
-                           "\nObstacles: " + Util::toStringInt(globals.previousNumSegmentsWithObstacles));
-    }
-    else if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
+    if (tunnel->getMode() == GAME_PROFICIENCY && tunnel->getNBack() > 0 && player->getShowCombo())
     {
         if (tunnel->getSpawnCombo() > 1)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
@@ -284,16 +310,6 @@ void Hud::update(float elapsed)
         float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit + 1;
         //indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
         indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
-    }
-    else if (tunnel->getMode() == GAME_TIMED)
-    {
-        label1->setCaption(Util::toStringInt(timeLeft));
-    }
-    else //if (tunnel->getMode() == GAME_NAVIGATION)
-    {
-        threshold1->setPosition(0.40, 0.15);
-        threshold2->setPosition(0.45, 0.15);
-        threshold3->setPosition(0.50, 0.15);
     }
     
     threshold1->setMaterialName("General/StarGold");

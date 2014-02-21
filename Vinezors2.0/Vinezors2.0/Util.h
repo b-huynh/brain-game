@@ -112,7 +112,7 @@ class LevelManager;
 
 namespace Util
 {
-    static const float EPSILON = 0.0050f;
+    static const float EPSILON = 0.001f;
 
     struct ConfigGlobal
     {
@@ -132,9 +132,6 @@ namespace Util
         int set2Repetitions;
         int set3Repetitions;
         int gameMode;
-        int revealColor;
-        int revealSound;
-        int revealShape;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;
@@ -279,6 +276,7 @@ namespace Util
     Direction oppositeOf(Direction dir);
     bool doSidesMatch(bool sides1[NUM_DIRECTIONS], bool sides2[NUM_DIRECTIONS]);
     void setSides(bool sides[NUM_DIRECTIONS], int level, Direction dir);
+    void copySides(bool dest[NUM_DIRECTIONS], bool src[NUM_DIRECTIONS]); // C.P.
     int getNumSides(int level);
     int getNumSides(bool sides[NUM_DIRECTIONS]);
     Direction randDirection();
