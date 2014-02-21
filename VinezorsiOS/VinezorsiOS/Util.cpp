@@ -181,8 +181,10 @@ void Util::ConfigGlobal::initPaths(const char* name)
     
 #if defined(OGRE_IS_IOS)
     savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
-    configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
-    configBackup = Util::getIOSDir() + "/backup.conf";
+    //configPath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".conf";
+    configPath = Util::getIOSDir() + "/" + playerName + "/" + "config.json";
+    configBackup = Util::getIOSDir() + "/backup.json";
+    //configBackup = Util::getIOSDir() + "/backup.conf";
 #else
     savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
     configPath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".conf";

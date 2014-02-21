@@ -175,6 +175,8 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    parseConfig(globals.configPath, "A");
+    
     seed = time(0);
     srand(seed);
     sessionOver = false;

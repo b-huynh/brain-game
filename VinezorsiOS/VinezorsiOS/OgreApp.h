@@ -79,6 +79,7 @@ protected:
 #endif
 
 #include "Util.h"
+#include "Networking.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 class OgreApp : public Ogre::RenderTargetListener

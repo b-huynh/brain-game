@@ -36,6 +36,7 @@
 		5DF940F317F4B1500082C239 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EC17F4B1500082C239 /* Vine.cpp */; };
 		5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF940F417F4B4A40082C239 /* OpenAL.framework */; };
 		5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB00CD18A15D27005452C6 /* LevelManager.cpp */; };
+		B636BA5618AACB98008CF1E3 /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = B636BA5518AACB98008CF1E3 /* Networking.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -148,6 +149,8 @@
 		5DF940F717F4B5D20082C239 /* General.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.material; sourceTree = "<group>"; };
 		5DFB00CD18A15D27005452C6 /* LevelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelManager.cpp; sourceTree = "<group>"; };
 		5DFB00CE18A15D27005452C6 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		B636BA5418AACB98008CF1E3 /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
+		B636BA5518AACB98008CF1E3 /* Networking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Networking.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +225,8 @@
 		5DF9408917F4AF360082C239 /* Basic Ogre Framework */ = {
 			isa = PBXGroup;
 			children = (
+				B636BA5518AACB98008CF1E3 /* Networking.mm */,
+				B636BA5418AACB98008CF1E3 /* Networking.h */,
 				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
 				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
 				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
@@ -481,6 +486,7 @@
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleViewController.m in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
+				B636BA5618AACB98008CF1E3 /* Networking.mm in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
 				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
 				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
