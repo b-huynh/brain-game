@@ -1,0 +1,12 @@
+material phong2
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+		}
+
+	}
+
+}

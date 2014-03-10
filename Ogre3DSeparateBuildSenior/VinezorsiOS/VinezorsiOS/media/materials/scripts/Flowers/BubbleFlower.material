@@ -1,0 +1,14 @@
+material BalloonFBXASC032Flower
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.0 0.24 0.24 1
+		       diffuse 0.0 0.64 0.64 1
+			specular 0.0 0.014902 0.0643137 1 1.37187
+		}
+
+	}
+
+}

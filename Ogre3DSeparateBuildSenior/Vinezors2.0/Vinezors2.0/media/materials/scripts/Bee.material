@@ -1,0 +1,168 @@
+material Bee/Center1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Center003.1.png
+        }
+      } 
+    }
+}
+
+material Bee/Center2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Center003.2.png
+        }
+      } 
+    }
+}
+
+material Bee/Center3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Center003.3.png
+        }
+      } 
+    }
+}
+
+material Bee/Left1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Left002.1.png
+        }
+      } 
+    }
+}
+
+material Bee/Left2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Left002.2.png
+        }
+      } 
+    }
+}
+
+material Bee/Left3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Left002.3.png
+        }
+      } 
+    }
+}
+
+material Bee/Right1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Right003.1.png
+        }
+      } 
+    }
+}
+
+material Bee/Right2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Right003.2.png
+        }
+      } 
+    }
+}
+
+material Bee/Right3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Bee/Right003.3.png
+        }
+      } 
+    }
+}
+
+material Bee/Shadow
+{
+	technique
+	{
+	    pass
+	    {
+        scene_blend alpha_blend
+        depth_write off
+        	texture_unit
+        	{
+            	    texture Bee/roundShadow2.png
+        	}
+	    }
+	}
+}

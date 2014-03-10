@@ -1,0 +1,13 @@
+material phong1
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.4 0.4 0.4 1
+			specular 0.3 0.3 0.3 1 25.6
+		}
+
+	}
+
+}

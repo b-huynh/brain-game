@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3F5A87AD18BE8510003C6741 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F5A87AC18BE8510003C6741 /* Images.xcassets */; };
+		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
+		5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EAEB11864D54B004C9756 /* Hud.cpp */; };
+		5D2D423218CE34610035786C /* Score.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2D423018CE34610035786C /* Score.cpp */; };
+		5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */; };
+		5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */; };
+		5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */; };
+		5DA3B27A18BBAD5A001BFBB9 /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3B27918BBAD5A001BFBB9 /* Networking.mm */; };
+		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
+		5DF598A918852ADD00F85646 /* OgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598A818852ADD00F85646 /* OgreView.mm */; };
+		5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598AD188537FD00F85646 /* MainViewController.mm */; };
+		5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407617F4AF360082C239 /* CoreGraphics.framework */; };
+		5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407817F4AF360082C239 /* Foundation.framework */; };
+		5DF9407B17F4AF360082C239 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407A17F4AF360082C239 /* OpenGLES.framework */; };
+		5DF9407D17F4AF360082C239 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407C17F4AF360082C239 /* QuartzCore.framework */; };
+		5DF9407F17F4AF360082C239 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF9407E17F4AF360082C239 /* UIKit.framework */; };
+		5DF9408617F4AF360082C239 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF9408417F4AF360082C239 /* InfoPlist.strings */; };
+		5DF9408817F4AF360082C239 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF9408717F4AF360082C239 /* main.mm */; };
+		5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF9408B17F4AF360082C239 /* OgreApp.cpp */; };
+		5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF9408E17F4AF360082C239 /* OgreFramework.cpp */; };
+		5DF940D817F4AF370082C239 /* ogre.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5DF940D717F4AF370082C239 /* ogre.cfg */; };
+		5DF940DA17F4AF370082C239 /* plugins.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5DF940D917F4AF370082C239 /* plugins.cfg */; };
+		5DF940DC17F4AF370082C239 /* resources.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 5DF940DB17F4AF370082C239 /* resources.cfg */; };
+		5DF940EE17F4B1500082C239 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940E217F4B14F0082C239 /* Player.cpp */; };
+		5DF940EF17F4B1500082C239 /* Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940E417F4B14F0082C239 /* Pod.cpp */; };
+		5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940E617F4B14F0082C239 /* Tunnel.cpp */; };
+		5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940E817F4B14F0082C239 /* TunnelSlice.cpp */; };
+		5DF940F217F4B1500082C239 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EA17F4B14F0082C239 /* Util.cpp */; };
+		5DF940F317F4B1500082C239 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF940EC17F4B1500082C239 /* Vine.cpp */; };
+		5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF940F417F4B4A40082C239 /* OpenAL.framework */; };
+		5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB00CD18A15D27005452C6 /* LevelManager.cpp */; };
+		5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB00D418A4F057005452C6 /* MainView.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3F5A87AC18BE8510003C6741 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Fly-By/Images.xcassets"; sourceTree = "<group>"; };
+		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
+		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		5D1EAEB11864D54B004C9756 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
+		5D1EAEB21864D54B004C9756 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
+		5D2D423018CE34610035786C /* Score.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Score.cpp; sourceTree = "<group>"; };
+		5D2D423118CE34610035786C /* Score.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Score.h; sourceTree = "<group>"; };
+		5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SimpleMenu.storyboard; sourceTree = "<group>"; };
+		5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMenuViewController.h; sourceTree = "<group>"; };
+		5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleMenuViewController.mm; sourceTree = "<group>"; };
+		5DA3B27818BBAD5A001BFBB9 /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
+		5DA3B27918BBAD5A001BFBB9 /* Networking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Networking.mm; sourceTree = "<group>"; };
+		5DF597A718848E0100F85646 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		5DF598A718852ADD00F85646 /* OgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreView.h; sourceTree = "<group>"; };
+		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
+		5DF598AC188537FD00F85646 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		5DF598AD188537FD00F85646 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
+		5DF9407317F4AF360082C239 /* Fly-By.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fly-By.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5DF9407A17F4AF360082C239 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		5DF9407C17F4AF360082C239 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		5DF9407E17F4AF360082C239 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		5DF9408217F4AF360082C239 /* VinezorsiOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VinezorsiOS-Prefix.pch"; sourceTree = "<group>"; };
+		5DF9408317F4AF360082C239 /* VinezorsiOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VinezorsiOS-Info.plist"; sourceTree = "<group>"; };
+		5DF9408517F4AF360082C239 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DF9408717F4AF360082C239 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		5DF9408A17F4AF360082C239 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		5DF9408B17F4AF360082C239 /* OgreApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OgreApp.cpp; sourceTree = "<group>"; };
+		5DF9408D17F4AF360082C239 /* OgreApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OgreApp.h; sourceTree = "<group>"; };
+		5DF9408E17F4AF360082C239 /* OgreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OgreFramework.cpp; sourceTree = "<group>"; };
+		5DF9409017F4AF360082C239 /* OgreFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OgreFramework.h; sourceTree = "<group>"; };
+		5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OgreStaticPluginLoader.h; sourceTree = "<group>"; };
+		5DF940D717F4AF370082C239 /* ogre.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = ogre.cfg; sourceTree = "<group>"; };
+		5DF940D917F4AF370082C239 /* plugins.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = plugins.cfg; sourceTree = "<group>"; };
+		5DF940DB17F4AF370082C239 /* resources.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = resources.cfg; sourceTree = "<group>"; };
+		5DF940E217F4B14F0082C239 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
+		5DF940E317F4B14F0082C239 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
+		5DF940E417F4B14F0082C239 /* Pod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pod.cpp; sourceTree = "<group>"; };
+		5DF940E517F4B14F0082C239 /* Pod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pod.h; sourceTree = "<group>"; };
+		5DF940E617F4B14F0082C239 /* Tunnel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tunnel.cpp; sourceTree = "<group>"; };
+		5DF940E717F4B14F0082C239 /* Tunnel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tunnel.h; sourceTree = "<group>"; };
+		5DF940E817F4B14F0082C239 /* TunnelSlice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TunnelSlice.cpp; sourceTree = "<group>"; };
+		5DF940E917F4B14F0082C239 /* TunnelSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TunnelSlice.h; sourceTree = "<group>"; };
+		5DF940EA17F4B14F0082C239 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		5DF940EB17F4B14F0082C239 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		5DF940EC17F4B1500082C239 /* Vine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vine.cpp; sourceTree = "<group>"; };
+		5DF940ED17F4B1500082C239 /* Vine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vine.h; sourceTree = "<group>"; };
+		5DF940F417F4B4A40082C239 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		5DFB00CD18A15D27005452C6 /* LevelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelManager.cpp; sourceTree = "<group>"; };
+		5DFB00CE18A15D27005452C6 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		5DFB00D418A4F057005452C6 /* MainView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainView.storyboard; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5DF9406F17F4AF360082C239 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */,
+				5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */,
+				5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */,
+				5DF9407B17F4AF360082C239 /* OpenGLES.framework in Frameworks */,
+				5DF9407D17F4AF360082C239 /* QuartzCore.framework in Frameworks */,
+				5DF9407F17F4AF360082C239 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5D260D6D18A9CCC6006C91AC /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */,
+				5DF9408E17F4AF360082C239 /* OgreFramework.cpp */,
+				5DF9409017F4AF360082C239 /* OgreFramework.h */,
+				5DF597A718848E0100F85646 /* AppDelegate.mm */,
+				5DF9408A17F4AF360082C239 /* AppDelegate.h */,
+				5DF598A818852ADD00F85646 /* OgreView.mm */,
+				5DF598A718852ADD00F85646 /* OgreView.h */,
+				5DF598AD188537FD00F85646 /* MainViewController.mm */,
+				5DF598AC188537FD00F85646 /* MainViewController.h */,
+				5DFB00D418A4F057005452C6 /* MainView.storyboard */,
+				5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */,
+				5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */,
+				5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		5D260D6E18A9CD85006C91AC /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				5DA3B27918BBAD5A001BFBB9 /* Networking.mm */,
+				5DA3B27818BBAD5A001BFBB9 /* Networking.h */,
+				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
+				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
+				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
+				5D1EAEB21864D54B004C9756 /* Hud.h */,
+				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
+				5D15DF4C1825CCFB00DF0F99 /* History.h */,
+				5D2D423018CE34610035786C /* Score.cpp */,
+				5D2D423118CE34610035786C /* Score.h */,
+				5DF940E217F4B14F0082C239 /* Player.cpp */,
+				5DF940E317F4B14F0082C239 /* Player.h */,
+				5DF940E417F4B14F0082C239 /* Pod.cpp */,
+				5DF940E517F4B14F0082C239 /* Pod.h */,
+				5DF940E617F4B14F0082C239 /* Tunnel.cpp */,
+				5DF940E717F4B14F0082C239 /* Tunnel.h */,
+				5DF940E817F4B14F0082C239 /* TunnelSlice.cpp */,
+				5DF940E917F4B14F0082C239 /* TunnelSlice.h */,
+				5DF940EC17F4B1500082C239 /* Vine.cpp */,
+				5DF940ED17F4B1500082C239 /* Vine.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		5DF9406917F4AF360082C239 = {
+			isa = PBXGroup;
+			children = (
+				3F5A87AC18BE8510003C6741 /* Images.xcassets */,
+				5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */,
+				5DF9408017F4AF360082C239 /* VinezorsiOS */,
+				5DF9407517F4AF360082C239 /* Frameworks */,
+				5DF9407417F4AF360082C239 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5DF9407417F4AF360082C239 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9407317F4AF360082C239 /* Fly-By.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5DF9407517F4AF360082C239 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5DF940F417F4B4A40082C239 /* OpenAL.framework */,
+				5DF9407617F4AF360082C239 /* CoreGraphics.framework */,
+				5DF9407817F4AF360082C239 /* Foundation.framework */,
+				5DF9407A17F4AF360082C239 /* OpenGLES.framework */,
+				5DF9407C17F4AF360082C239 /* QuartzCore.framework */,
+				5DF9407E17F4AF360082C239 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5DF9408017F4AF360082C239 /* VinezorsiOS */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9408417F4AF360082C239 /* InfoPlist.strings */,
+				5DF9408917F4AF360082C239 /* Source */,
+				5DF9409217F4AF370082C239 /* Resources */,
+				5DF9408117F4AF360082C239 /* Supporting Files */,
+			);
+			path = VinezorsiOS;
+			sourceTree = "<group>";
+		};
+		5DF9408117F4AF360082C239 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9408217F4AF360082C239 /* VinezorsiOS-Prefix.pch */,
+				5DF9408317F4AF360082C239 /* VinezorsiOS-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5DF9408917F4AF360082C239 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				5DF9408717F4AF360082C239 /* main.mm */,
+				5DF9408B17F4AF360082C239 /* OgreApp.cpp */,
+				5DF9408D17F4AF360082C239 /* OgreApp.h */,
+				5DF940EA17F4B14F0082C239 /* Util.cpp */,
+				5DF940EB17F4B14F0082C239 /* Util.h */,
+				5D260D6E18A9CD85006C91AC /* Classes */,
+				5D260D6D18A9CCC6006C91AC /* Framework */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		5DF9409217F4AF370082C239 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5DF940D717F4AF370082C239 /* ogre.cfg */,
+				5DF940D917F4AF370082C239 /* plugins.cfg */,
+				5DF940DB17F4AF370082C239 /* resources.cfg */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5DF9407217F4AF360082C239 /* Fly-By */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Fly-By" */;
+			buildPhases = (
+				5DF9406E17F4AF360082C239 /* Sources */,
+				5DF9406F17F4AF360082C239 /* Frameworks */,
+				5DF9407017F4AF360082C239 /* Resources */,
+				5DF9407117F4AF360082C239 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Fly-By";
+			productName = VinezorsiOS;
+			productReference = 5DF9407317F4AF360082C239 /* Fly-By.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5DF9406A17F4AF360082C239 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					5DF9407217F4AF360082C239 = {
+						DevelopmentTeam = 9GN2WT7Q58;
+					};
+				};
+			};
+			buildConfigurationList = 5DF9406D17F4AF360082C239 /* Build configuration list for PBXProject "VinezorsiOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5DF9406917F4AF360082C239;
+			productRefGroup = 5DF9407417F4AF360082C239 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DF9407217F4AF360082C239 /* Fly-By */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5DF9407017F4AF360082C239 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DF9408617F4AF360082C239 /* InfoPlist.strings in Resources */,
+				3F5A87AD18BE8510003C6741 /* Images.xcassets in Resources */,
+				5DF940D817F4AF370082C239 /* ogre.cfg in Resources */,
+				5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */,
+				5DF940DA17F4AF370082C239 /* plugins.cfg in Resources */,
+				5DF940DC17F4AF370082C239 /* resources.cfg in Resources */,
+				5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */,
+				5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5DF9407117F4AF360082C239 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# This shell script simply copies resources into their respective locations\nditto \"$PROJECT_DIR/$PROJECT_NAME/media/\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/media/\"\nditto $PROJECT_DIR/$PROJECT_NAME/*.cfg \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5DF9406E17F4AF360082C239 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
+				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
+				5DF9408817F4AF360082C239 /* main.mm in Sources */,
+				5DA3B27A18BBAD5A001BFBB9 /* Networking.mm in Sources */,
+				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
+				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
+				5D2D423218CE34610035786C /* Score.cpp in Sources */,
+				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
+				5DF940EE17F4B1500082C239 /* Player.cpp in Sources */,
+				5DF940EF17F4B1500082C239 /* Pod.cpp in Sources */,
+				5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */,
+				5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */,
+				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
+				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
+				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
+				5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */,
+				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
+				5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		5DF9408417F4AF360082C239 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5DF9408517F4AF360082C239 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5DF940DD17F4AF370082C239 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = No;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VinezorsiOS/VinezorsiOS-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = No;
+				GCC_THUMB_SUPPORT = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
+					"\"$(OGRE_SDK_ROOT)/include\"",
+					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)/include\"",
+				);
+				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(OGRE_SDK_ROOT)/lib/Release\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib/release\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
+					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
+				);
+				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGRE_SDK_ROOT = "~/OgreSDKIOS";
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		5DF940DE17F4AF370082C239 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_INLINES_ARE_PRIVATE_EXTERN = No;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VinezorsiOS/VinezorsiOS-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = No;
+				GCC_THUMB_SUPPORT = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
+					"\"$(OGRE_SDK_ROOT)/include\"",
+					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)/include\"",
+				);
+				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(OGRE_SDK_ROOT)/lib/Release\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib/release\"",
+					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
+					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
+				);
+				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGRE_SDK_ROOT = "~/OgreSDKIOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		5DF940E017F4AF370082C239 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
+				OTHER_LDFLAGS = (
+					"-lOIS",
+					"-lOgreMainStatic",
+					"-lRenderSystem_GLES2Static",
+					"-lOgreRTShaderSystemStatic",
+					"-lmesaglsl2",
+					"-lboost_system",
+					"-lboost_chrono",
+					"-lboost_date_time",
+					"-lboost_thread",
+					"-lFreeType",
+					"-lFreeImage",
+					"-lzzip",
+					"-lz",
+					"-lOgreOggSoundiOS",
+					"-lPlugin_ParticleFXStatic",
+				);
+				PROVISIONING_PROFILE = "";
+			};
+			name = Debug;
+		};
+		5DF940E117F4AF370082C239 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
+				OTHER_LDFLAGS = (
+					"-lOIS",
+					"-lOgreMainStatic",
+					"-lRenderSystem_GLES2Static",
+					"-lOgreRTShaderSystemStatic",
+					"-lmesaglsl2",
+					"-lboost_system",
+					"-lboost_chrono",
+					"-lboost_date_time",
+					"-lboost_thread",
+					"-lFreeType",
+					"-lFreeImage",
+					"-lzzip",
+					"-lz",
+					"-lOgreOggSoundiOS",
+					"-lPlugin_ParticleFXStatic",
+				);
+				PROVISIONING_PROFILE = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5DF9406D17F4AF360082C239 /* Build configuration list for PBXProject "VinezorsiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DF940DD17F4AF370082C239 /* Debug */,
+				5DF940DE17F4AF370082C239 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Fly-By" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DF940E017F4AF370082C239 /* Debug */,
+				5DF940E117F4AF370082C239 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5DF9406A17F4AF360082C239 /* Project object */;
+}
