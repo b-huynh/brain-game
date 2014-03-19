@@ -1,0 +1,14 @@
+material tempiris_old
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.15 0 0.2 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.3 0 0.4 1 1
+		}
+
+	}
+
+}

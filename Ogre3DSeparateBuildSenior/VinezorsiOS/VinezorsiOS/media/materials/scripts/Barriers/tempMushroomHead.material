@@ -1,0 +1,14 @@
+material tempMushroomHead
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.165 0.155 0.1 1
+			diffuse 0.2475 0.2325 0.15 1
+			specular 0.33 0.31 0.2 1 1.6
+		}
+
+	}
+
+}

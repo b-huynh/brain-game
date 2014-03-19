@@ -1,0 +1,14 @@
+material tempMushroomStem
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.3 0.285 0.185 1
+			diffuse 0.4 0.38 0.247 1
+			specular 0.4 0.38 0.247 1 1.6
+		}
+
+	}
+
+}

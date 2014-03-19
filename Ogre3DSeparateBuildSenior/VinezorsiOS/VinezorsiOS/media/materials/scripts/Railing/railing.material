@@ -1,0 +1,14 @@
+material RailinginitialShadingGroup1
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.5 0.5 0.5 1
+			specular 0.5 0.5 0.5 1 25.6
+		}
+
+	}
+
+}

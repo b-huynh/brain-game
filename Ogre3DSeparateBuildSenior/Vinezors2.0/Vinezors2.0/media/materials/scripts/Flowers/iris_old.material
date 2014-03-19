@@ -1,0 +1,99 @@
+material phong1
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material phong2
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material phong3
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material phong4
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material phong5
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material phong6
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.38 0.06 0.44 1
+			diffuse 0.38 0.06 0.44 1
+			specular 0.38 0.06 0.44 1 25.6
+		}
+
+	}
+
+}

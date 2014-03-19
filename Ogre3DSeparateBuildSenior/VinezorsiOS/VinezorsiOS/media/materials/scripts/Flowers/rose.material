@@ -1,0 +1,14 @@
+material Rose
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.3 0 0 1
+			diffuse 0.6 0 0 1
+			specular 0.198431 0.123373 0.123373 1 1.47033
+		}
+
+	}
+
+}
