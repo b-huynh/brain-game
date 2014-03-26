@@ -560,7 +560,7 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     time_t raw = time(0);
     struct tm * timeinfo = localtime( &raw );
     char buffer [80];
-    strftime(buffer, 80, "%F-%H-%M", timeinfo);
+    strftime(buffer, 80, "% F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
     std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
