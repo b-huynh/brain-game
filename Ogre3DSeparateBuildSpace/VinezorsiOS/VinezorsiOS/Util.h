@@ -15,7 +15,7 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEBUG_MODE 1
+#define DEBUG_MODE 1
 
 #include <string>
 
@@ -138,6 +138,9 @@ namespace Util
         int set1Repetitions;
         int set2Repetitions;
         int set3Repetitions;
+        int set1StartingSpeed;
+        int set2StartingSpeed;
+        int set3StartingSpeed;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;
@@ -211,6 +214,7 @@ namespace Util
         int setPodMesh;
         float swipeSensitivity;
         int swipeInverted;
+        int boostEnabled;
         int combo1MinA;
         int combo2MinA;
         int combo1MinB;
@@ -227,6 +231,16 @@ namespace Util
         int navUnlockMax1;
         int navUnlockNBack2;
         int navUnlockMax2;
+        float volumeMusic;
+        float volumeSignal1;
+        float volumeSignal2;
+        float volumeSignal3;
+        float volumeSignal4;
+        float volumeFeedbackGood;
+        float volumeFeedbackBad;
+        float volumeFeedbackCollision;
+        float volumeBoost;
+        float volumeStartup;
         
         int screenWidth;
         int screenHeight;
@@ -283,8 +297,8 @@ namespace Util
         ConfigGlobal();
         void set();
         
-        void initPaths(const char* name);
-        void initLogs(const char* name, int session);
+        void initPaths();
+        void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);
         bool loadConfig(int stageID);
         

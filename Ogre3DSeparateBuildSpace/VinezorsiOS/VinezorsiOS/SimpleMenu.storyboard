@@ -56,7 +56,6 @@
                             <constraint firstAttribute="centerX" secondItem="rCe-HO-EhR" secondAttribute="centerX" id="s24-Ya-HCl"/>
                         </constraints>
                     </view>
-                    <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="Switch_Music" destination="nLn-B6-Cjr" id="diG-5Y-jut"/>

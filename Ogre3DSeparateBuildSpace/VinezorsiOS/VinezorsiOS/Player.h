@@ -256,6 +256,7 @@ public:
     PlayerLevel getSkillLevel() const;
     int getNumStagesWon() const;
     
+    void setRunningSpeed(int val1, int val2, int val3);
     void setSeed(unsigned value);
     void setName(const std::string & name);
     void setHP(int value);

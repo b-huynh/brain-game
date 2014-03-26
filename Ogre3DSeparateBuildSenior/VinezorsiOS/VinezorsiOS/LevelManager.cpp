@@ -286,84 +286,68 @@ void LevelManager::decrementSchedIndex()
             resetRepeatingSchedule();
     }
 }
-bool LevelManager::levelFinishedA(Tunnel* tunnel, Evaluation forced)
+
+bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
-    
-    PlayerLevel skillLevel = player->getSkillLevel();
-    if (eval == PASS || forced == PASS)
-    {
-        skillLevel.navigation += Util::randRangeInt(4, 6);
-        if (skillLevel.navigation >= globals.navMap.size())
-        {
-            skillLevel.set1++;
-            skillLevel.navigation -= globals.navMap.size();
-        }
-    }
-    else if (eval == FAIL || forced == FAIL)
-    {
-        skillLevel.navigation -= Util::randRangeInt(4, 6);
-        if (skillLevel.navigation < 0)
-        {
-            skillLevel.set1--;
-            skillLevel.navigation += globals.navMap.size();
-        }
-    }
-    player->setSkillLevel(skillLevel);
-    
-    return false;
-}
-
-// This version does not follow any schedule, it is good for debugging and for testing easy configurations
-Tunnel* LevelManager::getNextLevelA(Tunnel* previousTunnel)
-{
-    // Extract previous information as the previous tunnel still exists
-    Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
-    Quaternion newRot = Quaternion(1, 0, 0, 0);
-    Vector3 newForward = globals.tunnelReferenceForward;
-    int oldNBack = previousTunnel ? previousTunnel->getNBack() : 0;
-    GameMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_TIMED;
-    if (previousTunnel)
-    {
-        delete previousTunnel;
-    }
-    
-    // Load configuration
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
-    PlayerLevel skillLevel = player->getSkillLevel();
-    GameMode nmode = GAME_PROFICIENCY;
-    int nlevel = skillLevel.set1;
-    int ncontrol = 1;
-    Tunnel* ret = new Tunnel(
-                             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
-                             newOrigin + newForward * (globals.tunnelSegmentWidth / 2),
-                             newRot,
-                             globals.tunnelSegmentWidth,
-                             globals.tunnelSegmentDepth,
-                             globals.tunnelMinAngleTurn,
-                             globals.tunnelMaxAngleTurn,
-                             0,
-                             nmode,
-                             'H',
-                             nlevel,
-                             ncontrol,
-                             SOUTH,
-                             globals.tunnelSegmentsPerSection,
-                             globals.tunnelSegmentsPerPod,
-                             globals.tunnelSegmentsPerDistractors,
-                             globals.signalTypes);
-    
-    return ret;
-}
-
-bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
-{
-    Evaluation eval = tunnel->getEval();
-    
-    // Update Skill Level Here
     bool allowRetry = false;
+    switch (getCurrentPhase())
+    {
+        case PHASE_SET1:
+        {
+            if (eval == PASS || forced == PASS)
+            {
+            }
+            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            break;
+        }
+        case PHASE_SET2:
+        {
+            if (eval == PASS || forced == PASS)
+            {
+            }
+            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            break;
+        }
+        case PHASE_SET3:
+        {
+            if (eval == PASS || forced == PASS)
+            {
+            }
+            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            break;
+        }
+        case PHASE_NAVIGATION:
+        {
+            if (eval == PASS || forced == PASS)
+            {
+            }
+            else allowRetry = player->getName() == "subject999" && forced == EVEN;
+            break;
+        }
+        case PHASE_TEACHING:
+        {
+            if (eval == PASS || forced == PASS)
+            {}
+            else allowRetry = forced == EVEN;
+            break;
+        }
+        case PHASE_SETSPECIAL:
+        {
+            if (eval == PASS || forced == PASS)
+            {}
+            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            break;
+        }
+        case PHASE_DONE:
+            break;
+    }
+    return allowRetry;
+}
+
+void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
+{
+    Evaluation eval = tunnel->getEval();
     PlayerLevel skillLevel = player->getSkillLevel();
     switch (getCurrentPhase())
     {
@@ -383,7 +367,20 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set1++;
                 }
             }
-            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            else if (eval == FAIL || forced == FAIL)
+            {
+                skillLevel.set1Rep--;
+                if (skillLevel.set1Rep < 0)
+                {
+                    if (skillLevel.set1 > 1)
+                    {
+                        skillLevel.set1Rep = globals.set1Repetitions - 1;
+                        skillLevel.set1--;
+                    }
+                    else
+                        skillLevel.set1Rep = 0;
+                }
+            }
             break;
         }
         case PHASE_SET2:
@@ -402,7 +399,20 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set2++;
                 }
             }
-            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            else if (eval == FAIL || forced == FAIL)
+            {
+                skillLevel.set2Rep--;
+                if (skillLevel.set2Rep < 0)
+                {
+                    if (skillLevel.set2 > 1)
+                    {
+                        skillLevel.set2Rep = globals.set2Repetitions - 1;
+                        skillLevel.set2--;
+                    }
+                    else
+                        skillLevel.set2Rep = 0;
+                }
+            }
             break;
         }
         case PHASE_SET3:
@@ -421,7 +431,20 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
                     skillLevel.set3++;
                 }
             }
-            else allowRetry = forced == EVEN && !isRepeatingPhase();
+            else if (eval == FAIL || forced == FAIL)
+            {
+                skillLevel.set3Rep--;
+                if (skillLevel.set3Rep < 0)
+                {
+                    if (skillLevel.set3 > 1)
+                    {
+                        skillLevel.set3Rep = globals.set3Repetitions - 1;
+                        skillLevel.set3--;
+                    }
+                    else
+                        skillLevel.set3Rep = 0;
+                }
+            }
             break;
         }
         case PHASE_NAVIGATION:
@@ -445,25 +468,7 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
             std::cout << "Speed Score: " << skillLevel.minSpeed << " " << skillLevel.averageSpeed << " " << skillLevel.maxSpeed << std::endl;
             break;
         }
-        case PHASE_TEACHING:
-        {
-            if (eval == PASS || forced == PASS)
-            {}
-            else allowRetry = forced == EVEN;
-            break;
-        }
-        case PHASE_RECESS:
-        {
-            break;
-        }
-        case PHASE_SETSPECIAL:
-        {
-            if (eval == PASS || forced == PASS)
-            {}
-            else allowRetry = forced == EVEN && !isRepeatingPhase();
-            break;
-        }
-        case PHASE_DONE:
+        default:
             break;
     }
     player->setSkillLevel(skillLevel);
@@ -471,8 +476,6 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
     player->saveActions(globals.actionPath);
     player->saveSession(globals.sessionPath);
     player->saveProgress(globals.savePath, globals.currStageID);
-    
-    return allowRetry;
 }
 
 // This version follows a schedule specified when LevelManager was initialized
@@ -480,7 +483,7 @@ bool LevelManager::levelFinishedB(Tunnel* tunnel, Evaluation forced)
 // Very big function...
 // Hardcoded settings for five different area. Until the json files are implemented, this will
 // be more modular. For now, it'll do.
-Tunnel* LevelManager::getNextLevelB(Tunnel* previousTunnel)
+Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
 {
     // Extract previous information as the previous tunnel still exists
     Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);

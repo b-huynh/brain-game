@@ -33,13 +33,16 @@
     if (self.mViewControllerMain) [self.mViewControllerMain activate];
 }
 
+- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
 - (void)go:(NSString*)str :(BOOL)isOn
 {
     [self.mViewControllerMenu release];
     
     // Run Ogre
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
-//    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mViewControllerMain startWithWindow:self.mWindow:str:isOn];
     [self.mWindow makeKeyAndVisible];

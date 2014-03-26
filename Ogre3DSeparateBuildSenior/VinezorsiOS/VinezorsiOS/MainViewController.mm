@@ -150,6 +150,7 @@
     // and assigned it as the root view controller of the window
     //
     // Let's first retrieve it
+    
     UIViewController* ogreViewController = window.rootViewController;
     NSAssert(ogreViewController.view == mOgreView, @"Ogre's created view controller owns the given view.");
     NSAssert(ogreViewController.interfaceOrientation == self.interfaceOrientation, @"Ogre's view controller has the same device orientation");
@@ -422,6 +423,14 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
     return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return UIInterfaceOrientationPortrait;
 }
 
 - (void)cleanup

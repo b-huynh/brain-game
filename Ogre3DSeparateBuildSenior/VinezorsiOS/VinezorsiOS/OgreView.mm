@@ -42,6 +42,8 @@
         unsigned int width = (uint)self.bounds.size.width;
         unsigned int height = (uint)self.bounds.size.height;
         
+        //NSLog(@"Relayout: %d %d\n", width, height);
+        
         // Resize the window
         mRenderWindow->resize(width, height);
         OgreFramework::getSingletonPtr()->requestResize();
