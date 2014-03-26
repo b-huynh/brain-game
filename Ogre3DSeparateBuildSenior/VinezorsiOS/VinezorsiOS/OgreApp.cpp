@@ -175,6 +175,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    syncConfig();
     seed = time(0);
     srand(seed);
     sessionOver = false;
@@ -232,6 +233,8 @@ void OgreApp::setupDemoScene()
     lightNodeMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+
+    syncLogs();
 }
 
 void OgreApp::update(float elapsed)
@@ -441,6 +444,7 @@ void OgreApp::endGame()
         player->saveStage(globals.logPath);
         player->saveProgress(globals.savePath, levelMgr->isDoneWithMainSchedule());
         sessionOver = true;
+        syncLogs();
     }
 }
 
