@@ -117,7 +117,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "607"
             endingLineNumber = "607"
-            landmarkName = "OgreApp::activatePerformSingleTap(float x, float y)"
+            landmarkName = "OgreApp::activatePerformDoubleTap(float x, float y)"
             landmarkType = "5">
             <Locations>
                <Location

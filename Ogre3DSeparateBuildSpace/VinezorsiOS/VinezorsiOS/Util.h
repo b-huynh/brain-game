@@ -141,6 +141,8 @@ namespace Util
         int set1StartingSpeed;
         int set2StartingSpeed;
         int set3StartingSpeed;
+        int trialStartingSpeed;
+        int startingNav;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;
@@ -173,7 +175,7 @@ namespace Util
         int podBinSize1; // This is for tunnels that pre-generate the pod sequence
         int podBinSize2;
         int podBinSize3;
-        int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
+        float podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int span; // The range left and right for a target to spawn from the previous target
         int stageTotalDistractorsMin;
         int stageTotalDistractorsMax;

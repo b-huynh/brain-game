@@ -531,9 +531,9 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                     globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
             }
             
-            globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-            globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-            globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
             
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FLOWER, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
@@ -578,9 +578,9 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                     globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
             }
             
-            globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-            globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-            globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
             
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FLOWER, POD_COLOR_ORANGE, POD_SHAPE_ROSE, POD_SOUND_1));
@@ -625,9 +625,9 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                     globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
             }
             
-            globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-            globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-            globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
             
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FLOWER, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_1));
@@ -679,9 +679,9 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                 globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
             
             globals.stageTotalSignals = skillLevel.averageSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-            globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-            globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
             
             // Divide by 4 because there are 4 nav levels in time trial
             globals.tunnelSectionsPerNavigationUpgrade = (globals.initCamSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerSection) / globals.numTimePhases);
@@ -740,6 +740,10 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
             
             if (!configStageType(globals.configPath, globals.configBackup, "H"))
                 globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+            
+            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
+            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
             
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FLOWER, POD_COLOR_PINK, POD_SHAPE_ROSE, POD_SOUND_1));

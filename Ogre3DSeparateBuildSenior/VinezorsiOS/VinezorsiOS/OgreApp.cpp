@@ -175,6 +175,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    globals.initPaths();
     syncConfig();
     seed = time(0);
     srand(seed);
@@ -194,8 +195,14 @@ void OgreApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(origin.x, origin.y, origin.z + globals.tunnelSegmentDepth / 2));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
-    if (!configStageType(globals.configPath, globals.configBackup, "setSchedule"))
+    globals.initPaths();
+    if (!configStageType(globals.configPath, globals.configBackup, "forceSubject"))
         globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    else
+    {
+        std::cout << "Pre-defined subject name\n";
+        globals.initPaths(); // Reinitialize paths if player name has been re-refined
+    }
     
 	player = new Player(
                         globals.playerName,
@@ -208,10 +215,10 @@ void OgreApp::setupDemoScene()
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds(true);
+    player->setRunningSpeed(globals.set1StartingSpeed, globals.set2StartingSpeed, globals.set3StartingSpeed, globals.trialStartingSpeed, globals.startingNav);
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     globals.initLogs(player->getSkillLevel().sessionID);
-    player->setRunningSpeed(globals.set1StartingSpeed, globals.set2StartingSpeed, globals.set3StartingSpeed);
     
     tunnel = NULL;
     hud = new Hud();

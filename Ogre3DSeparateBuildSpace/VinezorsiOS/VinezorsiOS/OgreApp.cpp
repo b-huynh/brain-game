@@ -175,6 +175,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    globals.initPaths();
     syncConfig();
     
     seed = time(0);
@@ -215,6 +216,7 @@ void OgreApp::setupDemoScene()
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds(true);
+    player->setRunningSpeed(globals.set1StartingSpeed, globals.set2StartingSpeed, globals.set3StartingSpeed, globals.trialStartingSpeed, globals.startingNav);
     if (player->getName() != "subject999")
     {
         if (!player->loadProgress(globals.savePath))
@@ -233,7 +235,6 @@ void OgreApp::setupDemoScene()
         skill.set3Rep = 2;
         player->setSkillLevel(skill);
     }
-    player->setRunningSpeed(globals.set1StartingSpeed, globals.set2StartingSpeed, globals.set3StartingSpeed);
     globals.initLogs(player->getSkillLevel().sessionID);
     
     tunnel = NULL;

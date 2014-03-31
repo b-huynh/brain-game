@@ -45,11 +45,7 @@ bool configStageType(std::string configPath, std::string configKey)
     
     for (NSString* key in [cgValues allKeys]) {
         NSString* value;
-<<<<<<< HEAD
-        if ([key isEqualToString:@"scheduleMain"] || [key isEqualToString:@"scheduleRepeat"] || [key isEqualToString:@"scheduleRepeatRandomPool"] || [key isEqualToString:@"playerName"])
-=======
         if ([[cgValues objectForKey:key] isKindOfClass:[NSString class]])
->>>>>>> f83f0fd21bd3974580332f84b5ef58f388dca234
             value = [cgValues objectForKey:key];
         else
             value = [[cgValues objectForKey:key] stringValue];

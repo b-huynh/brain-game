@@ -55,8 +55,8 @@ void PlayerLevel::calculateNavigation()
            navigationScores[nextNavLevel].accuracy < THRESHOLD_DROP)
         --nextNavLevel;
     nextNavLevel = Util::clamp(nextNavLevel, navigationScores.findMin(), navigationScores.findMax());
-    if (nextNavLevel > navigation + 2)
-        navigation = navigation + 2;
+    if (nextNavLevel > navigation + 1)
+        navigation = navigation + 1;
     else
         navigation = nextNavLevel;
     navigation = Util::clamp(navigation, 0, getNavLimit());
@@ -357,11 +357,13 @@ int Player::getNumStagesWon() const
     return numStagesWon;
 }
 
-void Player::setRunningSpeed(int val1, int val2, int val3)
+void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
 {
     skillLevel.runSpeed1 = val1;
     skillLevel.runSpeed2 = val2;
     skillLevel.runSpeed3 = val3;
+    skillLevel.averageSpeed = val4;
+    skillLevel.navigation = nav;
 }
 
 void Player::setSeed(unsigned value)
@@ -884,7 +886,7 @@ void Player::newTunnel(bool setmusic)
     if (soundFeedbackGood) soundFeedbackGood->setVolume(globals.volumeFeedbackGood);
     if (soundFeedbackBad) soundFeedbackBad->setVolume(globals.volumeFeedbackBad);
     if (soundCollision) soundCollision->setVolume(globals.volumeFeedbackCollision);
-    if (soundStartup) soundCollision->setVolume(globals.volumeStartup);
+    if (soundStartup) soundStartup->setVolume(globals.volumeStartup);
     
     tunnel->setOffsetIterators(camPos, vineOffset);
     for (int i = 0; i < vines.size(); ++i)

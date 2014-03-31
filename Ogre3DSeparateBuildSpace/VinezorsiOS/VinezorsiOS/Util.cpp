@@ -35,6 +35,8 @@ Util::ConfigGlobal::ConfigGlobal()
     set1StartingSpeed = 15;
     set2StartingSpeed = 15;
     set3StartingSpeed = 15;
+    trialStartingSpeed = 20;
+    startingNav = 2;
     tunnelReferenceForward = Vector3(0, 0, -1);
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
@@ -67,7 +69,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
-    podNBackChance = 33;
+    podNBackChance = 33.0;
     span = 2;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
@@ -324,6 +326,10 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> set2StartingSpeed;
     else if (paramName == "set3StartingSpeed")
         in >> set3StartingSpeed;
+    else if (paramName == "trialStartingSpeed")
+        in >> trialStartingSpeed;
+    else if (paramName == "startingNav")
+        in >> startingNav;
     else if (paramName == "nback")
         in >> nback;
     else if (paramName == "control")
