@@ -341,12 +341,63 @@
     {
         CGFloat dx = dp.x - totalX;
         CGFloat dy = dp.y - totalY;
-        if ((totalX >= 0.0 && dx < -initialThreshold) || dx < -swipeThreshold)
+        /*
+        if (fabs(v.x) <= fabs(v.y) && (swipeState == 0 || swipeState == 2))
+        {
+            if (startP.x < sender.view.frame.size.width / 2)
+            {
+                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+            }
+            else if (startP.x > sender.view.frame.size.width / 2)
+            {
+                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalY = dp.y;
+                    swipeState = 2;
+                }
+            }
+        }
+        else if (fabs(v.x) >= fabs(v.y) && (swipeState == 0 || swipeState == 1))
+        {
+                if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
+                {
+                    mApplication->activatePerformLeftMove();
+                    totalX = dp.x;
+                    swipeState = 1;
+                }
+                if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
+                {
+                    mApplication->activatePerformRightMove();
+                    totalX = dp.x;
+                    swipeState = 1;
+                }
+        }
+         */
+        
+        if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
         {
             mApplication->activatePerformLeftMove();
             totalX = dp.x;
         }
-        if ((totalX <= 0.0 && dx > initialThreshold) || dx > swipeThreshold)
+        if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
         {
             mApplication->activatePerformRightMove();
             totalX = dp.x;

@@ -84,12 +84,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/OgreApp.cpp"
-            timestampString = "414916947.498608"
+            timestampString = "418240618.952757"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "301"
-            endingLineNumber = "301"
-            landmarkName = "OgreApp::update(float elapsed)"
+            startingLineNumber = "309"
+            endingLineNumber = "309"
+            landmarkName = "OgreApp::endLevel(Evaluation forced)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

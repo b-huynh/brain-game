@@ -469,6 +469,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -501,6 +502,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};

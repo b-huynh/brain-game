@@ -138,6 +138,11 @@ namespace Util
         int set1Repetitions;
         int set2Repetitions;
         int set3Repetitions;
+        int set1StartingSpeed;
+        int set2StartingSpeed;
+        int set3StartingSpeed;
+        int trialStartingSpeed;
+        int startingNav;
         Vector3 tunnelReferenceForward;
         Vector3 tunnelReferenceUpward;
         Vector3 tunnelReferenceRight;
@@ -170,7 +175,7 @@ namespace Util
         int podBinSize1; // This is for tunnels that pre-generate the pod sequence
         int podBinSize2;
         int podBinSize3;
-        int podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
+        float podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int span; // The range left and right for a target to spawn from the previous target
         int stageTotalDistractorsMin;
         int stageTotalDistractorsMax;
@@ -211,6 +216,7 @@ namespace Util
         int setPodMesh;
         float swipeSensitivity;
         int swipeInverted;
+        int boostEnabled;
         int combo1MinA;
         int combo2MinA;
         int combo1MinB;
@@ -227,6 +233,16 @@ namespace Util
         int navUnlockMax1;
         int navUnlockNBack2;
         int navUnlockMax2;
+        float volumeMusic;
+        float volumeSignal1;
+        float volumeSignal2;
+        float volumeSignal3;
+        float volumeSignal4;
+        float volumeFeedbackGood;
+        float volumeFeedbackBad;
+        float volumeFeedbackCollision;
+        float volumeBoost;
+        float volumeStartup;
         
         int screenWidth;
         int screenHeight;
@@ -283,8 +299,8 @@ namespace Util
         ConfigGlobal();
         void set();
         
-        void initPaths(const char* name);
-        void initLogs(const char* name, int session);
+        void initPaths();
+        void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);
         bool loadConfig(int stageID);
         

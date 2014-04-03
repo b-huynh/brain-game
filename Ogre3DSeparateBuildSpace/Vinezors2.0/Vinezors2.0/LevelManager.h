@@ -44,13 +44,10 @@ public:
     void incrementSchedIndex();
     void decrementSchedIndex();
     
-    // Simple progressive model, good for debugging different stages
-    bool levelFinishedA(Tunnel* tunnel, Evaluation forced);
-    Tunnel* getNextLevelA(Tunnel* previousTunnel);
-    
     // Follows a special schedule of game modes
-    bool levelFinishedB(Tunnel* tunnel, Evaluation forced);
-    Tunnel* getNextLevelB(Tunnel* previousTunnel);
+    bool levelFinished(Tunnel* tunnel, Evaluation forced);
+    void updatePlayerSkill(Tunnel* tunnel, Evaluation forced);
+    Tunnel* getNextLevel(Tunnel* previousTunnel);
 };
 
 #endif /* defined(__Vinezors2_0__LevelManager__) */

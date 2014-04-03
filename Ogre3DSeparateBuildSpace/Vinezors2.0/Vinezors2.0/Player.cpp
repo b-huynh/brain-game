@@ -358,6 +358,15 @@ int Player::getNumStagesWon() const
     return numStagesWon;
 }
 
+void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
+{
+    skillLevel.runSpeed1 = val1;
+    skillLevel.runSpeed2 = val2;
+    skillLevel.runSpeed3 = val3;
+    skillLevel.averageSpeed = val4;
+    skillLevel.navigation = nav;
+}
+
 void Player::setSeed(unsigned value)
 {
     seed = value;
@@ -583,7 +592,7 @@ void Player::testPodGiveFeedback(Pod* test)
             skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
         }
         
-        if (soundFeedbackBad)
+        if (soundFeedbackBad && !test->isPodGood() && test->isPodTaken())
         {
             soundFeedbackBad->stop();
             soundFeedbackBad->play();
@@ -897,6 +906,17 @@ void Player::newTunnel(bool setmusic)
             startMusicTimer = 2.0;
         }
     }
+    if (soundMusic) soundMusic->setVolume(globals.volumeMusic);
+    if (soundPods[POD_SIGNAL_1]) soundPods[POD_SIGNAL_1]->setVolume(globals.volumeSignal1);
+    if (soundPods[POD_SIGNAL_2]) soundPods[POD_SIGNAL_2]->setVolume(globals.volumeSignal2);
+    if (soundPods[POD_SIGNAL_3]) soundPods[POD_SIGNAL_3]->setVolume(globals.volumeSignal3);
+    if (soundPods[POD_SIGNAL_4]) soundPods[POD_SIGNAL_4]->setVolume(globals.volumeSignal4);
+    if (soundFeedbackGreat) soundFeedbackGreat->setVolume(globals.volumeFeedbackGood);
+    if (soundFeedbackGood) soundFeedbackGood->setVolume(globals.volumeFeedbackGood);
+    if (soundFeedbackBad) soundFeedbackBad->setVolume(globals.volumeFeedbackBad);
+    if (soundCollision) soundCollision->setVolume(globals.volumeFeedbackCollision);
+    if (soundBoost) soundBoost->setVolume(globals.volumeBoost);
+    if (soundStartup) soundStartup->setVolume(globals.volumeStartup);
     
     tunnel->setOffsetIterators(camPos, vineOffset);
     for (int i = 0; i < vines.size(); ++i)
@@ -997,7 +1017,7 @@ void Player::setSounds(bool mode)
     {
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
         soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
-        //soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
         soundPods[POD_SIGNAL_1] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod1");
         soundPods[POD_SIGNAL_2] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
         soundPods[POD_SIGNAL_3] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod3");
@@ -1011,7 +1031,7 @@ void Player::setSounds(bool mode)
     {
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
         soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
-        //soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+        soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
         for (int i = 0; i < NUM_POD_SIGNALS; ++i)
             soundPods[i] = NULL;
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");

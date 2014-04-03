@@ -176,9 +176,11 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::setupDemoScene()
 {
     globals.initPaths();
+#if defined(OGRE_IS_IOS)
     syncConfig();
-    
+#endif
     seed = time(0);
+    
     srand(seed);
     sessionOver = false;
     
@@ -197,13 +199,8 @@ void OgreApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
     globals.initPaths();
-    if (!configStageType(globals.configPath, globals.configBackup, "forceSubject"))
+    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
         globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    else
-    {
-        std::cout << "Pre-defined subject name\n";
-        globals.initPaths(); // Reinitialize paths if player name has been re-refined
-    }
     
 	player = new Player(
                         globals.playerName,
@@ -240,14 +237,8 @@ void OgreApp::setupDemoScene()
     tunnel = NULL;
     hud = new Hud();
     
-    if (!configStageType(globals.configPath, globals.configBackup, "setSchedule"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
     // Determine length of time
     globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
-    
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     std::cout << "Session Length: " << globals.sessionTime << std::endl;
     
     levelMgr = new LevelManager(player, globals.scheduleMain, globals.scheduleRepeat, globals.scheduleRepeatRandomPool);
@@ -262,7 +253,9 @@ void OgreApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
+#if defined(OGRE_IS_IOS)
     syncLogs();
+#endif
 }
 
 void OgreApp::update(float elapsed)
@@ -481,7 +474,9 @@ void OgreApp::endGame()
         player->saveStage(globals.logPath);
         player->saveProgress(globals.savePath, levelMgr->isDoneWithMainSchedule());
         sessionOver = true;
+#if defined(OGRE_IS_IOS)
         syncLogs(); //Attempt to sync recently save log file.
+#endif
     }
 }
 
