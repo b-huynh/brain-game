@@ -318,7 +318,7 @@ void OgreApp::endLevel(Evaluation forced)
         if (levelMgr->levelFinished(tunnel, forced))
         {
             gameState = STATE_PROMPT;
-            globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<---     --->", MESSAGE_NORMAL);
+            globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<--- Swipe --->", MESSAGE_NORMAL);
         }
         else
             gameState = STATE_PLAY;

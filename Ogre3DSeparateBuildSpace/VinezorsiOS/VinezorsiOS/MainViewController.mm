@@ -41,6 +41,8 @@
     CGPoint startP;
     CGFloat totalX;
     CGFloat totalY;
+    CGFloat vmaxX;
+    CGFloat vmaxY;
     int swipeState;
 }
 
@@ -95,7 +97,9 @@
     pinchRecognizer.delegate = self;
     longPressRecognizer.delegate = self;
     
-    initialThreshold = 12.50;
+    //initialThreshold = 12.50;
+    //swipeThreshold = 30.00;
+    initialThreshold = 15.00;
     swipeThreshold = 30.00;
     swipeState = 0;
 }
@@ -335,69 +339,30 @@
         startP = p;
         totalX = 0.0;
         totalY = 0.0;
+        vmaxX = 0.0;
+        vmaxY = 0.0;
         swipeState = 0;
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
         CGFloat dx = dp.x - totalX;
         CGFloat dy = dp.y - totalY;
-        /*
-        if (fabs(v.x) <= fabs(v.y) && (swipeState == 0 || swipeState == 2))
-        {
-            if (startP.x < sender.view.frame.size.width / 2)
-            {
-                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
-                {
-                    mApplication->activatePerformLeftMove();
-                    totalY = dp.y;
-                    swipeState = 2;
-                }
-                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
-                {
-                    mApplication->activatePerformRightMove();
-                    totalY = dp.y;
-                    swipeState = 2;
-                }
-            }
-            else if (startP.x > sender.view.frame.size.width / 2)
-            {
-                if ((totalY == 0.0 && dy < -initialThreshold && v.y < -initialThreshold) || (dy < v.y && v.y < -swipeThreshold))
-                {
-                    mApplication->activatePerformRightMove();
-                    totalY = dp.y;
-                    swipeState = 2;
-                }
-                if ((totalY == 0.0 && dy > initialThreshold && v.y > initialThreshold) || (dy > v.y && v.y > swipeThreshold))
-                {
-                    mApplication->activatePerformLeftMove();
-                    totalY = dp.y;
-                    swipeState = 2;
-                }
-            }
-        }
-        else if (fabs(v.x) >= fabs(v.y) && (swipeState == 0 || swipeState == 1))
-        {
-                if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
-                {
-                    mApplication->activatePerformLeftMove();
-                    totalX = dp.x;
-                    swipeState = 1;
-                }
-                if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
-                {
-                    mApplication->activatePerformRightMove();
-                    totalX = dp.x;
-                    swipeState = 1;
-                }
-        }
-         */
         
-        if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
+        if (abs(vmaxX) < abs(v.x))
+            vmaxX = v.x;
+        if (abs(vmaxY) < abs(v.y))
+            vmaxY = v.y;
+        
+        NSLog(@"%f %f", dx, v.x);
+        
+        if ((totalX == 0.0 && dx < -initialThreshold && vmaxX < -initialThreshold) || (dx < vmaxX / 5 && vmaxX < -swipeThreshold))
+        //if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
         {
             mApplication->activatePerformLeftMove();
             totalX = dp.x;
         }
-        if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
+        if ((totalX == 0.0 && dx > initialThreshold && vmaxX > initialThreshold) || (dx > vmaxX / 5 && vmaxX > swipeThreshold))
+        //if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
         {
             mApplication->activatePerformRightMove();
             totalX = dp.x;
@@ -407,6 +372,8 @@
     {
         totalX = 0.0;
         totalY = 0.0;
+        vmaxX = 0.0;
+        vmaxY = 0.0;
         swipeState = 0;
     }
 }

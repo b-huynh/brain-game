@@ -10,6 +10,8 @@
 
 Util::ConfigGlobal globals;
 
+#define NETWORKING 1
+
 OgreApp::OgreApp()
 {
 }
@@ -176,8 +178,10 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::setupDemoScene()
 {
     globals.initPaths();
+#if defined(NETWORKING)
 #if defined(OGRE_IS_IOS)
     syncConfig();
+#endif
 #endif
     
     seed = time(0);
@@ -240,8 +244,10 @@ void OgreApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
+#if defined(NETWORKING)
 #if defined(OGRE_IS_IOS)
     syncLogs();
+#endif
 #endif
 }
 
@@ -456,8 +462,10 @@ void OgreApp::endGame()
         player->saveStage(globals.logPath);
         player->saveProgress(globals.savePath, levelMgr->isDoneWithMainSchedule());
         sessionOver = true;
+#if defined(NETWORKING)
 #if defined(OGRE_IS_IOS)
         syncLogs();
+#endif
 #endif
     }
 }

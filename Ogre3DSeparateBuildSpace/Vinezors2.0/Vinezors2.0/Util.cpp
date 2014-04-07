@@ -16,7 +16,7 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     scheduleMain = "DEABC";
-    scheduleRepeat = "H";
+    scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
     stageTime = 120.0;
@@ -136,6 +136,8 @@ Util::ConfigGlobal::ConfigGlobal()
     volumeFeedbackGood = 0.25;
     volumeFeedbackBad = 0.25;
     volumeFeedbackCollision = 0.25;
+    volumeBoost = 0.25;
+    volumeStartup = 0.25;
     numSegmentsWithObstacles = 0;
     previousNumSegmentsWithObstacles = 0;
     
@@ -500,8 +502,20 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
     }
     else if (paramName == "speedMap")
     {
-        int input1, input2;
-        in >> input1 >> input2;
+        int input1;
+        float input2;
+        
+        std::string s;
+        std::stringstream ss;
+        in >> s;
+        ss << s;
+        ss >> input1;
+        ss.clear();
+        in >> s;
+        ss << s;
+        ss >> input2;
+        ss.clear();
+        
         speedMap[input1] = input2;
     }
     else
@@ -626,7 +640,7 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     time_t raw = time(0);
     struct tm * timeinfo = localtime( &raw );
     char buffer [80];
-    strftime(buffer, 80, "% F-%H-%M", timeinfo);
+    strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
     std::string logPath = Util::getIOSDir() + "/" + playerName + "/"

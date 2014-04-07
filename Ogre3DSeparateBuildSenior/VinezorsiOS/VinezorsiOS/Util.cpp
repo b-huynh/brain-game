@@ -20,7 +20,7 @@ Util::ConfigGlobal::ConfigGlobal()
     moveRight = false;
     
     scheduleMain = "DEABC";
-    scheduleRepeat = "H";
+    scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.0;
     stageTime = 120.0;
@@ -495,8 +495,20 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
     }
     else if (paramName == "speedMap")
     {
-        int input1, input2;
-        in >> input1 >> input2;
+        int input1;
+        float input2;
+        
+        std::string s;
+        std::stringstream ss;
+        in >> s;
+        ss << s;
+        ss >> input1;
+        ss.clear();
+        in >> s;
+        ss << s;
+        ss >> input2;
+        ss.clear();
+        
         speedMap[input1] = input2;
     }
     else
