@@ -124,6 +124,9 @@ float ScoreSet::findTotalAccuracy() const
 
 void ScoreSet::setMinOptMax(int & nmin, int & noptimal, int & nmax) const
 {
+    if (scores.size() <= 0)
+        return;
+    
     const float desiredLeft = 1.00;
     const float desiredRight = 0.25;
     std::map<int, Score>::const_iterator best = scores.begin();

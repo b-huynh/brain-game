@@ -21,6 +21,7 @@ private:
     bool mushroomGummyAnimationFlag;
     bool mushroomGummyAnimationDone;
     float wobbleSpeed;
+    bool flowerSproutAnimationFlag;
     bool flowerHitAnimationFlag;
     bool flowerHitAnimationDone;
     float flowerHitAnimationTimer;

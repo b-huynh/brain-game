@@ -16,7 +16,7 @@
 Util::ConfigGlobal::ConfigGlobal()
 {
     scheduleMain = "DEABC";
-    scheduleRepeat = "H";
+    scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
     stageTime = 120.0;
@@ -32,6 +32,11 @@ Util::ConfigGlobal::ConfigGlobal()
     set1Repetitions = 3;
     set2Repetitions = 3;
     set3Repetitions = 3;
+    set1StartingSpeed = 15;
+    set2StartingSpeed = 15;
+    set3StartingSpeed = 15;
+    trialStartingSpeed = 20;
+    startingNav = 2;
     tunnelReferenceForward = Vector3(0, 0, -1);
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
@@ -64,7 +69,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
-    podNBackChance = 33;
+    podNBackChance = 33.0;
     span = 2;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
@@ -106,6 +111,7 @@ Util::ConfigGlobal::ConfigGlobal()
     setVineShip = VINE_RUNNER_SHIP;
     swipeSensitivity = 12.0;
     swipeInverted = 0;
+    boostEnabled = 1;
     combo1MinA = 5;
     combo2MinA = 10;
     combo1MinB = 3;
@@ -122,6 +128,16 @@ Util::ConfigGlobal::ConfigGlobal()
     navUnlockMax1 = 15;
     navUnlockNBack2 = 6;
     navUnlockMax2 = 20;
+    volumeMusic = 0.25;
+    volumeSignal1 = 0.25;
+    volumeSignal2 = 0.25;
+    volumeSignal3 = 0.25;
+    volumeSignal4 = 0.25;
+    volumeFeedbackGood = 0.25;
+    volumeFeedbackBad = 0.25;
+    volumeFeedbackCollision = 0.25;
+    volumeBoost = 0.25;
+    volumeStartup = 0.25;
     numSegmentsWithObstacles = 0;
     previousNumSegmentsWithObstacles = 0;
     
@@ -156,6 +172,20 @@ Util::ConfigGlobal::ConfigGlobal()
 //    navMap[22] = NavigationLevel(22, 4, 7);
     navIndex = 0;
     
+    speedMap[1] = 1.0;
+    speedMap[2] = 2.0;
+    speedMap[3] = 3.0;
+    speedMap[4] = 4.0;
+    speedMap[5] = 5.0;
+    speedMap[6] = 6.0;
+    speedMap[7] = 7.0;
+    speedMap[8] = 8.0;
+    speedMap[9] = 9.0;
+    speedMap[10] = 10.0;
+    speedMap[11] = 11.0;
+    speedMap[12] = 12.0;
+    speedMap[13] = 13.0;
+    speedMap[14] = 14.0;
     speedMap[15] = 15.0;
     speedMap[16] = 18.0;
     speedMap[17] = 21.0;
@@ -230,10 +260,8 @@ void Util::ConfigGlobal::set()
     pauseButton_height = pauseButton_width;
 }
 
-void Util::ConfigGlobal::initPaths(const char* name)
+void Util::ConfigGlobal::initPaths()
 {
-    playerName = name;
-    
 #if defined(OGRE_IS_IOS)
     savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
     configPath = Util::getIOSDir() + "/" + playerName + "/" + "config.json";
@@ -245,7 +273,7 @@ void Util::ConfigGlobal::initPaths(const char* name)
 #endif
 }
 
-void Util::ConfigGlobal::initLogs(const char* name, int session)
+void Util::ConfigGlobal::initLogs(int session)
 {
     // This is computed after player save is loaded for session ID
     //Build log path
@@ -256,7 +284,9 @@ void Util::ConfigGlobal::initLogs(const char* name, int session)
 
 void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
 {
-    if (paramName == "scheduleMain")
+    if (paramName == "playerName")
+        in >> playerName;
+    else if (paramName == "scheduleMain")
         in >> scheduleMain;
     else if (paramName == "scheduleRepeat")
         in >> scheduleRepeat;
@@ -292,6 +322,16 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> set2Repetitions;
     else if (paramName == "set3Repetitions")
         in >> set3Repetitions;
+    else if (paramName == "set1StartingSpeed")
+        in >> set1StartingSpeed;
+    else if (paramName == "set2StartingSpeed")
+        in >> set2StartingSpeed;
+    else if (paramName == "set3StartingSpeed")
+        in >> set3StartingSpeed;
+    else if (paramName == "trialStartingSpeed")
+        in >> trialStartingSpeed;
+    else if (paramName == "startingNav")
+        in >> startingNav;
     else if (paramName == "nback")
         in >> nback;
     else if (paramName == "control")
@@ -392,6 +432,8 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> swipeSensitivity;
     else if (paramName == "swipeInverted")
         in >> swipeInverted;
+    else if (paramName == "boostEnabled")
+        in >> boostEnabled;
     else if (paramName == "combo1MinA")
         in >> combo1MinA;
     else if (paramName == "combo2MinA")
@@ -424,6 +466,26 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> navUnlockNBack2;
     else if (paramName == "navUnlockMax2")
         in >> navUnlockMax2;
+    else if (paramName == "volumeMusic")
+        in >> volumeMusic;
+    else if (paramName == "volumeSignal1")
+        in >> volumeSignal1;
+    else if (paramName == "volumeSignal2")
+        in >> volumeSignal2;
+    else if (paramName == "volumeSignal3")
+        in >> volumeSignal3;
+    else if (paramName == "volumeSignal4")
+        in >> volumeSignal4;
+    else if (paramName == "volumeFeedbackGood")
+        in >> volumeFeedbackGood;
+    else if (paramName == "volumeFeedbackBad")
+        in >> volumeFeedbackBad;
+    else if (paramName == "volumeFeedbackCollision")
+        in >> volumeFeedbackCollision;
+    else if (paramName == "volumeBoost")
+        in >> volumeBoost;
+    else if (paramName == "volumeStartup")
+        in >> volumeStartup;
     else if (paramName == "numSignalTypes")
     {
         int input;
@@ -437,6 +499,24 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> input1 >> input2 >> input3 >> input4 >> input5;
         assert(input1 >= 0 && input1 < signalTypes.size());
         signalTypes[input1].push_back(PodInfo((PodSignal)input1, (PodMeshType)input2, (PodColor)input3, (PodShape)input4, (PodSound)input5));
+    }
+    else if (paramName == "speedMap")
+    {
+        int input1;
+        float input2;
+        
+        std::string s;
+        std::stringstream ss;
+        in >> s;
+        ss << s;
+        ss >> input1;
+        ss.clear();
+        in >> s;
+        ss << s;
+        ss >> input2;
+        ss.clear();
+        
+        speedMap[input1] = input2;
     }
     else
     {
@@ -560,7 +640,7 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     time_t raw = time(0);
     struct tm * timeinfo = localtime( &raw );
     char buffer [80];
-    strftime(buffer, 80, "% F-%H-%M", timeinfo);
+    strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
     std::string logPath = Util::getIOSDir() + "/" + playerName + "/"

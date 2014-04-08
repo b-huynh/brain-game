@@ -99,7 +99,7 @@ public:
 #endif
     void update(float elapsed);
     void endLevel(Evaluation forced = EVEN);
-    void setLevel(Evaluation forced = EVEN);
+    void setLevel(Evaluation forced = EVEN, bool forward = true);
     
     float getTotalElapsed() const;
     void setPause(bool value);

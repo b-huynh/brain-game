@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-/* 
- Configures values based on the dictionary object 
+/*
+ Configures values based on the dictionary object
  keyed by configKey in JSON file pointed to by configPath
  */
 bool configStageType(std::string configPath, std::string configKey);
@@ -14,13 +14,12 @@ bool configStageType(std::string configPath, std::string backupPath, std::string
  Fetch Config files from server.
  Returns true on success.
  */
-bool syncConfig (std::string configPath, std::string username);
+bool syncConfig ();
 
 /*
  Attempts to sync existing log files with server.
  Returns true if files are synced.
  */
-bool syncLogs (std::string logPath, std::string username);
-
+bool syncLogs();
 
 #endif /* defined(__VinezorsiOS__Networking__) */

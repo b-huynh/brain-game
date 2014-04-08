@@ -24,12 +24,12 @@ float wobble_speed_increment = -0.075f;//0.2f;            // Increment to speed 
 
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), mushroomGummyAnimationTimer(0.0f), mushroomGummyAnimationFlag(false), mushroomGummyAnimationDone(false), wobbleSpeed(hazard_wobble_speed), flowerHitAnimationFlag(false), flowerHitAnimationDone(false), flowerHitAnimationTimer(0.0f), flowerHitWobbleSpeed(0.0f), retractAnimationFlag(false), retractAnimationTimer(1.0)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), mushroomGummyAnimationTimer(0.0f), mushroomGummyAnimationFlag(false), mushroomGummyAnimationDone(false), wobbleSpeed(hazard_wobble_speed), flowerSproutAnimationFlag(false), flowerHitAnimationFlag(false), flowerHitAnimationDone(false), flowerHitAnimationTimer(0.0f), flowerHitWobbleSpeed(0.0f), retractAnimationFlag(false), retractAnimationTimer(1.0)
 {
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), mushroomGummyAnimationTimer(0.0f), mushroomGummyAnimationFlag(false), mushroomGummyAnimationDone(false), wobbleSpeed(hazard_wobble_speed), flowerHitAnimationFlag(false), flowerHitAnimationDone(false), flowerHitAnimationTimer(0.0f), flowerHitWobbleSpeed(0.0f), retractAnimationFlag(false), retractAnimationTimer(1.0)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), mushroomGummyAnimationTimer(0.0f), mushroomGummyAnimationFlag(false), mushroomGummyAnimationDone(false), wobbleSpeed(hazard_wobble_speed), flowerSproutAnimationFlag(false), flowerHitAnimationFlag(false), flowerHitAnimationDone(false), flowerHitAnimationTimer(0.0f), flowerHitWobbleSpeed(0.0f), retractAnimationFlag(false), retractAnimationTimer(1.0)
 {
     loadPod();
 }
@@ -306,7 +306,7 @@ void Pod::setToGrowth(float t)
         entirePod->translate((base - tip) * (1 - t));
         stem->setScale(Vector3(t * stemRadius, t * stemLength, t * stemRadius));
         if( t >= 0.8 && t <= 0.9 && !retractAnimationFlag ) {
-            flowerHitAnimationFlag = true;
+            flowerSproutAnimationFlag = true;
         }
     }
     else
@@ -651,7 +651,48 @@ void Pod::update(float elapsed)
     
     
     if( mtype == POD_FLOWER ) {
-        if( flowerHitAnimationFlag ) {
+        
+        /* Bobbing forward animation
+        if( flowerSproutAnimationFlag ) {
+            head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(Vector3(0,1,1)));
+            flowerHitAnimationTimer += elapsed;
+            flowerHitWobbleSpeed += elapsed;
+            if (flowerHitWobbleSpeed > 0.4)
+                flowerHitWobbleSpeed = 0.4;
+            if( podShape == POD_SHAPE_BUBBLE ) head->pitch(75 * Degree(sin(8 * (1.4-flowerHitWobbleSpeed) * flowerHitAnimationTimer)*Ogre::Math::Exp(-flowerHitAnimationTimer*2.8)));
+            else head->pitch(80 * Degree(sin(8 * (1.4-flowerHitWobbleSpeed) * flowerHitAnimationTimer)*Ogre::Math::Exp(-flowerHitAnimationTimer*2.85)));
+            if (flowerHitAnimationTimer >= 1.0) {
+                head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(Vector3(0,1,1)));
+                flowerSproutAnimationFlag = false;
+                flowerHitAnimationTimer = 0.0;
+                flowerHitWobbleSpeed = 0.0;
+            }
+        }
+         */
+        
+        if( flowerSproutAnimationFlag ) {
+            head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(Vector3(0,1,1)));
+            flowerHitAnimationTimer += elapsed;
+            flowerHitWobbleSpeed += elapsed;
+            if (flowerHitWobbleSpeed > 2.0)
+                flowerHitWobbleSpeed = 2.0;
+            if( podShape == POD_SHAPE_DAISY ) head->roll(15 * Degree(sin(128 * flowerHitWobbleSpeed * flowerHitAnimationTimer)));
+            else head->roll(10 * Degree(sin(128 * flowerHitWobbleSpeed * flowerHitAnimationTimer)));
+            if (flowerHitAnimationTimer >= 0.5) {
+                head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(Vector3(0,1,1)));
+                flowerSproutAnimationFlag = false;
+                flowerHitAnimationTimer = 0.0;
+                flowerHitWobbleSpeed = 0.0;
+            }
+        }
+        
+        else if( retractAnimationFlag ) {
+            retractAnimationTimer -= 7.0*elapsed;
+            if( retractAnimationTimer < 0.0 ) retractAnimationFlag = false;
+            else setToGrowth(retractAnimationTimer);
+        }
+        
+        else if( flowerHitAnimationFlag ) {
             head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(Vector3(0,1,1)));
             flowerHitAnimationTimer += elapsed;
             flowerHitWobbleSpeed += elapsed;
@@ -666,16 +707,8 @@ void Pod::update(float elapsed)
                 flowerHitWobbleSpeed = 0.0;
             }
         }
+        
     }
-    
-    if( mtype == POD_FLOWER ) {
-        if( retractAnimationFlag ) {
-            retractAnimationTimer -= 7.0*elapsed;
-            if( retractAnimationTimer < 0.0 ) retractAnimationFlag = false;
-            else setToGrowth(retractAnimationTimer);
-        }
-    }
-    
     
     
     if (glowNode)

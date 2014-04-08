@@ -10,6 +10,8 @@
 
 Util::ConfigGlobal globals;
 
+#define NETWORKING 1
+
 OgreApp::OgreApp()
 {
 }
@@ -116,7 +118,7 @@ void OgreApp::startDemo(const char* name, MusicMode musica)
 void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica)
 #endif
 {
-    globals.initPaths(name);
+    globals.playerName = name;
     gameState = STATE_PLAY;
     musicMode = musica;
     
@@ -175,8 +177,15 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    globals.initPaths();
+#if defined(NETWORKING)
+#if defined(OGRE_IS_IOS)
     syncConfig();
+#endif
+#endif
+    
     seed = time(0);
+    
     srand(seed);
     sessionOver = false;
     
@@ -194,6 +203,10 @@ void OgreApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(origin.x, origin.y, origin.z + globals.tunnelSegmentDepth / 2));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
+    globals.initPaths();
+    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
+        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    
 	player = new Player(
                         globals.playerName,
                         OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition(),
@@ -205,9 +218,10 @@ void OgreApp::setupDemoScene()
                         "vinezors" + Util::toStringInt(seed) + ".csv");
 	player->addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), player->getCamPos(), globals.vineRadius));
     player->setSounds(true);
+    player->setRunningSpeed(globals.set1StartingSpeed, globals.set2StartingSpeed, globals.set3StartingSpeed, globals.trialStartingSpeed, globals.startingNav);
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
-    globals.initLogs(player->getName().c_str(), player->getSkillLevel().sessionID);
+    globals.initLogs(player->getSkillLevel().sessionID);
     
     tunnel = NULL;
     hud = new Hud();
@@ -218,10 +232,6 @@ void OgreApp::setupDemoScene()
         globals.sessionTime += ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * (player->getSkillLevel().sessionID - 1);
     std::cout << "Session Length: " << globals.sessionTime << std::endl;
     
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    if (!configStageType(globals.configPath, globals.configBackup, "setSchedule"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     levelMgr = new LevelManager(player, globals.scheduleMain, globals.scheduleRepeat, globals.scheduleRepeatRandomPool);
     
     setLevel(EVEN);
@@ -233,8 +243,12 @@ void OgreApp::setupDemoScene()
     lightNodeMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-
+    
+#if defined(NETWORKING)
+#if defined(OGRE_IS_IOS)
     syncLogs();
+#endif
+#endif
 }
 
 void OgreApp::update(float elapsed)
@@ -294,7 +308,7 @@ void OgreApp::endLevel(Evaluation forced)
     if (tunnel)
     {
         tunnel->setCleaning(true);
-        if (levelMgr->levelFinishedB(tunnel, forced))
+        if (levelMgr->levelFinished(tunnel, forced))
         {
             gameState = STATE_PROMPT;
             globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<--- Swipe --->", MESSAGE_NORMAL);
@@ -304,14 +318,18 @@ void OgreApp::endLevel(Evaluation forced)
     }
 }
 
-void OgreApp::setLevel(Evaluation forced)
+void OgreApp::setLevel(Evaluation forced, bool forward)
 {
     globals.clearMessage();
     
     std::vector<NavigationLevel> navLevels;
     if (tunnel)
     {
-        levelMgr->incrementSchedIndex();
+        levelMgr->updatePlayerSkill(tunnel, forced);
+        if (forward)
+            levelMgr->incrementSchedIndex();
+        else
+            levelMgr->decrementSchedIndex();
         navLevels = tunnel->getNavLevels();
         player->unlink();
         tunnel->unlink();
@@ -321,7 +339,7 @@ void OgreApp::setLevel(Evaluation forced)
     // Don't gen a new tunnel if our schedule is over
     if (!predictSessionOver())
     {
-        tunnel = levelMgr->getNextLevelB(tunnel);
+        tunnel = levelMgr->getNextLevel(tunnel);
         if (navLevels.size() <= 0) // First stage
         {
             globals.appendMessage("\n\nSession No: " + Util::toStringInt(player->getSkillLevel().sessionID), MESSAGE_NORMAL);
@@ -444,7 +462,11 @@ void OgreApp::endGame()
         player->saveStage(globals.logPath);
         player->saveProgress(globals.savePath, levelMgr->isDoneWithMainSchedule());
         sessionOver = true;
+#if defined(NETWORKING)
+#if defined(OGRE_IS_IOS)
         syncLogs();
+#endif
+#endif
     }
 }
 
@@ -560,7 +582,7 @@ void OgreApp::activatePerformRightMove()
         case STATE_PROMPT:
         {
             gameState = STATE_PLAY;
-            setLevel();
+            setLevel(FAIL);
             break;
         }
     }
@@ -583,11 +605,9 @@ void OgreApp::activatePerformSingleTap(float x, float y)
     }
 #ifdef DEBUG_MODE
     else if (y <= 100 && x <= globals.screenWidth / 2) {
-        endLevel(FAIL);
-        setLevel(FAIL);
+        setLevel(EVEN, false);
     } else if (y <= 100 && x > globals.screenWidth / 2) {
-        endLevel(PASS);
-        setLevel(PASS);
+        setLevel(EVEN);
     }
 #endif
 }
@@ -601,7 +621,7 @@ void OgreApp::activatePerformPinch()
 void OgreApp::activatePerformBeginLongPress()
 {
     player->addAction(ACTION_TAP_HOLD);
-    if (gameState == STATE_PLAY && !pause) player->performBoost();
+    if (gameState == STATE_PLAY && !pause && globals.boostEnabled) player->performBoost();
 }
 
 void OgreApp::activatePerformEndLongPress()
