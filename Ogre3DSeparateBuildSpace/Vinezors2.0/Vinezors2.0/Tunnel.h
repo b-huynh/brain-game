@@ -13,10 +13,6 @@
 #include <vector>
 #include "Util.h"
 #include "TunnelSlice.h"
-#include "History.h"
-
-// Added GAME_TEACHING C.P.
-enum GameMode { GAME_PROFICIENCY, GAME_TIMED, GAME_NAVIGATION, GAME_TEACHING, GAME_RECESS };
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -25,7 +21,6 @@ public:
     enum SetPodTarget { UNKNOWN, BAD_TARGET, GOOD_TARGET };
     
     Player* player;
-    Hud* hud;
     
     SceneNode* parentNode;
     
@@ -76,13 +71,12 @@ public:
     
     // Stage attributes
     int stageNo;
-    GameMode mode;
+    StageMode mode;
     char phase;
     float totalElapsed;
     float timePenalty;
     int nback;
     int control;
-    History* history;
     Direction basis;
     bool sidesUsed[NUM_DIRECTIONS];
     std::vector<std::string> materialNames;
@@ -101,7 +95,7 @@ public:
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, GameMode mode, char phase, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -136,7 +130,6 @@ public:
 	int getPodIndex() const;
     Quaternion getQuaternion() const;
     Quaternion getCombinedQuaternion(TunnelSlice* slice) const;
-    History* getHistory() const;
     Evaluation getEval() const;
     Pod* getNearestPod(int numSlices) const;
     void getSpanFrom(int span, Direction base, const bool sides[NUM_DIRECTIONS], bool ret[NUM_DIRECTIONS]);
@@ -147,8 +140,9 @@ public:
     std::vector<SectionInfo> getSectionInfo() const;
     std::vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees) const;
-    PodSignal getNBackTest(int section) const;
-    GameMode getMode() const;
+    PodSignal getNBackTest(int index, int nvalue) const;
+    PodSignal getNBackTest(int nvalue) const;
+    StageMode getMode() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
@@ -171,6 +165,7 @@ public:
     void setSpawnCombo(int level);
     void upgradeControl();
     void addToTimePenalty(float value);
+    void setVisible(bool value);
     void setCleaning(bool value);
     bool needsCleaning() const;
     
@@ -198,7 +193,7 @@ public:
     std::vector<Pod *> findPodCollisions(SceneNode* ent);
     
     void unlink();
-    void link(Player* player, Hud* hud);
+    void link(Player* player);
     void presetTargets(int level);
     void constructTunnel(int size); // Removed preset param C.P.
     

@@ -1383,15 +1383,15 @@ void Player::update(float elapsed)
                         for (; ind < pods.size(); ++ind)
                         {
                             bool avoided = true;
-                            if (pods[i]->getPodTrigger())
+                            if (pods[ind]->getPodTrigger())
                             {
-                                if (pods[i]->isPodTaken())
+                                if (pods[ind]->isPodTaken())
                                 {
                                     avoided = false;
-                                    segmentEncoding[pods[i]->getLoc()] = ENC_OBSTACLE_YES_HIT;
+                                    segmentEncoding[pods[ind]->getLoc()] = ENC_OBSTACLE_YES_HIT;
                                 }
                                 else
-                                    segmentEncoding[pods[i]->getLoc()] = ENC_OBSTACLE_NO_HIT;
+                                    segmentEncoding[pods[ind]->getLoc()] = ENC_OBSTACLE_NO_HIT;
                             }
                             if (avoided) numAvoidancesTotal++;
                             else numCollisionsTotal++;

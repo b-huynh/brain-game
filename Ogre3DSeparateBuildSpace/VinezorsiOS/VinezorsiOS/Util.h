@@ -16,6 +16,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEBUG_MODE 1
+//#define NETWORKING 1
 
 #include <string>
 
@@ -299,6 +300,8 @@ namespace Util
         ConfigGlobal();
         void set();
         
+        Vector2 convertToPercentScreen(Vector2 p);
+        
         void initPaths();
         void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);
@@ -322,6 +325,7 @@ namespace Util
     void copySides(bool dest[NUM_DIRECTIONS], bool src[NUM_DIRECTIONS]); // C.P.
     int getNumSides(int level);
     int getNumSides(bool sides[NUM_DIRECTIONS]);
+    int getControlLevel(bool sides[NUM_DIRECTIONS]);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();

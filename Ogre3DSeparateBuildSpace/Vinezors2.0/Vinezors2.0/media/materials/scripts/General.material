@@ -13,6 +13,21 @@ material General/BaseBlack
     }
 }
 
+material General/BaseGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture gray_fixed.png
+        }
+      } 
+    }
+}
+
 material General/BaseWhite
 {
     technique
@@ -182,7 +197,7 @@ material General/PauseButton
     }
 }
 
-material General/StarGray
+material General/PauseButtonGray
 {
     technique
     {
@@ -193,24 +208,7 @@ material General/StarGray
         depth_write off
         texture_unit
         {
-            texture stargray.png
-        }
-      } 
-    }
-}
-
-material General/StarGold
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture stargold.png
+            texture pause_buttongray.png
         }
       } 
     }
@@ -293,7 +291,7 @@ material General/WallBindingD
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_SpacePlatForms.png
+				texture LevelBinding/blueice.png
 			}
 		}
 	}
@@ -309,8 +307,7 @@ material General/WallBindingE
 
             texture_unit
 			{
-				texture LevelBinding/blueice.png
-			}
+				texture LevelBinding/TunnelTile_PurplePipes.png			}
 		}
 	}
 }
@@ -325,7 +322,8 @@ material General/WallBindingG
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_PurplePipes.png
+				texture LevelBinding/TunnelTile_SpacePlatForms.png
+
 			}
 		}
 	}
@@ -651,14 +649,30 @@ material General/PodStem
     }
 }
 
-material General/VineShell
+material General/VineShellActive
 {
     technique
     {
         pass
         {
-            ambient 0.3 0.3 0.3 0.7
-            diffuse 1.0 1.0 1.0 0.7
+            ambient 0.1 0.2 0.2 0.5
+            diffuse 0.5 1.0 1.0 0.5
+            specular 1.0 1.0 1.0 128
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material General/VineShellInactive
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.2 0.1 0.1 0.5
+            diffuse 1.0 0.5 0.5 0.5
+            specular 1.0 1.0 1.0 128
             scene_blend alpha_blend
             depth_write off
         }
@@ -695,24 +709,6 @@ material General/VineBase
     }
 }
 
-material General/VineShell
-{
-    technique
-    {
-        pass
-        {
-            //ambient 0.0 0.1 0.2 0.3
-            //diffuse 0.0 0.7 1.0 0.3
-            ambient 0.1 0.2 0.3 0.3
-            diffuse 0.5 0.9 1.0 0.3
-            specular 1.0 1.0 1.0 10
-            scene_blend alpha_blend
-            depth_write off
-            cull_hardware none
-            cull_software none
-        }
-    }
-}
 
 material General/Star
 {
@@ -745,7 +741,7 @@ material General/SpaceSkyPlane
 
 			texture_unit
 			{
-				texture space.jpg
+				texture deepspace.png
 			}
 		}
 	}
@@ -767,4 +763,140 @@ material General/TestSkyPlane0
 			}
 		}
 	}
+}
+
+material General/MainTitle
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture maintitle.png
+			}
+		}
+	}
+}
+
+material General/CreditsTitle
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture creditstitle.png
+			}
+		}
+	}
+}
+
+material General/PlayButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonplay.png
+			}
+		}
+	}
+}
+
+material General/CreditsButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttoncredits.png
+			}
+		}
+	}
+}
+
+material General/BackButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonback.png
+			}
+		}
+	}
+}
+
+material General/ExitButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonexit.png
+			}
+		}
+	}
+}
+
+material General/SelectYourLevel
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture selectyourlevel.png
+			}
+		}
+	}
+}
+
+material General/TimeBonusMaterial
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture plus20Seconds.png
+            }
+        }
+    }
 }

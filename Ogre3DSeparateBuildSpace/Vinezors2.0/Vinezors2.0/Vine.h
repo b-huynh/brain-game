@@ -39,8 +39,12 @@ struct Vine
     float wobbleSpeed;
     bool wobbling;
     
+    float shieldScaleValue;
+    float shieldScaleTarget;
+    
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
+    ~Vine();
 	
     void reloadIfNecessary(VineMeshType newMeshType);
     void loadShip();
@@ -57,6 +61,7 @@ struct Vine
 	void setForward(Vector3 value);
     float getRadius() const;
     void setQuaternion(Quaternion rot);
+    void setVisible(bool value);
     void setWobble(bool value);
     void setShockwave();
     void setBoost();
@@ -64,6 +69,7 @@ struct Vine
 	void move(Vector3 delta);
 	
 	void update(float elapsed);
+    void scaleShields(float size);
     
     void removeShockwave();
     void removeBoost();

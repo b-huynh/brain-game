@@ -16,12 +16,13 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEBUG_MODE 1
+//#define NETWORKING 1
 
 #include <string>
 
-enum GameState { STATE_PLAY, STATE_PROMPT };
+enum GameState { GAME_STATE_PLAY, GAME_STATE_PROMPT, GAME_STATE_MENU };
+enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS };
 enum Evaluation { PASS, FAIL, EVEN };
-enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
@@ -299,6 +300,8 @@ namespace Util
         ConfigGlobal();
         void set();
         
+        Vector2 convertToPercentScreen(Vector2 p);
+        
         void initPaths();
         void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);
@@ -322,6 +325,7 @@ namespace Util
     void copySides(bool dest[NUM_DIRECTIONS], bool src[NUM_DIRECTIONS]); // C.P.
     int getNumSides(int level);
     int getNumSides(bool sides[NUM_DIRECTIONS]);
+    int getControlLevel(bool sides[NUM_DIRECTIONS]);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();
@@ -346,8 +350,6 @@ namespace Util
     
     void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
     float getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments);
-    
-    void generateMaterials();
 };
 
 

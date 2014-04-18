@@ -12,6 +12,45 @@
 
 extern Util::ConfigGlobal globals;
 
+// Assigns pointer references to the button and initializes dimensions
+void HudButton::setButton(std::string name, GuiMetricsMode metricMode, Vector2 pos, Vector2 dimension, PanelOverlayElement* bgPtr, TextAreaOverlayElement* txtPtr)
+{
+    this->name = name;
+    p = pos;
+    dim = dimension;
+    metric = metricMode;
+    backgroundRef = bgPtr;
+    if (backgroundRef)
+    {
+        backgroundRef->setMetricsMode(metric);
+        backgroundRef->setPosition(pos.x, pos.y);
+        backgroundRef->setDimensions(dim.x, dim.y);
+    }
+    textRef = txtPtr;
+    if (textRef)
+    {
+        textRef->setMetricsMode(metric);
+        textRef->setAlignment(TextAreaOverlayElement::Center);
+        textRef->setCharHeight(1.0f / 40.0f);
+        textRef->setPosition(pos.x + dim.x / 2, pos.y + dim.y / 2);
+        textRef->setFontName("Arial");
+        textRef->setColour(ColourValue::ColourValue(0.0, 0.0, 0.0));
+    }
+}
+
+// Determines whether the parameter is inside the button
+bool HudButton::isInside(Vector2 target) const
+{
+    Vector2 check = p;
+    if (metric == GMM_PIXELS)
+    {
+        check.x /= globals.screenWidth;
+        check.y /= globals.screenHeight;
+    }
+    return (target.x >= check.x && target.x <= check.x + dim.x &&
+            target.y >= check.y && target.y <= check.y + dim.y);
+}
+
 Hud::Hud()
 {
     player = NULL;
@@ -38,12 +77,6 @@ Hud::Hud()
                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "HealthBar"));
     indicator = static_cast<PanelOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Indicator"));
-    threshold1 = static_cast<PanelOverlayElement*>(
-                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold1"));
-    threshold2 = static_cast<PanelOverlayElement*>(
-                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold2"));
-    threshold3 = static_cast<PanelOverlayElement*>(
-                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "threshold3"));
     pauseButton = static_cast<PanelOverlayElement*>(
                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "pauseButton"));
     
@@ -63,18 +96,36 @@ Hud::Hud()
     label7 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TextAreaLabel7"));
     
-    // Create an overlay, and add the panel
-    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayHealthArea");
-    Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("OverlayText");
-    overlay1->add2D(healthArea);
-    //overlay1->add2D(barHP);
-    overlay1->add2D(indicator);
-    //overlay1->add2D(threshold1);
-    //overlay1->add2D(threshold2);
-    //overlay1->add2D(threshold3);
-    overlay1->add2D(pauseButton);
-    overlay2->add2D(panelText);
+    itemEntireBackground = static_cast<PanelOverlayElement*>(
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ItemEntireBackground"));
+    // Note: These overlay elements are linked to a button, if we end up deleting these and NULLing it, it should be NULLed in the associated button as well
+    item1Background = static_cast<PanelOverlayElement*>(
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Item1Background"));
+    item2Background = static_cast<PanelOverlayElement*>(
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Item2Background"));
+    item3Background = static_cast<PanelOverlayElement*>(
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Item3Background"));
+    item1Text = static_cast<TextAreaOverlayElement*>(
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "Item1Text"));
+    item2Text = static_cast<TextAreaOverlayElement*>(
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "Item2Text"));
+    item3Text = static_cast<TextAreaOverlayElement*>(
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "Item3Text"));
     
+    buttons = std::vector<HudButton>(4);
+    
+    // Create an overlay, and add the panel
+    Overlay* overlay = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("EntireOverlay");
+    overlay->add2D(healthArea);
+    //overlay->add2D(barHP);
+    overlay->add2D(indicator);
+    overlay->add2D(pauseButton);
+    
+    overlay->add2D(itemEntireBackground);
+    overlay->add2D(item1Background);
+    overlay->add2D(item2Background);
+    overlay->add2D(item3Background);
+    overlay->add2D(panelText);
     panelText->addChild(label1);
     panelText->addChild(label2);
     panelText->addChild(label3);
@@ -82,8 +133,10 @@ Hud::Hud()
     panelText->addChild(label5);
     panelText->addChild(label6);
     panelText->addChild(label7);
-    overlays.push_back(overlay1);
-    overlays.push_back(overlay2);
+    panelText->addChild(item1Text);
+    panelText->addChild(item2Text);
+    panelText->addChild(item3Text);
+    overlays.push_back(overlay);
 }
 
 void Hud::unlink()
@@ -102,23 +155,31 @@ void Hud::init(Tunnel* tunnel, Player* player)
 {
     link(tunnel, player);
     setOverlay();
-    if (tunnel->getMode() == GAME_TIMED)
-    {
-        healthArea->hide();
-        barHP->hide();
-        indicator->hide();
-    }
-    else if (tunnel->getMode() == GAME_PROFICIENCY)
+    if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         healthArea->show();
         barHP->show();
         indicator->show();
+        itemEntireBackground->show();
+        item1Background->show();
+        item2Background->show();
+        item3Background->show();
+        item1Text->show();
+        item2Text->show();
+        item3Text->show();
     }
-    else //if (tunnel->getMode() == GAME_NAVIGATION)
+    else
     {
         healthArea->hide();
         barHP->hide();
         indicator->hide();
+        itemEntireBackground->hide();
+        item1Background->hide();
+        item2Background->hide();
+        item3Background->hide();
+        item1Text->hide();
+        item2Text->hide();
+        item3Text->hide();
     }
     
     for(int i = 0; i < overlays.size(); ++i)
@@ -158,23 +219,6 @@ void Hud::setOverlay()
     indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
     indicator->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
     indicator->setMaterialName("General/Indicator");
-    
-    threshold1->setMetricsMode(GMM_RELATIVE);
-    threshold1->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
-    threshold1->setMaterialName("General/StarGray");
-    
-    threshold2->setMetricsMode(GMM_RELATIVE);
-    threshold2->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
-    threshold2->setMaterialName("General/StarGray");
-    
-    threshold3->setMetricsMode(GMM_RELATIVE);
-    threshold3->setDimensions(healthArea->getWidth() / 15, globals.HPBarHeight + 0.01);
-    threshold3->setMaterialName("General/StarGray");
-    
-    pauseButton->setMetricsMode(GMM_PIXELS);
-    pauseButton->setPosition(globals.pauseButton_posX, globals.pauseButton_posY);
-    pauseButton->setDimensions(globals.pauseButton_width, globals.pauseButton_height);
-    pauseButton->setMaterialName("General/PauseButton");
     
     label1->setMetricsMode(GMM_PIXELS);
     label1->setAlignment(TextAreaOverlayElement::Center);
@@ -222,6 +266,17 @@ void Hud::setOverlay()
     label7->setCharHeight(globals.screenHeight / 50);
     label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label7->setFontName("Arial");
+    
+    buttons[0].setButton("pause", GMM_PIXELS, Vector2(globals.pauseButton_posX, globals.pauseButton_posY), Vector2(globals.pauseButton_width, globals.pauseButton_height), pauseButton, NULL);
+    buttons[1].setButton("item1", GMM_RELATIVE, Vector2(0.80, 0.30), Vector2(0.15, 0.10), item1Background, item1Text);
+    buttons[2].setButton("item2", GMM_RELATIVE, Vector2(0.80, 0.45), Vector2(0.15, 0.10), item2Background, item2Text);
+    buttons[3].setButton("item3", GMM_RELATIVE, Vector2(0.80, 0.60), Vector2(0.15, 0.10), item3Background, item3Text);
+    pauseButton->setMaterialName("General/PauseButton");
+    
+    itemEntireBackground->setMetricsMode(GMM_RELATIVE);
+    itemEntireBackground->setPosition(0.775, 0.25);
+    itemEntireBackground->setDimensions(0.20, 0.50);
+    itemEntireBackground->setMaterialName("General/BaseGray");
 }
 
 void Hud::update(float elapsed)
@@ -238,17 +293,11 @@ void Hud::update(float elapsed)
     else
      */
     label1->setCaption(globals.messageBig);
-    if (tunnel->getMode() == GAME_PROFICIENCY || tunnel->getMode() == GAME_TIMED || tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
+    if (tunnel->getMode() == GAME_PROFICIENCY || tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
     {
         Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
         label2->setColour(fontColor);
         label2->setCaption("Time: " + Util::toStringInt(timeLeft));
-    }
-    else if (tunnel->getMode() == GAME_NAVIGATION)
-    {
-        Ogre::ColourValue fontColor = player->getHP() <= globals.HPNegativeLimit ? Ogre::ColourValue(1.0, 0.0, 0.0) : Ogre::ColourValue(1.0, 1.0, 1.0);
-        label2->setColour(fontColor);
-        label2->setCaption("Chances: " + Util::toStringInt(player->getHP()));
     }
     switch (tunnel->getPhase())
     {
@@ -281,24 +330,15 @@ void Hud::update(float elapsed)
             break;
     }
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
-    if (tunnel->getMode() == GAME_TIMED)
-    {
-        float percentComplete = static_cast<float>((tunnel->getSpawnLimit() - tunnel->getSignalsLeft())) / tunnel->getSpawnLimit() * 100;
-        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
-        label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
-        //label5->setCaption("Signals: " + Util::toStringInt(tunnel->getSignalsLeft()));
-    }
-    else if (tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
+    if (tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
     {
         float percentComplete = static_cast<float>(player->getNumCorrectTotal()) / tunnel->getNumTargets() * 100;
         percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
         label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
     }
-    else if (tunnel->getMode() == GAME_NAVIGATION)
+    else if (tunnel->getMode() == GAME_PROFICIENCY)
     {
-        float percentComplete = static_cast<float>(player->getTotalElapsed()) / globals.stageTime * 100;
-        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
-        label5->setCaption("Completed: " + Util::toStringInt(percentComplete) + "%");
+        label5->setCaption("Score: " + Util::toStringInt(player->getScore()));
     }
     else
         label5->setCaption("");
@@ -310,8 +350,8 @@ void Hud::update(float elapsed)
             label7->setCaption("Combo" + Util::toStringInt(tunnel->getSpawnCombo() - 1));
     }
     
+    // Set Progress Bar indicator position for the appropriate mode
     float barWidth = barHP->getWidth();
-    // Set UI positions depending on game mode
     if (tunnel->getMode() == GAME_PROFICIENCY)
     {
         float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit + 1;
@@ -319,9 +359,39 @@ void Hud::update(float elapsed)
         indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
     }
     
-    threshold1->setMaterialName("General/StarGold");
-    threshold2->setMaterialName("General/StarGold");
-    threshold3->setMaterialName("General/StarGold");
+    // Update toggle buttons to reflect which N-Back setting is active
+    switch (player->getToggleBack())
+    {
+        case 0:
+            item1Background->setMaterialName("General/BaseYellow");
+            item2Background->setMaterialName("General/BaseRed");
+            item3Background->setMaterialName("General/BaseRed");
+            break;
+        case 1:
+            item2Background->setMaterialName("General/BaseYellow");
+            item1Background->setMaterialName("General/BaseRed");
+            item3Background->setMaterialName("General/BaseRed");
+            break;
+        case 2:
+            item3Background->setMaterialName("General/BaseYellow");
+            item1Background->setMaterialName("General/BaseRed");
+            item2Background->setMaterialName("General/BaseRed");
+            break;
+    }
+    item1Text->setCaption(Util::toStringInt(tunnel->getNBack()) + "-Back");
+    item2Text->setCaption(Util::toStringInt(Util::clamp(tunnel->getNBack() - 1, 0, tunnel->getNBack())) + "-Back");
+    item3Text->setCaption(Util::toStringInt(Util::clamp(tunnel->getNBack() - 2, 0, tunnel->getNBack())) + "-Back");
+}
+
+std::string Hud::queryButtons(Vector2 target) const
+{
+    Vector2 comp = globals.convertToPercentScreen(target);
+    for (int i = 0; i < buttons.size(); ++i)
+    {
+        if (buttons[i].isInside(comp))
+            return buttons[i].name;
+    }
+    return "";
 }
 
 void Hud::hideOverlays()

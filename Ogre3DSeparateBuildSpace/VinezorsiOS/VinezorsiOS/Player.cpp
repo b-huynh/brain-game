@@ -96,14 +96,14 @@ std::string PlayerLevel::getCurrentStats() const
 }
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), speedControl(speedControl), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -162,6 +162,11 @@ int Player::getNumWrongCombo() const
 int Player::getNumCollisionsTotal() const
 {
     return numCollisionsTotal;
+}
+
+float Player::getScore() const
+{
+    return score;
 }
 
 Direction Player::getCamDir() const
@@ -337,10 +342,16 @@ float Player::getAccuracy() const
 
 float Player::getProgress() const
 {
+    float goal = std::pow(10.0, tunnel->getNBack()) * globals.HPPositiveLimit;
+    float progress = score / goal;
+    progress = Util::clamp(progress, 0.0, 1.0);
+    return progress <= 1.0 ? progress : 1.0;
+    /*
     int value = numCorrectTotal - numWrongTotal;
     float progress = static_cast<float>(value) / tunnel->getNumTargets();
     progress = Util::clamp(progress, 0.0, 1.0);
     return progress <= 1.0 ? progress : 1.0;
+     */
 }
 
 bool Player::getShowCombo() const
@@ -351,6 +362,11 @@ bool Player::getShowCombo() const
 PlayerLevel Player::getSkillLevel() const
 {
     return skillLevel;
+}
+
+int Player::getToggleBack() const
+{
+    return toggleBack;
 }
 
 int Player::getNumStagesWon() const
@@ -400,6 +416,11 @@ void Player::setNumCorrectCombo(int value)
 void Player::setNumWrongCombo(int value)
 {
     numWrongCombo = value;
+}
+
+void Player::setScore(float value)
+{
+    score = value;
 }
 
 void Player::updateGlowExtraction(float elapsed)
@@ -526,18 +547,14 @@ void Player::testPodGiveFeedback(Pod* test)
     
     History* history = tunnel->getHistory();
     
+    int testedNBack = Util::clamp(tunnel->getNBack() - toggleBack, 0, tunnel->getNBack());
+    bool goodPod = tunnel->getNBackTest(testedNBack) != POD_SIGNAL_UNKNOWN;
+    if (tunnel->getMode() == GAME_RECESS) goodPod = true;
+    std::cout << "Good: " << goodPod	 << std::endl;
+
     // Determine whether the player got it right or not
-    if (test->isPodGood() && test->isPodTaken()) {
-        if (tunnel->getMode() == GAME_TIMED)
-        {
-            skillLevel.speedScores[baseSpeed].right++;
-        }
-        else if (tunnel->getMode() == GAME_NAVIGATION)
-        {
-            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].right++;
-        }
-        
-        if (tunnel->getMode() == GAME_NAVIGATION || tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
+    if (goodPod && test->isPodTaken()) {
+        if (tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
         {
             if (soundFeedbackGood)
             {
@@ -554,24 +571,26 @@ void Player::testPodGiveFeedback(Pod* test)
             }
         }
         ++numCorrectTotal;
-        ++numCorrectCombo;
-        numWrongCombo = 0;
 
         // Combo Speed
         //if (tunnel->getMode() == GAME_PROFICIENCY)
         //    bonusSpeed += 1.0;
-        
+        if (testedNBack == tunnel->getNBack())
+        {
+            if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
+            else hp += globals.HPNegativeCorrectAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        }
+        ++numCorrectCombo;
+        numWrongCombo = 0;
         if (numCorrectCombo % globals.numToSpeedUp == 0)
         {
             baseSpeed += globals.stepsizeSpeedUp;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
-        if (hp >= 0)
-            hp += globals.HPPositiveCorrectAnswer;
-        else
-            hp += globals.HPNegativeCorrectAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        std::cout << "Combo: "  << numCorrectCombo << std::endl;
+        score += std::pow(10.0, testedNBack);
         
         if (history) history->determineCoverLoc(true);
     }
@@ -581,18 +600,8 @@ void Player::testPodGiveFeedback(Pod* test)
         numCorrectBonus++;
     }
     else if ((test->isPodGood() && !test->isPodTaken()) ||
-             (!test->isPodGood() && test->isPodTaken())) {
-        
-        if (tunnel->getMode() == GAME_TIMED)
-        {
-            skillLevel.speedScores[baseSpeed].wrong++;
-        }
-        else if (tunnel->getMode() == GAME_NAVIGATION)
-        {
-            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
-        }
-        
-        if (soundFeedbackBad && !test->isPodGood() && test->isPodTaken())
+             (!goodPod && test->isPodTaken())) {
+        if (soundFeedbackBad)
         {
             soundFeedbackBad->stop();
             soundFeedbackBad->play();
@@ -602,28 +611,27 @@ void Player::testPodGiveFeedback(Pod* test)
         else //if ((!test->isPodGood() && test->isPodTaken()) //Took bad
             ++numWrongTotal;
         
-        ++numWrongCombo;
+        if (numCorrectCombo < 5)
+        {
+            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+            else hp += globals.HPNegativeWrongAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        }
         numCorrectCombo = 0;
-        // Combo Speed reduction
-        //if (tunnel->getMode() == GAME_PROFICIENCY)
-        //{
-        //    bonusSpeed -= 3.0;
-        //    if (bonusSpeed < 0.0) bonusSpeed = 0.0;
-        //}
-        
+        ++numWrongCombo;
         if (numWrongCombo % globals.numToSpeedDown == 0)
         {
             baseSpeed += globals.stepsizeSpeedDown;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
+        // Combo Speed reduction
         numCorrectBonus = 0;
-        
-        if (hp >= 0)
-            hp += globals.HPPositiveWrongAnswer;
-        else
-            hp += globals.HPNegativeWrongAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        //if (tunnel->getMode() == GAME_PROFICIENCY)
+        //{
+        //    bonusSpeed -= 3.0;
+        //    if (bonusSpeed < 0.0) bonusSpeed = 0.0;
+        //}
         
         if (history) history->determineCoverLoc(false);
     }
@@ -765,6 +773,11 @@ void Player::setSkillLevel(PlayerLevel value)
     skillLevel = value;
 }
 
+void Player::setToggleBack(int value)
+{
+    toggleBack = value;
+}
+
 void Player::saveCam()
 {
     oldPos = camPos;
@@ -810,6 +823,7 @@ void Player::newTunnel(bool setmusic)
     numWrongCombo = 0;
     numAvoidancesTotal = 0;
     numCollisionsTotal = 0;
+    score = 0.0;
     camDir = SOUTH;
     lookback = NULL;
     selectedTarget = NULL;
@@ -821,7 +835,7 @@ void Player::newTunnel(bool setmusic)
     sess.stageTime = globals.stageTime;
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
-    if (tunnel->getMode() == GAME_NAVIGATION || tunnel->getMode() == GAME_RECESS || tunnel->getMode() == GAME_TEACHING)
+    if (tunnel->getMode() == GAME_RECESS || tunnel->getMode() == GAME_TEACHING)
         sess.nback = 0;
     else
         sess.nback = tunnel->getNBack();
@@ -1060,34 +1074,26 @@ void Player::checkCollisions()
                 {
                     if (hits[i]->getPodTrigger())
                     {
-                        if (tunnel->getMode() == GAME_NAVIGATION)
-                        {
-                            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
-                        }
                         if (soundCollision)
                         {
                             soundCollision->stop();
                             soundCollision->play();
                         }
                         
-                        if (hp >= 0)
-                            hp += globals.HPPositiveDistractor;
-                        else
-                            hp += globals.HPNegativeDistractor;
-                        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-                        
-                        baseSpeed -= globals.distractorSpeedPenalty;
-                        baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-                        tunnel->addToTimePenalty(globals.distractorTimePenalty);
-                        speedTimer = 5.0;
-                        
-                        vines[i]->setWobble(true);
-                        
-                        if (tunnel->getMode() == GAME_PROFICIENCY)
+                        if (numCorrectCombo < 5)
                         {
-                            if (globals.stageTime > 0 && tunnel->getTimeLeft() <= 0)
-                                tunnel->setDone(EVEN);
+                            baseSpeed -= globals.distractorSpeedPenalty;
+                            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                            speedTimer = 5.0;
+                            tunnel->addToTimePenalty(globals.distractorTimePenalty);
+                            if (hp >= 0)
+                                hp += globals.HPPositiveDistractor;
+                            else
+                                hp += globals.HPNegativeDistractor;
+                            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                            vines[i]->setWobble(true);
                         }
+                        numCorrectCombo = 0;
                     }
                 }
             }
@@ -1447,6 +1453,7 @@ void Player::update(float elapsed)
                     targetSlice->setInfoStored(true);
                 }
             }
+            vines[i]->scaleShields(static_cast<float>(numCorrectCombo) / 5);
         }
     }
     updateGlowExtraction(elapsed);

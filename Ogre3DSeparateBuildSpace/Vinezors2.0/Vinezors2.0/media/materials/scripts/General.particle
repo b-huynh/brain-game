@@ -25,30 +25,52 @@ particle_system General/StarBoost
     }
  }
 
-particle_system General/StarShockwave
+particle_system General/StarExplode
  {
     material        General/Star
-    particle_width  5.0
-    particle_height 5.0
+    particle_width  2.0
+    particle_height 2.0
     cull_each       true
-    quota           25
+    quota           100
     billboard_type  point
     local_space	    true
  
     // Area emitter
     emitter Ellipsoid
     {
-        angle           50
+        angle           180
         emission_rate   500
-        time_to_live_min 1.0
-        time_to_live_max 2.0
+        time_to_live    1
         direction       0 0 -1
-        velocity_min    50
-	velocity_max	100
-        colour 1.0 1.0 1.0
-        width           1
-        height          1
-        depth           1
+        velocity_min    20
+        velocity_max	20
+        colour_range_start 1.0 1.0 1.0
+        colour_range_end 1.0 0.7 0.7
+        width           5
+        height          5
+        depth           2
+    }
+ }
+
+particle_system General/Beam
+ {
+    material        General/Star
+    particle_width  1
+    particle_height 1
+    cull_each       true
+    quota           3000
+    billboard_type  point
+    local_space	    true
+ 
+    // Area emitter
+    emitter Ring
+    {
+        emission_rate   5000
+        time_to_live    1
+        colour 0.0 0.3 0.5
+        width           2
+        height          2
+        depth           50
     }
  }
 
@@ -107,10 +129,10 @@ particle_system General/GlowPodBox
 particle_system General/GlowPodEllipsoid
  {
     material        General/Star
-    particle_width  4
-    particle_height 4
+    particle_width  3
+    particle_height 3
     cull_each       true
-    quota           50
+    quota           80
     billboard_type  point
     local_space	    true
  
@@ -124,8 +146,8 @@ particle_system General/GlowPodEllipsoid
         direction       0 1 0
         velocity       0.001
         colour 0.0 0.0 0.0
-        width           2
-        height          2
-        depth           2
+        width           1
+        height          1
+        depth           1
     }
  }

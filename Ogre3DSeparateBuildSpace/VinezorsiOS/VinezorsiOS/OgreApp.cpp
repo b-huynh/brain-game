@@ -10,8 +10,6 @@
 
 Util::ConfigGlobal globals;
 
-#define NETWORKING 1
-
 OgreApp::OgreApp()
 {
 }
@@ -178,13 +176,11 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::setupDemoScene()
 {
     globals.initPaths();
-#if defined(NETWORKING)
-#if defined(OGRE_IS_IOS)
+#if defined(OGRE_IS_IOS) && defined(NETWORKING)
     syncConfig();
 #endif
-#endif
-    seed = time(0);
     
+    seed = time(0);
     srand(seed);
     sessionOver = false;
     
@@ -243,6 +239,7 @@ void OgreApp::setupDemoScene()
     
     // Determine length of time
     globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
+    
     std::cout << "Session Length: " << globals.sessionTime << std::endl;
     
     levelMgr = new LevelManager(player, globals.scheduleMain, globals.scheduleRepeat, globals.scheduleRepeatRandomPool);
@@ -257,10 +254,8 @@ void OgreApp::setupDemoScene()
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
-#if defined(NETWORKING)
-#if defined(OGRE_IS_IOS)
+#if defined(OGRE_IS_IOS) && (NETWORKING)
     syncLogs();
-#endif
 #endif
 }
 
@@ -324,7 +319,7 @@ void OgreApp::endLevel(Evaluation forced)
         if (levelMgr->levelFinished(tunnel, forced))
         {
             gameState = STATE_PROMPT;
-            globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<--- Swipe --->", MESSAGE_NORMAL);
+            globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<---     --->", MESSAGE_NORMAL);
         }
         else
             gameState = STATE_PLAY;
@@ -480,10 +475,8 @@ void OgreApp::endGame()
         player->saveStage(globals.logPath);
         player->saveProgress(globals.savePath, levelMgr->isDoneWithMainSchedule());
         sessionOver = true;
-#if defined(NETWORKING)
-#if defined(OGRE_IS_IOS)
+#if defined(OGRE_IS_IOS) && defined(NETWORKING)
         syncLogs(); //Attempt to sync recently save log file.
-#endif
 #endif
     }
 }
@@ -615,10 +608,15 @@ void OgreApp::activatePerformDoubleTap(float x, float y)
 void OgreApp::activatePerformSingleTap(float x, float y)
 {
     player->addAction(ACTION_SINGLE_TAP);
-    if (x >= globals.pauseButton_posX && x <= globals.pauseButton_posX + globals.pauseButton_width &&
-        y >= globals.pauseButton_posY && y <= globals.pauseButton_posY + globals.pauseButton_posY) {
+    std::string queryGUI = hud->queryButtons(Vector2(x, y));
+    if (queryGUI == "item1")
+        player->setToggleBack(0);
+    else if (queryGUI == "item2")
+        player->setToggleBack(1);
+    else if (queryGUI == "item3")
+        player->setToggleBack(2);
+    else if (queryGUI == "pause")
         if (!pause) setPause(true);
-    }
 #ifdef DEBUG_MODE
     else if (y <= 100 && x <= globals.screenWidth / 2) {
         setLevel(EVEN, false);
@@ -816,6 +814,24 @@ bool OgreApp::keyReleased(const OIS::KeyEvent &keyEventRef)
     
     switch (keyEventRef.key)
     {
+        case OIS::KC_1:
+        {
+            player->setToggleBack(2);
+            std::cout << "toggle: " + Util::toStringInt(tunnel->getNBack() - 2) + "-Back\n";
+            break;
+        }
+        case OIS::KC_2:
+        {
+            player->setToggleBack(1);
+            std::cout << "toggle: " + Util::toStringInt(tunnel->getNBack() - 1) + "-Back\n";
+            break;
+        }
+        case OIS::KC_3:
+        {
+            player->setToggleBack(0);
+            std::cout << "toggle: " + Util::toStringInt(tunnel->getNBack()) + "-Back\n";
+            break;
+        }
         case OIS::KC_LEFT:
         {
             player->setKeyLeft(false);

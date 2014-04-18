@@ -81,6 +81,7 @@ private:
     int numWrongCombo;
     int numAvoidancesTotal;
     int numCollisionsTotal;
+    float score;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -113,6 +114,8 @@ private:
     TunnelSlice* lookback;
     Pod* selectedTarget;
     float glowSpeed;
+    
+    int toggleBack; // 0, 1, or 2
     
     SpeedControlMode speedControl;
     
@@ -211,7 +214,7 @@ private:
 public:
     
 	Player();
-	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
+	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -224,6 +227,7 @@ public:
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
     int getNumCollisionsTotal() const;
+    float getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -254,6 +258,7 @@ public:
     float getProgress() const;
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
+    int getToggleBack() const;
     int getNumStagesWon() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
@@ -264,6 +269,7 @@ public:
     void setNumWrongTotal(int value);
     void setNumCorrectCombo(int value);
     void setNumWrongCombo(int value);
+    void setScore(float value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
@@ -284,6 +290,7 @@ public:
     void setDesireRoll(int value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
+    void setToggleBack(int value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;

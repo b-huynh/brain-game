@@ -177,10 +177,11 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::setupDemoScene()
 {
+    bool isSynced = false;
     globals.initPaths();
 #if defined(NETWORKING)
 #if defined(OGRE_IS_IOS)
-    syncConfig();
+    isSynced = syncConfig();
 #endif
 #endif
     
@@ -243,6 +244,10 @@ void OgreApp::setupDemoScene()
     lightNodeMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNodeMain->attachObject(lightMain);
     lightNodeMain->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+    
+    if (!isSynced) {
+        globals.setMessage("ERROR: Could not connect for updates.\nPlease contact the RA", MESSAGE_ERROR);
+    }
     
 #if defined(NETWORKING)
 #if defined(OGRE_IS_IOS)

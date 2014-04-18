@@ -16,7 +16,7 @@
 #include "History.h"
 
 // Added GAME_TEACHING C.P.
-enum GameMode { GAME_PROFICIENCY, GAME_TIMED, GAME_NAVIGATION, GAME_TEACHING, GAME_RECESS };
+enum GameMode { GAME_PROFICIENCY, GAME_TEACHING, GAME_RECESS };
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -101,7 +101,7 @@ public:
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, GameMode mode, char phase, int nback, int control, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, GameMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -147,7 +147,8 @@ public:
     std::vector<SectionInfo> getSectionInfo() const;
     std::vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees) const;
-    PodSignal getNBackTest(int section) const;
+    PodSignal getNBackTest(int index, int nvalue) const;
+    PodSignal getNBackTest(int nvalue) const;
     GameMode getMode() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;

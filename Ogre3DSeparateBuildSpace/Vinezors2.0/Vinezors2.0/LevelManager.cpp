@@ -32,32 +32,20 @@ GamePhase LevelManager::getPhaseAt(const std::string sched, int index) const
                 return PHASE_SET2;
             case 'C':
                 return PHASE_SET3;
-            case 'D':
-                return PHASE_NAVIGATION;
-            case 'E':
-                return PHASE_TIMED;
             case 'F':
                 return PHASE_TEACHING;
             case 'G':
                 return PHASE_RECESS;
-            case 'H':
-                return PHASE_SETSPECIAL;
             case 'a':
                 return PHASE_SET1;
             case 'b':
                 return PHASE_SET2;
             case 'c':
                 return PHASE_SET3;
-            case 'd':
-                return PHASE_NAVIGATION;
-            case 'e':
-                return PHASE_TIMED;
             case 'f':
                 return PHASE_TEACHING;
             case 'g':
                 return PHASE_RECESS;
-            case 'h':
-                return PHASE_SETSPECIAL;
             default:
                 return PHASE_SET1;
         }
@@ -287,6 +275,7 @@ void LevelManager::decrementSchedIndex()
 
 bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
 {
+    /*
     Evaluation eval = tunnel->getEval();
     bool allowRetry = false;
     switch (getCurrentPhase())
@@ -315,14 +304,6 @@ bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
             else allowRetry = forced == EVEN && !isRepeatingPhase();
             break;
         }
-        case PHASE_NAVIGATION:
-        {
-            if (eval == PASS || forced == PASS)
-            {
-            }
-            else allowRetry = player->getName() == "subject999" && forced == EVEN;
-            break;
-        }
         case PHASE_TEACHING:
         {
             if (eval == PASS || forced == PASS)
@@ -330,21 +311,17 @@ bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
             else allowRetry = forced == EVEN;
             break;
         }
-        case PHASE_SETSPECIAL:
-        {
-            if (eval == PASS || forced == PASS)
-            {}
-            else allowRetry = forced == EVEN && !isRepeatingPhase();
-            break;
-        }
         case PHASE_DONE:
             break;
     }
+    updatePlayerSkill(tunnel, forced);
     return allowRetry;
+    */
 }
 
 void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
 {
+    /*
     Evaluation eval = tunnel->getEval();
     PlayerLevel skillLevel = player->getSkillLevel();
     switch (getCurrentPhase())
@@ -445,27 +422,6 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
             }
             break;
         }
-        case PHASE_NAVIGATION:
-        {
-            // Don't record cheats
-            if (forced == EVEN)
-            {
-                skillLevel.calculateNavigation();
-                skillLevel.navigation = Util::clamp(skillLevel.navigation, 0, globals.navMap.size() - 1);
-            }
-            std::cout << "Navigation Score: " << skillLevel.navigation << std::endl;
-            break;
-        }
-        case PHASE_TIMED:
-        {
-            // Don't record cheats
-            if (forced == EVEN)
-            {
-                skillLevel.calculateSpeed();
-            }
-            std::cout << "Speed Score: " << skillLevel.minSpeed << " " << skillLevel.averageSpeed << " " << skillLevel.maxSpeed << std::endl;
-            break;
-        }
         default:
             break;
     }
@@ -474,6 +430,7 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
     player->saveActions(globals.actionPath);
     player->saveSession(globals.sessionPath);
     player->saveProgress(globals.savePath, globals.currStageID);
+    */
 }
 
 // This version follows a schedule specified when LevelManager was initialized
@@ -483,20 +440,20 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
 // be more modular. For now, it'll do.
 Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
 {
+    /*
     // Extract previous information as the previous tunnel still exists
     Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
     Quaternion newRot = Quaternion(1, 0, 0, 0);
     Vector3 newForward = globals.tunnelReferenceForward;
     int oldNBack = previousTunnel ? previousTunnel->getNBack() : 0;
-    GameMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_TIMED;
+    PlayMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_PROFICIENCY;
     if (previousTunnel)
     {
         delete previousTunnel;
     }
     
-    GameMode nmode = GAME_PROFICIENCY;
+    PlayMode nmode = GAME_PROFICIENCY;
     int nlevel = 0;
-    int ncontrol = 1;
     
     if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
         globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
@@ -507,7 +464,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
         case PHASE_SET1:
         {
             nlevel = skillLevel.set1;
-            ncontrol = 1;
             nmode = GAME_PROFICIENCY;
             
             globals.initCamSpeed = skillLevel.runSpeed1;
@@ -554,7 +510,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
         case PHASE_SET2:
         {
             nlevel = skillLevel.set2;
-            ncontrol = 1;
             nmode = GAME_PROFICIENCY;
             
             globals.initCamSpeed = skillLevel.runSpeed2;
@@ -601,7 +556,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
         case PHASE_SET3:
         {
             nlevel = skillLevel.set3;
-            ncontrol = 1;
             nmode = GAME_PROFICIENCY;
             
             globals.initCamSpeed = skillLevel.runSpeed3;
@@ -645,63 +599,9 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
             globals.setMessage("Match by Only Sound!", MESSAGE_NORMAL);
             break;
         }
-        case PHASE_NAVIGATION:
-        {
-            nlevel = std::max(0, skillLevel.getMasteredNBack() - 1);
-            if (nlevel < 1) nlevel = 1;
-            ncontrol = 1;
-            nmode = GAME_NAVIGATION;
-            
-            globals.initCamSpeed = skillLevel.averageSpeed;
-            
-            if (!configStageType(globals.configPath, globals.configBackup, "D"))
-                globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-            
-            globals.tunnelSectionsPerNavigationUpgrade = (globals.initCamSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerSection) / globals.numNavPhases);
-            if (globals.tunnelSectionsPerNavigationUpgrade <= 0)
-                globals.tunnelSectionsPerNavigationUpgrade = 1;
-            std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
-            
-            globals.setBigMessage("Navigation");
-            globals.setMessage("Avoid Obstacles. Grab Fuel!", MESSAGE_NORMAL);
-            break;
-        }
-        case PHASE_TIMED:
-        {
-            nlevel = std::max(0, skillLevel.getMasteredNBack() - 1);
-            if (nlevel < 1) nlevel = 1;
-            ncontrol = 1;
-            nmode = GAME_TIMED;
-            
-            globals.initCamSpeed = skillLevel.averageSpeed;
-            globals.stageTime = extractTotalTime();
-            if (!configStageType(globals.configPath, globals.configBackup, "E"))
-                globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-            
-            globals.stageTotalSignals = skillLevel.averageSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            
-            // Divide by 4 because there are 4 nav levels in time trial
-            globals.tunnelSectionsPerNavigationUpgrade = (globals.initCamSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerSection) / globals.numTimePhases);
-            
-            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            std::cout << "Navigation Upgrade Num: " << globals.tunnelSectionsPerNavigationUpgrade << std::endl;
-            
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Grab Matching Fuel Cells!", MESSAGE_NORMAL);
-            break;
-        }
         case PHASE_TEACHING:
         {
             nlevel = 1;
-            ncontrol = 1;
             nmode = GAME_TEACHING;
             
             if (!configStageType(globals.configPath, globals.configBackup, "F"))
@@ -715,7 +615,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
         {
             nlevel = std::max(0, skillLevel.getMasteredNBack() - 1);
             if (nlevel < 1) nlevel = 1;
-            ncontrol = 1;
             nmode = GAME_RECESS;
             
             globals.initCamSpeed = skillLevel.averageSpeed;
@@ -727,32 +626,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
             
             globals.setBigMessage("Recess!");
             globals.setMessage("Avoid Obstacles. Grab Fuel Cells!", MESSAGE_NORMAL);
-            break;
-        }
-        case PHASE_SETSPECIAL:
-        {
-            nlevel = 2;
-            ncontrol = 1;
-            nmode = GAME_PROFICIENCY;
-            
-            globals.initCamSpeed = skillLevel.runSpeed3;
-            globals.maxCamSpeed = skillLevel.maxSpeed;
-            
-            if (!configStageType(globals.configPath, globals.configBackup, "H"))
-                globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-            
-            globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-            
-            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back Introduction");
-            globals.setMessage("Grab Matching Fuel Cells!", MESSAGE_NORMAL);
             break;
         }
         default:
@@ -771,7 +644,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                              nmode,
                              getScheduleValue(),
                              nlevel,
-                             ncontrol,
                              SOUTH,
                              globals.tunnelSegmentsPerSection,
                              globals.tunnelSegmentsPerPod,
@@ -779,4 +651,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                              globals.signalTypes);
     
     return ret;
+     */
+    return NULL;
 }

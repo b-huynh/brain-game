@@ -15,7 +15,7 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
-    scheduleMain = "DEABC";
+    scheduleMain = "GABC";
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
@@ -46,11 +46,11 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
     tunnelWallLength = tunnelSegmentWidth / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
-    tunnelSegmentsPerSection = 5;
+    tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    tunnelSectionsPerNavigationUpgrade = 3;
+    tunnelSectionsPerNavigationUpgrade = 2;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
     initiationSections = 1;
@@ -87,7 +87,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 1;
     HPPositiveWrongAnswer = -2;
     HPPositiveDistractor = -1;
-    distractorSpeedPenalty = -1.0;
+    distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
@@ -146,7 +146,11 @@ Util::ConfigGlobal::ConfigGlobal()
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
     signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
     signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-    navMap = std::vector<NavigationLevel>(21);
+    
+    //navMap = std::vector<NavigationLevel>(1);
+    //navMap[0] = NavigationLevel(0, 4, 3);
+    
+    navMap = std::vector<NavigationLevel>(23);
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -168,8 +172,9 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[18] = NavigationLevel(18, 3, 4);
     navMap[19] = NavigationLevel(19, 4, 6);
     navMap[20] = NavigationLevel(20, 3, 5);
-//    navMap[21] = NavigationLevel(21, 3, 6);
-//    navMap[22] = NavigationLevel(22, 4, 7);
+    navMap[19] = NavigationLevel(21, 3, 6);
+    navMap[19] = NavigationLevel(22, 4, 7);
+    
     navIndex = 0;
     
     speedMap[1] = 1.0;
@@ -258,6 +263,11 @@ void Util::ConfigGlobal::set()
     pauseButton_posY = screenHeight - screenHeight / 12;
     pauseButton_width = screenWidth / 15;
     pauseButton_height = pauseButton_width;
+}
+
+Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
+{
+    return Vector2(p.x / screenWidth, p.y / screenHeight);
 }
 
 void Util::ConfigGlobal::initPaths()
@@ -854,6 +864,24 @@ int Util::getNumSides(bool sides[NUM_DIRECTIONS])
     return count;
 }
 
+int Util::getControlLevel(bool sides[NUM_DIRECTIONS])
+{
+    int count = getNumSides(sides);
+    switch (count)
+    {
+        case 3:
+            return 1;
+        case 5:
+            return 2;
+        case 7:
+            return 3;
+        case 8:
+            return 4;
+        default:
+            return 0; // should never happen
+    }
+}
+
 Direction Util::randDirection()
 {
     return (Direction)(rand() % NUM_DIRECTIONS);
@@ -1444,67 +1472,4 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
 float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments)
 {
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
-}
-
-void Util::generateMaterials()
-{
-    /*
-     MaterialPtr mat0 =
-     MaterialManager::getSingleton().create("PodUnknownMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat0->setLightingEnabled(true);
-     mat0->setAmbient(0.3, 0.3, 0.3);
-     mat0->setDiffuse(0.3, 0.3, 0.3, 1.0);
-     mat0->load();
-     
-     MaterialPtr mat1 =
-     MaterialManager::getSingleton().create("PodRedMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat1->setLightingEnabled(true);
-     mat1->setAmbient(0.5, 0.0, 0.0);
-     mat1->setDiffuse(0.5, 0.0, 0.0, 1.0);
-     mat1->load();
-     
-     MaterialPtr mat2 =
-     MaterialManager::getSingleton().create("PodGreenMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat2->setLightingEnabled(true);
-     mat2->setAmbient(0.0, 0.5, 0.0);
-     mat2->setDiffuse(0.0, 0.5, 0.0, 1.0);
-     mat2->load();
-     
-     MaterialPtr mat3 =
-     MaterialManager::getSingleton().create("PodBlueMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat3->setAmbient(0.0, 0.0, 0.5);
-     mat3->setDiffuse(0.0, 0.0, 0.5, 1.0);
-     mat3->load();
-     
-     MaterialPtr mat4 =
-     MaterialManager::getSingleton().create("PodYellowMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat4->setLightingEnabled(true);
-     mat4->setAmbient(0.5, 0.5, 0.0);
-     mat4->setDiffuse(0.5, 0.5, 0.0, 1.0);
-     mat4->load();
-     
-     MaterialPtr mat5 =
-     MaterialManager::getSingleton().create("StemMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat5->setLightingEnabled(true);
-     mat5->setAmbient(0.25, 0.5, 0.25);
-     mat5->setDiffuse(0.25, 0.5, 0.25, 1.0);
-     mat5->load();
-     
-     MaterialPtr mat6 =
-     MaterialManager::getSingleton().create("PodShellMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat6->setLightingEnabled(true);
-     mat6->setAmbient(0.5, 0.0, 0.0);
-     mat6->setDiffuse(0.5, 0.0, 0.0, 0.1);
-     mat6->load();
-     */
-    
-    /*
-     Technique *technique = m->createTechnique();
-     Pass *pass = technique->createPass();
-     pass->setIlluminationStage(Ogre::IS_PER_LIGHT);
-     pass->setVertexColourTracking(Ogre::TVC_DIFFUSE);
-     pass->setAmbient(1.0, 0.0, 0.0);
-     pass->setLightingEnabled(true);
-     */
-    
 }

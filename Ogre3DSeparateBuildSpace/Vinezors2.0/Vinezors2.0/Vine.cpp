@@ -16,9 +16,14 @@ Vine::Vine()
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius)
-: parentNode(parentNode), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
+: parentNode(parentNode), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false), shieldScaleValue(0.0), shieldScaleTarget(0.0)
 {
     loadShip();
+}
+
+Vine::~Vine()
+{
+    removeFromScene();
 }
 
 void Vine::reloadIfNecessary(VineMeshType newMeshType)
@@ -80,18 +85,12 @@ void Vine::loadRunnerShip()
     tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
     tip->yaw(Degree(180.0));
     
-    /*
      // Transparent shell for maybe a shield look around the ship
     shell = entireVine->createChildSceneNode("shellNode" + Util::toStringInt(vineID));
     Entity* shellEntity = shell->getCreator()->createEntity("vineShellEntity" + Util::toStringInt(vineID), "sphereMesh");
-    shellEntity->setMaterialName("General/VineShell");
+    shellEntity->setMaterialName("General/VineShellInactive");
     shell->attachObject(shellEntity);
-    shell->scale(
-        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer),
-        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer),
-        globals.podAppearance * (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer));
-    shell->setScale(radius * 2.5, radius * 2.5, radius * 2.5);
-    */
+    scaleShields(0);
 }
 
 void Vine::loadFlowerShip()
@@ -107,7 +106,7 @@ void Vine::loadFlowerShip()
     tip->scale(0.5, 0.5, 0.5);
     
     // Problem with transparency not carrying over... assign custom material
-    tipEntity->getSubEntity(0)->setMaterialName("General/VineShell");
+    tipEntity->getSubEntity(0)->setMaterialName("General/VineShellActive");
 }
 
 VineMeshType Vine::getMeshType() const
@@ -160,6 +159,11 @@ void Vine::setQuaternion(Quaternion rot)
     entireVine->setOrientation(rot);
 }
 
+void Vine::setVisible(bool value)
+{
+    entireVine->setVisible(value);
+}
+
 void Vine::setWobble(bool value)
 {
     wobbling = value;
@@ -190,6 +194,9 @@ void Vine::move(Vector3 delta)
 	entireVine->translate(delta);
 }
 
+float length = 1.0f;
+float originalHeight = 0.0f;
+
 void Vine::update(float elapsed)
 {
     tip->resetOrientation();
@@ -201,10 +208,51 @@ void Vine::update(float elapsed)
         if (wobbleSpeed > 2.0)
             wobbleSpeed = 2.0;
         
-        tip->roll(15 * Degree(sin(64 * wobbleSpeed * totalElapsed)));
-        if (totalElapsed >= 0.5)
+        tip->pitch(-8 * Degree(sin(8 * (2.2-wobbleSpeed) * totalElapsed)));
+        tip->roll(16 * Degree(sin(8 * (2.2-wobbleSpeed) * totalElapsed)));
+        tip->translate(0.0,-0.1*sin(4*(2.1-wobbleSpeed) * totalElapsed),0.0);
+        
+        if (totalElapsed >= length) {
             setWobble(false);
+            Vector3 fixHeight = tip->getPosition();
+            fixHeight.y = originalHeight;
+            tip->setPosition(fixHeight);
+        }
     }
+    else {
+        Vector3 pos = tip->getPosition();
+        originalHeight = pos.y;
+    }
+    
+    // Shield update values
+    if (shieldScaleValue < shieldScaleTarget)
+    {
+        shieldScaleValue += elapsed;
+        if (shieldScaleValue > shieldScaleTarget) shieldScaleValue = shieldScaleTarget;
+    }
+    else if (shieldScaleValue > shieldScaleTarget)
+    {
+        shieldScaleValue -= 3 * elapsed;
+        if (shieldScaleValue < shieldScaleTarget) shieldScaleValue = shieldScaleTarget;
+    }
+    if (shell)
+    {
+        shieldScaleValue = Util::clamp(shieldScaleValue, 0.0, 1.0);
+        shell->setScale(
+                        radius * 2 * shieldScaleValue,
+                        radius * 2 * shieldScaleValue,
+                        radius * 2 * shieldScaleValue);
+        if (shieldScaleValue >= 1.0)
+            static_cast<Entity*>(shell->getAttachedObject(0))->setMaterialName("General/VineShellActive");
+        else
+            static_cast<Entity*>(shell->getAttachedObject(0))->setMaterialName("General/VineShellInactive");
+        
+    }
+}
+
+void Vine::scaleShields(float size)
+{
+    shieldScaleTarget = size;
 }
 
 void Vine::removeShockwave()
@@ -245,7 +293,7 @@ void Vine::removeFromScene()
     }
     if (shell)
     {
-        shell->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
+        shell->getCreator()->destroyMovableObject(shell->getAttachedObject(0)); // Assuming only one entity
         shell->removeAndDestroyAllChildren();
         shell->getCreator()->destroySceneNode(shell);
         shell = NULL;

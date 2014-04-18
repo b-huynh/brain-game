@@ -12,41 +12,44 @@
 #include <vector>
 #include "Util.h"
 
+struct HudButton
+{
+    std::string name;
+    Overlay* overlay;
+    GuiMetricsMode metric;
+    Vector2 p;
+    Vector2 dim;
+    
+    PanelOverlayElement* backgroundRef;
+    TextAreaOverlayElement* textRef;
+    
+    HudButton() : name(""), overlay(NULL), metric(), p(), dim(), backgroundRef(NULL), textRef(NULL) {}
+    
+    void setButton(std::string name, Overlay* olay, GuiMetricsMode metricMode, Vector2 pos, Vector2 dimension, PanelOverlayElement* bgPtr, TextAreaOverlayElement* txtPtr);
+    bool isInside(Vector2 target) const;
+};
+
 class Hud
 {
-private:
-    Player* player;
-    Tunnel* tunnel;
-    
-    std::vector<Ogre::Overlay*> overlays;
-    
-    OverlayContainer* panelText;
-    BorderPanelOverlayElement* healthArea;
-    PanelOverlayElement* barHP;
-    PanelOverlayElement* indicator;
-    PanelOverlayElement* threshold1;
-    PanelOverlayElement* threshold2;
-    PanelOverlayElement* threshold3;
-    PanelOverlayElement* pauseButton;
-    TextAreaOverlayElement* label1;
-    TextAreaOverlayElement* label2;
-    TextAreaOverlayElement* label3;
-    TextAreaOverlayElement* label4;
-    TextAreaOverlayElement* label5;
-    TextAreaOverlayElement* label6;
-    TextAreaOverlayElement* label7;
 public:
     Hud();
-    void unlink();
-    void link(Tunnel* tunnel, Player* player);
-    void init(Tunnel* tunnel, Player* player);
-    void setOverlay();
-    void update(float elapsed);
+    virtual ~Hud();
+    
+    virtual void init() = 0;                // Initialize all elements
+    virtual void adjust() = 0;              // For resizing windows, we have to readjust some items
+    virtual void update(float elapsed) = 0; // Update certain animated items (timers, ect.)
+    
+    std::string queryButtons(Vector2 target) const; // Returns any buttons containing target
     
     void hideOverlays();
     void showOverlays();
+protected:
+    std::vector<Ogre::Overlay*> overlays;
+    std::vector<HudButton> buttons;
     
-    ~Hud();
+    virtual void alloc() = 0;
+    virtual void dealloc() = 0;
+    virtual void setOverlay() = 0;
 };
 
 #endif /* defined(__Vinezors2_0__Hud__) */

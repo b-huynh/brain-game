@@ -15,7 +15,7 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
-    scheduleMain = "DEABC";
+    scheduleMain = "GABC";
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
@@ -46,11 +46,11 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
     tunnelWallLength = tunnelSegmentWidth / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
-    tunnelSegmentsPerSection = 5;
+    tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    tunnelSectionsPerNavigationUpgrade = 3;
+    tunnelSectionsPerNavigationUpgrade = 2;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
     initiationSections = 1;
@@ -146,7 +146,11 @@ Util::ConfigGlobal::ConfigGlobal()
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
     signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
     signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-    navMap = std::vector<NavigationLevel>(21);
+    
+    //navMap = std::vector<NavigationLevel>(1);
+    //navMap[0] = NavigationLevel(0, 4, 3);
+    
+    navMap = std::vector<NavigationLevel>(23);
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -168,8 +172,9 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[18] = NavigationLevel(18, 3, 4);
     navMap[19] = NavigationLevel(19, 4, 6);
     navMap[20] = NavigationLevel(20, 3, 5);
-//    navMap[21] = NavigationLevel(21, 3, 6);
-//    navMap[22] = NavigationLevel(22, 4, 7);
+    navMap[19] = NavigationLevel(21, 3, 6);
+    navMap[19] = NavigationLevel(22, 4, 7);
+    
     navIndex = 0;
     
     speedMap[1] = 1.0;
@@ -258,6 +263,11 @@ void Util::ConfigGlobal::set()
     pauseButton_posY = screenHeight - screenHeight / 12;
     pauseButton_width = screenWidth / 15;
     pauseButton_height = pauseButton_width;
+}
+
+Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
+{
+    return Vector2(p.x / screenWidth, p.y / screenHeight);
 }
 
 void Util::ConfigGlobal::initPaths()
@@ -852,6 +862,24 @@ int Util::getNumSides(bool sides[NUM_DIRECTIONS])
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         if (sides[i]) ++count;
     return count;
+}
+
+int Util::getControlLevel(bool sides[NUM_DIRECTIONS])
+{
+    int count = getNumSides(sides);
+    switch (count)
+    {
+        case 3:
+            return 1;
+        case 5:
+            return 2;
+        case 7:
+            return 3;
+        case 8:
+            return 4;
+        default:
+            return 0; // should never happen
+    }
 }
 
 Direction Util::randDirection()
