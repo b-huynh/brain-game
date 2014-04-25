@@ -79,7 +79,7 @@ protected:
 #endif
 
 #include "Util.h"
-#include "Networking.h"
+#include "EngineStateManager.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 class OgreApp : public Ogre::RenderTargetListener
@@ -98,15 +98,7 @@ public:
 	void startDemo(const char* name, MusicMode musica);
 #endif
     void update(float elapsed);
-    void endLevel(Evaluation forced = EVEN);
-    void setLevel(Evaluation forced = EVEN, bool forward = true);
-    
-    float getTotalElapsed() const;
-    void setPause(bool value);
-    bool isPaused() const;
-    bool predictSessionOver() const;
     void endGame();
-    
     void requestResize();
     
     void activatePerformLeftMove();
@@ -121,12 +113,10 @@ public:
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
-#endif
     
     virtual bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef);
-    virtual void preViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
-    virtual void postViewportUpdate(const Ogre::RenderTargetViewportEvent & evt) override;
+#endif
     
 private:
     void setupDemoScene();
@@ -134,25 +124,16 @@ private:
     bool initializeRTShaderSystem(SceneManager* sceneMgr);
     void finalizeRTShaderSystem();
     
-    GameState gameState;
-    MusicMode musicMode;
+    EngineStateManager* engineStateMgr;
     
     unsigned seed;
-    bool pause;
-    bool sessionOver;
-    Vector3 origin;
-    SceneNode* lightNodeMain;
-    Tunnel* tunnel;
 	Player* player;
-    Hud* hud;
-    LevelManager* levelMgr;
     
-	bool					m_bShutdown;
+	bool m_bShutdown;
 #ifdef USE_RTSHADER_SYSTEM
     RTShader::ShaderGenerator*			mShaderGenerator;			// The Shader generator instance.
     ShaderGeneratorTechniqueResolverListener*	mMaterialMgrListener;		// Shader generator material manager listener.
 #endif // USE_RTSHADER_SYSTEM
-    
 };
 
 //|||||||||||||||||||||||||||||||||||||||||||||||

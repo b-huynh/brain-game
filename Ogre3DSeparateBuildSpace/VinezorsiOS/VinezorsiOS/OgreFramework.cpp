@@ -148,6 +148,7 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
     
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
+    m_pSoundMgr->createSound("MusicMenu", "VideoGameSong4.ogg", false, true, true);
     m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);

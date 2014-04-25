@@ -20,11 +20,11 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
     stageTime = 120.0;
-    stageTotalSignals = 60;
-    stageTotalTargets1 = 20;
-    stageTotalTargets2 = 35;
-    stageTotalTargets3 = 45;
-    stageTotalCollections = 40;
+    stageTotalSignals = 300;
+    stageTotalTargets1 = 100;
+    stageTotalTargets2 = 150;
+    stageTotalTargets3 = 200;
+    stageTotalCollections = 30;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
@@ -49,10 +49,12 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
+    tunnelSegmentsPerPowerup = 30;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
     tunnelSectionsPerNavigationUpgrade = 2;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
+    initialSegmentsFirstPowerup = 6;
     initiationSections = 1;
     vineTOffset = 1.1;
     vineRadius = tunnelSegmentWidth / 15.0;
@@ -356,10 +358,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerPod;
     else if (paramName == "tunnelSegmentsPerDistractors")
         in >> tunnelSegmentsPerDistractors;
+    else if (paramName == "tunnelSegmentsPerPowerup")
+        in >> tunnelSegmentsPerPowerup;
     else if (paramName == "initialSegmentsFirstPod")
         in >> initialSegmentsFirstPod;
     else if (paramName == "initialSegmentsFirstDistractors")
         in >> initialSegmentsFirstDistractors;
+    else if (paramName == "initialSegmentsFirstPowerup")
+        in >> initialSegmentsFirstPowerup;
     else if (paramName == "podRotateSpeed")
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")

@@ -23,8 +23,10 @@ private:
     std::string materialName;
     
     Entity* headContentEntity;
-    SceneNode* glowNode;
+    SceneNode* glowNode;                // Extraction glow for selection. Particularly for tractor beam
     ParticleSystem* glowEffect;
+    SceneNode* indicatorNode;           // Indicator used to tell player it is a good target
+    ParticleSystem* indicatorEffect;
     
     Vector3 base;
     Vector3 tip;
@@ -43,10 +45,10 @@ private:
     Vector3 rotateSpeed;
     
     Direction loc;
-    bool podTested;
-    bool podTaken;
-    bool podTrigger;
-    bool podGood;
+    bool podTested;     // Pod has already been tested. This is used to make sure we don't send feedback twice
+    bool podTaken;      // Pod is picked up or selected
+    bool podTrigger;    // Feedback on collision or when completely passed, memory signals set this to false, obstacles set this to true
+    bool podGood;       // *** Should remove if continuing with multiple N-Backs test
     
     Vector3 dest;
 public:
@@ -59,6 +61,7 @@ public:
     void loadFlower();
     void loadFuelCell();
     void loadHazard();
+    void loadPowerup();
     
     PodMeshType getMeshType() const;
     Vector3 getBase() const;
@@ -93,14 +96,17 @@ public:
     void revealPod();
     void uncloakPod();
     void generateGlow(PodColor color, PodShape shape);
+    void generateIndicator();
     void setDest(Vector3 value);
 	void setMoveSpeed(float value);
 	void setRotateSpeed(Vector3 value);
     void setPodTested(bool value);
     void setPodGood(bool value);
     void setPodTrigger(bool value);
+    void setVisibleIndicator(bool value);
     
     void removeGlow();
+    void removeIndicator();
 	void removeFromScene();
     
 	void update(float elapsed);

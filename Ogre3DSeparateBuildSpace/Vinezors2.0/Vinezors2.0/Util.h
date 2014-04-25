@@ -15,18 +15,19 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEBUG_MODE 1
-//#define NETWORKING 1
+#define DEBUG_MODE
+//#define NETWORKING
 
 #include <string>
 
 enum GameState { GAME_STATE_PLAY, GAME_STATE_PROMPT, GAME_STATE_MENU };
-enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS };
+enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS, STAGE_MODE_COLLECTION };
 enum Evaluation { PASS, FAIL, EVEN };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum ActionCode { ACTION_NONE, ACTION_SINGLE_TAP, ACTION_DOUBLE_TAP, ACTION_TAP_HOLD, ACTION_SWIPE_LEFT, ACTION_SWIPE_RIGHT, ACTION_PINCH };
+enum PowerupType { POWERUP_NONE, POWERUP_TRACTOR_BEAM, POWERUP_TIME_WARP, POWERUP_SHIELDS };
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
@@ -65,9 +66,7 @@ struct SectionInfo
 };
 
 // Pod Info
-enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD };
-enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
-#define NUM_POD_TYPES 3
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
@@ -156,10 +155,12 @@ namespace Util
         int tunnelSegmentsPerSection;
         int tunnelSegmentsPerPod;
         int tunnelSegmentsPerDistractors;
+        int tunnelSegmentsPerPowerup;
         int tunnelSegmentsBeforeRefresh;
         int tunnelSectionsPerNavigationUpgrade;
         int initialSegmentsFirstPod;
         int initialSegmentsFirstDistractors;
+        int initialSegmentsFirstPowerup;
         int initiationSections;
         float vineTOffset;
         float vineRadius;

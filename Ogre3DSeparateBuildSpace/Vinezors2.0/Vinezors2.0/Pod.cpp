@@ -14,6 +14,7 @@ extern Util::ConfigGlobal globals;
 
 static int podID = 0;
 static int glowID = 0;
+static int indicatorID = 0;
 
 Pod::Pod()
 : parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
@@ -21,7 +22,7 @@ Pod::Pod()
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest()
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest()
 {
     loadPod();
 }
@@ -30,17 +31,20 @@ void Pod::loadPod()
 {
     switch (mtype)
     {
-        case POD_BASIC:
-            loadBasicShape();
-            break;
         case POD_FUEL:
             loadFuelCell();
             break;
         case POD_FLOWER:
             loadFlower();
             break;
-        default:
+        case POD_HAZARD:
             loadHazard();
+            break;
+        case POD_POWERUP:
+            loadPowerup();
+            break;
+        default:
+            loadBasicShape();
             break;
     }
     ++podID;
@@ -189,6 +193,48 @@ void Pod::loadHazard()
     
 }
 
+void Pod::loadPowerup()
+{
+    
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    switch (podColor)
+    {
+        case POD_COLOR_PINK:
+//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/TractorBeam.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+            headContentEntity->setMaterialName("General/PodRed");
+            break;
+        case POD_COLOR_GREEN:
+//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/SlowDown.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+            headContentEntity->setMaterialName("General/PodGreen");
+            break;
+        case POD_COLOR_BLUE:
+//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/Shield.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+            headContentEntity->setMaterialName("General/PodBlue");
+            break;
+        default:
+            std::cout << "WARNING: Unknown Powerup Model Type!\n";
+            break;
+    }
+    
+    head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v);
+    
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
 PodMeshType Pod::getMeshType() const
 {
     return mtype;
@@ -220,10 +266,14 @@ void Pod::setToGrowth(float t)
     {
         head->setScale(Vector3(headRadius / 20, t * headRadius / 20, headRadius / 20));
     }
-    else
+    else if (mtype == POD_HAZARD)
     {
         head->setScale(Vector3(0.5, 0.5 * t, 0.5));
-        //head->setScale(Vector3(0.7, 0.7 * t, 0.7));
+    }
+    else if (mtype == POD_POWERUP)
+    {
+//        head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
+        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
     }
 }
 
@@ -339,6 +389,8 @@ void Pod::setSkin()
         else
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
     }
+    else if (mtype == POD_POWERUP)
+        headContentEntity->setMaterialName(materialName);
 }
 
 void Pod::takePod()
@@ -348,6 +400,8 @@ void Pod::takePod()
         podTaken = true;
     
         materialName += "Transparent";
+        if (mtype == POD_POWERUP)
+            hidePod();
         setSkin();
     }
 }
@@ -390,7 +444,6 @@ void Pod::uncloakPod()
     if (podTaken)
         materialName += "Transparent";
     setSkin();
-    //if (!podTrigger) generateGlow(podColor, podShape);
 }
 
 void Pod::generateGlow(PodColor color, PodShape shape)
@@ -460,6 +513,23 @@ void Pod::generateGlow(PodColor color, PodShape shape)
     }
 }
 
+void Pod::generateIndicator()
+{
+    if (!indicatorNode)
+    {
+        std::string indicatorName = "General/GoodPodIndicator";
+        
+        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(glowID));
+        indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
+        
+        ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+        
+        indicatorNode->attachObject(indicatorEffect);
+        ++indicatorID;
+        
+    }
+}
+
 void Pod::setDest(Vector3 value)
 {
     dest = value;
@@ -490,6 +560,12 @@ void Pod::setPodTrigger(bool value)
     podTrigger = value;
 }
 
+void Pod::setVisibleIndicator(bool value)
+{
+    if (indicatorNode)
+        indicatorNode->setVisible(value);
+}
+
 void Pod::removeGlow()
 {
     if (glowNode)
@@ -499,6 +575,18 @@ void Pod::removeGlow()
         glowNode->getCreator()->destroySceneNode(glowNode);
         glowNode = NULL;
         glowEffect = NULL;
+    }
+}
+
+void Pod::removeIndicator()
+{
+    if (indicatorNode)
+    {
+        indicatorNode->getCreator()->destroyParticleSystem(indicatorEffect);
+        indicatorNode->removeAndDestroyAllChildren();
+        indicatorNode->getCreator()->destroySceneNode(indicatorNode);
+        indicatorNode = NULL;
+        indicatorEffect = NULL;
     }
 }
 
@@ -534,6 +622,10 @@ void Pod::update(float elapsed)
     if (glowNode)
     {
         glowNode->setOrientation(head->_getDerivedOrientation());
+    }
+    if (indicatorNode)
+    {
+        indicatorNode->roll(Degree(elapsed));;
     }
     if (moveSpeed != 0.0)
     {

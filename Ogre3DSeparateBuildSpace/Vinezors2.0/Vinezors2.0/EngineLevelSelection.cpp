@@ -54,36 +54,70 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     if (queryGUI == "levelA1")
     {
         StageRequest level;
-        level.nback = 0;
+        level.nback = 3;
         level.navLevels.push_back(NavigationLevel(0, 0, 0));
         level.navLevels.push_back(NavigationLevel(0, 1, 0));
         level.navLevels.push_back(NavigationLevel(0, 2, 0));
         level.navLevels.push_back(NavigationLevel(0, 3, 0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
         level.phase = 'E';
+        globals.initCamSpeed = 15;
+        globals.minCamSpeed = 15;
+        globals.maxCamSpeed = 40;
+        player->setToggleBack(3);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
     else if (queryGUI == "levelA2")
     {
         StageRequest level;
-        level.nback = 1;
-        level.navLevels.push_back(NavigationLevel(0, 0, 0));
-        level.navLevels.push_back(NavigationLevel(0, 1, 0));
+        level.nback = 3;
         level.navLevels.push_back(NavigationLevel(0, 2, 0));
         level.navLevels.push_back(NavigationLevel(0, 3, 0));
+        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.navLevels.push_back(NavigationLevel(0, 0, 1));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
         level.phase = 'D';
+        globals.initCamSpeed = 16;
+        globals.minCamSpeed = 15;
+        globals.maxCamSpeed = 40;
+        player->setToggleBack(3);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
     else if (queryGUI == "levelA3")
     {
         StageRequest level;
-        level.nback = 1;
-        level.navLevels.push_back(NavigationLevel(0, 0, 0));
-        level.navLevels.push_back(NavigationLevel(0, 1, 0));
-        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.nback = 3;
         level.navLevels.push_back(NavigationLevel(0, 0, 1));
+        level.navLevels.push_back(NavigationLevel(0, 1, 2));
+        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.navLevels.push_back(NavigationLevel(0, 0, 2));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
         level.phase = 'A';
+        globals.initCamSpeed = 17;
+        globals.minCamSpeed = 15;
+        globals.maxCamSpeed = 40;
+        level.powerups.push_back(POWERUP_SHIELDS);
+        player->setToggleBack(2);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
@@ -91,36 +125,66 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "levelA4")
     {
         StageRequest level;
-        level.nback = 1;
-        level.navLevels.push_back(NavigationLevel(0, 2, 0));
-        level.navLevels.push_back(NavigationLevel(0, 2, 1));
-        level.navLevels.push_back(NavigationLevel(0, 3, 1));
-        level.navLevels.push_back(NavigationLevel(0, 3, 2));
+        level.nback = 3;
+        level.navLevels.push_back(NavigationLevel(0, 0, 0));
+        level.navLevels.push_back(NavigationLevel(0, 0, 1));
+        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.navLevels.push_back(NavigationLevel(0, 1, 0));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
         level.phase = 'A';
+        globals.initCamSpeed = 16;
+        globals.minCamSpeed = 15;
+        globals.maxCamSpeed = 40;
+        level.powerups.push_back(POWERUP_SHIELDS);
+        player->setToggleBack(1);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
     else if (queryGUI == "levelA5")
     {
         StageRequest level;
-        level.nback = 2;
-        level.navLevels.push_back(NavigationLevel(0, 0, 0));
-        level.navLevels.push_back(NavigationLevel(0, 1, 0));
-        level.navLevels.push_back(NavigationLevel(0, 0, 1));
-        level.navLevels.push_back(NavigationLevel(0, 0, 2));
+        level.nback = 3;
+        level.navLevels.push_back(NavigationLevel(0, 2, 0));
+        level.navLevels.push_back(NavigationLevel(0, 2, 1));
+        level.navLevels.push_back(NavigationLevel(0, 3, 0));
+        level.navLevels.push_back(NavigationLevel(0, 3, 2));
+        level.collectionCriteria.push_back(CollectionCriteria(0));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
         level.phase = 'B';
+        globals.initCamSpeed = 17;
+        globals.minCamSpeed = 16;
+        globals.maxCamSpeed = 40;
+        level.powerups.push_back(POWERUP_TRACTOR_BEAM);
+        player->setToggleBack(3);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
     else if (queryGUI == "levelA6")
     {
         StageRequest level;
-        level.nback = 2;
-        level.navLevels.push_back(NavigationLevel(0, 0, 0));
-        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.nback = 3;
+        level.navLevels.push_back(NavigationLevel(0, 1, 0));
         level.navLevels.push_back(NavigationLevel(0, 2, 1));
-        level.navLevels.push_back(NavigationLevel(0, 3, 2));
+        level.navLevels.push_back(NavigationLevel(0, 1, 0));
+        level.navLevels.push_back(NavigationLevel(0, 2, 2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(3));
+        level.collectionCriteria.push_back(CollectionCriteria(3));
         level.phase = 'C';
+        globals.initCamSpeed = 16;
+        globals.minCamSpeed = 16;
+        globals.maxCamSpeed = 40;
+        level.powerups.push_back(POWERUP_TRACTOR_BEAM);
+        level.powerups.push_back(POWERUP_SHIELDS);
+        player->setToggleBack(1);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
@@ -128,11 +192,24 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     {
         StageRequest level;
         level.nback = 3;
-        level.navLevels.push_back(NavigationLevel(0, 0, 2));
-        level.navLevels.push_back(NavigationLevel(0, 1, 3));
-        level.navLevels.push_back(NavigationLevel(0, 2, 4));
-        level.navLevels.push_back(NavigationLevel(0, 3, 5));
+        level.navLevels.push_back(NavigationLevel(0, 0, 1));
+        level.navLevels.push_back(NavigationLevel(0, 1, 1));
+        level.navLevels.push_back(NavigationLevel(0, 2, 2));
+        level.navLevels.push_back(NavigationLevel(0, 3, 2));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(2));
+        level.collectionCriteria.push_back(CollectionCriteria(3));
+        level.collectionCriteria.push_back(CollectionCriteria(3));
+        level.collectionCriteria.push_back(CollectionCriteria(3));
         level.phase = 'D';
+        globals.initCamSpeed = 16;
+        globals.minCamSpeed = 15;
+        globals.maxCamSpeed = 40;
+        level.powerups.push_back(POWERUP_TIME_WARP);
+        player->setToggleBack(2);
         player->setStageRequest(level);
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }

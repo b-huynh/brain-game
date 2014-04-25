@@ -12,11 +12,11 @@ extern Util::ConfigGlobal globals;
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), boostEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius)
-: parentNode(parentNode), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shell(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false), shieldScaleValue(0.0), shieldScaleTarget(0.0)
+: parentNode(parentNode), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
     loadShip();
 }
@@ -80,17 +80,12 @@ void Vine::loadRunnerShip()
     
     tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
-    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/runnerShip.mesh");
+    Entity* tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/new_ship_mesh.mesh");
     tip->attachObject(tipEntity);
     tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
     tip->yaw(Degree(180.0));
-    
-     // Transparent shell for maybe a shield look around the ship
-    shell = entireVine->createChildSceneNode("shellNode" + Util::toStringInt(vineID));
-    Entity* shellEntity = shell->getCreator()->createEntity("vineShellEntity" + Util::toStringInt(vineID), "sphereMesh");
-    shellEntity->setMaterialName("General/VineShellInactive");
-    shell->attachObject(shellEntity);
-    scaleShields(0);
+    tipEntity->getSubEntity(3)->setMaterialName("General/WallBindingC");
+    tipEntity->getSubEntity(7)->setMaterialName("General/WallBindingC");
 }
 
 void Vine::loadFlowerShip()
@@ -185,7 +180,7 @@ void Vine::setBoost()
     if (!boostEffect)
     {
         boostEffect = parentNode->getCreator()->createParticleSystem("StarBoost", "General/StarBoost");
-        entireVine->attachObject(boostEffect); 
+        tip->attachObject(boostEffect);
     }
 }
 
@@ -223,36 +218,6 @@ void Vine::update(float elapsed)
         Vector3 pos = tip->getPosition();
         originalHeight = pos.y;
     }
-    
-    // Shield update values
-    if (shieldScaleValue < shieldScaleTarget)
-    {
-        shieldScaleValue += elapsed;
-        if (shieldScaleValue > shieldScaleTarget) shieldScaleValue = shieldScaleTarget;
-    }
-    else if (shieldScaleValue > shieldScaleTarget)
-    {
-        shieldScaleValue -= 3 * elapsed;
-        if (shieldScaleValue < shieldScaleTarget) shieldScaleValue = shieldScaleTarget;
-    }
-    if (shell)
-    {
-        shieldScaleValue = Util::clamp(shieldScaleValue, 0.0, 1.0);
-        shell->setScale(
-                        radius * 2 * shieldScaleValue,
-                        radius * 2 * shieldScaleValue,
-                        radius * 2 * shieldScaleValue);
-        if (shieldScaleValue >= 1.0)
-            static_cast<Entity*>(shell->getAttachedObject(0))->setMaterialName("General/VineShellActive");
-        else
-            static_cast<Entity*>(shell->getAttachedObject(0))->setMaterialName("General/VineShellInactive");
-        
-    }
-}
-
-void Vine::scaleShields(float size)
-{
-    shieldScaleTarget = size;
 }
 
 void Vine::removeShockwave()
@@ -269,8 +234,8 @@ void Vine::removeBoost()
 {
     if (boostEffect)
     {
-        entireVine->detachObject(boostEffect);
-        entireVine->getCreator()->destroyParticleSystem(boostEffect);
+        tip->detachObject(boostEffect);
+        tip->getCreator()->destroyParticleSystem(boostEffect);
         boostEffect = NULL;
     }
 }
@@ -286,22 +251,15 @@ void Vine::removeFromScene()
     }
     if (tip)
     {
+        removeBoost();
         tip->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
         tip->removeAndDestroyAllChildren();
         tip->getCreator()->destroySceneNode(tip);
         tip = NULL;
     }
-    if (shell)
-    {
-        shell->getCreator()->destroyMovableObject(shell->getAttachedObject(0)); // Assuming only one entity
-        shell->removeAndDestroyAllChildren();
-        shell->getCreator()->destroySceneNode(shell);
-        shell = NULL;
-    }
     if (entireVine)
     {
         removeShockwave();
-        removeBoost();
         entireVine->removeAndDestroyAllChildren();
         entireVine->getCreator()->destroySceneNode(entireVine);
         entireVine = NULL;

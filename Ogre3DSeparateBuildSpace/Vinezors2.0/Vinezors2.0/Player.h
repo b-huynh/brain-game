@@ -22,6 +22,8 @@ struct StageRequest
 {
     int nback;
     std::vector<NavigationLevel> navLevels;
+    std::vector<CollectionCriteria> collectionCriteria;
+    std::vector<PowerupType> powerups;
     char phase;
 };
 
@@ -193,6 +195,7 @@ private:
     float selectTimer;
     bool selectTimerFlag;
     float startMusicTimer;
+    bool godMode;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -253,6 +256,7 @@ public:
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
     int getToggleBack() const;
+    bool getGodMode() const;
     int getNumStagesWon() const;
     StageRequest getStageRequest() const;
     
@@ -286,6 +290,7 @@ public:
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
+    void setGodMode(bool value);
     void setStageRequest(StageRequest value);
     void saveCam();
     void revertCam();
@@ -315,17 +320,19 @@ public:
     void decideFinalSpeed(float elapsed);
     
     void addAction(ActionCode actType);
-    void updateGlowExtraction(float elapsed);
-    void setGlowGrabParameters();
     void updateTractorBeam(float elapsed);
     void performTractorBeam();
     void updateTimeWarp(float elapsed);
     void performTimeWarp();
+    void updateBoost(float elapsed);
+    void performBoost();
+    void updateShields(float elapsed);
+    bool triggerShields();
+    void performShields();
+    void updateGlowExtraction(float elapsed);
+    void setGlowGrabParameters();
     void beginBadFuelPickUp();
     void updateBadFuelPickUp(float elapsed);
-    void performBoost();
-    void updateBoost(float elapsed);
-    void updateShields(float elapsed);
     void testPodGiveFeedback(Pod* test);
     void determineSpawnCombo();
     void offsetShip(float elapsed);
@@ -337,6 +344,7 @@ public:
     bool isPowerUpAvailable(std::string pwr);
     void performPowerUp(std::string pwr);
     void destroyPowerUps();
+    void resetPowerUps();
     
     void incrementNumStagesWon();
     void calculateNavigationScores();

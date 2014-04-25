@@ -396,7 +396,7 @@
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
+    return UIInterfaceOrientationLandscapeLeft;
 }
 
 - (void)cleanup

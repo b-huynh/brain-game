@@ -275,6 +275,7 @@ void LevelManager::decrementSchedIndex()
 
 bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
 {
+    /*
     Evaluation eval = tunnel->getEval();
     bool allowRetry = false;
     switch (getCurrentPhase())
@@ -313,11 +314,14 @@ bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
         case PHASE_DONE:
             break;
     }
+    updatePlayerSkill(tunnel, forced);
     return allowRetry;
+    */
 }
 
 void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
 {
+    /*
     Evaluation eval = tunnel->getEval();
     PlayerLevel skillLevel = player->getSkillLevel();
     switch (getCurrentPhase())
@@ -426,6 +430,7 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
     player->saveActions(globals.actionPath);
     player->saveSession(globals.sessionPath);
     player->saveProgress(globals.savePath, globals.currStageID);
+    */
 }
 
 // This version follows a schedule specified when LevelManager was initialized
@@ -435,18 +440,19 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
 // be more modular. For now, it'll do.
 Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
 {
+    /*
     // Extract previous information as the previous tunnel still exists
     Vector3 newOrigin = Vector3(0, 0, 0) + globals.tunnelReferenceForward * (globals.tunnelSegmentWidth / 2);
     Quaternion newRot = Quaternion(1, 0, 0, 0);
     Vector3 newForward = globals.tunnelReferenceForward;
     int oldNBack = previousTunnel ? previousTunnel->getNBack() : 0;
-    GameMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_PROFICIENCY;
+    PlayMode oldGameMode = previousTunnel ? previousTunnel->getMode() : GAME_PROFICIENCY;
     if (previousTunnel)
     {
         delete previousTunnel;
     }
     
-    GameMode nmode = GAME_PROFICIENCY;
+    PlayMode nmode = GAME_PROFICIENCY;
     int nlevel = 0;
     
     if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
@@ -645,4 +651,6 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
                              globals.signalTypes);
     
     return ret;
+     */
+    return NULL;
 }

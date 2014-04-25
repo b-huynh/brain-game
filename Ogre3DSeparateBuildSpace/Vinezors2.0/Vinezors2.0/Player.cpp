@@ -96,7 +96,7 @@ std::string PlayerLevel::getCurrentStats() const
 }
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), numStagesWon(0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), numStagesWon(0)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -104,7 +104,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), numStagesWon(0)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), numStagesWon(0)
 {
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -366,6 +366,11 @@ int Player::getToggleBack() const
     return toggleBack;
 }
 
+bool Player::getGodMode() const
+{
+    return godMode;
+}
+
 int Player::getNumStagesWon() const
 {
     return numStagesWon;
@@ -425,69 +430,12 @@ void Player::setScore(float value)
     score = value;
 }
 
-void Player::updateGlowExtraction(float elapsed)
-{
-    if (selectedTarget)
-    {
-        SceneNode* glowNode = selectedTarget->getGlowNode();
-        
-        if (selectedTarget->isPodTaken() && glowNode)
-        {
-            Vector3 vinePos = vines[0]->getEntireVine()->_getDerivedPosition();
-            Vector3 podPos = selectedTarget->getEntirePod()->_getDerivedPosition();
-            Vector3 glowPos = glowNode->_getDerivedPosition();
-            Vector3 glowMove = (vinePos - glowPos);
-            float glowMoveLen = glowMove.length();
-            if (glowMoveLen <= glowSpeed * elapsed)
-            {
-                glowNode->translate(glowMove);
-                if (selectTimer <= 0.0 && !selectTimerFlag) {
-                    selectTimer = 0.1;
-                    selectTimerFlag = true;
-                }
-            }
-            else
-            {
-                glowMove *= glowSpeed / glowMoveLen * elapsed;
-                glowNode->translate((glowMove));
-            }
-        }
-        if( selectTimerFlag ) {
-            selectTimer -= elapsed;
-            if (selectTimer <= 0.0)
-            {
-                if (selectedTarget)
-                    testPodGiveFeedback(selectedTarget);
-                selectTimer = 0.0;
-                selectedTarget = NULL;
-                selectTimerFlag = false;
-            }
-        }
-    }
-}
-
-
-void Player::setGlowGrabParameters()
-{
-    // Extract a glow that is in the form of a sphere always, not shape of pod.
-    selectedTarget->removeGlow();
-    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
-    
-    // Assign a glow speed towards the player
-    if (selectedTarget->getGlowNode())
-    {
-        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
-        if (finalSpeed > minSpeed)
-            glowSpeed *= (finalSpeed / minSpeed);
-        
-    }
-}
 
 void Player::updateTractorBeam(float elapsed)
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (selectedTarget && t)
+    if (selectedTarget && t && t->active)
     {
         SceneNode* glowNode = selectedTarget->getGlowNode();
         
@@ -510,7 +458,7 @@ void Player::updateTractorBeam(float elapsed)
             t->tractorBeamNode->roll(Radian(Degree(15.0f)));
         }
     }
-    else if( t && t->tractorBeamEffect ) {
+    else if( t && t->active && t->tractorBeamEffect ) {
         t->tractorBeamNode->detachObject(t->tractorBeamEffect);
         t->tractorBeamNode->getCreator()->destroyParticleSystem(t->tractorBeamEffect);
         t->tractorBeamEffect = NULL;
@@ -520,14 +468,13 @@ void Player::updateTractorBeam(float elapsed)
         t->tractorBeamRotatorNode = NULL;
         t->active = false;
     }
-    
 }
 
 void Player::performTractorBeam()
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (!selectedTarget && t)
+    if (!selectedTarget && t && !t->active)
     {
         selectedTarget = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
         if (selectedTarget && !selectedTarget->getGlowNode() && !selectedTarget->isPodTaken())
@@ -538,6 +485,7 @@ void Player::performTractorBeam()
             //    selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
             
             t->active = true;
+            t->available = false;
             t->tractorBeamRotatorNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("BeamRotatorNode");
             t->tractorBeamNode = t->tractorBeamRotatorNode->createChildSceneNode("BeamNode");
             t->tractorBeamEffect = t->tractorBeamNode->getCreator()->createParticleSystem("Beam", "General/Beam");
@@ -553,7 +501,7 @@ void Player::updateTimeWarp(float elapsed)
 {
     TimeWarp* t = (TimeWarp*)powerups["TimeWarp"];
     
-    if( t ) {
+    if( t && t->active ) {
         if( t->zoomIn == 0 ) {
             t->currentAngle += t->angleIncrement;
             if( t->currentAngle >= t->maxAngle ) {
@@ -633,7 +581,7 @@ void Player::performTimeWarp()
     
     TimeWarp* t = dynamic_cast<TimeWarp*>(powerups["TimeWarp"]);
     
-    if ( t ) {
+    if ( t && !t->active ) {
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
         
         t->origFov = Degree(cam->getFOVy());
@@ -645,8 +593,171 @@ void Player::performTimeWarp()
         
         t->mainTimer = 0.0f;
         t->active = true;
+        t->available = false;
+    }
+}
+
+void Player::updateBoost(float elapsed)
+{
+    float timeRange = 0.5;
+    if (boostTimer > 0.0)
+    {
+        boostTimer -= elapsed;
+        if (boostTimer <= 0.0)
+            boostTimer = 0.0;
+        else if (boostTimer <= timeRange)
+        {
+            soundBoost->stop();
+            vines[0]->removeBoost();
+        }
+    }
+}
+
+void Player::performBoost()
+{
+    float timeRange = 0.5; // Range to linearly decrease back to normal speed
+    if (boostTimer <= timeRange)
+    {
+        boostTimer = 2.0;
+        vines[0]->setBoost();
+        if (soundBoost)
+        {
+            soundBoost->stop();
+            soundBoost->play();
+        }
+    }
+}
+
+void Player::performShields()
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    
+    if ( t && t->shieldScaleTarget < 1.0) {
+        
+        if (!t->shieldNode)
+        {
+            t->shieldNode = vines[0]->entireVine->createChildSceneNode("shieldNode");
+            t->shieldEntity = t->shieldNode->getCreator()->createEntity("shieldEntity", "sphereMesh");
+            
+            t->shieldEntity->setMaterialName("General/VineShellInactive");
+            t->shieldNode->attachObject(t->shieldEntity);
+        }
+        t->active = true;
+        t->available = false;
+        t->shieldScaleTarget = 1.0;
     }
     
+}
+
+bool Player::triggerShields()
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    if ( t && t->active && t->shieldScaleTarget >= 1.0 )
+    {
+        t->shieldScaleTarget = 0.0;
+        t->active = false;
+        return true;
+    }
+    return false;
+}
+
+void Player::updateShields(float elapsed)
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    
+    if ( t && t->shieldNode ) {
+        // Move value towards target destination
+        if (t->shieldScaleValue < t->shieldScaleTarget)
+        {
+            t->shieldScaleValue += 1.5 * elapsed;
+            if (t->shieldScaleValue > t->shieldScaleTarget)
+                t->shieldScaleValue = t->shieldScaleTarget;
+        }
+        else if (t->shieldScaleValue > t->shieldScaleTarget)
+        {
+            t->shieldScaleValue -= 2 * elapsed;
+            if (t->shieldScaleValue < t->shieldScaleTarget)
+                t->shieldScaleValue = t->shieldScaleTarget;
+        }
+        
+        t->shieldNode->setScale(
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue,
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue,
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue);
+        
+        if (t->shieldScaleValue >= 1.0)
+            t->shieldEntity->setMaterialName("General/VineShellActive");
+        else
+            t->shieldEntity->setMaterialName("General/VineShellInactive");
+        
+        if (t->shieldScaleValue <= 0.0 && t->shieldScaleTarget <= 0.0)
+        {
+            t->shieldNode->detachObject(t->shieldEntity);
+            t->shieldNode->getCreator()->destroyEntity(t->shieldEntity);
+            t->shieldEntity = NULL;
+            t->shieldNode->getParent()->removeChild(t->shieldNode);
+            t->shieldNode->getCreator()->destroySceneNode(t->shieldNode);
+            t->shieldNode = NULL;
+            t->active = false;
+        }
+    }
+}
+
+void Player::updateGlowExtraction(float elapsed)
+{
+    if (selectedTarget)
+    {
+        SceneNode* glowNode = selectedTarget->getGlowNode();
+        
+        if (selectedTarget->isPodTaken() && glowNode)
+        {
+            Vector3 vinePos = vines[0]->getEntireVine()->_getDerivedPosition();
+            Vector3 podPos = selectedTarget->getEntirePod()->_getDerivedPosition();
+            Vector3 glowPos = glowNode->_getDerivedPosition();
+            Vector3 glowMove = (vinePos - glowPos);
+            float glowMoveLen = glowMove.length();
+            if (glowMoveLen <= glowSpeed * elapsed)
+            {
+                glowNode->translate(glowMove);
+                if (selectTimer <= 0.0 && !selectTimerFlag) {
+                    selectTimer = 0.1;
+                    selectTimerFlag = true;
+                }
+            }
+            else
+            {
+                glowMove *= glowSpeed / glowMoveLen * elapsed;
+                glowNode->translate((glowMove));
+            }
+        }
+        if( selectTimerFlag ) {
+            selectTimer -= elapsed;
+            if (selectTimer <= 0.0)
+            {
+                if (selectedTarget)
+                    testPodGiveFeedback(selectedTarget);
+                selectTimer = 0.0;
+                selectedTarget = NULL;
+                selectTimerFlag = false;
+            }
+        }
+    }
+}
+
+void Player::setGlowGrabParameters()
+{
+    // Extract a glow that is in the form of a sphere always, not shape of pod.
+    selectedTarget->removeGlow();
+    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    
+    // Assign a glow speed towards the player
+    if (selectedTarget->getGlowNode())
+    {
+        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
+        if (finalSpeed > minSpeed)
+            glowSpeed *= (finalSpeed / minSpeed);
+        
+    }
 }
 
 void Player::beginBadFuelPickUp()
@@ -670,51 +781,13 @@ void Player::updateBadFuelPickUp(float elapsed)
     }
 }
 
-void Player::performBoost()
-{
-    float timeRange = 0.5; // Range to linearly decrease back to normal speed
-    if (boostTimer <= timeRange)
-    {
-        boostTimer = 2.0;
-        vines[0]->setBoost();
-        if (soundBoost)
-        {
-            soundBoost->stop();
-            soundBoost->play();
-        }
-    }
-}
-
-void Player::updateBoost(float elapsed)
-{
-    float timeRange = 0.5;
-    if (boostTimer > 0.0)
-    {
-        boostTimer -= elapsed;
-        if (boostTimer <= 0.0)
-            boostTimer = 0.0;
-        else if (boostTimer <= timeRange)
-        {
-            soundBoost->stop();
-            vines[0]->removeBoost();
-        }
-    }
-}
-
-void Player::updateShields(float elapsed)
-{
-    vines[0]->scaleShields(static_cast<float>(numCorrectCombo) / 5);
-}
-
 void Player::testPodGiveFeedback(Pod* test)
 {
     if (test->isPodTested())
         return;
     test->setPodTested(true);
     
-    int testedNBack = Util::clamp(tunnel->getNBack() - toggleBack, 0, tunnel->getNBack());
-    bool goodPod = tunnel->getNBackTest(testedNBack) != POD_SIGNAL_UNKNOWN;
-    if (tunnel->getMode() == STAGE_MODE_RECESS) goodPod = true;
+    bool goodPod = tunnel->getPodIsGood();
     std::cout << "Good: " << goodPod	 << std::endl;
 
     // Determine whether the player got it right or not
@@ -737,7 +810,9 @@ void Player::testPodGiveFeedback(Pod* test)
         }
         ++numCorrectTotal;
 
-        if (testedNBack == tunnel->getNBack())
+        tunnel->satisfyCriteria(Util::clamp(tunnel->getNBack() - toggleBack, 0, tunnel->getNBack()));
+        
+        if (getToggleBack() == 0)
         {
             if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
             else hp += globals.HPNegativeCorrectAnswer;
@@ -751,34 +826,23 @@ void Player::testPodGiveFeedback(Pod* test)
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
-        std::cout << "Combo: "  << numCorrectCombo << std::endl;
-        score += std::pow(10.0, testedNBack);
+        score += std::pow(10.0, 2 - getToggleBack());
     }
-    else if (!test->isPodGood() && !test->isPodTaken())
+    else if (!goodPod && test->isPodTaken())
     {
-        numSafeTotal++;
-        numCorrectBonus++;
-    }
-    else if ((test->isPodGood() && !test->isPodTaken()) ||
-             (!goodPod && test->isPodTaken())) {
-        if( test->isPodTaken() ) beginBadFuelPickUp();
-        
         if (soundFeedbackBad)
         {
             soundFeedbackBad->stop();
             soundFeedbackBad->play();
         }
-        if (test->isPodGood() && !test->isPodTaken()) // Missed good
-            ++numMissedTotal;
-        else //if ((!test->isPodGood() && test->isPodTaken()) //Took bad
-            ++numWrongTotal;
+        ++numWrongTotal;
         
-        if (numCorrectCombo < 5)
-        {
-            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-            else hp += globals.HPNegativeWrongAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        }
+        if( test->isPodTaken() ) beginBadFuelPickUp();
+        
+        if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+        else hp += globals.HPNegativeWrongAnswer;
+        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        
         numCorrectCombo = 0;
         ++numWrongCombo;
         if (numWrongCombo % globals.numToSpeedDown == 0)
@@ -786,14 +850,16 @@ void Player::testPodGiveFeedback(Pod* test)
             baseSpeed += globals.stepsizeSpeedDown;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
-        
-        // Combo Speed reduction
         numCorrectBonus = 0;
-        //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY)
-        //{
-        //    bonusSpeed -= 3.0;
-        //    if (bonusSpeed < 0.0) bonusSpeed = 0.0;
-        //}
+    }
+    else if (!test->isPodGood() && !test->isPodTaken())
+    {
+        numSafeTotal++;
+        numCorrectBonus++;
+    }
+    else if (test->isPodGood() && !test->isPodTaken()) // Missed good
+    {
+        ++numMissedTotal;
     }
     // Check for combo mode
     //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
@@ -1124,6 +1190,12 @@ void Player::setToggleBack(int value)
     toggleBack = value;
 }
 
+void Player::setGodMode(bool value)
+{
+    godMode = value;
+    tunnel->respondToToggleCheat();
+}
+
 void Player::setStageRequest(StageRequest value)
 {
     stageRequest = value;
@@ -1424,26 +1496,49 @@ void Player::checkCollisions()
                 {
                     if (hits[i]->getPodTrigger())
                     {
-                        if (soundCollision)
+                        if (hits[i]->getMeshType() == POD_HAZARD)
                         {
-                            soundCollision->stop();
-                            soundCollision->play();
-                        }
+                            if (soundCollision)
+                            {
+                                soundCollision->stop();
+                                soundCollision->play();
+                            }
                         
-                        if (numCorrectCombo < 5)
-                        {
-                            baseSpeed -= globals.distractorSpeedPenalty;
-                            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-                            speedTimer = 5.0;
-                            tunnel->addToTimePenalty(globals.distractorTimePenalty);
-                            if (hp >= 0)
-                                hp += globals.HPPositiveDistractor;
-                            else
-                                hp += globals.HPNegativeDistractor;
-                            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-                            vines[i]->setWobble(true);
+                            if (!triggerShields())
+                            {
+                                baseSpeed -= globals.distractorSpeedPenalty;
+                                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                                speedTimer = 5.0;
+                                tunnel->addToTimePenalty(globals.distractorTimePenalty);
+                                if (hp >= 0)
+                                    hp += globals.HPPositiveDistractor;
+                                else
+                                    hp += globals.HPNegativeDistractor;
+                                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                            
+                                beginBadFuelPickUp();
+                            }
+                            numCorrectCombo = 0;
                         }
-                        numCorrectCombo = 0;
+                        else if (hits[i]->getMeshType() == POD_POWERUP)
+                        {
+                            switch (hits[i]->getPodColor())
+                            {
+                                case POD_COLOR_PINK:
+                                    powerups["TractorBeam"]->available = true;
+                                    break;
+                                case POD_COLOR_BLUE:
+                                    powerups["Shields"]->available = true;
+                                    break;
+                                case POD_COLOR_GREEN:
+                                    powerups["TimeWarp"]->available = true;
+                                    break;
+                                case POD_COLOR_YELLOW:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
                 }
             }
@@ -1534,17 +1629,17 @@ void Player::update(float elapsed)
     
     updateBadFuelPickUp(elapsed);
     updateBoost(elapsed);
-    updateShields(elapsed);
     updateGlowExtraction(elapsed);
     
     for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
-        if( it->second->active ) {
-            if( (it->first).compare("TimeWarp") == 0 ) {
-                updateTimeWarp(elapsed);
-            }
-            else if( (it->first).compare("TractorBeam") == 0 ) {
-                updateTractorBeam(elapsed);
-            }
+        if( (it->first).compare("TimeWarp") == 0 ) {
+            updateTimeWarp(elapsed);
+        }
+        else if( (it->first).compare("TractorBeam") == 0 ) {
+            updateTractorBeam(elapsed);
+        }
+        else if( (it->first).compare("Shields") == 0 ) {
+            updateShields(elapsed);
         }
     }
     
@@ -1576,9 +1671,11 @@ void Player::initPowerUps()
 {
     powerups["TractorBeam"] = new TractorBeam();
     powerups["TimeWarp"] = new TimeWarp(0.0f,0.45f,20.0f,75.0f);
+    powerups["Shields"] = new Shields();
     
-    powerups["TractorBeam"]->available = true;
-    powerups["TimeWarp"]->available = true;
+    powerups["TractorBeam"]->available = false;
+    powerups["TimeWarp"]->available = false;
+    powerups["Shields"]->available = false;
 }
 
 void Player::setPowerUp( std::string pwr, bool val )
@@ -1589,7 +1686,7 @@ void Player::setPowerUp( std::string pwr, bool val )
 
 bool Player::isPowerUpAvailable( std::string pwr )
 {
-    if( powerups.find(pwr) != powerups.end() && !powerups[pwr]->active)
+    if( powerups.find(pwr) != powerups.end())
         return powerups[pwr]->available;
     
     return false;
@@ -1605,6 +1702,9 @@ void Player::performPowerUp( std::string pwr )
         else if( pwr.compare("TractorBeam") == 0 ) {
             performTractorBeam();
         }
+        else if( pwr.compare("Shields") == 0 ) {
+            performShields();
+        }
     }
 }
 
@@ -1612,6 +1712,13 @@ void Player::destroyPowerUps()
 {
     for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
         delete it->second;
+    }
+}
+
+void Player::resetPowerUps()
+{
+    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
+        it->second->reset();
     }
 }
 

@@ -20,11 +20,11 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
     stageTime = 120.0;
-    stageTotalSignals = 60;
-    stageTotalTargets1 = 20;
-    stageTotalTargets2 = 35;
-    stageTotalTargets3 = 45;
-    stageTotalCollections = 40;
+    stageTotalSignals = 300;
+    stageTotalTargets1 = 100;
+    stageTotalTargets2 = 150;
+    stageTotalTargets3 = 200;
+    stageTotalCollections = 30;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
@@ -49,10 +49,12 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
+    tunnelSegmentsPerPowerup = 30;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
     tunnelSectionsPerNavigationUpgrade = 2;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
+    initialSegmentsFirstPowerup = 6;
     initiationSections = 1;
     vineTOffset = 1.1;
     vineRadius = tunnelSegmentWidth / 15.0;
@@ -87,7 +89,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 1;
     HPPositiveWrongAnswer = -2;
     HPPositiveDistractor = -1;
-    distractorSpeedPenalty = -1.0;
+    distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
@@ -356,10 +358,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerPod;
     else if (paramName == "tunnelSegmentsPerDistractors")
         in >> tunnelSegmentsPerDistractors;
+    else if (paramName == "tunnelSegmentsPerPowerup")
+        in >> tunnelSegmentsPerPowerup;
     else if (paramName == "initialSegmentsFirstPod")
         in >> initialSegmentsFirstPod;
     else if (paramName == "initialSegmentsFirstDistractors")
         in >> initialSegmentsFirstDistractors;
+    else if (paramName == "initialSegmentsFirstPowerup")
+        in >> initialSegmentsFirstPowerup;
     else if (paramName == "podRotateSpeed")
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
@@ -1472,67 +1478,4 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
 float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments)
 {
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
-}
-
-void Util::generateMaterials()
-{
-    /*
-     MaterialPtr mat0 =
-     MaterialManager::getSingleton().create("PodUnknownMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat0->setLightingEnabled(true);
-     mat0->setAmbient(0.3, 0.3, 0.3);
-     mat0->setDiffuse(0.3, 0.3, 0.3, 1.0);
-     mat0->load();
-     
-     MaterialPtr mat1 =
-     MaterialManager::getSingleton().create("PodRedMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat1->setLightingEnabled(true);
-     mat1->setAmbient(0.5, 0.0, 0.0);
-     mat1->setDiffuse(0.5, 0.0, 0.0, 1.0);
-     mat1->load();
-     
-     MaterialPtr mat2 =
-     MaterialManager::getSingleton().create("PodGreenMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat2->setLightingEnabled(true);
-     mat2->setAmbient(0.0, 0.5, 0.0);
-     mat2->setDiffuse(0.0, 0.5, 0.0, 1.0);
-     mat2->load();
-     
-     MaterialPtr mat3 =
-     MaterialManager::getSingleton().create("PodBlueMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat3->setAmbient(0.0, 0.0, 0.5);
-     mat3->setDiffuse(0.0, 0.0, 0.5, 1.0);
-     mat3->load();
-     
-     MaterialPtr mat4 =
-     MaterialManager::getSingleton().create("PodYellowMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat4->setLightingEnabled(true);
-     mat4->setAmbient(0.5, 0.5, 0.0);
-     mat4->setDiffuse(0.5, 0.5, 0.0, 1.0);
-     mat4->load();
-     
-     MaterialPtr mat5 =
-     MaterialManager::getSingleton().create("StemMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat5->setLightingEnabled(true);
-     mat5->setAmbient(0.25, 0.5, 0.25);
-     mat5->setDiffuse(0.25, 0.5, 0.25, 1.0);
-     mat5->load();
-     
-     MaterialPtr mat6 =
-     MaterialManager::getSingleton().create("PodShellMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat6->setLightingEnabled(true);
-     mat6->setAmbient(0.5, 0.0, 0.0);
-     mat6->setDiffuse(0.5, 0.0, 0.0, 0.1);
-     mat6->load();
-     */
-    
-    /*
-     Technique *technique = m->createTechnique();
-     Pass *pass = technique->createPass();
-     pass->setIlluminationStage(Ogre::IS_PER_LIGHT);
-     pass->setVertexColourTracking(Ogre::TVC_DIFFUSE);
-     pass->setAmbient(1.0, 0.0, 0.0);
-     pass->setLightingEnabled(true);
-     */
-    
 }

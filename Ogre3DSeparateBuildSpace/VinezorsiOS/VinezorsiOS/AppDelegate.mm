@@ -3,7 +3,7 @@
 #import "SimpleMenuViewController.h"
 #import "MainViewController.h"
 
-#define AUTO_START 1
+#define AUTO_START
 
 @implementation AppDelegate
 
@@ -14,7 +14,7 @@
 #ifdef AUTO_START
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject998":TRUE];
+    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100":TRUE];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 #else

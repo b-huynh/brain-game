@@ -76,7 +76,6 @@ void EngineStage::update(float elapsed)
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
             if (lightNode)
                 lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-            
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -199,12 +198,32 @@ void EngineStage::activatePerformSingleTap(float x, float y)
         {
             std::string queryGUI = hud->queryButtons(Vector2(x, y));
             
-            if (queryGUI == "toggle1")
+            if (queryGUI == "powerup1")
+                player->performPowerUp("TractorBeam");
+            else if (queryGUI == "powerup2")
+                player->performPowerUp("Shields");
+            else if (queryGUI == "powerup3")
+                player->performPowerUp("TimeWarp");
+            else if (queryGUI == "toggle1")
+            {
                 player->setToggleBack(0);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
             else if (queryGUI == "toggle2")
+            {
                 player->setToggleBack(1);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
             else if (queryGUI == "toggle3")
+            {
                 player->setToggleBack(2);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
+            else if (queryGUI == "toggle3")
+            {
+                player->setToggleBack(3);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
             else if (queryGUI == "pause")
             {
                 setPause(true);
@@ -352,6 +371,11 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             player->setKeyRight(true);
             break;
         }
+        case OIS::KC_SPACE:
+        {
+            player->setKeySpace(true);
+            break;
+        }
         case OIS::KC_LEFT:
         {
             activatePerformLeftMove();
@@ -362,20 +386,52 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             activatePerformRightMove();
             break;
         }
+        case OIS::KC_UP:
+        {
+            player->setBaseSpeed(player->getBaseSpeed() + 1);
+            break;
+        }
+        case OIS::KC_DOWN:
+        {
+            player->setBaseSpeed(player->getBaseSpeed() - 1);
+            break;
+        }
+        case OIS::KC_1:
+        {
+            player->setToggleBack(3);
+            if (tunnel) tunnel->respondToToggleCheat();
+            break;
+        }
+        case OIS::KC_2:
+        {
+            player->setToggleBack(2);
+            if (tunnel) tunnel->respondToToggleCheat();
+            break;
+        }
+        case OIS::KC_3:
+        {
+            player->setToggleBack(1);
+            if (tunnel) tunnel->respondToToggleCheat();
+            break;
+        }
+        case OIS::KC_4:
+        {
+            player->setToggleBack(0);
+            if (tunnel) tunnel->respondToToggleCheat();
+            break;
+        }
         case OIS::KC_P:
         {
-            break;
-        }
-        case OIS::KC_MINUS:
-        {
-            break;
-        }
-        case OIS::KC_EQUALS:
-        {
-            break;
-        }
-        case OIS::KC_SPACE:
-        {
+            if (stageState == STAGE_STATE_RUNNING)
+            {
+                setPause(true);
+                stageState = STAGE_STATE_PAUSE;
+            }
+            else
+            {
+                setPause(false);
+                stageState = STAGE_STATE_RUNNING;
+            }
             break;
         }
         case OIS::KC_Z:
@@ -391,6 +447,19 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_C:
         {
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TimeWarp");
+            break;
+        }
+        case OIS::KC_V:
+        {
+            if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("Shields");
+            break;
+        }
+        case OIS::KC_G:
+        {
+#ifdef DEBUG_MODE
+            player->setGodMode(!player->getGodMode());
+            std::cout << "God Mode: " << player->getGodMode() << std::endl;
+#endif
             break;
         }
         default:
@@ -422,48 +491,9 @@ void EngineStage::keyReleased(const OIS::KeyEvent &keyEventRef)
             player->setKeyRight(false);
             break;
         }
-        case OIS::KC_1:
-        {
-            player->setToggleBack(2);
-            break;
-        }
-        case OIS::KC_2:
-        {
-            player->setToggleBack(1);
-            break;
-        }
-        case OIS::KC_3:
-        {
-            player->setToggleBack(0);
-            break;
-        }
-        case OIS::KC_UP:
-        {
-            player->setBaseSpeed(player->getBaseSpeed() + 1);
-            break;
-        }
-        case OIS::KC_DOWN:
-        {
-            player->setBaseSpeed(player->getBaseSpeed() - 1);
-            break;
-        }
         case OIS::KC_SPACE:
         {
             player->setKeySpace(false);
-            break;
-        }
-        case OIS::KC_P:
-        {
-            if (stageState == STAGE_STATE_RUNNING)
-            {
-                setPause(true);
-                stageState = STAGE_STATE_PAUSE;
-            }
-            else
-            {
-                setPause(false);
-                stageState = STAGE_STATE_RUNNING;
-            }
             break;
         }
         default:
@@ -509,64 +539,59 @@ void EngineStage::setup()
     {
         case 'A':
         {
-            nmode = STAGE_MODE_PROFICIENCY;
-            globals.initCamSpeed = skillLevel.runSpeed1;
+            nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_CONE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_CONE, POD_SOUND_4));
             
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
+            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.setMessage("Obtain matches by Color!", MESSAGE_NORMAL);
             break;
         }
         case 'B':
         {
-            nmode = STAGE_MODE_PROFICIENCY;
-            globals.initCamSpeed = skillLevel.runSpeed2;
+            nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
+            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.setMessage("Obtain matches by Shape!", MESSAGE_NORMAL);
             break;
         }
         case 'C':
         {
-            nmode = STAGE_MODE_PROFICIENCY;
-            globals.initCamSpeed = skillLevel.runSpeed3;
+            nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_4));
 
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
+            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.setMessage("Obtain matches by only sound!", MESSAGE_NORMAL);
             break;
         }
         case 'D':
-            nmode = STAGE_MODE_PROFICIENCY;
-            globals.initCamSpeed = (skillLevel.runSpeed1 + skillLevel.runSpeed2 + skillLevel.runSpeed3) / 3;
+            nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matches by signals!", MESSAGE_NORMAL);
+            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
+            globals.setMessage("Obtain matching signals!", MESSAGE_NORMAL);
             break;
         case 'E':
             nmode = STAGE_MODE_RECESS;
-            globals.initCamSpeed = (skillLevel.runSpeed1 + skillLevel.runSpeed2 + skillLevel.runSpeed3) / 3;
             globals.signalTypes.clear();
             globals.stageTotalCollections = skillLevel.averageSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            globals.setBigMessage("Recess!");
+            //globals.setBigMessage("Recess!");
             globals.setMessage("Grab Fuel Cells!", MESSAGE_NORMAL);
             break;
     }
@@ -587,11 +612,14 @@ void EngineStage::setup()
                         globals.tunnelSegmentsPerSection,
                         globals.tunnelSegmentsPerPod,
                         globals.tunnelSegmentsPerDistractors,
-                        globals.signalTypes);
+                        globals.tunnelSegmentsPerPowerup,
+                        globals.signalTypes,
+                        level.powerups);
     tunnel->link(player);
     player->link(tunnel);
     
     tunnel->setNavigationLevels(level.navLevels);
+    tunnel->setCollectionCriteria(level.collectionCriteria);
     tunnel->constructTunnel(globals.tunnelSections);
     player->newTunnel();
     
@@ -639,6 +667,7 @@ void EngineStage::setup()
 
 void EngineStage::dealloc()
 {
+    player->resetPowerUps();
     player->removeVines();
     if (tunnel)
     {
@@ -667,10 +696,6 @@ void EngineStage::setPause(bool value)
         OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
         globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
-#ifdef DEBUG_MODE
-        globals.appendMessage("\n\n" + player->getSkillLevel().getCurrentStats(), MESSAGE_NORMAL);
-        globals.appendMessage("\n\n" + Util::toStringInt(globals.sessionTime - getTotalElapsed()), MESSAGE_NORMAL);
-#endif
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }
     else

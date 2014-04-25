@@ -14,6 +14,14 @@
 #include "Util.h"
 #include "TunnelSlice.h"
 
+struct CollectionCriteria
+{
+    int nback;
+    bool collected;
+    
+    CollectionCriteria(int n) : nback(n), collected(false) {}
+};
+
 // Stores the list of tunnel segments
 class Tunnel
 {
@@ -56,6 +64,7 @@ public:
     int sectionSize;
     int podSegmentSize;
     int distractorSegmentSize;
+    int powerupSegmentSize;
     int spawnIndex; // The current index to spawn which pod.
     int spawnCombo;
     int spawnLimit;
@@ -67,6 +76,7 @@ public:
     int renewalSectionCounter;
     int renewalPodCounter;
     int renewalDistractorCounter;
+    int renewalPowerupCounter;
     std::list<Pod*> activePods; // Animating pods
     
     // Stage attributes
@@ -90,12 +100,15 @@ public:
     std::vector<NavigationLevel> navLevels;
     std::list<int> propagateCounters;
     
+    std::vector<CollectionCriteria> collectionCriteria;
+    std::vector<PowerupType> powerups;
+    
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -140,8 +153,13 @@ public:
     std::vector<SectionInfo> getSectionInfo() const;
     std::vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees) const;
+    // Given n-back to test, return the match if any, otherwise return POD_UNKNOWN for no
     PodSignal getNBackTest(int index, int nvalue) const;
     PodSignal getNBackTest(int nvalue) const;
+    // Uses getNBackTest and determines n-back to test by the player's toggleBack
+    bool getPodIsGood(int index) const;
+    bool getPodIsGood() const;
+    
     StageMode getMode() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
@@ -158,6 +176,7 @@ public:
     int getNumNavLevels() const;
     int getBuildingNavLevel() const;    // The nav level the tunnel is building
     int getCurrentNavLevel() const;     // The nav level the player is still on
+    std::vector<CollectionCriteria> getCollectionCriteria() const;
     
     virtual void checkIfDone();
     bool isDone() const;
@@ -173,6 +192,9 @@ public:
     void updateNavigationLevel();
     void setNavigationLevels();
     void setNavigationLevels(const std::vector<NavigationLevel> & preset);
+    void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
+    void satisfyCriteria(int nback);
+    bool isCriteriaSatisfied() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
@@ -180,7 +202,8 @@ public:
     PodInfo getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting);
     PodInfo getNextPodInfo(SectionInfo segmentInfo, SetPodTarget setting);
     PodInfo getNextPodInfo(SectionInfo segmentInfo);
-    std::vector<PodInfo> getNextDistractorInfo(SectionInfo segmentInfo, PodInfo signal = PodInfo());
+    std::vector<PodInfo> getNextDistractorInfo(SectionInfo segmentInfo, const std::vector<PodInfo> & signals);
+    std::vector<PodInfo> getNextPowerupInfo(SectionInfo segmentInfo, const std::vector<PodInfo> & signals);
     void setPods(TunnelSlice* segment, const std::vector<PodInfo> & podInfos = std::vector<PodInfo>());
     void addSegment(SectionInfo sectionInfo);
 	void renewSegment(SectionInfo sectionInfo);
@@ -190,14 +213,13 @@ public:
     bool updateIterators(Vector3 checkPos);
 	bool renewIfNecessary();
     
-    std::vector<Pod *> findPodCollisions(SceneNode* ent);
-    
     void unlink();
     void link(Player* player);
     void presetTargets(int level);
-    void constructTunnel(int size); // Removed preset param C.P.
+    void constructTunnel(int size);
     
     void update(float elapsed);
+    void respondToToggleCheat();
     
 	~Tunnel();
 };

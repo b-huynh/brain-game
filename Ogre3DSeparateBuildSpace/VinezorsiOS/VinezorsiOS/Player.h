@@ -11,10 +11,24 @@
 
 #include <vector>
 #include <fstream>
+#include <map>
 #include "Util.h"
 #include "Vine.h"
 #include "Tunnel.h"
 #include "Score.h"
+#include "Powerup.h"
+
+struct StageRequest
+{
+    int nback;
+    std::vector<NavigationLevel> navLevels;
+    std::vector<CollectionCriteria> collectionCriteria;
+    std::vector<PowerupType> powerups;
+    char phase;
+    bool hasHoldout;
+    
+    StageRequest() : nback(0), phase('A'), hasHoldout(false) {}
+};
 
 struct PlayerLevel {
     int sessionID;
@@ -66,7 +80,6 @@ private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
     
     Tunnel* tunnel;
-    Hud* hud;
     
     unsigned seed;
     
@@ -117,17 +130,6 @@ private:
     
     int toggleBack; // 0, 1, or 2
     
-    SpeedControlMode speedControl;
-    
-    //static const char ENC_NO_PANEL = '-';
-    //static const char ENC_YES_PANEL = '+';
-    //static const char ENC_OBSTACLE_NO_HIT = '=';
-    //static const char ENC_OBSTACLE_YES_HIT = '#';
-    //static const char ENC_PLAYER_STATIC = 'P';
-    //static const char ENC_PLAYER_CORRECT = 'O';
-    //static const char ENC_PLAYER_WRONG = 'X';
-    //static const char ENC_TARGET = 'T';
-    //static const char ENC_FAKE = 'F';
     static const char ENC_NO_PANEL = '0';
     static const char ENC_YES_PANEL = '1';
     static const char ENC_TARGET = '2';
@@ -185,14 +187,18 @@ private:
     std::list<Session> sessions;
     PlayerLevel skillLevel;
     
+    std::map<std::string,Powerup*> powerups;
+    
     float totalElapsed;
     float totalDistanceTraveled;
     float animationTimer;
     float speedTimer;
-    float shockwaveTimer;
+    float badFuelPickUpTimer;
     float boostTimer;
     float selectTimer;
+    bool selectTimerFlag;
     float startMusicTimer;
+    bool godMode;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -204,17 +210,14 @@ private:
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
-    // Swipe Capabilities (Note: iOS now uses the ViewController on top of ogre, this is more for the OS X version now
-    float inputTotalX;
-    bool inputMoved;
-    float inputLeftBound;
-    float inputRightBound;
-    
+    StageRequest stageRequest;
     int numStagesWon;
 public:
+    std::vector<int> levelCompletion;
+    bool win;
     
 	Player();
-	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
+	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
 	
     unsigned getSeed() const;
     std::string getName() const;
@@ -249,8 +252,7 @@ public:
 	float getBaseSpeed() const;
 	float getFinalSpeed() const;
 	float getTotalSpeed() const;
-	Vector3 getVineOffset() const;
-    SpeedControlMode getSpeedControl() const;
+	float getVineOffset() const;
 	float getTotalElapsed() const;
 	float getTotalDistanceTraveled() const;
 	float getAnimationTimer() const;
@@ -259,7 +261,9 @@ public:
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
     int getToggleBack() const;
+    bool getGodMode() const;
     int getNumStagesWon() const;
+    StageRequest getStageRequest() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
     void setSeed(unsigned value);
@@ -291,6 +295,8 @@ public:
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
+    void setGodMode(bool value);
+    void setStageRequest(StageRequest value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -306,31 +312,44 @@ public:
     void setSounds(bool mode);
     
     void unlink();
-    void link(Tunnel* tunnel, Hud* hud);
-    void newTunnel(bool setmusic);
+    void link(Tunnel* tunnel);
+    void newTunnel();
+    void startMenu();
     
 	void move(Vector3 delta);
     void changeMovementMode();
     void setShowCombo(bool value);
 	void addVine(Vine* vine);
+    void removeVines();
 	void checkCollisions();
+    void decideFinalSpeed(float elapsed);
     
-    void resetCursorMoved();
-    void setCursorMoved();
-    void updateCursorCooldown(float elapsed);
-    void checkCursorMove(float dx, float dy);
-    bool checkPerformLeftMove(bool force);
-    bool checkPerformRightMove(bool force);
     void addAction(ActionCode actType);
+    void updateTractorBeam(float elapsed);
+    void performTractorBeam();
+    void updateTimeWarp(float elapsed);
+    void performTimeWarp();
+    void updateBoost(float elapsed);
+    void performBoost();
+    void updateShields(float elapsed);
+    bool triggerShields();
+    void performShields();
     void updateGlowExtraction(float elapsed);
     void setGlowGrabParameters();
-    void performShockwave();
-    void updateShockwave(float elapsed);
-    void performBoost();
-    void updateBoost(float elapsed);
+    void beginBadFuelPickUp();
+    void updateBadFuelPickUp(float elapsed);
     void testPodGiveFeedback(Pod* test);
     void determineSpawnCombo();
+    void offsetShip(float elapsed);
+    void recordInfo();
 	void update(float elapsed);
+    
+    void initPowerUps();
+    void setPowerUp(std::string pwr, bool value);
+    bool isPowerUpAvailable(std::string pwr);
+    void performPowerUp(std::string pwr);
+    void destroyPowerUps();
+    void resetPowerUps();
     
     void incrementNumStagesWon();
     void calculateNavigationScores();

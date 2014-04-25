@@ -20,7 +20,6 @@ struct Vine
     SceneNode *entireVine;
 	SceneNode *tip;
 	SceneNode *base;
-	SceneNode *shell;
     ParticleSystem* shockwaveEffect;
     ParticleSystem* boostEffect;
     Vector3 forward;
@@ -38,9 +37,6 @@ struct Vine
     float totalElapsed;
     float wobbleSpeed;
     bool wobbling;
-    
-    float shieldScaleValue;
-    float shieldScaleTarget;
     
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
@@ -69,7 +65,6 @@ struct Vine
 	void move(Vector3 delta);
 	
 	void update(float elapsed);
-    void scaleShields(float size);
     
     void removeShockwave();
     void removeBoost();
