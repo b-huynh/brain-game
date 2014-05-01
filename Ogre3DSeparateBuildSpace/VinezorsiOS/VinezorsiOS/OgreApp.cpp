@@ -119,7 +119,6 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 #endif
 {
     globals.playerName = name;
-    
 	new OgreFramework();
 #if !defined(OGRE_IS_IOS)
     if (!OgreFramework::getSingletonPtr()->initOgre(this, this, this))

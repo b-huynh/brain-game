@@ -15,70 +15,17 @@
 #include "Util.h"
 #include "Vine.h"
 #include "Tunnel.h"
-#include "Score.h"
 #include "Powerup.h"
-
-struct StageRequest
-{
-    int nback;
-    std::vector<NavigationLevel> navLevels;
-    std::vector<CollectionCriteria> collectionCriteria;
-    std::vector<PowerupType> powerups;
-    char phase;
-    bool hasHoldout;
-    
-    StageRequest() : nback(0), phase('A'), hasHoldout(false) {}
-};
-
-struct PlayerLevel {
-    int sessionID;
-    
-    // Reps
-    int set1Rep;
-    int set2Rep;
-    int set3Rep;
-    
-    // Ranks
-    int set1; // Color/Sound
-    int set2; // Shape/Sound
-    int set3; // Sound only
-    
-    // New
-    int set1Notify; // Color/Sound
-    int set2Notify; // Shape/Sound
-    int set3Notify; // Sound only
-    
-    int navigation;
-    
-    int minSpeed;
-    int averageSpeed;
-    int maxSpeed;
-    
-    int runSpeed1;
-    int runSpeed2;
-    int runSpeed3;
-    
-    ScoreSet navigationScores;
-    ScoreSet speedScores;
-    
-    int getMasteredNBack() const;
-    
-    int getHighestNBack() const;
-    
-    int getNavLimit() const;
-    
-    PlayerLevel();
-    
-    void calculateNavigation();
-    void calculateSpeed();
-    std::string getCurrentStats() const;
-};
+#include "PlayerLevel.h"
+#include "PlayerProgress.h"
+#include "LevelSet.h"
 
 class Player
 {
 private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
     
+    LevelSet* levels;
     Tunnel* tunnel;
     
     unsigned seed;
@@ -210,7 +157,7 @@ private:
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
-    StageRequest stageRequest;
+    int levelRequest;
     int numStagesWon;
 public:
     std::vector<int> levelCompletion;
@@ -219,6 +166,7 @@ public:
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
 	
+    LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
     int getHP() const;
@@ -263,7 +211,7 @@ public:
     int getToggleBack() const;
     bool getGodMode() const;
     int getNumStagesWon() const;
-    StageRequest getStageRequest() const;
+    int getLevelRequest() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
     void setSeed(unsigned value);
@@ -296,7 +244,7 @@ public:
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
     void setGodMode(bool value);
-    void setStageRequest(StageRequest value);
+    void setLevelRequest(int value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -313,7 +261,8 @@ public:
     
     void unlink();
     void link(Tunnel* tunnel);
-    void newTunnel();
+    void initToggleBack();
+    void newTunnel(const std::string & nameMusic);
     void startMenu();
     
 	void move(Vector3 delta);

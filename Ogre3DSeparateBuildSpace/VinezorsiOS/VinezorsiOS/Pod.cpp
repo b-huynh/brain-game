@@ -130,6 +130,9 @@ void Pod::loadFuelCell()
         case POD_SHAPE_TRIANGLE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
             break;
+        case POD_SHAPE_HOLDOUT:
+            generateIndicator();
+            break;
         default:
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
                 materialName = "General/PodPurple";
@@ -139,12 +142,12 @@ void Pod::loadFuelCell()
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
     }
-    if (podShape != POD_SHAPE_UNKNOWN)
+    if (podShape != POD_SHAPE_UNKNOWN && podShape != POD_SHAPE_HOLDOUT)
     {
         headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
         headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     }
-    head->attachObject(headContentEntity);
+    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
@@ -218,7 +221,7 @@ void Pod::loadPowerup()
             headContentEntity->setMaterialName("General/PodGreen");
             break;
         case POD_COLOR_BLUE:
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/Shield.mesh");
+//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
             headContentEntity->setMaterialName("General/PodBlue");
             break;
@@ -383,7 +386,7 @@ void Pod::setSkin()
 {
     if (mtype == POD_BASIC)
         headContentEntity->setMaterialName(materialName);
-    else if (mtype == POD_FUEL)
+    else if (mtype == POD_FUEL && podShape != POD_SHAPE_HOLDOUT)
     {
         if (podShape != POD_SHAPE_UNKNOWN)
             // Based on Maya model, SubEntity1 is the content in the fuel cell
@@ -521,7 +524,7 @@ void Pod::generateIndicator()
     {
         std::string indicatorName = "General/GoodPodIndicator";
         
-        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(glowID));
+        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
         indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         
         ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
@@ -564,7 +567,7 @@ void Pod::setPodTrigger(bool value)
 
 void Pod::setVisibleIndicator(bool value)
 {
-    if (indicatorNode)
+    if (indicatorNode && podShape != POD_SHAPE_HOLDOUT)
         indicatorNode->setVisible(value);
 }
 
@@ -600,7 +603,8 @@ void Pod::removeFromScene()
         stem->getCreator()->destroyMovableObject(stem->getAttachedObject(0)); // Assuming only one entity
         stem = NULL;
     }
-    if (head)
+    removeIndicator();
+    if (head && podShape != POD_SHAPE_HOLDOUT)
     {
         head->getCreator()->destroyEntity(headContentEntity);
         head = NULL;
@@ -654,5 +658,5 @@ void Pod::update(float elapsed)
 
 Pod::~Pod()
 {
-    
+
 }

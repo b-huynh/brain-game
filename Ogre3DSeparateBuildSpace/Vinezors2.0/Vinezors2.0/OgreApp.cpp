@@ -119,7 +119,6 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 #endif
 {
     globals.playerName = name;
-    
 	new OgreFramework();
 #if !defined(OGRE_IS_IOS)
     if (!OgreFramework::getSingletonPtr()->initOgre(this, this, this))
@@ -208,8 +207,8 @@ void OgreApp::setupDemoScene()
     Util::createDefaultSegments(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     
     globals.initPaths();
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
+    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3::ZERO);
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3::ZERO);
@@ -332,9 +331,9 @@ void OgreApp::activatePerformSingleTap(float x, float y)
 
 void OgreApp::activatePerformPinch()
 {
-    //player->addAction(ACTION_PINCH);
-    //Engine* activeEngine = engineStateMgr->getActiveEngine();
-    //if (activeEngine) activeEngine->activatePerformPinch();
+    player->addAction(ACTION_PINCH);
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformPinch();
 }
 
 void OgreApp::activatePerformBeginLongPress()

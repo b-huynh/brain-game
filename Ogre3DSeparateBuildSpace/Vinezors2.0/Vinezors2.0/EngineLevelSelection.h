@@ -12,6 +12,7 @@
 #include "Util.h"
 
 #include "Engine.h"
+#include "LevelSet.h"
 
 class EngineLevelSelection : public Engine
 {
@@ -42,6 +43,7 @@ protected:
 	Player* player;
     Hud* hud;
     
+    bool testForLevelButtons(const std::string & queryGUI);
     void alloc();
     void dealloc();
 };

@@ -26,7 +26,10 @@
 		5D46024F19080ECF00F73DC3 /* HudStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024D19080ECF00F73DC3 /* HudStage.cpp */; };
 		5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025019080ED500F73DC3 /* HudLevelSelection.cpp */; };
 		5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025519080FEE00F73DC3 /* Powerup.cpp */; };
+		5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */; };
+		5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */; };
 		5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF1087118C41BF800FD25E4 /* Player.cpp */; };
+		5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF141CC190C8F9500AF2960 /* LevelSet.cpp */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
 		5DF598A918852ADD00F85646 /* OgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598A818852ADD00F85646 /* OgreView.mm */; };
 		5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598AD188537FD00F85646 /* MainViewController.mm */; };
@@ -88,7 +91,13 @@
 		5D46025119080ED500F73DC3 /* HudLevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudLevelSelection.h; sourceTree = "<group>"; };
 		5D46025519080FEE00F73DC3 /* Powerup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Powerup.cpp; sourceTree = "<group>"; };
 		5D46025619080FEE00F73DC3 /* Powerup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Powerup.h; sourceTree = "<group>"; };
+		5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLevel.cpp; sourceTree = "<group>"; };
+		5DCDDD901911719200CF67F1 /* PlayerLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerLevel.h; sourceTree = "<group>"; };
+		5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerProgress.cpp; sourceTree = "<group>"; };
+		5DCDDD921911719200CF67F1 /* PlayerProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerProgress.h; sourceTree = "<group>"; };
 		5DF1087118C41BF800FD25E4 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
+		5DF141CC190C8F9500AF2960 /* LevelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSet.cpp; sourceTree = "<group>"; };
+		5DF141CD190C8F9500AF2960 /* LevelSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSet.h; sourceTree = "<group>"; };
 		5DF597A718848E0100F85646 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		5DF598A718852ADD00F85646 /* OgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreView.h; sourceTree = "<group>"; };
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
@@ -174,6 +183,8 @@
 				5D46023019080E4000F73DC3 /* EngineModes */,
 				5D2A13AF18B82E8E002D8C6F /* Networking.mm */,
 				5D2A13AE18B82E8E002D8C6F /* Networking.h */,
+				5DF141CC190C8F9500AF2960 /* LevelSet.cpp */,
+				5DF141CD190C8F9500AF2960 /* LevelSet.h */,
 				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
 				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
 				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
@@ -272,6 +283,10 @@
 		5D46025419080F4D00F73DC3 /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */,
+				5DCDDD901911719200CF67F1 /* PlayerLevel.h */,
+				5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */,
+				5DCDDD921911719200CF67F1 /* PlayerProgress.h */,
 				5D2D422D18CE32BA0035786C /* Score.cpp */,
 				5D2D422E18CE32BA0035786C /* Score.h */,
 				5DF1087118C41BF800FD25E4 /* Player.cpp */,
@@ -447,10 +462,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
+				5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
 				5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */,
+				5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */,
 				5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */,
+				5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */,
 				5D46023F19080E8500F73DC3 /* EngineLevelSelection.cpp in Sources */,
 				5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */,
 				5D2A13B018B82E8E002D8C6F /* Networking.mm in Sources */,

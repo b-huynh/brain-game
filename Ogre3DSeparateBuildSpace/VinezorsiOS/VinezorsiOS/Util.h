@@ -15,7 +15,7 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 //#define NETWORKING
 
 #include <string>
@@ -69,7 +69,7 @@ struct SectionInfo
 enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
-enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
+enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_HOLDOUT, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
 #define NUM_POD_SIGNALS 5 // For assigning sounds to each index
 struct PodInfo
@@ -124,6 +124,7 @@ struct PodInfo
                     break;
                 case 'D':
                     //  Original hold out mechanic idea for color/shape/sound levels
+                    /*
                      if( rand_signal < 0.33f ) {
                      podColor = POD_COLOR_UNKNOWN;
                      //std::cout << "Hold out: color" << std::endl;
@@ -137,12 +138,11 @@ struct PodInfo
                      //std::cout << "Hold out: sound" << std::endl;
                      }
                      break;
-                    
+                    */
                     
                     // Special hold out idea where only sound is kept and GODMODE particleFX is used for the pod
-                    //podColor = POD_COLOR_UNKNOWN;
-                    //podShape = POD_SHAPE_UNKNOWN;
-                    //std::cout << "Hold out: special" << std::endl;
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: special" << std::endl;
                 default:
                     break;
             }
@@ -250,6 +250,7 @@ namespace Util
         int HPPositiveCorrectAnswer;
         int HPPositiveWrongAnswer;
         int HPPositiveDistractor;
+        float wrongAnswerTimePenalty;
         float distractorSpeedPenalty;
         float distractorTimePenalty;
         float initCamSpeed;
@@ -403,6 +404,7 @@ namespace Util
     void createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, float length, float depth, Vector3 loc, Quaternion rot, Vector3 & bl, Vector3 & tr);
     void createSegment(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth,  const bool sides[NUM_DIRECTIONS]);
     void createDefaultSegments(Ogre::SceneManager* sceneMgr);
+    void setSkyboxAndFog(std::string nameSkybox);
     
     void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
     float getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments);

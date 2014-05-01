@@ -13,14 +13,7 @@
 #include <vector>
 #include "Util.h"
 #include "TunnelSlice.h"
-
-struct CollectionCriteria
-{
-    int nback;
-    bool collected;
-    
-    CollectionCriteria(int n) : nback(n), collected(false) {}
-};
+#include "LevelSet.h"
 
 // Stores the list of tunnel segments
 class Tunnel
@@ -83,6 +76,7 @@ public:
     int stageNo;
     StageMode mode;
     char phase;
+    float stageTime;
     float totalElapsed;
     float timePenalty;
     int nback;
@@ -95,6 +89,7 @@ public:
     
     std::vector<std::vector<PodInfo> > signalTypes;
     int catchupPhase; // Used to update distractors at navPhase
+    int tunnelSectionsPerNavigationUpgrade;
     int navPhase; // Put in navigation class later...
     int navCheckpoint; // Counter to tell when to upgrade tunnel when changing sections
     std::vector<NavigationLevel> navLevels;
@@ -102,13 +97,18 @@ public:
     
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
+    bool hasHoldout;
+    int holdOutCounter;
+    int trackNBackA;
+    int trackNBackB;
+    int trackNBackC;
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -154,13 +154,19 @@ public:
     std::vector<PodInfo> getPodInfo() const;
     Quaternion getNewSegmentQuaternion(Direction dir, int degrees) const;
     // Given n-back to test, return the match if any, otherwise return POD_UNKNOWN for no
+    bool testForRepeatSignal(PodSignal ps, int numtimes);
+    bool testForRepeatMatch(int nvalue, PodSignal ps, int numtime);
+    PodSignal generateItem(int nbackA, int nbackB, int nbackC, int trackA, int trackB, int trackC);
+    PodSignal getNBackTest(int nvalue, PodSignal test) const;
     PodSignal getNBackTest(int index, int nvalue) const;
     PodSignal getNBackTest(int nvalue) const;
     // Uses getNBackTest and determines n-back to test by the player's toggleBack
     bool getPodIsGood(int index) const;
     bool getPodIsGood() const;
+    int getNBackToggle() const;
     
     StageMode getMode() const;
+    float getStageTime() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
@@ -176,6 +182,7 @@ public:
     int getNumNavLevels() const;
     int getBuildingNavLevel() const;    // The nav level the tunnel is building
     int getCurrentNavLevel() const;     // The nav level the player is still on
+    bool extractPowerup(PowerupType type);
     std::vector<CollectionCriteria> getCollectionCriteria() const;
     
     virtual void checkIfDone();
@@ -190,11 +197,16 @@ public:
     
     void setNewControl(int control);
     void updateNavigationLevel();
-    void setNavigationLevels();
-    void setNavigationLevels(const std::vector<NavigationLevel> & preset);
+    void setNavigationLevels(int tunnelSectionsPerNavLevel);
+    void setNavigationLevels(int startingNavLevel, int navLimit, int tunnelSectionsPerNavLevel);
+    void setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel);
     void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
-    void satisfyCriteria(int nback);
+    bool satisfyCriteria(int nback);
+    int loseRandomCriteria();
     bool isCriteriaSatisfied() const;
+    bool setAllCriteriaTo(bool value);
+    int getLowestCriteria() const;
+    int getHighestCriteria() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
@@ -216,10 +228,12 @@ public:
     void unlink();
     void link(Player* player);
     void presetTargets(int level);
-    void constructTunnel(int size);
+    void constructTunnel(const std::string & nameTunnelTile, int size);
     
     void update(float elapsed);
     void respondToToggleCheat();
+    
+    void setHoldOut(bool val);
     
 	~Tunnel();
 };

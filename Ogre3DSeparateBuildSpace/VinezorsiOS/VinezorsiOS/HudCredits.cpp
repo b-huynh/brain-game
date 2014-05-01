@@ -69,7 +69,7 @@ void HudCredits::setOverlay()
     creditsTitle->setMetricsMode(GMM_RELATIVE);
     creditsTitle->setPosition(0.25, 0.15);
     creditsTitle->setDimensions(0.40, 0.20);
-    creditsTitle->setMaterialName("General/CreditsTitle");
+    creditsTitle->setMaterialName("General/TextArtCreditsTitle");
     
     backButtonBackground->setMaterialName("General/BackButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.20, 0.78), Vector2(0.30, 0.10), backButtonBackground, NULL);

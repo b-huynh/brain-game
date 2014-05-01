@@ -98,7 +98,7 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
                                                 0.0,
                                                 1.0,
                                                 1.0);
-    m_pViewportMain->getTarget()->addListener(pRenderTargetListener);    
+    m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
     
 	Ogre::String secName, typeName, archName;
 	Ogre::ConfigFile cf;

@@ -44,6 +44,7 @@
     CGFloat vmaxX;
     CGFloat vmaxY;
     int swipeState;
+    bool pinchDetected;
 }
 
 @property (retain) NSTimer *mTimer;
@@ -102,6 +103,7 @@
     initialThreshold = 15.00;
     swipeThreshold = 30.00;
     swipeState = 0;
+    pinchDetected = false;
 }
 
 - (void)didReceiveMemoryWarning
@@ -325,7 +327,11 @@
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformPinch();
+    {
+        NSLog(@"%f\n", sender.scale);
+        if (sender.scale <= 0.75 || sender.scale >= 1.5)
+            mApplication->activatePerformPinch();
+    }
 }
 
 - (IBAction)handlePan:(UIPanGestureRecognizer*)sender
@@ -353,7 +359,7 @@
         if (abs(vmaxY) < abs(v.y))
             vmaxY = v.y;
         
-        NSLog(@"%f %f", dx, v.x);
+        //NSLog(@"%f %f", dx, v.x);
         
         if ((totalX == 0.0 && dx < -initialThreshold && vmaxX < -initialThreshold) || (dx < vmaxX / 5 && vmaxX < -swipeThreshold))
         //if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))

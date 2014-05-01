@@ -12,6 +12,7 @@
 #include "Networking.h"
 #include "Tunnel.h"
 #include "Player.h"
+#include "LevelSet.h"
 
 extern Util::ConfigGlobal globals;
 
@@ -50,6 +51,7 @@ void EngineStage::update(float elapsed)
         {
             setup();
             setPause(true);
+            globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
             stageState = STAGE_STATE_PAUSE;
             break;
         }
@@ -63,10 +65,13 @@ void EngineStage::update(float elapsed)
             {
                 completeStage(EVEN);
                 stageState = STAGE_STATE_PROMPT;
-                globals.setMessage("Play Again?\n\n\n(Yes / No)\n\n\n<---     --->", MESSAGE_NORMAL);
+                setPause(true);
+                globals.appendMessage("\nPlay Again?", MESSAGE_NORMAL);
             }
 
             hud->update(elapsed);
+            hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -76,6 +81,9 @@ void EngineStage::update(float elapsed)
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
             if (lightNode)
                 lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+            
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -91,16 +99,28 @@ void EngineStage::update(float elapsed)
                 player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
             
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
             hud->update(elapsed);
+            hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
             break;
         }
         case STAGE_STATE_PROMPT:
-            tunnel->update(elapsed);
+        {
             hud->update(elapsed);
+            hud->setOverlay(0, true);
+            hud->setOverlay(1, true);
+            
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             break;
+        }
         case STAGE_STATE_DONE:
         {
+            // Unpause Settings but without the sound deactivating
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            globals.clearMessage();
+            Ogre::ControllerManager::getSingleton().setTimeFactor(1);
             engineStateMgr->requestPopEngine();
             break;
         }
@@ -115,7 +135,7 @@ void EngineStage::activatePerformLeftMove()
             break;
         case STAGE_STATE_RUNNING:
         {
-            if (player->setVineDirRequest(Util::rightOf(player->getVineDest())) && !tunnel->isDone())
+            if (!tunnel->isDone() && player->setVineDirRequest(Util::rightOf(player->getVineDest())))
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val + 45);
@@ -129,11 +149,7 @@ void EngineStage::activatePerformLeftMove()
             break;
         }
         case STAGE_STATE_PROMPT:
-        {
-            // Request a retry of this level
-            stageState = STAGE_STATE_INIT;
             break;
-        }
         case STAGE_STATE_DONE:
             break;
     }
@@ -147,7 +163,7 @@ void EngineStage::activatePerformRightMove()
             break;
         case STAGE_STATE_RUNNING:
         {
-            if (player->setVineDirRequest(Util::leftOf(player->getVineDest())) && !tunnel->isDone())
+            if (!tunnel->isDone() && player->setVineDirRequest(Util::leftOf(player->getVineDest())))
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val - 45);
@@ -161,11 +177,7 @@ void EngineStage::activatePerformRightMove()
             break;
         }
         case STAGE_STATE_PROMPT:
-        {
-            // Request a return to menu which requires main app to pop this off stack
-            stageState = STAGE_STATE_DONE;
             break;
-        }
         case STAGE_STATE_DONE:
             break;
     }
@@ -227,14 +239,71 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             else if (queryGUI == "pause")
             {
                 setPause(true);
-                stageState = STAGE_STATE_PAUSE;
+                stageState = STAGE_STATE_PROMPT;
             }
             break;
         }
         case STAGE_STATE_PAUSE:
+        {
+            std::string queryGUI = hud->queryButtons(Vector2(x, y));
+            
+            if (queryGUI == "toggle1")
+            {
+                player->setToggleBack(0);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
+            else if (queryGUI == "toggle2")
+            {
+                player->setToggleBack(1);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
+            else if (queryGUI == "toggle3")
+            {
+                player->setToggleBack(2);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
+            else if (queryGUI == "toggle4")
+            {
+                player->setToggleBack(3);
+                if (tunnel) tunnel->respondToToggleCheat();
+            }
+            else if (queryGUI == "pause")
+            {
+                setPause(true);
+                stageState = STAGE_STATE_PROMPT;
+            }
             break;
+        }
         case STAGE_STATE_PROMPT:
+        {
+            std::string queryGUI = hud->queryButtons(Vector2(x, y));
+            
+            if (queryGUI == "resume")
+            {
+                if (!tunnel->needsCleaning())
+                {
+                    setPause(false);
+                    stageState = STAGE_STATE_RUNNING;
+                }
+            }
+            else if (queryGUI == "next")
+            {
+                if (player->getLevels()->hasLevel(player->getLevelRequest() + 1))
+                {
+                    player->setLevelRequest(player->getLevelRequest() + 1);
+                    stageState = STAGE_STATE_INIT;
+                }
+            }
+            else if (queryGUI == "restart")
+            {
+                stageState = STAGE_STATE_INIT;
+            }
+            else if (queryGUI == "levelselect")
+            {
+                stageState = STAGE_STATE_DONE;
+            }
             break;
+        }
         case STAGE_STATE_DONE:
             break;
     }
@@ -430,6 +499,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             if (stageState == STAGE_STATE_RUNNING)
             {
                 setPause(true);
+                globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
                 stageState = STAGE_STATE_PAUSE;
             }
             else
@@ -537,9 +607,8 @@ void EngineStage::setup()
     globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
     
     StageMode nmode = STAGE_MODE_PROFICIENCY;
-    StageRequest level = player->getStageRequest();
+    StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequest());
     int nlevel = level.nback;
-    
     switch (level.phase)
     {
         case 'A':
@@ -552,7 +621,7 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_CONE, POD_SOUND_4));
             
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matches by Color!", MESSAGE_NORMAL);
+            globals.appendMessage("\nObtain matches by Color!", MESSAGE_NORMAL);
             break;
         }
         case 'B':
@@ -565,7 +634,7 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matches by Shape!", MESSAGE_NORMAL);
+            globals.appendMessage("Obtain matches by Shape!", MESSAGE_NORMAL);
             break;
         }
         case 'C':
@@ -595,11 +664,24 @@ void EngineStage::setup()
         case 'E':
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
-            globals.stageTotalCollections = skillLevel.averageSpeed * globals.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+            
+            if (level.initCamSpeed <= 15) // For starting slower stages, be nicer
+                globals.stageTotalCollections = (globals.speedMap[level.minCamSpeed] + globals.speedMap[level.maxCamSpeed]) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+            else
+                globals.stageTotalCollections = (globals.speedMap[level.minCamSpeed] + globals.speedMap[level.maxCamSpeed]) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
             //globals.setBigMessage("Recess!");
+            globals.setMessage("Reach the end! Grab Fuel Cells!", MESSAGE_NORMAL);
+            break;
+        case 'F':
+            nmode = STAGE_MODE_TEACHING;
+            globals.signalTypes.clear();
+            //globals.setBigMessage("Training!");
             globals.setMessage("Grab Fuel Cells!", MESSAGE_NORMAL);
             break;
     }
+    globals.initCamSpeed = level.initCamSpeed;
+    globals.minCamSpeed = level.minCamSpeed;
+    globals.maxCamSpeed = level.maxCamSpeed;
     
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
@@ -613,6 +695,7 @@ void EngineStage::setup()
                         nmode,
                         level.phase, // replace or remove...
                         nlevel,
+                        level.stageTime,
                         SOUTH,
                         globals.tunnelSegmentsPerSection,
                         globals.tunnelSegmentsPerPod,
@@ -624,10 +707,22 @@ void EngineStage::setup()
     player->link(tunnel);
     
     tunnel->setHoldOut(level.hasHoldout);
-    tunnel->setNavigationLevels(level.navLevels);
+    if (tunnel->getMode() == STAGE_MODE_RECESS)
+    {
+        // Assign nav levels in an incremental order specified by Liam's formula if the mode is recess
+        // Therefore, the level parameter provided looks at the nav level provided as the starting index
+        tunnel->setNavigationLevels(level.navLevels[0].level, globals.navMap.size() - 1, level.tunnelSectionsPerNavLevel);
+    }
+    else
+    {
+        // Otherwise, nav levels provided by the parameters
+        tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
+    }
     tunnel->setCollectionCriteria(level.collectionCriteria);
-    tunnel->constructTunnel(globals.tunnelSections);
-    player->newTunnel();
+    tunnel->constructTunnel(level.nameTunnelTile, globals.tunnelSections);
+    player->newTunnel(level.nameMusic);
+    
+    Util::setSkyboxAndFog(level.nameSkybox);
     
     /*
      if (skillLevel.set1Notify)
@@ -653,14 +748,6 @@ void EngineStage::setup()
     //lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
     lightNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("lightNode");
     lightNode->attachObject(lightMain);
-    
-    // Set skybox
-    Plane plane;
-    plane.d = 80;
-    plane.normal = Ogre::Vector3(0, 0, 1);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/SpaceSkyPlane", 1, 1, true);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
-    OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
     
     // Set initial transformations for camera, light, skynode
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
@@ -701,14 +788,18 @@ void EngineStage::setPause(bool value)
     {
         OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
-        globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
+        LevelSet* levels = player->getLevels();
+        std::string msg = "Level: ";
+        msg += levels->getLevelRow(player->getLevelRequest());
+        msg += "-";
+        msg += Util::toStringInt(levels->getLevelCol(player->getLevelRequest()));
+        globals.setMessage(msg, MESSAGE_NORMAL);
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }
     else
     {
         player->unpause();
         OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
-        
         globals.clearMessage();
         Ogre::ControllerManager::getSingleton().setTimeFactor(1);
     }
@@ -819,6 +910,7 @@ void EngineStage::completeStage(Evaluation forced)
         default:
             break;
     }
+    if (eval == PASS) player->levelCompletion[player->getLevelRequest()] = 1;
     player->setSkillLevel(skillLevel);
     player->saveStage(globals.logPath);
     player->saveActions(globals.actionPath);

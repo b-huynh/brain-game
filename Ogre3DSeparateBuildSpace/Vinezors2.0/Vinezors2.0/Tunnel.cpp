@@ -19,18 +19,21 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), done(false), cleanup(false)
+    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdOutCounter(0), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
-Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
-    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), done(false), cleanup(false)
+Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
+    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdOutCounter(0), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
 	current = segments.end();
     setNewControl(control);
+    
+    // Add time based on n-back since players need more time before they can get targets
+    this->stageTime += 2 * nback;
 }
 
 SceneNode* Tunnel::getMainTunnelNode() const
@@ -368,8 +371,7 @@ Direction Tunnel::getRandPossibleDirection(SectionInfo segmentInfo, bool assignG
     // chooses the guide as the previous destination.
     if (guide != NO_DIRECTION)
         vineLoc = guide;
-    //int span = globals.span;
-    int span = Util::clamp(Util::getControlLevel(panels), 2, 6);
+    int span = globals.span;
     int count = 0;
     // If panel exists for current location, enable it as a possible direction
     if (panels[vineLoc])
@@ -509,6 +511,96 @@ Quaternion Tunnel::getNewSegmentQuaternion(Direction dir, int degrees) const
     return rot;
 }
 
+bool decide(bool m1, bool m2, bool m3, int track1, int track2, int track3)
+{
+	if (m1)
+	{
+		return (!m2 || track1 <= track2) && (!m3 || track1 <= track3);
+	}
+	return false;
+}
+
+// If numtimes is 2, that means the signal appears 3 times in a row
+bool Tunnel::testForRepeatSignal(PodSignal ps, int numtimes)
+{
+    for (int i = 1; i <= numtimes; ++i)
+    {
+        if (getNBackTest(i, ps) != ps)
+            return false;
+    }
+    return true;
+}
+
+// Returns the test for whether the next pod would cause a n-back match of numtimes
+bool Tunnel::testForRepeatMatch(int nvalue, PodSignal ps, int numtimes)
+{
+    for (int i = 1; i <= numtimes - 1; ++i)
+    {
+        if (getNBackTest(types.size() - i, nvalue) == POD_SIGNAL_UNKNOWN)
+            return false;
+    }
+    return getNBackTest(nvalue, ps) == ps;
+}
+
+// Generate a signal using some rules to make sure no repetitiveness
+PodSignal Tunnel::generateItem(int nbackA, int nbackB, int nbackC, int trackA, int trackB, int trackC)
+{
+    std::vector<PodSignal> candidates;
+	std::vector<PodSignal> priorities;
+	
+	bool m1 = (rand() % 100) < 33;
+	bool m2 = (rand() % 100) < 33;
+	bool m3 = (rand() % 100) < 33;
+	for (int i = 0; i < signalTypes.size(); ++i)
+	{
+        PodSignal ps = (PodSignal)i;
+        /*
+        std::cout << testForRepeatSignal(ps, 2) << " "
+            << testForRepeatMatch(nbackA, ps, 2) << " "
+            << testForRepeatMatch(nbackB, ps, 2) << " "
+        << testForRepeatMatch(nbackC, ps, 2) << std::endl;
+        */
+		// Test for 2 in a row and never let 3 in a row happen
+		// Also never let the same n-back three in a row
+		if (!testForRepeatSignal(ps, 2) &&
+            !testForRepeatMatch(nbackA, ps, 2) &&
+            !testForRepeatMatch(nbackB, ps, 2) &&
+            !testForRepeatMatch(nbackC, ps, 2))
+		{
+			// Guarantee it if it should be that n-back with no double in a row of the same n-back
+			if ((decide(m1, m2, m3, trackA, trackB, trackC) && getNBackTest(nbackA, ps) == ps && !testForRepeatMatch(nbackA, ps, 2)) ||
+				(decide(m2, m1, m3, trackB, trackA, trackC) && getNBackTest(nbackB, ps) == ps && !testForRepeatMatch(nbackB, ps, 2)) ||
+				(decide(m3, m1, m2, trackC, trackA, trackB) && getNBackTest(nbackC, ps) == ps && !testForRepeatMatch(nbackC, ps, 2)))
+			{
+                // Don't guarantee it if it causes a repeat signal
+                priorities.push_back(ps);
+			}
+			candidates.push_back(ps);
+		}
+	}
+	if (candidates.size() <= 0)
+	{
+		cout << "WARNING: NO AVAILABLE CANDIDATES TO PUSH BACK\n";
+		return;
+	}
+	if (priorities.size() > 0)
+		return priorities[rand() % priorities.size()];
+	else
+		return candidates[rand() % candidates.size()];
+}
+
+// Returns the signal if the next signal added would be a match
+// If no match, return POD_SIGNAL_UNKNOWN
+PodSignal Tunnel::getNBackTest(int nvalue, PodSignal test) const
+{
+    if ((int)(types.size()) - nvalue >= 0 && types[types.size() - nvalue].podSignal == test)
+        return test;
+    else
+        return POD_SIGNAL_UNKNOWN;
+}
+
+// Returns the type of signal that matched the n-back at the specified index
+// If no match, return POD_SIGNAL_UNKNOWN
 PodSignal Tunnel::getNBackTest(int ind, int nvalue) const
 {
     if (ind - nvalue >= 0 && types[ind - nvalue].podSignal == types[ind].podSignal)
@@ -517,6 +609,7 @@ PodSignal Tunnel::getNBackTest(int ind, int nvalue) const
         return POD_SIGNAL_UNKNOWN;
 }
 
+// Tests for n-back at the podIndex (i.e. where the player is)
 PodSignal Tunnel::getNBackTest(int nvalue) const
 {
     return getNBackTest(podIndex, nvalue);
@@ -524,9 +617,8 @@ PodSignal Tunnel::getNBackTest(int nvalue) const
 
 bool Tunnel::getPodIsGood(int index) const
 {
-    int testedNBack = Util::clamp(getNBack() - player->getToggleBack(), 0, getNBack());
-    bool goodPod = getNBackTest(index, testedNBack) != POD_SIGNAL_UNKNOWN;
-    if (getMode() == STAGE_MODE_RECESS) goodPod = true;
+    bool goodPod = getNBackTest(index, getNBackToggle()) != POD_SIGNAL_UNKNOWN;
+    if (getMode() == STAGE_MODE_RECESS || getMode() == STAGE_MODE_TEACHING) goodPod = true;
     return goodPod;
 }
 
@@ -536,9 +628,21 @@ bool Tunnel::getPodIsGood() const
     return getPodIsGood(podIndex);
 }
 
+int Tunnel::getNBackToggle() const
+{
+    if (player->getToggleBack() == 3)
+        return 0;
+    return Util::clamp(getNBack() - player->getToggleBack(), 0, getNBack());
+}
+
 StageMode Tunnel::getMode() const
 {
     return mode;
+}
+
+float Tunnel::getStageTime() const
+{
+    return stageTime;
 }
 
 float Tunnel::getTotalElapsed() const
@@ -553,7 +657,7 @@ float Tunnel::getTimePenalty() const
 
 float Tunnel::getTimeLeft() const
 {
-    return globals.stageTime - getTotalElapsed() - getTimePenalty();
+    return stageTime - getTotalElapsed() - getTimePenalty();
 }
 
 int Tunnel::getNBack() const
@@ -593,6 +697,7 @@ char Tunnel::getPhase() const
 
 void Tunnel::determineMaterial()
 {
+    // Determines material based on what phase it is
     materialNames.clear();
     switch (getPhase())
     {
@@ -621,112 +726,6 @@ void Tunnel::determineMaterial()
             materialNames.push_back("General/Wall1");
             break;
     }
-    /*
-    if (nback <= 1)
-    {
-        materialNames.push_back("General/Wall1");
-        return;
-    }
-
-    if (globals.setWallPanelTexture)
-    {
-        switch ((nback - 2) % 4)
-        {
-            case 0:
-                materialNames.push_back("General/WallCartoon2");
-                break;
-            case 1:
-                materialNames.push_back("General/WallCartoon3");
-                break;
-            case 2:
-                materialNames.push_back("General/WallCartoon4");
-                break;
-            case 3:
-                materialNames.push_back("General/WallCartoon5");
-                break;
-            default:
-                materialNames.push_back("General/Wall1");
-                break;
-        }
-    }
-    else
-    {
-        switch ((nback - 2) % 6)
-        {
-            case 0:
-            {
-                std::string materialName;
-                int r = rand() % 2;
-                materialName = "General/Wall2";
-                materialName += char('a' + r);
-                materialNames.push_back(materialName);
-                break;
-            }
-            case 1:
-            {
-                std::string materialName;
-                int r = rand() % 2;
-                materialName = "General/Wall3";
-                materialName += char('a' + r);
-                materialNames.push_back(materialName);
-                break;
-            }
-            case 2:
-            {
-                std::string materialName;
-                int r = rand() % 2;
-                materialName = "General/Wall4";
-                materialName += char('a' + r);
-                materialNames.push_back(materialName);
-                break;
-            }
-            case 3:
-            {
-                std::string materialName;
-                int r = rand() % 3;
-                materialName = "General/Wall5";
-                materialName += char('a' + r);
-                materialNames.push_back(materialName);
-                break;
-            }
-            case 4:
-            {
-                std::string materialName;
-            
-                int r = rand() % 3;
-                materialName = "General/Wall6";
-                materialName += char('a' + r);
-                if (materialName == "General/Wall6a")
-                {
-                    materialNames.push_back(materialName + "1");
-                    materialNames.push_back(materialName + "2");
-                    materialNames.push_back(materialName + "3");
-                }
-                else if (materialName == "General/Wall6b")
-                {
-                    materialNames.push_back(materialName + "1");
-                    materialNames.push_back(materialName + "2");
-                    materialNames.push_back(materialName + "3");
-                }
-                else
-                    materialNames.push_back(materialName);
-                break;
-            }
-            case 5:
-            {
-                std::string materialName;
-                int r = rand() % 2;
-                materialName = "General/Wall7";
-                materialName += char('a' + r);
-                materialNames.push_back(materialName);
-                break;
-            }
-            default:
-                materialNames.push_back("General/Wall1");
-                break;
-        }
-    }
-     */
 }
 
 std::string Tunnel::getMaterialName() const
@@ -756,6 +755,20 @@ int Tunnel::getCurrentNavLevel() const
     return navLevels[catchupPhase].level;
 }
 
+// Removes the first occurence of the type parameter specified and returns true
+// If it is not found, it returns false
+bool Tunnel::extractPowerup(PowerupType type)
+{
+    for (int i = 0; i < powerups.size(); ++i)
+        if (powerups[i] == type)
+        {
+            powerups[i] = powerups[powerups.size() - 1];
+            powerups.pop_back();
+            return true;
+        }
+    return false;
+}
+
 std::vector<CollectionCriteria> Tunnel::getCollectionCriteria() const
 {
     return collectionCriteria;
@@ -768,7 +781,7 @@ void Tunnel::checkIfDone()
     {
         if (getMode() == STAGE_MODE_PROFICIENCY ||
             getMode() == STAGE_MODE_COLLECTION ||
-            getMode() == STAGE_MODE_RECESS)
+            getMode() == STAGE_MODE_TEACHING)
         {
             if (isCriteriaSatisfied())
                 setDone(PASS);
@@ -776,14 +789,14 @@ void Tunnel::checkIfDone()
             //    setDone(PASS);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(EVEN);
-            else if (globals.stageTime > 0 && getTimeLeft() <= 0)
+            else if (stageTime > 0 && getTimeLeft() <= 0)
                 setDone(EVEN);
         }
-        else //if (getMode() == STAGE_MODE_TEACHING)
+        else //if (getMode() == STAGE_MODE_RECESS)
         {
-            if (player->getNumCorrectTotal() >= getNumTargets())
+            if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(PASS);
-            else if (globals.stageTime > 0 && getTimeLeft() <= 0)
+            else if (stageTime > 0 && getTimeLeft() <= 0)
                 setDone(EVEN);
         }
     }
@@ -808,7 +821,11 @@ void Tunnel::setDone(Evaluation eval)
         addSection(info);
     }
     if (eval == PASS)
+    {
         player->incrementNumStagesWon();
+        player->win = true;
+    }
+    else player->win = false;
     done = true;
 }
 
@@ -820,36 +837,20 @@ void Tunnel::setSpawnCombo(int level)
 // Used in Time/Speed Trial and is called everytime a new section is added
 void Tunnel::upgradeControl()
 {
-    if (getMode() == STAGE_MODE_TEACHING)
+    ++navCheckpoint;
+    if (navCheckpoint >= tunnelSectionsPerNavigationUpgrade)
     {
-        float percentComplete = static_cast<float>(player->getNumCorrectTotal()) / getNumTargets();
-        if (percentComplete >= 0.50 && navPhase + 1 < navLevels.size())
+        if (navPhase + 1 < navLevels.size())
         {
+            navCheckpoint = 0;
             ++navPhase;
-            
-            // No need for propagate counters, we want the distractors asap
+        
+            // Counter to notify when new set of distractors obtained from new control level should be generated
+            int propagateCounter = segments.size();// - renewalSectionCounter;
+            for (std::list<int>::const_iterator it = propagateCounters.begin(); it != propagateCounters.end(); ++it)
+                propagateCounter -= (*it);
+            propagateCounters.push_back(propagateCounter);
             setNewControl(navLevels[navPhase].control);
-            globals.stageTotalDistractorsMin = navLevels[navPhase].obstacles;
-            globals.stageTotalDistractorsMax = navLevels[navPhase].obstacles;
-        }
-    }
-    else
-    {
-        ++navCheckpoint;
-        if (navCheckpoint >= globals.tunnelSectionsPerNavigationUpgrade)
-        {
-            if (navPhase + 1 < navLevels.size())
-            {
-                navCheckpoint = 0;
-                ++navPhase;
-            
-                // Counter to notify when new set of distractors obtained from new control level should be generated
-                int propagateCounter = segments.size();// - renewalSectionCounter;
-                for (std::list<int>::const_iterator it = propagateCounters.begin(); it != propagateCounters.end(); ++it)
-                    propagateCounter -= (*it);
-                propagateCounters.push_back(propagateCounter);
-                setNewControl(navLevels[navPhase].control);
-            }
         }
     }
 }
@@ -874,64 +875,71 @@ bool Tunnel::needsCleaning() const
     return cleanup;
 }
 
+// Sets the boolean values for each discrete panel (panel or no panel)
 void Tunnel::setNewControl(int control)
 {
     this->control = control;
-    //SectionInfo info = SectionInfo(CHECKPOINT_PASS, NO_DIRECTION, 0, sidesUsed);
-    //addSegment(info);
     Util::setSides(sidesUsed, control, basis);
 }
 
-void Tunnel::setNavigationLevels()
+// Sets navigation levels based on player nav level and nav limit
+void Tunnel::setNavigationLevels(int tunnelSectionsPerNavLevel)
 {
     navLevels.clear();
-    int playerNavLevel = player->getSkillLevel().navigation;
-    if (getMode() == STAGE_MODE_PROFICIENCY ||
-        getMode() == STAGE_MODE_COLLECTION ||
-        getMode() == STAGE_MODE_RECESS)
-    {
-        if (playerNavLevel < 3) playerNavLevel = 3;
-        if (globals.tunnelSectionsPerNavigationUpgrade > 0)
-        {
-            int tunnelNavLevel;
-            for (int i = 0; i < 20; ++i)
-            {
-                tunnelNavLevel = playerNavLevel + Util::randRangeInt(playerNavLevel - 3, playerNavLevel + 1);
-                tunnelNavLevel = Util::clamp(tunnelNavLevel, 0, 0);
-                navLevels.push_back(globals.navMap[tunnelNavLevel]);
-            }
-        }
-    }
-    else //if (getMode() == STAGE_MODE_TEACHING)
-    {
-        navLevels.push_back(NavigationLevel(0, 1, 0));
-        navLevels.push_back(NavigationLevel(0, 1, 1));
-    }
-    std::cout << "Nav Levels: " << std::endl;
-    for (int i = 0; i < navLevels.size(); ++i)
-        std::cout << navLevels[i].level << " " << navLevels[i].control << " " << navLevels[i].obstacles << std::endl;
-    std::cout << "Nav Limit: " << player->getSkillLevel().getNavLimit() << std::endl;
+    PlayerLevel skill = player->getSkillLevel();
+    int playerNavLevel = skill.navigation;
+    if (playerNavLevel < 2) playerNavLevel = 2;
+
+    setNavigationLevels(playerNavLevel - 2, skill.getNavLimit(), tunnelSectionsPerNavLevel);
+    std::cout << "Nav Limit: " << skill.getNavLimit() << std::endl;
     
     navPhase = 0;
     catchupPhase = 0;
     navCheckpoint = 0;
+    tunnelSectionsPerNavigationUpgrade = tunnelSectionsPerNavLevel;
     setNewControl(navLevels[navPhase].control);
     globals.stageTotalDistractorsMin = navLevels[navPhase].obstacles;
     globals.stageTotalDistractorsMax = navLevels[navPhase].obstacles;
 }
 
-void Tunnel::setNavigationLevels(const std::vector<NavigationLevel> & preset)
+// Sets navigation levels based on provided parameter nav level and clamps at provided nav limit
+// Refers to globals.navLevels as the ordering of nav levels
+void Tunnel::setNavigationLevels(int startingNavLevel, int navLimit, int tunnelSectionsPerNavLevel)
 {
-    //navLevels = preset;
     navLevels.clear();
-    for (int i = 0; i < 20; ++i) // Duplicate copies for repeat
+    int dn = 0;
+    for (int i = 0; i < 25; ++i)
     {
-        std::cout << "test: " << preset[i % preset.size()].control << " " << preset[i % preset.size()].obstacles << std::endl;
+        navLevels.push_back(globals.navMap[Util::clamp(startingNavLevel + dn, 0, navLimit)]);
+        dn += 1;
+    }
+
+    std::cout << "Nav Levels: " << std::endl;
+    for (int i = 0; i < navLevels.size(); ++i)
+        std::cout << navLevels[i].level << " " << navLevels[i].control << " " << navLevels[i].obstacles << std::endl;
+    
+    navPhase = 0;
+    catchupPhase = 0;
+    navCheckpoint = 0;
+    tunnelSectionsPerNavigationUpgrade = tunnelSectionsPerNavLevel;
+    setNewControl(navLevels[navPhase].control);
+    globals.stageTotalDistractorsMin = navLevels[navPhase].obstacles;
+    globals.stageTotalDistractorsMax = navLevels[navPhase].obstacles;
+}
+
+// Sets navigation levels based on the parameters
+void Tunnel::setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel)
+{
+    navLevels.clear();
+    for (int i = 0; i < 25; ++i) // Duplicate copies for repeat
+    {
+        //std::cout << "test: " << preset[i % preset.size()].control << " " << preset[i % preset.size()].obstacles << std::endl;
         navLevels.push_back(preset[i % preset.size()]);
     }
     navPhase = 0;
     catchupPhase = 0;
     navCheckpoint = 0;
+    tunnelSectionsPerNavigationUpgrade = tunnelSectionsPerNavLevel;
     setNewControl(navLevels[navPhase].control);
     globals.stageTotalDistractorsMin = navLevels[navPhase].obstacles;
     globals.stageTotalDistractorsMax = navLevels[navPhase].obstacles;
@@ -942,18 +950,41 @@ void Tunnel::setCollectionCriteria(const std::vector<CollectionCriteria> & value
     collectionCriteria = value;
 }
 
-void Tunnel::satisfyCriteria(int n)
+// Collects the first occurence of the n-back value in the collection criteria list
+bool Tunnel::satisfyCriteria(int n)
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
     {
         if (n == collectionCriteria[i].nback && !collectionCriteria[i].collected)
         {
             collectionCriteria[i].collected = true;
-            break;
+            return true;
         }
     }
+    return false;
 }
 
+// Randomly set a collected item to uncollected and returns that index
+// If no item is collected, -1 is returned
+int Tunnel::loseRandomCriteria()
+{
+    std::vector<int> collectedRefs;
+    for (int i = 0; i < collectionCriteria.size(); ++i)
+    {
+        if (collectionCriteria[i].collected)
+            collectedRefs.push_back(i);
+    }
+    if (collectedRefs.size() > 0)
+    {
+        int ind = rand() % collectedRefs.size();
+        collectionCriteria[collectedRefs[ind]].collected = false;
+        return ind;
+    }
+    else
+        return -1;
+}
+
+// Checks whether all collection criterias are satisfied
 bool Tunnel::isCriteriaSatisfied() const
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
@@ -962,6 +993,36 @@ bool Tunnel::isCriteriaSatisfied() const
             return false;
     }
     return true;
+}
+
+bool Tunnel::setAllCriteriaTo(bool value)
+{
+    for (int i = 0; i < collectionCriteria.size(); ++i)
+        collectionCriteria[i].collected = true;
+}
+
+// Returns the lowest n-back criteria required
+int Tunnel::getLowestCriteria() const
+{
+    int ret = nback;
+    for (int i = 0; i < collectionCriteria.size(); ++i)
+    {
+        if (collectionCriteria[i].nback < ret)
+            ret = collectionCriteria[i].nback;
+    }
+    return ret;
+}
+
+// Returns the highest n-back criteria required
+int Tunnel::getHighestCriteria() const
+{
+    int ret = 0;
+    for (int i = 0; i < collectionCriteria.size(); ++i)
+    {
+        if (collectionCriteria[i].nback > ret)
+            ret = collectionCriteria[i].nback;
+    }
+    return ret;
 }
 
 void Tunnel::removeSegment()
@@ -1022,6 +1083,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
     else // If not spawn one now
     {
         Direction podLoc = getRandPossibleDirection(segmentInfo);
+        /*
         PodSignal final = POD_SIGNAL_UNKNOWN;
         
         PodSignal repeat1 = POD_SIGNAL_UNKNOWN; // Two repeated signals
@@ -1063,7 +1125,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         {
             final = guarantee;
         }
-        else //if (setting != UNKNOWN) // C.P. Removed Redundancy if check
+        else //if (setting != UNKNOWN) 
         {
             // Determine whether the next pod is a good target
             int r = rand() % 100 + 1;
@@ -1092,13 +1154,30 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                 final = podType;
             }
         }
-    
+         */
+        
+        int nvalueA = nback - 2 > 0 ? nback - 2 : nback;
+        int nvalueB = nback - 1 > 0 ? nback - 1 : nback;
+        int nvalueC = nback;
+        PodSignal final = generateItem(nvalueA, nvalueB, nvalueC, trackNBackA, trackNBackB, trackNBackC);
+        if (final == POD_SIGNAL_UNKNOWN)
+            final = (PodSignal)(rand() % signalTypes.size());
+        if (getNBackTest(nvalueA, final) != POD_SIGNAL_UNKNOWN) trackNBackA++;
+        if (getNBackTest(nvalueB, final) != POD_SIGNAL_UNKNOWN) trackNBackB++;
+        if (getNBackTest(nvalueC, final) != POD_SIGNAL_UNKNOWN) trackNBackC++;
+        
         ret = signalTypes[final][rand() % signalTypes[final].size()];
         
         ret.podLoc = podLoc;
         // Determine NBack of next pod is good
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
+        
+        ++holdOutCounter;
+        if( holdOutCounter >= 4 ) {
+            if( hasHoldout ) ret.holdOut(phase);
+            holdOutCounter = 0;
+        }
         
         types.push_back(ret);
     }
@@ -1148,12 +1227,14 @@ std::vector<PodInfo> Tunnel::getNextPowerupInfo(SectionInfo segment, const std::
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         if (availability[i]) availDirs.push_back(i);
     
-    PowerupType power = POWERUP_NONE;
-    if (powerups.size() <= 0) return ret;
-    power = powerups[rand() % powerups.size()];
     
-    int chance = rand() % 100 + 1;
-    if (availDirs.size() > 0 && chance <= 100)
+    PowerupType power = POWERUP_NONE;
+    //if (powerups.size() <= 0) return ret;
+    //power = powerups[rand() % powerups.size()];
+    if (getTimeLeft() <= 20.0)
+        power = POWERUP_TIME_WARP;
+    
+    if (availDirs.size() > 0 && extractPowerup(power))
     {
         int rind = rand() % availDirs.size();
         
@@ -1493,11 +1574,12 @@ void Tunnel::presetTargets(int level)
      */
 }
 
-void Tunnel::constructTunnel(int size) // Removed preset param C.P.
+void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 {
     // Pregenerate some targets
-    if (nback > 0 && getMode() != STAGE_MODE_TEACHING && getMode() != STAGE_MODE_RECESS)
+    if (nback > 0 && getMode() != STAGE_MODE_RECESS)
     {
+        /*
         targets = std::vector<TargetInfo>(globals.stageTotalSignals + nback);
         presetTargets(1);
         presetTargets(2);
@@ -1511,8 +1593,7 @@ void Tunnel::constructTunnel(int size) // Removed preset param C.P.
         std::cout << std::endl;
         for (int i = 0; i < targets.size(); ++i)
             std::cout << targets[i].level3;
-        std::cout << std::endl; 
-        /*
+        std::cout << std::endl;
         int podInd = 0;
         for (int i = 0; i < nback; ++i)
         {
@@ -1555,9 +1636,11 @@ void Tunnel::constructTunnel(int size) // Removed preset param C.P.
     else
     {
         numTargets = globals.stageTotalCollections;
+        spawnLimit = globals.stageTotalCollections;
     }
     
-    determineMaterial();
+    //determineMaterial();
+    materialNames.push_back(nameTunnelTile);
     
     // Output strands
     for (int i = 0; i < globals.initiationSections; ++i) {
@@ -1595,7 +1678,8 @@ void Tunnel::constructTunnel(int size) // Removed preset param C.P.
 
 void Tunnel::update(float elapsed)
 {
-    totalElapsed += elapsed;
+    if (!isDone())
+        totalElapsed += elapsed;
     
     // Animate Pod Growing outwards or Growing inwards
     const float GROWTH_SPEED = player->getFinalSpeed() / 10.0;
@@ -1694,6 +1778,11 @@ void Tunnel::respondToToggleCheat()
     if (pod)
         pod->setVisibleIndicator(getPodIsGood() && player->getGodMode());
 #endif
+}
+
+void Tunnel::setHoldOut(bool val)
+{
+    hasHoldout = val;
 }
 
 Tunnel::~Tunnel()

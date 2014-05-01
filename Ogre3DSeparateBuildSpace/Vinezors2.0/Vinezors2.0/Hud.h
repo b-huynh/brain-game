@@ -41,6 +41,7 @@ public:
     
     std::string queryButtons(Vector2 target) const; // Returns any buttons containing target
     
+    void setOverlay(int index, bool visible);
     void hideOverlays();
     void showOverlays();
 protected:

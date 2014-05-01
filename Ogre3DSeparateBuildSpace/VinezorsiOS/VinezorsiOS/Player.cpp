@@ -97,23 +97,30 @@ std::string PlayerLevel::getCurrentStats() const
 }
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), win(false), numStagesWon(0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), levelRequest(0), win(false), numStagesWon(0)
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
     initPowerUps();
-    levelCompletion = std::vector<int>(7, 0);
+    levelCompletion = std::vector<int>(21, 0);
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), stageRequest(), win(false), numStagesWon(0)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), levelRequest(0), win(false), numStagesWon(0)
 {
+    levels = new LevelSet();
+    levels->initializeLevelSet();
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
     initPowerUps();
-    levelCompletion = std::vector<int>(7, 0);
+    levelCompletion = std::vector<int>(21, 0);
+}
+
+LevelSet* Player::getLevels() const
+{
+    return levels;
 }
 
 unsigned Player::getSeed() const
@@ -381,9 +388,9 @@ int Player::getNumStagesWon() const
     return numStagesWon;
 }
 
-StageRequest Player::getStageRequest() const
+int Player::getLevelRequest() const
 {
-    return stageRequest;
+    return levelRequest;
 }
 
 void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
@@ -434,7 +441,6 @@ void Player::setScore(float value)
 {
     score = value;
 }
-
 
 void Player::updateTractorBeam(float elapsed)
 {
@@ -558,7 +564,7 @@ void Player::updateTimeWarp(float elapsed)
         }
         else {
             if( t->mainTimer >= t->timeBonusTimeout ) {
-                globals.stageTime += t->timeBonus;
+                tunnel->addToTimePenalty(-t->timeBonus);
                 
                 t->zoomIn = 0;
                 t->active = false;
@@ -793,7 +799,6 @@ void Player::testPodGiveFeedback(Pod* test)
     test->setPodTested(true);
     
     bool goodPod = tunnel->getPodIsGood();
-    std::cout << "Good: " << goodPod	 << std::endl;
 
     // Determine whether the player got it right or not
     if (goodPod && test->isPodTaken()) {
@@ -815,7 +820,11 @@ void Player::testPodGiveFeedback(Pod* test)
         }
         ++numCorrectTotal;
 
-        tunnel->satisfyCriteria(Util::clamp(tunnel->getNBack() - toggleBack, 0, tunnel->getNBack()));
+        if (tunnel->satisfyCriteria(tunnel->getNBackToggle()) || tunnel->getMode() == STAGE_MODE_RECESS)
+        {
+            baseSpeed += globals.stepsizeSpeedUp;
+            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+        }
         
         if (getToggleBack() == 0)
         {
@@ -825,13 +834,18 @@ void Player::testPodGiveFeedback(Pod* test)
         }
         ++numCorrectCombo;
         numWrongCombo = 0;
-        if (numCorrectCombo % globals.numToSpeedUp == 0)
+        
+        if (tunnel->getMode() == STAGE_MODE_PROFICIENCY &&
+            numCorrectCombo % globals.numToSpeedUp == 0)
         {
             baseSpeed += globals.stepsizeSpeedUp;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
-        score += std::pow(10.0, 2 - getToggleBack());
+        if (tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getMode() == STAGE_MODE_RECESS)
+            score += 5.0;
+        else
+            score += std::pow(5.0, 4 - getToggleBack());
     }
     else if (!goodPod && test->isPodTaken())
     {
@@ -842,11 +856,14 @@ void Player::testPodGiveFeedback(Pod* test)
         }
         ++numWrongTotal;
         
-        if( test->isPodTaken() ) beginBadFuelPickUp();
+        //tunnel->loseRandomCriteria();
+        //beginBadFuelPickUp();
         
         if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
         else hp += globals.HPNegativeWrongAnswer;
         hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        
+        tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
         
         numCorrectCombo = 0;
         ++numWrongCombo;
@@ -856,6 +873,9 @@ void Player::testPodGiveFeedback(Pod* test)
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         numCorrectBonus = 0;
+        
+        //score -= std::pow(5.0, 4);
+        //if (score < 0.0) score = 0.0;
     }
     else if (!test->isPodGood() && !test->isPodTaken())
     {
@@ -1200,9 +1220,9 @@ void Player::setGodMode(bool value)
     godMode = value;
 }
 
-void Player::setStageRequest(StageRequest value)
+void Player::setLevelRequest(int value)
 {
-    stageRequest = value;
+    levelRequest = value;
 }
 
 void Player::saveCam()
@@ -1229,7 +1249,20 @@ void Player::link(Tunnel* tunnel)
     this->tunnel = tunnel;
 }
 
-void Player::newTunnel()
+// Initializes the toggle based on the criterias of the tunnel and the n-back's on the toggle
+void Player::initToggleBack()
+{
+    int minNBack = tunnel->getLowestCriteria();
+    int toggle = 0;
+    if (minNBack <= 0) // 0-backs always the last toggle
+        toggle = 3;
+    else
+        toggle = tunnel->getNBack() - minNBack;
+    
+    setToggleBack(toggle);
+}
+
+void Player::newTunnel(const std::string & nameMusic)
 {
     setCamPos(tunnel->getStart() + tunnel->getCurrent()->getForward() * globals.tunnelSegmentDepth);
     setCamRot(tunnel->getCurrent()->getQuaternion());
@@ -1262,7 +1295,7 @@ void Player::newTunnel()
     sess.sessionNo = skillLevel.sessionID;
     sess.eventID = tunnel->getStageNo();
     sess.taskType = tunnel->getPhase() - 'A';
-    sess.stageTime = globals.stageTime;
+    sess.stageTime = tunnel->getStageTime();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
@@ -1293,33 +1326,8 @@ void Player::newTunnel()
     OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
     
     OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
-    switch (tunnel->getPhase())
-    {
-        case 'A':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music2");
-            break;
-        case 'B':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-            break;
-        case 'C':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music5");
-            break;
-        case 'D':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-            break;
-        case 'E':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
-            break;
-        case 'F':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-            break;
-        case 'G':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-            break;
-        case 'H':
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
-            break;
-    }
+    if (nameMusic != "")
+        soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound(nameMusic);
     if (soundMusic != soundMusicTemp)
     {
         if (soundMusic) soundMusic->stop();
@@ -1359,6 +1367,7 @@ void Player::newTunnel()
             camRoll = -camRoll;
         desireRoll = camRoll;
     }
+    initToggleBack();
     tunnel->setSpawnCombo(1);
     triggerStartup = true;
     results.clear();
@@ -1374,7 +1383,7 @@ void Player::startMenu()
         OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
         
         soundMusic = soundMusicTemp;
-        soundMusic->play();
+        if (soundMusic) soundMusic->play();
     }
     
 }
@@ -1536,6 +1545,7 @@ void Player::checkCollisions()
                                     break;
                                 case POD_COLOR_GREEN:
                                     powerups["TimeWarp"]->available = true;
+                                    performTimeWarp();
                                     break;
                                 case POD_COLOR_YELLOW:
                                     break;
@@ -1634,7 +1644,9 @@ void Player::update(float elapsed)
     updateBadFuelPickUp(elapsed);
     updateBoost(elapsed);
     updateGlowExtraction(elapsed);
-    
+#ifdef DEBUG_MODE
+    vines[0]->setPowerIndication(godMode);
+#endif
     for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
         if( (it->first).compare("TimeWarp") == 0 ) {
             updateTimeWarp(elapsed);

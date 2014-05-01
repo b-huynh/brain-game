@@ -31,12 +31,11 @@ void EngineCredits::enter()
     player->startMenu();
     
     // Set skybox
-    Plane plane;
-    plane.d = 80;
-    plane.normal = Ogre::Vector3(0, 0, 1);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, "General/SpaceSkyPlane", 1, 1, true);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.5, 0.0, 0.5), 0.0, 300.0, 600.0);
-    OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+    Util::setSkyboxAndFog("General/PurpleSpaceSkyPlane");
+	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
+	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
+    if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetOrientation();
 }
 
 void EngineCredits::exit()

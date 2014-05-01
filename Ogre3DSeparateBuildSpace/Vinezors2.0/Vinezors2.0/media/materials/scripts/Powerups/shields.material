@@ -1,0 +1,55 @@
+material black
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.401709 0.401709 0.401709 1
+			diffuse 0.153841 0.153841 0.153841 1
+		}
+
+	}
+
+}
+
+
+
+material blinn6
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0 0 0.760678 1
+			specular 0.5 0.5 0.5 1 89.6
+		}
+
+	}
+
+}
+
+
+
+material bubble
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.923079 0.923079 0.923079 1
+			specular 0.5 0.5 0.5 1 89.6
+			scene_blend add
+
+			texture_unit
+			{
+				colour_op_ex blend_manual src_manual src_current 0.128206 1 1 1
+				colour_op_multipass_fallback dest_colour zero
+				alpha_op_ex source1 src_manual src_current 0.128206
+			}
+		}
+
+	}
+
+}

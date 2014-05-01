@@ -49,9 +49,9 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
-    tunnelSegmentsPerPowerup = 30;
+    tunnelSegmentsPerPowerup = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    tunnelSectionsPerNavigationUpgrade = 2;
+    tunnelSectionsPerNavigationUpgrade = 10;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
     initialSegmentsFirstPowerup = 6;
@@ -89,14 +89,15 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 1;
     HPPositiveWrongAnswer = -2;
     HPPositiveDistractor = -1;
+    wrongAnswerTimePenalty = 10.0;
     distractorSpeedPenalty = 1.0;
-    distractorTimePenalty = 0.0;
+    distractorTimePenalty = 10.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
-    maxCamSpeed = 30.0;
+    maxCamSpeed = 40.0;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -174,51 +175,70 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[18] = NavigationLevel(18, 3, 4);
     navMap[19] = NavigationLevel(19, 4, 6);
     navMap[20] = NavigationLevel(20, 3, 5);
-    navMap[19] = NavigationLevel(21, 3, 6);
-    navMap[19] = NavigationLevel(22, 4, 7);
+    navMap[21] = NavigationLevel(21, 3, 6);
+    navMap[22] = NavigationLevel(22, 4, 7);
     
     navIndex = 0;
     
-    speedMap[1] = 1.0;
-    speedMap[2] = 2.0;
-    speedMap[3] = 3.0;
-    speedMap[4] = 4.0;
+    speedMap[1] = 5.0;
+    speedMap[2] = 5.0;
+    speedMap[3] = 5.0;
+    speedMap[4] = 5.0;
     speedMap[5] = 5.0;
-    speedMap[6] = 6.0;
-    speedMap[7] = 7.0;
-    speedMap[8] = 8.0;
-    speedMap[9] = 9.0;
-    speedMap[10] = 10.0;
-    speedMap[11] = 11.0;
-    speedMap[12] = 12.0;
-    speedMap[13] = 13.0;
-    speedMap[14] = 14.0;
-    speedMap[15] = 15.0;
-    speedMap[16] = 18.0;
-    speedMap[17] = 21.0;
-    speedMap[18] = 22.0;
-    speedMap[19] = 23.0;
-    speedMap[20] = 24.0;
-    speedMap[21] = 25.0;
-    speedMap[22] = 26.0;
-    speedMap[23] = 27.0;
-    speedMap[24] = 28.0;
-    speedMap[25] = 29.0;
-    speedMap[26] = 30.0;
-    speedMap[27] = 30.5;
-    speedMap[28] = 31.0;
-    speedMap[29] = 31.5;
-    speedMap[30] = 32.0;
-    speedMap[31] = 32.5;
-    speedMap[32] = 33.0;
-    speedMap[33] = 33.5;
-    speedMap[34] = 34.0;
-    speedMap[35] = 34.5;
-    speedMap[36] = 35.0;
-    speedMap[37] = 35.5;
-    speedMap[38] = 36.0;
-    speedMap[39] = 36.5;
-    speedMap[40] = 37.0;
+    speedMap[6] = 5.5;
+    speedMap[7] = 6.0;
+    speedMap[8] = 6.5;
+    speedMap[9] = 7.0;
+    speedMap[10] = 7.5;
+    speedMap[11] = 8.0;
+    speedMap[12] = 8.5;
+    speedMap[13] = 9.0;
+    speedMap[14] = 9.5;
+    speedMap[15] = 10.0;
+    speedMap[16] = 13.0;
+    speedMap[17] = 15.0;
+    speedMap[18] = 17.0;
+    speedMap[19] = 19.0;
+    speedMap[20] = 20.0;
+    speedMap[21] = 21.0;
+    speedMap[22] = 22.0;
+    speedMap[23] = 23.0;
+    speedMap[24] = 24.0;
+    speedMap[25] = 25.0;
+    speedMap[26] = 25.5;
+    speedMap[27] = 26.0;
+    speedMap[28] = 26.5;
+    speedMap[29] = 27.0;
+    speedMap[30] = 27.5;
+    speedMap[31] = 28.0;
+    speedMap[32] = 28.5;
+    speedMap[33] = 29.0;
+    speedMap[34] = 29.5;
+    speedMap[35] = 30.0;
+    speedMap[36] = 30.5;
+    speedMap[37] = 31.0;
+    speedMap[38] = 31.5;
+    speedMap[39] = 32.0;
+    speedMap[40] = 32.5;
+    speedMap[41] = 33.0;
+    speedMap[42] = 33.5;
+    speedMap[43] = 34.0;
+    speedMap[44] = 34.5;
+    speedMap[45] = 35.0;
+    speedMap[46] = 35.5;
+    speedMap[47] = 36.0;
+    speedMap[48] = 36.5;
+    speedMap[49] = 37.0;
+    speedMap[50] = 37.5;
+    speedMap[42] = 38.0;
+    speedMap[43] = 38.5;
+    speedMap[44] = 39.0;
+    speedMap[45] = 39.5;
+    speedMap[46] = 40.0;
+    speedMap[47] = 40.0;
+    speedMap[48] = 40.0;
+    speedMap[49] = 40.0;
+    speedMap[50] = 40.0;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -410,6 +430,8 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> HPNegativeWrongAnswer;
     else if (paramName == "HPNegativeDistractor")
         in >> HPNegativeDistractor;
+    else if (paramName == "wrongAnswerTimePenalty")
+        in >> wrongAnswerTimePenalty;
     else if (paramName == "distractorSpeedPenalty")
         in >> distractorSpeedPenalty;
     else if (paramName == "distractorTimePenalty")
@@ -1431,6 +1453,34 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
     
     sides[NORTH] = true;
     Util::createSegment(sceneMgr, "segmentMesh8", 1.0, 1.0, sides);
+}
+
+void Util::setSkyboxAndFog(std::string nameSkybox)
+{
+    // Set skybox, fog, and background
+    if (nameSkybox == "General/PurpleSpaceSkyPlane")
+    {
+        Plane plane;
+        plane.d = 80;
+        plane.normal = Ogre::Vector3(0, 0, 1);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 1, true);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
+        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+    }
+    else if (nameSkybox == "General/BlankStarrySkyPlane")
+    {
+        Plane plane;
+        plane.d = 80;
+        plane.normal = Ogre::Vector3(0, 0, 1);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
+    }
+    else
+    {
+        std::cerr << "WARNING: UNKNOWN SKYBOX " << nameSkybox << std::endl;
+    }
 }
 
 // Step function to increase speed by 1 or decrease by 1 is not included but could be.

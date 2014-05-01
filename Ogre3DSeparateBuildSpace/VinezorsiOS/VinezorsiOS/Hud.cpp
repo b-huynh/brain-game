@@ -62,6 +62,15 @@ Hud::~Hud()
     // Deallocation happens in derived classes
 }
 
+void Hud::setOverlay(int index, bool visible)
+{
+    if (index < 0 || index >= overlays.size()) return;
+    if (visible)
+        overlays[index]->show();
+    else
+        overlays[index]->hide();
+}
+
 std::string Hud::queryButtons(Vector2 target) const
 {
     Vector2 comp = globals.convertToPercentScreen(target);

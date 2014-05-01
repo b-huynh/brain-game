@@ -28,7 +28,8 @@ protected:
     enum ButtonSet {
         BUTTON_PAUSE,
         BUTTON_TOGGLE1, BUTTON_TOGGLE2, BUTTON_TOGGLE3, BUTTON_TOGGLE4,
-        BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3 
+        BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3,
+        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
     };
     
     // Overlay items for GAME_STATE_PLAY
@@ -54,6 +55,10 @@ protected:
     PanelOverlayElement* toggle2Background;
     PanelOverlayElement* toggle3Background;
     PanelOverlayElement* toggle4Background;
+    PanelOverlayElement* toggle1TextArt;
+    PanelOverlayElement* toggle2TextArt;
+    PanelOverlayElement* toggle3TextArt;
+    PanelOverlayElement* toggle4TextArt;
     PanelOverlayElement* toggleIndicator;
     TextAreaOverlayElement* toggle1Text;
     TextAreaOverlayElement* toggle2Text;
@@ -63,6 +68,11 @@ protected:
     PanelOverlayElement* powerup1Background;
     PanelOverlayElement* powerup2Background;
     PanelOverlayElement* powerup3Background;
+    
+    PanelOverlayElement* resumeButtonBackground;
+    PanelOverlayElement* nextButtonBackground;
+    PanelOverlayElement* restartButtonBackground;
+    PanelOverlayElement* levelSelectButtonBackground;
     
     void link(Player* player, Tunnel* tunnel);
     void unlink();

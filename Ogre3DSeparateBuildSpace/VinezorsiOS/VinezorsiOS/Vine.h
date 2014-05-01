@@ -19,6 +19,7 @@ struct Vine
     VineMeshType meshType;
     SceneNode *entireVine;
 	SceneNode *tip;
+    Entity* tipEntity;
 	SceneNode *base;
     ParticleSystem* shockwaveEffect;
     ParticleSystem* boostEffect;
@@ -65,6 +66,7 @@ struct Vine
 	void move(Vector3 delta);
 	
 	void update(float elapsed);
+    void setPowerIndication(int indication);
     
     void removeShockwave();
     void removeBoost();

@@ -7,6 +7,7 @@
 //
 
 #include "HudMainMenu.h"
+#include "Player.h"
 
 HudMainMenu::HudMainMenu(Player* player)
 :Hud()
@@ -76,7 +77,7 @@ void HudMainMenu::setOverlay()
     mainTitle->setMetricsMode(GMM_RELATIVE);
     mainTitle->setPosition(0.15, 0.15);
     mainTitle->setDimensions(0.60, 0.20);
-    mainTitle->setMaterialName("General/MainTitle");
+    mainTitle->setMaterialName("General/TextArtMainTitle");
     
     playButtonBackground->setMaterialName("General/PlayButton");
     creditsButtonBackground->setMaterialName("General/CreditsButton");
