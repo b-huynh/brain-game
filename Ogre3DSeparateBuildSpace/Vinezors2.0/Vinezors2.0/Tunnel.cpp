@@ -239,6 +239,11 @@ int Tunnel::getNumTargets() const
     return numTargets;
 }
 
+// Number of required targets to pick up.
+// Note: this is different from collection criteria,
+// as this value has no required n-back specification.
+//
+// Therefore, this is the number of required good feedbacks
 int Tunnel::getTotalCollections() const
 {
     return globals.stageTotalCollections;
@@ -581,7 +586,7 @@ PodSignal Tunnel::generateItem(int nbackA, int nbackB, int nbackC, int trackA, i
 	if (candidates.size() <= 0)
 	{
 		cout << "WARNING: NO AVAILABLE CANDIDATES TO PUSH BACK\n";
-		return;
+		return POD_SIGNAL_UNKNOWN;
 	}
 	if (priorities.size() > 0)
 		return priorities[rand() % priorities.size()];
@@ -658,6 +663,14 @@ float Tunnel::getTimePenalty() const
 float Tunnel::getTimeLeft() const
 {
     return stageTime - getTotalElapsed() - getTimePenalty();
+}
+
+// Return percent complete based off the number of signals left to pass
+float Tunnel::getPercentComplete() const
+{
+    float percentComplete = static_cast<float>((getSpawnLimit() - getSignalsLeft())) / getSpawnLimit();
+    percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
+    return percentComplete;
 }
 
 int Tunnel::getNBack() const
@@ -820,12 +833,6 @@ void Tunnel::setDone(Evaluation eval)
             info.tunnelType = CHECKPOINT_EVEN;
         addSection(info);
     }
-    if (eval == PASS)
-    {
-        player->incrementNumStagesWon();
-        player->win = true;
-    }
-    else player->win = false;
     done = true;
 }
 
@@ -1022,6 +1029,22 @@ int Tunnel::getHighestCriteria() const
         if (collectionCriteria[i].nback > ret)
             ret = collectionCriteria[i].nback;
     }
+    return ret;
+}
+
+// Returns the number of required collection criterias
+int Tunnel::getNumRequiredCriteria() const
+{
+    return collectionCriteria.size();
+}
+
+// Returns the number of satisfied elements
+int Tunnel::getNumSatisfiedCriteria() const
+{
+    int ret = 0;
+    for (int i = 0; i < collectionCriteria.size(); ++i)
+        if (collectionCriteria[i].collected)
+            ret++;
     return ret;
 }
 
@@ -1231,7 +1254,8 @@ std::vector<PodInfo> Tunnel::getNextPowerupInfo(SectionInfo segment, const std::
     PowerupType power = POWERUP_NONE;
     //if (powerups.size() <= 0) return ret;
     //power = powerups[rand() % powerups.size()];
-    if (getTimeLeft() <= 20.0)
+    
+    if (getTimeLeft() >= 5.0 && getTimeLeft() <= 25.0)
         power = POWERUP_TIME_WARP;
     
     if (availDirs.size() > 0 && extractPowerup(power))
@@ -1678,7 +1702,7 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 
 void Tunnel::update(float elapsed)
 {
-    if (!isDone())
+    if (!isDone() && !player->isPowerUpActive("TimeWarp"))
         totalElapsed += elapsed;
     
     // Animate Pod Growing outwards or Growing inwards

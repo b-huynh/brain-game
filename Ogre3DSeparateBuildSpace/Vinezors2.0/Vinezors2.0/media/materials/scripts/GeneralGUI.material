@@ -349,40 +349,6 @@ material General/GUITopPanel
 	}
 }
 
-material General/GUILeftPanel
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture GUI_PowerUps.png
-			}
-		}
-	}
-}
-
-material General/GUIRightPanel
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture GUI_GearShift.png
-			}
-		}
-	}
-}
-
 material General/GUIMainHud
 {
 	technique
@@ -394,7 +360,7 @@ material General/GUIMainHud
             depth_write off
 			texture_unit
 			{
-				texture hudtest6.png
+				texture hud.png
 			}
 		}
 	}
@@ -874,4 +840,106 @@ material General/GUIPowerupButton2
             }
 		}
 	}
+}
+
+material General/PlanetAvailable
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture BlueStar.png
+        }
+      } 
+    }
+}
+
+material General/PlanetUnavailable
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture GrayPlanet.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar0Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_03.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar1Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_13.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar2Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_23.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar3Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_33.png
+        }
+      } 
+    }
 }

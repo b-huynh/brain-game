@@ -57,12 +57,12 @@ public:
     
     StageRequest retrieveLevel(int levelSelect) const;
     StageRequest retrieveLevel(int row, int col) const;
-    int getLevelNo(int row, int col) const; // Level Selection (row, col) -> (n-back, task)
+    int getLevelNo(char row, int col) const; // Level Selection 'A' to 'C' and 1 - 7
     int getLevelRow(int level) const;
     int getLevelCol(int level) const;
     int getNumLevels() const;
-    int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
     void initializeLevelSet();
+    
 };
 
 #endif /* defined(__Vinezors2_0__LevelSet__) */

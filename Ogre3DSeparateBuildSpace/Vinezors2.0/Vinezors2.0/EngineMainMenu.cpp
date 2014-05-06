@@ -67,8 +67,6 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
 #if !defined(OGRE_IS_IOS)
 void EngineMainMenu::mouseMoved(const OIS::MouseEvent &evt)
 {
-    
-    return true;
 }
 
 void EngineMainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -81,7 +79,6 @@ void EngineMainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID
         default:
             break;
     }
-    return true;
 }
 
 void EngineMainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -93,7 +90,6 @@ void EngineMainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonI
         default:
             break;
     }
-    return true;
 }
 
 void EngineMainMenu::keyPressed(const OIS::KeyEvent &keyEventRef)

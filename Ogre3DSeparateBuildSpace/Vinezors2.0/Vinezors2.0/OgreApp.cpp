@@ -238,7 +238,7 @@ void OgreApp::endGame()
 {
     // End the game on a good note and only once
     player->saveStage(globals.logPath);
-    player->saveProgress(globals.savePath, true);
+    player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
     syncLogs(); //Attempt to sync recently save log file.
 #endif

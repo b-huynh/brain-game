@@ -288,9 +288,15 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else if (queryGUI == "next")
             {
-                if (player->getLevels()->hasLevel(player->getLevelRequest() + 1))
+                LevelSet* levels = player->getLevels();
+                int row = levels->getLevelRow(player->getLevelRequestRow());
+                int col = levels->getLevelCol(player->getLevelRequestCol());
+                int level = levels->getLevelNo(row, col);
+                if (player->isLevelAvailable(level + 1))
                 {
-                    player->setLevelRequest(player->getLevelRequest() + 1);
+                    row = levels->getLevelRow(level + 1);
+                    col = levels->getLevelCol(level + 1);
+                    player->setLevelRequest(row, col);
                     stageState = STAGE_STATE_INIT;
                 }
             }
@@ -391,7 +397,6 @@ void EngineStage::mouseMoved(const OIS::MouseEvent &evt)
         
         player->setMousePos(Vector2(evt.state.X.abs, evt.state.Y.abs));
     }
-    return true;
 }
 
 void EngineStage::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -405,7 +410,6 @@ void EngineStage::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id
         default:
             break;
     }
-    return true;
 }
 
 void EngineStage::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -418,7 +422,6 @@ void EngineStage::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID i
         default:
             break;
     }
-    return true;
 }
 
 void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
@@ -529,14 +532,24 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("Shields");
             break;
         }
-        case OIS::KC_G:
-        {
 #ifdef DEBUG_MODE
-            player->setGodMode(!player->getGodMode());
-            std::cout << "God Mode: " << player->getGodMode() << std::endl;
-#endif
+        case OIS::KC_K:
+        {
+            if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(EVEN);
             break;
         }
+        case OIS::KC_L:
+        {
+            if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+            break;
+        }
+        case OIS::KC_G:
+        {
+            player->setGodMode(!player->getGodMode());
+            std::cout << "God Mode: " << player->getGodMode() << std::endl;
+            break;
+        }
+#endif
         default:
             break;
     }
@@ -607,7 +620,7 @@ void EngineStage::setup()
     globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
     
     StageMode nmode = STAGE_MODE_PROFICIENCY;
-    StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequest());
+    StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
     int nlevel = level.nback;
     switch (level.phase)
     {
@@ -788,12 +801,15 @@ void EngineStage::setPause(bool value)
     {
         OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
+        
+        // Display current level index
         LevelSet* levels = player->getLevels();
         std::string msg = "Level: ";
-        msg += levels->getLevelRow(player->getLevelRequest());
+        msg += Util::toStringInt(player->getLevelRequestRow() + 1);
         msg += "-";
-        msg += Util::toStringInt(levels->getLevelCol(player->getLevelRequest()));
+        msg += (char)('A' + player->getLevelRequestCol());
         globals.setMessage(msg, MESSAGE_NORMAL);
+        
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }
     else
@@ -808,112 +824,5 @@ void EngineStage::setPause(bool value)
 void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
-    PlayerLevel skillLevel = player->getSkillLevel();
-    switch (tunnel->getPhase())
-    {
-        case 'A':
-        {
-            skillLevel.runSpeed1 = player->getBaseSpeed();
-            skillLevel.set1Notify = 0;
-            if (eval == PASS || forced == PASS)
-            {
-                skillLevel.set1Rep++;
-                if (skillLevel.set1Rep >= globals.set1Repetitions)
-                {
-                    skillLevel.runSpeed1 *= globals.nlevelSpeedModifier;
-                    skillLevel.runSpeed1 = Util::clamp(skillLevel.runSpeed1, globals.minCamSpeed, globals.maxCamSpeed);
-                    skillLevel.set1Rep = 0;
-                    skillLevel.set1Notify = 1;
-                    skillLevel.set1++;
-                }
-            }
-            else if (eval == FAIL || forced == FAIL)
-            {
-                skillLevel.set1Rep--;
-                if (skillLevel.set1Rep < 0)
-                {
-                    if (skillLevel.set1 > 1)
-                    {
-                        skillLevel.set1Rep = globals.set1Repetitions - 1;
-                        skillLevel.set1--;
-                    }
-                    else
-                        skillLevel.set1Rep = 0;
-                }
-            }
-            break;
-        }
-        case 'B':
-        {
-            skillLevel.runSpeed2 = player->getBaseSpeed();
-            skillLevel.set2Notify = 0;
-            if (eval == PASS || forced == PASS)
-            {
-                skillLevel.set2Rep++;
-                if (skillLevel.set2Rep >= globals.set2Repetitions)
-                {
-                    skillLevel.runSpeed2 *= globals.nlevelSpeedModifier;
-                    skillLevel.runSpeed2 = Util::clamp(skillLevel.runSpeed2, globals.minCamSpeed, globals.maxCamSpeed);
-                    skillLevel.set2Rep = 0;
-                    skillLevel.set2Notify = 1;
-                    skillLevel.set2++;
-                }
-            }
-            else if (eval == FAIL || forced == FAIL)
-            {
-                skillLevel.set2Rep--;
-                if (skillLevel.set2Rep < 0)
-                {
-                    if (skillLevel.set2 > 1)
-                    {
-                        skillLevel.set2Rep = globals.set2Repetitions - 1;
-                        skillLevel.set2--;
-                    }
-                    else
-                        skillLevel.set2Rep = 0;
-                }
-            }
-            break;
-        }
-        case 'C':
-        {
-            skillLevel.runSpeed3 = player->getBaseSpeed();
-            skillLevel.set3Notify = 0;
-            if (eval == PASS || forced == PASS)
-            {
-                skillLevel.set3Rep++;
-                if (skillLevel.set3Rep >= globals.set3Repetitions)
-                {
-                    skillLevel.runSpeed3 *= globals.nlevelSpeedModifier;
-                    skillLevel.runSpeed3 = Util::clamp(skillLevel.runSpeed3, globals.minCamSpeed, globals.maxCamSpeed);
-                    skillLevel.set3Rep = 0;
-                    skillLevel.set3Notify = 1;
-                    skillLevel.set3++;
-                }
-            }
-            else if (eval == FAIL || forced == FAIL)
-            {
-                skillLevel.set3Rep--;
-                if (skillLevel.set3Rep < 0)
-                {
-                    if (skillLevel.set3 > 1)
-                    {
-                        skillLevel.set3Rep = globals.set3Repetitions - 1;
-                        skillLevel.set3--;
-                    }
-                    else
-                        skillLevel.set3Rep = 0;
-                }
-            }
-            break;
-        }
-        default:
-            break;
-    }
-    if (eval == PASS) player->levelCompletion[player->getLevelRequest()] = 1;
-    player->setSkillLevel(skillLevel);
-    player->saveStage(globals.logPath);
-    player->saveActions(globals.actionPath);
-    player->saveSession(globals.sessionPath);
-    player->saveProgress(globals.savePath, globals.currStageID);
+    player->saveAllResults(eval);
 }

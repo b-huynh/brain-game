@@ -157,11 +157,13 @@ private:
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
-    int levelRequest;
+    // Study report at the end of the session
     int numStagesWon;
+    
+    int levelRequestRow;
+    int levelRequestCol;
+    std::vector< std::vector<PlayerProgress> > levelProgress;
 public:
-    std::vector<int> levelCompletion;
-    bool win;
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
@@ -211,7 +213,15 @@ public:
     int getToggleBack() const;
     bool getGodMode() const;
     int getNumStagesWon() const;
-    int getLevelRequest() const;
+    int getLevelRequestRow() const;
+    int getLevelRequestCol() const;
+    bool hasLevelProgress(int level);
+    bool hasLevelProgress(int row, int col);
+    PlayerProgress getLevelProgress(int level);
+    PlayerProgress getLevelProgress(int row, int col);
+    bool isLevelAvailable(int level);
+    bool isLevelAvailable(int row, int col);
+    int getTotalLevelRating(int row);
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
     void setSeed(unsigned value);
@@ -244,7 +254,10 @@ public:
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
     void setGodMode(bool value);
-    void setLevelRequest(int value);
+    void setLevelRequestRow(int value);
+    void setLevelRequestCol(int value);
+    void setLevelRequest(int row, int col);
+    void setAllProgressTo(const PlayerProgress & value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -296,6 +309,7 @@ public:
     void initPowerUps();
     void setPowerUp(std::string pwr, bool value);
     bool isPowerUpAvailable(std::string pwr);
+    bool isPowerUpActive(std::string pwr);
     void performPowerUp(std::string pwr);
     void destroyPowerUps();
     void resetPowerUps();
@@ -304,10 +318,13 @@ public:
     void calculateNavigationScores();
     void calculateSpeedScores();
     std::string getCurrentStats() const;
+    
+    void saveAllResults(Evaluation eval);
     bool saveStage(std::string file);
     bool saveActions(std::string file);
     bool saveSession(std::string file);
-    bool saveProgress(std::string file, bool updateSessionID);
+    //bool saveProgress(std::string file, bool updateSessionID);
+    bool saveProgress(std::string file);
     bool loadProgress(std::string savePath);
     
     ~Player();

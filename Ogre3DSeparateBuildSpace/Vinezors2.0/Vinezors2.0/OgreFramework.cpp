@@ -186,19 +186,12 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundPod1", "spacePodWub.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundPod2", "spacePodDisorient.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundPod3", "spacePodWobble.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundPod4", "spacePodBalance.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod1", "pod4.wav", false, false, true);           // Rose
     m_pSoundMgr->createSound("SoundPod2", "pod3.wav", false, false, true);            // Iris
     m_pSoundMgr->createSound("SoundPod3", "bubbleSound.wav", false, false, true);    // Bubble Flower
     m_pSoundMgr->createSound("SoundPod4", "pod2.wav", false, false, true);            // Daisy
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
-    
-	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
-	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();

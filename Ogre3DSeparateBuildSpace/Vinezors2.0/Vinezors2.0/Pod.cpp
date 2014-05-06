@@ -216,14 +216,12 @@ void Pod::loadPowerup()
             headContentEntity->setMaterialName("General/PodRed");
             break;
         case POD_COLOR_GREEN:
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/SlowDown.mesh");
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
-            headContentEntity->setMaterialName("General/PodGreen");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/slowdown.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName("slowdown/Bubble");
             break;
         case POD_COLOR_BLUE:
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
-            headContentEntity->setMaterialName("General/PodBlue");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName("General/VineShellActive");
             break;
         default:
             std::cout << "WARNING: Unknown Powerup Model Type!\n";
@@ -277,8 +275,8 @@ void Pod::setToGrowth(float t)
     }
     else if (mtype == POD_POWERUP)
     {
-//        head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
-        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
+        head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
+//        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
     }
 }
 
@@ -423,7 +421,7 @@ void Pod::revealPod()
 
 void Pod::uncloakPod()
 {
-    if (mtype == POD_HAZARD)
+    if (mtype == POD_HAZARD || mtype == POD_POWERUP)
         return;
     switch (podColor)
     {

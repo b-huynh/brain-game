@@ -39,8 +39,6 @@ protected:
     PanelOverlayElement* pauseBackground;
     std::vector<PanelOverlayElement*> collectionBar;
     PanelOverlayElement* GUITopPanel;
-    PanelOverlayElement* GUILeftPanel;
-    PanelOverlayElement* GUIRightPanel;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
@@ -60,10 +58,6 @@ protected:
     PanelOverlayElement* toggle3TextArt;
     PanelOverlayElement* toggle4TextArt;
     PanelOverlayElement* toggleIndicator;
-    TextAreaOverlayElement* toggle1Text;
-    TextAreaOverlayElement* toggle2Text;
-    TextAreaOverlayElement* toggle3Text;
-    TextAreaOverlayElement* toggle4Text;
     
     PanelOverlayElement* powerup1Background;
     PanelOverlayElement* powerup2Background;

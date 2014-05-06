@@ -28,7 +28,7 @@ StageRequest LevelSet::retrieveLevel(int row, int col) const
     return stageList[NUM_TASKS * row + col];
 }
 
-int LevelSet::getLevelNo(int row, int col) const
+int LevelSet::getLevelNo(char row, int col) const
 {
     return NUM_TASKS * row + col;
 }
@@ -48,138 +48,227 @@ int LevelSet::getNumLevels() const
     return stageList.size();
 }
 
-int LevelSet::getTotalRowRequirement(int row) const
-{
-    return Util::clamp(7 + row, 7, 12);
-}
-
 void LevelSet::initializeLevelSet()
 {
     StageRequest level;
     
     /////////////////////
-    /// Level 0   1-A ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.nameTunnelTile = "General/WallBindingA";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music2";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 1   1-B ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.nameTunnelTile = "General/WallBindingB";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music1";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 2   1-C ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.nameTunnelTile = "General/WallBindingC";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music5";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 3   1-D ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.nameTunnelTile = "General/WallBindingD";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music3";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
-    level.hasHoldout = true;
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 4   1-E ///
+    /// Level 0   A-1 ///
     /////////////////////
     level = StageRequest();
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 0, 0));
+    level.nameTunnelTile = "General/WallBindingStart";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music1";
+    level.tunnelSectionsPerNavLevel = 25;
+    level.phase = 'E';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    /*
+    level = StageRequest();
+    level.nback = 0;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.nameTunnelTile = "General/WallBindingStart";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music1";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'F';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 50;
+    stageList.push_back(level);
+     */
+    
+    /////////////////////
+    /// Level 1   A-2 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.nameTunnelTile = "General/WallBindingA";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music1";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 2   A-3 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(0));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.nameTunnelTile = "General/WallBindingA";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music1";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 3   A-4 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.nameTunnelTile = "General/WallBindingB";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music2";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'B';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 4   A-5 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 0;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(0, 0, 0));
+    level.nameTunnelTile = "General/WallBindingG";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music4";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'E';
+    level.initCamSpeed = 17;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 50;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 5   A-6 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.nameTunnelTile = "General/WallBindingC";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music5";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'C';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 6   A-7 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 0, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 0, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.nameTunnelTile = "General/WallBindingD";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music2";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.hasHoldout = true;
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 7   A-8 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 3;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingD";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music2";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 8   B-1 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 0;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(2, 0, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -187,59 +276,53 @@ void LevelSet::initializeLevelSet()
     level.phase = 'E';
     level.initCamSpeed = 17;
     level.minCamSpeed = 15;
-    level.maxCamSpeed = 55;
+    level.maxCamSpeed = 50;
     stageList.push_back(level);
     
-    
     /////////////////////
-    /// Level 5   2-A ///
+    /// Level 9   B-2 ///
     /////////////////////
     level = StageRequest();
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.nameTunnelTile = "General/WallBindingA";
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.nameTunnelTile = "General/WallBindingE";
     level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music2";
+    level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phase = 'D';
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 6   2-B ///
+    /// Level 10  B-3 ///
     /////////////////////
     level = StageRequest();
-    level.nback = 3;
+    level.nback = 4;
     level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music1";
+    level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'B';
     level.initCamSpeed = 15;
@@ -248,51 +331,66 @@ void LevelSet::initializeLevelSet()
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 7   2-C ///
+    /// Level 11  B-4 ///
     /////////////////////
     level = StageRequest();
-    level.nback = 3;
+    level.nback = 4;
     level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.nameTunnelTile = "General/WallBindingC";
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music5";
+    level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phase = 'A';
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 8   2-D ///
+    /// Level 12  B-5 ///
     /////////////////////
     level = StageRequest();
-    level.nback = 3;
+    level.nback = 0;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(4, 0, 0));
+    level.nameTunnelTile = "General/WallBindingG";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music4";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'E';
+    level.initCamSpeed = 17;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 50;
+    stageList.push_back(level);
+    
+    /////////////////////
+    /// Level 13  B-6 ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.collectionCriteria.push_back(CollectionCriteria(2));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 2));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -305,99 +403,20 @@ void LevelSet::initializeLevelSet()
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 9   2-E ///
+    /// Level 14  B-7 ///
     /////////////////////
     level = StageRequest();
-    level.nback = 0;
-    level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.nameTunnelTile = "General/WallBindingG";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music4";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
-    level.initCamSpeed = 17;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 55;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 10  3-A ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.nameTunnelTile = "General/WallBindingA";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music2";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 11  3-B ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
+    level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 1));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.nameTunnelTile = "General/WallBindingB";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music1";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
-    level.initCamSpeed = 15;
-    level.minCamSpeed = 15;
-    level.maxCamSpeed = 40;
-    stageList.push_back(level);
-    
-    /////////////////////
-    /// Level 12  3-C ///
-    /////////////////////
-    level = StageRequest();
-    level.nback = 3;
-    level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -409,44 +428,41 @@ void LevelSet::initializeLevelSet()
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 13  3-D ///
+    /// Level 15  B-8 ///
     /////////////////////
     level = StageRequest();
-    level.nback = 3;
+    level.nback = 4;
     level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.collectionCriteria.push_back(CollectionCriteria(3));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.collectionCriteria.push_back(CollectionCriteria(4));
+    level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music3";
+    level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
     stageList.push_back(level);
     
     /////////////////////
-    /// Level 14  3-E ///
+    /// Level 16  C-1 ///
     /////////////////////
     level = StageRequest();
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 1, 1));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(6, 0, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -454,6 +470,39 @@ void LevelSet::initializeLevelSet()
     level.phase = 'E';
     level.initCamSpeed = 17;
     level.minCamSpeed = 15;
-    level.maxCamSpeed = 55;
+    level.maxCamSpeed = 50;
     stageList.push_back(level);
+    
+    /*
+    /////////////////////
+    /// Level ??? ?-? ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 6;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 3));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.collectionCriteria.push_back(CollectionCriteria(5));
+    level.collectionCriteria.push_back(CollectionCriteria(5));
+    level.collectionCriteria.push_back(CollectionCriteria(5));
+    level.collectionCriteria.push_back(CollectionCriteria(5));
+    level.collectionCriteria.push_back(CollectionCriteria(5));
+    level.collectionCriteria.push_back(CollectionCriteria(6));
+    level.collectionCriteria.push_back(CollectionCriteria(6));
+    level.collectionCriteria.push_back(CollectionCriteria(6));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingA";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music2";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 15;
+    level.maxCamSpeed = 40;
+    stageList.push_back(level);
+     */
 }

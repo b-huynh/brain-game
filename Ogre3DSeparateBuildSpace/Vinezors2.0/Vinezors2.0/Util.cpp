@@ -230,15 +230,16 @@ Util::ConfigGlobal::ConfigGlobal()
     speedMap[48] = 36.5;
     speedMap[49] = 37.0;
     speedMap[50] = 37.5;
-    speedMap[42] = 38.0;
-    speedMap[43] = 38.5;
-    speedMap[44] = 39.0;
-    speedMap[45] = 39.5;
-    speedMap[46] = 40.0;
-    speedMap[47] = 40.0;
-    speedMap[48] = 40.0;
-    speedMap[49] = 40.0;
-    speedMap[50] = 40.0;
+    speedMap[51] = 38.0;
+    speedMap[52] = 38.5;
+    speedMap[53] = 39.0;
+    speedMap[54] = 39.5;
+    speedMap[55] = 40.0;
+    speedMap[56] = 40.0;
+    speedMap[57] = 40.0;
+    speedMap[58] = 40.0;
+    speedMap[59] = 40.0;
+    speedMap[60] = 40.0;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed

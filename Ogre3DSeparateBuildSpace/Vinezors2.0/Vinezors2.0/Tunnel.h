@@ -170,6 +170,7 @@ public:
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
+    float getPercentComplete() const;
     int getNBack() const;
     int getControl() const;
     Direction getBasis() const;
@@ -207,6 +208,8 @@ public:
     bool setAllCriteriaTo(bool value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
+    int getNumRequiredCriteria() const;
+    int getNumSatisfiedCriteria() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;

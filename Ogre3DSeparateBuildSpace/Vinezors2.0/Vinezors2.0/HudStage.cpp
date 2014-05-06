@@ -46,39 +46,8 @@ void HudStage::update(float elapsed)
     label2->setColour(fontColor);
     label2->setCaption("Time: " + Util::toStringInt(timeLeft));
 
-    /*
-    switch (tunnel->getPhase())
-    {
-        case 'A':
-            label3->setCaption("Color/Sound");
-            break;
-        case 'B':
-            label3->setCaption("Shape/Sound");
-            break;
-        case 'C':
-            label3->setCaption("Sound");
-            break;
-        case 'D':
-            label3->setCaption("Color/Shape/Sound");
-            break;
-        case 'E':
-            label3->setCaption("Navigation");
-            break;
-        case 'F':
-            label3->setCaption("Tutorial");
-            break;
-        default:
-            label3->setCaption("");
-            break;
-    }
-    */
     if (tunnel->getMode() == STAGE_MODE_RECESS)
-    {
-        float percentComplete = static_cast<float>((tunnel->getSpawnLimit() - tunnel->getSignalsLeft())) / tunnel->getSpawnLimit() * 100;
-        percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
-        label3->setCaption("Complete: " + Util::toStringInt(percentComplete) + "%");
-        
-    }
+        label3->setCaption("Complete: " + Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
     else
         label3->setCaption("");
     
@@ -95,11 +64,6 @@ void HudStage::update(float elapsed)
         //indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
         indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
     }
-    
-    toggle1Text->setCaption(Util::toStringInt(tunnel->getNBack()));
-    toggle2Text->setCaption(Util::toStringInt(tunnel->getNBack() - 1));
-    toggle3Text->setCaption(Util::toStringInt(tunnel->getNBack() - 2));
-    toggle4Text->setCaption(Util::toStringInt(tunnel->getNBack() - 3));
     
     switch (player->getToggleBack())
     {
@@ -164,7 +128,11 @@ void HudStage::update(float elapsed)
     else
         resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
     
-    if (player->getLevels()->hasLevel(player->getLevelRequest() + 1))
+    LevelSet* levels = player->getLevels();
+    int levelRow = player->getLevelRequestRow();
+    int levelCol = player->getLevelRequestCol();
+    int level = levels->getLevelNo(levelRow, levelCol);
+    if (player->isLevelAvailable(level + 1))
         nextButtonBackground->setMaterialName("General/NextButtonRound");
     else
         nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
@@ -200,10 +168,6 @@ void HudStage::alloc()
     
     GUITopPanel = static_cast<PanelOverlayElement*>(
                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUITopPanel"));
-    GUILeftPanel = static_cast<PanelOverlayElement*>(
-                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUILeftPanel"));
-    GUIRightPanel = static_cast<PanelOverlayElement*>(
-                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUIRightPanel"));
     
     // Create text area
     label1 = static_cast<TextAreaOverlayElement*>(
@@ -242,14 +206,6 @@ void HudStage::alloc()
                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle4TextArt"));
     toggleIndicator = static_cast<PanelOverlayElement*>(
                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggleIndicator"));
-    toggle1Text = static_cast<TextAreaOverlayElement*>(
-                                                       OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageToggle1Text"));
-    toggle2Text = static_cast<TextAreaOverlayElement*>(
-                                                       OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageToggle2Text"));
-    toggle3Text = static_cast<TextAreaOverlayElement*>(
-                                                       OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageToggle3Text"));
-    toggle4Text = static_cast<TextAreaOverlayElement*>(
-                                                       OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageToggle4Text"));
     powerup1Background = static_cast<PanelOverlayElement*>(
                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Powerup1Background"));
     powerup2Background = static_cast<PanelOverlayElement*>(
@@ -277,8 +233,6 @@ void HudStage::alloc()
     //overlay1->add2D(indicator);
     
     overlay1->add2D(GUITopPanel);
-    //overlay1->add2D(GUILeftPanel);
-    //overlay1->add2D(GUIRightPanel);
     
     overlay1->add2D(pauseBackground);
     for (int i = 0; i < collectionBar.size(); ++i)
@@ -305,10 +259,6 @@ void HudStage::alloc()
     panelText->addChild(label5);
     panelText->addChild(label6);
     panelText->addChild(label7);
-    //panelText->addChild(toggle1Text);
-    //panelText->addChild(toggle2Text);
-    //panelText->addChild(toggle3Text);
-    //panelText->addChild(toggle4Text);
     overlay2->add2D(resumeButtonBackground);
     overlay2->add2D(nextButtonBackground);
     overlay2->add2D(restartButtonBackground);
@@ -326,8 +276,6 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(indicator);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUITopPanel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUILeftPanel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUIRightPanel);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
     collectionBar.clear();
@@ -355,10 +303,6 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(restartButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1Text);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2Text);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle3Text);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle4Text);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
@@ -400,22 +344,9 @@ void HudStage::setOverlay()
     indicator->setMaterialName("General/Indicator");
     
     GUITopPanel->setMetricsMode(GMM_RELATIVE);
-//    GUITopPanel->setPosition(0.0, 0.0);
-//    GUITopPanel->setDimensions(1.0, 0.1);
-//    GUITopPanel->setMaterialName("General/GUITopPanel");
     GUITopPanel->setPosition(0.0, 0.0);
     GUITopPanel->setDimensions(1.0, 1.0);
     GUITopPanel->setMaterialName("General/GUIMainHud");
-    
-    GUILeftPanel->setMetricsMode(GMM_RELATIVE);
-    GUILeftPanel->setPosition(0.0, 0.3);
-    GUILeftPanel->setDimensions(0.1, 0.5);
-    GUILeftPanel->setMaterialName("General/GUILeftPanel");
-    
-    GUIRightPanel->setMetricsMode(GMM_RELATIVE);
-    GUIRightPanel->setPosition(0.9, 0.3);
-    GUIRightPanel->setDimensions(0.1, 0.6);
-    GUIRightPanel->setMaterialName("General/GUIRightPanel");
     
     float x = 0.285;
     float y = 0.035;
@@ -507,10 +438,10 @@ void HudStage::setOverlay()
     toggle4TextArt->setMaterialName("General/GUIToggleTextNumber0");
     
     buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_PIXELS, Vector2(globals.pauseButton_posX, globals.pauseButton_posY), Vector2(globals.pauseButton_width, globals.pauseButton_height), pauseBackground, NULL);
-    buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.45), Vector2(0.08, 0.08), toggle1Background, toggle1Text);
-    buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.55), Vector2(0.08, 0.08), toggle2Background, toggle2Text);
-    buttons[BUTTON_TOGGLE3].setButton("toggle3", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.65), Vector2(0.08, 0.08), toggle3Background, toggle3Text);
-    buttons[BUTTON_TOGGLE4].setButton("toggle4", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.75), Vector2(0.08, 0.08), toggle4Background, toggle4Text);
+    buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.45), Vector2(0.08, 0.08), toggle1Background, NULL);
+    buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.55), Vector2(0.08, 0.08), toggle2Background, NULL);
+    buttons[BUTTON_TOGGLE3].setButton("toggle3", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.65), Vector2(0.08, 0.08), toggle3Background, NULL);
+    buttons[BUTTON_TOGGLE4].setButton("toggle4", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.75), Vector2(0.08, 0.08), toggle4Background, NULL);
     float pheight = 0.12;
     float pwidth = pheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_POWERUP1].setButton("powerup1", overlays[0], GMM_RELATIVE, Vector2(0.015, 0.45), Vector2(pwidth, pheight), powerup1Background, NULL);

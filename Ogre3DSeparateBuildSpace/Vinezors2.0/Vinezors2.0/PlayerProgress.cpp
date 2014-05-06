@@ -8,10 +8,21 @@
 
 #include "PlayerProgress.h"
 
-PlayerProgress::PlayerProgress() : rating(0), score(0.0), time(0.0),
+PlayerProgress::PlayerProgress() : rating(-1), score(0.0), time(0.0),
 collection0Correct(0), collection1Correct(0), collection2Correct(0), collection3Correct(0),
 collection0Wrong(0), collection1Wrong(0), collection2Wrong(0), collection3Wrong(0)
 {}
+
+// returns true if the new rating overwrites the old rating
+bool PlayerProgress::setRating(int nrating)
+{
+    if (nrating >= rating)
+    {
+        rating = nrating;
+        return true;
+    }
+    return false;
+}
 
 std::ostream& operator<<(std::ostream& outfile, const PlayerProgress & prg)
 {
