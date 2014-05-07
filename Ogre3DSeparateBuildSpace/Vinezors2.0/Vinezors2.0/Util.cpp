@@ -1530,3 +1530,71 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
 {
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
+
+void PodInfo::performHoldout(char phase)
+{
+    //float rand_holdOut = Ogre::Math::UnitRandom();
+    float rand_signal = Ogre::Math::UnitRandom();
+    
+    if( true ) {//|| rand_holdOut < 0.1f ) {
+        switch(phase) {
+            case 'A':   // levels that normally have color and sound active
+                if( rand_signal < 0.5f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    std::cout << "Hold out: color" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound" << std::endl;
+                }
+                break;
+            case 'B':   // levels that normally have shape and sound active
+                if( rand_signal < 0.5f ) {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: shape" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound" << std::endl;
+                }
+                break;
+            case 'C':   // levels that normally have sound only active
+                break;
+            case 'D':   // levels that normally have all three signals active
+                if( rand_signal < 0.167f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                }
+                else if( rand_signal < 0.333f ) {
+                    podSound = POD_SOUND_UNKNOWN;
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: sound and shape (color only)" << std::endl;
+                }
+                else if( rand_signal < 0.500f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: color and sound (shape only)" << std::endl;
+                }
+                else if( rand_signal < 0.667f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    std::cout << "Hold out: color (shape and sound only)" << std::endl;
+                }
+                else if( rand_signal < 0.824f ) {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: shape (color and sound only)" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                }
+            case 'E':   // recess levels
+                break;
+            case 'F':   // gear shift levels
+                break;
+            default:
+                break;
+        }
+    }
+
+}

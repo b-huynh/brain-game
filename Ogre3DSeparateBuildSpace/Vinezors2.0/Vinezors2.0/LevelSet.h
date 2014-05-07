@@ -36,11 +36,12 @@ struct StageRequest
     int tunnelSectionsPerNavLevel;
     char phase;
     bool hasHoldout;
+    int holdoutFrequency;
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
     
-    StageRequest() : nback(0), stageTime(120.0), navLevels(), collectionCriteria(), powerups(), nameTunnelTile(""), nameSkybox(""), nameMusic(""), tunnelSectionsPerNavLevel(10), phase('A'), hasHoldout(false), initCamSpeed(20.0), minCamSpeed(15.0), maxCamSpeed(25.0) {}
+    StageRequest() : nback(0), stageTime(120.0), navLevels(), collectionCriteria(), powerups(), nameTunnelTile(""), nameSkybox(""), nameMusic(""), tunnelSectionsPerNavLevel(10), phase('A'), hasHoldout(false), holdoutFrequency(4), initCamSpeed(20.0), minCamSpeed(15.0), maxCamSpeed(25.0) {}
 };
 
 class LevelSet

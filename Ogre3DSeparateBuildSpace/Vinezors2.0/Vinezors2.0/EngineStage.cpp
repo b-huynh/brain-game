@@ -719,7 +719,7 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    tunnel->setHoldOut(level.hasHoldout);
+    tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
     if (tunnel->getMode() == STAGE_MODE_RECESS)
     {
         // Assign nav levels in an incremental order specified by Liam's formula if the mode is recess

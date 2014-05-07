@@ -67,7 +67,7 @@ struct SectionInfo
 
 // Pod Info
 enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
-enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_UNKNOWN };
+enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_HOLDOUT, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_HOLDOUT, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
@@ -94,60 +94,7 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
     
-    void holdOut(char phase) {
-        //float rand_holdOut = Ogre::Math::UnitRandom();
-        float rand_signal = Ogre::Math::UnitRandom();
-        
-        if( true ) {//|| rand_holdOut < 0.1f ) {
-            switch(phase) {
-                case 'A':
-                    if( rand_signal < 0.5f ) {
-                        podColor = POD_COLOR_UNKNOWN;
-                        //std::cout << "Hold out: color" << std::endl;
-                    }
-                    else {
-                        podSound = POD_SOUND_UNKNOWN;
-                        //std::cout << "Hold out: sound" << std::endl;
-                    }
-                    break;
-                case 'B':
-                    if( rand_signal < 0.5f ) {
-                        podShape = POD_SHAPE_UNKNOWN;
-                        //std::cout << "Hold out: shape" << std::endl;
-                    }
-                    else {
-                        podSound = POD_SOUND_UNKNOWN;
-                        //std::cout << "Hold out: sound" << std::endl;
-                    }
-                    break;
-                case 'C':
-                    break;
-                case 'D':
-                    //  Original hold out mechanic idea for color/shape/sound levels
-                    /*
-                     if( rand_signal < 0.33f ) {
-                     podColor = POD_COLOR_UNKNOWN;
-                     //std::cout << "Hold out: color" << std::endl;
-                     }
-                     else if( rand_signal < 0.66f ) {
-                     podShape = POD_SHAPE_UNKNOWN;
-                     //std::cout << "Hold out: shape" << std::endl;
-                     }
-                     else {
-                     podSound = POD_SOUND_UNKNOWN;
-                     //std::cout << "Hold out: sound" << std::endl;
-                     }
-                     break;
-                    */
-                    
-                    // Special hold out idea where only sound is kept and GODMODE particleFX is used for the pod
-                    podShape = POD_SHAPE_HOLDOUT;
-                    std::cout << "Hold out: special" << std::endl;
-                default:
-                    break;
-            }
-        }
-    }
+    void performHoldout(char phase);
 };
 
 // Vine Info

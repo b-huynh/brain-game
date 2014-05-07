@@ -165,6 +165,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
+    level.holdoutFrequency = 4;
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
@@ -299,6 +300,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
+    level.holdoutFrequency = 4;
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
@@ -432,6 +434,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
+    level.holdoutFrequency = 4;
     level.initCamSpeed = 15;
     level.minCamSpeed = 15;
     level.maxCamSpeed = 40;
