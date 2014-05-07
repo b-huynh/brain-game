@@ -98,7 +98,10 @@ public:
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
     bool hasHoldout;
-    int holdOutCounter;
+    int holdoutCounter;
+    int holdoutPod;
+    int holdoutIndex;
+    int holdoutFrequency;
     int trackNBackA;
     int trackNBackB;
     int trackNBackC;
@@ -236,7 +239,7 @@ public:
     void update(float elapsed);
     void respondToToggleCheat();
     
-    void setHoldOut(bool val);
+    void setHoldout(bool val, int holdoutFrequency);
     
 	~Tunnel();
 };

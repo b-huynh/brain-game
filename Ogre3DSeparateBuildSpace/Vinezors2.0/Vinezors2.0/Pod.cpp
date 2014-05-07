@@ -525,7 +525,36 @@ void Pod::generateIndicator()
         indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
         indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         
-        ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+        if( podShape == POD_SHAPE_HOLDOUT ) {
+            Ogre::ColourValue emitterColor;
+            switch (podColor)
+            {
+                case POD_COLOR_BLUE:
+                    emitterColor = Ogre::ColourValue(0.0,0.0,1.0);
+                    break;
+                case POD_COLOR_GREEN:
+                    emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
+                    break;
+                case POD_COLOR_PINK:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
+                    break;
+                case POD_COLOR_YELLOW:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
+                    break;
+                case POD_COLOR_PURPLE:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    break;
+                case POD_COLOR_HOLDOUT:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    break;
+                default:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                    break;
+            }
+            
+            ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+            indicatorEmitter->setColour(emitterColor);
+        }
         
         indicatorNode->attachObject(indicatorEffect);
         ++indicatorID;
@@ -621,6 +650,10 @@ void Pod::removeFromScene()
     }
 }
 
+float colortimer = 0.0f;
+float colordelay = 0.2f;
+int coloridx = 0;
+
 void Pod::update(float elapsed)
 {
     if (glowNode)
@@ -651,6 +684,88 @@ void Pod::update(float elapsed)
         head->yaw(Degree(rotateSpeed.x));
         head->pitch(Degree(rotateSpeed.y));
         head->roll(Degree(rotateSpeed.z));
+    }
+    
+    if( podColor == POD_COLOR_HOLDOUT && mtype == POD_FUEL && podShape != POD_SHAPE_HOLDOUT)
+    {
+        if( colortimer >= colordelay ) {
+            if( coloridx >= 3 ) coloridx = 0;
+            else coloridx++;
+            
+            colortimer = 0.0f;
+            
+            std::string tempMaterial;
+            switch (coloridx)
+            {
+                case 0:
+                    tempMaterial = "General/PodBlue";
+                    break;
+                case 1:
+                    tempMaterial = "General/PodGreen";
+                    break;
+                case 2:
+                    tempMaterial = "General/PodRed";
+                    break;
+                case 3:
+                    tempMaterial = "General/PodYellow";
+                    break;
+                case 4:
+                    tempMaterial = "General/PodPurple";
+                    break;
+                default:
+                    tempMaterial = "General/PodWhite";
+                    break;
+            }
+            if (podTaken)
+                tempMaterial += "Transparent";
+            
+            if (podShape != POD_SHAPE_UNKNOWN)
+                // Based on Maya model, SubEntity1 is the content in the fuel cell
+                headContentEntity->getSubEntity(1)->setMaterialName(tempMaterial);
+            else
+                headContentEntity->getSubEntity(0)->setMaterialName(tempMaterial);
+        }
+        else {
+            colortimer += elapsed;
+        }
+    }
+    else if( podColor == POD_COLOR_HOLDOUT && mtype == POD_FUEL && podShape == POD_SHAPE_HOLDOUT ) {
+        if( colortimer >= colordelay ) {
+            if( coloridx >= 3 ) coloridx = 0;
+            else coloridx++;
+            
+            colortimer = 0.0f;
+            
+            Ogre::ColourValue emitterColor;
+            switch (coloridx)
+            {
+                case 0:
+                    emitterColor = Ogre::ColourValue(0.0,0.0,1.0);
+                    break;
+                case 1:
+                    emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
+                    break;
+                case 2:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
+                    break;
+                case 3:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
+                    break;
+                case 4:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    break;
+                default:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                    break;
+            }
+            
+            ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+            indicatorEmitter->setColour(emitterColor);
+            
+        }
+        else {
+            colortimer += elapsed;
+        }
     }
 }
 
