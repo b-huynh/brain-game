@@ -213,6 +213,74 @@ material General/PauseButtonGray
     }
 }
 
+material General/ButtonGoDown
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoleft1.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoDownGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoleft1GRAY.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoUp
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoright1.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoUpGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoright1GRAY.png
+        }
+      } 
+    }
+}
+
 material General/TextArtMainTitle
 {
 	technique

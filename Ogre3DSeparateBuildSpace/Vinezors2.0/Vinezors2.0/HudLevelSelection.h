@@ -27,11 +27,13 @@ protected:
     static const int LEVEL_ITEM_HEIGHT = 3;
     
     Player* player;
+    int rowIndex;
     
+    static const int NUM_UNIQUE_BUTTONS = 3;
     enum Buttons {
+        BUTTON_BACK, BUTTON_UP, BUTTON_DOWN
         // Note: levelItemBackgrounds are created based on LEVEL_ITEM_WIDTH and LEVEL_ITEM_HEIGHT
         // which are not included in here
-        BUTTON_BACK
     };
     
     // Overlay items for GAME_STATE_MENU
@@ -41,6 +43,8 @@ protected:
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemNames;
     std::vector<TextAreaOverlayElement*> levelSetStars;
     PanelOverlayElement* backButtonBackground;
+    PanelOverlayElement* buttonGoUpBackground;
+    PanelOverlayElement* buttonGoDownBackground;
     
     void link(Player* player);
     void unlink();
@@ -48,6 +52,7 @@ protected:
     virtual void dealloc();
     virtual void setOverlay();
     
+    int convertLevelRowToButtonRow() const;
     void updateDisplay();
     void setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, int row, int col);
 };

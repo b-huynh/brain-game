@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421091181.90801"
+            timestampString = "421113821.005753"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1313"
-            endingLineNumber = "1313"
+            startingLineNumber = "1323"
+            endingLineNumber = "1323"
             landmarkName = "Player::newTunnel(const std::string &amp; nameMusic)"
             landmarkType = "5">
          </BreakpointContent>
@@ -126,11 +126,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421091181.90801"
+            timestampString = "421113821.005753"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "471"
-            endingLineNumber = "471"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "Player::updateTractorBeam(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -158,11 +158,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421091181.90801"
+            timestampString = "421113821.005753"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "860"
-            endingLineNumber = "860"
+            startingLineNumber = "865"
+            endingLineNumber = "865"
             landmarkName = "Player::testPodGiveFeedback(Pod* test)"
             landmarkType = "5">
          </BreakpointContent>
@@ -174,11 +174,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421091181.90801"
+            timestampString = "421113821.005753"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "863"
-            endingLineNumber = "863"
+            startingLineNumber = "868"
+            endingLineNumber = "868"
             landmarkName = "Player::testPodGiveFeedback(Pod* test)"
             landmarkType = "5">
          </BreakpointContent>
@@ -574,12 +574,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudLevelSelection.cpp"
-            timestampString = "421089658.564544"
+            timestampString = "421113821.005753"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
             landmarkName = "HudLevelSelection::alloc()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vinezors2.0/LevelSet.cpp"
+            timestampString = "421102766.479971"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "LevelSet::initializeLevelSet()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

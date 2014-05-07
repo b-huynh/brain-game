@@ -14,7 +14,7 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), levelProgress()
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -24,7 +24,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), levelProgress()
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
@@ -370,10 +370,15 @@ bool Player::isLevelAvailable(int row, int col)
     return isLevelAvailable(level);
 }
 
+int Player::getMenuRowIndex() const
+{
+    return menuRowIndex;
+}
+
 // Returns the total rating of a row-set of levels
 int Player::getTotalLevelRating(int row)
 {
-    if (row < 0 && row >= levelProgress.size()) return -1;
+    if (row < 0 && row >= levelProgress.size()) return 0;
     int total = 0;
     for (int col = 0; col < levelProgress[row].size(); ++col)
         if (levelProgress[row][col].rating >= 0)
@@ -1223,6 +1228,11 @@ void Player::setLevelRequest(int row, int col)
 {
     levelRequestRow = row;
     levelRequestCol = col;
+}
+
+void Player::setMenuRowIndex(int value)
+{
+    menuRowIndex = value;
 }
 
 void Player::setAllProgressTo(const PlayerProgress & value)

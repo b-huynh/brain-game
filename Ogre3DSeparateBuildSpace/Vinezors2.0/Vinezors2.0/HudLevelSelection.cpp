@@ -10,8 +10,10 @@
 #include "Player.h"
 #include "LevelSet.h"
 
+extern Util::ConfigGlobal globals;
+
 HudLevelSelection::HudLevelSelection(Player* player)
-: Hud()
+: Hud(), rowIndex(0)
 {
     link(player);
     init();
@@ -78,11 +80,13 @@ void HudLevelSelection::alloc()
         levelSetStars[i] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSetStars" + Util::toStringInt(i)));
     }
     
+    buttonGoUpBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoUpButtonBackground"));
+    buttonGoDownBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoDownButtonBackground"));
     backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionBackButtonBackground"));
     
     // Back Button plus the Vector of 2-D Buttons
     // Order matters that the Back Button is first
-    buttons = std::vector<HudButton>(1 + LEVEL_ITEM_WIDTH * LEVEL_ITEM_HEIGHT);
+    buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS + LEVEL_ITEM_WIDTH * LEVEL_ITEM_HEIGHT);
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("LevelSelectionOverlay");
@@ -100,6 +104,8 @@ void HudLevelSelection::alloc()
             }
         }
     }
+    overlay1->add2D(buttonGoUpBackground);
+    overlay1->add2D(buttonGoDownBackground);
     overlay1->add2D(backButtonBackground);
     overlays.push_back(overlay1);
 }
@@ -116,9 +122,11 @@ void HudLevelSelection::dealloc()
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemPlanets[i][j]);
     for (int i = 0; i < levelItemNames.size(); ++i)
         for (int j = 0; j < levelItemNames[i].size(); ++j)
-        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemNames[i][j]);
+            OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemNames[i][j]);
     for (int i = 0; i < levelSetStars.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSetStars[i]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoUpBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoDownBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
@@ -130,17 +138,6 @@ void HudLevelSelection::setOverlay()
     levelSelectPrompt->setPosition(0.10, 0.05);
     levelSelectPrompt->setDimensions(0.80, 0.20);
     levelSelectPrompt->setMaterialName("General/TextArtLevelSelection");
-    
-    // Assign a 2-D level selection map for each button
-    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
-        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
-            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], i, j);
-    for (int i = 0; i < levelSetStars.size(); ++i)
-    {
-        int earnedStars = player->getTotalLevelRating(i);
-        int totalStars = 3 * NUM_TASKS;
-        levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(totalStars));
-    }
     
     backButtonBackground->setMaterialName("General/BackButton");
     
@@ -155,9 +152,13 @@ void HudLevelSelection::setOverlay()
     {
         for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
         {
+            // calculate dimensions for button size and make sure it's square
+            float percsize = 0.15;
+            float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+            
             std::string buttonName = "level";
             buttonName += (char)('A' + i) + Util::toStringInt(j);
-            buttons[1 + i * LEVEL_ITEM_WIDTH + j].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(curx, cury), Vector2(0.10, 0.10), levelItemBackgrounds[i][j], NULL);
+            buttons[NUM_UNIQUE_BUTTONS + i * LEVEL_ITEM_WIDTH + j].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(curx, cury), Vector2(dimen, dimen), levelItemBackgrounds[i][j], NULL);
             curx += dx;
         }
         curx = sx;
@@ -168,9 +169,13 @@ void HudLevelSelection::setOverlay()
     {
         for (int j = 0; j < levelItemPlanets[i].size(); ++j)
         {
+            // calculate dimensions for button size and make sure it's square
+            float percsize = 0.10;
+            float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+            
             levelItemPlanets[i][j]->setMetricsMode(GMM_RELATIVE);
             levelItemPlanets[i][j]->setPosition(0.02, 0.02);
-            levelItemPlanets[i][j]->setDimensions(0.065, 0.065);
+            levelItemPlanets[i][j]->setDimensions(dimen, dimen);
         }
     }
     // Set orientations for the title per level
@@ -180,7 +185,7 @@ void HudLevelSelection::setOverlay()
         {
             levelItemNames[i][j]->setMetricsMode(GMM_RELATIVE);
             levelItemNames[i][j]->setAlignment(TextAreaOverlayElement::Center);
-            levelItemNames[i][j]->setPosition(0.05, -0.02);
+            levelItemNames[i][j]->setPosition(0.06, -0.02);
             levelItemNames[i][j]->setCharHeight(0.025);
             levelItemNames[i][j]->setFontName("Arial");
         }
@@ -195,7 +200,26 @@ void HudLevelSelection::setOverlay()
         levelSetStars[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
         levelSetStars[i]->setFontName("Arial");
     }
+    // The Up Button
+    {
+        // calculate dimensions for button size and make sure it's square
+        float percsize = 0.10;
+        float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+        buttons[BUTTON_UP].setButton("goup", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.400), Vector2(dimen, dimen), buttonGoUpBackground, NULL);
+    }
+    // The Down Button
+    {
+        // calculate dimensions for button size and make sure it's square
+        float percsize = 0.10;
+        float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+        buttons[BUTTON_DOWN].setButton("godown", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.550), Vector2(dimen, dimen), buttonGoDownBackground, NULL);
+    }
+    buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
+    buttonGoDownBackground->setMaterialName("General/ButtonGoDownGray");
+    
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.20, 0.78), Vector2(0.30, 0.10), backButtonBackground, NULL);
+    
+    updateDisplay();
 }
 
 void HudLevelSelection::link(Player* player)
@@ -208,6 +232,14 @@ void HudLevelSelection::unlink()
     this->player = NULL;
 }
 
+// Given the player's selection index, convert the index to a mapping the 2-D button set
+int HudLevelSelection::convertLevelRowToButtonRow() const
+{
+    int menuRowIndex = player->getMenuRowIndex();
+    
+    return menuRowIndex;
+}
+
 void HudLevelSelection::updateDisplay()
 {
     // Assign a 2-D level selection map for each button
@@ -217,9 +249,9 @@ void HudLevelSelection::updateDisplay()
     // Update the display of stars earned per row
     for (int i = 0; i < levelSetStars.size(); ++i)
     {
-        int earnedStars = player->getTotalLevelRating(i);
-        int totalStars = 3 * NUM_TASKS;
-        levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(totalStars));
+        int requiredStars = player->getLevels()->getTotalRowRequirement(i);
+        int earnedStars = Util::clamp(player->getTotalLevelRating(i), 0, requiredStars);
+        levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(requiredStars));
     }
 }
 

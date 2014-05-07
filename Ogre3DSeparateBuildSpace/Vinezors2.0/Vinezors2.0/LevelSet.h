@@ -46,7 +46,7 @@ struct StageRequest
 class LevelSet
 {
 private:
-    std::vector<StageRequest> stageList;
+    std::vector<std::vector<StageRequest> > stageList;
 public:
     LevelSet() : stageList() {}
     

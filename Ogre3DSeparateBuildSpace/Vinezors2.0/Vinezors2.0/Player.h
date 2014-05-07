@@ -160,8 +160,13 @@ private:
     // Study report at the end of the session
     int numStagesWon;
     
+    // Stage
     int levelRequestRow;
     int levelRequestCol;
+    // Level Selection
+    int menuRowIndex;
+    
+    // Level Results
     std::vector< std::vector<PlayerProgress> > levelProgress;
 public:
     
@@ -221,6 +226,7 @@ public:
     PlayerProgress getLevelProgress(int row, int col);
     bool isLevelAvailable(int level);
     bool isLevelAvailable(int row, int col);
+    int getMenuRowIndex() const;
     int getTotalLevelRating(int row);
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
@@ -257,6 +263,7 @@ public:
     void setLevelRequestRow(int value);
     void setLevelRequestCol(int value);
     void setLevelRequest(int row, int col);
+    void setMenuRowIndex(int value);
     void setAllProgressTo(const PlayerProgress & value);
     void saveCam();
     void revertCam();
