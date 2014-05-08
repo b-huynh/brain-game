@@ -183,6 +183,93 @@ void EngineStage::activatePerformRightMove()
     }
 }
 
+void EngineStage::activatePerformSwipeUp()
+{
+    /*
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                int tog = player->getToggleBack() - 1;
+                if (player->getLevelRequestRow() > 0)
+                {
+                    if (tog < 0) tog = 3;
+                }
+                else
+                {
+                    if (tog < 1) tog = 3;
+                }
+                player->setToggleBack(tog);
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            int tog = player->getToggleBack() - 1;
+            if (player->getLevelRequestRow() > 0)
+            {
+                if (tog < 0) tog = 3;
+            }
+            else
+            {
+                if (tog < 1) tog = 3;
+            }
+            player->setToggleBack(tog);
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+    */
+}
+
+void EngineStage::activatePerformSwipeDown()
+{
+    /*
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                int tog = player->getToggleBack();
+                if (player->getLevelRequestRow() > 0)
+                    tog = (tog + 1) % 4;
+                else
+                    tog = (tog + 1) % 3 + 1;
+                player->setToggleBack(tog);
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                int tog = player->getToggleBack();
+                if (player->getLevelRequestRow() > 0)
+                    tog = (tog + 1) % 4;
+                else
+                    tog = (tog + 1) % 3 + 1;
+                player->setToggleBack(tog);
+            }
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+     */
+}
+
 void EngineStage::activatePerformDoubleTap(float x, float y)
 {
     switch (stageState)
@@ -218,23 +305,38 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 player->performPowerUp("TimeWarp");
             else if (queryGUI == "toggle1")
             {
-                player->setToggleBack(0);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    // Bad hack but
+                    // Don't show 3-Back for multi-collection tasks of 1 or less.
+                    if (player->getLevelRequestRow() > 0)
+                        player->setToggleBack(0);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle2")
             {
-                player->setToggleBack(1);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(1);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle3")
             {
-                player->setToggleBack(2);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(2);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle4")
             {
-                player->setToggleBack(3);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(3);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "pause")
             {
@@ -249,23 +351,38 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             
             if (queryGUI == "toggle1")
             {
-                player->setToggleBack(0);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    // Bad hack but
+                    // Don't show 3-Back for multi-collection tasks of 1 or less.
+                    if (player->getLevelRequestRow() > 0)
+                        player->setToggleBack(0);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle2")
             {
-                player->setToggleBack(1);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(1);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle3")
             {
-                player->setToggleBack(2);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(2);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "toggle4")
             {
-                player->setToggleBack(3);
-                if (tunnel) tunnel->respondToToggleCheat();
+                if (tunnel && tunnel->isMultiCollectionTask())
+                {
+                    player->setToggleBack(3);
+                    tunnel->respondToToggleCheat();
+                }
             }
             else if (queryGUI == "pause")
             {
@@ -465,36 +582,51 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_UP:
         {
-            player->setBaseSpeed(player->getBaseSpeed() + 1);
+            activatePerformSwipeUp();
             break;
         }
         case OIS::KC_DOWN:
         {
-            player->setBaseSpeed(player->getBaseSpeed() - 1);
+            activatePerformSwipeDown();
             break;
         }
         case OIS::KC_1:
         {
-            player->setToggleBack(3);
-            if (tunnel) tunnel->respondToToggleCheat();
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                player->setToggleBack(3);
+                tunnel->respondToToggleCheat();
+            }
             break;
         }
         case OIS::KC_2:
         {
-            player->setToggleBack(2);
-            if (tunnel) tunnel->respondToToggleCheat();
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                player->setToggleBack(2);
+                tunnel->respondToToggleCheat();
+            }
             break;
         }
         case OIS::KC_3:
         {
-            player->setToggleBack(1);
-            if (tunnel) tunnel->respondToToggleCheat();
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                player->setToggleBack(1);
+                tunnel->respondToToggleCheat();
+            }
             break;
         }
         case OIS::KC_4:
         {
-            player->setToggleBack(0);
-            if (tunnel) tunnel->respondToToggleCheat();
+            if (tunnel && tunnel->isMultiCollectionTask())
+            {
+                // Bad hack but
+                // Don't show 3-Back for multi-collection tasks of 1 or less.
+                if (player->getLevelRequestRow() > 0)
+                    player->setToggleBack(0);
+                tunnel->respondToToggleCheat();
+            }
             break;
         }
         case OIS::KC_P:

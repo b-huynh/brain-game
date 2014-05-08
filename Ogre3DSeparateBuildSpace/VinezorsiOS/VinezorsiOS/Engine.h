@@ -33,12 +33,14 @@ public:
     virtual void enter() = 0;
     virtual void exit() = 0;
     virtual void update(float elapsed) = 0;
-    virtual void getEngineType() const = 0;
+    virtual EngineState getEngineType() const = 0;
     
     // Optional functions to extend from
     // The functions below are interrupt handlers
     virtual void activatePerformLeftMove();
     virtual void activatePerformRightMove();
+    virtual void activatePerformSwipeUp();
+    virtual void activatePerformSwipeDown();
     virtual void activatePerformDoubleTap(float x, float y);
     virtual void activatePerformSingleTap(float x, float y);
     virtual void activatePerformPinch();

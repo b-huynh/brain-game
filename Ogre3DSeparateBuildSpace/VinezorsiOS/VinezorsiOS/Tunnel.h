@@ -98,10 +98,15 @@ public:
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
     bool hasHoldout;
-    int holdOutCounter;
+    int holdoutCounter;
+    int holdoutPod;
+    int holdoutIndex;
+    int holdoutFrequency;
     int trackNBackA;
     int trackNBackB;
     int trackNBackC;
+    
+    bool multiCollectionTask;
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
@@ -170,6 +175,7 @@ public:
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
+    float getPercentComplete() const;
     int getNBack() const;
     int getControl() const;
     Direction getBasis() const;
@@ -204,9 +210,12 @@ public:
     bool satisfyCriteria(int nback);
     int loseRandomCriteria();
     bool isCriteriaSatisfied() const;
+    bool isMultiCollectionTask() const;
     bool setAllCriteriaTo(bool value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
+    int getNumRequiredCriteria() const;
+    int getNumSatisfiedCriteria() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
@@ -233,7 +242,7 @@ public:
     void update(float elapsed);
     void respondToToggleCheat();
     
-    void setHoldOut(bool val);
+    void setHoldout(bool val, int holdoutFrequency);
     
 	~Tunnel();
 };

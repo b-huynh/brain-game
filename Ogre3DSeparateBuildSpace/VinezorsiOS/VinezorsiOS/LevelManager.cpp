@@ -317,6 +317,7 @@ bool LevelManager::levelFinished(Tunnel* tunnel, Evaluation forced)
     updatePlayerSkill(tunnel, forced);
     return allowRetry;
     */
+    return false;
 }
 
 void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)

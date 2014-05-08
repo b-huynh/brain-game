@@ -45,6 +45,21 @@ void EngineLevelSelection::exit()
 
 void EngineLevelSelection::update(float elapsed)
 {
+    hud->update(elapsed);
+}
+
+void EngineLevelSelection::activatePerformSwipeUp()
+{
+    int menuRow = player->getMenuRowIndex() - 1;
+    if (player->getLevels()->hasLevelRow(menuRow))
+        player->setMenuRowIndex(menuRow);
+}
+
+void EngineLevelSelection::activatePerformSwipeDown()
+{
+    int menuRow = player->getMenuRowIndex() + 1;
+    if (player->getLevels()->hasLevelRow(menuRow + 2)) // add 2 for the end row
+        player->setMenuRowIndex(menuRow);
 }
 
 void EngineLevelSelection::activatePerformSingleTap(float x, float y)
@@ -59,14 +74,38 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     {
         engineStateMgr->requestPopEngine();
     }
+    else if (queryGUI == "godown")
+    {
+        activatePerformSwipeDown();
+    }
+    else if (queryGUI == "goup")
+    {
+        activatePerformSwipeUp();
+    }
 
+}
+
+void EngineLevelSelection::activatePerformPinch()
+{
+#ifdef DEBUG_MODE
+    if (player->isLevelAvailable(NUM_LEVELS * NUM_TASKS - 1))
+    {
+        PlayerProgress value;
+        value.rating = -1;
+        player->setAllProgressTo(value);
+    }
+    else
+    {
+        PlayerProgress value;
+        value.rating = 3;
+        player->setAllProgressTo(value);
+    }
+#endif
 }
 
 #if !defined(OGRE_IS_IOS)
 void EngineLevelSelection::mouseMoved(const OIS::MouseEvent &evt)
 {
-    
-    return true;
 }
 
 void EngineLevelSelection::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -79,7 +118,6 @@ void EngineLevelSelection::mousePressed(const OIS::MouseEvent &evt, OIS::MouseBu
         default:
             break;
     }
-    return true;
 }
 
 void EngineLevelSelection::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -91,11 +129,41 @@ void EngineLevelSelection::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseB
         default:
             break;
     }
-    return true;
 }
 
 void EngineLevelSelection::keyPressed(const OIS::KeyEvent &keyEventRef)
 {
+    switch (keyEventRef.key)
+    {
+        case OIS::KC_UP:
+        {
+            activatePerformSwipeUp();
+            break;
+        }
+        case OIS::KC_DOWN:
+        {
+            activatePerformSwipeDown();
+            break;
+        }
+#ifdef DEBUG_MODE
+        case OIS::KC_K:
+        {
+            PlayerProgress value;
+            value.rating = -1;
+            player->setAllProgressTo(value);
+            break;
+        }
+        case OIS::KC_L:
+        {
+            PlayerProgress value;
+            value.rating = 3;
+            player->setAllProgressTo(value);
+            break;
+        }
+#endif
+        default:
+            break;
+    }
 }
 
 void EngineLevelSelection::keyReleased(const OIS::KeyEvent &keyEventRef)
@@ -110,18 +178,21 @@ void EngineLevelSelection::requestResize()
 
 bool EngineLevelSelection::testForLevelButtons(const std::string & queryGUI)
 {
-    for (char c = 'A'; c <= 'C'; ++c)
-        for (int i = 1; i <= 8; ++i)
+    for (int c = 0; c < 3; ++c)
+        for (int i = 0; i < NUM_TASKS; ++i)
         {
             std::string pre = "level";
-            std::string queryTest = pre + c + Util::toStringInt(i);
+            std::string queryTest = pre + (char)('A' + c) + Util::toStringInt(i);
+            
             if (queryGUI == queryTest)
             {
                 LevelSet* levels = player->getLevels();
-                int levelSelect = levels->getLevelNo(c, i);
-                if  (levels->hasLevel(levelSelect))
+                int levelSelect = levels->getLevelNo(player->getMenuRowIndex() + c, i);
+                if  (player->isLevelAvailable(levelSelect))
                 {
-                    player->setLevelRequest(levelSelect);
+                    int row = levels->getLevelRow(levelSelect);
+                    int col = levels->getLevelCol(levelSelect);
+                    player->setLevelRequest(row, col);
                     engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
                 }
                 return true;

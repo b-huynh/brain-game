@@ -11,6 +11,7 @@
 
 #include "Score.h"
 
+// Tracks player progress in the Study build
 struct PlayerLevel {
     int sessionID;
     

@@ -22,7 +22,7 @@ public:
     virtual void enter();
     virtual void exit();
     virtual void update(float elapsed);
-    virtual void getEngineType() const {
+    virtual EngineState getEngineType() const {
         return ENGINE_MAIN_MENU;
     }
     

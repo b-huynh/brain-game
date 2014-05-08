@@ -36,7 +36,7 @@ std::ostream& operator<<(std::ostream& outfile, const PlayerProgress & prg)
             << prg.collection0Wrong << " "
             << prg.collection1Wrong << " "
             << prg.collection2Wrong << " "
-            << prg.collection3Wrong << std::endl;
+            << prg.collection3Wrong;
     return outfile;
 }
 

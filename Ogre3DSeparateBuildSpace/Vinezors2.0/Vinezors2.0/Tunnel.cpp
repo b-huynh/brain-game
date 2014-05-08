@@ -19,14 +19,14 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false)
+    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
-    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false)
+    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
 	current = segments.end();
@@ -955,6 +955,11 @@ void Tunnel::setNavigationLevels(const std::vector<NavigationLevel> & preset, in
 void Tunnel::setCollectionCriteria(const std::vector<CollectionCriteria> & value)
 {
     collectionCriteria = value;
+    
+    // Determine whether it is a multi-type-collection task
+    int minback = getLowestCriteria();
+    int maxback = getHighestCriteria();
+    multiCollectionTask = minback != maxback;
 }
 
 // Collects the first occurence of the n-back value in the collection criteria list
@@ -1002,10 +1007,18 @@ bool Tunnel::isCriteriaSatisfied() const
     return true;
 }
 
+// Returns true if the task has different types to collect
+bool Tunnel::isMultiCollectionTask() const
+{
+    return multiCollectionTask;
+}
+
+// Sets all criteria to not collected or collected.
+// Good for cheat debugging
 bool Tunnel::setAllCriteriaTo(bool value)
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
-        collectionCriteria[i].collected = true;
+        collectionCriteria[i].collected = value;
 }
 
 // Returns the lowest n-back criteria required
@@ -1106,66 +1119,38 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
     else // If not spawn one now
     {
         Direction podLoc = getRandPossibleDirection(segmentInfo);
-        /*
+        
         PodSignal final = POD_SIGNAL_UNKNOWN;
-        
-        PodSignal repeat1 = POD_SIGNAL_UNKNOWN; // Two repeated signals
-        PodSignal repeat2 = POD_SIGNAL_UNKNOWN; // Three repeated signals
-        PodSignal repeat3 = POD_SIGNAL_UNKNOWN; // Four repeated signals! Unused
-        // Obtain repeated signals
-        if (types.size() > 2 && types[index - 1].podSignal == types[index - 2].podSignal)
-            repeat1 = types[index - 1].podSignal;
-        if (types.size() > 3 && repeat1 != POD_SIGNAL_UNKNOWN && types[index - 2].podSignal == types[index - 3].podSignal)
-            repeat2 = types[index - 2].podSignal;
-        if (types.size() > 4 && repeat2 != POD_SIGNAL_UNKNOWN && types[index - 3].podSignal == types[index - 4].podSignal)
-            repeat3 = types[index - 3].podSignal;
-        
-        PodSignal guarantee = POD_SIGNAL_UNKNOWN;
-        if (types.size() >= nback && nback > 0)
-            guarantee = types[index - nback].podSignal;
-        
-        if (setting == BAD_TARGET)
+        if (!isMultiCollectionTask())
         {
-            std::vector<PodSignal> candidates;
-            for (int i = 0; i < signalTypes.size(); ++i)
-                if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || (signalTypes.size() < 3 || nback >= 2)) && // Prevent repeated signals for nbacks less than 2 unless theres not enough supported signals
-                    ((PodSignal)i != repeat1 || nback > 3) && // If there's two in a row already, don't allow possibly three for nback 3
-                    (PodSignal)i != repeat2 && // If there's already three in a row... don't even try 4
-                    (PodSignal)i != guarantee) // This is supposed to be bad, it shouldn't be a target
-                    candidates.push_back((PodSignal)i);
-            
-            // Reroll the next pod if it happens to be a repeat.
-            PodSignal podType = candidates[rand() % candidates.size()];
-            if (types.size() > 0 && types[index - 1].podSignal == podType)
-                podType = candidates[rand() % candidates.size()];
-            if (podType == repeat1)
-            {
-                podType = candidates[rand() % candidates.size()];
-            }
-            final = podType;
-        }
-        else if (setting == GOOD_TARGET)
-        {
-            final = guarantee;
-        }
-        else //if (setting != UNKNOWN) 
-        {
-            // Determine whether the next pod is a good target
-            int r = rand() % 100 + 1;
-            bool nbackGuarantee = r <= globals.podNBackChance;
+            // If it is not a multi-collection task, do this pod gen since it's more accurate
+            int testedNBack = getLowestCriteria();
         
-            // If the next pod should be a target (rolled and no more than 3 in a row)
-            if (nbackGuarantee && guarantee != repeat2)
-                final = guarantee;
+            PodSignal repeat1 = POD_SIGNAL_UNKNOWN; // Two repeated signals
+            PodSignal repeat2 = POD_SIGNAL_UNKNOWN; // Three repeated signals
+            PodSignal repeat3 = POD_SIGNAL_UNKNOWN; // Four repeated signals! Unused
+            // Obtain repeated signals
+            if (types.size() > 2 && types[index - 1].podSignal == types[index - 2].podSignal)
+                repeat1 = types[index - 1].podSignal;
+            if (types.size() > 3 && repeat1 != POD_SIGNAL_UNKNOWN && types[index - 2].podSignal == types[index - 3].podSignal)
+                repeat2 = types[index - 2].podSignal;
+            if (types.size() > 4 && repeat2 != POD_SIGNAL_UNKNOWN && types[index - 3].podSignal == types[index - 4].podSignal)
+                repeat3 = types[index - 3].podSignal;
         
-            // Randomly assign next pod not a target
-            if (final == POD_SIGNAL_UNKNOWN)
+            PodSignal guarantee = POD_SIGNAL_UNKNOWN;
+            if (types.size() >= testedNBack && testedNBack > 0)
+                guarantee = types[index - testedNBack].podSignal;
+        
+            if (setting == BAD_TARGET)
             {
                 std::vector<PodSignal> candidates;
                 for (int i = 0; i < signalTypes.size(); ++i)
-                    if ((PodSignal)i != repeat2 && (PodSignal)i != guarantee)
+                    if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || (signalTypes.size() < 3 || testedNBack >= 2)) && // Prevent repeated signals for nbacks less than 2 unless theres not enough supported signals
+                        ((PodSignal)i != repeat1 || testedNBack > 3) && // If there's two in a row already, don't allow possibly three for nback 3
+                        (PodSignal)i != repeat2 && // If there's already three in a row... don't even try 4
+                        (PodSignal)i != guarantee) // This is supposed to be bad, it shouldn't be a target
                         candidates.push_back((PodSignal)i);
-        
+            
                 // Reroll the next pod if it happens to be a repeat.
                 PodSignal podType = candidates[rand() % candidates.size()];
                 if (types.size() > 0 && types[index - 1].podSignal == podType)
@@ -1176,18 +1161,53 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                 }
                 final = podType;
             }
-        }
-         */
+            else if (setting == GOOD_TARGET)
+            {
+                final = guarantee;
+            }
+            else //if (setting != UNKNOWN)
+            {
+                // Determine whether the next pod is a good target
+                int r = rand() % 100 + 1;
+                bool nbackGuarantee = r <= globals.podNBackChance;
+                
+                // If the next pod should be a target (rolled and no more than 3 in a row)
+                if (nbackGuarantee && guarantee != repeat2)
+                    final = guarantee;
         
-        int nvalueA = nback - 2 > 0 ? nback - 2 : nback;
-        int nvalueB = nback - 1 > 0 ? nback - 1 : nback;
-        int nvalueC = nback;
-        PodSignal final = generateItem(nvalueA, nvalueB, nvalueC, trackNBackA, trackNBackB, trackNBackC);
-        if (final == POD_SIGNAL_UNKNOWN)
-            final = (PodSignal)(rand() % signalTypes.size());
-        if (getNBackTest(nvalueA, final) != POD_SIGNAL_UNKNOWN) trackNBackA++;
-        if (getNBackTest(nvalueB, final) != POD_SIGNAL_UNKNOWN) trackNBackB++;
-        if (getNBackTest(nvalueC, final) != POD_SIGNAL_UNKNOWN) trackNBackC++;
+                // Randomly assign next pod not a target
+                if (final == POD_SIGNAL_UNKNOWN)
+                {
+                    std::vector<PodSignal> candidates;
+                    for (int i = 0; i < signalTypes.size(); ++i)
+                        if ((PodSignal)i != repeat2 && (PodSignal)i != guarantee)
+                            candidates.push_back((PodSignal)i);
+                    
+                    // Reroll the next pod if it happens to be a repeat.
+                    PodSignal podType = candidates[rand() % candidates.size()];
+                    if (types.size() > 0 && types[index - 1].podSignal == podType)
+                        podType = candidates[rand() % candidates.size()];
+                    if (podType == repeat1)
+                    {
+                        podType = candidates[rand() % candidates.size()];
+                    }
+                    final = podType;
+                }
+            }
+        }
+        else
+        {
+            // If it is a multi-collection task do this generation task instead
+            int nvalueA = nback - 2 > 0 ? nback - 2 : nback;
+            int nvalueB = nback - 1 > 0 ? nback - 1 : nback;
+            int nvalueC = nback;
+            final = generateItem(nvalueA, nvalueB, nvalueC, trackNBackA, trackNBackB, trackNBackC);
+            if (final == POD_SIGNAL_UNKNOWN)
+                final = (PodSignal)(rand() % signalTypes.size());
+            if (getNBackTest(nvalueA, final) != POD_SIGNAL_UNKNOWN) trackNBackA++;
+            if (getNBackTest(nvalueB, final) != POD_SIGNAL_UNKNOWN) trackNBackB++;
+            if (getNBackTest(nvalueC, final) != POD_SIGNAL_UNKNOWN) trackNBackC++;
+        }
         
         ret = signalTypes[final][rand() % signalTypes[final].size()];
         
@@ -1500,6 +1520,8 @@ void Tunnel::link(Player* player)
 
 void Tunnel::presetTargets(int level)
 {
+    int testedNBack = getLowestCriteria();
+    
     // The following uses a binning algorithm originated from the famous pigeonhole principle
     int TOTAL_SIGNALS = globals.stageTotalSignals;
     int TOTAL_ITEMS = 0;
@@ -1545,10 +1567,10 @@ void Tunnel::presetTargets(int level)
     }
     
     // Now that we have our bins, we assign positions in those bins for good signals
-    std::vector<bool> signalTargets(TOTAL_SIGNALS + nback, false);
+    std::vector<bool> signalTargets(TOTAL_SIGNALS + testedNBack, false);
     for (int n = 0; n < binItemCounts.size(); ++n)
     {
-        int signalStartIndex = nback + n * BIN_SIZE;
+        int signalStartIndex = testedNBack + n * BIN_SIZE;
         
         std::vector<int> signalSlotIndices(BIN_SIZE);
         for (int i = 0; i < signalSlotIndices.size(); ++i)
@@ -1615,10 +1637,11 @@ void Tunnel::presetTargets(int level)
 void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 {
     // Pregenerate some targets
-    if (nback > 0 && getMode() != STAGE_MODE_RECESS)
+    if (nback > 0 && getMode() != STAGE_MODE_RECESS && !isMultiCollectionTask())
     {
-        /*
-        targets = std::vector<TargetInfo>(globals.stageTotalSignals + nback);
+        int testedNBack = getLowestCriteria();
+        
+        targets = std::vector<TargetInfo>(globals.stageTotalSignals + testedNBack);
         presetTargets(1);
         presetTargets(2);
         presetTargets(3);
@@ -1633,43 +1656,6 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
             std::cout << targets[i].level3;
         std::cout << std::endl;
         int podInd = 0;
-        for (int i = 0; i < nback; ++i)
-        {
-            getNextPodInfoAt(BAD_TARGET, podInd);
-            ++podInd;
-        }
-        // Assign random signals.
-        for (int i = 0; i < signalTargets.size(); ++i)
-        {
-            getNextPodInfoAt(signalTargets[i] ? GOOD_TARGET : BAD_TARGET, podInd);
-            ++podInd;
-        }
-        
-        for (int i = 0; i < types.size(); ++i)
-            std::cout << types[i].goodPod;
-        std::cout << "\n";
-        for (int i = 0; i < types.size(); ++i)
-        {
-            switch (types[i].podSignal)
-            {
-                case POD_SIGNAL_1:
-                    std::cout << 'B';
-                    break;
-                case POD_SIGNAL_2:
-                    std::cout << 'G';
-                    break;
-                case POD_SIGNAL_3:
-                    std::cout << 'R';
-                    break;
-                case POD_SIGNAL_4:
-                    std::cout << 'Y';
-                    break;
-                default:
-                    std::cout << 'U';
-            }
-        }
-        std::cout << "\n";
-        */
     }
     else
     {

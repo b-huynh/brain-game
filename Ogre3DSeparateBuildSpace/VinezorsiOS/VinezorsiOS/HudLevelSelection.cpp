@@ -10,8 +10,10 @@
 #include "Player.h"
 #include "LevelSet.h"
 
+extern Util::ConfigGlobal globals;
+
 HudLevelSelection::HudLevelSelection(Player* player)
-: Hud()
+: Hud(), rowIndex(0)
 {
     link(player);
     init();
@@ -37,92 +39,73 @@ void HudLevelSelection::adjust()
 
 void HudLevelSelection::update(float elapsed)
 {
+    updateDisplay();
 }
 
 void HudLevelSelection::alloc()
 {
     // Allocate Resources
-    levelSelectPrompt = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectPrompt"));
-    levelA1Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA1Background"));
-    levelA2Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA2Background"));
-    levelA3Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA3Background"));
-    levelA4Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA4Background"));
-    levelA5Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA5Background"));
-    levelA6Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA6Background"));
-    levelA7Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA7Background"));
-    levelA8Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionA8Background"));
-    levelB1Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB1Background"));
-    levelB2Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB2Background"));
-    levelB3Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB3Background"));
-    levelB4Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB4Background"));
-    levelB5Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB5Background"));
-    levelB6Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB6Background"));
-    levelB7Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB7Background"));
-    levelB8Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionB8Background"));
-    levelC1Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC1Background"));
-    levelC2Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC2Background"));
-    levelC3Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC3Background"));
-    levelC4Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC4Background"));
-    levelC5Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC5Background"));
-    levelC6Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC6Background"));
-    levelC7Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC7Background"));
-    levelC8Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionC8Background"));
-    backButtonBackground = static_cast<PanelOverlayElement*>(
-                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionBackButtonBackground"));
-    buttons = std::vector<HudButton>(25);
+    levelSelectPrompt = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectPrompt"));
+    
+    levelItemBackgrounds = std::vector< std::vector<PanelOverlayElement*> >(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
+    {
+        levelItemBackgrounds[i] = std::vector<PanelOverlayElement*>(LEVEL_ITEM_WIDTH);
+        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
+        {
+            levelItemBackgrounds[i][j] = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelection" + Util::toStringInt(i) + (char)('A' + j)));
+        }
+    }
+    levelItemPlanets = std::vector< std::vector<PanelOverlayElement*> >(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelItemPlanets.size(); ++i)
+    {
+        levelItemPlanets[i] = std::vector<PanelOverlayElement*>(LEVEL_ITEM_WIDTH);
+        for (int j = 0; j < levelItemPlanets[i].size(); ++j)
+        {
+            levelItemPlanets[i][j] = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelPlanet" + Util::toStringInt(i) + (char)('A' + j)));
+        }
+    }
+    levelItemNames = std::vector< std::vector<TextAreaOverlayElement*> >(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelItemNames.size(); ++i)
+    {
+        levelItemNames[i] = std::vector<TextAreaOverlayElement*>(LEVEL_ITEM_WIDTH);
+        for (int j = 0; j < levelItemNames[i].size(); ++j)
+        {
+            levelItemNames[i][j] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelName" + Util::toStringInt(i) + (char)('A' + j)));
+        }
+    }
+    levelSetStars = std::vector<TextAreaOverlayElement*>(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelSetStars.size(); ++i)
+    {
+        levelSetStars[i] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSetStars" + Util::toStringInt(i)));
+    }
+    
+    buttonGoUpBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoUpButtonBackground"));
+    buttonGoDownBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoDownButtonBackground"));
+    backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionBackButtonBackground"));
+    
+    // Back Button plus the Vector of 2-D Buttons
+    // Order matters that the Back Button is first
+    buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS + LEVEL_ITEM_WIDTH * LEVEL_ITEM_HEIGHT);
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("LevelSelectionOverlay");
     overlay1->add2D(levelSelectPrompt);
-    overlay1->add2D(levelA1Background);
-    overlay1->add2D(levelA2Background);
-    overlay1->add2D(levelA3Background);
-    overlay1->add2D(levelA4Background);
-    overlay1->add2D(levelA5Background);
-    overlay1->add2D(levelA6Background);
-    overlay1->add2D(levelA7Background);
-    overlay1->add2D(levelA8Background);
-    overlay1->add2D(levelB1Background);
-    overlay1->add2D(levelB2Background);
-    overlay1->add2D(levelB3Background);
-    overlay1->add2D(levelB4Background);
-    overlay1->add2D(levelB5Background);
-    overlay1->add2D(levelB6Background);
-    overlay1->add2D(levelB7Background);
-    overlay1->add2D(levelB8Background);
-    overlay1->add2D(levelC1Background);
-    overlay1->add2D(levelC2Background);
-    overlay1->add2D(levelC3Background);
-    overlay1->add2D(levelC4Background);
-    overlay1->add2D(levelC5Background);
-    overlay1->add2D(levelC6Background);
-    overlay1->add2D(levelC7Background);
-    overlay1->add2D(levelC8Background);
+    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
+    {
+        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
+        {
+            overlay1->add2D(levelItemBackgrounds[i][j]);
+            levelItemBackgrounds[i][j]->addChild(levelItemPlanets[i][j]);
+            levelItemBackgrounds[i][j]->addChild(levelItemNames[i][j]);
+            if (j == levelItemBackgrounds[i].size() - 1)
+            {
+                levelItemBackgrounds[i][j]->addChild(levelSetStars[i]);
+            }
+        }
+    }
+    overlay1->add2D(buttonGoUpBackground);
+    overlay1->add2D(buttonGoDownBackground);
     overlay1->add2D(backButtonBackground);
     overlays.push_back(overlay1);
 }
@@ -131,30 +114,19 @@ void HudLevelSelection::dealloc()
 {
     // Delete children first, then parents
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectPrompt);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA1Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA2Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA3Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA4Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA5Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA6Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA7Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelA8Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB1Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB2Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB3Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB4Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB5Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB6Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB7Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelB8Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC1Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC2Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC3Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC4Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC5Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC6Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC7Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelC8Background);
+    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
+        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
+            OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemBackgrounds[i][j]);
+    for (int i = 0; i < levelItemPlanets.size(); ++i)
+        for (int j = 0; j < levelItemPlanets[i].size(); ++j)
+            OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemPlanets[i][j]);
+    for (int i = 0; i < levelItemNames.size(); ++i)
+        for (int j = 0; j < levelItemNames[i].size(); ++j)
+            OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemNames[i][j]);
+    for (int i = 0; i < levelSetStars.size(); ++i)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSetStars[i]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoUpBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoDownBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
@@ -167,59 +139,87 @@ void HudLevelSelection::setOverlay()
     levelSelectPrompt->setDimensions(0.80, 0.20);
     levelSelectPrompt->setMaterialName("General/TextArtLevelSelection");
     
-    // Assign a 2-D level selection map for each button
-    setLevelButton(levelA1Background, 'A', 1);
-    setLevelButton(levelA2Background, 'A', 2);
-    setLevelButton(levelA3Background, 'A', 3);
-    setLevelButton(levelA4Background, 'A', 4);
-    setLevelButton(levelA5Background, 'A', 5);
-    setLevelButton(levelA6Background, 'A', 6);
-    setLevelButton(levelA7Background, 'A', 7);
-    setLevelButton(levelA8Background, 'A', 8);
-    setLevelButton(levelB1Background, 'B', 1);
-    setLevelButton(levelB2Background, 'B', 2);
-    setLevelButton(levelB3Background, 'B', 3);
-    setLevelButton(levelB4Background, 'B', 4);
-    setLevelButton(levelB5Background, 'B', 5);
-    setLevelButton(levelB6Background, 'B', 6);
-    setLevelButton(levelB7Background, 'B', 7);
-    setLevelButton(levelB8Background, 'B', 8);
-    setLevelButton(levelC1Background, 'C', 1);
-    setLevelButton(levelC2Background, 'C', 2);
-    setLevelButton(levelC3Background, 'C', 3);
-    setLevelButton(levelC4Background, 'C', 4);
-    setLevelButton(levelC5Background, 'C', 5);
-    setLevelButton(levelC6Background, 'C', 6);
-    setLevelButton(levelC7Background, 'C', 7);
-    setLevelButton(levelC8Background, 'C', 8);
-    
     backButtonBackground->setMaterialName("General/BackButton");
     
-    buttons[BUTTON_LEVELA1].setButton("levelA1", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.30), Vector2(0.08, 0.08), levelA1Background, NULL);
-    buttons[BUTTON_LEVELA2].setButton("levelA2", overlays[0], GMM_RELATIVE, Vector2(0.22, 0.30), Vector2(0.08, 0.08), levelA2Background, NULL);
-    buttons[BUTTON_LEVELA3].setButton("levelA3", overlays[0], GMM_RELATIVE, Vector2(0.32, 0.30), Vector2(0.08, 0.08), levelA3Background, NULL);
-    buttons[BUTTON_LEVELA4].setButton("levelA4", overlays[0], GMM_RELATIVE, Vector2(0.42, 0.30), Vector2(0.08, 0.08), levelA4Background, NULL);
-    buttons[BUTTON_LEVELA5].setButton("levelA5", overlays[0], GMM_RELATIVE, Vector2(0.52, 0.30), Vector2(0.08, 0.08), levelA5Background, NULL);
-    buttons[BUTTON_LEVELA6].setButton("levelA6", overlays[0], GMM_RELATIVE, Vector2(0.62, 0.30), Vector2(0.08, 0.08), levelA6Background, NULL);
-    buttons[BUTTON_LEVELA7].setButton("levelA7", overlays[0], GMM_RELATIVE, Vector2(0.72, 0.30), Vector2(0.08, 0.08), levelA7Background, NULL);
-    buttons[BUTTON_LEVELA8].setButton("levelA8", overlays[0], GMM_RELATIVE, Vector2(0.82, 0.30), Vector2(0.08, 0.08), levelA8Background, NULL);
-    buttons[BUTTON_LEVELB1].setButton("levelB1", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.45), Vector2(0.08, 0.08), levelB1Background, NULL);
-    buttons[BUTTON_LEVELB2].setButton("levelB2", overlays[0], GMM_RELATIVE, Vector2(0.22, 0.45), Vector2(0.08, 0.08), levelB2Background, NULL);
-    buttons[BUTTON_LEVELB3].setButton("levelB3", overlays[0], GMM_RELATIVE, Vector2(0.32, 0.45), Vector2(0.08, 0.08), levelB3Background, NULL);
-    buttons[BUTTON_LEVELB4].setButton("levelB4", overlays[0], GMM_RELATIVE, Vector2(0.42, 0.45), Vector2(0.08, 0.08), levelB4Background, NULL);
-    buttons[BUTTON_LEVELB5].setButton("levelB5", overlays[0], GMM_RELATIVE, Vector2(0.52, 0.45), Vector2(0.08, 0.08), levelB5Background, NULL);
-    buttons[BUTTON_LEVELB6].setButton("levelB6", overlays[0], GMM_RELATIVE, Vector2(0.62, 0.45), Vector2(0.08, 0.08), levelB6Background, NULL);
-    buttons[BUTTON_LEVELB7].setButton("levelB7", overlays[0], GMM_RELATIVE, Vector2(0.72, 0.45), Vector2(0.08, 0.08), levelB7Background, NULL);
-    buttons[BUTTON_LEVELB8].setButton("levelB8", overlays[0], GMM_RELATIVE, Vector2(0.82, 0.45), Vector2(0.08, 0.08), levelB8Background, NULL);
-    buttons[BUTTON_LEVELC1].setButton("levelC1", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.60), Vector2(0.08, 0.08), levelC1Background, NULL);
-    buttons[BUTTON_LEVELC2].setButton("levelC2", overlays[0], GMM_RELATIVE, Vector2(0.22, 0.60), Vector2(0.08, 0.08), levelC2Background, NULL);
-    buttons[BUTTON_LEVELC3].setButton("levelC3", overlays[0], GMM_RELATIVE, Vector2(0.32, 0.60), Vector2(0.08, 0.08), levelC3Background, NULL);
-    buttons[BUTTON_LEVELC4].setButton("levelC4", overlays[0], GMM_RELATIVE, Vector2(0.42, 0.60), Vector2(0.08, 0.08), levelC4Background, NULL);
-    buttons[BUTTON_LEVELC5].setButton("levelC5", overlays[0], GMM_RELATIVE, Vector2(0.52, 0.60), Vector2(0.08, 0.08), levelC5Background, NULL);
-    buttons[BUTTON_LEVELC6].setButton("levelC6", overlays[0], GMM_RELATIVE, Vector2(0.62, 0.60), Vector2(0.08, 0.08), levelC6Background, NULL);
-    buttons[BUTTON_LEVELC7].setButton("levelC7", overlays[0], GMM_RELATIVE, Vector2(0.72, 0.60), Vector2(0.08, 0.08), levelC7Background, NULL);
-    buttons[BUTTON_LEVELC8].setButton("levelC8", overlays[0], GMM_RELATIVE, Vector2(0.82, 0.60), Vector2(0.08, 0.08), levelC8Background, NULL);
+    float sx = 0.12;
+    float sy = 0.30;
+    float dx = 0.135;
+    float dy = 0.135;
+    float curx = sx;
+    float cury = sy;
+    // Set orientations for background per level
+    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
+    {
+        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
+        {
+            // calculate dimensions for button size and make sure it's square
+            float percsize = 0.15;
+            float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+            
+            std::string buttonName = "level";
+            buttonName += (char)('A' + i) + Util::toStringInt(j);
+            buttons[NUM_UNIQUE_BUTTONS + i * LEVEL_ITEM_WIDTH + j].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(curx, cury), Vector2(dimen, dimen), levelItemBackgrounds[i][j], NULL);
+            curx += dx;
+        }
+        curx = sx;
+        cury += dy;
+    }
+    // Set orientations for the planet per level
+    for (int i = 0; i < levelItemPlanets.size(); ++i)
+    {
+        for (int j = 0; j < levelItemPlanets[i].size(); ++j)
+        {
+            // calculate dimensions for button size and make sure it's square
+            float percsize = 0.10;
+            float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+            
+            levelItemPlanets[i][j]->setMetricsMode(GMM_RELATIVE);
+            levelItemPlanets[i][j]->setPosition(0.02, 0.02);
+            levelItemPlanets[i][j]->setDimensions(dimen, dimen);
+        }
+    }
+    // Set orientations for the title per level
+    for (int i = 0; i < levelItemNames.size(); ++i)
+    {
+        for (int j = 0; j < levelItemNames[i].size(); ++j)
+        {
+            levelItemNames[i][j]->setMetricsMode(GMM_RELATIVE);
+            levelItemNames[i][j]->setAlignment(TextAreaOverlayElement::Center);
+            levelItemNames[i][j]->setPosition(0.06, -0.02);
+            levelItemNames[i][j]->setCharHeight(0.025);
+            levelItemNames[i][j]->setFontName("Arial");
+        }
+    }
+    // Set orientations for total stars earned per row
+    for (int i = 0; i < levelSetStars.size(); ++i)
+    {
+        levelSetStars[i]->setMetricsMode(GMM_RELATIVE);
+        levelSetStars[i]->setAlignment(TextAreaOverlayElement::Center);
+        levelSetStars[i]->setPosition(0.15, 0.05);
+        levelSetStars[i]->setCharHeight(0.025);
+        levelSetStars[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+        levelSetStars[i]->setFontName("Arial");
+    }
+    // The Up Button
+    {
+        // calculate dimensions for button size and make sure it's square
+        float percsize = 0.10;
+        float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+        buttons[BUTTON_UP].setButton("goup", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.400), Vector2(dimen, dimen), buttonGoUpBackground, NULL);
+    }
+    // The Down Button
+    {
+        // calculate dimensions for button size and make sure it's square
+        float percsize = 0.10;
+        float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+        buttons[BUTTON_DOWN].setButton("godown", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.550), Vector2(dimen, dimen), buttonGoDownBackground, NULL);
+    }
+    buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
+    buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
+    
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.20, 0.78), Vector2(0.30, 0.10), backButtonBackground, NULL);
+    
+    updateDisplay();
 }
 
 void HudLevelSelection::link(Player* player)
@@ -232,18 +232,73 @@ void HudLevelSelection::unlink()
     this->player = NULL;
 }
 
-void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, char row, int no)
+// Given the player's selection index, convert the index to a mapping the 2-D button set
+int HudLevelSelection::convertLevelRowToButtonRow() const
+{
+    int menuRowIndex = player->getMenuRowIndex();
+    return menuRowIndex;
+}
+
+void HudLevelSelection::updateDisplay()
+{
+    // Assign a 2-D level selection map for each button
+    for (int i = 0; i < levelItemBackgrounds.size(); ++i)
+        for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
+            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], player->getMenuRowIndex() + i, j);
+    // Update the display of stars earned per row
+    for (int i = 0; i < levelSetStars.size(); ++i)
+    {
+        int requiredStars = player->getLevels()->getTotalRowRequirement(player->getMenuRowIndex() + i);
+        int earnedStars = Util::clamp(player->getTotalLevelRating(player->getMenuRowIndex() + i), 0, requiredStars);
+        levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(requiredStars));
+    }
+    
+    int menuRow;
+    menuRow = player->getMenuRowIndex() + 1;
+    if (player->getLevels()->hasLevelRow(menuRow + 2)) // add 2 for the end row
+        buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
+    else
+        buttonGoDownBackground->setMaterialName("General/ButtonGoDownGray");
+    
+    menuRow = player->getMenuRowIndex() - 1;
+    if (player->getLevels()->hasLevelRow(menuRow))
+        buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
+    else
+        buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
+    
+}
+
+// Assigns the texture description for each level depending on player performance
+// in previous and that level
+void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, int row, int col)
 {
     LevelSet* levels = player->getLevels();
-    int levelSelect = levels->getLevelNo(row, no);
-    if (levels->hasLevel(levelSelect))
+    int levelSelect = levels->getLevelNo(row, col);
+    if (player->isLevelAvailable(levelSelect))
     {
-        if (levelSelect < player->levelCompletion.size() && player->levelCompletion[levelSelect] > 0)
-            levelBackground->setMaterialName("General/PauseButtonYellow");
+        if (player->hasLevelProgress(levelSelect))
+        {
+            PlayerProgress progress = player->getLevelProgress(levelSelect);
+            if (progress.rating >= 3)
+                levelBackground->setMaterialName("General/LevelBar3Fill");
+            else if (progress.rating == 2)
+                levelBackground->setMaterialName("General/LevelBar2Fill");
+            else if (progress.rating == 1)
+                levelBackground->setMaterialName("General/LevelBar1Fill");
+            else
+                levelBackground->setMaterialName("General/LevelBar0Fill");
+        }
         else
-            levelBackground->setMaterialName("General/PauseButton");
+            levelBackground->setMaterialName("General/LevelBar0Fill");
+        levelItem->setMaterialName("General/PlanetAvailable");
+        levelName->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     }
     else
-        levelBackground->setMaterialName("General/PauseButtonGray");
-    
+    {
+        levelBackground->setMaterialName("General/LevelBar0Fill");
+        levelItem->setMaterialName("General/PlanetUnavailable");
+        levelName->setColour(ColourValue::ColourValue(0.5, 0.5, 0.5));
+    }
+    std::string name = Util::toStringInt(row + 1) + '-' + char('A' + col);
+    levelName->setCaption(name);
 }

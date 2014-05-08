@@ -19,12 +19,16 @@ struct HudButton
     GuiMetricsMode metric;
     Vector2 p;
     Vector2 dim;
+    bool active;    // Button is active for selection
     
     PanelOverlayElement* backgroundRef;
     TextAreaOverlayElement* textRef;
     
-    HudButton() : name(""), overlay(NULL), metric(), p(), dim(), backgroundRef(NULL), textRef(NULL) {}
+    HudButton() : name(""), overlay(NULL), metric(), p(), dim(), backgroundRef(NULL), textRef(NULL), active(true) {}
     
+    void setActive(bool value);
+    void hide();
+    void show();
     void setButton(std::string name, Overlay* olay, GuiMetricsMode metricMode, Vector2 pos, Vector2 dimension, PanelOverlayElement* bgPtr, TextAreaOverlayElement* txtPtr);
     bool isInside(Vector2 target) const;
 };

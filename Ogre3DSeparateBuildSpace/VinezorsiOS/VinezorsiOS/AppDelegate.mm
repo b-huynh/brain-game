@@ -14,7 +14,7 @@
 #ifdef AUTO_START
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100":TRUE];
+    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101":TRUE];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 #else

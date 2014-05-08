@@ -143,8 +143,8 @@ void HudLevelSelection::setOverlay()
     
     float sx = 0.12;
     float sy = 0.30;
-    float dx = 0.14;
-    float dy = 0.14;
+    float dx = 0.135;
+    float dy = 0.135;
     float curx = sx;
     float cury = sy;
     // Set orientations for background per level
@@ -214,8 +214,8 @@ void HudLevelSelection::setOverlay()
         float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
         buttons[BUTTON_DOWN].setButton("godown", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.550), Vector2(dimen, dimen), buttonGoDownBackground, NULL);
     }
-    buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
-    buttonGoDownBackground->setMaterialName("General/ButtonGoDownGray");
+    buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
+    buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
     
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.20, 0.78), Vector2(0.30, 0.10), backButtonBackground, NULL);
     
@@ -236,7 +236,6 @@ void HudLevelSelection::unlink()
 int HudLevelSelection::convertLevelRowToButtonRow() const
 {
     int menuRowIndex = player->getMenuRowIndex();
-    
     return menuRowIndex;
 }
 
@@ -245,14 +244,28 @@ void HudLevelSelection::updateDisplay()
     // Assign a 2-D level selection map for each button
     for (int i = 0; i < levelItemBackgrounds.size(); ++i)
         for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
-            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], i, j);
+            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], player->getMenuRowIndex() + i, j);
     // Update the display of stars earned per row
     for (int i = 0; i < levelSetStars.size(); ++i)
     {
-        int requiredStars = player->getLevels()->getTotalRowRequirement(i);
-        int earnedStars = Util::clamp(player->getTotalLevelRating(i), 0, requiredStars);
+        int requiredStars = player->getLevels()->getTotalRowRequirement(player->getMenuRowIndex() + i);
+        int earnedStars = Util::clamp(player->getTotalLevelRating(player->getMenuRowIndex() + i), 0, requiredStars);
         levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(requiredStars));
     }
+    
+    int menuRow;
+    menuRow = player->getMenuRowIndex() + 1;
+    if (player->getLevels()->hasLevelRow(menuRow + 2)) // add 2 for the end row
+        buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
+    else
+        buttonGoDownBackground->setMaterialName("General/ButtonGoDownGray");
+    
+    menuRow = player->getMenuRowIndex() - 1;
+    if (player->getLevels()->hasLevelRow(menuRow))
+        buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
+    else
+        buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
+    
 }
 
 // Assigns the texture description for each level depending on player performance

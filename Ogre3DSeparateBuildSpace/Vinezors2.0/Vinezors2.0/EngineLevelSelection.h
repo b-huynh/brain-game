@@ -27,7 +27,10 @@ public:
         return ENGINE_LEVEL_SELECTION;
     }
     
+    virtual void activatePerformSwipeUp();
+    virtual void activatePerformSwipeDown();
     virtual void activatePerformSingleTap(float x, float y);
+    virtual void activatePerformPinch();
     
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);

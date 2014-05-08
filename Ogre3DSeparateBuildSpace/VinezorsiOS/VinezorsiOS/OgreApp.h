@@ -103,6 +103,8 @@ public:
     
     void activatePerformLeftMove();
     void activatePerformRightMove();
+    void activatePerformSwipeUp();
+    void activatePerformSwipeDown();
     void activatePerformDoubleTap(float x, float y);
     void activatePerformSingleTap(float x, float y);
     void activatePerformPinch();

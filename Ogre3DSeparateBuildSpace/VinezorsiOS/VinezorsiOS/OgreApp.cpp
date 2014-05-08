@@ -238,7 +238,7 @@ void OgreApp::endGame()
 {
     // End the game on a good note and only once
     player->saveStage(globals.logPath);
-    player->saveProgress(globals.savePath, true);
+    player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
     syncLogs(); //Attempt to sync recently save log file.
 #endif
@@ -313,6 +313,22 @@ void OgreApp::activatePerformRightMove()
     player->addAction(ACTION_SWIPE_RIGHT);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformRightMove();
+}
+
+void OgreApp::activatePerformSwipeUp()
+{
+    std::cout << "SWIPE PERFORMED\n";
+    // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformSwipeUp();
+}
+
+void OgreApp::activatePerformSwipeDown()
+{
+    std::cout << "SWIPE PERFORMED\n";
+    // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformSwipeDown();
 }
 
 void OgreApp::activatePerformDoubleTap(float x, float y)

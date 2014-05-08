@@ -29,6 +29,16 @@ void Engine::activatePerformRightMove()
     
 }
 
+void Engine::activatePerformSwipeUp()
+{
+    
+}
+
+void Engine::activatePerformSwipeDown()
+{
+    
+}
+
 void Engine::activatePerformDoubleTap(float x, float y)
 {
     

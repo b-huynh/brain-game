@@ -354,14 +354,25 @@ bool Player::isLevelAvailable(int level)
     int levelRow = levels->getLevelRow(level);
     int levelCol = levels->getLevelCol(level);
     
+    int totalRatingCur = getTotalLevelRating(levelRow);
+    int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
+    
     if (!levels->hasLevel(levelRow - 1, levelCol))
-        return true;
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
     if (!hasLevelProgress(levelRow - 1, levelCol))
         return false;
-    int totalRating = getTotalLevelRating(levelRow - 1);
+    int totalRatingPrev = getTotalLevelRating(levelRow - 1);
     int previousRating = getLevelProgress(levelRow - 1, levelCol).rating;
+    int rowRequirementPrev = levels->getTotalRowRequirement(levelRow - 1);
     
-    return totalRating >= levels->getTotalRowRequirement(totalRating) && previousRating >= 3;
+    //std::cout << levelRow << "," << levelCol << " " << rowRequirementCur << " " << totalRatingCur << std::endl;
+    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 3)
+    {
+        // For the last level, unlock it only if we are close
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
+    }
+    else
+        return false;
 }
 
 bool Player::isLevelAvailable(int row, int col)

@@ -59,8 +59,6 @@ void EngineCredits::activatePerformSingleTap(float x, float y)
 #if !defined(OGRE_IS_IOS)
 void EngineCredits::mouseMoved(const OIS::MouseEvent &evt)
 {
-    
-    return true;
 }
 
 void EngineCredits::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -73,7 +71,6 @@ void EngineCredits::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID 
         default:
             break;
     }
-    return true;
 }
 
 void EngineCredits::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
@@ -85,7 +82,6 @@ void EngineCredits::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID
         default:
             break;
     }
-    return true;
 }
 
 void EngineCredits::keyPressed(const OIS::KeyEvent &keyEventRef)

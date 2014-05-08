@@ -23,7 +23,7 @@ public:
     virtual void update(float elapsed);
 protected:
     // 2-D grid of level selection buttons
-    static const int LEVEL_ITEM_WIDTH = 5;
+    static const int LEVEL_ITEM_WIDTH = 6;
     static const int LEVEL_ITEM_HEIGHT = 3;
     
     Player* player;

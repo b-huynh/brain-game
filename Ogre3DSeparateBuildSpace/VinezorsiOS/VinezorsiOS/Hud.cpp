@@ -12,6 +12,29 @@
 
 extern Util::ConfigGlobal globals;
 
+void HudButton::setActive(bool value)
+{
+    active = value;
+}
+
+void HudButton::hide()
+{
+    setActive(false);
+    if (backgroundRef)
+        backgroundRef->hide();
+    if (textRef)
+        textRef->hide();
+}
+
+void HudButton::show()
+{
+    setActive(true);
+    if (backgroundRef)
+        backgroundRef->show();
+    if (textRef)
+        textRef->show();
+}
+
 // Assigns pointer references to the button and initializes dimensions
 void HudButton::setButton(std::string name, Overlay* olay, GuiMetricsMode metricMode, Vector2 pos, Vector2 dimension, PanelOverlayElement* bgPtr, TextAreaOverlayElement* txtPtr)
 {
@@ -35,7 +58,7 @@ void HudButton::setButton(std::string name, Overlay* olay, GuiMetricsMode metric
         textRef->setCharHeight(1.0f / 40.0f);
         textRef->setPosition(pos.x + dim.x / 2, pos.y + dim.y / 2);
         textRef->setFontName("Arial");
-        textRef->setColour(ColourValue::ColourValue(0.0, 0.0, 0.0));
+        textRef->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     }
 }
 
@@ -76,7 +99,7 @@ std::string Hud::queryButtons(Vector2 target) const
     Vector2 comp = globals.convertToPercentScreen(target);
     for (int i = 0; i < buttons.size(); ++i)
     {
-        if ((buttons[i].overlay && buttons[i].overlay->isVisible()) && buttons[i].isInside(comp))
+        if ((buttons[i].overlay && buttons[i].overlay->isVisible()) && buttons[i].isInside(comp) && buttons[i].active)
         {
             return buttons[i].name;
         }

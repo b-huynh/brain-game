@@ -315,6 +315,22 @@ void OgreApp::activatePerformRightMove()
     if (activeEngine) activeEngine->activatePerformRightMove();
 }
 
+void OgreApp::activatePerformSwipeUp()
+{
+    std::cout << "SWIPE PERFORMED\n";
+    // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformSwipeUp();
+}
+
+void OgreApp::activatePerformSwipeDown()
+{
+    std::cout << "SWIPE PERFORMED\n";
+    // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformSwipeDown();
+}
+
 void OgreApp::activatePerformDoubleTap(float x, float y)
 {
     //player->addAction(ACTION_DOUBLE_TAP);

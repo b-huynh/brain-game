@@ -11,6 +11,7 @@
 
 #include <fstream>
 
+// Tracks player performance on specific levels
 struct PlayerProgress
 {
     // Best rating for the player on this level
@@ -27,6 +28,9 @@ struct PlayerProgress
     int collection1Wrong;
     int collection2Wrong;
     int collection3Wrong;
+    
+    // returns true if the new rating overwrites the old rating
+    bool setRating(int nrating);
     
     PlayerProgress();
 };

@@ -12,7 +12,7 @@
 #include "Util.h"
 
 // Number of Columns and Rows
-#define NUM_TASKS 5
+#define NUM_TASKS 6
 #define NUM_LEVELS 8
 
 struct CollectionCriteria
@@ -55,6 +55,7 @@ public:
     // Refer to player.h isLevelAvailable to determine whether the player reqs meet playability
     bool hasLevel(int levelSelect) const;
     bool hasLevel(int row, int col) const;
+    bool hasLevelRow(int row) const;
     
     StageRequest retrieveLevel(int levelSelect) const;
     StageRequest retrieveLevel(int row, int col) const;

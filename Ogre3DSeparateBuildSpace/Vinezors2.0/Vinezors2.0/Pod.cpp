@@ -530,7 +530,7 @@ void Pod::generateIndicator()
             switch (podColor)
             {
                 case POD_COLOR_BLUE:
-                    emitterColor = Ogre::ColourValue(0.0,0.0,1.0);
+                    emitterColor = Ogre::ColourValue(0.0,0.5,1.0);
                     break;
                 case POD_COLOR_GREEN:
                     emitterColor = Ogre::ColourValue(0.0,1.0,0.0);

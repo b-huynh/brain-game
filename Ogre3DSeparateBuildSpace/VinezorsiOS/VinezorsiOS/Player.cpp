@@ -13,109 +13,26 @@ using namespace std;
 
 extern Util::ConfigGlobal globals;
 
-int PlayerLevel::getMasteredNBack() const
-{
-    return std::min(set1, std::min(set2, set3));
-}
-
-int PlayerLevel::getHighestNBack() const
-{
-    return std::max(set1, std::max(set2, set3));
-}
-
-int PlayerLevel::getNavLimit() const
-{
-    int best = getHighestNBack();
-    if (best >= globals.navUnlockNBack2)
-        return globals.navUnlockMax2;
-    else if (best >= globals.navUnlockNBack1)
-        return globals.navUnlockMax1;
-    else
-        return globals.navUnlockMax0;
-}
-
-PlayerLevel::PlayerLevel()
-    : sessionID(0), set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), set1Notify(0), set2Notify(0), set3Notify(0), navigation(2), minSpeed(15), averageSpeed(20), maxSpeed(25), runSpeed1(15), runSpeed2(15), runSpeed3(15), navigationScores(), speedScores()
-{
-}
-
-void PlayerLevel::calculateNavigation()
-{
-    navigationScores.updateAccuracies();
-    
-    int nextNavLevel = navigationScores.findMax();
-    if (navigationScores.find(navigation) >= 0) // Did the player reach his/her current nav level?
-        nextNavLevel = navigation;
-    
-    // Starting at current nav level, determine whether we should go up or down
-    const float THRESHOLD_PASS = 0.85;
-    const float THRESHOLD_DROP = 0.70;
-    while (navigationScores.find(nextNavLevel) >= 0 &&
-           navigationScores[nextNavLevel].accuracy >= THRESHOLD_PASS)
-        ++nextNavLevel;
-    while (navigationScores.find(nextNavLevel) >= 0 &&
-           navigationScores[nextNavLevel].accuracy < THRESHOLD_DROP)
-        --nextNavLevel;
-    nextNavLevel = Util::clamp(nextNavLevel, navigationScores.findMin(), navigationScores.findMax());
-    if (nextNavLevel > navigation + 2)
-        navigation = navigation + 2;
-    else
-        navigation = nextNavLevel;
-    navigation = Util::clamp(navigation, 0, getNavLimit());
-}
-
-void PlayerLevel::calculateSpeed()
-{
-    int nmin;
-    int nmax;
-    int noptimal;
-    
-    int lowerbound = minSpeed;
-    int upperbound = maxSpeed;
-    speedScores.setMinOptMax(nmin, noptimal, nmax);
-    minSpeed = Util::clamp(nmin, lowerbound, upperbound);
-    averageSpeed = Util::clamp(noptimal, lowerbound, upperbound);
-    maxSpeed = Util::clamp(nmax, lowerbound, upperbound);
-    
-    std::cout << "New Min: " << nmin << std::endl;
-    std::cout << "New Opt: " << noptimal << std::endl;
-    std::cout << "New Max: " << nmax << std::endl;
-}
-
-std::string PlayerLevel::getCurrentStats() const
-{
-    return
-    "Color/Sound " + Util::toStringInt(set1) + "\n" +
-    "Shape/Sound " + Util::toStringInt(set2) + "\n" +
-    " Sound Only " + Util::toStringInt(set3) + "\n" +
-    " Navigation " + Util::toStringInt(navigation) + "\n" +
-    " Time Speed " + Util::toStringInt(averageSpeed) + "\n" +
-    "  Max Speed " + Util::toStringInt(maxSpeed) + "\n" +
-    " Run Speed1 " + Util::toStringInt(runSpeed1) + "\n" +
-    " Run Speed2 " + Util::toStringInt(runSpeed2) + "\n" +
-    " Run Speed3 " + Util::toStringInt(runSpeed3);
-}
-
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), levelRequest(0), win(false), numStagesWon(0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
-    levelCompletion = std::vector<int>(21, 0);
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), levelRequest(0), win(false), numStagesWon(0)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
-    levelCompletion = std::vector<int>(21, 0);
 }
 
 LevelSet* Player::getLevels() const
@@ -351,16 +268,10 @@ float Player::getAccuracy() const
 
 float Player::getProgress() const
 {
-    float goal = std::pow(10.0, tunnel->getNBack()) * globals.HPPositiveLimit;
-    float progress = score / goal;
-    progress = Util::clamp(progress, 0.0, 1.0);
-    return progress <= 1.0 ? progress : 1.0;
-    /*
     int value = numCorrectTotal - numWrongTotal;
     float progress = static_cast<float>(value) / tunnel->getNumTargets();
     progress = Util::clamp(progress, 0.0, 1.0);
     return progress <= 1.0 ? progress : 1.0;
-     */
 }
 
 bool Player::getShowCombo() const
@@ -388,10 +299,104 @@ int Player::getNumStagesWon() const
     return numStagesWon;
 }
 
-int Player::getLevelRequest() const
+int Player::getLevelRequestRow() const
 {
-    return levelRequest;
+    return levelRequestRow;
 }
+
+int Player::getLevelRequestCol() const
+{
+    return levelRequestCol;
+}
+
+bool Player::hasLevelProgress(int level)
+{
+    int row = levels->getLevelRow(level);
+    int col = levels->getLevelCol(level);
+    return hasLevelProgress(row, col);
+}
+
+bool Player::hasLevelProgress(int row, int col)
+{
+    return row >= 0 && col >= 0 && row < levelProgress.size() && col < levelProgress[row].size();
+}
+
+PlayerProgress Player::getLevelProgress(int level)
+{
+    int row = levels->getLevelRow(level);
+    int col = levels->getLevelCol(level);
+    return levelProgress[row][col];
+}
+
+PlayerProgress Player::getLevelProgress(int row, int col)
+{
+    return levelProgress[row][col];
+}
+
+// Is the level available to the player based on player stats?
+bool Player::isLevelAvailable(int level)
+{
+    /*
+     // Linear progression
+    if (!levels->hasLevel(level))
+        return false;
+    if (level <= 0) return true;
+    if (!hasLevelProgress(level - 1))
+        return false;
+    PlayerProgress progress = getLevelProgress(level - 1);
+    return progress.rating > 0;
+     */
+    
+    // Satisfy previous row star total and
+    // previous column level must be 3 stars
+    if (!levels->hasLevel(level))
+        return false;
+    int levelRow = levels->getLevelRow(level);
+    int levelCol = levels->getLevelCol(level);
+    
+    int totalRatingCur = getTotalLevelRating(levelRow);
+    int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
+    
+    if (!levels->hasLevel(levelRow - 1, levelCol))
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
+    if (!hasLevelProgress(levelRow - 1, levelCol))
+        return false;
+    int totalRatingPrev = getTotalLevelRating(levelRow - 1);
+    int previousRating = getLevelProgress(levelRow - 1, levelCol).rating;
+    int rowRequirementPrev = levels->getTotalRowRequirement(levelRow - 1);
+    
+    //std::cout << levelRow << "," << levelCol << " " << rowRequirementCur << " " << totalRatingCur << std::endl;
+    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 3)
+    {
+        // For the last level, unlock it only if we are close
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
+    }
+    else
+        return false;
+}
+
+bool Player::isLevelAvailable(int row, int col)
+{
+    int level = levels->getLevelNo(row, col);
+    return isLevelAvailable(level);
+}
+
+int Player::getMenuRowIndex() const
+{
+    return menuRowIndex;
+}
+
+// Returns the total rating of a row-set of levels
+int Player::getTotalLevelRating(int row)
+{
+    if (row < 0 && row >= levelProgress.size()) return 0;
+    int total = 0;
+    for (int col = 0; col < levelProgress[row].size(); ++col)
+        if (levelProgress[row][col].rating >= 0)
+            total += levelProgress[row][col].rating;
+    return total;
+}
+
 
 void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
 {
@@ -1220,9 +1225,32 @@ void Player::setGodMode(bool value)
     godMode = value;
 }
 
-void Player::setLevelRequest(int value)
+void Player::setLevelRequestRow(int value)
 {
-    levelRequest = value;
+    levelRequestRow = value;
+}
+
+void Player::setLevelRequestCol(int value)
+{
+    levelRequestCol = value;
+}
+
+void Player::setLevelRequest(int row, int col)
+{
+    levelRequestRow = row;
+    levelRequestCol = col;
+}
+
+void Player::setMenuRowIndex(int value)
+{
+    menuRowIndex = value;
+}
+
+void Player::setAllProgressTo(const PlayerProgress & value)
+{
+    for (int i = 0; i < levelProgress.size(); ++i)
+        for (int j = 0; j < levelProgress[i].size(); ++j)
+            levelProgress[i][j] = value;
 }
 
 void Player::saveCam()
@@ -1700,10 +1728,20 @@ void Player::setPowerUp( std::string pwr, bool val )
         powerups[pwr]->available = val;
 }
 
+// Is the powerup available for use?
 bool Player::isPowerUpAvailable( std::string pwr )
 {
     if( powerups.find(pwr) != powerups.end())
         return powerups[pwr]->available;
+    
+    return false;
+}
+
+// Is the powerup executing?
+bool Player::isPowerUpActive( std::string pwr )
+{
+    if( powerups.find(pwr) != powerups.end())
+        return powerups[pwr]->active;
     
     return false;
 }
@@ -1756,6 +1794,51 @@ void Player::calculateSpeedScores()
 std::string Player::getCurrentStats() const
 {
     return skillLevel.getCurrentStats();
+}
+
+void Player::saveAllResults(Evaluation eval)
+{
+    // Assign the correct rating based on tunnel results
+    int nrating = -1;
+    if (eval == PASS)
+    {
+        nrating = 3;
+        incrementNumStagesWon();
+    }
+    else
+    {
+        // Recess is based off of distance (number of signals left to pass)
+        // Every other is a collection task which we will use the default 3, 5, 8
+        if (tunnel->getMode() == STAGE_MODE_RECESS)
+        {
+            float percentComplete = tunnel->getPercentComplete();
+            if (percentComplete >= 0.9)
+                nrating = 2;
+            else if (percentComplete >= 0.7)
+                nrating = 1;
+            else
+                nrating = 0;
+        }
+        else
+        {
+            int collected = tunnel->getNumSatisfiedCriteria();
+            if (collected >= 5)
+                nrating = 2;
+            else if (collected >= 3)
+                nrating = 1;
+            else
+                nrating = 0;
+        }
+    }
+    if (levelProgress[levelRequestRow][levelRequestCol].setRating(nrating))
+    {
+        // Assign other level progress info here since it is a new score
+    }
+    setSkillLevel(skillLevel);
+    saveStage(globals.logPath);
+    saveActions(globals.actionPath);
+    saveSession(globals.sessionPath);
+    saveProgress(globals.savePath);
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -2002,6 +2085,8 @@ bool Player::saveSession(std::string file)
     return true;
 }
 
+/*
+// Save based on adaptive player skill level from study
 bool Player::saveProgress(std::string file, bool updateSessionID)
 {
     std::ofstream out;
@@ -2034,7 +2119,8 @@ bool Player::saveProgress(std::string file, bool updateSessionID)
     out.close();
     return ret;
 }
-
+ 
+// Load based on adaptive player skill level from study
 bool Player::loadProgress(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
@@ -2065,6 +2151,56 @@ bool Player::loadProgress(std::string savePath)
     } else {
         globals.currStageID = 0;
         std::cout << "Starting from StageID " << globals.currStageID << std::endl;
+        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = false;
+    }
+    saveFile.close();
+    return ret;
+}
+*/
+
+// Save based on player results in level progression
+bool Player::saveProgress(std::string file)
+{
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    bool ret = true;
+    
+    out << levelProgress.size() << std::endl;
+    for (int i = 0; i < levelProgress.size(); ++i)
+    {
+        for (int j = 0; j < levelProgress[i].size(); ++j)
+            out << levelProgress[i][j] << std::endl;
+    }
+    
+    std::cout << "Save Level Progress: " << file << std::endl;
+    ret = out.good();
+    
+    out.close();
+    return ret;
+}
+
+// Load based on player results in level progression
+bool Player::loadProgress(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    bool ret = false;
+    
+    if (saveFile.good()) {
+        int size;
+        saveFile >> size;
+        
+        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
+        for (int i = 0; i < levelProgress.size(); ++i)
+        {
+            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
+            for (int j = 0; j < levelProgress[i].size(); ++j)
+                saveFile >> levelProgress[i][j];
+        }
+        
+        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = true;
+    } else {
         globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = false;
     }

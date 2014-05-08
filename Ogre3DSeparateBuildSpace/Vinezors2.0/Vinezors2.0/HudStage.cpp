@@ -496,21 +496,46 @@ void HudStage::setOverlay()
     // NOTE: should have a button member function called inactivate so it deactivates
     // in the queryGUI function! Hiding currently works since the effect of toggle
     // is negligible in other logic
-    if (tunnel->getMode() == STAGE_MODE_RECESS)
+    toggle1TextArt->hide();
+    toggle2TextArt->hide();
+    toggle3TextArt->hide();
+    toggle4TextArt->hide();
+    toggleIndicator->hide();
+    powerup1Background->hide();
+    powerup2Background->hide();
+    powerup3Background->hide();
+    if (tunnel->getMode() != STAGE_MODE_RECESS)
     {
-        toggle1TextArt->hide();
-        toggle2TextArt->hide();
-        toggle3TextArt->hide();
-        toggle4TextArt->hide();
-        toggleIndicator->hide();
-    }
-    else
-    {
-        toggle1TextArt->show();
-        toggle2TextArt->show();
-        toggle3TextArt->show();
-        toggle4TextArt->show();
-        toggleIndicator->show();
+        if (tunnel->isMultiCollectionTask())
+        {
+            // Bad hack but
+            // Don't show 3-Back for multi-collection tasks of 1 or less.
+            if (player->getLevelRequestRow() > 0)
+                toggle1TextArt->show();
+            toggle2TextArt->show();
+            toggle3TextArt->show();
+            toggle4TextArt->show();
+            toggleIndicator->show();
+        }
+        else
+        {
+            switch (player->getToggleBack())
+            {
+                case 0:
+                    toggle1TextArt->show();
+                    break;
+                case 1:
+                    toggle2TextArt->show();
+                    break;
+                case 2:
+                    toggle3TextArt->show();
+                    break;
+                case 3:
+                    toggle4TextArt->show();
+                    break;
+            }
+            toggleIndicator->hide();
+        }
     }
 }
 

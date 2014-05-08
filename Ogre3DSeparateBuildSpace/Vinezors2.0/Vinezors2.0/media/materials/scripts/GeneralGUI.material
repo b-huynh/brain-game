@@ -224,7 +224,7 @@ material General/ButtonGoDown
         depth_write off
         texture_unit
         {
-            texture buttongoleft1.png
+            texture buttongoright1.png
         }
       } 
     }
@@ -241,7 +241,7 @@ material General/ButtonGoDownGray
         depth_write off
         texture_unit
         {
-            texture buttongoleft1GRAY.png
+            texture buttongoright1GRAY.png
         }
       } 
     }
@@ -258,7 +258,7 @@ material General/ButtonGoUp
         depth_write off
         texture_unit
         {
-            texture buttongoright1.png
+            texture buttongoleft1.png
         }
       } 
     }
@@ -275,7 +275,7 @@ material General/ButtonGoUpGray
         depth_write off
         texture_unit
         {
-            texture buttongoright1GRAY.png
+            texture buttongoleft1GRAY.png
         }
       } 
     }

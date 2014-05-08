@@ -106,6 +106,8 @@ public:
     int trackNBackB;
     int trackNBackC;
     
+    bool multiCollectionTask;
+    
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
 public:
@@ -208,6 +210,7 @@ public:
     bool satisfyCriteria(int nback);
     int loseRandomCriteria();
     bool isCriteriaSatisfied() const;
+    bool isMultiCollectionTask() const;
     bool setAllCriteriaTo(bool value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
