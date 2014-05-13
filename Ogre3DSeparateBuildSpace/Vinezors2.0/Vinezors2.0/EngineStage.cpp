@@ -715,7 +715,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
 #ifdef DEBUG_MODE
         case OIS::KC_K:
         {
-            if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(EVEN);
+            if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(FAIL);
             break;
         }
         case OIS::KC_L:
@@ -834,10 +834,10 @@ void EngineStage::setup()
         {
             nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_4));
 
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.setMessage("Obtain matches by only sound!", MESSAGE_NORMAL);

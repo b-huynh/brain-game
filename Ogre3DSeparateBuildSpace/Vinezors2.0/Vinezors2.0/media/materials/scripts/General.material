@@ -183,6 +183,25 @@ material General/VineBase
 }
 
 
+material General/WhiteStar
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture star.png
+			}
+		}
+	}
+}
+
 material General/Star
 {
 	technique

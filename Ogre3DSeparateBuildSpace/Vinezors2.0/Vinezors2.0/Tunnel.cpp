@@ -19,14 +19,14 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false)
+: player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
 }
 
 Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
-    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false)
+    : player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), activePods(), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), trackNBackA(0), trackNBackB(0), trackNBackC(0), multiCollectionTask(false), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
 	current = segments.end();
@@ -803,16 +803,16 @@ void Tunnel::checkIfDone()
             //else if (player->getHP() >= globals.HPPositiveLimit)
             //    setDone(PASS);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
-                setDone(EVEN);
+                setDone(FAIL);//setDone(EVEN);
             else if (stageTime > 0 && getTimeLeft() <= 0)
-                setDone(EVEN);
+                setDone(FAIL);//setDone(EVEN);
         }
         else //if (getMode() == STAGE_MODE_RECESS)
         {
             if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(PASS);
             else if (stageTime > 0 && getTimeLeft() <= 0)
-                setDone(EVEN);
+                setDone(FAIL);//setDone(EVEN);
         }
     }
 }
@@ -1420,8 +1420,8 @@ void Tunnel::addSection(SectionInfo newSection)
 {
     if (newSection.tunnelType > NORMAL) {
         
-        for (int i = 0; i < sectionSize; ++i)
-            addSegment(newSection);
+        //for (int i = 0; i < sectionSize; ++i)
+        addSegment(newSection);
         return;
     }
     for (int i = 0; i < sectionSize; ++i)
@@ -1795,6 +1795,103 @@ void Tunnel::update(float elapsed)
     player->update(elapsed);
     
     cleanup = !cleanup ? (isDone() && player->getAnimationTimer() <= 0.0) : cleanup;
+    
+    
+    nextSliceM = getNext(globals.podAppearance+4);
+    if ( !gateSlice && nextSliceM->getType() == CHECKPOINT_PASS ) {
+        gateSlice = nextSliceM;
+    }
+    else if( !gateSlice && nextSliceM->getType() == CHECKPOINT_FAIL ) {
+        gateSlice = nextSliceM;
+        tVal = 4.0f;
+    }
+    gateAnimation(elapsed);
+}
+
+void Tunnel::gateAnimation(float elapsed)
+{
+    if( gateSlice && gateSlice->getType() == CHECKPOINT_PASS ) {
+        if( !gateOpen ) {
+            if( !activateGreen ) {
+                if( gateDelayTimer >= gateDelay ) {
+                    activateGreen = true;
+                }
+                else {
+                    gateDelayTimer += elapsed;
+                    gateSlice->gateEntity->getSubEntity(1)->setMaterialName("General/WallCheckpointPass");
+                }
+            }
+            else {
+                if( tVal + tSpeed*elapsed >= 4.0f ) {
+                    tVal = 4.0f;
+                    if( gateDelayTimer >= gateDelay ) {
+                        gateOpen = true;
+                        gateDelayTimer = 0.0f;
+                        tSpeed = 0.0f;
+                    }
+                    else {
+                        gateDelayTimer += elapsed;
+                    }
+                }
+                else {
+                    if( tSpeed+tAccel >= tSpeedOpen ) {
+                        tSpeed = tSpeedOpen;
+                    }
+                    else {
+                        tSpeed += tAccel;
+                    }
+                    tVal += tSpeed*elapsed;
+                }
+            
+                for( int i = 0; i < 8; ++i ) {
+                    Vector3 t = Vector3(0,tVal,0);
+                    Vector3 r = Vector3(Math::Cos(Degree(45*i))*t.x - Math::Sin(Degree(45*i))*t.y,Math::Sin(Degree(45*i))*t.x + Math::Cos(Degree(45*i))*t.y,0);
+                    gateSlice->gateDoorNodes[i]->setPosition(r);
+                }
+            }
+        }
+    }
+    if( gateSlice && gateSlice->getType() == CHECKPOINT_FAIL ) {
+        if( !gateOpen ) {
+            if( !activateGreen ) {
+                if( gateDelayTimer >= gateDelay ) {
+                    activateGreen = true;
+                }
+                else {
+                    gateDelayTimer += elapsed;
+                    gateSlice->gateEntity->getSubEntity(1)->setMaterialName("General/WallCheckpointFail");
+                }
+            }
+            else {
+                if( tVal - tSpeed*elapsed <= 0.0f ) {
+                    tVal = 0.0f;
+                    if( gateDelayTimer >= gateDelay ) {
+                        gateOpen = true;
+                        gateDelayTimer = 0.0f;
+                        tSpeed = 0.0f;
+                    }
+                    else {
+                        gateDelayTimer += elapsed;
+                    }
+                }
+                else {
+                    if( tSpeed+tAccel >= tSpeedOpen ) {
+                        tSpeed = tSpeedOpen;
+                    }
+                    else {
+                        tSpeed += tAccel;
+                    }
+                    tVal -= tSpeed*elapsed;
+                }
+                
+                for( int i = 0; i < 8; ++i ) {
+                    Vector3 t = Vector3(0,tVal,0);
+                    Vector3 r = Vector3(Math::Cos(Degree(45*i))*t.x - Math::Sin(Degree(45*i))*t.y,Math::Sin(Degree(45*i))*t.x + Math::Cos(Degree(45*i))*t.y,0);
+                    gateSlice->gateDoorNodes[i]->setPosition(r);
+                }
+            }
+        }
+    }
 }
 
 void Tunnel::respondToToggleCheat()

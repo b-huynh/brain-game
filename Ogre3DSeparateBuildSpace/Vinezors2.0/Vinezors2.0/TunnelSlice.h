@@ -113,6 +113,12 @@ public:
     void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
     
 	void removeFromScene();
+    
+    SceneNode* gateNode;
+    Entity* gateEntity;
+    
+    SceneNode* gateDoorNodes[8];
+    Entity* gateDoorEntities[8];
 };
 
 #endif /* defined(__Testing__TunnelSlice__) */

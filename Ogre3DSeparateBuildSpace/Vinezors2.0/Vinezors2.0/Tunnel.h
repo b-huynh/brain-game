@@ -110,6 +110,19 @@ public:
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
+    
+    TunnelSlice* gateSlice;
+    float tVal;
+    bool gateOpen;
+    bool activateGreen;
+
+    float tSpeedOpen;
+    
+    float tSpeed;
+    float tAccel;
+    
+    float gateDelayTimer;
+    float gateDelay;
 public:
 	Tunnel();
     
@@ -243,6 +256,8 @@ public:
     void respondToToggleCheat();
     
     void setHoldout(bool val, int holdoutFrequency);
+    
+    void gateAnimation(float elapsed);
     
 	~Tunnel();
 };

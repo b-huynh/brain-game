@@ -171,7 +171,7 @@ void HudSlider::setBallPosition(Vector2 value)
 // Set the ball position at the specified slot
 void HudSlider::setBallPosition(int slot)
 {
-    Vector2 pos = Vector2((slot - min) * getRangeWidth() / slots, p2.y);
+    Vector2 pos = Vector2((slot - min) * (getRangeWidth()) / slots, p2.y);
     setBallPosition(pos);
 }
 
