@@ -67,6 +67,7 @@ private:
     float baseSpeed;
     float bonusSpeed;
     float finalSpeed;
+    float initSpeed;
     float minSpeed;
     float maxSpeed;
     
@@ -228,8 +229,11 @@ public:
     bool isLevelAvailable(int row, int col);
     int getMenuRowIndex() const;
     int getTotalLevelRating(int row);
+    bool hasTriggeredStartup() const;
+    float getScoring() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
+    void setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed);
     void setSeed(unsigned value);
     void setName(const std::string & name);
     void setHP(int value);

@@ -317,7 +317,6 @@ void OgreApp::activatePerformRightMove()
 
 void OgreApp::activatePerformSwipeUp()
 {
-    std::cout << "SWIPE PERFORMED\n";
     // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformSwipeUp();
@@ -325,7 +324,6 @@ void OgreApp::activatePerformSwipeUp()
 
 void OgreApp::activatePerformSwipeDown()
 {
-    std::cout << "SWIPE PERFORMED\n";
     // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformSwipeDown();
@@ -365,12 +363,33 @@ void OgreApp::activatePerformEndLongPress()
     //if (activeEngine) activeEngine->activatePerformEndLongPress();
 }
 
+
+void OgreApp::activateMoved(float x, float y, float dx, float dy)
+{
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activateMoved(x, y, dx, dy);
+}
+
+void OgreApp::activatePressed(float x, float y)
+{
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePressed(x, y);
+}
+
+void OgreApp::activateReleased(float x, float y, float dx, float dy)
+{
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activateReleased(x, y, dx, dy);
+}
+
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
+// Note to mimic IOS mechanisms, Mouse Handler events call two functions
 bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     OgreFramework::getSingletonPtr()->mouseMoved(evt);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseMoved(evt);
+    if (activeEngine) activeEngine->activateMoved(evt.state.X.abs, evt.state.Y.abs, evt.state.X.rel, evt.state.Y.rel);
     return true;
 }
 
@@ -379,6 +398,7 @@ bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     OgreFramework::getSingletonPtr()->mousePressed(evt, id);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mousePressed(evt, id);
+    if (activeEngine) activeEngine->activatePressed(evt.state.X.abs, evt.state.Y.abs);
     return true;
 }
 
@@ -387,6 +407,7 @@ bool OgreApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     OgreFramework::getSingletonPtr()->mouseReleased(evt, id);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseReleased(evt, id);
+    if (activeEngine) activeEngine->activateReleased(evt.state.X.abs, evt.state.Y.abs, evt.state.X.rel, evt.state.Y.rel);
     return true;
 }
 

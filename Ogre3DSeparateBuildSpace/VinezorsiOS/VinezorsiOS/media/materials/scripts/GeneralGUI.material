@@ -281,6 +281,40 @@ material General/ButtonGoUpGray
     }
 }
 
+material General/ButtonGo
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongo.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoGRAY.png
+        }
+      } 
+    }
+}
+
 material General/TextArtMainTitle
 {
 	technique
@@ -1007,6 +1041,40 @@ material General/LevelBar3Fill
         texture_unit
         {
             texture lvlprgress_33.png
+        }
+      } 
+    }
+}
+
+material General/SliderRange
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderrange.png
+        }
+      } 
+    }
+}
+
+material General/SliderBall
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderbutton.png
         }
       } 
     }

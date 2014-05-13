@@ -142,7 +142,6 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
     m_pTrayMgr->hideCursor();
     m_pTrayMgr->setListener(this);
     m_pTrayMgr->setTrayPadding(10.0);
-    
     Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
     //  m_quitButton = OgreFramework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_BOTTOMLEFT, "sdkQuitButton", "QUIT", 250);
     

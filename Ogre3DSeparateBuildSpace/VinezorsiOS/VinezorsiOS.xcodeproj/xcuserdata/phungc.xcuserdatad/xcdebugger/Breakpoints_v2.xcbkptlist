@@ -56,7 +56,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "326"
-            endingLineNumber = "326">
+            endingLineNumber = "326"
+            landmarkName = "OgreApp::activatePerformSwipeDown()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -92,11 +94,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "421186946.833428"
+            timestampString = "421665477.42362"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "608"
-            endingLineNumber = "608">
+            startingLineNumber = "609"
+            endingLineNumber = "609">
             <Locations>
                <Location
                   shouldBeEnabled = "No"

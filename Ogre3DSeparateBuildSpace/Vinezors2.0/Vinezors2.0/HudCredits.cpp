@@ -25,13 +25,13 @@ HudCredits::~HudCredits()
 void HudCredits::init()
 {
     alloc();
-    setOverlay();
+    initOverlay();
     showOverlays();
 }
 
 void HudCredits::adjust()
 {
-    setOverlay();
+    initOverlay();
 }
 
 void HudCredits::update(float elapsed)
@@ -63,7 +63,7 @@ void HudCredits::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
-void HudCredits::setOverlay()
+void HudCredits::initOverlay()
 {
     // Link and set resources
     creditsTitle->setMetricsMode(GMM_RELATIVE);

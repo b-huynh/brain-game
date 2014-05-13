@@ -33,6 +33,42 @@ struct HudButton
     bool isInside(Vector2 target) const;
 };
 
+struct HudSlider
+{
+    std::string name;
+    Overlay* overlay;
+    GuiMetricsMode metric;
+    int min;
+    int max;
+    int slots;
+    
+    // Orientation of slider
+    Vector2 p1;
+    Vector2 dim1;
+    
+    // Local orientation of ball
+    Vector2 p2;
+    Vector2 dim2;
+    
+    PanelOverlayElement* rangeRef;
+    PanelOverlayElement* ballRef;
+    
+    Vector2 p2cache; // transition
+    
+    bool selected;
+    
+    HudSlider() : name(""), overlay(NULL), metric(), min(0), max(0), slots(0), p1(), dim1(), dim2(), rangeRef(NULL), ballRef(NULL), p2cache(), selected(false) {}
+    
+    void setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2 dimension1, Vector2 dimension2, int min, int max, int slots, PanelOverlayElement* range, PanelOverlayElement* ball);
+    bool isInsideRange(Vector2 target) const;
+    bool isInsideBall(Vector2 target) const;
+    void adjust();
+    float getRangeWidth() const;
+    void setBallPosition(Vector2 value);
+    Vector2 getBallPosition() const;
+    int getIndex() const;
+};
+
 class Hud
 {
 public:
@@ -54,7 +90,7 @@ protected:
     
     virtual void alloc() = 0;
     virtual void dealloc() = 0;
-    virtual void setOverlay() = 0;
+    virtual void initOverlay() = 0;
 };
 
 #endif /* defined(__Vinezors2_0__Hud__) */

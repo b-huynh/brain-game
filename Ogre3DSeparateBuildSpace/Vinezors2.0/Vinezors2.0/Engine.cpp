@@ -64,6 +64,21 @@ void Engine::activatePerformEndLongPress()
     
 }
 
+void Engine::activateMoved(float x, float y, float dx, float dy)
+{
+    
+}
+
+void Engine::activatePressed(float x, float y)
+{
+    
+}
+
+void Engine::activateReleased(float x, float y, float dx,  float dy)
+{
+    
+}
+
 #if !defined(OGRE_IS_IOS)
 void Engine::mouseMoved(const OIS::MouseEvent &evt)
 {

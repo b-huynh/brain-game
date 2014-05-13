@@ -633,6 +633,8 @@ bool Tunnel::getPodIsGood() const
     return getPodIsGood(podIndex);
 }
 
+// Returns the n-back based on the player's current toggle value.
+// if there is only one n-back in a stage, this toggle value should be fixed
 int Tunnel::getNBackToggle() const
 {
     if (player->getToggleBack() == 3)

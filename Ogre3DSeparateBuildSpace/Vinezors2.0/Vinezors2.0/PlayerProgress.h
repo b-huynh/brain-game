@@ -19,15 +19,13 @@ struct PlayerProgress
     int score;  // score rating
     float time; // time left on tunnel
     
-    // Toggle-back collection statistics
-    int collection0Correct;
-    int collection1Correct;
-    int collection2Correct;
-    int collection3Correct;
-    int collection0Wrong;
-    int collection1Wrong;
-    int collection2Wrong;
-    int collection3Wrong;
+    int numCorrect;
+    int numWrong;
+    int numSafe;
+    int numMissed;
+    
+    int startSpeed;
+    int exitSpeed;
     
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);

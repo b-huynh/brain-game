@@ -18,6 +18,8 @@ public:
     HudStage(Player* player, Tunnel* tunnel);
     virtual ~HudStage();
     
+    HudSlider* getSpeedSlider() const { return speedSlider; }
+    
     virtual void init();
     virtual void adjust();
     virtual void update(float elapsed);
@@ -26,7 +28,7 @@ protected:
     Tunnel* tunnel;
     
     enum ButtonSet {
-        BUTTON_PAUSE,
+        BUTTON_PAUSE, BUTTON_GO,
         BUTTON_TOGGLE1, BUTTON_TOGGLE2, BUTTON_TOGGLE3, BUTTON_TOGGLE4,
         BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3,
         BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
@@ -37,6 +39,9 @@ protected:
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
     PanelOverlayElement* pauseBackground;
+    PanelOverlayElement* goBackground;
+    PanelOverlayElement* sliderRangeBackground;
+    PanelOverlayElement* sliderBallBackground;
     std::vector<PanelOverlayElement*> collectionBar;
     PanelOverlayElement* GUITopPanel;
     OverlayContainer* panelText;
@@ -68,11 +73,13 @@ protected:
     PanelOverlayElement* restartButtonBackground;
     PanelOverlayElement* levelSelectButtonBackground;
     
+    HudSlider* speedSlider;
+    
     void link(Player* player, Tunnel* tunnel);
     void unlink();
     virtual void alloc();
     virtual void dealloc();
-    virtual void setOverlay();
+    virtual void initOverlay();
 };
 
 #endif /* defined(__Vinezors2_0__HudStage__) */

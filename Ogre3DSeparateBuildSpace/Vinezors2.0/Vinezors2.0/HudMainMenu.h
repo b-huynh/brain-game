@@ -38,7 +38,7 @@ protected:
     void unlink();
     virtual void alloc();
     virtual void dealloc();
-    virtual void setOverlay();
+    virtual void initOverlay();
 };
 
 #endif /* defined(__Vinezors2_0__HudMainMenu__) */

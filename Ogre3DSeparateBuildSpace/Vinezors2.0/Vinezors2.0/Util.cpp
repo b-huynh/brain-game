@@ -275,10 +275,7 @@ void Util::ConfigGlobal::set()
     label5_posX = screenWidth - screenWidth / 40;
     label5_posY = 7 * screenHeight / 40;
     label6_posX = screenWidth / 2;
-    label6_posY = screenHeight / 2 - screenHeight / 5;
-#ifdef DEBUG_MODE
-    label6_posY = screenHeight / 2 - screenHeight / 3.5;
-#endif
+    label6_posY = screenHeight / 2 - screenHeight / 3;
     label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
     

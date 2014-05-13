@@ -14,7 +14,7 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -24,7 +24,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
@@ -397,6 +397,52 @@ int Player::getTotalLevelRating(int row)
     return total;
 }
 
+// Returns true if the player hasn't started the tunnel yet
+//
+// This flag is set to false the moment player update runs once.
+// Then, the ship plays its startup sound.
+bool Player::hasTriggeredStartup() const
+{
+    return !triggerStartup;
+}
+
+// Returns the score of a positive target using the tunnel n-back
+//
+// Later, if points vary by target in a stage, we should pass in
+// the signal that was selected.
+float Player::getScoring() const
+{
+    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
+        return 50.0;
+    
+    int nvalue = tunnel->getNBackToggle();
+    switch (nvalue)
+    {
+        case 0:
+            return 50.0;
+        case 1:
+            return 100.0;
+        case 2:
+            return 250.0;
+        case 3:
+            return 500.0;
+        case 4:
+            return 1000.0;
+        case 5:
+            return 2000.0;
+        case 6:
+            return 4000.0;
+        case 7:
+            return 6000.0;
+        case 8:
+            return 8000.0;
+        case 9:
+            return 10000.0;
+        case 10:
+            return 15000.0;
+    }
+    return 5000.0 * nvalue;
+}
 
 void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
 {
@@ -405,6 +451,15 @@ void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
     skillLevel.runSpeed3 = val3;
     skillLevel.averageSpeed = val4;
     skillLevel.navigation = nav;
+}
+
+void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
+{
+    this->initSpeed = initSpeed;
+    this->minSpeed = minSpeed;
+    this->maxSpeed = maxSpeed;
+    baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
+    finalSpeed = getTotalSpeed();
 }
 
 void Player::setSeed(unsigned value)
@@ -847,10 +902,8 @@ void Player::testPodGiveFeedback(Pod* test)
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
-        if (tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getMode() == STAGE_MODE_RECESS)
-            score += 5.0;
-        else
-            score += std::pow(5.0, 4 - getToggleBack());
+        // Determine Score
+        score += getScoring();
     }
     else if (!goodPod && test->isPodTaken())
     {
@@ -882,12 +935,12 @@ void Player::testPodGiveFeedback(Pod* test)
         //score -= std::pow(5.0, 4);
         //if (score < 0.0) score = 0.0;
     }
-    else if (!test->isPodGood() && !test->isPodTaken())
+    else if (!goodPod && !test->isPodTaken())
     {
         numSafeTotal++;
         numCorrectBonus++;
     }
-    else if (test->isPodGood() && !test->isPodTaken()) // Missed good
+    else if (goodPod && !test->isPodTaken()) // Missed good
     {
         ++numMissedTotal;
     }
@@ -1298,9 +1351,6 @@ void Player::newTunnel(const std::string & nameMusic)
 	addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), camPos, globals.vineRadius));
     
     hp = globals.startingHP;
-    minSpeed = globals.minCamSpeed;
-    maxSpeed = globals.maxCamSpeed;
-    baseSpeed = Util::clamp(globals.initCamSpeed, minSpeed, maxSpeed);
     
     totalDistanceTraveled = 0.0;
     animationTimer = 5.0;
@@ -1798,6 +1848,11 @@ std::string Player::getCurrentStats() const
 
 void Player::saveAllResults(Evaluation eval)
 {
+#define SCORE_PER_SECOND 100
+    
+    // Calculate total score which is current plus time left
+    score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
+    
     // Assign the correct rating based on tunnel results
     int nrating = -1;
     if (eval == PASS)
@@ -1830,10 +1885,22 @@ void Player::saveAllResults(Evaluation eval)
                 nrating = 0;
         }
     }
-    if (levelProgress[levelRequestRow][levelRequestCol].setRating(nrating))
+    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    // If level has never been done before or we have a new high score, then save stats
+    if (levelResult->rating < 0 || score > levelResult->score)
     {
+        levelResult->score = score;
+        levelResult->time = tunnel->getTimeLeft();
+        levelResult->numCorrect = numCorrectTotal;
+        levelResult->numWrong = numWrongTotal;
+        levelResult->numSafe = numSafeTotal;
+        levelResult->numMissed = numMissedTotal;
+        levelResult->startSpeed = initSpeed;
+        levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
     }
+    levelResult->setRating(nrating); // Assign rating last
+    
     setSkillLevel(skillLevel);
     saveStage(globals.logPath);
     saveActions(globals.actionPath);
@@ -2195,7 +2262,11 @@ bool Player::loadProgress(std::string savePath)
         {
             levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
             for (int j = 0; j < levelProgress[i].size(); ++j)
+            {
+                std::cout << "Level: " << i << "," << j << std::endl;
                 saveFile >> levelProgress[i][j];
+                std::cout << levelProgress[i][j] << std::endl;
+            }
         }
         
         globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);

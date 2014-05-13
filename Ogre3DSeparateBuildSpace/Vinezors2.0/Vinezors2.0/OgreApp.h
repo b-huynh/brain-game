@@ -111,6 +111,9 @@ public:
     void activatePerformBeginLongPress();
     void activatePerformEndLongPress();
     
+    void activateMoved(float x, float y, float dx, float dy);
+	void activatePressed(float x, float y);
+	void activateReleased(float x, float y, float dx, float dy);
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);

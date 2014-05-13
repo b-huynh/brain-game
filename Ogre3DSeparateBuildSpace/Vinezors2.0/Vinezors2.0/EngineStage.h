@@ -12,6 +12,7 @@
 #include "Util.h"
 
 #include "Engine.h"
+#include "HudStage.h"
 
 // Note: This Engine is not yet suited to be any GameState object underneath another in the stack
 class EngineStage : public Engine
@@ -37,6 +38,9 @@ public:
     virtual void activatePerformBeginLongPress();
     virtual void activatePerformEndLongPress();
     
+    virtual void activateMoved(float x, float y, float dx, float dy);
+	virtual void activatePressed(float x, float y);
+	virtual void activateReleased(float x, float y, float dx, float dy);
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);
 	virtual void mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
@@ -49,6 +53,12 @@ public:
     virtual void requestResize();
 protected:
     // State machine of stage
+    //
+    // INIT: sets up initial tunnel and goes to begin prompt
+    // PAUSE: begin prompt (adjust speed, tutorial, ect.)
+    // RUNNING: actual gameplay
+    // PROMPT: end prompt and manual pause prompt
+    // DONE: cleanup of game state
     enum StageState { STAGE_STATE_INIT, STAGE_STATE_PAUSE, STAGE_STATE_RUNNING, STAGE_STATE_PROMPT, STAGE_STATE_DONE };
     
     StageState stageState;
@@ -57,7 +67,7 @@ protected:
     SceneNode* lightNode;
     Tunnel* tunnel;
 	Player* player;
-    Hud* hud;
+    HudStage* hud;
     
     void setup();
     void dealloc();

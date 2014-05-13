@@ -8,7 +8,6 @@
 
 #include "EngineStage.h"
 #include "EngineStateManager.h"
-#include "HudStage.h"
 #include "Networking.h"
 #include "Tunnel.h"
 #include "Player.h"
@@ -51,7 +50,7 @@ void EngineStage::update(float elapsed)
         {
             setup();
             setPause(true);
-            globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
+            globals.appendMessage("\n\nSet Your Speed", MESSAGE_NORMAL);
             stageState = STAGE_STATE_PAUSE;
             break;
         }
@@ -66,12 +65,15 @@ void EngineStage::update(float elapsed)
                 completeStage(EVEN);
                 stageState = STAGE_STATE_PROMPT;
                 setPause(true);
-                globals.appendMessage("\nPlay Again?", MESSAGE_NORMAL);
+                
+                std::string finalScoreMessage = Util::toStringInt(player->getScore());
+                globals.appendMessage("\nScore " + finalScoreMessage + "\n\nPlay Again?", MESSAGE_NORMAL);
             }
 
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
+            hud->setOverlay(2, false);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -101,9 +103,14 @@ void EngineStage::update(float elapsed)
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
+            int sliderSpeed = hud->getSpeedSlider()->getIndex();
+            globals.initCamSpeed = Util::clamp(sliderSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+            player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+            
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
+            hud->setOverlay(2, true);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -111,6 +118,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
+            hud->setOverlay(2, false);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             break;
@@ -144,8 +152,8 @@ void EngineStage::activatePerformLeftMove()
         }
         case STAGE_STATE_PAUSE:
         {
-            stageState = STAGE_STATE_RUNNING;
-            setPause(false);
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -172,8 +180,8 @@ void EngineStage::activatePerformRightMove()
         }
         case STAGE_STATE_PAUSE:
         {
-            stageState = STAGE_STATE_RUNNING;
-            setPause(false);
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -185,40 +193,16 @@ void EngineStage::activatePerformRightMove()
 
 void EngineStage::activatePerformSwipeUp()
 {
-    /*
     switch (stageState)
     {
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                int tog = player->getToggleBack() - 1;
-                if (player->getLevelRequestRow() > 0)
-                {
-                    if (tog < 0) tog = 3;
-                }
-                else
-                {
-                    if (tog < 1) tog = 3;
-                }
-                player->setToggleBack(tog);
-            }
             break;
-        }
         case STAGE_STATE_PAUSE:
         {
-            int tog = player->getToggleBack() - 1;
-            if (player->getLevelRequestRow() > 0)
-            {
-                if (tog < 0) tog = 3;
-            }
-            else
-            {
-                if (tog < 1) tog = 3;
-            }
-            player->setToggleBack(tog);
+            globals.initCamSpeed = Util::clamp(globals.initCamSpeed + 1, globals.minCamSpeed, globals.maxCamSpeed);
+            player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -226,40 +210,20 @@ void EngineStage::activatePerformSwipeUp()
         case STAGE_STATE_DONE:
             break;
     }
-    */
 }
 
 void EngineStage::activatePerformSwipeDown()
 {
-    /*
     switch (stageState)
     {
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                int tog = player->getToggleBack();
-                if (player->getLevelRequestRow() > 0)
-                    tog = (tog + 1) % 4;
-                else
-                    tog = (tog + 1) % 3 + 1;
-                player->setToggleBack(tog);
-            }
             break;
-        }
         case STAGE_STATE_PAUSE:
         {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                int tog = player->getToggleBack();
-                if (player->getLevelRequestRow() > 0)
-                    tog = (tog + 1) % 4;
-                else
-                    tog = (tog + 1) % 3 + 1;
-                player->setToggleBack(tog);
-            }
+            globals.initCamSpeed = Util::clamp(globals.initCamSpeed - 1, globals.minCamSpeed, globals.maxCamSpeed);
+            player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -267,7 +231,6 @@ void EngineStage::activatePerformSwipeDown()
         case STAGE_STATE_DONE:
             break;
     }
-     */
 }
 
 void EngineStage::activatePerformDoubleTap(float x, float y)
@@ -389,6 +352,11 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 setPause(true);
                 stageState = STAGE_STATE_PROMPT;
             }
+            else if (queryGUI == "go")
+            {
+                stageState = STAGE_STATE_RUNNING;
+                setPause(false);
+            }
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -397,7 +365,13 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             
             if (queryGUI == "resume")
             {
-                if (!tunnel->needsCleaning())
+                // If game hasn't started yet, go back to init prompt
+                // Otherwise, go to gameplay
+                if (!player->hasTriggeredStartup())
+                {
+                    stageState = STAGE_STATE_PAUSE;
+                }
+                else if (!tunnel->needsCleaning())
                 {
                     setPause(false);
                     stageState = STAGE_STATE_RUNNING;
@@ -406,13 +380,14 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             else if (queryGUI == "next")
             {
                 LevelSet* levels = player->getLevels();
-                int row = levels->getLevelRow(player->getLevelRequestRow());
-                int col = levels->getLevelCol(player->getLevelRequestCol());
+                int row = player->getLevelRequestRow();
+                int col = player->getLevelRequestCol();
                 int level = levels->getLevelNo(row, col);
-                if (player->isLevelAvailable(level + 1))
+                int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
+                if (player->isLevelAvailable(nlevel))
                 {
-                    row = levels->getLevelRow(level + 1);
-                    col = levels->getLevelCol(level + 1);
+                    row = levels->getLevelRow(nlevel);
+                    col = levels->getLevelCol(nlevel);
                     player->setLevelRequest(row, col);
                     stageState = STAGE_STATE_INIT;
                 }
@@ -488,6 +463,79 @@ void EngineStage::activatePerformEndLongPress()
             break;
         case STAGE_STATE_DONE:
             break;
+    }
+}
+
+// The following deal with injecting coordinates to simulate a slider
+//
+void EngineStage::activateMoved(float x, float y, float dx, float dy)
+{
+    if (stageState == STAGE_STATE_PAUSE)
+    {
+        HudSlider* speedSlider = NULL;
+        if (hud) speedSlider = hud->getSpeedSlider();
+        if (speedSlider && speedSlider->selected)
+        {
+#if !defined(OGRE_IS_IOS)
+            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#else
+            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#endif
+            speedSlider->setBallPosition(np);
+            
+            //std::cout << "move " << speedSlider->p2.x << " " << globals.convertToPercentScreen(Vector2(dx, 0.0)).x << std::endl;;
+        }
+    }
+}
+
+void EngineStage::activatePressed(float x, float y)
+{
+    if (stageState == STAGE_STATE_PAUSE)
+    {
+        HudSlider* speedSlider = NULL;
+        if (hud) speedSlider = hud->getSpeedSlider();
+        if (speedSlider)
+        {
+            Vector2 pos = globals.convertToPercentScreen(Vector2(x, y));
+        
+            // Case for tapping into the slider which makes ball jump to position
+            if (speedSlider->isInsideRange(pos))
+            {
+                // Project position to range
+                float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
+                speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
+            }
+        
+            // Initialize p2cache first time we touch ball
+            // p2cache is better since iOS tracking uses total dx which is more accurate
+            // then passing in a dx everytime
+            if (speedSlider->isInsideBall(pos))
+            {
+                speedSlider->selected = true;
+                speedSlider->p2cache = speedSlider->p2;
+            }
+            //std::cout << "press\n";
+        }
+    }
+}
+
+void EngineStage::activateReleased(float x, float y, float dx, float dy)
+{
+    if (stageState == STAGE_STATE_PAUSE)
+    {
+        HudSlider* speedSlider = NULL;
+        if (hud) speedSlider = hud->getSpeedSlider();
+        if (speedSlider && speedSlider->selected)
+        {
+            speedSlider->selected = false;
+#if !defined(OGRE_IS_IOS)
+            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#else
+            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#endif
+            speedSlider->setBallPosition(np);
+            //std::cout << "release\n";
+        }
     }
 }
 
@@ -634,7 +682,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             if (stageState == STAGE_STATE_RUNNING)
             {
                 setPause(true);
-                globals.appendMessage("\n\nSwipe to Continue", MESSAGE_NORMAL);
+                globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
                 stageState = STAGE_STATE_PAUSE;
             }
             else
@@ -866,6 +914,7 @@ void EngineStage::setup()
     tunnel->setCollectionCriteria(level.collectionCriteria);
     tunnel->constructTunnel(level.nameTunnelTile, globals.tunnelSections);
     player->newTunnel(level.nameMusic);
+    player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
     
     Util::setSkyboxAndFog(level.nameSkybox);
     

@@ -28,13 +28,13 @@ HudLevelSelection::~HudLevelSelection()
 void HudLevelSelection::init()
 {
     alloc();
-    setOverlay();
+    initOverlay();
     showOverlays();
 }
 
 void HudLevelSelection::adjust()
 {
-    setOverlay();
+    initOverlay();
 }
 
 void HudLevelSelection::update(float elapsed)
@@ -131,7 +131,7 @@ void HudLevelSelection::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
-void HudLevelSelection::setOverlay()
+void HudLevelSelection::initOverlay()
 {
     // Link and set resources
     levelSelectPrompt->setMetricsMode(GMM_RELATIVE);

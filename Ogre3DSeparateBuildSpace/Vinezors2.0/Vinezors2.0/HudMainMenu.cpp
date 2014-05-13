@@ -25,13 +25,13 @@ HudMainMenu::~HudMainMenu()
 void HudMainMenu::init()
 {
     alloc();
-    setOverlay();
+    initOverlay();
     showOverlays();
 }
 
 void HudMainMenu::adjust()
 {
-    setOverlay();
+    initOverlay();
 }
 
 void HudMainMenu::update(float elapsed)
@@ -71,7 +71,7 @@ void HudMainMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
-void HudMainMenu::setOverlay()
+void HudMainMenu::initOverlay()
 {
     // Link and set resources
     mainTitle->setMetricsMode(GMM_RELATIVE);
