@@ -27,6 +27,8 @@ struct PlayerProgress
     int startSpeed;
     int exitSpeed;
     
+    int initSpeedSetting;
+    
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);
     

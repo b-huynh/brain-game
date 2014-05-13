@@ -235,8 +235,6 @@ void HudStage::alloc()
     
     buttons = std::vector<HudButton>(13);
     
-    speedSlider = new HudSlider();
-    
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayHUD");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayPauseMenu");
@@ -285,7 +283,17 @@ void HudStage::alloc()
     overlays.push_back(overlay2);
     overlays.push_back(overlay3);
     
-    speedSlider->setSlider("speed", overlays[2], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10), globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed, sliderRangeBackground, sliderBallBackground);
+    speedSlider = new HudSlider();
+    speedSlider->setSlider("speed", overlays[2], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10),
+                           globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed, sliderRangeBackground, sliderBallBackground);
+    
+    // Set the ball position to the previous speed setting if the player played this level before
+    // Otherwise, use the suggested speed
+    PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
+    if (levelPerformance.initSpeedSetting >= 0)
+        speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+    else
+        speedSlider->setBallPosition(globals.initCamSpeed);
     speedSlider->adjust();
 }
 

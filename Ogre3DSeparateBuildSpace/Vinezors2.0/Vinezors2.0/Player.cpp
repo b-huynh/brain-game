@@ -624,7 +624,7 @@ void Player::updateTimeWarp(float elapsed)
         }
         else {
             if( t->mainTimer >= t->timeBonusTimeout ) {
-                tunnel->addToTimePenalty(-t->timeBonus);
+                if (!tunnel->isDone()) tunnel->addToTimePenalty(-t->timeBonus);
                 
                 t->zoomIn = 0;
                 t->active = false;
@@ -1899,6 +1899,8 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
     }
+    // Update other level results/settings
+    levelResult->initSpeedSetting = initSpeed;
     levelResult->setRating(nrating); // Assign rating last
     
     setSkillLevel(skillLevel);

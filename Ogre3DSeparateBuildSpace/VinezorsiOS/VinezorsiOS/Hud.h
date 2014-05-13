@@ -65,6 +65,7 @@ struct HudSlider
     void adjust();
     float getRangeWidth() const;
     void setBallPosition(Vector2 value);
+    void setBallPosition(int slot);
     Vector2 getBallPosition() const;
     int getIndex() const;
 };

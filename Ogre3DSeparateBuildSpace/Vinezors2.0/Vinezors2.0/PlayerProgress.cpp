@@ -8,7 +8,7 @@
 
 #include "PlayerProgress.h"
 
-PlayerProgress::PlayerProgress() : rating(-1), score(0.0), time(0.0), numCorrect(0), numWrong(0), numSafe(0), numMissed(0), startSpeed(0), exitSpeed(0)
+PlayerProgress::PlayerProgress() : rating(-1), score(0.0), time(0.0), numCorrect(0), numWrong(0), numSafe(0), numMissed(0), startSpeed(-1), exitSpeed(-1), initSpeedSetting(-1)
 {}
 
 // returns true if the new rating overwrites the old rating
@@ -32,7 +32,8 @@ std::ostream& operator<<(std::ostream& outfile, const PlayerProgress & prg)
             << prg.numSafe << " "
             << prg.numMissed << " "
             << prg.startSpeed << " "
-            << prg.exitSpeed;
+            << prg.exitSpeed << " "
+            << prg.initSpeedSetting;
     return outfile;
 }
 
@@ -46,6 +47,7 @@ std::istream& operator>>(std::istream& infile, PlayerProgress & prg)
         >> prg.numSafe
         >> prg.numMissed
         >> prg.startSpeed
-        >> prg.exitSpeed;
+        >> prg.exitSpeed
+        >> prg.initSpeedSetting;
     return infile;
 }
