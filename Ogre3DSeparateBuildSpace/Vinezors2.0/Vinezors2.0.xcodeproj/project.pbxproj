@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3FBA8D331919C427009BEA79 /* GeneralGate.material in Resources */ = {isa = PBXBuildFile; fileRef = 3FBA8D321919C427009BEA79 /* GeneralGate.material */; };
 		5D04AD2919003C4900E0A98B /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2719003C4900E0A98B /* Engine.cpp */; };
 		5D04AD2C1900523200E0A98B /* HudStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2A1900523200E0A98B /* HudStage.cpp */; };
 		5D04AD301900543500E0A98B /* HudLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2E1900543500E0A98B /* HudLevelSelection.cpp */; };
@@ -90,6 +91,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3FBA8D321919C427009BEA79 /* GeneralGate.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneralGate.material; sourceTree = "<group>"; };
 		5D04AD2719003C4900E0A98B /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		5D04AD2819003C4900E0A98B /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		5D04AD2A1900523200E0A98B /* HudStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStage.cpp; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 		5DE1229417F0DA8200E49916 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
+				3FBA8D321919C427009BEA79 /* GeneralGate.material */,
 				5D299E3B18A01EE00014CFA9 /* General.particle */,
 				5DE1229617F0DA8200E49916 /* General.material */,
 				5DCDDD801910136E00CF67F1 /* GeneralGUI.material */,
@@ -471,6 +474,7 @@
 				5DCDDD871910136E00CF67F1 /* GeneralTunnelTiles.material in Resources */,
 				5D299E3C18A01EE00014CFA9 /* General.particle in Resources */,
 				5DCDDD861910136E00CF67F1 /* GeneralSkyplane.material in Resources */,
+				3FBA8D331919C427009BEA79 /* GeneralGate.material in Resources */,
 				B6C64C4417DE8C5B0092CA8E /* ogre.cfg in Resources */,
 				5DCDDD841910136E00CF67F1 /* GeneralGUI.material in Resources */,
 				B6C64C4717DE8C5B0092CA8E /* plugins.cfg in Resources */,

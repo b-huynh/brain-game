@@ -73,6 +73,79 @@ void Vine::loadBasicShip()
     base->scale(radius * 1.5, radius / 1.5, radius * 1.5);
 }
 
+/*
+SceneNode* gateNode;
+Entity* gateEntity;
+
+SceneNode* gateDoorNodes[8];
+Entity* gateDoorEntities[8];
+
+bool gateOpen = true;
+float tVal = 0.0f;
+
+float tSpeedOpen = 10.0f;
+float tSpeedClose = 20.0f;
+
+float tSpeed = 0.0f;
+float tAccel = 2.0f;
+
+float gateDelayTimer = 0.0f;
+float gateDelay = 1.0f;
+
+void Vine::updateGate(float elapsed)
+{
+    if( gateOpen ) {
+        if( tVal + tSpeed*elapsed >= 4.0f ) {
+            tVal = 4.0f;
+            if( gateDelayTimer >= gateDelay ) {
+                gateOpen = false;
+                gateDelayTimer = 0.0f;
+                tSpeed = 0.0f;
+            }
+            else {
+                gateDelayTimer += elapsed;
+            }
+        }
+        else {
+            if( tSpeed+tAccel >= tSpeedOpen ) {
+                tSpeed = tSpeedOpen;
+            }
+            else {
+                tSpeed += tAccel;
+            }
+            tVal += tSpeed*elapsed;
+        }
+    }
+    else {
+        if( tVal - tSpeed*elapsed <= 0.0f ) {
+            tVal = 0.0f;
+            if( gateDelayTimer >= gateDelay ) {
+                gateOpen = true;
+                gateDelayTimer = 0.0f;
+                tSpeed = 0.0f;
+            }
+            else {
+                gateDelayTimer += elapsed;
+            }
+        }
+        else {
+            if( tSpeed+tAccel >= tSpeedClose ) {
+                tSpeed = tSpeedClose;
+            }
+            else {
+                tSpeed += tAccel;
+            }
+            tVal -= tSpeed*elapsed;
+        }
+    }
+    
+    for( int i = 0; i < 8; ++i ) {
+        Vector3 t = Vector3(0,tVal,0);
+        Vector3 r = Vector3(Math::Cos(Degree(45*i))*t.x - Math::Sin(Degree(45*i))*t.y,Math::Sin(Degree(45*i))*t.x + Math::Cos(Degree(45*i))*t.y,0);
+        gateDoorNodes[i]->setPosition(r);
+    }
+}
+*/
 void Vine::loadRunnerShip()
 {
     removeFromScene();
@@ -94,6 +167,50 @@ void Vine::loadRunnerShip()
     //tipEntity->getSubEntity(5)->setMaterialName("new_ship_mesh/FrontWing");
     tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColor");
     
+    
+    /*
+    gateNode = entireVine->createChildSceneNode("gateNode" + Util::toStringInt(vineID));
+    gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(vineID), "ExitGate/ExitGate.mesh");
+    
+    gateEntity->getSubEntity(0)->setMaterialName("Gate/TransparentNeonAqua");
+    gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
+    gateEntity->getSubEntity(2)->setMaterialName("Gate/LightGray");
+    gateEntity->getSubEntity(3)->setMaterialName("Gate/DarkGray");
+    
+    for( int i = 0; i < 8; ++i )
+    {
+        gateDoorNodes[i] = gateNode->createChildSceneNode("gateDoorNode" + Util::toStringInt(vineID) + Util::toStringInt(i));
+        gateDoorEntities[i] = gateDoorNodes[i]->getCreator()->createEntity("gateDoorEntity" + Util::toStringInt(vineID) + Util::toStringInt(i), "ExitGate/ExitGateDoor.mesh");
+    
+        gateDoorEntities[i]->getSubEntity(0)->setMaterialName("Gate/DarkestGray");
+        gateDoorEntities[i]->getSubEntity(1)->setMaterialName("Gate/DarkGray");
+    
+        gateDoorNodes[i]->attachObject(gateDoorEntities[i]);
+        
+        gateDoorNodes[i]->roll(Degree(45*i));
+    }
+    
+    */
+    /*
+    gateEntity->getSubEntity(0)->setMaterialName("Gate/DarkGray");
+    gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
+    
+    for( int i = 2; i <= 16; i += 2 )
+        gateEntity->getSubEntity(i)->setMaterialName("Gate/DarkestGray");
+    
+    for( int i = 3; i <= 17; i += 2 )
+        gateEntity->getSubEntity(i)->setMaterialName("Gate/DarkGray");
+    
+    gateEntity->getSubEntity(18)->setMaterialName("Gate/TransparentNeonAqua");
+    
+    gateEntity->getSubEntity(19)->setMaterialName("Gate/NeonAqua");
+    gateEntity->getSubEntity(20)->setMaterialName("Gate/LightGray");
+    
+     */
+    /*
+    gateNode->attachObject(gateEntity);
+    gateNode->translate(Vector3(0,0,-10));
+     */
 }
 
 void Vine::loadFlowerShip()
@@ -226,6 +343,8 @@ void Vine::update(float elapsed)
         Vector3 pos = tip->getPosition();
         originalHeight = pos.y;
     }
+    
+    //updateGate(elapsed);
 }
 
 // Display effect for some powerup. Currently used to show godmode is on

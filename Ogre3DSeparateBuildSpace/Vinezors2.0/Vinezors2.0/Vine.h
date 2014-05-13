@@ -63,6 +63,8 @@ struct Vine
     void setShockwave();
     void setBoost();
     
+    void updateGate(float elapsed);
+    
 	void move(Vector3 delta);
 	
 	void update(float elapsed);

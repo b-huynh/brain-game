@@ -1471,7 +1471,7 @@ void Player::setSounds(bool mode)
         soundPods[POD_SIGNAL_2] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
         soundPods[POD_SIGNAL_3] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod3");
         soundPods[POD_SIGNAL_4] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod4");
-        soundPods[POD_SIGNAL_UNKNOWN] = NULL;
+        soundPods[POD_SIGNAL_UNKNOWN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("HoldoutPod");
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
@@ -1571,7 +1571,7 @@ void Player::decideFinalSpeed(float elapsed)
 {
     if (tunnel->isDone())
     {
-        if (tunnel->getEval() != PASS)
+        if (tunnel->getEval() != PASS && tunnel->getEval() != FAIL)
         {
             float totalSpeed = getTotalSpeed();
             float speedRange = totalSpeed;

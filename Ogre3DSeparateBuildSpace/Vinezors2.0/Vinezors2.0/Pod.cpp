@@ -440,6 +440,8 @@ void Pod::uncloakPod()
         case POD_COLOR_PURPLE:
             materialName = "General/PodPurple";
             break;
+        case POD_COLOR_HOLDOUT:
+            materialName = "General/PodWhite";
         default:
             materialName = "General/PodWhite";
             break;
@@ -498,6 +500,9 @@ void Pod::generateGlow(PodColor color, PodShape shape)
             case POD_SHAPE_TRIANGLE:
                 particleName += "Ellipsoid"; // No ogre particle shape for tris
                 break;
+            case POD_SHAPE_HOLDOUT:
+                particleName += "Ellipsoid";
+                break;
             default:
                 particleName += "Cylinder";
                 break;
@@ -520,12 +525,11 @@ void Pod::generateIndicator()
 {
     if (!indicatorNode)
     {
-        std::string indicatorName = "General/GoodPodIndicator";
-        
         indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
-        indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         
         if( podShape == POD_SHAPE_HOLDOUT ) {
+            std::string indicatorName = "General/HoldOutPod";
+            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
             Ogre::ColourValue emitterColor;
             switch (podColor)
             {
@@ -545,7 +549,7 @@ void Pod::generateIndicator()
                     emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
                     break;
                 case POD_COLOR_HOLDOUT:
-                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
                     break;
                 default:
                     emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
@@ -554,6 +558,10 @@ void Pod::generateIndicator()
             
             ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
             indicatorEmitter->setColour(emitterColor);
+        }
+        else {
+            std::string indicatorName = "General/GoodPodIndicator";
+            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         }
         
         indicatorNode->attachObject(indicatorEffect);
@@ -686,6 +694,7 @@ void Pod::update(float elapsed)
         head->roll(Degree(rotateSpeed.z));
     }
     
+    /*
     if( podColor == POD_COLOR_HOLDOUT && mtype == POD_FUEL && podShape != POD_SHAPE_HOLDOUT)
     {
         if( colortimer >= colordelay ) {
@@ -766,7 +775,7 @@ void Pod::update(float elapsed)
         else {
             colortimer += elapsed;
         }
-    }
+    }*/
 }
 
 Pod::~Pod()
