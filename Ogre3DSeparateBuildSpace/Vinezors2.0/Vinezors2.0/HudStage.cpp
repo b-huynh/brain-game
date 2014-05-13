@@ -285,16 +285,16 @@ void HudStage::alloc()
     
     speedSlider = new HudSlider();
     speedSlider->setSlider("speed", overlays[2], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10),
-                           globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed, sliderRangeBackground, sliderBallBackground);
+                           globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
     // Otherwise, use the suggested speed
     PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
+    speedSlider->adjust();
     if (levelPerformance.initSpeedSetting >= 0)
         speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
     else
         speedSlider->setBallPosition(globals.initCamSpeed);
-    speedSlider->adjust();
 }
 
 void HudStage::dealloc()

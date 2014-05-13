@@ -79,6 +79,14 @@ void HudLevelSelection::alloc()
     {
         levelSetStars[i] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSetStars" + Util::toStringInt(i)));
     }
+    levelSetScores = std::vector<TextAreaOverlayElement*>(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelSetScores.size(); ++i)
+    {
+        levelSetScores[i] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSetScores" + Util::toStringInt(i)));
+    }
+    
+    levelTotalScoreBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetTotalScoreBackground"));
+    levelTotalScore = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSetTotalScore"));
     
     buttonGoUpBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoUpButtonBackground"));
     buttonGoDownBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoDownButtonBackground"));
@@ -101,9 +109,12 @@ void HudLevelSelection::alloc()
             if (j == levelItemBackgrounds[i].size() - 1)
             {
                 levelItemBackgrounds[i][j]->addChild(levelSetStars[i]);
+                levelItemBackgrounds[i][j]->addChild(levelSetScores[i]);
             }
         }
     }
+    overlay1->add2D(levelTotalScoreBackground);
+    levelTotalScoreBackground->addChild(levelTotalScore);
     overlay1->add2D(buttonGoUpBackground);
     overlay1->add2D(buttonGoDownBackground);
     overlay1->add2D(backButtonBackground);
@@ -125,6 +136,10 @@ void HudLevelSelection::dealloc()
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemNames[i][j]);
     for (int i = 0; i < levelSetStars.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSetStars[i]);
+    for (int i = 0; i < levelSetScores.size(); ++i)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSetScores[i]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelTotalScore);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelTotalScoreBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoUpBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoDownBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
@@ -200,6 +215,31 @@ void HudLevelSelection::initOverlay()
         levelSetStars[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
         levelSetStars[i]->setFontName("Arial");
     }
+    // Set orientations for total score earned per row
+    for (int i = 0; i < levelSetScores.size(); ++i)
+    {
+        levelSetScores[i]->setMetricsMode(GMM_RELATIVE);
+        levelSetScores[i]->setAlignment(TextAreaOverlayElement::Center);
+        levelSetScores[i]->setPosition(0.25, 0.05);
+        levelSetScores[i]->setCharHeight(0.025);
+        levelSetScores[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+        levelSetScores[i]->setFontName("Arial");
+    }
+    
+    // Display Text
+    levelTotalScoreBackground->setMetricsMode(GMM_RELATIVE);
+    levelTotalScoreBackground->setPosition(0.60, 0.75);
+    levelTotalScoreBackground->setDimensions(0.30, 0.10);
+    levelTotalScoreBackground->setMaterialName("General/ButtonBackground");
+    
+    levelTotalScore->setMetricsMode(GMM_RELATIVE);
+    levelTotalScore->setAlignment(TextAreaOverlayElement::Center);
+    levelTotalScore->setPosition(0.150, 0.040);
+    levelTotalScore->setCharHeight(0.04);
+    levelTotalScore->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    levelTotalScore->setFontName("Arial");
+    
+    
     // The Up Button
     {
         // calculate dimensions for button size and make sure it's square
@@ -250,8 +290,15 @@ void HudLevelSelection::updateDisplay()
     {
         int requiredStars = player->getLevels()->getTotalRowRequirement(player->getMenuRowIndex() + i);
         int earnedStars = Util::clamp(player->getTotalLevelRating(player->getMenuRowIndex() + i), 0, requiredStars);
+        float totalScore = player->getTotalLevelScore(player->getMenuRowIndex() + i);
         levelSetStars[i]->setCaption(Util::toStringInt(earnedStars) + "/" + Util::toStringInt(requiredStars));
+        if (totalScore > 0.0)
+            levelSetScores[i]->setCaption(Util::toStringInt(totalScore));
+        else
+            levelSetScores[i]->setCaption("-");
     }
+    float entireScore = player->getTotalLevelScore();
+    levelTotalScore->setCaption(Util::toStringInt(entireScore));
     
     int menuRow;
     menuRow = player->getMenuRowIndex() + 1;

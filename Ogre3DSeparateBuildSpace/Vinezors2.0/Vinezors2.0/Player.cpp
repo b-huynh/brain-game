@@ -309,32 +309,32 @@ int Player::getLevelRequestCol() const
     return levelRequestCol;
 }
 
-bool Player::hasLevelProgress(int level)
+bool Player::hasLevelProgress(int level) const
 {
     int row = levels->getLevelRow(level);
     int col = levels->getLevelCol(level);
     return hasLevelProgress(row, col);
 }
 
-bool Player::hasLevelProgress(int row, int col)
+bool Player::hasLevelProgress(int row, int col) const
 {
     return row >= 0 && col >= 0 && row < levelProgress.size() && col < levelProgress[row].size();
 }
 
-PlayerProgress Player::getLevelProgress(int level)
+PlayerProgress Player::getLevelProgress(int level) const
 {
     int row = levels->getLevelRow(level);
     int col = levels->getLevelCol(level);
     return levelProgress[row][col];
 }
 
-PlayerProgress Player::getLevelProgress(int row, int col)
+PlayerProgress Player::getLevelProgress(int row, int col) const
 {
     return levelProgress[row][col];
 }
 
 // Is the level available to the player based on player stats?
-bool Player::isLevelAvailable(int level)
+bool Player::isLevelAvailable(int level) const
 {
     /*
      // Linear progression
@@ -375,7 +375,7 @@ bool Player::isLevelAvailable(int level)
         return false;
 }
 
-bool Player::isLevelAvailable(int row, int col)
+bool Player::isLevelAvailable(int row, int col) const
 {
     int level = levels->getLevelNo(row, col);
     return isLevelAvailable(level);
@@ -387,13 +387,33 @@ int Player::getMenuRowIndex() const
 }
 
 // Returns the total rating of a row-set of levels
-int Player::getTotalLevelRating(int row)
+int Player::getTotalLevelRating(int row) const
 {
     if (row < 0 && row >= levelProgress.size()) return 0;
     int total = 0;
     for (int col = 0; col < levelProgress[row].size(); ++col)
         if (levelProgress[row][col].rating >= 0)
             total += levelProgress[row][col].rating;
+    return total;
+}
+
+// Returns the total score of a row-set of levels
+float Player::getTotalLevelScore(int row) const
+{
+    if (row < 0 && row >= levelProgress.size()) return 0.0;
+    float total = 0.0;
+    for (int col = 0; col < levelProgress[row].size(); ++col)
+        if (levelProgress[row][col].score >= 0.0)
+            total += levelProgress[row][col].score;
+    return total;
+}
+
+// Returns the total score of all levels
+float Player::getTotalLevelScore() const
+{
+    float total = 0.0;
+    for (int row = 0; row < levelProgress.size(); ++row)
+        total += getTotalLevelScore(row);
     return total;
 }
 

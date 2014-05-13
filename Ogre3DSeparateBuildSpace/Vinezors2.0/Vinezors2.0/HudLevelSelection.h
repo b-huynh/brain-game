@@ -42,6 +42,9 @@ protected:
     std::vector< std::vector<PanelOverlayElement*> > levelItemPlanets;
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemNames;
     std::vector<TextAreaOverlayElement*> levelSetStars;
+    std::vector<TextAreaOverlayElement*> levelSetScores;
+    PanelOverlayElement* levelTotalScoreBackground;
+    TextAreaOverlayElement* levelTotalScore;
     PanelOverlayElement* backButtonBackground;
     PanelOverlayElement* buttonGoUpBackground;
     PanelOverlayElement* buttonGoDownBackground;

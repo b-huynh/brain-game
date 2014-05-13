@@ -192,9 +192,10 @@ void OgreApp::setupDemoScene()
     
     // The code snippet below is used to output text
     // create a font resource
-    ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     resourceText->setParameter("type", "truetype");
     resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
+    //resourceText->setParameter("source", "NEUROPOL.ttf");
     resourceText->setParameter("size", "16");
     resourceText->setParameter("resolution", "96");
     resourceText->load();
