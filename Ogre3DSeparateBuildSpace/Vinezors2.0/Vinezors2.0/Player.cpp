@@ -1628,6 +1628,24 @@ void Player::addAction(ActionCode actType)
     actions.push_back(act);
 }
 
+float flyOutCounter = 0.0f;
+float flyOutDuration = 0.25f;
+float endAnimationSuccessDuration = 3.0f;
+float endAnimationFailDuration = 1.5f;
+bool endAnimationBegin = false;
+
+float flyOutSpeed = 0.0f;
+float flyOutIncr = 0.01f;
+bool flyOutSpeedUp = true;
+
+float flyOutCamSpeed = 0.0f;
+float flyOutAngleY = 0.0f;
+float flyOutAngleX = 0.0f;
+
+bool flyLeft = true;
+
+bool soundStart = false;
+
 void Player::update(float elapsed)
 {
     totalElapsed += elapsed;
@@ -1644,6 +1662,117 @@ void Player::update(float elapsed)
         if (startMusicTimer <= 0.0)
             soundMusic->play();
     }
+    
+    
+    
+    
+    //*******//
+    if( tunnel->getEval() == PASS && tunnel->getFlyOut() ) {
+        if( endAnimationBegin ) {
+            if( flyOutCounter >= endAnimationSuccessDuration ) {
+                flyOutCounter = 0.0f;
+                endAnimationBegin = false;
+                flyOutAngleX = 0.0f;
+                flyOutAngleY = 0.0f;
+                flyLeft = true;
+                tunnel->setCleaning(true);
+            }
+            else {
+                flyOutCounter += elapsed;
+                if( flyOutCamSpeed-0.5f < 0.0f ) {
+                    flyOutCamSpeed = 0.0f;
+                }
+                else {
+                    flyOutCamSpeed -= 0.5f;
+                }
+                
+                move(Vector3(0,0,-flyOutCamSpeed));
+                Vector3 moveOffset = /*getCamForward(true)*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+                
+                // rotate about y
+                moveOffset = Vector3(Math::Cos(Degree(flyOutAngleY))*moveOffset.x+Math::Sin(Degree(flyOutAngleY))*moveOffset.z,moveOffset.y,-Math::Sin(Degree(flyOutAngleY))*moveOffset.x+Math::Cos(Degree(flyOutAngleY))*moveOffset.z);
+                
+                // rotate about x
+                moveOffset = Vector3(moveOffset.x,Math::Cos(Degree(flyOutAngleX))*moveOffset.y-Math::Sin(Degree(flyOutAngleX))*moveOffset.z,Math::Sin(Degree(flyOutAngleX))*moveOffset.y+Math::Cos(Degree(flyOutAngleX))*moveOffset.z);
+            
+                
+                vines[0]->move(moveOffset);
+                
+                
+                if( flyLeft ) {
+                    if( flyOutAngleY+1.5f > 12.0f ) {
+                        flyLeft = false;
+                        performBoost();
+                    }
+                    else {
+                        vines[0]->getEntireVine()->rotate(Vector3::UNIT_Y, Degree(1.5f));
+                        vines[0]->getEntireVine()->rotate(Vector3::UNIT_X, Degree(-1.2f));
+                        flyOutAngleY += 1.5f;
+                        flyOutAngleX -= 1.2f;
+                    }
+                }
+                else {
+                    finalSpeed++;
+                    vines[0]->getEntireVine()->rotate(Vector3::UNIT_Y, Degree(-2.0f));
+                    vines[0]->getEntireVine()->rotate(Vector3::UNIT_X, Degree(1.5f));
+                    flyOutAngleY -= 2.0f;
+                    flyOutAngleX += 1.5f;
+                }
+            }
+        }
+        else if( flyOutCounter >= flyOutDuration ) {
+            endAnimationBegin = true;
+            flyOutCounter = 0.0f;
+        }
+        else {
+            flyOutCounter += elapsed;
+            flyOutCamSpeed = globals.globalModifierCamSpeed*finalSpeed*elapsed;
+            move(Vector3(0,0,-flyOutCamSpeed));
+            Vector3 moveOffset = /*getCamForward(true)*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+            vines[0]->move(moveOffset);
+        }
+        return;
+    }
+    else if( tunnel->getEval() == FAIL && tunnel->getFlyOut() ) {
+        if( !soundStart ) {
+            OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("LevelFail");
+            sound->play();
+            soundStart = true;
+        }
+        
+        if( flyOutCounter >= endAnimationFailDuration ) {
+            flyOutCounter = 0.0f;
+            flyOutSpeedUp = true;
+            flyOutSpeed = 0.0f;
+            soundStart = false;
+            tunnel->setCleaning(true);
+        }
+        else {
+            flyOutCounter += elapsed;
+            if( flyOutSpeedUp ) {
+                if( flyOutSpeed >= 0.15f ) {
+                    flyOutSpeed = 0.15f;
+                    flyOutSpeedUp = false;
+                }
+                else {
+                    flyOutSpeed += flyOutIncr;
+                }
+            }
+            else {
+                if( flyOutSpeed <= 0.0f ) {
+                    flyOutSpeed = 0.0f;
+                }
+                else {
+                    flyOutSpeed -= flyOutIncr;
+                }
+            }
+            vines[0]->move(Vector3(0,-flyOutSpeed,0));
+        }
+        return;
+    }
+    
+    
+    
     
     // Determine the speed of the player for this update
     decideFinalSpeed(elapsed);

@@ -194,6 +194,12 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
     
+    m_pSoundMgr->createSound("GateOpen", "gateopen.wav", false, false, true);
+    m_pSoundMgr->createSound("GateClose", "gateclose.wav", false, false, true);
+    
+    m_pSoundMgr->createSound("LevelFail", "down.wav", false, false, true);
+    m_pSoundMgr->createSound("LevelPass", "LevelPass.wav", false, false, true);
+    
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     

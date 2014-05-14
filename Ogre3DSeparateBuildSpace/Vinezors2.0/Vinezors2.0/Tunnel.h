@@ -108,6 +108,7 @@ public:
     
     bool done;      // Says stage is over, but not the ending animation
     bool cleanup;   // Totally done, ending animation is over
+    bool flyOut;
     
     TunnelSlice* gateSlice;
     float tVal;
@@ -211,6 +212,8 @@ public:
     void setVisible(bool value);
     void setCleaning(bool value);
     bool needsCleaning() const;
+    
+    bool getFlyOut();
     
     void setNewControl(int control);
     void updateNavigationLevel();
