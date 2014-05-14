@@ -340,7 +340,10 @@ void OgreApp::activatePerformSingleTap(float x, float y)
 {
     player->addAction(ACTION_SINGLE_TAP);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
-    if (activeEngine) activeEngine->activatePerformSingleTap(x, y);
+    if (activeEngine) {
+        activeEngine->activatePerformSingleTap(x, y);
+        activeEngine->activateVelocity(0.0);
+    }
 }
 
 void OgreApp::activatePerformPinch()
@@ -353,6 +356,9 @@ void OgreApp::activatePerformPinch()
 void OgreApp::activatePerformBeginLongPress()
 {
     player->addAction(ACTION_TAP_HOLD);
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activateVelocity(0.0);
+    
     //Engine* activeEngine = engineStateMgr->getActiveEngine();
     //if (activeEngine) activeEngine->activatePerformBeginLongPress();
 }
@@ -373,13 +379,22 @@ void OgreApp::activateMoved(float x, float y, float dx, float dy)
 void OgreApp::activatePressed(float x, float y)
 {
     Engine* activeEngine = engineStateMgr->getActiveEngine();
-    if (activeEngine) activeEngine->activatePressed(x, y);
+    if (activeEngine) {
+        activeEngine->activatePressed(x, y);
+        activeEngine->activateVelocity(0.0);
+    }
 }
 
 void OgreApp::activateReleased(float x, float y, float dx, float dy)
 {
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateReleased(x, y, dx, dy);
+}
+
+void OgreApp::activateVelocity(float vel)
+{
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activateVelocity(vel);
 }
 
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS

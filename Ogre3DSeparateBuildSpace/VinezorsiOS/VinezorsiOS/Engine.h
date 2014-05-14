@@ -38,7 +38,9 @@ public:
     // Optional functions to extend from
     // The functions below are interrupt handlers
     virtual void activatePerformLeftMove();
+    virtual void activatePerformLeftMove(int angle);
     virtual void activatePerformRightMove();
+    virtual void activatePerformRightMove(int angle);
     virtual void activatePerformSwipeUp();
     virtual void activatePerformSwipeDown();
     virtual void activatePerformDoubleTap(float x, float y);
@@ -50,6 +52,8 @@ public:
     virtual void activateMoved(float x, float y, float dx, float dy);
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
+    virtual void activateVelocity(float vel);
+    
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);
 	virtual void mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);

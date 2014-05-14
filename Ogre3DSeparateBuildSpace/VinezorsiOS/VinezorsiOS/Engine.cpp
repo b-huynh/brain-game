@@ -24,7 +24,17 @@ void Engine::activatePerformLeftMove()
     
 }
 
+void Engine::activatePerformLeftMove(int angle)
+{
+    
+}
+
 void Engine::activatePerformRightMove()
+{
+    
+}
+
+void Engine::activatePerformRightMove(int angle)
 {
     
 }
@@ -75,6 +85,11 @@ void Engine::activatePressed(float x, float y)
 }
 
 void Engine::activateReleased(float x, float y, float dx,  float dy)
+{
+    
+}
+
+void Engine::activateVelocity(float vel)
 {
     
 }

@@ -160,6 +160,11 @@ Vector3 Player::getCamPos() const
 	return camPos;
 }
 
+Vector3 Player::getPos() const
+{
+    return vines[0]->getPos();
+}
+
 Quaternion Player::getOldRot() const
 {
 	return oldRot;
@@ -1190,6 +1195,12 @@ void Player::setCamDir(Direction value)
 
 bool Player::setVineDirRequest(Direction value, bool force)
 {
+    vines[0]->loc = value;
+    vines[0]->dest = value;
+    
+    return true;
+    
+    /*
     TunnelSlice* closest = tunnel->getCurrentOffset();
     if (closest)
     {
@@ -1211,6 +1222,7 @@ bool Player::setVineDirRequest(Direction value, bool force)
         return true;
     }
     return false;
+     */
 }
 
 void Player::setMousePos(Vector2 value)
@@ -1226,6 +1238,11 @@ void Player::setOldPos(Vector3 value)
 void Player::setCamPos(Vector3 value)
 {
 	camPos = value;
+}
+
+void Player::setPos(Vector3 value)
+{
+    vines[0]->setPos(value);
 }
 
 void Player::setOldRot(Quaternion value)

@@ -199,6 +199,7 @@ public:
 	Vector2 getMousePos() const;
 	Vector3 getOldPos() const;
 	Vector3 getCamPos() const;
+    Vector3 getPos() const;
 	Quaternion getOldRot() const;
     int getOldRoll() const;
 	Quaternion getCamRot() const;
@@ -254,6 +255,7 @@ public:
 	void setMousePos(Vector2 value);
 	void setOldPos(Vector3 value);
 	void setCamPos(Vector3 value);
+    void setPos(Vector3 value);
 	void setOldRot(Quaternion value);
     void setOldRoll(int value);
 	void setCamRot(Quaternion value);

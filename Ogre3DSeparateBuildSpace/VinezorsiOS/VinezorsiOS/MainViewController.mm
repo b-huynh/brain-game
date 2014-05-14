@@ -45,6 +45,9 @@
     CGFloat vmaxY;
     int swipeState;
     bool pinchDetected;
+    
+    unsigned int screenWidth;
+    unsigned int screenHeight;
 }
 
 @property (retain) NSTimer *mTimer;
@@ -116,6 +119,9 @@
 {
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
+    
+    screenWidth = width;
+    screenHeight = height;
     
     mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     
@@ -342,55 +348,65 @@
     
     if (sender.state == UIGestureRecognizerStateBegan)
     {
-        startP = p;
-        totalX = 0.0;
-        totalY = 0.0;
-        vmaxX = 0.0;
-        vmaxY = 0.0;
-        swipeState = 0;
+        mApplication->activateVelocity(0.0);
         
-        //NSLog(@"Began %f %f", p.x, p.y);
-        mApplication->activatePressed(p.x, p.y);
+        NSLog(@"T: (%f, %f)", dp.x, dp.y);
+        NSLog(@"Beginning Pan");
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
-        CGFloat dx = dp.x - totalX;
-        CGFloat dy = dp.y - totalY;
-        //NSLog(@"Move %f %f", p.x, p.y);
-        mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
+        /* Calculate Cross Product from center to Velocity vector */
+        CGFloat centerX = screenWidth / 2.0;
+        CGFloat centerY = screenHeight / 2.0;
         
-        if (abs(vmaxX) < abs(v.x))
-            vmaxX = v.x;
-        if (abs(vmaxY) < abs(v.y))
-            vmaxY = v.y;
+        CGFloat uX = centerX - p.x;
+        CGFloat uY = centerY - p.y;
         
+        CGFloat crossZ = (uX * v.y) - (uY * v.x);
         
-        if ((totalX == 0.0 && dx < -initialThreshold && vmaxX < -initialThreshold) || (dx < vmaxX / 5 && vmaxX < -swipeThreshold))
-        //if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
-        {
-            mApplication->activatePerformLeftMove();
-            totalX = dp.x;
-        }
-        if ((totalX == 0.0 && dx > initialThreshold && vmaxX > initialThreshold) || (dx > vmaxX / 5 && vmaxX > swipeThreshold))
-        //if ((totalX == 0.0 && dx > initialThreshold && v.x > initialThreshold) || (dx > v.x && v.x > swipeThreshold))
-        {
-            mApplication->activatePerformRightMove();
-            totalX = dp.x;
+        BOOL clockwise = crossZ < 0.0;
+        
+        /* Accrue speed */
+        CGFloat dot = (v.x * v.x) + (v.y * v.y);
+        CGFloat magnitude = sqrtf(dot);
+        
+        NSLog(@"Speed: %f", magnitude);
+        NSLog(@"V: (%f, %f)", v.x, v.y);
+        
+        if (clockwise) {
+            mApplication->activateVelocity(magnitude);
+        } else {
+            mApplication->activateVelocity(-magnitude);
         }
     }
     else
     {
-        CGFloat dx = dp.x - totalX;
-        CGFloat dy = dp.y - totalY;
-        mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
+        /* Calculate Cross Product from center to Velocity vector */
+        CGFloat centerX = screenWidth / 2.0;
+        CGFloat centerY = screenHeight / 2.0;
         
-        totalX = 0.0;
-        totalY = 0.0;
-        vmaxX = 0.0;
-        vmaxY = 0.0;
-        swipeState = 0;
+        CGFloat uX = centerX - p.x;
+        CGFloat uY = centerY - p.y;
         
-        //NSLog(@"End %f %f", p.x, p.y);
+        CGFloat crossZ = (uX * v.y) - (uY * v.x);
+        
+        BOOL clockwise = crossZ < 0.0;
+        
+        /* Accrue speed */
+        CGFloat dot = (v.x * v.x) + (v.y * v.y);
+        CGFloat magnitude = sqrtf(dot);
+        
+        NSLog(@"Speed: %f", magnitude);
+        NSLog(@"V: (%f, %f)", v.x, v.y);
+        
+        if (clockwise) {
+            mApplication->activateVelocity(magnitude);
+        } else {
+            mApplication->activateVelocity(-magnitude);
+        }
+        
+        NSLog(@"End Pan");
+        NSLog(@"V: (%f, %f)", v.x, v.y);
     }
 }
 
