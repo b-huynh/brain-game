@@ -1,0 +1,239 @@
+material General/BaseBlack
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture black_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture gray_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseWhite
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture white_fixed.png
+        }
+      } 
+    }
+}
+x
+material General/BaseRed
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture red_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseBlue
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture blue_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseGreen
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture green_fixed.png
+        }
+      } 
+    }
+}
+
+material General/BaseYellow
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture yellow_fixed.png
+        }
+      } 
+    }
+}
+
+material General/Sun
+{
+    technique
+	{
+        pass
+		{
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
+}
+
+material General/VineShellActive
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.1 0.2 0.2 0.5
+            diffuse 0.5 1.0 1.0 0.5
+            specular 1.0 1.0 1.0 128
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material General/VineShellInactive
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.2 0.1 0.1 0.5
+            diffuse 1.0 0.5 0.5 0.5
+            specular 1.0 1.0 1.0 128
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material General/VineTop
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.0 0.3 0.3 1
+            diffuse 0.5 1.0 1.0 1
+            emissive 0.0 0.3 0.3 1
+        }
+    }
+}
+
+material General/VineBase
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.1 0.1 0.1 1
+        }
+    }
+}
+
+
+material General/WhiteStar
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture star.png
+			}
+		}
+	}
+}
+
+material General/Star
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture star2.png
+			}
+		}
+	}
+}
+
+material General/TimeBonusMaterial
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture plus20Seconds.png
+            }
+        }
+    }
+}

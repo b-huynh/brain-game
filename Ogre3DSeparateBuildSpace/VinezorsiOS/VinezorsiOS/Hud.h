@@ -38,6 +38,7 @@ struct HudSlider
     std::string name;
     Overlay* overlay;
     GuiMetricsMode metric;
+    bool orientation; // false is horizontal, true is vertical
     int min;
     int max;
     int slots;
@@ -57,9 +58,9 @@ struct HudSlider
     
     bool selected;
     
-    HudSlider() : name(""), overlay(NULL), metric(), min(0), max(0), slots(0), p1(), dim1(), dim2(), rangeRef(NULL), ballRef(NULL), p2cache(), selected(false) {}
+    HudSlider() : name(""), overlay(NULL), metric(), orientation(false), min(0), max(0), slots(0), p1(), dim1(), dim2(), rangeRef(NULL), ballRef(NULL), p2cache(), selected(false) {}
     
-    void setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2 dimension1, Vector2 dimension2, int min, int max, int slots, PanelOverlayElement* range, PanelOverlayElement* ball);
+    void setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2 dimension1, Vector2 dimension2, bool orient, int min, int max, int slots, PanelOverlayElement* range, PanelOverlayElement* ball);
     bool isInsideRange(Vector2 target) const;
     bool isInsideBall(Vector2 target) const;
     void adjust();

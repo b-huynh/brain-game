@@ -75,13 +75,14 @@ bool HudButton::isInside(Vector2 target) const
             target.y >= check.y && target.y <= check.y + dim.y);
 }
 
-void HudSlider::setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2 dimension1, Vector2 dimension2, int min, int max, int slots, PanelOverlayElement* range, PanelOverlayElement* ball)
+void HudSlider::setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2 dimension1, Vector2 dimension2, bool orient, int min, int max, int slots, PanelOverlayElement* range, PanelOverlayElement* ball)
 {
     this->name = name;
     overlay = olay;
     p1 = pos1;
     p2 = Vector2::ZERO;
     p2cache = p2;
+    orientation = orient;
     dim1 = dimension1;
     dim2 = dimension2;
     this->min = min;
@@ -104,7 +105,7 @@ void HudSlider::setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2
     }
 }
 
-// Determines whether the parameter is inside the button
+// Determines whether the parameter is inside the slider range
 bool HudSlider::isInsideRange(Vector2 target) const
 {
     Vector2 check = p1;
@@ -113,8 +114,12 @@ bool HudSlider::isInsideRange(Vector2 target) const
         check.x /= globals.screenWidth;
         check.y /= globals.screenHeight;
     }
-    return (target.x >= check.x && target.x <= check.x + dim1.x + dim2.x / 2 &&
-            target.y >= check.y && target.y <= check.y + dim1.y);
+    if (orientation)
+        return (target.x >= check.x && target.x <= check.x + dim1.x &&
+                target.y >= check.y && target.y <= check.y + dim1.y + dim2.y / 2);
+    else
+        return (target.x >= check.x && target.x <= check.x + dim1.x + dim2.x / 2 &&
+                target.y >= check.y && target.y <= check.y + dim1.y);
 }
 
 // Determines whether the parameter is inside the button
@@ -130,6 +135,7 @@ bool HudSlider::isInsideBall(Vector2 target) const
             target.y >= check.y && target.y <= check.y + dim2.y);
 }
 
+// Adjusts the slider mainly for switching screens
 void HudSlider::adjust()
 {
     float rheight;
@@ -138,55 +144,84 @@ void HudSlider::adjust()
     float swidth;
     if (globals.screenWidth > globals.screenHeight)
     {
-        rheight = 0.10;
+        rheight = dim2.y;
         rwidth = rheight * globals.screenHeight / globals.screenWidth;
-        sheight = 0.10;
-        swidth = 0.50;
+        if (orientation)
+        {
+            swidth = rwidth;
+            sheight = dim1.y;
+        }
+        else
+        {
+            swidth = dim1.x;
+            sheight = rheight;
+        }
     }
     else
     {
-        rwidth = 0.10;
+        rwidth = dim2.x;
         rheight = rwidth * globals.screenWidth / globals.screenHeight;
-        swidth = 0.50;
-        sheight = 0.10 * globals.screenWidth / globals.screenHeight;
+        if (orientation)
+        {
+            swidth = rwidth;
+            sheight = dim1.y;
+        }
+        else
+        {
+            swidth = dim1.x;
+            sheight = rheight;
+        }
     }
-    dim1 = Vector2(swidth, sheight);
-    dim2 = Vector2(rwidth, rheight);
-    rangeRef->setDimensions(dim1.x, dim2.y);
-    ballRef->setDimensions(dim2.x, dim2.y);
+    //dim1 = Vector2(swidth, sheight);
+    //dim2 = Vector2(rwidth, rheight);
+    rangeRef->setDimensions(swidth, sheight);
+    ballRef->setDimensions(rwidth, rheight);
     
 }
 
+// Returns the range of the slider in HUD coordinates
 float HudSlider::getRangeWidth() const
 {
-    return dim1.x - dim2.x;
+    if (orientation)
+        return dim1.y - dim2.y;
+    else
+        return dim1.x - dim2.x;
 }
 
+// Sets the ball's position bounded to the range of the slider
 void HudSlider::setBallPosition(Vector2 value)
 {
-    p2 = Vector2(Util::clamp(value.x, 0.0, getRangeWidth()), value.y);
+    if (orientation)
+        p2 = Vector2(value.x, Util::clamp(value.y, 0.0, getRangeWidth()));
+    else
+        p2 = Vector2(Util::clamp(value.x, 0.0, getRangeWidth()), value.y);
     ballRef->setPosition(p2.x, p2.y);
 }
 
 // Set the ball position at the specified slot
 void HudSlider::setBallPosition(int slot)
 {
-    Vector2 pos = Vector2((slot - min) * (getRangeWidth()) / slots, p2.y);
+    Vector2 pos;
+    if (orientation)
+        pos = Vector2(p2.x, (max - slot) * (getRangeWidth()) / (slots - 1));
+    else
+        pos = Vector2((slot - min) * (getRangeWidth()) / (slots - 1), p2.y);
     setBallPosition(pos);
 }
 
+// Returns the ball's position
 Vector2 HudSlider::getBallPosition() const
 {
     return p2;
 }
 
+// Returns a discrete index based on the ball's position
 int HudSlider::getIndex() const
 {
-    //float segmentLength = getRangeWidth() / slots;
-    //return p2.x / segmentLength + min;
-    //std::cout << p2.x / getRangeWidth() * slots + min << " " << slots << " " << p2.x << " " << getRangeWidth() << " " << min << std::endl;
-    
-    return p2.x / getRangeWidth() * slots + min;
+    if (orientation)
+        return max - p2.y / getRangeWidth() * (slots - 1);
+    else
+        return p2.x / getRangeWidth() * (slots - 1) + min;
 }
 
 Hud::Hud()

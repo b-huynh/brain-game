@@ -1541,7 +1541,7 @@ void PodInfo::performHoldout(char phase)
                     std::cout << "Hold out: color" << std::endl;
                 }
                 else {
-                    podSound = POD_SOUND_UNKNOWN;
+                    podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
@@ -1551,7 +1551,7 @@ void PodInfo::performHoldout(char phase)
                     std::cout << "Hold out: shape" << std::endl;
                 }
                 else {
-                    podSound = POD_SOUND_UNKNOWN;
+                    podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
@@ -1564,13 +1564,13 @@ void PodInfo::performHoldout(char phase)
                     std::cout << "Hold out: color and shape (sound only)" << std::endl;
                 }
                 else if( rand_signal < 0.333f ) {
-                    podSound = POD_SOUND_UNKNOWN;
+                    podSound = POD_SOUND_HOLDOUT;
                     podShape = POD_SHAPE_HOLDOUT;
                     std::cout << "Hold out: sound and shape (color only)" << std::endl;
                 }
                 else if( rand_signal < 0.500f ) {
                     podColor = POD_COLOR_HOLDOUT;
-                    podSound = POD_SOUND_UNKNOWN;
+                    podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: color and sound (shape only)" << std::endl;
                 }
                 else if( rand_signal < 0.667f ) {
@@ -1582,7 +1582,7 @@ void PodInfo::performHoldout(char phase)
                     std::cout << "Hold out: shape (color and sound only)" << std::endl;
                 }
                 else {
-                    podSound = POD_SOUND_UNKNOWN;
+                    podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: sound (color and shape only)" << std::endl;
                 }
             case 'E':   // recess levels

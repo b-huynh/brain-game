@@ -1,0 +1,35 @@
+material General/PurpleSpaceSkyPlane
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture deepspace.png
+			}
+		}
+	}
+}
+
+material General/BlankStarrySkyPlane
+{
+	technique
+	{
+		pass
+        {
+			lighting off
+			depth_write off
+            fog_override true
+
+			texture_unit
+			{
+				texture space.jpg
+            }
+		}
+	}
+}
