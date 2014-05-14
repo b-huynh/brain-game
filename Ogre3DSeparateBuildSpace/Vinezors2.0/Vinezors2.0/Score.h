@@ -11,6 +11,7 @@
 
 #include <map>
 
+// Used in PlayerLevel.h to track percent accuracies
 struct Score
 {
     int right;

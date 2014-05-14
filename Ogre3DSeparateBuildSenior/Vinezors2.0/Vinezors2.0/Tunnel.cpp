@@ -637,6 +637,7 @@ int Tunnel::getBuildingNavLevel() const
 
 int Tunnel::getCurrentNavLevel() const
 {
+    std::cout << "Nav Me Please: " << navLevels[catchupPhase].level << std::endl;
     return navLevels[catchupPhase].level;
 }
 
@@ -789,7 +790,7 @@ void Tunnel::setNavigationLevels()
     if (getMode() == GAME_PROFICIENCY)
     {
         int tunnelNavLevel = playerNavLevel + Util::randRangeInt(-2, 0);
-        tunnelNavLevel = Util::clamp(tunnelNavLevel, 0, player->getSkillLevel().getNavLimit());
+        tunnelNavLevel = Util::clamp(tunnelNavLevel, 0, 0);
         navLevels.push_back(globals.navMap[tunnelNavLevel]);
     }
     else if (getMode() == GAME_TIMED)

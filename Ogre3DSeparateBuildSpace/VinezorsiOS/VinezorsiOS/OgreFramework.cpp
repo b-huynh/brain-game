@@ -98,7 +98,7 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
                                                 0.0,
                                                 1.0,
                                                 1.0);
-    m_pViewportMain->getTarget()->addListener(pRenderTargetListener);    
+    m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
     
 	Ogre::String secName, typeName, archName;
 	Ogre::ConfigFile cf;
@@ -142,12 +142,12 @@ bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, u
     m_pTrayMgr->hideCursor();
     m_pTrayMgr->setListener(this);
     m_pTrayMgr->setTrayPadding(10.0);
-    
     Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
     //  m_quitButton = OgreFramework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_BOTTOMLEFT, "sdkQuitButton", "QUIT", 250);
     
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
+    m_pSoundMgr->createSound("MusicMenu", "VideoGameSong4.ogg", false, true, true);
     m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);

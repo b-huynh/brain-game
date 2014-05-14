@@ -14,6 +14,7 @@ extern Util::ConfigGlobal globals;
 
 static int podID = 0;
 static int glowID = 0;
+static int indicatorID = 0;
 
 Pod::Pod()
 : parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL)
@@ -21,7 +22,7 @@ Pod::Pod()
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest()
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest()
 {
     loadPod();
 }
@@ -30,17 +31,20 @@ void Pod::loadPod()
 {
     switch (mtype)
     {
-        case POD_BASIC:
-            loadBasicShape();
-            break;
         case POD_FUEL:
             loadFuelCell();
             break;
         case POD_FLOWER:
             loadFlower();
             break;
-        default:
+        case POD_HAZARD:
             loadHazard();
+            break;
+        case POD_POWERUP:
+            loadPowerup();
+            break;
+        default:
+            loadBasicShape();
             break;
     }
     ++podID;
@@ -126,19 +130,24 @@ void Pod::loadFuelCell()
         case POD_SHAPE_TRIANGLE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
             break;
+        case POD_SHAPE_HOLDOUT:
+            generateIndicator();
+            break;
         default:
-            materialName = "General/PodPurple";
+            if( podSignal == POD_SIGNAL_UNKNOWN ) {
+                materialName = "General/PodPurple";
+            }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelPenta.mesh");
             headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal"); // Assign with no specular
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
     }
-    if (podShape != POD_SHAPE_UNKNOWN)
+    if (podShape != POD_SHAPE_UNKNOWN && podShape != POD_SHAPE_HOLDOUT)
     {
         headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
         headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     }
-    head->attachObject(headContentEntity);
+    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
@@ -189,6 +198,46 @@ void Pod::loadHazard()
     
 }
 
+void Pod::loadPowerup()
+{
+    
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    switch (podColor)
+    {
+        case POD_COLOR_PINK:
+//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/TractorBeam.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
+            headContentEntity->setMaterialName("General/PodRed");
+            break;
+        case POD_COLOR_GREEN:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/slowdown.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName("slowdown/Bubble");
+            break;
+        case POD_COLOR_BLUE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName("General/VineShellActive");
+            break;
+        default:
+            std::cout << "WARNING: Unknown Powerup Model Type!\n";
+            break;
+    }
+    
+    head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v);
+    
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
 PodMeshType Pod::getMeshType() const
 {
     return mtype;
@@ -220,10 +269,14 @@ void Pod::setToGrowth(float t)
     {
         head->setScale(Vector3(headRadius / 20, t * headRadius / 20, headRadius / 20));
     }
-    else
+    else if (mtype == POD_HAZARD)
     {
         head->setScale(Vector3(0.5, 0.5 * t, 0.5));
-        //head->setScale(Vector3(0.7, 0.7 * t, 0.7));
+    }
+    else if (mtype == POD_POWERUP)
+    {
+        head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
+//        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
     }
 }
 
@@ -331,7 +384,7 @@ void Pod::setSkin()
 {
     if (mtype == POD_BASIC)
         headContentEntity->setMaterialName(materialName);
-    else if (mtype == POD_FUEL)
+    else if (mtype == POD_FUEL && podShape != POD_SHAPE_HOLDOUT)
     {
         if (podShape != POD_SHAPE_UNKNOWN)
             // Based on Maya model, SubEntity1 is the content in the fuel cell
@@ -339,6 +392,8 @@ void Pod::setSkin()
         else
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
     }
+    else if (mtype == POD_POWERUP)
+        headContentEntity->setMaterialName(materialName);
 }
 
 void Pod::takePod()
@@ -348,6 +403,8 @@ void Pod::takePod()
         podTaken = true;
     
         materialName += "Transparent";
+        if (mtype == POD_POWERUP)
+            hidePod();
         setSkin();
     }
 }
@@ -364,7 +421,7 @@ void Pod::revealPod()
 
 void Pod::uncloakPod()
 {
-    if (mtype == POD_HAZARD || podShape == POD_SHAPE_UNKNOWN)
+    if (mtype == POD_HAZARD || mtype == POD_POWERUP)
         return;
     switch (podColor)
     {
@@ -383,6 +440,8 @@ void Pod::uncloakPod()
         case POD_COLOR_PURPLE:
             materialName = "General/PodPurple";
             break;
+        case POD_COLOR_HOLDOUT:
+            materialName = "General/PodWhite";
         default:
             materialName = "General/PodWhite";
             break;
@@ -390,7 +449,6 @@ void Pod::uncloakPod()
     if (podTaken)
         materialName += "Transparent";
     setSkin();
-    //if (!podTrigger) generateGlow(podColor, podShape);
 }
 
 void Pod::generateGlow(PodColor color, PodShape shape)
@@ -442,6 +500,9 @@ void Pod::generateGlow(PodColor color, PodShape shape)
             case POD_SHAPE_TRIANGLE:
                 particleName += "Ellipsoid"; // No ogre particle shape for tris
                 break;
+            case POD_SHAPE_HOLDOUT:
+                particleName += "Ellipsoid";
+                break;
             default:
                 particleName += "Cylinder";
                 break;
@@ -457,6 +518,55 @@ void Pod::generateGlow(PodColor color, PodShape shape)
         glowNode->attachObject(glowEffect);
         glowNode->setPosition(head->_getDerivedPosition());
         ++glowID;
+    }
+}
+
+void Pod::generateIndicator()
+{
+    if (!indicatorNode)
+    {
+        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
+        
+        if( podShape == POD_SHAPE_HOLDOUT ) {
+            std::string indicatorName = "General/HoldOutPod";
+            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
+            Ogre::ColourValue emitterColor;
+            switch (podColor)
+            {
+                case POD_COLOR_BLUE:
+                    emitterColor = Ogre::ColourValue(0.0,0.5,1.0);
+                    break;
+                case POD_COLOR_GREEN:
+                    emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
+                    break;
+                case POD_COLOR_PINK:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
+                    break;
+                case POD_COLOR_YELLOW:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
+                    break;
+                case POD_COLOR_PURPLE:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    break;
+                case POD_COLOR_HOLDOUT:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                    break;
+                default:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                    break;
+            }
+            
+            ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+            indicatorEmitter->setColour(emitterColor);
+        }
+        else {
+            std::string indicatorName = "General/GoodPodIndicator";
+            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
+        }
+        
+        indicatorNode->attachObject(indicatorEffect);
+        ++indicatorID;
+        
     }
 }
 
@@ -490,6 +600,12 @@ void Pod::setPodTrigger(bool value)
     podTrigger = value;
 }
 
+void Pod::setVisibleIndicator(bool value)
+{
+    if (indicatorNode && podShape != POD_SHAPE_HOLDOUT)
+        indicatorNode->setVisible(value);
+}
+
 void Pod::removeGlow()
 {
     if (glowNode)
@@ -502,6 +618,18 @@ void Pod::removeGlow()
     }
 }
 
+void Pod::removeIndicator()
+{
+    if (indicatorNode)
+    {
+        indicatorNode->getCreator()->destroyParticleSystem(indicatorEffect);
+        indicatorNode->removeAndDestroyAllChildren();
+        indicatorNode->getCreator()->destroySceneNode(indicatorNode);
+        indicatorNode = NULL;
+        indicatorEffect = NULL;
+    }
+}
+
 void Pod::removeFromScene()
 {
     removeGlow();
@@ -510,7 +638,8 @@ void Pod::removeFromScene()
         stem->getCreator()->destroyMovableObject(stem->getAttachedObject(0)); // Assuming only one entity
         stem = NULL;
     }
-    if (head)
+    removeIndicator();
+    if (head && podShape != POD_SHAPE_HOLDOUT)
     {
         head->getCreator()->destroyEntity(headContentEntity);
         head = NULL;
@@ -529,11 +658,19 @@ void Pod::removeFromScene()
     }
 }
 
+float colortimer = 0.0f;
+float colordelay = 0.2f;
+int coloridx = 0;
+
 void Pod::update(float elapsed)
 {
     if (glowNode)
     {
         glowNode->setOrientation(head->_getDerivedOrientation());
+    }
+    if (indicatorNode)
+    {
+        indicatorNode->roll(Degree(elapsed));;
     }
     if (moveSpeed != 0.0)
     {
@@ -556,9 +693,92 @@ void Pod::update(float elapsed)
         head->pitch(Degree(rotateSpeed.y));
         head->roll(Degree(rotateSpeed.z));
     }
+    
+    /*
+    if( podColor == POD_COLOR_HOLDOUT && mtype == POD_FUEL && podShape != POD_SHAPE_HOLDOUT)
+    {
+        if( colortimer >= colordelay ) {
+            if( coloridx >= 3 ) coloridx = 0;
+            else coloridx++;
+            
+            colortimer = 0.0f;
+            
+            std::string tempMaterial;
+            switch (coloridx)
+            {
+                case 0:
+                    tempMaterial = "General/PodBlue";
+                    break;
+                case 1:
+                    tempMaterial = "General/PodGreen";
+                    break;
+                case 2:
+                    tempMaterial = "General/PodRed";
+                    break;
+                case 3:
+                    tempMaterial = "General/PodYellow";
+                    break;
+                case 4:
+                    tempMaterial = "General/PodPurple";
+                    break;
+                default:
+                    tempMaterial = "General/PodWhite";
+                    break;
+            }
+            if (podTaken)
+                tempMaterial += "Transparent";
+            
+            if (podShape != POD_SHAPE_UNKNOWN)
+                // Based on Maya model, SubEntity1 is the content in the fuel cell
+                headContentEntity->getSubEntity(1)->setMaterialName(tempMaterial);
+            else
+                headContentEntity->getSubEntity(0)->setMaterialName(tempMaterial);
+        }
+        else {
+            colortimer += elapsed;
+        }
+    }
+    else if( podColor == POD_COLOR_HOLDOUT && mtype == POD_FUEL && podShape == POD_SHAPE_HOLDOUT ) {
+        if( colortimer >= colordelay ) {
+            if( coloridx >= 3 ) coloridx = 0;
+            else coloridx++;
+            
+            colortimer = 0.0f;
+            
+            Ogre::ColourValue emitterColor;
+            switch (coloridx)
+            {
+                case 0:
+                    emitterColor = Ogre::ColourValue(0.0,0.0,1.0);
+                    break;
+                case 1:
+                    emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
+                    break;
+                case 2:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
+                    break;
+                case 3:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
+                    break;
+                case 4:
+                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                    break;
+                default:
+                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                    break;
+            }
+            
+            ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
+            indicatorEmitter->setColour(emitterColor);
+            
+        }
+        else {
+            colortimer += elapsed;
+        }
+    }*/
 }
 
 Pod::~Pod()
 {
-    
+
 }

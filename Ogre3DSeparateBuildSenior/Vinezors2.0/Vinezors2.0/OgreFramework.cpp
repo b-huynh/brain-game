@@ -80,8 +80,9 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
         m_pRenderWnd = m_pRoot->initialise(true, "");
     else
         return false;
-    //    m_pRenderWnd->resize(globals.screenWidth, globals.screenHeight);
-    //    m_pRenderWnd->setFullscreen(true, 1024, 800);
+    m_pRenderWnd->resize(600, 800);
+    m_pRenderWnd->windowMovedOrResized();
+    //m_pRenderWnd->setFullscreen(true, 800, 600);
     globals.screenWidth = m_pRenderWnd->getWidth();
     globals.screenHeight = m_pRenderWnd->getHeight();
     globals.set();

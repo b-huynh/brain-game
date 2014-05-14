@@ -19,8 +19,8 @@ struct Vine
     VineMeshType meshType;
     SceneNode *entireVine;
 	SceneNode *tip;
+    Entity* tipEntity;
 	SceneNode *base;
-	SceneNode *shell;
     ParticleSystem* shockwaveEffect;
     ParticleSystem* boostEffect;
     Vector3 forward;
@@ -41,6 +41,7 @@ struct Vine
     
 	Vine();
 	Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius);
+    ~Vine();
 	
     void reloadIfNecessary(VineMeshType newMeshType);
     void loadShip();
@@ -57,13 +58,17 @@ struct Vine
 	void setForward(Vector3 value);
     float getRadius() const;
     void setQuaternion(Quaternion rot);
+    void setVisible(bool value);
     void setWobble(bool value);
     void setShockwave();
     void setBoost();
     
+    void updateGate(float elapsed);
+    
 	void move(Vector3 delta);
 	
 	void update(float elapsed);
+    void setPowerIndication(int indication);
     
     void removeShockwave();
     void removeBoost();

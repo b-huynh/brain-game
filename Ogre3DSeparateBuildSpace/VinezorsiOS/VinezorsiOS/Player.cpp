@@ -13,100 +13,31 @@ using namespace std;
 
 extern Util::ConfigGlobal globals;
 
-int PlayerLevel::getMasteredNBack() const
-{
-    return std::min(set1, std::min(set2, set3));
-}
-
-int PlayerLevel::getHighestNBack() const
-{
-    return std::max(set1, std::max(set2, set3));
-}
-
-int PlayerLevel::getNavLimit() const
-{
-    int best = getHighestNBack();
-    if (best >= globals.navUnlockNBack2)
-        return globals.navUnlockMax2;
-    else if (best >= globals.navUnlockNBack1)
-        return globals.navUnlockMax1;
-    else
-        return globals.navUnlockMax0;
-}
-
-PlayerLevel::PlayerLevel()
-    : sessionID(0), set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), set1Notify(0), set2Notify(0), set3Notify(0), navigation(2), minSpeed(15), averageSpeed(20), maxSpeed(25), runSpeed1(15), runSpeed2(15), runSpeed3(15), navigationScores(), speedScores()
-{}
-
-void PlayerLevel::calculateNavigation()
-{
-    navigationScores.updateAccuracies();
-    
-    int nextNavLevel = navigationScores.findMax();
-    if (navigationScores.find(navigation) >= 0) // Did the player reach his/her current nav level?
-        nextNavLevel = navigation;
-    
-    // Starting at current nav level, determine whether we should go up or down
-    const float THRESHOLD_PASS = 0.85;
-    const float THRESHOLD_DROP = 0.70;
-    while (navigationScores.find(nextNavLevel) >= 0 &&
-           navigationScores[nextNavLevel].accuracy >= THRESHOLD_PASS)
-        ++nextNavLevel;
-    while (navigationScores.find(nextNavLevel) >= 0 &&
-           navigationScores[nextNavLevel].accuracy < THRESHOLD_DROP)
-        --nextNavLevel;
-    nextNavLevel = Util::clamp(nextNavLevel, navigationScores.findMin(), navigationScores.findMax());
-    if (nextNavLevel > navigation + 2)
-        navigation = navigation + 2;
-    else
-        navigation = nextNavLevel;
-    navigation = Util::clamp(navigation, 0, getNavLimit());
-}
-
-void PlayerLevel::calculateSpeed()
-{
-    int nmin;
-    int nmax;
-    int noptimal;
-    
-    int lowerbound = minSpeed;
-    int upperbound = maxSpeed;
-    speedScores.setMinOptMax(nmin, noptimal, nmax);
-    minSpeed = Util::clamp(nmin, lowerbound, upperbound);
-    averageSpeed = Util::clamp(noptimal, lowerbound, upperbound);
-    maxSpeed = Util::clamp(nmax, lowerbound, upperbound);
-    
-    std::cout << "New Min: " << nmin << std::endl;
-    std::cout << "New Opt: " << noptimal << std::endl;
-    std::cout << "New Max: " << nmax << std::endl;
-}
-
-std::string PlayerLevel::getCurrentStats() const
-{
-    return
-    "Color/Sound " + Util::toStringInt(set1) + "\n" +
-    "Shape/Sound " + Util::toStringInt(set2) + "\n" +
-    " Sound Only " + Util::toStringInt(set3) + "\n" +
-    " Navigation " + Util::toStringInt(navigation) + "\n" +
-    " Time Speed " + Util::toStringInt(averageSpeed) + "\n" +
-    "  Max Speed " + Util::toStringInt(maxSpeed) + "\n" +
-    " Run Speed1 " + Util::toStringInt(runSpeed1) + "\n" +
-    " Run Speed2 " + Util::toStringInt(runSpeed2) + "\n" +
-    " Run Speed3 " + Util::toStringInt(runSpeed3);
-}
-
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(SPEED_CONTROL_FLEXIBLE), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
+    tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
+    initPowerUps();
 }
 
-Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), speedControl(speedControl), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), shockwaveTimer(0.0), boostTimer(0.0), selectTimer(0.0), startMusicTimer(0.0), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), inputTotalX(0.0), inputMoved(false), numStagesWon(0)
+Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
 {
+    levels = new LevelSet();
+    levels->initializeLevelSet();
+    tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
+    initPowerUps();
+}
+
+LevelSet* Player::getLevels() const
+{
+    return levels;
 }
 
 unsigned Player::getSeed() const
@@ -162,6 +93,11 @@ int Player::getNumWrongCombo() const
 int Player::getNumCollisionsTotal() const
 {
     return numCollisionsTotal;
+}
+
+float Player::getScore() const
+{
+    return score;
 }
 
 Direction Player::getCamDir() const
@@ -303,14 +239,9 @@ float Player::getTotalSpeed() const
     return currentTotal;
 }
 
-Vector3 Player::getVineOffset() const
+float Player::getVineOffset() const
 {
-	return getCamForward() * vineOffset;
-}
-
-SpeedControlMode Player::getSpeedControl() const
-{
-    return speedControl;
+	return vineOffset;
 }
 
 float Player::getTotalElapsed() const
@@ -353,9 +284,164 @@ PlayerLevel Player::getSkillLevel() const
     return skillLevel;
 }
 
+int Player::getToggleBack() const
+{
+    return toggleBack;
+}
+
+bool Player::getGodMode() const
+{
+    return godMode;
+}
+
 int Player::getNumStagesWon() const
 {
     return numStagesWon;
+}
+
+int Player::getLevelRequestRow() const
+{
+    return levelRequestRow;
+}
+
+int Player::getLevelRequestCol() const
+{
+    return levelRequestCol;
+}
+
+bool Player::hasLevelProgress(int level)
+{
+    int row = levels->getLevelRow(level);
+    int col = levels->getLevelCol(level);
+    return hasLevelProgress(row, col);
+}
+
+bool Player::hasLevelProgress(int row, int col)
+{
+    return row >= 0 && col >= 0 && row < levelProgress.size() && col < levelProgress[row].size();
+}
+
+PlayerProgress Player::getLevelProgress(int level)
+{
+    int row = levels->getLevelRow(level);
+    int col = levels->getLevelCol(level);
+    return levelProgress[row][col];
+}
+
+PlayerProgress Player::getLevelProgress(int row, int col)
+{
+    return levelProgress[row][col];
+}
+
+// Is the level available to the player based on player stats?
+bool Player::isLevelAvailable(int level)
+{
+    /*
+     // Linear progression
+    if (!levels->hasLevel(level))
+        return false;
+    if (level <= 0) return true;
+    if (!hasLevelProgress(level - 1))
+        return false;
+    PlayerProgress progress = getLevelProgress(level - 1);
+    return progress.rating > 0;
+     */
+    
+    // Satisfy previous row star total and
+    // previous column level must be 3 stars
+    if (!levels->hasLevel(level))
+        return false;
+    int levelRow = levels->getLevelRow(level);
+    int levelCol = levels->getLevelCol(level);
+    
+    int totalRatingCur = getTotalLevelRating(levelRow);
+    int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
+    
+    if (!levels->hasLevel(levelRow - 1, levelCol))
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
+    if (!hasLevelProgress(levelRow - 1, levelCol))
+        return false;
+    int totalRatingPrev = getTotalLevelRating(levelRow - 1);
+    int previousRating = getLevelProgress(levelRow - 1, levelCol).rating;
+    int rowRequirementPrev = levels->getTotalRowRequirement(levelRow - 1);
+    
+    //std::cout << levelRow << "," << levelCol << " " << rowRequirementCur << " " << totalRatingCur << std::endl;
+    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 3)
+    {
+        // For the last level, unlock it only if we are close
+        return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
+    }
+    else
+        return false;
+}
+
+bool Player::isLevelAvailable(int row, int col)
+{
+    int level = levels->getLevelNo(row, col);
+    return isLevelAvailable(level);
+}
+
+int Player::getMenuRowIndex() const
+{
+    return menuRowIndex;
+}
+
+// Returns the total rating of a row-set of levels
+int Player::getTotalLevelRating(int row)
+{
+    if (row < 0 && row >= levelProgress.size()) return 0;
+    int total = 0;
+    for (int col = 0; col < levelProgress[row].size(); ++col)
+        if (levelProgress[row][col].rating >= 0)
+            total += levelProgress[row][col].rating;
+    return total;
+}
+
+// Returns true if the player hasn't started the tunnel yet
+//
+// This flag is set to false the moment player update runs once.
+// Then, the ship plays its startup sound.
+bool Player::hasTriggeredStartup() const
+{
+    return !triggerStartup;
+}
+
+// Returns the score of a positive target using the tunnel n-back
+//
+// Later, if points vary by target in a stage, we should pass in
+// the signal that was selected.
+float Player::getScoring() const
+{
+    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
+        return 50.0;
+    
+    int nvalue = tunnel->getNBackToggle();
+    switch (nvalue)
+    {
+        case 0:
+            return 50.0;
+        case 1:
+            return 100.0;
+        case 2:
+            return 250.0;
+        case 3:
+            return 500.0;
+        case 4:
+            return 1000.0;
+        case 5:
+            return 2000.0;
+        case 6:
+            return 4000.0;
+        case 7:
+            return 6000.0;
+        case 8:
+            return 8000.0;
+        case 9:
+            return 10000.0;
+        case 10:
+            return 15000.0;
+    }
+    return 5000.0 * nvalue;
 }
 
 void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
@@ -365,6 +451,15 @@ void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
     skillLevel.runSpeed3 = val3;
     skillLevel.averageSpeed = val4;
     skillLevel.navigation = nav;
+}
+
+void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
+{
+    this->initSpeed = initSpeed;
+    this->minSpeed = minSpeed;
+    this->maxSpeed = maxSpeed;
+    baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
+    finalSpeed = getTotalSpeed();
 }
 
 void Player::setSeed(unsigned value)
@@ -402,103 +497,174 @@ void Player::setNumWrongCombo(int value)
     numWrongCombo = value;
 }
 
-void Player::updateGlowExtraction(float elapsed)
+void Player::setScore(float value)
 {
-    if (selectedTarget)
+    score = value;
+}
+
+void Player::updateTractorBeam(float elapsed)
+{
+    TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
+    
+    if (selectedTarget && t && t->active)
     {
         SceneNode* glowNode = selectedTarget->getGlowNode();
         
         if (selectedTarget->isPodTaken() && glowNode)
         {
-            Vector3 vinePos = vines[0]->getEntireVine()->_getDerivedPosition();
-            Vector3 podPos = selectedTarget->getEntirePod()->_getDerivedPosition();
-            Vector3 glowPos = glowNode->_getDerivedPosition();
-            Vector3 glowMove = (vinePos - glowPos);
-            float glowMoveLen = glowMove.length();
-            if (glowMoveLen <= glowSpeed * elapsed)
-            {
-                glowNode->translate(glowMove);
-            }
-            else
-            {
-                glowMove *= glowSpeed / glowMoveLen * elapsed;
-                glowNode->translate((glowMove));
-            }
+            Vector3 vinePos = vines[0]->entireVine->_getDerivedPosition();
+            Vector3 podPos = selectedTarget->getHead()->_getDerivedPosition();
             
+            Vector3 rotator = (podPos - vinePos).normalisedCopy();
+            
+            Quaternion q = getCamForward(false).getRotationTo(rotator);
+            
+            float distance = (podPos - vinePos).length();
+            t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance-7.0f));
+            t->tractorBeamNode->setPosition(0,0,-distance/2.0-7.0f);
+            
+            t->tractorBeamRotatorNode->setPosition(vines[0]->entireVine->_getDerivedPosition());
+            t->tractorBeamRotatorNode->setOrientation(getCamRot() * q);
+            
+            t->tractorBeamNode->roll(Radian(Degree(15.0f)));
         }
-        selectTimer -= elapsed;
-        if (selectTimer <= 0.0)
-        {
-            if (selectedTarget)
-                testPodGiveFeedback(selectedTarget);
-            selectTimer = 0.0;
-            selectedTarget = NULL;
-        }
+    }
+    else if( t && t->active && t->tractorBeamEffect ) {
+        t->tractorBeamNode->detachObject(t->tractorBeamEffect);
+        t->tractorBeamNode->getCreator()->destroyParticleSystem(t->tractorBeamEffect);
+        t->tractorBeamEffect = NULL;
+        t->tractorBeamRotatorNode->removeAndDestroyChild("BeamNode");
+        t->tractorBeamNode = NULL;
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->removeAndDestroyChild("BeamRotatorNode");
+        t->tractorBeamRotatorNode = NULL;
+        t->active = false;
     }
 }
 
-void Player::setGlowGrabParameters()
+void Player::performTractorBeam()
 {
-    // Extract a glow that is in the form of a sphere always, not shape of pod.
-    //selectedTarget->removeGlow();
-    //selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    // Assign a glow speed towards the player
-    if (selectedTarget->getGlowNode())
+    if (!selectedTarget && t && !t->active)
     {
-        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
-        if (finalSpeed > minSpeed)
-            glowSpeed *= (finalSpeed / minSpeed);
+        selectedTarget = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
+        if (selectedTarget && !selectedTarget->getGlowNode() && !selectedTarget->isPodTaken())
+        {
+            selectedTarget->takePod();
+            setGlowGrabParameters();
+            //if (selectTimer <= 0.0)
+            //    selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
+            
+            t->active = true;
+            t->available = false;
+            t->tractorBeamRotatorNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("BeamRotatorNode");
+            t->tractorBeamNode = t->tractorBeamRotatorNode->createChildSceneNode("BeamNode");
+            t->tractorBeamEffect = t->tractorBeamNode->getCreator()->createParticleSystem("Beam", "General/Beam");
+            t->tractorBeamEffect->getEmitter(0)->setParameter("depth", "0");
+            t->tractorBeamNode->attachObject(t->tractorBeamEffect);
+            
+        } else
+            selectedTarget = NULL;
     }
 }
 
-void Player::performShockwave()
+void Player::updateTimeWarp(float elapsed)
 {
-    if (shockwaveTimer <= 0.0)
-    {
-        if (!selectedTarget)
-        {
-            selectedTarget = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
-            if (selectedTarget && selectedTarget->getGlowNode() && !selectedTarget->isPodTaken())
-            {
-                selectedTarget->takePod();
-                setGlowGrabParameters();
-                if (selectTimer <= 0.0)
-                    selectTimer = 1.0 / (finalSpeed / globals.initCamSpeed);
-            } else
-                selectedTarget = NULL;
+    TimeWarp* t = (TimeWarp*)powerups["TimeWarp"];
+    
+    if( t && t->active ) {
+        if( t->zoomIn == 0 ) {
+            t->currentAngle += t->angleIncrement;
+            if( t->currentAngle >= t->maxAngle ) {
+                t->currentAngle = t->maxAngle;
+                if( t->mainTimer >= t->mainTimeout ) {
+                    t->mainTimer = 0.0f;
+                    t->zoomIn = 1;
+                    
+                    t->timeBonusNode = vines[0]->entireVine->createChildSceneNode("timeBonusNode");
+                    t->timeBonusNode->translate(Vector3(0.0,5.0f,5.0f));
+                    
+                    float timeBonusWidth = 8.0f;
+                    float timeBonusHeight = 4.0f;
+                    Ogre::Plane timeBonusPlane;
+                    timeBonusPlane.normal = Ogre::Vector3::UNIT_Z;
+                    timeBonusPlane.d = 0;
+                    Ogre::MeshPtr timeBonusPlaneMeshPtr = Ogre::MeshManager::getSingleton().createPlane("timeBonusPlane",Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, timeBonusPlane, timeBonusWidth, timeBonusHeight, 10, 10, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+                    
+                    t->timeBonusEntity = t->timeBonusNode->getCreator()->createEntity("timeBonusEntity", timeBonusPlaneMeshPtr);
+                    t->timeBonusNode->attachObject(t->timeBonusEntity);
+                    
+                    t->timeBonusEntity->getSubEntity(0)->setMaterialName("General/TimeBonusMaterial");
+                }
+                else {
+                    t->mainTimer += elapsed;
+                }
+            }
+            if( t->currentOffset <= t->offsetLimit ) {
+                t->currentOffset = t->offsetLimit;
+            }
+            else {
+                t->currentOffset -= t->offsetIncrement;
+            }
+            finalSpeed *= t->slowdown;
         }
-        shockwaveTimer = 1.0;
-        //vines[0]->setShockwave();
-    }
-}
- 
-void Player::updateShockwave(float elapsed)
-{
-        // Move the glow towards the vine
-        if (shockwaveTimer > 0)
-        {
-            shockwaveTimer -= elapsed;
-            if (shockwaveTimer <= 0.0)
-            {
-                vines[0]->removeShockwave();
-                shockwaveTimer = 0.0;
+        else if( t->zoomIn == 1 ) {
+            t->currentAngle -= t->angleIncrement;
+            if( t->currentOffset >= t->origOffset ) {
+                t->currentOffset = t->origOffset;
+            }
+            else {
+                t->currentOffset += t->offsetIncrement;
+            }
+            if( t->currentAngle <= t->origAngle ) {
+                t->currentAngle = t->origAngle;
+                t->currentOffset = t->origOffset;
+                t->zoomIn = 2;
             }
         }
+        else {
+            if( t->mainTimer >= t->timeBonusTimeout ) {
+                if (!tunnel->isDone()) tunnel->addToTimePenalty(-t->timeBonus);
+                
+                t->zoomIn = 0;
+                t->active = false;
+                
+                t->timeBonusNode->detachObject(t->timeBonusEntity);
+                t->timeBonusNode->getCreator()->destroyEntity(t->timeBonusEntity);
+                t->timeBonusEntity = NULL;
+                vines[0]->entireVine->removeAndDestroyChild("timeBonusNode");
+                t->timeBonusNode = NULL;
+            }
+            else {
+                t->mainTimer += elapsed;
+                t->timeBonusNode->translate(Vector3(t->xFlySpeed,t->yFlySpeed,0.0f));
+                t->timeBonusNode->scale(Vector3(t->scaleFactor,t->scaleFactor,0.0f));
+            }
+        }
+        Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
+        cam->setFOVy(Degree(t->currentAngle));
+        vineOffset = t->currentOffset;
+    }
 }
 
-void Player::performBoost()
+void Player::performTimeWarp()
 {
-    float timeRange = 0.5; // Range to linearly decrease back to normal speed
-    if (boostTimer <= timeRange)
-    {
-        boostTimer = 2.0;
-        vines[0]->setBoost();
-        if (soundBoost)
-        {
-            soundBoost->stop();
-            soundBoost->play();
-        }
+    
+    TimeWarp* t = dynamic_cast<TimeWarp*>(powerups["TimeWarp"]);
+    
+    if ( t && !t->active ) {
+        Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
+        
+        t->origFov = Degree(cam->getFOVy());
+        t->origAngle = t->origFov.valueDegrees();
+        t->currentAngle = t->origFov.valueDegrees();
+        
+        t->origOffset = vineOffset;
+        t->currentOffset = t->origOffset;
+        
+        t->mainTimer = 0.0f;
+        t->active = true;
+        t->available = false;
     }
 }
 
@@ -518,26 +684,185 @@ void Player::updateBoost(float elapsed)
     }
 }
 
+void Player::performBoost()
+{
+    float timeRange = 0.5; // Range to linearly decrease back to normal speed
+    if (boostTimer <= timeRange)
+    {
+        boostTimer = 2.0;
+        vines[0]->setBoost();
+        if (soundBoost)
+        {
+            soundBoost->stop();
+            soundBoost->play();
+        }
+    }
+}
+
+void Player::performShields()
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    
+    if ( t && t->shieldScaleTarget < 1.0) {
+        
+        if (!t->shieldNode)
+        {
+            t->shieldNode = vines[0]->entireVine->createChildSceneNode("shieldNode");
+            t->shieldEntity = t->shieldNode->getCreator()->createEntity("shieldEntity", "sphereMesh");
+            
+            t->shieldEntity->setMaterialName("General/VineShellInactive");
+            t->shieldNode->attachObject(t->shieldEntity);
+        }
+        t->active = true;
+        t->available = false;
+        t->shieldScaleTarget = 1.0;
+    }
+    
+}
+
+bool Player::triggerShields()
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    if ( t && t->active && t->shieldScaleTarget >= 1.0 )
+    {
+        t->shieldScaleTarget = 0.0;
+        t->active = false;
+        return true;
+    }
+    return false;
+}
+
+void Player::updateShields(float elapsed)
+{
+    Shields* t = dynamic_cast<Shields*>(powerups["Shields"]);
+    
+    if ( t && t->shieldNode ) {
+        // Move value towards target destination
+        if (t->shieldScaleValue < t->shieldScaleTarget)
+        {
+            t->shieldScaleValue += 1.5 * elapsed;
+            if (t->shieldScaleValue > t->shieldScaleTarget)
+                t->shieldScaleValue = t->shieldScaleTarget;
+        }
+        else if (t->shieldScaleValue > t->shieldScaleTarget)
+        {
+            t->shieldScaleValue -= 2 * elapsed;
+            if (t->shieldScaleValue < t->shieldScaleTarget)
+                t->shieldScaleValue = t->shieldScaleTarget;
+        }
+        
+        t->shieldNode->setScale(
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue,
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue,
+                                vines[0]->getRadius() * 2 * t->shieldScaleValue);
+        
+        if (t->shieldScaleValue >= 1.0)
+            t->shieldEntity->setMaterialName("General/VineShellActive");
+        else
+            t->shieldEntity->setMaterialName("General/VineShellInactive");
+        
+        if (t->shieldScaleValue <= 0.0 && t->shieldScaleTarget <= 0.0)
+        {
+            t->shieldNode->detachObject(t->shieldEntity);
+            t->shieldNode->getCreator()->destroyEntity(t->shieldEntity);
+            t->shieldEntity = NULL;
+            t->shieldNode->getParent()->removeChild(t->shieldNode);
+            t->shieldNode->getCreator()->destroySceneNode(t->shieldNode);
+            t->shieldNode = NULL;
+            t->active = false;
+        }
+    }
+}
+
+void Player::updateGlowExtraction(float elapsed)
+{
+    if (selectedTarget)
+    {
+        SceneNode* glowNode = selectedTarget->getGlowNode();
+        
+        if (selectedTarget->isPodTaken() && glowNode)
+        {
+            Vector3 vinePos = vines[0]->getEntireVine()->_getDerivedPosition();
+            Vector3 podPos = selectedTarget->getEntirePod()->_getDerivedPosition();
+            Vector3 glowPos = glowNode->_getDerivedPosition();
+            Vector3 glowMove = (vinePos - glowPos);
+            float glowMoveLen = glowMove.length();
+            if (glowMoveLen <= glowSpeed * elapsed)
+            {
+                glowNode->translate(glowMove);
+                if (selectTimer <= 0.0 && !selectTimerFlag) {
+                    selectTimer = 0.1;
+                    selectTimerFlag = true;
+                }
+            }
+            else
+            {
+                glowMove *= glowSpeed / glowMoveLen * elapsed;
+                glowNode->translate((glowMove));
+            }
+        }
+        if( selectTimerFlag ) {
+            selectTimer -= elapsed;
+            if (selectTimer <= 0.0)
+            {
+                if (selectedTarget)
+                    testPodGiveFeedback(selectedTarget);
+                selectTimer = 0.0;
+                selectedTarget = NULL;
+                selectTimerFlag = false;
+            }
+        }
+    }
+}
+
+void Player::setGlowGrabParameters()
+{
+    // Extract a glow that is in the form of a sphere always, not shape of pod.
+    selectedTarget->removeGlow();
+    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    
+    // Assign a glow speed towards the player
+    if (selectedTarget->getGlowNode())
+    {
+        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
+        if (finalSpeed > minSpeed)
+            glowSpeed *= (finalSpeed / minSpeed);
+        
+    }
+}
+
+void Player::beginBadFuelPickUp()
+{
+    badFuelPickUpTimer = 1.0;
+    //vines[0]->setExplode();
+    vines[0]->setWobble(true);
+}
+
+void Player::updateBadFuelPickUp(float elapsed)
+{
+    // Move the glow towards the vine
+    if (badFuelPickUpTimer > 0)
+    {
+        badFuelPickUpTimer -= elapsed;
+        if (badFuelPickUpTimer <= 0.0)
+        {
+            //vines[0]->removeExplode();
+            badFuelPickUpTimer = 0.0;
+        }
+    }
+}
+
 void Player::testPodGiveFeedback(Pod* test)
 {
     if (test->isPodTested())
         return;
     test->setPodTested(true);
     
-    History* history = tunnel->getHistory();
-    
+    bool goodPod = tunnel->getPodIsGood();
+
     // Determine whether the player got it right or not
-    if (test->isPodGood() && test->isPodTaken()) {
-        if (tunnel->getMode() == GAME_TIMED)
-        {
-            skillLevel.speedScores[baseSpeed].right++;
-        }
-        else if (tunnel->getMode() == GAME_NAVIGATION)
-        {
-            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].right++;
-        }
-        
-        if (tunnel->getMode() == GAME_NAVIGATION || tunnel->getMode() == GAME_TEACHING || tunnel->getMode() == GAME_RECESS)
+    if (goodPod && test->isPodTaken()) {
+        if (tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getMode() == STAGE_MODE_RECESS)
         {
             if (soundFeedbackGood)
             {
@@ -554,81 +879,73 @@ void Player::testPodGiveFeedback(Pod* test)
             }
         }
         ++numCorrectTotal;
-        ++numCorrectCombo;
-        numWrongCombo = 0;
 
-        // Combo Speed
-        //if (tunnel->getMode() == GAME_PROFICIENCY)
-        //    bonusSpeed += 1.0;
-        
-        if (numCorrectCombo % globals.numToSpeedUp == 0)
+        if (tunnel->satisfyCriteria(tunnel->getNBackToggle()) || tunnel->getMode() == STAGE_MODE_RECESS)
         {
             baseSpeed += globals.stepsizeSpeedUp;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
-        if (hp >= 0)
-            hp += globals.HPPositiveCorrectAnswer;
-        else
-            hp += globals.HPNegativeCorrectAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        if (getToggleBack() == 0)
+        {
+            if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
+            else hp += globals.HPNegativeCorrectAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        }
+        ++numCorrectCombo;
+        numWrongCombo = 0;
         
-        if (history) history->determineCoverLoc(true);
+        if (tunnel->getMode() == STAGE_MODE_PROFICIENCY &&
+            numCorrectCombo % globals.numToSpeedUp == 0)
+        {
+            baseSpeed += globals.stepsizeSpeedUp;
+            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+        }
+        
+        // Determine Score
+        score += getScoring();
     }
-    else if (!test->isPodGood() && !test->isPodTaken())
+    else if (!goodPod && test->isPodTaken())
     {
-        numSafeTotal++;
-        numCorrectBonus++;
-    }
-    else if ((test->isPodGood() && !test->isPodTaken()) ||
-             (!test->isPodGood() && test->isPodTaken())) {
-        
-        if (tunnel->getMode() == GAME_TIMED)
-        {
-            skillLevel.speedScores[baseSpeed].wrong++;
-        }
-        else if (tunnel->getMode() == GAME_NAVIGATION)
-        {
-            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
-        }
-        
-        if (soundFeedbackBad && !test->isPodGood() && test->isPodTaken())
+        if (soundFeedbackBad)
         {
             soundFeedbackBad->stop();
             soundFeedbackBad->play();
         }
-        if (test->isPodGood() && !test->isPodTaken()) // Missed good
-            ++numMissedTotal;
-        else //if ((!test->isPodGood() && test->isPodTaken()) //Took bad
-            ++numWrongTotal;
+        ++numWrongTotal;
         
-        ++numWrongCombo;
+        //tunnel->loseRandomCriteria();
+        //beginBadFuelPickUp();
+        
+        if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+        else hp += globals.HPNegativeWrongAnswer;
+        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        
+        tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+        
         numCorrectCombo = 0;
-        // Combo Speed reduction
-        //if (tunnel->getMode() == GAME_PROFICIENCY)
-        //{
-        //    bonusSpeed -= 3.0;
-        //    if (bonusSpeed < 0.0) bonusSpeed = 0.0;
-        //}
-        
+        ++numWrongCombo;
         if (numWrongCombo % globals.numToSpeedDown == 0)
         {
             baseSpeed += globals.stepsizeSpeedDown;
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
-        
         numCorrectBonus = 0;
         
-        if (hp >= 0)
-            hp += globals.HPPositiveWrongAnswer;
-        else
-            hp += globals.HPNegativeWrongAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        
-        if (history) history->determineCoverLoc(false);
+        //score -= std::pow(5.0, 4);
+        //if (score < 0.0) score = 0.0;
+    }
+    else if (!goodPod && !test->isPodTaken())
+    {
+        numSafeTotal++;
+        numCorrectBonus++;
+    }
+    else if (goodPod && !test->isPodTaken()) // Missed good
+    {
+        ++numMissedTotal;
     }
     // Check for combo mode
-    //if (tunnel->getMode() == GAME_PROFICIENCY) determineSpawnCombo();
+    //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
 }
 
 void Player::determineSpawnCombo()
@@ -647,6 +964,192 @@ void Player::determineSpawnCombo()
             tunnel->setSpawnCombo(2);
         if (numCorrectCombo >= globals.combo2MinB)
             tunnel->setSpawnCombo(3);
+    }
+}
+
+void Player::offsetShip(float elapsed)
+{
+    tunnel->setOffsetIterators(camPos, vineOffset); // Important in order to cleanly move camera and vine
+    TunnelSlice* closest = tunnel->getCurrentOffset();
+    if (closest) {
+        vines[0]->previousID = vines[0]->afterID;
+        vines[0]->previoust = vines[0]->aftert;
+        vines[0]->afterID = closest->getTunnelSliceID();
+        vines[0]->aftert = tunnel->getTLeftOffsetCurrent();
+        vines[0]->setQuaternion(getCombinedRotAndRoll());
+        Vector3 centerPos = closest->getCenter(vines[0]->aftert);
+        Vector3 targetPos1;
+        Vector3 targetPos2;
+        
+        // If on empty panel, find closest one.
+        if (!closest->hasAvailableSide(vines[0]->dest))
+        {
+            Direction best = vines[0]->dest;
+            Direction lo = best;
+            Direction ro = best;
+            do
+            {
+                lo = Util::leftOf(lo);
+                ro = Util::rightOf(ro);
+                if (closest->hasAvailableSide(lo))
+                    best = lo;
+                else if (closest->hasAvailableSide(ro))
+                    best = ro;
+            } while (!closest->hasAvailableSide(best) && lo != best && ro != best);
+            vines[0]->loc = vines[0]->dest;
+            vines[0]->dest = best;
+            vines[0]->transition = 0.0;
+        }
+        
+        // Transition from panel to the next panel
+        vines[0]->transition += globals.vineTransitionSpeed * elapsed;
+        if (vines[0]->transition >= 1.0)
+        {
+            vines[0]->loc = vines[0]->dest;
+            vines[0]->transition = 0.0;
+        }
+        // Moving through the segment. Has to deal with transition between each segment
+        if (tunnel->getTLeftOffsetCurrent() >= 0.0 || vines[0]->previousID + 1 < vines[0]->afterID || (tunnel->getPreviousOffset() == closest && !lookback))
+        {
+            targetPos1 = centerPos + closest->requestWallDirection(vines[0]->loc) * closest->getWallLength() / 1.5;
+            targetPos2 = centerPos + closest->requestWallDirection(vines[0]->dest) * closest->getWallLength() / 1.5;
+        }
+        else
+        {
+            if (tunnel->getPreviousOffset() != closest)
+                lookback = tunnel->getPreviousOffset();
+            //            if (!lookback)
+            //                lookback = closest;
+            
+            Vector3 exit = lookback->getEnd();
+            Vector3 entry = closest->getStart();
+            // This section is to make the movement of slow ships a little smoother
+            Vector3 p1 = exit + lookback->requestWallDirection(vines[0]->loc) * lookback->getWallLength() / 1.5;
+            Vector3 p2 = entry + closest->requestWallDirection(vines[0]->loc) * closest->getWallLength() / 1.5;
+            Vector3 p3 = exit + lookback->requestWallDirection(vines[0]->dest) * lookback->getWallLength() / 1.5;
+            Vector3 p4 = entry + closest->requestWallDirection(vines[0]->dest) * closest->getWallLength() / 1.5;
+            
+            targetPos1 = p1 + (p2 - p1) * (1.0 + tunnel->getTLeftOffsetCurrent());
+            targetPos2 = p3 + (p4 - p3) * (1.0 + tunnel->getTLeftOffsetCurrent());
+        }
+        vines[0]->setForward(closest->getForward());
+        vines[0]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[0]->transition);
+        
+        vines[0]->update(elapsed); // Mostly for animating the navigation around the tunnel
+        if (movementMode == MOVEMENT_ROTATING)
+        {
+            // Rotate camera strictly around vine. Assuming only one vine
+            if (vines[0]->dest != vines[0]->loc && vines[0]->transition != 0.0)
+            {
+                Vector3 southVec = closest->requestWallDirection(SOUTH);
+                Vector3 rightVec = closest->requestWallDirection(EAST);
+                Vector3 vineVec = (vines[0]->getPos() - centerPos).normalisedCopy();
+                
+                camRoll = Degree(vineVec.angleBetween(southVec)).valueDegrees();
+                if (vineVec.dotProduct(rightVec) > 0)
+                    camRoll = -camRoll;
+                desireRoll = camRoll;
+            }
+        }
+    }
+}
+
+void Player::recordInfo()
+{
+    // If player vine is halfway through a segment, we can get results
+    std::vector<TunnelSlice*> slices = tunnel->findSlicesSincePreviousOffset();
+    for (int j = 0; j < slices.size(); ++j)
+    {
+        TunnelSlice* targetSlice = slices[j];
+        
+        if (!targetSlice->isInfoStored() &&
+            ((vines[0]->previousID < targetSlice->getTunnelSliceID() && vines[0]->afterID > targetSlice->getTunnelSliceID()) ||
+             (vines[0]->previousID == targetSlice->getTunnelSliceID() && vines[0]->previoust < globals.podCollisionMax && (vines[0]->aftert >= globals.podCollisionMax || vines[0]->afterID > vines[0]->previousID)) ||
+             (vines[0]->afterID == targetSlice->getTunnelSliceID() && vines[0]->aftert >= globals.podCollisionMax)))
+        {
+            std::vector<Pod*> pods = targetSlice->getPods();
+            PodInfo targetinfo;
+            SectionInfo sliceInfo = targetSlice->getSectionInfo();
+            targetinfo.podExists = false;
+            char segmentEncoding[NUM_DIRECTIONS];
+            // Set segment information
+            for (int i = 0;i < NUM_DIRECTIONS; ++i)
+                segmentEncoding[i] = sliceInfo.sidesUsed[i] ? ENC_YES_PANEL : ENC_NO_PANEL;
+            char playerEnc = ENC_PLAYER_STATIC;
+            if (pods.size() > 0)
+            {
+                int ind = 0;
+                // Set up target info and feedback
+                if (pods.size() > 0 && !pods[0]->getPodTrigger())
+                {
+                    Pod* test = pods[0];
+                    
+                    targetinfo = test->getPodInfo();
+                    targetinfo.podExists = true;
+                    ind++;
+                    
+                    // For very fast players
+                    if (selectedTarget && selectedTarget != test)
+                        testPodGiveFeedback(selectedTarget);
+                    
+                    if (!test->isPodTested())
+                    {
+                        selectTimerFlag = true;
+                        selectedTarget = test;;
+                        if (selectTimer <= 0.0) // Make sure it's not being grabbed already
+                            setGlowGrabParameters();
+                        if (selectTimer <= 0.0 || selectTimer > 0.1)
+                            selectTimer = 0.1;
+                    }
+                    
+                    segmentEncoding[test->getLoc()] = test->isPodGood() ? ENC_TARGET : ENC_FAKE;
+                    if (test->isPodGood() && test->isPodTaken())
+                        playerEnc = ENC_PLAYER_CORRECT;
+                    else if ((test->isPodGood() && !test->isPodTaken()) ||
+                             (!test->isPodGood() && test->isPodTaken()))
+                        playerEnc = ENC_PLAYER_WRONG;
+                }
+                // Set obstacle info, assuming the first index can sometimes be signal
+                for (; ind < pods.size(); ++ind)
+                {
+                    bool avoided = true;
+                    if (pods[ind]->getPodTrigger())
+                    {
+                        if (pods[ind]->isPodTaken())
+                        {
+                            avoided = false;
+                            segmentEncoding[pods[ind]->getLoc()] = ENC_OBSTACLE_YES_HIT;
+                        }
+                        else
+                            segmentEncoding[pods[ind]->getLoc()] = ENC_OBSTACLE_NO_HIT;
+                    }
+                    if (avoided) numAvoidancesTotal++;
+                    else numCollisionsTotal++;
+                }
+            }
+            segmentEncoding[vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest] = playerEnc;
+            
+            // This code block is to record data of the pods
+            Result result;
+            memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
+            result.eventID = tunnel->getStageNo();
+            result.taskType = tunnel->getPhase() - 'A';
+            result.nback = tunnel->getNBack();
+            result.navigation = tunnel->getCurrentNavLevel();
+            result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
+            result.podInfo = targetinfo;
+            result.sectionInfo = sliceInfo;
+            result.timestamp = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
+            result.minSpeed = minSpeed;
+            result.maxSpeed = maxSpeed;
+            result.baseSpeed = baseSpeed;
+            result.finalSpeed = finalSpeed;
+            result.navScore = skillLevel.navigation;
+            results.push_back(result);
+            
+            // Flag to trigger only once
+            targetSlice->setInfoStored(true);
+        }
     }
 }
 
@@ -765,6 +1268,44 @@ void Player::setSkillLevel(PlayerLevel value)
     skillLevel = value;
 }
 
+void Player::setToggleBack(int value)
+{
+    toggleBack = value;
+}
+
+void Player::setGodMode(bool value)
+{
+    godMode = value;
+}
+
+void Player::setLevelRequestRow(int value)
+{
+    levelRequestRow = value;
+}
+
+void Player::setLevelRequestCol(int value)
+{
+    levelRequestCol = value;
+}
+
+void Player::setLevelRequest(int row, int col)
+{
+    levelRequestRow = row;
+    levelRequestCol = col;
+}
+
+void Player::setMenuRowIndex(int value)
+{
+    menuRowIndex = value;
+}
+
+void Player::setAllProgressTo(const PlayerProgress & value)
+{
+    for (int i = 0; i < levelProgress.size(); ++i)
+        for (int j = 0; j < levelProgress[i].size(); ++j)
+            levelProgress[i][j] = value;
+}
+
 void Player::saveCam()
 {
     oldPos = camPos;
@@ -782,21 +1323,34 @@ void Player::revertCam()
 void Player::unlink()
 {
     this->tunnel = NULL;
-    this->hud = NULL;
 }
 
-void Player::link(Tunnel* tunnel, Hud* hud)
+void Player::link(Tunnel* tunnel)
 {
     this->tunnel = tunnel;
-    this->hud = hud;
 }
 
-void Player::newTunnel(bool setmusic)
+// Initializes the toggle based on the criterias of the tunnel and the n-back's on the toggle
+void Player::initToggleBack()
 {
+    int minNBack = tunnel->getLowestCriteria();
+    int toggle = 0;
+    if (minNBack <= 0) // 0-backs always the last toggle
+        toggle = 3;
+    else
+        toggle = tunnel->getNBack() - minNBack;
+    
+    setToggleBack(toggle);
+}
+
+void Player::newTunnel(const std::string & nameMusic)
+{
+    setCamPos(tunnel->getStart() + tunnel->getCurrent()->getForward() * globals.tunnelSegmentDepth);
+    setCamRot(tunnel->getCurrent()->getQuaternion());
+    setDesireRot(getCamRot());
+	addVine(new Vine(OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(), camPos, globals.vineRadius));
+    
     hp = globals.startingHP;
-    minSpeed = globals.minCamSpeed;
-    maxSpeed = globals.maxCamSpeed;
-    baseSpeed = Util::clamp(globals.initCamSpeed, minSpeed, maxSpeed);
     
     totalDistanceTraveled = 0.0;
     animationTimer = 5.0;
@@ -810,6 +1364,7 @@ void Player::newTunnel(bool setmusic)
     numWrongCombo = 0;
     numAvoidancesTotal = 0;
     numCollisionsTotal = 0;
+    score = 0.0;
     camDir = SOUTH;
     lookback = NULL;
     selectedTarget = NULL;
@@ -818,10 +1373,10 @@ void Player::newTunnel(bool setmusic)
     sess.sessionNo = skillLevel.sessionID;
     sess.eventID = tunnel->getStageNo();
     sess.taskType = tunnel->getPhase() - 'A';
-    sess.stageTime = globals.stageTime;
+    sess.stageTime = tunnel->getStageTime();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
-    if (tunnel->getMode() == GAME_NAVIGATION || tunnel->getMode() == GAME_RECESS || tunnel->getMode() == GAME_TEACHING)
+    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         sess.nback = 0;
     else
         sess.nback = tunnel->getNBack();
@@ -847,65 +1402,17 @@ void Player::newTunnel(bool setmusic)
     
     OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
     OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
-    if (setmusic)
+    
+    OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
+    if (nameMusic != "")
+        soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound(nameMusic);
+    if (soundMusic != soundMusicTemp)
     {
-        OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
-        switch (tunnel->getPhase())
-        {
-            case 'A':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music2");
-                break;
-            case 'B':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-                break;
-            case 'C':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music5");
-                break;
-            case 'D':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-                break;
-            case 'E':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
-                break;
-            case 'F':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-                break;
-            case 'G':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-                break;
-            case 'H':
-                soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
-                break;
-        }
-        /*
-        if (tunnel->getNBack() <= 1)
-            soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-        else
-        {
-            switch ((tunnel->getNBack() + 2) % 4)
-            {
-                case 0:
-                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music1");
-                    break;
-                case 1:
-                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music2");
-                    break;
-                case 2:
-                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music3");
-                    break;
-                case 3:
-                    soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("Music4");
-                    break;
-            }
-        }
-         */
-        if (soundMusic != soundMusicTemp)
-        {
-            if (soundMusic) soundMusic->stop();
-            soundMusic = soundMusicTemp;
-            startMusicTimer = 2.0;
-        }
+        if (soundMusic) soundMusic->stop();
+        soundMusic = soundMusicTemp;
+        startMusicTimer = 2.0;
     }
+
     if (soundMusic) soundMusic->setVolume(globals.volumeMusic);
     if (soundPods[POD_SIGNAL_1]) soundPods[POD_SIGNAL_1]->setVolume(globals.volumeSignal1);
     if (soundPods[POD_SIGNAL_2]) soundPods[POD_SIGNAL_2]->setVolume(globals.volumeSignal2);
@@ -918,32 +1425,45 @@ void Player::newTunnel(bool setmusic)
     if (soundBoost) soundBoost->setVolume(globals.volumeBoost);
     if (soundStartup) soundStartup->setVolume(globals.volumeStartup);
     
+    // initalize player ship location
     tunnel->setOffsetIterators(camPos, vineOffset);
-    for (int i = 0; i < vines.size(); ++i)
+    vines[0]->setVisible(true);
+    vines[0]->reloadIfNecessary(globals.setVineShip);
+    TunnelSlice* closest = tunnel->getCurrentOffset();
+    if (closest)
     {
-        vines[i]->reloadIfNecessary(globals.setVineShip);
-        
-        TunnelSlice* closest = tunnel->getCurrentOffset();
-        if (closest)
-        {
-            Vector3 centerPos = closest->getCenter(tunnel->getTLeftOffsetCurrent());
-            Vector3 southVec = closest->requestWallDirection(SOUTH);
-            Vector3 rightVec = closest->requestWallDirection(EAST);
-            vines[i]->loc = SOUTH;
-            vines[i]->dest = SOUTH;
-            vines[i]->setPos(centerPos + closest->requestWallDirection(vines[i]->loc) * closest->getWallLength() / 1.5);
-            vines[i]->setQuaternion(closest->getQuaternion());
-            Vector3 vineVec = (vines[i]->getPos() - centerPos).normalisedCopy();
-            camRoll = Degree(vineVec.angleBetween(southVec)).valueDegrees();
-            if (vineVec.dotProduct(rightVec) > 0)
-                camRoll = -camRoll;
-            desireRoll = camRoll;
-        }
+        Vector3 centerPos = closest->getCenter(tunnel->getTLeftOffsetCurrent());
+        Vector3 southVec = closest->requestWallDirection(SOUTH);
+        Vector3 rightVec = closest->requestWallDirection(EAST);
+        vines[0]->loc = SOUTH;
+        vines[0]->dest = SOUTH;
+        vines[0]->setPos(centerPos + closest->requestWallDirection(vines[0]->loc) * closest->getWallLength() / 1.5);
+        vines[0]->setQuaternion(closest->getQuaternion());
+        Vector3 vineVec = (vines[0]->getPos() - centerPos).normalisedCopy();
+        camRoll = Degree(vineVec.angleBetween(southVec)).valueDegrees();
+        if (vineVec.dotProduct(rightVec) > 0)
+            camRoll = -camRoll;
+        desireRoll = camRoll;
     }
+    initToggleBack();
     tunnel->setSpawnCombo(1);
     triggerStartup = true;
     results.clear();
     actions.clear();
+}
+
+void Player::startMenu()
+{
+    OgreOggSound::OgreOggISound* soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("MusicMenu");
+    if (soundMusic != soundMusicTemp)
+    {
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+        
+        soundMusic = soundMusicTemp;
+        if (soundMusic) soundMusic->play();
+    }
+    
 }
 
 void Player::move(Vector3 delta)
@@ -1022,7 +1542,7 @@ void Player::setSounds(bool mode)
         soundPods[POD_SIGNAL_2] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
         soundPods[POD_SIGNAL_3] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod3");
         soundPods[POD_SIGNAL_4] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod4");
-        soundPods[POD_SIGNAL_UNKNOWN] = NULL;
+        soundPods[POD_SIGNAL_UNKNOWN] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("HoldoutPod");
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
@@ -1046,6 +1566,13 @@ void Player::addVine(Vine *vine)
     vine->loc = camDir;
 }
 
+void Player::removeVines()
+{
+    for (int i = 0; i < vines.size(); ++i)
+        delete vines[i];
+    vines.clear();
+}
+
 void Player::checkCollisions()
 {
     std::vector<TunnelSlice*> slices = tunnel->findSlicesSincePreviousOffset();
@@ -1060,33 +1587,49 @@ void Player::checkCollisions()
                 {
                     if (hits[i]->getPodTrigger())
                     {
-                        if (tunnel->getMode() == GAME_NAVIGATION)
+                        if (hits[i]->getMeshType() == POD_HAZARD)
                         {
-                            skillLevel.navigationScores[tunnel->getCurrentNavLevel()].wrong++;
+                            if (soundCollision)
+                            {
+                                soundCollision->stop();
+                                soundCollision->play();
+                            }
+                        
+                            if (!triggerShields())
+                            {
+                                baseSpeed -= globals.distractorSpeedPenalty;
+                                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                                speedTimer = 5.0;
+                                tunnel->addToTimePenalty(globals.distractorTimePenalty);
+                                if (hp >= 0)
+                                    hp += globals.HPPositiveDistractor;
+                                else
+                                    hp += globals.HPNegativeDistractor;
+                                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                            
+                                beginBadFuelPickUp();
+                            }
+                            numCorrectCombo = 0;
                         }
-                        if (soundCollision)
+                        else if (hits[i]->getMeshType() == POD_POWERUP)
                         {
-                            soundCollision->stop();
-                            soundCollision->play();
-                        }
-                        
-                        if (hp >= 0)
-                            hp += globals.HPPositiveDistractor;
-                        else
-                            hp += globals.HPNegativeDistractor;
-                        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-                        
-                        baseSpeed -= globals.distractorSpeedPenalty;
-                        baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-                        tunnel->addToTimePenalty(globals.distractorTimePenalty);
-                        speedTimer = 5.0;
-                        
-                        vines[i]->setWobble(true);
-                        
-                        if (tunnel->getMode() == GAME_PROFICIENCY)
-                        {
-                            if (globals.stageTime > 0 && tunnel->getTimeLeft() <= 0)
-                                tunnel->setDone(EVEN);
+                            switch (hits[i]->getPodColor())
+                            {
+                                case POD_COLOR_PINK:
+                                    powerups["TractorBeam"]->available = true;
+                                    break;
+                                case POD_COLOR_BLUE:
+                                    powerups["Shields"]->available = true;
+                                    break;
+                                case POD_COLOR_GREEN:
+                                    powerups["TimeWarp"]->available = true;
+                                    performTimeWarp();
+                                    break;
+                                case POD_COLOR_YELLOW:
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
@@ -1095,110 +1638,18 @@ void Player::checkCollisions()
     }
 }
 
-void Player::resetCursorMoved()
+void Player::decideFinalSpeed(float elapsed)
 {
-    inputTotalX = 0.0;
-    inputMoved = false;
-}
-
-void Player::setCursorMoved()
-{
-    inputMoved = true;
-}
-
-void Player::updateCursorCooldown(float elapsed)
-{
-    // Cooldown before next swipe can be read
-    if (inputMoved)
-    {
-        if (inputTotalX > 0.0)
-        {
-            inputTotalX -= globals.screenWidth / 2 * elapsed;
-            if (inputTotalX <= 0.0)
-            {
-                inputTotalX = 0.0;
-                inputMoved = false;
-            }
-        }
-        else if (inputTotalX < 0.0)
-        {
-            inputTotalX += globals.screenWidth / 2 * elapsed;
-            if (inputTotalX >= 0.0)
-            {
-                inputTotalX = 0.0;
-                inputMoved = false;
-            }
-        }
-    }
-    else
-    {
-        inputLeftBound = -globals.screenWidth / globals.swipeSensitivity;
-        inputRightBound = globals.screenWidth / globals.swipeSensitivity;
-    }
-}
-
-void Player::checkCursorMove(float dx, float dy)
-{
-    std::cout << inputTotalX << std::endl;
-    if (!inputMoved)
-        inputTotalX += dx;
-}
-
-bool Player::checkPerformLeftMove(bool force)
-{
-    if (force || (!inputMoved && ((!globals.swipeInverted && inputTotalX < inputLeftBound) || (globals.swipeInverted && inputTotalX > inputRightBound))))
-    {
-        return true;
-    }
-    else return false;
-}
-
-bool Player::checkPerformRightMove(bool force)
-{
-    if (force || (!inputMoved && ((globals.swipeInverted && inputTotalX < inputLeftBound) || (!globals.swipeInverted && inputTotalX > inputRightBound))))
-    {
-        return true;
-    }
-    else return false;
-}
-
-void Player::addAction(ActionCode actType)
-{
-    Action act;
-    act.eventID = tunnel ? tunnel->getStageNo() : -1;
-    act.action = actType;
-    act.timestamp = static_cast<int>(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
-    act.baseSpeed = baseSpeed;
-    act.finalSpeed = finalSpeed;
-    actions.push_back(act);
-}
-
-void Player::update(float elapsed)
-{
-    totalElapsed += elapsed;
-    
-    if (triggerStartup && soundStartup && !soundStartup->isPlaying())
-    {
-        soundStartup->play();
-        triggerStartup = false;
-    }
-    if (soundMusic && !soundMusic->isPlaying())
-    {
-        startMusicTimer -= elapsed;
-        if (startMusicTimer <= 0.0)
-            soundMusic->play();
-    }
-    
     if (tunnel->isDone())
     {
-        if (tunnel->getEval() != PASS)
+        if (tunnel->getEval() != PASS && tunnel->getEval() != FAIL)
         {
             float totalSpeed = getTotalSpeed();
             float speedRange = totalSpeed;
             float timeRange = 3.0;
             float offset = 5.0 - timeRange;
             if (animationTimer > offset)
-                finalSpeed = speedRange * ((animationTimer - offset) / timeRange);           
+                finalSpeed = speedRange * ((animationTimer - offset) / timeRange);
             else
                 finalSpeed = 0.0;
             animationTimer -= elapsed;
@@ -1235,8 +1686,58 @@ void Player::update(float elapsed)
         finalSpeed = getTotalSpeed();
         totalDistanceTraveled += finalSpeed * elapsed;
     }
+}
+
+void Player::addAction(ActionCode actType)
+{
+    Action act;
+    act.eventID = tunnel ? tunnel->getStageNo() : -1;
+    act.action = actType;
+    act.timestamp = static_cast<int>(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
+    act.baseSpeed = baseSpeed;
+    act.finalSpeed = finalSpeed;
+    actions.push_back(act);
+}
+
+void Player::update(float elapsed)
+{
+    totalElapsed += elapsed;
     
-    // Linearly interpolate the camera to get smooth transitions
+    // Play music at beginning of stage
+    if (triggerStartup && soundStartup && !soundStartup->isPlaying())
+    {
+        soundStartup->play();
+        triggerStartup = false;
+    }
+    if (soundMusic && !soundMusic->isPlaying())
+    {
+        startMusicTimer -= elapsed;
+        if (startMusicTimer <= 0.0)
+            soundMusic->play();
+    }
+    
+    // Determine the speed of the player for this update
+    decideFinalSpeed(elapsed);
+    
+    updateBadFuelPickUp(elapsed);
+    updateBoost(elapsed);
+    updateGlowExtraction(elapsed);
+#ifdef DEBUG_MODE
+    vines[0]->setPowerIndication(godMode);
+#endif
+    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
+        if( (it->first).compare("TimeWarp") == 0 ) {
+            updateTimeWarp(elapsed);
+        }
+        else if( (it->first).compare("TractorBeam") == 0 ) {
+            updateTractorBeam(elapsed);
+        }
+        else if( (it->first).compare("Shields") == 0 ) {
+            updateShields(elapsed);
+        }
+    }
+    
+    // Interpolate the camera to get smooth transitions
     TunnelSlice* next = tunnel->getNext(1);
     if (next)
     {
@@ -1247,211 +1748,82 @@ void Player::update(float elapsed)
         camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
     }
     
-    updateCursorCooldown(elapsed);
-    tunnel->update(elapsed);
-    tunnel->setOffsetIterators(camPos, vineOffset);
+    // Orient the ship in front of the camera at all times
+    offsetShip(elapsed);
     
-    for (int i = 0; i < vines.size(); ++i)
-    {
-        // Determine which tunnel segment and corner each vine should be
-        // in. This is done by calculating a t from 0 to 1
-        TunnelSlice* closest = tunnel->getCurrent();
-        if (closest && closest->getPods().size() > 0 && !closest->isPodHistory() && !tunnel->isDone())
-        {
-            if (tunnel->getTLeftCurrent() > 0.5)
-            {
-                History* history = tunnel->getHistory();
-                if (history) history->addPod(closest->getPods()[0]->getPodInfo());
-                
-                closest->setPodHistory(true);
-            }
-        }
-        
-        closest = tunnel->getCurrentOffset();
-        if (closest) {
-            vines[i]->previousID = vines[i]->afterID;
-            vines[i]->previoust = vines[i]->aftert;
-            vines[i]->afterID = closest->getTunnelSliceID();
-            vines[i]->aftert = tunnel->getTLeftOffsetCurrent();
-            vines[i]->setQuaternion(getCombinedRotAndRoll());
-            Vector3 centerPos = closest->getCenter(tunnel->getTLeftOffsetCurrent());
-            Vector3 targetPos1;
-            Vector3 targetPos2;
-            
-            // If on empty panel, find closest one.
-            if (!closest->hasAvailableSide(vines[i]->dest))
-            {
-                Direction best = vines[i]->dest;
-                Direction lo = best;
-                Direction ro = best;
-                do
-                {
-                    lo = Util::leftOf(lo);
-                    ro = Util::rightOf(ro);
-                    if (closest->hasAvailableSide(lo))
-                        best = lo;
-                    else if (closest->hasAvailableSide(ro))
-                        best = ro;
-                } while (!closest->hasAvailableSide(best) && lo != best && ro != best);
-                vines[i]->loc = vines[i]->dest;
-                vines[i]->dest = best;
-                vines[i]->transition = 0.0;
-            }
-            
-            vines[i]->transition += globals.vineTransitionSpeed * elapsed;
-            if (vines[i]->transition >= 1.0)
-            {
-                vines[i]->loc = vines[i]->dest;
-                vines[i]->transition = 0.0;
-            }
-            if (tunnel->getTLeftOffsetCurrent() >= 0.0 || vines[i]->previousID + 1 < vines[i]->afterID)
-            {
-                targetPos1 = centerPos + closest->requestWallDirection(vines[i]->loc) * closest->getWallLength() / 1.5;
-                targetPos2 = centerPos + closest->requestWallDirection(vines[i]->dest) * closest->getWallLength() / 1.5;
-            }
-            else
-            {
-                if (tunnel->getPreviousOffset() != closest)
-                    lookback = tunnel->getPreviousOffset();
-                if (!lookback)
-                    lookback = closest;
-                
-                Vector3 exit = lookback->getEnd();
-                Vector3 entry = closest->getStart();
-                // This section is to make the movement of slow ships a little smoother
-                Vector3 p1 = exit + lookback->requestWallDirection(vines[i]->loc) * lookback->getWallLength() / 1.5;
-                Vector3 p2 = entry + closest->requestWallDirection(vines[i]->loc) * closest->getWallLength() / 1.5;
-                Vector3 p3 = exit + lookback->requestWallDirection(vines[i]->dest) * lookback->getWallLength() / 1.5;
-                Vector3 p4 = entry + closest->requestWallDirection(vines[i]->dest) * closest->getWallLength() / 1.5;
-                
-                targetPos1 = p1 + (p2 - p1) * (1.0 + tunnel->getTLeftOffsetCurrent());
-                targetPos2 = p3 + (p4 - p3) * (1.0 + tunnel->getTLeftOffsetCurrent());
-            }
-            vines[i]->setForward(closest->getForward());
-            vines[i]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[i]->transition);
-            
-            vines[i]->update(elapsed); // Mostly for animating the navigation around the tunnel
-            if (movementMode == MOVEMENT_ROTATING)
-            {
-                // Rotate camera strictly around vine. Assuming only one vine
-                if (vines[i]->dest != vines[i]->loc && vines[i]->transition != 0.0)
-                {
-                    Vector3 southVec = closest->requestWallDirection(SOUTH);
-                    Vector3 rightVec = closest->requestWallDirection(EAST);
-                    Vector3 vineVec = (vines[i]->getPos() - centerPos).normalisedCopy();
-                
-                    camRoll = Degree(vineVec.angleBetween(southVec)).valueDegrees();
-                    if (vineVec.dotProduct(rightVec) > 0)
-                        camRoll = -camRoll;
-                    desireRoll = camRoll;
-                }
-            }
-        }
-    }
     if (!tunnel->isDone())
     {
+        // Check for collisions for player and the tunnel
         checkCollisions();
-        for (int i = 0; i < vines.size(); ++i)
-        {
-            // If player vine is halfway through a segment, we can get results
-            std::vector<TunnelSlice*> slices = tunnel->findSlicesSincePreviousOffset();
-            for (int j = 0; j < slices.size(); ++j)
-            {
-                TunnelSlice* targetSlice = slices[j];
-                
-                if (!targetSlice->isInfoStored() &&
-                    ((vines[i]->previousID < targetSlice->getTunnelSliceID() && vines[i]->afterID > targetSlice->getTunnelSliceID()) ||
-                     (vines[i]->previousID == targetSlice->getTunnelSliceID() && vines[i]->previoust < globals.podCollisionMax && (vines[i]->aftert >= globals.podCollisionMax || vines[i]->afterID > vines[i]->previousID)) ||
-                     (vines[i]->afterID == targetSlice->getTunnelSliceID() && vines[i]->aftert >= globals.podCollisionMax)))
-                {
-                    std::vector<Pod*> pods = targetSlice->getPods();
-                    PodInfo targetinfo;
-                    SectionInfo sliceInfo = targetSlice->getSectionInfo();
-                    targetinfo.podExists = false;
-                    char segmentEncoding[NUM_DIRECTIONS];
-                    // Set segment information
-                    for (int i = 0;i < NUM_DIRECTIONS; ++i)
-                        segmentEncoding[i] = sliceInfo.sidesUsed[i] ? ENC_YES_PANEL : ENC_NO_PANEL;
-                    char playerEnc = ENC_PLAYER_STATIC;
-                    if (pods.size() > 0)
-                    {
-                        int ind = 0;
-                        // Set up target info and feedback
-                        if (pods.size() > 0 && !pods[0]->getPodTrigger())
-                        {
-                            Pod* test = pods[0];
-                            
-                            targetinfo = test->getPodInfo();
-                            targetinfo.podExists = true;
-                            ind++;
-                            
-                            // For very fast players
-                            if (selectedTarget && selectedTarget != test)
-                                testPodGiveFeedback(selectedTarget);
-                            
-                            if (!test->isPodTested())
-                            {
-                                selectedTarget = test;
-                                if (selectTimer <= 0.0) // Make sure it's not being grabbed already
-                                    setGlowGrabParameters();
-                                if (selectTimer <= 0.0 || selectTimer > 0.1)
-                                    selectTimer = 0.1 / (finalSpeed / globals.initCamSpeed);
-                            }
-                            
-                            segmentEncoding[test->getLoc()] = test->isPodGood() ? ENC_TARGET : ENC_FAKE;
-                            if (test->isPodGood() && test->isPodTaken())
-                                playerEnc = ENC_PLAYER_CORRECT;
-                            else if ((test->isPodGood() && !test->isPodTaken()) ||
-                                     (!test->isPodGood() && test->isPodTaken()))
-                                playerEnc = ENC_PLAYER_WRONG;
-                        }
-                        // Set obstacle info, assuming the first index can sometimes be signal
-                        for (; ind < pods.size(); ++ind)
-                        {
-                            bool avoided = true;
-                            if (pods[i]->getPodTrigger())
-                            {
-                                if (pods[i]->isPodTaken())
-                                {
-                                    avoided = false;
-                                    segmentEncoding[pods[i]->getLoc()] = ENC_OBSTACLE_YES_HIT;
-                                }
-                                else
-                                    segmentEncoding[pods[i]->getLoc()] = ENC_OBSTACLE_NO_HIT;
-                            }
-                            if (avoided) numAvoidancesTotal++;
-                            else numCollisionsTotal++;
-                        }
-                    }
-                    segmentEncoding[vines[i]->transition < 0.50 ? vines[i]->loc : vines[i]->dest] = playerEnc;
-                    
-                    // This code block is to record data of the pods
-                    Result result;
-                    memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
-                    result.eventID = tunnel->getStageNo();
-                    result.taskType = tunnel->getPhase() - 'A';
-                    result.nback = tunnel->getNBack();
-                    result.navigation = tunnel->getCurrentNavLevel();
-                    result.playerLoc = vines[i]->transition < 0.50 ? vines[i]->loc : vines[i]->dest;
-                    result.podInfo = targetinfo;
-                    result.sectionInfo = sliceInfo;
-                    result.timestamp = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
-                    result.minSpeed = minSpeed;
-                    result.maxSpeed = maxSpeed;
-                    result.baseSpeed = baseSpeed;
-                    result.finalSpeed = finalSpeed;
-                    result.navScore = skillLevel.navigation;
-                    results.push_back(result);
-                    
-                    // Flag to trigger only once
-                    targetSlice->setInfoStored(true);
-                }
-            }
+        
+        // Record the segment info player has passed
+        recordInfo();
+    }
+}
+
+void Player::initPowerUps()
+{
+    powerups["TractorBeam"] = new TractorBeam();
+    powerups["TimeWarp"] = new TimeWarp(0.0f,0.45f,20.0f,75.0f);
+    powerups["Shields"] = new Shields();
+    
+    powerups["TractorBeam"]->available = false;
+    powerups["TimeWarp"]->available = false;
+    powerups["Shields"]->available = false;
+}
+
+void Player::setPowerUp( std::string pwr, bool val )
+{
+    if( powerups.find(pwr) != powerups.end() )
+        powerups[pwr]->available = val;
+}
+
+// Is the powerup available for use?
+bool Player::isPowerUpAvailable( std::string pwr )
+{
+    if( powerups.find(pwr) != powerups.end())
+        return powerups[pwr]->available;
+    
+    return false;
+}
+
+// Is the powerup executing?
+bool Player::isPowerUpActive( std::string pwr )
+{
+    if( powerups.find(pwr) != powerups.end())
+        return powerups[pwr]->active;
+    
+    return false;
+}
+
+void Player::performPowerUp( std::string pwr )
+{
+    std::cout << "Powerup: " << pwr << std::endl;
+    if( isPowerUpAvailable(pwr) ) {
+        if( pwr.compare("TimeWarp") == 0 ) {
+            performTimeWarp();
+        }
+        else if( pwr.compare("TractorBeam") == 0 ) {
+            performTractorBeam();
+        }
+        else if( pwr.compare("Shields") == 0 ) {
+            performShields();
         }
     }
-    updateGlowExtraction(elapsed);
-    updateShockwave(elapsed);
-    updateBoost(elapsed);
+}
+
+void Player::destroyPowerUps()
+{
+    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
+        delete it->second;
+    }
+}
+
+void Player::resetPowerUps()
+{
+    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
+        it->second->reset();
+    }
 }
 
 void Player::incrementNumStagesWon()
@@ -1472,6 +1844,70 @@ void Player::calculateSpeedScores()
 std::string Player::getCurrentStats() const
 {
     return skillLevel.getCurrentStats();
+}
+
+void Player::saveAllResults(Evaluation eval)
+{
+#define SCORE_PER_SECOND 100
+    
+    // Calculate total score which is current plus time left
+    score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
+    
+    // Assign the correct rating based on tunnel results
+    int nrating = -1;
+    if (eval == PASS)
+    {
+        nrating = 3;
+        incrementNumStagesWon();
+    }
+    else
+    {
+        // Recess is based off of distance (number of signals left to pass)
+        // Every other is a collection task which we will use the default 3, 5, 8
+        if (tunnel->getMode() == STAGE_MODE_RECESS)
+        {
+            float percentComplete = tunnel->getPercentComplete();
+            if (percentComplete >= 0.9)
+                nrating = 2;
+            else if (percentComplete >= 0.7)
+                nrating = 1;
+            else
+                nrating = 0;
+        }
+        else
+        {
+            int collected = tunnel->getNumSatisfiedCriteria();
+            if (collected >= 5)
+                nrating = 2;
+            else if (collected >= 3)
+                nrating = 1;
+            else
+                nrating = 0;
+        }
+    }
+    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    // If level has never been done before or we have a new high score, then save stats
+    if (levelResult->rating < 0 || score > levelResult->score)
+    {
+        levelResult->score = score;
+        levelResult->time = tunnel->getTimeLeft();
+        levelResult->numCorrect = numCorrectTotal;
+        levelResult->numWrong = numWrongTotal;
+        levelResult->numSafe = numSafeTotal;
+        levelResult->numMissed = numMissedTotal;
+        levelResult->startSpeed = initSpeed;
+        levelResult->exitSpeed = baseSpeed;
+        // Assign other level progress info here since it is a new score
+    }
+    // Update other level results/settings
+    levelResult->initSpeedSetting = initSpeed;
+    levelResult->setRating(nrating); // Assign rating last
+    
+    setSkillLevel(skillLevel);
+    saveStage(globals.logPath);
+    saveActions(globals.actionPath);
+    saveSession(globals.sessionPath);
+    saveProgress(globals.savePath);
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -1718,6 +2154,8 @@ bool Player::saveSession(std::string file)
     return true;
 }
 
+/*
+// Save based on adaptive player skill level from study
 bool Player::saveProgress(std::string file, bool updateSessionID)
 {
     std::ofstream out;
@@ -1750,7 +2188,8 @@ bool Player::saveProgress(std::string file, bool updateSessionID)
     out.close();
     return ret;
 }
-
+ 
+// Load based on adaptive player skill level from study
 bool Player::loadProgress(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
@@ -1787,7 +2226,62 @@ bool Player::loadProgress(std::string savePath)
     saveFile.close();
     return ret;
 }
+*/
+
+// Save based on player results in level progression
+bool Player::saveProgress(std::string file)
+{
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    bool ret = true;
+    
+    out << levelProgress.size() << std::endl;
+    for (int i = 0; i < levelProgress.size(); ++i)
+    {
+        for (int j = 0; j < levelProgress[i].size(); ++j)
+            out << levelProgress[i][j] << std::endl;
+    }
+    
+    std::cout << "Save Level Progress: " << file << std::endl;
+    ret = out.good();
+    
+    out.close();
+    return ret;
+}
+
+// Load based on player results in level progression
+bool Player::loadProgress(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    bool ret = false;
+    
+    if (saveFile.good()) {
+        int size;
+        saveFile >> size;
+        
+        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
+        for (int i = 0; i < levelProgress.size(); ++i)
+        {
+            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
+            for (int j = 0; j < levelProgress[i].size(); ++j)
+            {
+                std::cout << "Level: " << i << "," << j << std::endl;
+                saveFile >> levelProgress[i][j];
+                std::cout << levelProgress[i][j] << std::endl;
+            }
+        }
+        
+        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = true;
+    } else {
+        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = false;
+    }
+    saveFile.close();
+    return ret;
+}
 
 Player::~Player()
 {
+    destroyPowerUps(); 
 }

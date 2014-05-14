@@ -668,7 +668,7 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
         }
         case PHASE_TIMED:
         {
-            nlevel = std::max(0, skillLevel.getMasteredNBack() - 1);
+            nlevel = std::max(0, skillLevel.getMasteredNBack());
             if (nlevel < 1) nlevel = 1;
             ncontrol = 1;
             nmode = GAME_TIMED;

@@ -15,7 +15,21 @@
 		5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */; };
 		5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */; };
 		5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */; };
+		5D46023619080E7200F73DC3 /* EngineCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46023419080E7200F73DC3 /* EngineCredits.cpp */; };
+		5D46023919080E7900F73DC3 /* EngineMainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46023719080E7900F73DC3 /* EngineMainMenu.cpp */; };
+		5D46023C19080E7F00F73DC3 /* EngineStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46023A19080E7F00F73DC3 /* EngineStage.cpp */; };
+		5D46023F19080E8500F73DC3 /* EngineLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46023D19080E8500F73DC3 /* EngineLevelSelection.cpp */; };
+		5D46024419080E8E00F73DC3 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024019080E8E00F73DC3 /* Engine.cpp */; };
+		5D46024519080E8E00F73DC3 /* EngineStateManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024219080E8E00F73DC3 /* EngineStateManager.cpp */; };
+		5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024719080EC100F73DC3 /* HudCredits.cpp */; };
+		5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024A19080EC900F73DC3 /* HudMainMenu.cpp */; };
+		5D46024F19080ECF00F73DC3 /* HudStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024D19080ECF00F73DC3 /* HudStage.cpp */; };
+		5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025019080ED500F73DC3 /* HudLevelSelection.cpp */; };
+		5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025519080FEE00F73DC3 /* Powerup.cpp */; };
+		5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */; };
+		5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */; };
 		5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF1087118C41BF800FD25E4 /* Player.cpp */; };
+		5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF141CC190C8F9500AF2960 /* LevelSet.cpp */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
 		5DF598A918852ADD00F85646 /* OgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598A818852ADD00F85646 /* OgreView.mm */; };
 		5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598AD188537FD00F85646 /* MainViewController.mm */; };
@@ -55,7 +69,35 @@
 		5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMenuViewController.h; sourceTree = "<group>"; };
 		5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleMenuViewController.mm; sourceTree = "<group>"; };
+		5D46023419080E7200F73DC3 /* EngineCredits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineCredits.cpp; sourceTree = "<group>"; };
+		5D46023519080E7200F73DC3 /* EngineCredits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineCredits.h; sourceTree = "<group>"; };
+		5D46023719080E7900F73DC3 /* EngineMainMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineMainMenu.cpp; sourceTree = "<group>"; };
+		5D46023819080E7900F73DC3 /* EngineMainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineMainMenu.h; sourceTree = "<group>"; };
+		5D46023A19080E7F00F73DC3 /* EngineStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStage.cpp; sourceTree = "<group>"; };
+		5D46023B19080E7F00F73DC3 /* EngineStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStage.h; sourceTree = "<group>"; };
+		5D46023D19080E8500F73DC3 /* EngineLevelSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineLevelSelection.cpp; sourceTree = "<group>"; };
+		5D46023E19080E8500F73DC3 /* EngineLevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineLevelSelection.h; sourceTree = "<group>"; };
+		5D46024019080E8E00F73DC3 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
+		5D46024119080E8E00F73DC3 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
+		5D46024219080E8E00F73DC3 /* EngineStateManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStateManager.cpp; sourceTree = "<group>"; };
+		5D46024319080E8E00F73DC3 /* EngineStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStateManager.h; sourceTree = "<group>"; };
+		5D46024719080EC100F73DC3 /* HudCredits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudCredits.cpp; sourceTree = "<group>"; };
+		5D46024819080EC100F73DC3 /* HudCredits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudCredits.h; sourceTree = "<group>"; };
+		5D46024A19080EC900F73DC3 /* HudMainMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudMainMenu.cpp; sourceTree = "<group>"; };
+		5D46024B19080EC900F73DC3 /* HudMainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudMainMenu.h; sourceTree = "<group>"; };
+		5D46024D19080ECF00F73DC3 /* HudStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStage.cpp; sourceTree = "<group>"; };
+		5D46024E19080ECF00F73DC3 /* HudStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudStage.h; sourceTree = "<group>"; };
+		5D46025019080ED500F73DC3 /* HudLevelSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudLevelSelection.cpp; sourceTree = "<group>"; };
+		5D46025119080ED500F73DC3 /* HudLevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudLevelSelection.h; sourceTree = "<group>"; };
+		5D46025519080FEE00F73DC3 /* Powerup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Powerup.cpp; sourceTree = "<group>"; };
+		5D46025619080FEE00F73DC3 /* Powerup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Powerup.h; sourceTree = "<group>"; };
+		5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLevel.cpp; sourceTree = "<group>"; };
+		5DCDDD901911719200CF67F1 /* PlayerLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerLevel.h; sourceTree = "<group>"; };
+		5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerProgress.cpp; sourceTree = "<group>"; };
+		5DCDDD921911719200CF67F1 /* PlayerProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerProgress.h; sourceTree = "<group>"; };
 		5DF1087118C41BF800FD25E4 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
+		5DF141CC190C8F9500AF2960 /* LevelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSet.cpp; sourceTree = "<group>"; };
+		5DF141CD190C8F9500AF2960 /* LevelSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSet.h; sourceTree = "<group>"; };
 		5DF597A718848E0100F85646 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		5DF598A718852ADD00F85646 /* OgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreView.h; sourceTree = "<group>"; };
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
@@ -137,18 +179,95 @@
 		5D260D6E18A9CD85006C91AC /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5D46025419080F4D00F73DC3 /* Player */,
+				5D46023019080E4000F73DC3 /* EngineModes */,
 				5D2A13AF18B82E8E002D8C6F /* Networking.mm */,
 				5D2A13AE18B82E8E002D8C6F /* Networking.h */,
+				5DF141CC190C8F9500AF2960 /* LevelSet.cpp */,
+				5DF141CD190C8F9500AF2960 /* LevelSet.h */,
 				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
 				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
-				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
-				5D1EAEB21864D54B004C9756 /* Hud.h */,
 				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
 				5D15DF4C1825CCFB00DF0F99 /* History.h */,
-				5D2D422D18CE32BA0035786C /* Score.cpp */,
-				5D2D422E18CE32BA0035786C /* Score.h */,
-				5DF1087118C41BF800FD25E4 /* Player.cpp */,
-				5DF940E317F4B14F0082C239 /* Player.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		5D46022F19080E3700F73DC3 /* EngineLevelSelection */ = {
+			isa = PBXGroup;
+			children = (
+				5D46025019080ED500F73DC3 /* HudLevelSelection.cpp */,
+				5D46025119080ED500F73DC3 /* HudLevelSelection.h */,
+				5D46023D19080E8500F73DC3 /* EngineLevelSelection.cpp */,
+				5D46023E19080E8500F73DC3 /* EngineLevelSelection.h */,
+			);
+			name = EngineLevelSelection;
+			sourceTree = "<group>";
+		};
+		5D46023019080E4000F73DC3 /* EngineModes */ = {
+			isa = PBXGroup;
+			children = (
+				5D46024219080E8E00F73DC3 /* EngineStateManager.cpp */,
+				5D46024319080E8E00F73DC3 /* EngineStateManager.h */,
+				5D46024619080E9400F73DC3 /* BaseClasses */,
+				5D46023319080E6800F73DC3 /* EngineCredits */,
+				5D46023219080E5A00F73DC3 /* EngineMainMenu */,
+				5D46023119080E5300F73DC3 /* EngineStage */,
+				5D46022F19080E3700F73DC3 /* EngineLevelSelection */,
+			);
+			name = EngineModes;
+			sourceTree = "<group>";
+		};
+		5D46023119080E5300F73DC3 /* EngineStage */ = {
+			isa = PBXGroup;
+			children = (
+				5D46025319080F3800F73DC3 /* GameObjects */,
+				5D46024D19080ECF00F73DC3 /* HudStage.cpp */,
+				5D46024E19080ECF00F73DC3 /* HudStage.h */,
+				5D46023A19080E7F00F73DC3 /* EngineStage.cpp */,
+				5D46023B19080E7F00F73DC3 /* EngineStage.h */,
+			);
+			name = EngineStage;
+			sourceTree = "<group>";
+		};
+		5D46023219080E5A00F73DC3 /* EngineMainMenu */ = {
+			isa = PBXGroup;
+			children = (
+				5D46024A19080EC900F73DC3 /* HudMainMenu.cpp */,
+				5D46024B19080EC900F73DC3 /* HudMainMenu.h */,
+				5D46023719080E7900F73DC3 /* EngineMainMenu.cpp */,
+				5D46023819080E7900F73DC3 /* EngineMainMenu.h */,
+			);
+			name = EngineMainMenu;
+			sourceTree = "<group>";
+		};
+		5D46023319080E6800F73DC3 /* EngineCredits */ = {
+			isa = PBXGroup;
+			children = (
+				5D46024719080EC100F73DC3 /* HudCredits.cpp */,
+				5D46024819080EC100F73DC3 /* HudCredits.h */,
+				5D46023419080E7200F73DC3 /* EngineCredits.cpp */,
+				5D46023519080E7200F73DC3 /* EngineCredits.h */,
+			);
+			name = EngineCredits;
+			sourceTree = "<group>";
+		};
+		5D46024619080E9400F73DC3 /* BaseClasses */ = {
+			isa = PBXGroup;
+			children = (
+				5D1EAEB11864D54B004C9756 /* Hud.cpp */,
+				5D1EAEB21864D54B004C9756 /* Hud.h */,
+				5D46024019080E8E00F73DC3 /* Engine.cpp */,
+				5D46024119080E8E00F73DC3 /* Engine.h */,
+			);
+			name = BaseClasses;
+			sourceTree = "<group>";
+		};
+		5D46025319080F3800F73DC3 /* GameObjects */ = {
+			isa = PBXGroup;
+			children = (
+				5D46025519080FEE00F73DC3 /* Powerup.cpp */,
+				5D46025619080FEE00F73DC3 /* Powerup.h */,
 				5DF940E417F4B14F0082C239 /* Pod.cpp */,
 				5DF940E517F4B14F0082C239 /* Pod.h */,
 				5DF940E617F4B14F0082C239 /* Tunnel.cpp */,
@@ -158,7 +277,22 @@
 				5DF940EC17F4B1500082C239 /* Vine.cpp */,
 				5DF940ED17F4B1500082C239 /* Vine.h */,
 			);
-			name = Classes;
+			name = GameObjects;
+			sourceTree = "<group>";
+		};
+		5D46025419080F4D00F73DC3 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */,
+				5DCDDD901911719200CF67F1 /* PlayerLevel.h */,
+				5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */,
+				5DCDDD921911719200CF67F1 /* PlayerProgress.h */,
+				5D2D422D18CE32BA0035786C /* Score.cpp */,
+				5D2D422E18CE32BA0035786C /* Score.h */,
+				5DF1087118C41BF800FD25E4 /* Player.cpp */,
+				5DF940E317F4B14F0082C239 /* Player.h */,
+			);
+			name = Player;
 			sourceTree = "<group>";
 		};
 		5DF9406917F4AF360082C239 = {
@@ -328,20 +462,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
+				5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
+				5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */,
+				5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */,
+				5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */,
+				5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */,
+				5D46023F19080E8500F73DC3 /* EngineLevelSelection.cpp in Sources */,
 				5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */,
 				5D2A13B018B82E8E002D8C6F /* Networking.mm in Sources */,
+				5D46023C19080E7F00F73DC3 /* EngineStage.cpp in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
 				5D2D422F18CE32BA0035786C /* Score.cpp in Sources */,
 				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
 				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
+				5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */,
 				5DF940EF17F4B1500082C239 /* Pod.cpp in Sources */,
+				5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */,
 				5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */,
+				5D46024F19080ECF00F73DC3 /* HudStage.cpp in Sources */,
+				5D46023619080E7200F73DC3 /* EngineCredits.cpp in Sources */,
 				5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */,
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
 				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
+				5D46024519080E8E00F73DC3 /* EngineStateManager.cpp in Sources */,
+				5D46023919080E7900F73DC3 /* EngineMainMenu.cpp in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
+				5D46024419080E8E00F73DC3 /* Engine.cpp in Sources */,
 				5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */,
 				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
 				5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */,

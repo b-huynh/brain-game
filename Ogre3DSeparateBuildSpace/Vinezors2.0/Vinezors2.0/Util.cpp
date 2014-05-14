@@ -15,16 +15,16 @@
 
 Util::ConfigGlobal::ConfigGlobal()
 {
-    scheduleMain = "DEABC";
+    scheduleMain = "GABC";
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     sessionTime = 1800.00;
     stageTime = 120.0;
-    stageTotalSignals = 60;
-    stageTotalTargets1 = 20;
-    stageTotalTargets2 = 35;
-    stageTotalTargets3 = 45;
-    stageTotalCollections = 40;
+    stageTotalSignals = 300;
+    stageTotalTargets1 = 100;
+    stageTotalTargets2 = 150;
+    stageTotalTargets3 = 200;
+    stageTotalCollections = 30;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
@@ -46,13 +46,15 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
     tunnelWallLength = tunnelSegmentWidth / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
-    tunnelSegmentsPerSection = 5;
+    tunnelSegmentsPerSection = 4;
     tunnelSegmentsPerPod = 4;
     tunnelSegmentsPerDistractors = 4;
+    tunnelSegmentsPerPowerup = 4;
     tunnelSegmentsBeforeRefresh = tunnelSegmentsPerSection * 2;
-    tunnelSectionsPerNavigationUpgrade = 3;
+    tunnelSectionsPerNavigationUpgrade = 10;
     initialSegmentsFirstPod = 3;
     initialSegmentsFirstDistractors = 5;
+    initialSegmentsFirstPowerup = 6;
     initiationSections = 1;
     vineTOffset = 1.1;
     vineRadius = tunnelSegmentWidth / 15.0;
@@ -87,14 +89,15 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 1;
     HPPositiveWrongAnswer = -2;
     HPPositiveDistractor = -1;
-    distractorSpeedPenalty = -1.0;
-    distractorTimePenalty = 0.0;
+    wrongAnswerTimePenalty = 10.0;
+    distractorSpeedPenalty = 1.0;
+    distractorTimePenalty = 10.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
-    maxCamSpeed = 30.0;
+    maxCamSpeed = 40.0;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -146,7 +149,11 @@ Util::ConfigGlobal::ConfigGlobal()
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
     signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_DIAMOND, POD_SOUND_3));
     signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-    navMap = std::vector<NavigationLevel>(21);
+    
+    //navMap = std::vector<NavigationLevel>(1);
+    //navMap[0] = NavigationLevel(0, 4, 3);
+    
+    navMap = std::vector<NavigationLevel>(23);
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -168,50 +175,71 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[18] = NavigationLevel(18, 3, 4);
     navMap[19] = NavigationLevel(19, 4, 6);
     navMap[20] = NavigationLevel(20, 3, 5);
-//    navMap[21] = NavigationLevel(21, 3, 6);
-//    navMap[22] = NavigationLevel(22, 4, 7);
+    navMap[21] = NavigationLevel(21, 3, 6);
+    navMap[22] = NavigationLevel(22, 4, 7);
+    
     navIndex = 0;
     
-    speedMap[1] = 1.0;
-    speedMap[2] = 2.0;
-    speedMap[3] = 3.0;
-    speedMap[4] = 4.0;
+    speedMap[1] = 5.0;
+    speedMap[2] = 5.0;
+    speedMap[3] = 5.0;
+    speedMap[4] = 5.0;
     speedMap[5] = 5.0;
-    speedMap[6] = 6.0;
-    speedMap[7] = 7.0;
-    speedMap[8] = 8.0;
-    speedMap[9] = 9.0;
-    speedMap[10] = 10.0;
-    speedMap[11] = 11.0;
-    speedMap[12] = 12.0;
-    speedMap[13] = 13.0;
-    speedMap[14] = 14.0;
-    speedMap[15] = 15.0;
-    speedMap[16] = 18.0;
-    speedMap[17] = 21.0;
-    speedMap[18] = 22.0;
-    speedMap[19] = 23.0;
-    speedMap[20] = 24.0;
-    speedMap[21] = 25.0;
-    speedMap[22] = 26.0;
-    speedMap[23] = 27.0;
-    speedMap[24] = 28.0;
-    speedMap[25] = 29.0;
-    speedMap[26] = 30.0;
-    speedMap[27] = 30.5;
-    speedMap[28] = 31.0;
-    speedMap[29] = 31.5;
-    speedMap[30] = 32.0;
-    speedMap[31] = 32.5;
-    speedMap[32] = 33.0;
-    speedMap[33] = 33.5;
-    speedMap[34] = 34.0;
-    speedMap[35] = 34.5;
-    speedMap[36] = 35.0;
-    speedMap[37] = 35.5;
-    speedMap[38] = 36.0;
-    speedMap[39] = 36.5;
-    speedMap[40] = 37.0;
+    speedMap[6] = 5.5;
+    speedMap[7] = 6.0;
+    speedMap[8] = 6.5;
+    speedMap[9] = 7.0;
+    speedMap[10] = 7.5;
+    speedMap[11] = 8.0;
+    speedMap[12] = 8.5;
+    speedMap[13] = 9.0;
+    speedMap[14] = 9.5;
+    speedMap[15] = 10.0;
+    speedMap[16] = 13.0;
+    speedMap[17] = 15.0;
+    speedMap[18] = 17.0;
+    speedMap[19] = 19.0;
+    speedMap[20] = 20.0;
+    speedMap[21] = 21.0;
+    speedMap[22] = 22.0;
+    speedMap[23] = 23.0;
+    speedMap[24] = 24.0;
+    speedMap[25] = 25.0;
+    speedMap[26] = 25.5;
+    speedMap[27] = 26.0;
+    speedMap[28] = 26.5;
+    speedMap[29] = 27.0;
+    speedMap[30] = 27.5;
+    speedMap[31] = 28.0;
+    speedMap[32] = 28.5;
+    speedMap[33] = 29.0;
+    speedMap[34] = 29.5;
+    speedMap[35] = 30.0;
+    speedMap[36] = 30.5;
+    speedMap[37] = 31.0;
+    speedMap[38] = 31.5;
+    speedMap[39] = 32.0;
+    speedMap[40] = 32.5;
+    speedMap[41] = 33.0;
+    speedMap[42] = 33.5;
+    speedMap[43] = 34.0;
+    speedMap[44] = 34.5;
+    speedMap[45] = 35.0;
+    speedMap[46] = 35.5;
+    speedMap[47] = 36.0;
+    speedMap[48] = 36.5;
+    speedMap[49] = 37.0;
+    speedMap[50] = 37.5;
+    speedMap[51] = 38.0;
+    speedMap[52] = 38.5;
+    speedMap[53] = 39.0;
+    speedMap[54] = 39.5;
+    speedMap[55] = 40.0;
+    speedMap[56] = 40.0;
+    speedMap[57] = 40.0;
+    speedMap[58] = 40.0;
+    speedMap[59] = 40.0;
+    speedMap[60] = 40.0;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -247,10 +275,7 @@ void Util::ConfigGlobal::set()
     label5_posX = screenWidth - screenWidth / 40;
     label5_posY = 7 * screenHeight / 40;
     label6_posX = screenWidth / 2;
-    label6_posY = screenHeight / 2 - screenHeight / 5;
-#ifdef DEBUG_MODE
-    label6_posY = screenHeight / 2 - screenHeight / 3.5;
-#endif
+    label6_posY = screenHeight / 2 - screenHeight / 3;
     label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
     
@@ -258,6 +283,11 @@ void Util::ConfigGlobal::set()
     pauseButton_posY = screenHeight - screenHeight / 12;
     pauseButton_width = screenWidth / 15;
     pauseButton_height = pauseButton_width;
+}
+
+Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
+{
+    return Vector2(p.x / screenWidth, p.y / screenHeight);
 }
 
 void Util::ConfigGlobal::initPaths()
@@ -346,10 +376,14 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> tunnelSegmentsPerPod;
     else if (paramName == "tunnelSegmentsPerDistractors")
         in >> tunnelSegmentsPerDistractors;
+    else if (paramName == "tunnelSegmentsPerPowerup")
+        in >> tunnelSegmentsPerPowerup;
     else if (paramName == "initialSegmentsFirstPod")
         in >> initialSegmentsFirstPod;
     else if (paramName == "initialSegmentsFirstDistractors")
         in >> initialSegmentsFirstDistractors;
+    else if (paramName == "initialSegmentsFirstPowerup")
+        in >> initialSegmentsFirstPowerup;
     else if (paramName == "podRotateSpeed")
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
@@ -394,6 +428,8 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> HPNegativeWrongAnswer;
     else if (paramName == "HPNegativeDistractor")
         in >> HPNegativeDistractor;
+    else if (paramName == "wrongAnswerTimePenalty")
+        in >> wrongAnswerTimePenalty;
     else if (paramName == "distractorSpeedPenalty")
         in >> distractorSpeedPenalty;
     else if (paramName == "distractorTimePenalty")
@@ -852,6 +888,24 @@ int Util::getNumSides(bool sides[NUM_DIRECTIONS])
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         if (sides[i]) ++count;
     return count;
+}
+
+int Util::getControlLevel(bool sides[NUM_DIRECTIONS])
+{
+    int count = getNumSides(sides);
+    switch (count)
+    {
+        case 3:
+            return 1;
+        case 5:
+            return 2;
+        case 7:
+            return 3;
+        case 8:
+            return 4;
+        default:
+            return 0; // should never happen
+    }
 }
 
 Direction Util::randDirection()
@@ -1399,6 +1453,34 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
     Util::createSegment(sceneMgr, "segmentMesh8", 1.0, 1.0, sides);
 }
 
+void Util::setSkyboxAndFog(std::string nameSkybox)
+{
+    // Set skybox, fog, and background
+    if (nameSkybox == "General/PurpleSpaceSkyPlane")
+    {
+        Plane plane;
+        plane.d = 80;
+        plane.normal = Ogre::Vector3(0, 0, 1);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 1, true);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
+        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+    }
+    else if (nameSkybox == "General/BlankStarrySkyPlane")
+    {
+        Plane plane;
+        plane.d = 80;
+        plane.normal = Ogre::Vector3(0, 0, 1);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
+    }
+    else
+    {
+        std::cerr << "WARNING: UNKNOWN SKYBOX " << nameSkybox << std::endl;
+    }
+}
+
 // Step function to increase speed by 1 or decrease by 1 is not included but could be.
 void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime)
 {
@@ -1446,65 +1528,70 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
-void Util::generateMaterials()
+void PodInfo::performHoldout(char phase)
 {
-    /*
-     MaterialPtr mat0 =
-     MaterialManager::getSingleton().create("PodUnknownMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat0->setLightingEnabled(true);
-     mat0->setAmbient(0.3, 0.3, 0.3);
-     mat0->setDiffuse(0.3, 0.3, 0.3, 1.0);
-     mat0->load();
-     
-     MaterialPtr mat1 =
-     MaterialManager::getSingleton().create("PodRedMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat1->setLightingEnabled(true);
-     mat1->setAmbient(0.5, 0.0, 0.0);
-     mat1->setDiffuse(0.5, 0.0, 0.0, 1.0);
-     mat1->load();
-     
-     MaterialPtr mat2 =
-     MaterialManager::getSingleton().create("PodGreenMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat2->setLightingEnabled(true);
-     mat2->setAmbient(0.0, 0.5, 0.0);
-     mat2->setDiffuse(0.0, 0.5, 0.0, 1.0);
-     mat2->load();
-     
-     MaterialPtr mat3 =
-     MaterialManager::getSingleton().create("PodBlueMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat3->setAmbient(0.0, 0.0, 0.5);
-     mat3->setDiffuse(0.0, 0.0, 0.5, 1.0);
-     mat3->load();
-     
-     MaterialPtr mat4 =
-     MaterialManager::getSingleton().create("PodYellowMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat4->setLightingEnabled(true);
-     mat4->setAmbient(0.5, 0.5, 0.0);
-     mat4->setDiffuse(0.5, 0.5, 0.0, 1.0);
-     mat4->load();
-     
-     MaterialPtr mat5 =
-     MaterialManager::getSingleton().create("StemMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat5->setLightingEnabled(true);
-     mat5->setAmbient(0.25, 0.5, 0.25);
-     mat5->setDiffuse(0.25, 0.5, 0.25, 1.0);
-     mat5->load();
-     
-     MaterialPtr mat6 =
-     MaterialManager::getSingleton().create("PodShellMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-     mat6->setLightingEnabled(true);
-     mat6->setAmbient(0.5, 0.0, 0.0);
-     mat6->setDiffuse(0.5, 0.0, 0.0, 0.1);
-     mat6->load();
-     */
+    //float rand_holdOut = Ogre::Math::UnitRandom();
+    float rand_signal = Ogre::Math::UnitRandom();
     
-    /*
-     Technique *technique = m->createTechnique();
-     Pass *pass = technique->createPass();
-     pass->setIlluminationStage(Ogre::IS_PER_LIGHT);
-     pass->setVertexColourTracking(Ogre::TVC_DIFFUSE);
-     pass->setAmbient(1.0, 0.0, 0.0);
-     pass->setLightingEnabled(true);
-     */
-    
+    if( true ) {//|| rand_holdOut < 0.1f ) {
+        switch(phase) {
+            case 'A':   // levels that normally have color and sound active
+                if( rand_signal < 0.5f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    std::cout << "Hold out: color" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound" << std::endl;
+                }
+                break;
+            case 'B':   // levels that normally have shape and sound active
+                if( rand_signal < 0.5f ) {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: shape" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound" << std::endl;
+                }
+                break;
+            case 'C':   // levels that normally have sound only active
+                break;
+            case 'D':   // levels that normally have all three signals active
+                if( rand_signal < 0.167f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                }
+                else if( rand_signal < 0.333f ) {
+                    podSound = POD_SOUND_UNKNOWN;
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: sound and shape (color only)" << std::endl;
+                }
+                else if( rand_signal < 0.500f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: color and sound (shape only)" << std::endl;
+                }
+                else if( rand_signal < 0.667f ) {
+                    podColor = POD_COLOR_HOLDOUT;
+                    std::cout << "Hold out: color (shape and sound only)" << std::endl;
+                }
+                else if( rand_signal < 0.824f ) {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    std::cout << "Hold out: shape (color and sound only)" << std::endl;
+                }
+                else {
+                    podSound = POD_SOUND_UNKNOWN;
+                    std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                }
+            case 'E':   // recess levels
+                break;
+            case 'F':   // gear shift levels
+                break;
+            default:
+                break;
+        }
+    }
+
 }

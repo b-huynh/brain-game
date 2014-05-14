@@ -15,17 +15,19 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEBUG_MODE 1
+#define DEBUG_MODE
+//#define NETWORKING
 
 #include <string>
 
-enum GameState { STATE_PLAY, STATE_PROMPT };
+enum GameState { GAME_STATE_PLAY, GAME_STATE_PROMPT, GAME_STATE_MENU };
+enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS, STAGE_MODE_COLLECTION };
 enum Evaluation { PASS, FAIL, EVEN };
-enum SpeedControlMode { SPEED_CONTROL_FLEXIBLE, SPEED_CONTROL_AUTO };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
 enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum ActionCode { ACTION_NONE, ACTION_SINGLE_TAP, ACTION_DOUBLE_TAP, ACTION_TAP_HOLD, ACTION_SWIPE_LEFT, ACTION_SWIPE_RIGHT, ACTION_PINCH };
+enum PowerupType { POWERUP_NONE, POWERUP_TRACTOR_BEAM, POWERUP_TIME_WARP, POWERUP_SHIELDS };
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
@@ -64,12 +66,10 @@ struct SectionInfo
 };
 
 // Pod Info
-enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD };
-enum PodType { POD_TYPE_COLOR, POD_TYPE_SHAPE, POD_TYPE_SOUND }; // POD_TYPE_LOC, POD_TYPE_SIZE, POD_TYPE_ANIMATION, POD_TYPE_TYPE
-#define NUM_POD_TYPES 3
-enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_UNKNOWN };
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
+enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_HOLDOUT, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_UNKNOWN };
-enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
+enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_HOLDOUT, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
 enum PodSignal { POD_SIGNAL_1, POD_SIGNAL_2, POD_SIGNAL_3, POD_SIGNAL_4, POD_SIGNAL_UNKNOWN };
 #define NUM_POD_SIGNALS 5 // For assigning sounds to each index
 struct PodInfo
@@ -93,6 +93,8 @@ struct PodInfo
     PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false)
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
+    
+    void performHoldout(char phase);
 };
 
 // Vine Info
@@ -155,10 +157,12 @@ namespace Util
         int tunnelSegmentsPerSection;
         int tunnelSegmentsPerPod;
         int tunnelSegmentsPerDistractors;
+        int tunnelSegmentsPerPowerup;
         int tunnelSegmentsBeforeRefresh;
         int tunnelSectionsPerNavigationUpgrade;
         int initialSegmentsFirstPod;
         int initialSegmentsFirstDistractors;
+        int initialSegmentsFirstPowerup;
         int initiationSections;
         float vineTOffset;
         float vineRadius;
@@ -193,6 +197,7 @@ namespace Util
         int HPPositiveCorrectAnswer;
         int HPPositiveWrongAnswer;
         int HPPositiveDistractor;
+        float wrongAnswerTimePenalty;
         float distractorSpeedPenalty;
         float distractorTimePenalty;
         float initCamSpeed;
@@ -299,6 +304,8 @@ namespace Util
         ConfigGlobal();
         void set();
         
+        Vector2 convertToPercentScreen(Vector2 p);
+        
         void initPaths();
         void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);
@@ -322,6 +329,7 @@ namespace Util
     void copySides(bool dest[NUM_DIRECTIONS], bool src[NUM_DIRECTIONS]); // C.P.
     int getNumSides(int level);
     int getNumSides(bool sides[NUM_DIRECTIONS]);
+    int getControlLevel(bool sides[NUM_DIRECTIONS]);
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();
@@ -343,11 +351,10 @@ namespace Util
     void createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, float length, float depth, Vector3 loc, Quaternion rot, Vector3 & bl, Vector3 & tr);
     void createSegment(Ogre::SceneManager* sceneMgr, const std::string& strName, float length, float depth,  const bool sides[NUM_DIRECTIONS]);
     void createDefaultSegments(Ogre::SceneManager* sceneMgr);
+    void setSkyboxAndFog(std::string nameSkybox);
     
     void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
     float getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments);
-    
-    void generateMaterials();
 };
 
 

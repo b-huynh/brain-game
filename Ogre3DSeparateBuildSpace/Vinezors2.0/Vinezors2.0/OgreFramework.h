@@ -105,8 +105,6 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
-    void buttonHit(OgreBites::Button* button);
-	
     float totalElapsed;
     
 	Ogre::Root*                 m_pRoot;
@@ -151,8 +149,6 @@ private:
 	int                         m_iNumScreenShots;
     
 	bool                        m_bShutDownOgre;
-    
-    OgreBites::Button*          m_quitButton;
     
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;

@@ -1,0 +1,1081 @@
+material General/LevelSelectButtonRound
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundlevelselect.png
+        }
+      } 
+    }
+}
+
+material General/NextButtonRound
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundnext.png
+        }
+      } 
+    }
+}
+
+material General/NextButtonRoundGRAY
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundnextGRAY.png
+        }
+      } 
+    }
+}
+
+material General/RestartButtonRound
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundrestart.png
+        }
+      } 
+    }
+}
+
+material General/ResumeButtonRound
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundresume.png
+        }
+      } 
+    }
+}
+
+material General/ResumeButtonRoundGRAY
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonroundresumeGRAY.png
+        }
+      } 
+    }
+}
+
+material General/BarColors
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_green_gray.png
+        }
+      } 
+    }
+}
+
+material General/BarColors2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_blue_gray.png
+        }
+      } 
+    }
+}
+
+material General/BarColors3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        texture_unit
+        {
+            texture bar_purple_size.png
+        }
+      } 
+    }
+}
+
+material General/Indicator
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture indicatorwhite.png
+        }
+      } 
+    }
+}
+
+material General/PauseButton
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_button.png
+        }
+      } 
+    }
+}
+
+material General/PauseButtonYellow
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_buttonyellow.png
+        }
+      } 
+    }
+}
+
+material General/PauseButtonGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_buttongray.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoDown
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoright1.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoDownGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoright1GRAY.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoUp
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoleft1.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoUpGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoleft1GRAY.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGo
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongo.png
+        }
+      } 
+    }
+}
+
+material General/ButtonGoGray
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttongoGRAY.png
+        }
+      } 
+    }
+}
+
+material General/TextArtMainTitle
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture maintitle.png
+			}
+		}
+	}
+}
+
+material General/TextArtCreditsTitle
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture creditstitle.png
+			}
+		}
+	}
+}
+
+material General/PlayButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonplay.png
+			}
+		}
+	}
+}
+
+material General/CreditsButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttoncredits.png
+			}
+		}
+	}
+}
+
+material General/BackButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonback.png
+			}
+		}
+	}
+}
+
+material General/ExitButton
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonexit.png
+			}
+		}
+	}
+}
+
+material General/TextArtLevelSelection
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture selectyourlevel.png
+			}
+		}
+	}
+}
+
+material General/GUITopPanel
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture GUI_LifeBar.png
+			}
+		}
+	}
+}
+
+material General/GUIMainHud
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud.png
+			}
+		}
+	}
+}
+
+material General/GUICollection0Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score0.png
+			}
+		}
+	}
+}
+
+material General/GUICollection0Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score0f.png
+			}
+		}
+	}
+}
+
+material General/GUICollection1Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score1.png
+			}
+		}
+	}
+}
+
+material General/GUICollection1Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score1f.png
+			}
+		}
+	}
+}
+
+material General/GUICollection2Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score2.png
+			}
+		}
+	}
+}
+
+material General/GUICollection2Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score2f.png
+			}
+		}
+	}
+}
+
+material General/GUICollection3Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score3.png
+			}
+		}
+	}
+}
+
+material General/GUICollection3Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score3f.png
+			}
+		}
+	}
+}
+
+material General/GUICollectionGreyed
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score-no.png
+			}
+		}
+	}
+}
+
+material General/GUIToggleTextNumber0
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay0.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber1
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay1.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber2
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay2.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber3
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay3.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber4
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay4.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber5
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay5.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber6
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay6.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber7
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay7.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber8
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay8.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleTextNumber9
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture numberdisplay9.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleButton0
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture speed0slot.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleButton1
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture speed1slot.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleButton2
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture speed2slot.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleButton3
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture speed3slot.png
+            }
+		}
+	}
+}
+
+material General/GUIToggleIndicator
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture pointer.png
+            }
+		}
+	}
+}
+
+material General/GUIPowerupButtonBlank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture no_up.png
+            }
+		}
+	}
+}
+
+material General/GUIPowerupButton0
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture up0.png
+            }
+		}
+	}
+}
+
+material General/GUIPowerupButton1
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture up1.png
+            }
+		}
+	}
+}
+
+material General/GUIPowerupButton2
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture up2.png
+            }
+		}
+	}
+}
+
+material General/PlanetAvailable
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture BlueStar.png
+        }
+      } 
+    }
+}
+
+material General/PlanetUnavailable
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture GrayPlanet.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar0Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_03.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar1Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_13.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar2Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_23.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar3Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture lvlprgress_33.png
+        }
+      } 
+    }
+}
+
+material General/SliderRange
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderrange.png
+        }
+      } 
+    }
+}
+
+material General/SliderBall
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderbutton.png
+        }
+      } 
+    }
+}

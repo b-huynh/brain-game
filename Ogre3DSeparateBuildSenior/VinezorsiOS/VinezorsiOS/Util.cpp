@@ -91,7 +91,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 1;
     HPPositiveWrongAnswer = -2;
     HPPositiveDistractor = -1;
-    distractorSpeedPenalty = -1.0;
+    distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
@@ -129,9 +129,9 @@ Util::ConfigGlobal::ConfigGlobal()
     timeTrialLengthMax = 300;
     navUnlockMax0 = 2;
     navUnlockNBack1 = 4;
-    navUnlockMax1 = 5;
+    navUnlockMax1 = 4;
     navUnlockNBack2 = 6;
-    navUnlockMax2 = 7;
+    navUnlockMax2 = 6;
     volumeMusic = 0.25;
     volumeSignal1 = 0.25;
     volumeSignal2 = 0.25;
@@ -154,7 +154,7 @@ Util::ConfigGlobal::ConfigGlobal()
     signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FLOWER, POD_COLOR_GREEN, POD_SHAPE_IRIS, POD_SOUND_2));
     signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FLOWER, POD_COLOR_PINK, POD_SHAPE_BUBBLE, POD_SOUND_3));
     signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FLOWER, POD_COLOR_YELLOW, POD_SHAPE_DAISY, POD_SOUND_4));
-    navMap = std::vector<NavigationLevel>(8);
+    navMap = std::vector<NavigationLevel>(7);
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -162,7 +162,6 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[4] = NavigationLevel(4, 2, 2);
     navMap[5] = NavigationLevel(5, 1, 2);
     navMap[6] = NavigationLevel(6, 2, 3);
-    navMap[7] = NavigationLevel(7, 2, 4);
     navIndex = 0;
     
     speedMap[1] = 0.2;

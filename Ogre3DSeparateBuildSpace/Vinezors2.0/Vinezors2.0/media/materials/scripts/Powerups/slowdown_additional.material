@@ -1,0 +1,17 @@
+material slowdown/Bubble
+{
+	technique
+	{
+		pass
+		{
+            lighting on
+
+			ambient 0 0 0 1
+			diffuse 0.92 0.92 0.92 0.30
+			scene_blend alpha_blend
+            depth_write off
+		}
+
+	}
+
+}

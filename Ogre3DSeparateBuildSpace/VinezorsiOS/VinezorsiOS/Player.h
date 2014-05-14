@@ -11,62 +11,22 @@
 
 #include <vector>
 #include <fstream>
+#include <map>
 #include "Util.h"
 #include "Vine.h"
 #include "Tunnel.h"
-#include "Score.h"
-
-struct PlayerLevel {
-    int sessionID;
-    
-    // Reps
-    int set1Rep;
-    int set2Rep;
-    int set3Rep;
-    
-    // Ranks
-    int set1; // Color/Sound
-    int set2; // Shape/Sound
-    int set3; // Sound only
-    
-    // New
-    int set1Notify; // Color/Sound
-    int set2Notify; // Shape/Sound
-    int set3Notify; // Sound only
-    
-    int navigation;
-    
-    int minSpeed;
-    int averageSpeed;
-    int maxSpeed;
-    
-    int runSpeed1;
-    int runSpeed2;
-    int runSpeed3;
-    
-    ScoreSet navigationScores;
-    ScoreSet speedScores;
-    
-    int getMasteredNBack() const;
-    
-    int getHighestNBack() const;
-    
-    int getNavLimit() const;
-    
-    PlayerLevel();
-    
-    void calculateNavigation();
-    void calculateSpeed();
-    std::string getCurrentStats() const;
-};
+#include "Powerup.h"
+#include "PlayerLevel.h"
+#include "PlayerProgress.h"
+#include "LevelSet.h"
 
 class Player
 {
 private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
     
+    LevelSet* levels;
     Tunnel* tunnel;
-    Hud* hud;
     
     unsigned seed;
     
@@ -81,6 +41,7 @@ private:
     int numWrongCombo;
     int numAvoidancesTotal;
     int numCollisionsTotal;
+    float score;
 	bool mouseLeft;
 	bool keyUp;
 	bool keyDown;
@@ -106,6 +67,7 @@ private:
     float baseSpeed;
     float bonusSpeed;
     float finalSpeed;
+    float initSpeed;
     float minSpeed;
     float maxSpeed;
     
@@ -114,17 +76,8 @@ private:
     Pod* selectedTarget;
     float glowSpeed;
     
-    SpeedControlMode speedControl;
+    int toggleBack; // 0, 1, or 2
     
-    //static const char ENC_NO_PANEL = '-';
-    //static const char ENC_YES_PANEL = '+';
-    //static const char ENC_OBSTACLE_NO_HIT = '=';
-    //static const char ENC_OBSTACLE_YES_HIT = '#';
-    //static const char ENC_PLAYER_STATIC = 'P';
-    //static const char ENC_PLAYER_CORRECT = 'O';
-    //static const char ENC_PLAYER_WRONG = 'X';
-    //static const char ENC_TARGET = 'T';
-    //static const char ENC_FAKE = 'F';
     static const char ENC_NO_PANEL = '0';
     static const char ENC_YES_PANEL = '1';
     static const char ENC_TARGET = '2';
@@ -182,14 +135,18 @@ private:
     std::list<Session> sessions;
     PlayerLevel skillLevel;
     
+    std::map<std::string,Powerup*> powerups;
+    
     float totalElapsed;
     float totalDistanceTraveled;
     float animationTimer;
     float speedTimer;
-    float shockwaveTimer;
+    float badFuelPickUpTimer;
     float boostTimer;
     float selectTimer;
+    bool selectTimerFlag;
     float startMusicTimer;
+    bool godMode;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -201,18 +158,23 @@ private:
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
-    // Swipe Capabilities (Note: iOS now uses the ViewController on top of ogre, this is more for the OS X version now
-    float inputTotalX;
-    bool inputMoved;
-    float inputLeftBound;
-    float inputRightBound;
-    
+    // Study report at the end of the session
     int numStagesWon;
+    
+    // Stage
+    int levelRequestRow;
+    int levelRequestCol;
+    // Level Selection
+    int menuRowIndex;
+    
+    // Level Results
+    std::vector< std::vector<PlayerProgress> > levelProgress;
 public:
     
 	Player();
-	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float  offset, SpeedControlMode speedControl, unsigned seed, const std::string & filename);
+	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
 	
+    LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
     int getHP() const;
@@ -224,6 +186,7 @@ public:
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
     int getNumCollisionsTotal() const;
+    float getScore() const;
 	bool getMouseLeft() const;
 	bool getKeyUp() const;
 	bool getKeyDown() const;
@@ -245,8 +208,7 @@ public:
 	float getBaseSpeed() const;
 	float getFinalSpeed() const;
 	float getTotalSpeed() const;
-	Vector3 getVineOffset() const;
-    SpeedControlMode getSpeedControl() const;
+	float getVineOffset() const;
 	float getTotalElapsed() const;
 	float getTotalDistanceTraveled() const;
 	float getAnimationTimer() const;
@@ -254,9 +216,24 @@ public:
     float getProgress() const;
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
+    int getToggleBack() const;
+    bool getGodMode() const;
     int getNumStagesWon() const;
+    int getLevelRequestRow() const;
+    int getLevelRequestCol() const;
+    bool hasLevelProgress(int level);
+    bool hasLevelProgress(int row, int col);
+    PlayerProgress getLevelProgress(int level);
+    PlayerProgress getLevelProgress(int row, int col);
+    bool isLevelAvailable(int level);
+    bool isLevelAvailable(int row, int col);
+    int getMenuRowIndex() const;
+    int getTotalLevelRating(int row);
+    bool hasTriggeredStartup() const;
+    float getScoring() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
+    void setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed);
     void setSeed(unsigned value);
     void setName(const std::string & name);
     void setHP(int value);
@@ -264,6 +241,7 @@ public:
     void setNumWrongTotal(int value);
     void setNumCorrectCombo(int value);
     void setNumWrongCombo(int value);
+    void setScore(float value);
 	void setMouseLeft(bool value);
 	void setKeyUp(bool value);
 	void setKeyDown(bool value);
@@ -284,6 +262,13 @@ public:
     void setDesireRoll(int value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
+    void setToggleBack(int value);
+    void setGodMode(bool value);
+    void setLevelRequestRow(int value);
+    void setLevelRequestCol(int value);
+    void setLevelRequest(int row, int col);
+    void setMenuRowIndex(int value);
+    void setAllProgressTo(const PlayerProgress & value);
     void saveCam();
     void revertCam();
 	Vector3 getCamForward(bool combined = true) const;
@@ -299,40 +284,58 @@ public:
     void setSounds(bool mode);
     
     void unlink();
-    void link(Tunnel* tunnel, Hud* hud);
-    void newTunnel(bool setmusic);
+    void link(Tunnel* tunnel);
+    void initToggleBack();
+    void newTunnel(const std::string & nameMusic);
+    void startMenu();
     
 	void move(Vector3 delta);
     void changeMovementMode();
     void setShowCombo(bool value);
 	void addVine(Vine* vine);
+    void removeVines();
 	void checkCollisions();
+    void decideFinalSpeed(float elapsed);
     
-    void resetCursorMoved();
-    void setCursorMoved();
-    void updateCursorCooldown(float elapsed);
-    void checkCursorMove(float dx, float dy);
-    bool checkPerformLeftMove(bool force);
-    bool checkPerformRightMove(bool force);
     void addAction(ActionCode actType);
+    void updateTractorBeam(float elapsed);
+    void performTractorBeam();
+    void updateTimeWarp(float elapsed);
+    void performTimeWarp();
+    void updateBoost(float elapsed);
+    void performBoost();
+    void updateShields(float elapsed);
+    bool triggerShields();
+    void performShields();
     void updateGlowExtraction(float elapsed);
     void setGlowGrabParameters();
-    void performShockwave();
-    void updateShockwave(float elapsed);
-    void performBoost();
-    void updateBoost(float elapsed);
+    void beginBadFuelPickUp();
+    void updateBadFuelPickUp(float elapsed);
     void testPodGiveFeedback(Pod* test);
     void determineSpawnCombo();
+    void offsetShip(float elapsed);
+    void recordInfo();
 	void update(float elapsed);
+    
+    void initPowerUps();
+    void setPowerUp(std::string pwr, bool value);
+    bool isPowerUpAvailable(std::string pwr);
+    bool isPowerUpActive(std::string pwr);
+    void performPowerUp(std::string pwr);
+    void destroyPowerUps();
+    void resetPowerUps();
     
     void incrementNumStagesWon();
     void calculateNavigationScores();
     void calculateSpeedScores();
     std::string getCurrentStats() const;
+    
+    void saveAllResults(Evaluation eval);
     bool saveStage(std::string file);
     bool saveActions(std::string file);
     bool saveSession(std::string file);
-    bool saveProgress(std::string file, bool updateSessionID);
+    //bool saveProgress(std::string file, bool updateSessionID);
+    bool saveProgress(std::string file);
     bool loadProgress(std::string savePath);
     
     ~Player();

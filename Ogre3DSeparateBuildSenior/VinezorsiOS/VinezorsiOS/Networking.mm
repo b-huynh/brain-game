@@ -87,7 +87,16 @@ bool syncConfig (std::string configPath, std::string username)
  * Places it in globals.configPath on device
  */
 bool syncConfig() {
-    return syncConfig(globals.configPath, globals.playerName);
+    NSString* conf_path = [NSString stringWithUTF8String:globals.configPath.c_str()];
+    conf_path = [conf_path stringByDeletingLastPathComponent];
+    NSError* error = nil;
+    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:conf_path withIntermediateDirectories:YES attributes:nil error:&error];
+    if (success)
+        return syncConfig(globals.configPath, globals.playerName);
+    else {
+        NSLog(@"WARNING: Could not create subject directory...");
+        return false;
+    }
 }
 
 /*

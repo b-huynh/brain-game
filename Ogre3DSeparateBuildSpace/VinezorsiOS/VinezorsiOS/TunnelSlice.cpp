@@ -93,6 +93,67 @@ void TunnelSlice::initWalls()
     entireWall->attachObject(entireWallEntity);
     entireWall->scale(width, width, depth);
     
+    
+    if( type == CHECKPOINT_PASS )
+    {
+        gateNode = sliceNode->createChildSceneNode("gateNode" + Util::toStringInt(wallID));
+        gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(wallID), "ExitGate/ExitGate.mesh");
+    
+        gateEntity->getSubEntity(0)->setMaterialName("Gate/TransparentNeonAqua");
+        gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
+        gateEntity->getSubEntity(2)->setMaterialName("Gate/LightGray");
+        gateEntity->getSubEntity(3)->setMaterialName("Gate/DarkGray");
+    
+        for( int i = 0; i < 8; ++i )
+        {
+            gateDoorNodes[i] = gateNode->createChildSceneNode("gateDoorNode" + Util::toStringInt(wallID) + Util::toStringInt(i));
+            gateDoorEntities[i] = gateDoorNodes[i]->getCreator()->createEntity("gateDoorEntity" + Util::toStringInt(wallID) + Util::toStringInt(i), "ExitGate/ExitGateDoor.mesh");
+        
+            gateDoorEntities[i]->getSubEntity(0)->setMaterialName("Gate/DarkestGray");
+            gateDoorEntities[i]->getSubEntity(1)->setMaterialName("Gate/DarkGray");
+        
+            gateDoorNodes[i]->attachObject(gateDoorEntities[i]);
+        
+            gateDoorNodes[i]->roll(Degree(45*i));
+        }	
+    
+        gateNode->attachObject(gateEntity);
+        gateNode->translate(Vector3(0,0,-10));
+        gateNode->scale(2.45f,2.45f,2.45f);
+    }
+    else if( type == CHECKPOINT_FAIL ) {
+        gateNode = sliceNode->createChildSceneNode("gateNode" + Util::toStringInt(wallID));
+        gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(wallID), "ExitGate/ExitGate.mesh");
+        
+        gateEntity->getSubEntity(0)->setMaterialName("Gate/TransparentNeonAqua");
+        gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
+        gateEntity->getSubEntity(2)->setMaterialName("Gate/LightGray");
+        gateEntity->getSubEntity(3)->setMaterialName("Gate/DarkGray");
+        
+        for( int i = 0; i < 8; ++i )
+        {
+            gateDoorNodes[i] = gateNode->createChildSceneNode("gateDoorNode" + Util::toStringInt(wallID) + Util::toStringInt(i));
+            gateDoorEntities[i] = gateDoorNodes[i]->getCreator()->createEntity("gateDoorEntity" + Util::toStringInt(wallID) + Util::toStringInt(i), "ExitGate/ExitGateDoor.mesh");
+            
+            gateDoorEntities[i]->getSubEntity(0)->setMaterialName("Gate/DarkestGray");
+            gateDoorEntities[i]->getSubEntity(1)->setMaterialName("Gate/DarkGray");
+            
+            gateDoorNodes[i]->attachObject(gateDoorEntities[i]);
+            
+            gateDoorNodes[i]->roll(Degree(45*i));
+            
+            Vector3 t = Vector3(0,4.0f,0);
+            Vector3 r = Vector3(Math::Cos(Degree(45*i))*t.x - Math::Sin(Degree(45*i))*t.y,Math::Sin(Degree(45*i))*t.x + Math::Cos(Degree(45*i))*t.y,0);
+            gateDoorNodes[i]->setPosition(r);
+        }
+        
+        gateNode->attachObject(gateEntity);
+        gateNode->translate(Vector3(0,0,-10));
+        gateNode->scale(2.45f,2.45f,2.45f);
+    }
+    
+    
+    
     /*
      // The bottom initializes a node for each direction and attaches a plane mesh to them
     float wallLength = getWallLength();
@@ -290,11 +351,11 @@ bool TunnelSlice::hasAvailableSide(Direction side) const
 std::string TunnelSlice::getMaterialName() const
 {
     std::string materialName;
-    if (type == CHECKPOINT_PASS)
+    /*if (type == CHECKPOINT_PASS)
         materialName = "General/WallCheckpointPass";
-    else if (type == CHECKPOINT_FAIL)
-        materialName = "General/WallCheckpointFail";
-    else if (type == CHECKPOINT_EVEN)
+     else if (type == CHECKPOINT_FAIL)
+         materialName = "General/WallCheckpointFail";
+    else*/ if (type == CHECKPOINT_EVEN)
         materialName = "General/WallCheckpointEven";
     else if (materialNames.size() > 0)
         materialName = materialNames[rand() % materialNames.size()];

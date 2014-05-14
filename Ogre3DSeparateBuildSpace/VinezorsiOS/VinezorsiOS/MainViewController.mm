@@ -44,6 +44,7 @@
     CGFloat vmaxX;
     CGFloat vmaxY;
     int swipeState;
+    bool pinchDetected;
 }
 
 @property (retain) NSTimer *mTimer;
@@ -102,6 +103,7 @@
     initialThreshold = 15.00;
     swipeThreshold = 30.00;
     swipeState = 0;
+    pinchDetected = false;
 }
 
 - (void)didReceiveMemoryWarning
@@ -325,7 +327,11 @@
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformPinch();
+    {
+        NSLog(@"%f\n", sender.scale);
+        if (sender.scale <= 0.75 || sender.scale >= 1.5)
+            mApplication->activatePerformPinch();
+    }
 }
 
 - (IBAction)handlePan:(UIPanGestureRecognizer*)sender
@@ -342,18 +348,22 @@
         vmaxX = 0.0;
         vmaxY = 0.0;
         swipeState = 0;
+        
+        //NSLog(@"Began %f %f", p.x, p.y);
+        mApplication->activatePressed(p.x, p.y);
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
         CGFloat dx = dp.x - totalX;
         CGFloat dy = dp.y - totalY;
+        //NSLog(@"Move %f %f", p.x, p.y);
+        mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
         
         if (abs(vmaxX) < abs(v.x))
             vmaxX = v.x;
         if (abs(vmaxY) < abs(v.y))
             vmaxY = v.y;
         
-        NSLog(@"%f %f", dx, v.x);
         
         if ((totalX == 0.0 && dx < -initialThreshold && vmaxX < -initialThreshold) || (dx < vmaxX / 5 && vmaxX < -swipeThreshold))
         //if ((totalX == 0.0 && dx < -initialThreshold && v.x < -initialThreshold) || (dx < v.x && v.x < -swipeThreshold))
@@ -370,11 +380,17 @@
     }
     else
     {
+        CGFloat dx = dp.x - totalX;
+        CGFloat dy = dp.y - totalY;
+        mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
+        
         totalX = 0.0;
         totalY = 0.0;
         vmaxX = 0.0;
         vmaxY = 0.0;
         swipeState = 0;
+        
+        //NSLog(@"End %f %f", p.x, p.y);
     }
 }
 
@@ -396,7 +412,7 @@
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
+    return UIInterfaceOrientationLandscapeLeft;
 }
 
 - (void)cleanup
