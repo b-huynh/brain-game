@@ -410,9 +410,15 @@ void EngineStage::activatePerformSingleTap(float x, float y)
 void EngineStage::activatePerformPinch()
 {
 #ifdef DEBUG_MODE
-    std::cout << "God Mode: " << player->getGodMode() << std::endl;
-    player->setGodMode(!player->getGodMode());
-    if (tunnel) tunnel->respondToToggleCheat();
+#if defined(OGRE_IS_IOS)
+    if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+    else
+#endif
+    {
+        std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        player->setGodMode(!player->getGodMode());
+        if (tunnel) tunnel->respondToToggleCheat();
+    }
 #endif
     switch (stageState)
     {

@@ -74,6 +74,15 @@ void HudLevelSelection::alloc()
             levelItemNames[i][j] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelName" + Util::toStringInt(i) + (char)('A' + j)));
         }
     }
+    levelItemScores = std::vector< std::vector<TextAreaOverlayElement*> >(LEVEL_ITEM_HEIGHT);
+    for (int i = 0; i < levelItemScores.size(); ++i)
+    {
+        levelItemScores[i] = std::vector<TextAreaOverlayElement*>(LEVEL_ITEM_WIDTH);
+        for (int j = 0; j < levelItemScores[i].size(); ++j)
+        {
+            levelItemScores[i][j] = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelScore" + Util::toStringInt(i) + (char)('A' + j)));
+        }
+    }
     levelSetStars = std::vector<TextAreaOverlayElement*>(LEVEL_ITEM_HEIGHT);
     for (int i = 0; i < levelSetStars.size(); ++i)
     {
@@ -106,6 +115,7 @@ void HudLevelSelection::alloc()
             overlay1->add2D(levelItemBackgrounds[i][j]);
             levelItemBackgrounds[i][j]->addChild(levelItemPlanets[i][j]);
             levelItemBackgrounds[i][j]->addChild(levelItemNames[i][j]);
+            levelItemBackgrounds[i][j]->addChild(levelItemScores[i][j]);
             if (j == levelItemBackgrounds[i].size() - 1)
             {
                 levelItemBackgrounds[i][j]->addChild(levelSetStars[i]);
@@ -134,6 +144,9 @@ void HudLevelSelection::dealloc()
     for (int i = 0; i < levelItemNames.size(); ++i)
         for (int j = 0; j < levelItemNames[i].size(); ++j)
             OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemNames[i][j]);
+    for (int i = 0; i < levelItemScores.size(); ++i)
+        for (int j = 0; j < levelItemScores[i].size(); ++j)
+            OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelItemScores[i][j]);
     for (int i = 0; i < levelSetStars.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSetStars[i]);
     for (int i = 0; i < levelSetScores.size(); ++i)
@@ -157,9 +170,9 @@ void HudLevelSelection::initOverlay()
     backButtonBackground->setMaterialName("General/BackButton");
     
     float sx = 0.12;
-    float sy = 0.30;
+    float sy = 0.250;
     float dx = 0.135;
-    float dy = 0.135;
+    float dy = 0.175;
     float curx = sx;
     float cury = sy;
     // Set orientations for background per level
@@ -205,6 +218,18 @@ void HudLevelSelection::initOverlay()
             levelItemNames[i][j]->setFontName("Arial");
         }
     }
+    // Set orientations for the score per level
+    for (int i = 0; i < levelItemScores.size(); ++i)
+    {
+        for (int j = 0; j < levelItemScores[i].size(); ++j)
+        {
+            levelItemScores[i][j]->setMetricsMode(GMM_RELATIVE);
+            levelItemScores[i][j]->setAlignment(TextAreaOverlayElement::Center);
+            levelItemScores[i][j]->setPosition(0.050, 0.105);
+            levelItemScores[i][j]->setCharHeight(0.016);
+            levelItemScores[i][j]->setFontName("Arial");
+        }
+    }
     // Set orientations for total stars earned per row
     for (int i = 0; i < levelSetStars.size(); ++i)
     {
@@ -228,7 +253,7 @@ void HudLevelSelection::initOverlay()
     
     // Display Text
     levelTotalScoreBackground->setMetricsMode(GMM_RELATIVE);
-    levelTotalScoreBackground->setPosition(0.60, 0.75);
+    levelTotalScoreBackground->setPosition(0.675, 0.750);
     levelTotalScoreBackground->setDimensions(0.30, 0.10);
     levelTotalScoreBackground->setMaterialName("General/ButtonBackground");
     
@@ -284,7 +309,7 @@ void HudLevelSelection::updateDisplay()
     // Assign a 2-D level selection map for each button
     for (int i = 0; i < levelItemBackgrounds.size(); ++i)
         for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
-            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], player->getMenuRowIndex() + i, j);
+            setLevelButton(levelItemBackgrounds[i][j], levelItemPlanets[i][j], levelItemNames[i][j], levelItemScores[i][j], player->getMenuRowIndex() + i, j);
     // Update the display of stars earned per row
     for (int i = 0; i < levelSetStars.size(); ++i)
     {
@@ -317,8 +342,13 @@ void HudLevelSelection::updateDisplay()
 
 // Assigns the texture description for each level depending on player performance
 // in previous and that level
-void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, int row, int col)
+void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, TextAreaOverlayElement* levelScore, int row, int col)
 {
+    levelScore->setCaption("-");
+    levelScore->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    std::string name = Util::toStringInt(row + 1) + '-' + char('A' + col);
+    levelName->setCaption(name);
+    
     LevelSet* levels = player->getLevels();
     int levelSelect = levels->getLevelNo(row, col);
     if (player->isLevelAvailable(levelSelect))
@@ -334,6 +364,8 @@ void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, Pan
                 levelBackground->setMaterialName("General/LevelBar1Fill");
             else
                 levelBackground->setMaterialName("General/LevelBar0Fill");
+            
+            levelScore->setCaption(Util::toStringInt(progress.score));
         }
         else
             levelBackground->setMaterialName("General/LevelBar0Fill");
@@ -346,6 +378,4 @@ void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, Pan
         levelItem->setMaterialName("General/PlanetUnavailable");
         levelName->setColour(ColourValue::ColourValue(0.5, 0.5, 0.5));
     }
-    std::string name = Util::toStringInt(row + 1) + '-' + char('A' + col);
-    levelName->setCaption(name);
 }

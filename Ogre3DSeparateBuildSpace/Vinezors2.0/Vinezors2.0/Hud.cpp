@@ -146,20 +146,36 @@ void HudSlider::adjust()
     {
         rheight = dim2.y;
         rwidth = rheight * globals.screenHeight / globals.screenWidth;
-        sheight = dim1.y;
-        swidth = dim1.x;
+        if (orientation)
+        {
+            swidth = rwidth;
+            sheight = dim1.y;
+        }
+        else
+        {
+            swidth = dim1.x;
+            sheight = rheight;
+        }
     }
     else
     {
         rwidth = dim2.x;
         rheight = rwidth * globals.screenWidth / globals.screenHeight;
-        swidth = dim1.x;
-        sheight = dim1.y * globals.screenWidth / globals.screenHeight;
+        if (orientation)
+        {
+            swidth = rwidth;
+            sheight = dim1.y;
+        }
+        else
+        {
+            swidth = dim1.x;
+            sheight = rheight;
+        }
     }
-    dim1 = Vector2(swidth, sheight);
-    dim2 = Vector2(rwidth, rheight);
-    rangeRef->setDimensions(dim1.x, dim1.y);
-    ballRef->setDimensions(dim2.x, dim2.y);
+    //dim1 = Vector2(swidth, sheight);
+    //dim2 = Vector2(rwidth, rheight);
+    rangeRef->setDimensions(swidth, sheight);
+    ballRef->setDimensions(rwidth, rheight);
     
 }
 
@@ -187,7 +203,7 @@ void HudSlider::setBallPosition(int slot)
 {
     Vector2 pos;
     if (orientation)
-        pos = Vector2(p2.x, (slot - min) * (getRangeWidth()) / (slots - 1));
+        pos = Vector2(p2.x, (max - slot) * (getRangeWidth()) / (slots - 1));
     else
         pos = Vector2((slot - min) * (getRangeWidth()) / (slots - 1), p2.y);
     setBallPosition(pos);
@@ -202,7 +218,10 @@ Vector2 HudSlider::getBallPosition() const
 // Returns a discrete index based on the ball's position
 int HudSlider::getIndex() const
 {
-    return p2.x / getRangeWidth() * (slots - 1) + min;
+    if (orientation)
+        return max - p2.y / getRangeWidth() * (slots - 1);
+    else
+        return p2.x / getRangeWidth() * (slots - 1) + min;
 }
 
 Hud::Hud()

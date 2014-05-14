@@ -1770,7 +1770,7 @@ void Player::update(float elapsed)
                 tunnel->setCleaning(true);
                 
                 boostTimer = 0.0;
-                soundBoost->stop();
+                if (soundBoost) soundBoost->stop();
                 vines[0]->removeBoost();
             }
             else {

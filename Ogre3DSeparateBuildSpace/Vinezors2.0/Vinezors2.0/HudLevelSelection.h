@@ -41,6 +41,7 @@ protected:
     std::vector< std::vector<PanelOverlayElement*> > levelItemBackgrounds;
     std::vector< std::vector<PanelOverlayElement*> > levelItemPlanets;
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemNames;
+    std::vector< std::vector<TextAreaOverlayElement*> > levelItemScores;
     std::vector<TextAreaOverlayElement*> levelSetStars;
     std::vector<TextAreaOverlayElement*> levelSetScores;
     PanelOverlayElement* levelTotalScoreBackground;
@@ -57,7 +58,7 @@ protected:
     
     int convertLevelRowToButtonRow() const;
     void updateDisplay();
-    void setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, int row, int col);
+    void setLevelButton(PanelOverlayElement* levelBackground, PanelOverlayElement* levelItem, TextAreaOverlayElement* levelName, TextAreaOverlayElement* levelScore, int row, int col);
 };
 
 #endif /* defined(__Vinezors2_0__HudLevelSelection__) */
