@@ -60,6 +60,9 @@ void EngineStage::update(float elapsed)
 
             // Update the game state
             tunnel->update(elapsed);
+            
+            updateSpin(elapsed);
+            
             if (tunnel->needsCleaning())
             {
                 completeStage(EVEN);
@@ -135,6 +138,25 @@ void EngineStage::update(float elapsed)
     }
 }
 
+Direction getDirByRoll (int roll)
+{
+    while (roll > 360)
+        roll -= 360;
+    
+    while (roll < 0)
+        roll += 360;
+    
+    if (roll < 22.5) return SOUTH;
+    if (roll < 67.5) return SOUTHWEST;
+    if (roll < 112.5) return WEST;
+    if (roll < 157.5) return NORTHWEST;
+    if (roll < 202.5) return NORTH;
+    if (roll < 247.5) return NORTHEAST;
+    if (roll < 292.5) return EAST;
+    if (roll < 337.5) return SOUTHEAST;
+    if (roll < 360) return SOUTH;
+}
+
 void EngineStage::activatePerformLeftMove()
 {
     switch (stageState)
@@ -163,6 +185,51 @@ void EngineStage::activatePerformLeftMove()
     }
 }
 
+void EngineStage::activatePerformLeftMove(int angle)
+{
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (!tunnel->isDone())// && player->setVineDirRequest(Util::rightOf(player->getVineDest())))
+            {
+                SectionInfo info = tunnel->getCurrent()->getSectionInfo();
+                int numSides = 0;
+                for (int i = 0; i < NUM_DIRECTIONS; ++i)
+                    if (info.sidesUsed[i])
+                        ++numSides;
+                
+                int control;
+                if (numSides == 8) control = 4;
+                else if (numSides == 7) control = 3;
+                else if (numSides == 5) control = 2;
+                else if (numSides == 3) control = 1;
+                else control = 0;
+                float lock = control * (45);
+                
+                float val = player->getCamRoll();
+                if (val < lock || numSides == 8)
+                    player->setCamRoll(val + angle);
+                
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+}
+
 void EngineStage::activatePerformRightMove()
 {
     switch (stageState)
@@ -175,6 +242,51 @@ void EngineStage::activatePerformRightMove()
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val - 45);
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+}
+
+void EngineStage::activatePerformRightMove(int angle)
+{
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (!tunnel->isDone())
+            {
+                SectionInfo info = tunnel->getCurrent()->getSectionInfo();
+                int numSides = 0;
+                for (int i = 0; i < NUM_DIRECTIONS; ++i)
+                    if (info.sidesUsed[i])
+                        ++numSides;
+                
+                int control;
+                if (numSides == 8) control = 4;
+                else if (numSides == 7) control = 3;
+                else if (numSides == 5) control = 2;
+                else if (numSides == 3) control = 1;
+                else control = 0;
+                float lock = control * (-45);
+                
+                float val = player->getCamRoll();
+                if (val > lock || numSides == 8)
+                    player->setCamRoll(val - angle);
+                
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
             }
             break;
         }
@@ -565,6 +677,21 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
             //std::cout << "release\n";
         }
     }
+}
+
+void EngineStage::activateVelocity(float vel)
+{
+    float maxVel = 4500.0;
+    
+    std::cout << "SPIN VELOCITY: " << vel << std::endl;
+    if (vel != 0.0) this->spinVelocity = abs(vel);
+    damping = 1.035;
+    if (vel < 0.0) spinClockwise = false;
+    else if (vel > 0.0) spinClockwise = true;
+    else damping = 5.0;
+    
+    if (abs(spinVelocity) >= maxVel)
+        spinVelocity = maxVel;
 }
 
 #if !defined(OGRE_IS_IOS)
@@ -978,6 +1105,42 @@ void EngineStage::setup()
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     if (lightNode)
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+    
+    spinVelocity = 0.0f;
+    damping = 0.0f;
+}
+
+void EngineStage::updateSpin(float elapsed)
+{
+    float radius = globals.screenWidth / 2.0;
+    
+    radius = tunnel->getCurrent()->getWallLength() / 1.5;
+    
+    Quaternion vRot;
+    
+    spinVelocity /= damping;
+    
+    float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
+    const float PI = 3.14;
+    dTheta = (dTheta * 180.0) / PI;
+    
+    Radian theta = Ogre::Radian((int)dTheta);
+    
+    if (spinClockwise) {
+        this->activatePerformRightMove((int)dTheta);
+        theta = -theta;
+    } else {
+        this->activatePerformLeftMove((int)dTheta);
+    }
+    
+    Vector3 camUp = player->getCamUpward(true);
+    Vector3 camForward = player->getCamForward(true);
+    
+    vRot.ToAngleAxis(theta, camForward);
+    
+    Vector3 camDown = vRot * (-camUp);
+    
+    player->setPos(player->getCamPos() + player->getCamForward() * 25 + (camDown * radius));
 }
 
 void EngineStage::dealloc()
