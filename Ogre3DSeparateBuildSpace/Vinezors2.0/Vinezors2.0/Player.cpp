@@ -160,6 +160,11 @@ Vector3 Player::getCamPos() const
 	return camPos;
 }
 
+Vector3 Player::getPos() const
+{
+    return vines[0]->getPos();
+}
+
 Quaternion Player::getOldRot() const
 {
 	return oldRot;
@@ -998,6 +1003,11 @@ void Player::offsetShip(float elapsed)
         vines[0]->aftert = tunnel->getTLeftOffsetCurrent();
         vines[0]->setQuaternion(getCombinedRotAndRoll());
         Vector3 centerPos = closest->getCenter(vines[0]->aftert);
+        
+#if !defined(OGRE_IS_IOS)
+        // For desktop builds, don't include Brandon's swipe controller,
+        // This is the original standard 1 swipe per panel movement.
+        // For desktop builds, this is left or right arrow key.
         Vector3 targetPos1;
         Vector3 targetPos2;
         
@@ -1051,9 +1061,16 @@ void Player::offsetShip(float elapsed)
             
             targetPos1 = p1 + (p2 - p1) * (1.0 + tunnel->getTLeftOffsetCurrent());
             targetPos2 = p3 + (p4 - p3) * (1.0 + tunnel->getTLeftOffsetCurrent());
-        }
+         
+         }
+         vines[0]->setForward(closest->getForward());
+         vines[0]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[0]->transition);
+#else
+        // Brandon's swipe control offsets ship based on camera
+        float radius = tunnel->getCurrent()->getWallLength() / 1.5;
         vines[0]->setForward(closest->getForward());
-        vines[0]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[0]->transition);
+        vines[0]->setPos(getCamPos() + getCamForward() * 25 + (getCamUpward() * -1 * radius));
+#endif
         
         vines[0]->update(elapsed); // Mostly for animating the navigation around the tunnel
         if (movementMode == MOVEMENT_ROTATING)
@@ -1210,6 +1227,15 @@ void Player::setCamDir(Direction value)
 
 bool Player::setVineDirRequest(Direction value, bool force)
 {
+#if defined(OGRE_IS_IOS)
+    // For iOS special swipe controls, refer to
+    // updateSpin in EngineStage and offsetShip in Player as well
+    vines[0]->loc = value;
+    vines[0]->dest = value;
+    
+    return true;
+#else
+    // OSX OG controls which need animation
     TunnelSlice* closest = tunnel->getCurrentOffset();
     if (closest)
     {
@@ -1231,6 +1257,7 @@ bool Player::setVineDirRequest(Direction value, bool force)
         return true;
     }
     return false;
+#endif
 }
 
 void Player::setMousePos(Vector2 value)
@@ -1246,6 +1273,11 @@ void Player::setOldPos(Vector3 value)
 void Player::setCamPos(Vector3 value)
 {
 	camPos = value;
+}
+
+void Player::setPos(Vector3 value)
+{
+    vines[0]->setPos(value);
 }
 
 void Player::setOldRot(Quaternion value)
@@ -1770,7 +1802,7 @@ void Player::update(float elapsed)
                 tunnel->setCleaning(true);
                 
                 boostTimer = 0.0;
-                if (soundBoost) soundBoost->stop();
+                soundBoost->stop();
                 vines[0]->removeBoost();
             }
             else {
@@ -1783,7 +1815,8 @@ void Player::update(float elapsed)
                 }
                 
                 move(Vector3(0,0,-flyOutCamSpeed));
-                Vector3 moveOffset = /*getCamForward(true)*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+                //move(vines[0]->getForward() * flyOutCamSpeed);
+                Vector3 moveOffset = /*vines[0]->getForward()*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
                 
                 // rotate about y
                 moveOffset = Vector3(Math::Cos(Degree(flyOutAngleY))*moveOffset.x+Math::Sin(Degree(flyOutAngleY))*moveOffset.z,moveOffset.y,-Math::Sin(Degree(flyOutAngleY))*moveOffset.x+Math::Cos(Degree(flyOutAngleY))*moveOffset.z);

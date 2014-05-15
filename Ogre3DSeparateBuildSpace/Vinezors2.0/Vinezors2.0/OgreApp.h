@@ -114,6 +114,9 @@ public:
     void activateMoved(float x, float y, float dx, float dy);
 	void activatePressed(float x, float y);
 	void activateReleased(float x, float y, float dx, float dy);
+    
+    void activateVelocity(float v);
+    
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);

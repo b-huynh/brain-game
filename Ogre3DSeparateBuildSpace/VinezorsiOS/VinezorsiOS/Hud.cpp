@@ -183,9 +183,9 @@ void HudSlider::adjust()
 float HudSlider::getRangeWidth() const
 {
     if (orientation)
-        return dim1.y - dim2.y;
+        return rangeRef->getHeight() - ballRef->getHeight();
     else
-        return dim1.x - dim2.x;
+        return rangeRef->getWidth() - ballRef->getWidth();
 }
 
 // Sets the ball's position bounded to the range of the slider

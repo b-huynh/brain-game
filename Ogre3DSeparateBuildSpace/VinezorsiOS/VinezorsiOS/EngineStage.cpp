@@ -57,11 +57,12 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_RUNNING:
         {
             OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-
-            // Update the game state
-            tunnel->update(elapsed);
             
+#if defined(OGRE_IS_IOS)
+            // Update the game state
             updateSpin(elapsed);
+#endif
+            tunnel->update(elapsed);
             
             if (tunnel->needsCleaning())
             {
@@ -1112,12 +1113,6 @@ void EngineStage::setup()
 
 void EngineStage::updateSpin(float elapsed)
 {
-    float radius = globals.screenWidth / 2.0;
-    
-    radius = tunnel->getCurrent()->getWallLength() / 1.5;
-    
-    Quaternion vRot;
-    
     spinVelocity /= damping;
     
     float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
@@ -1132,15 +1127,6 @@ void EngineStage::updateSpin(float elapsed)
     } else {
         this->activatePerformLeftMove((int)dTheta);
     }
-    
-    Vector3 camUp = player->getCamUpward(true);
-    Vector3 camForward = player->getCamForward(true);
-    
-    vRot.ToAngleAxis(theta, camForward);
-    
-    Vector3 camDown = vRot * (-camUp);
-    
-    player->setPos(player->getCamPos() + player->getCamForward() * 25 + (camDown * radius));
 }
 
 void EngineStage::dealloc()

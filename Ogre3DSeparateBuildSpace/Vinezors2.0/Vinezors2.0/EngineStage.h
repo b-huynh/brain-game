@@ -29,7 +29,9 @@ public:
     }
     
     virtual void activatePerformLeftMove();
+    virtual void activatePerformLeftMove(int angle);
     virtual void activatePerformRightMove();
+    virtual void activatePerformRightMove(int angle);
     virtual void activatePerformSwipeUp();
     virtual void activatePerformSwipeDown();
     virtual void activatePerformDoubleTap(float x, float y);
@@ -41,6 +43,8 @@ public:
     virtual void activateMoved(float x, float y, float dx, float dy);
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
+    virtual void activateVelocity(float vel);
+    
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);
 	virtual void mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
@@ -69,10 +73,16 @@ protected:
 	Player* player;
     HudStage* hud;
     
+    //State of tunnel spin
+    float spinVelocity;
+    float damping;
+    bool spinClockwise;
+    
     void setup();
     void dealloc();
     void setPause(bool value);
     void completeStage(Evaluation forced);
+    void updateSpin(float elapsed);
 };
 
 #endif /* defined(__Vinezors2_0__EngineStage__) */
