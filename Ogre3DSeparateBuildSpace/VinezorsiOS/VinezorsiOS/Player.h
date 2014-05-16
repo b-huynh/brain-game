@@ -222,14 +222,16 @@ public:
     int getNumStagesWon() const;
     int getLevelRequestRow() const;
     int getLevelRequestCol() const;
-    bool hasLevelProgress(int level);
-    bool hasLevelProgress(int row, int col);
-    PlayerProgress getLevelProgress(int level);
-    PlayerProgress getLevelProgress(int row, int col);
-    bool isLevelAvailable(int level);
-    bool isLevelAvailable(int row, int col);
+    bool hasLevelProgress(int level) const;
+    bool hasLevelProgress(int row, int col) const;
+    PlayerProgress getLevelProgress(int level) const;
+    PlayerProgress getLevelProgress(int row, int col) const;
+    bool isLevelAvailable(int level) const;
+    bool isLevelAvailable(int row, int col) const;
     int getMenuRowIndex() const;
-    int getTotalLevelRating(int row);
+    int getTotalLevelRating(int row) const;
+    float getTotalLevelScore(int row) const;
+    float getTotalLevelScore() const;
     bool hasTriggeredStartup() const;
     float getScoring() const;
     

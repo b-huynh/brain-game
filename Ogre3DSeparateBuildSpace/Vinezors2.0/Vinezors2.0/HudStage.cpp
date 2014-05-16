@@ -165,6 +165,10 @@ void HudStage::alloc()
                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderRangeBackground"));
     sliderBallBackground = static_cast<PanelOverlayElement*>(
                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderBallBackground"));
+    popupWindowBackground = static_cast<PanelOverlayElement*>(
+                                                              OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePopupWindowBackground"));
+    popupSubWindowBackground = static_cast<PanelOverlayElement*>(
+                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePopupSubWindowBackground"));
     
     collectionBar = std::vector<PanelOverlayElement*>();
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem0")));
@@ -275,8 +279,10 @@ void HudStage::alloc()
     overlay2->add2D(restartButtonBackground);
     overlay2->add2D(levelSelectButtonBackground);
     
+    overlay3->add2D(popupWindowBackground);
+    popupWindowBackground->addChild(popupSubWindowBackground);
     overlay3->add2D(goBackground);
-    overlay3->add2D(sliderRangeBackground);
+    overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
     
     overlays.push_back(overlay1);
@@ -284,7 +290,13 @@ void HudStage::alloc()
     overlays.push_back(overlay3);
     
     speedSlider = new HudSlider();
-    speedSlider->setSlider("speed", overlays[2], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10),
+    
+    // Horizontal slider
+    //speedSlider->setSlider("speed", overlays[2], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10), false,
+    //                       globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
+    
+    // Vertical Slider
+    speedSlider->setSlider("speed", overlays[2], Vector2(0.030, 0.200), Vector2(0.075, 0.500), Vector2(0.075, 0.075), true,
                            globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
@@ -307,6 +319,8 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderRangeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderBallBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupSubWindowBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupWindowBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUITopPanel);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
@@ -382,6 +396,16 @@ void HudStage::initOverlay()
     GUITopPanel->setPosition(0.0, 0.0);
     GUITopPanel->setDimensions(1.0, 1.0);
     GUITopPanel->setMaterialName("General/GUIMainHud");
+    
+    popupWindowBackground->setMetricsMode(GMM_RELATIVE);
+    popupWindowBackground->setPosition(0.200, 0.115);
+    popupWindowBackground->setDimensions(0.60, 0.50);
+    popupWindowBackground->setMaterialName("General/SliderRangeHorizontal");
+    
+    popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
+    popupSubWindowBackground->setPosition(0.05, 0.05);
+    popupSubWindowBackground->setDimensions(0.50, 0.40);
+    popupSubWindowBackground->setMaterialName("General/ButtonBackground");
     
     float x = 0.285;
     float y = 0.035;
@@ -476,7 +500,7 @@ void HudStage::initOverlay()
     
     float gheight = 0.10;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[2], GMM_RELATIVE, Vector2(0.45, 0.60), Vector2(gwidth, gheight), goBackground, NULL);
+    buttons[BUTTON_GO].setButton("go", overlays[2], GMM_RELATIVE, Vector2(0.45, 0.45), Vector2(gwidth, gheight), goBackground, NULL);
     
     buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.45), Vector2(0.08, 0.08), toggle1Background, NULL);
     buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.55), Vector2(0.08, 0.08), toggle2Background, NULL);
@@ -518,7 +542,8 @@ void HudStage::initOverlay()
     
     pauseBackground->setMaterialName("General/PauseButton");
     goBackground->setMaterialName("General/ButtonGo");
-    sliderRangeBackground->setMaterialName("General/SliderRange");
+    //sliderRangeBackground->setMaterialName("General/SliderRangeHorizontal");
+    sliderRangeBackground->setMaterialName("General/SliderRangeVertical");
     sliderBallBackground->setMaterialName("General/SliderBall");
     toggle1Background->setMaterialName("General/GUIToggleButton3");
     toggle2Background->setMaterialName("General/GUIToggleButton2");

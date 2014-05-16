@@ -42,6 +42,9 @@ protected:
     PanelOverlayElement* goBackground;
     PanelOverlayElement* sliderRangeBackground;
     PanelOverlayElement* sliderBallBackground;
+    PanelOverlayElement* popupWindowBackground;
+    PanelOverlayElement* popupSubWindowBackground;
+    
     std::vector<PanelOverlayElement*> collectionBar;
     PanelOverlayElement* GUITopPanel;
     OverlayContainer* panelText;

@@ -57,11 +57,12 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_RUNNING:
         {
             OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-
-            // Update the game state
-            tunnel->update(elapsed);
             
+#if defined(OGRE_IS_IOS)
+            // Update the game state
             updateSpin(elapsed);
+#endif
+            tunnel->update(elapsed);
             
             if (tunnel->needsCleaning())
             {
@@ -522,9 +523,15 @@ void EngineStage::activatePerformSingleTap(float x, float y)
 void EngineStage::activatePerformPinch()
 {
 #ifdef DEBUG_MODE
-    std::cout << "God Mode: " << player->getGodMode() << std::endl;
-    player->setGodMode(!player->getGodMode());
-    if (tunnel) tunnel->respondToToggleCheat();
+#if defined(OGRE_IS_IOS)
+    if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+    else
+#endif
+    {
+        std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        player->setGodMode(!player->getGodMode());
+        if (tunnel) tunnel->respondToToggleCheat();
+    }
 #endif
     switch (stageState)
     {
@@ -588,10 +595,17 @@ void EngineStage::activateMoved(float x, float y, float dx, float dy)
         if (hud) speedSlider = hud->getSpeedSlider();
         if (speedSlider && speedSlider->selected)
         {
+            Vector2 np;
 #if !defined(OGRE_IS_IOS)
-            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #else
-            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
             speedSlider->setBallPosition(np);
             
@@ -614,8 +628,16 @@ void EngineStage::activatePressed(float x, float y)
             if (speedSlider->isInsideRange(pos))
             {
                 // Project position to range
-                float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
-                speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
+                if (speedSlider->orientation)
+                {
+                    float ny = pos.y - speedSlider->p1.y - speedSlider->dim2.y / 2;
+                    speedSlider->setBallPosition(Vector2(speedSlider->p2.x, ny));
+                }
+                else
+                {
+                    float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
+                    speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
+                }
             }
         
             // Initialize p2cache first time we touch ball
@@ -640,10 +662,17 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
         if (speedSlider && speedSlider->selected)
         {
             speedSlider->selected = false;
+            Vector2 np;
 #if !defined(OGRE_IS_IOS)
-            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #else
-            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
             speedSlider->setBallPosition(np);
             //std::cout << "release\n";
@@ -935,10 +964,10 @@ void EngineStage::setup()
         {
             nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_CONE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_CONE, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_HOLDOUT, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_HOLDOUT, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_HOLDOUT, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_HOLDOUT, POD_SOUND_4));
             
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.appendMessage("\nObtain matches by Color!", MESSAGE_NORMAL);
@@ -1084,12 +1113,6 @@ void EngineStage::setup()
 
 void EngineStage::updateSpin(float elapsed)
 {
-    float radius = globals.screenWidth / 2.0;
-    
-    radius = tunnel->getCurrent()->getWallLength() / 1.5;
-    
-    Quaternion vRot;
-    
     spinVelocity /= damping;
     
     float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
@@ -1104,15 +1127,6 @@ void EngineStage::updateSpin(float elapsed)
     } else {
         this->activatePerformLeftMove((int)dTheta);
     }
-    
-    Vector3 camUp = player->getCamUpward(true);
-    Vector3 camForward = player->getCamForward(true);
-    
-    vRot.ToAngleAxis(theta, camForward);
-    
-    Vector3 camDown = vRot * (-camUp);
-    
-    player->setPos(player->getCamPos() + player->getCamForward() * 25 + (camDown * radius));
 }
 
 void EngineStage::dealloc()

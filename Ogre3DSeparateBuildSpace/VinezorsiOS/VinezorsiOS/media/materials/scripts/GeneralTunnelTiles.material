@@ -56,7 +56,7 @@ material General/WallBindingC
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_ice4.png
+				texture LevelBinding/TunnelTile_sand1.png
 			}
 		}
 	}

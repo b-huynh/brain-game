@@ -36,16 +36,6 @@
     float mDeltaTime;
     BOOL mDisplayLinkSupported;
     
-    CGFloat initialThreshold;
-    CGFloat swipeThreshold;
-    CGPoint startP;
-    CGFloat totalX;
-    CGFloat totalY;
-    CGFloat vmaxX;
-    CGFloat vmaxY;
-    int swipeState;
-    bool pinchDetected;
-    
     unsigned int screenWidth;
     unsigned int screenHeight;
 }
@@ -93,6 +83,7 @@
     longPressRecognizer.minimumPressDuration = 0.20;
     [self.view addGestureRecognizer:longPressRecognizer];
     
+    // Required if double tap should override single tap
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     
     singleTapRecognizer.delegate = self;
@@ -100,13 +91,6 @@
     panRecognizer.delegate = self;
     pinchRecognizer.delegate = self;
     longPressRecognizer.delegate = self;
-    
-    //initialThreshold = 12.50;
-    //swipeThreshold = 30.00;
-    initialThreshold = 15.00;
-    swipeThreshold = 30.00;
-    swipeState = 0;
-    pinchDetected = false;
 }
 
 - (void)didReceiveMemoryWarning
@@ -349,7 +333,7 @@
     if (sender.state == UIGestureRecognizerStateBegan)
     {
         mApplication->activateVelocity(0.0);
-        
+        mApplication->activatePressed(p.x, p.y);
         NSLog(@"T: (%f, %f)", dp.x, dp.y);
         NSLog(@"Beginning Pan");
     }
@@ -378,6 +362,7 @@
         } else {
             mApplication->activateVelocity(-magnitude);
         }
+        mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
     }
     else
     {
@@ -404,6 +389,7 @@
         } else {
             mApplication->activateVelocity(-magnitude);
         }
+        mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
         
         NSLog(@"End Pan");
         NSLog(@"V: (%f, %f)", v.x, v.y);

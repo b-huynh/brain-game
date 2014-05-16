@@ -57,9 +57,13 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_RUNNING:
         {
             OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-
+            
+#if defined(OGRE_IS_IOS)
             // Update the game state
+            updateSpin(elapsed);
+#endif
             tunnel->update(elapsed);
+            
             if (tunnel->needsCleaning())
             {
                 completeStage(EVEN);
@@ -135,6 +139,25 @@ void EngineStage::update(float elapsed)
     }
 }
 
+Direction getDirByRoll (int roll)
+{
+    while (roll > 360)
+        roll -= 360;
+    
+    while (roll < 0)
+        roll += 360;
+    
+    if (roll < 22.5) return SOUTH;
+    if (roll < 67.5) return SOUTHWEST;
+    if (roll < 112.5) return WEST;
+    if (roll < 157.5) return NORTHWEST;
+    if (roll < 202.5) return NORTH;
+    if (roll < 247.5) return NORTHEAST;
+    if (roll < 292.5) return EAST;
+    if (roll < 337.5) return SOUTHEAST;
+    if (roll < 360) return SOUTH;
+}
+
 void EngineStage::activatePerformLeftMove()
 {
     switch (stageState)
@@ -163,6 +186,51 @@ void EngineStage::activatePerformLeftMove()
     }
 }
 
+void EngineStage::activatePerformLeftMove(int angle)
+{
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (!tunnel->isDone())// && player->setVineDirRequest(Util::rightOf(player->getVineDest())))
+            {
+                SectionInfo info = tunnel->getCurrent()->getSectionInfo();
+                int numSides = 0;
+                for (int i = 0; i < NUM_DIRECTIONS; ++i)
+                    if (info.sidesUsed[i])
+                        ++numSides;
+                
+                int control;
+                if (numSides == 8) control = 4;
+                else if (numSides == 7) control = 3;
+                else if (numSides == 5) control = 2;
+                else if (numSides == 3) control = 1;
+                else control = 0;
+                float lock = control * (45);
+                
+                float val = player->getCamRoll();
+                if (val < lock || numSides == 8)
+                    player->setCamRoll(val + angle);
+                
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+}
+
 void EngineStage::activatePerformRightMove()
 {
     switch (stageState)
@@ -175,6 +243,51 @@ void EngineStage::activatePerformRightMove()
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val - 45);
+            }
+            break;
+        }
+        case STAGE_STATE_PAUSE:
+        {
+            //stageState = STAGE_STATE_RUNNING;
+            //setPause(false);
+            break;
+        }
+        case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_DONE:
+            break;
+    }
+}
+
+void EngineStage::activatePerformRightMove(int angle)
+{
+    switch (stageState)
+    {
+        case STAGE_STATE_INIT:
+            break;
+        case STAGE_STATE_RUNNING:
+        {
+            if (!tunnel->isDone())
+            {
+                SectionInfo info = tunnel->getCurrent()->getSectionInfo();
+                int numSides = 0;
+                for (int i = 0; i < NUM_DIRECTIONS; ++i)
+                    if (info.sidesUsed[i])
+                        ++numSides;
+                
+                int control;
+                if (numSides == 8) control = 4;
+                else if (numSides == 7) control = 3;
+                else if (numSides == 5) control = 2;
+                else if (numSides == 3) control = 1;
+                else control = 0;
+                float lock = control * (-45);
+                
+                float val = player->getCamRoll();
+                if (val > lock || numSides == 8)
+                    player->setCamRoll(val - angle);
+                
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
             }
             break;
         }
@@ -410,9 +523,15 @@ void EngineStage::activatePerformSingleTap(float x, float y)
 void EngineStage::activatePerformPinch()
 {
 #ifdef DEBUG_MODE
-    std::cout << "God Mode: " << player->getGodMode() << std::endl;
-    player->setGodMode(!player->getGodMode());
-    if (tunnel) tunnel->respondToToggleCheat();
+#if defined(OGRE_IS_IOS)
+    if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+    else
+#endif
+    {
+        std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        player->setGodMode(!player->getGodMode());
+        if (tunnel) tunnel->respondToToggleCheat();
+    }
 #endif
     switch (stageState)
     {
@@ -476,10 +595,17 @@ void EngineStage::activateMoved(float x, float y, float dx, float dy)
         if (hud) speedSlider = hud->getSpeedSlider();
         if (speedSlider && speedSlider->selected)
         {
+            Vector2 np;
 #if !defined(OGRE_IS_IOS)
-            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #else
-            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
             speedSlider->setBallPosition(np);
             
@@ -502,8 +628,16 @@ void EngineStage::activatePressed(float x, float y)
             if (speedSlider->isInsideRange(pos))
             {
                 // Project position to range
-                float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
-                speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
+                if (speedSlider->orientation)
+                {
+                    float ny = pos.y - speedSlider->p1.y - speedSlider->dim2.y / 2;
+                    speedSlider->setBallPosition(Vector2(speedSlider->p2.x, ny));
+                }
+                else
+                {
+                    float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
+                    speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
+                }
             }
         
             // Initialize p2cache first time we touch ball
@@ -528,15 +662,37 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
         if (speedSlider && speedSlider->selected)
         {
             speedSlider->selected = false;
+            Vector2 np;
 #if !defined(OGRE_IS_IOS)
-            Vector2 np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #else
-            Vector2 np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+            if (speedSlider->orientation)
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+            else
+                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
             speedSlider->setBallPosition(np);
             //std::cout << "release\n";
         }
     }
+}
+
+void EngineStage::activateVelocity(float vel)
+{
+    float maxVel = 4500.0;
+    
+    std::cout << "SPIN VELOCITY: " << vel << std::endl;
+    if (vel != 0.0) this->spinVelocity = abs(vel);
+    damping = 1.035;
+    if (vel < 0.0) spinClockwise = false;
+    else if (vel > 0.0) spinClockwise = true;
+    else damping = 5.0;
+    
+    if (abs(spinVelocity) >= maxVel)
+        spinVelocity = maxVel;
 }
 
 #if !defined(OGRE_IS_IOS)
@@ -808,10 +964,10 @@ void EngineStage::setup()
         {
             nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_CONE, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_CONE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_CONE, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_HOLDOUT, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_HOLDOUT, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_HOLDOUT, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_HOLDOUT, POD_SOUND_4));
             
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.appendMessage("\nObtain matches by Color!", MESSAGE_NORMAL);
@@ -950,6 +1106,27 @@ void EngineStage::setup()
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     if (lightNode)
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+    
+    spinVelocity = 0.0f;
+    damping = 0.0f;
+}
+
+void EngineStage::updateSpin(float elapsed)
+{
+    spinVelocity /= damping;
+    
+    float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
+    const float PI = 3.14;
+    dTheta = (dTheta * 180.0) / PI;
+    
+    Radian theta = Ogre::Radian((int)dTheta);
+    
+    if (spinClockwise) {
+        this->activatePerformRightMove((int)dTheta);
+        theta = -theta;
+    } else {
+        this->activatePerformLeftMove((int)dTheta);
+    }
 }
 
 void EngineStage::dealloc()
