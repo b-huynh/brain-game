@@ -58,6 +58,9 @@ protected:
     TextAreaOverlayElement* label6;
     TextAreaOverlayElement* label7;
     
+    OverlayContainer* timeWarpContainer;
+    TextAreaOverlayElement* timeWarpLabel;
+    
     PanelOverlayElement* toggleEntireBackground;
     PanelOverlayElement* toggle1Background;
     PanelOverlayElement* toggle2Background;

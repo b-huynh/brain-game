@@ -1859,8 +1859,12 @@ void Player::update(float elapsed)
                     flyOutCamSpeed -= 0.5f;
                 }
                 
-                move(getCamForward() * flyOutCamSpeed);
-                Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+                move(getCamForward(true) * flyOutCamSpeed);
+                
+                Vector3 pos = vines[0]->getEntireVine()->getPosition();
+                
+                Vector3 moveOffset = /*getCamForward(true)*/Vector3::NEGATIVE_UNIT_Z * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+    
                 
                 // rotate about y
                 moveOffset = Vector3(Math::Cos(Degree(flyOutAngleY))*moveOffset.x+Math::Sin(Degree(flyOutAngleY))*moveOffset.z,moveOffset.y,-Math::Sin(Degree(flyOutAngleY))*moveOffset.x+Math::Cos(Degree(flyOutAngleY))*moveOffset.z);
@@ -1869,8 +1873,8 @@ void Player::update(float elapsed)
                 moveOffset = Vector3(moveOffset.x,Math::Cos(Degree(flyOutAngleX))*moveOffset.y-Math::Sin(Degree(flyOutAngleX))*moveOffset.z,Math::Sin(Degree(flyOutAngleX))*moveOffset.y+Math::Cos(Degree(flyOutAngleX))*moveOffset.z);
             
                 
-                vines[0]->move(moveOffset);
-                
+                // THANKS CALVIN FOR MAKING THIS POSSIBLE... THIS ANIMATION WOULD HAVE NEVER WORKED IF IT WERE NOT FOR YOUR AMAZING AND BRILLIANT MIND!!! -Manny
+                vines[0]->move(getCombinedRotAndRoll()*moveOffset); //<---
                 
                 if( flyLeft ) {
                     if( flyOutAngleY+1.5f > 12.0f ) {
@@ -1900,8 +1904,8 @@ void Player::update(float elapsed)
         else {
             flyOutCounter += elapsed;
             flyOutCamSpeed = globals.globalModifierCamSpeed*finalSpeed*elapsed;
-            move(getCamForward() * flyOutCamSpeed);
-            Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+            move(getCamForward(true) * flyOutCamSpeed);
+            Vector3 moveOffset = getCamForward(true) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
             vines[0]->move(moveOffset);
         }
         return;

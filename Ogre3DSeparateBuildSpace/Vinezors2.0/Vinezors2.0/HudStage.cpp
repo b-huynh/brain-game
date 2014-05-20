@@ -60,6 +60,8 @@ void HudStage::update(float elapsed)
     label6->setCaption(globals.message);
     label7->setCaption("");
     
+    timeWarpLabel->setCaption("+20 Seconds");
+    
     // Set Progress Bar indicator position for the appropriate mode
     float barWidth = barHP->getWidth();
     if (tunnel->getMode() == STAGE_MODE_PROFICIENCY)
@@ -196,6 +198,9 @@ void HudStage::alloc()
     label7 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel7"));
     
+    timeWarpLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextTimeWarpLabel"));
+    
+    
     toggleEntireBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggleEntireBackground"));
     // Note: These overlay elements are linked to a button, if we end up deleting these and NULLing it, it should be NULLed in the associated button as well
@@ -239,6 +244,16 @@ void HudStage::alloc()
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayHUD");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayPauseMenu");
+    
+    
+    
+    Overlay* overlay3 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("TimeWarpOverlay");
+    timeWarpContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TimeWarpInterface"));
+    overlay3->add2D(timeWarpContainer);
+    timeWarpContainer->addChild(timeWarpLabel);
+    
+    
+    
     //overlay1->add2D(healthArea);
     //overlay1->add2D(barHP);
     //overlay1->add2D(indicator);
@@ -281,6 +296,7 @@ void HudStage::alloc()
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
+    overlays.push_back(overlay3);
     
     speedSlider = new HudSlider();
     
@@ -323,6 +339,7 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label5);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label6);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggleEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1TextArt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2TextArt);
@@ -341,8 +358,10 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(restartButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[2]);
     if (speedSlider) delete speedSlider;
     speedSlider = NULL;
 }
@@ -353,6 +372,10 @@ void HudStage::initOverlay()
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
     panelText->setDimensions(10, 10);
+    
+    timeWarpContainer->setMetricsMode(GMM_RELATIVE);
+    timeWarpContainer->setPosition(0.5, 0.5);
+    timeWarpContainer->setDimensions(0.25, 0.25);
     
     healthArea->setMetricsMode(GMM_RELATIVE);
     healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
@@ -458,6 +481,14 @@ void HudStage::initOverlay()
     label7->setCharHeight(globals.screenHeight / 50);
     label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label7->setFontName("Arial");
+    
+    
+    timeWarpLabel->setMetricsMode(GMM_RELATIVE);
+    timeWarpLabel->setPosition(0, 0);
+    timeWarpLabel->setCharHeight(0.05);
+    timeWarpLabel->setColour(ColourValue::ColourValue(0.75, 0.0, 0.0));
+    timeWarpLabel->setFontName("Arial");
+    
     
     toggle1TextArt->setMetricsMode(GMM_RELATIVE);
     toggle1TextArt->setPosition(0.0250, 0.0025);

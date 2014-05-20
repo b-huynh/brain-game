@@ -52,11 +52,11 @@ material General/WallBindingC
 	{
         pass
 		{
-            lighting on
+            lighting off
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_sand1.png
+				texture LevelBinding/TunnelTile_ice4.png
 			}
 		}
 	}
