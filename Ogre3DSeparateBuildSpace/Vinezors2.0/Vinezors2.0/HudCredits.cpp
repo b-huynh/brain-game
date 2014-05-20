@@ -32,6 +32,7 @@ void HudCredits::init()
 void HudCredits::adjust()
 {
     initOverlay();
+    player->getTutorialMgr()->adjust();
 }
 
 void HudCredits::update(float elapsed)

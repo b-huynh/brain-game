@@ -1,8 +1,8 @@
 particle_system General/StarBoost
  {
     material        General/Star    
-    particle_width  4.0
-    particle_height 4.0
+    particle_width  3.0
+    particle_height 3.0
     cull_each       true
     quota           100
     billboard_type  point

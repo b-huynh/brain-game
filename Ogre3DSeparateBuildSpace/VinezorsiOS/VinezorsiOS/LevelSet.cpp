@@ -168,7 +168,8 @@ void LevelSet::initializeLevelSet()
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
-    level.tunnelSectionsPerNavLevel = 10;
+    level.tunnelSectionsPerNavLevel = 5;
+    //level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'E';
     level.initCamSpeed = 17;
     level.minCamSpeed = 15;

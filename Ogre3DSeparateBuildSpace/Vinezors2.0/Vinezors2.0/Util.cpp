@@ -154,6 +154,21 @@ Util::ConfigGlobal::ConfigGlobal()
     //navMap[0] = NavigationLevel(0, 4, 3);
     
     navMap = std::vector<NavigationLevel>(23);
+    /*
+     // Debug Nav Levels
+    navMap[0] = NavigationLevel(0, 4, 0);
+    navMap[1] = NavigationLevel(1, 3, 0);
+    navMap[2] = NavigationLevel(2, 2, 0);
+    navMap[3] = NavigationLevel(3, 1, 0);
+    navMap[4] = NavigationLevel(4, 4, 0);
+    navMap[5] = NavigationLevel(5, 2, 0);
+    navMap[6] = NavigationLevel(6, 4, 0);
+    navMap[7] = NavigationLevel(7, 1, 0);
+    navMap[8] = NavigationLevel(8, 1, 0);
+    navMap[9] = NavigationLevel(9, 3, 0);
+    navMap[10] = NavigationLevel(10, 3, 0);
+    navMap[11] = NavigationLevel(11, 4, 0);
+    */
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -716,21 +731,21 @@ int Util::getDegrees(Direction dir)
 	switch (dir)
 	{
         case NORTHWEST:
-            return 225;
+            return 135;
         case NORTH:
             return 180;
         case NORTHEAST:
-            return 135;
+            return 225;
         case EAST:
-            return 90;
+            return 270;
         case SOUTHEAST:
-            return 45;
+            return 315;
         case SOUTH:
             return 0;
         case SOUTHWEST:
-            return 270;
+            return 45;
         case WEST:
-            return 315;
+            return 90;
         default:
             return 0;
 	}

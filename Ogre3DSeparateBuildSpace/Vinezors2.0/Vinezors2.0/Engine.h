@@ -48,11 +48,16 @@ public:
     virtual void activatePerformPinch();
     virtual void activatePerformBeginLongPress();
     virtual void activatePerformEndLongPress();
+    virtual void activatePerformBeginShortPress();
+    virtual void activatePerformEndShortPress();
     
     virtual void activateMoved(float x, float y, float dx, float dy);
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
+    
+    virtual void activateReturnFromPopup();
+    
     
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);

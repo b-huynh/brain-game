@@ -27,21 +27,23 @@ protected:
     static const int LEVEL_ITEM_HEIGHT = 3;
     
     Player* player;
-    int rowIndex;
     
-    static const int NUM_UNIQUE_BUTTONS = 3;
+    static const int NUM_UNIQUE_BUTTONS = 4;
     enum Buttons {
-        BUTTON_BACK, BUTTON_UP, BUTTON_DOWN
+        BUTTON_BACK, BUTTON_UP, BUTTON_DOWN, BUTTON_ENABLETUTORIALS
         // Note: levelItemBackgrounds are created based on LEVEL_ITEM_WIDTH and LEVEL_ITEM_HEIGHT
         // which are not included in here
     };
     
     // Overlay items for GAME_STATE_MENU
     PanelOverlayElement* levelSelectPrompt;
+    
+    // Container of all the overlay elements to make this level selection icon
     std::vector< std::vector<PanelOverlayElement*> > levelItemBackgrounds;
     std::vector< std::vector<PanelOverlayElement*> > levelItemPlanets;
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemNames;
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemScores;
+    
     std::vector<TextAreaOverlayElement*> levelSetStars;
     std::vector<TextAreaOverlayElement*> levelSetScores;
     PanelOverlayElement* levelTotalScoreBackground;
@@ -49,6 +51,8 @@ protected:
     PanelOverlayElement* backButtonBackground;
     PanelOverlayElement* buttonGoUpBackground;
     PanelOverlayElement* buttonGoDownBackground;
+    PanelOverlayElement* buttonEnableTutorialsBackground;
+    TextAreaOverlayElement* textEnableTutorialsPrompt;
     
     void link(Player* player);
     void unlink();

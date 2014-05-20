@@ -10,10 +10,9 @@
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
+    
 #ifdef AUTO_START
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
-    //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101":TRUE];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
@@ -34,8 +33,8 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    //[[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.mViewControllerMain) [self.mViewControllerMain inactivate];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -44,8 +43,21 @@
 }
 
 - (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
+    NSUInteger mask = 0;
+    return mask | UIInterfaceOrientationMaskLandscape;
 }
+
+/*
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
+{
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder
+{
+    return YES;
+}
+*/
 
 - (void)go:(NSString*)str :(BOOL)isOn
 {

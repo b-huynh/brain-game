@@ -82,6 +82,14 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     {
         activatePerformSwipeUp();
     }
+    else if (queryGUI == "checktutorials")
+    {
+        TutorialManager* tutorialMgr = player->getTutorialMgr();
+        if (tutorialMgr->isEnabled())
+            tutorialMgr->disable();
+        else
+            tutorialMgr->enable();
+    }
 
 }
 

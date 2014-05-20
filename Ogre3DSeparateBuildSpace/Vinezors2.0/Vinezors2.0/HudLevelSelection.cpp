@@ -13,7 +13,7 @@
 extern Util::ConfigGlobal globals;
 
 HudLevelSelection::HudLevelSelection(Player* player)
-: Hud(), rowIndex(0)
+: Hud()
 {
     link(player);
     init();
@@ -35,6 +35,7 @@ void HudLevelSelection::init()
 void HudLevelSelection::adjust()
 {
     initOverlay();
+    player->getTutorialMgr()->adjust();
 }
 
 void HudLevelSelection::update(float elapsed)
@@ -100,6 +101,8 @@ void HudLevelSelection::alloc()
     buttonGoUpBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoUpButtonBackground"));
     buttonGoDownBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSetGoDownButtonBackground"));
     backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionBackButtonBackground"));
+    buttonEnableTutorialsBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectionEnableTutorialsBackground"));
+    textEnableTutorialsPrompt = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSelectionEnableTutorialsPrompt"));
     
     // Back Button plus the Vector of 2-D Buttons
     // Order matters that the Back Button is first
@@ -128,6 +131,8 @@ void HudLevelSelection::alloc()
     overlay1->add2D(buttonGoUpBackground);
     overlay1->add2D(buttonGoDownBackground);
     overlay1->add2D(backButtonBackground);
+    overlay1->add2D(buttonEnableTutorialsBackground);
+    buttonEnableTutorialsBackground->addChild(textEnableTutorialsPrompt);
     overlays.push_back(overlay1);
 }
 
@@ -156,6 +161,8 @@ void HudLevelSelection::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoUpBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonGoDownBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(buttonEnableTutorialsBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(textEnableTutorialsPrompt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
@@ -253,9 +260,9 @@ void HudLevelSelection::initOverlay()
     
     // Display Text
     levelTotalScoreBackground->setMetricsMode(GMM_RELATIVE);
-    levelTotalScoreBackground->setPosition(0.675, 0.750);
+    levelTotalScoreBackground->setPosition(0.675, 0.850);
     levelTotalScoreBackground->setDimensions(0.30, 0.10);
-    levelTotalScoreBackground->setMaterialName("General/ButtonBackground");
+    levelTotalScoreBackground->setMaterialName("General/ScreenBackground2");
     
     levelTotalScore->setMetricsMode(GMM_RELATIVE);
     levelTotalScore->setAlignment(TextAreaOverlayElement::Center);
@@ -264,6 +271,14 @@ void HudLevelSelection::initOverlay()
     levelTotalScore->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     levelTotalScore->setFontName("Arial");
     
+    textEnableTutorialsPrompt->setMetricsMode(GMM_RELATIVE);
+    textEnableTutorialsPrompt->setAlignment(TextAreaOverlayElement::Center);
+    textEnableTutorialsPrompt->setPosition(-0.150, 0.025);
+    textEnableTutorialsPrompt->setCharHeight(0.025);
+    textEnableTutorialsPrompt->setDimensions(0.80, 0.20);
+    textEnableTutorialsPrompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    textEnableTutorialsPrompt->setFontName("Arial");
+    textEnableTutorialsPrompt->setCaption("Enable Tutorials");
     
     // The Up Button
     {
@@ -278,6 +293,13 @@ void HudLevelSelection::initOverlay()
         float percsize = 0.10;
         float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
         buttons[BUTTON_DOWN].setButton("godown", overlays[0], GMM_RELATIVE, Vector2(0.025, 0.550), Vector2(dimen, dimen), buttonGoDownBackground, NULL);
+    }
+    // The Enable Tutorial Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float percsize = 0.10;
+        float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
+        buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.900, 0.725), Vector2(dimen, dimen), buttonEnableTutorialsBackground, NULL);
     }
     buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
     buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
@@ -337,6 +359,11 @@ void HudLevelSelection::updateDisplay()
         buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
     else
         buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
+    
+    if (player->getTutorialMgr()->isEnabled())
+        buttonEnableTutorialsBackground->setMaterialName("General/CheckboxGreen");
+    else
+        buttonEnableTutorialsBackground->setMaterialName("General/CheckboxBlank");
     
 }
 

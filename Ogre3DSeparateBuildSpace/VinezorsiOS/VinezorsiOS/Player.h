@@ -19,6 +19,7 @@
 #include "PlayerLevel.h"
 #include "PlayerProgress.h"
 #include "LevelSet.h"
+#include "TutorialManager.h"
 
 class Player
 {
@@ -169,7 +170,12 @@ private:
     
     // Level Results
     std::vector< std::vector<PlayerProgress> > levelProgress;
+    
+    // Tutorials
+    TutorialManager* tutorialMgr;
 public:
+    float offsetRoll;
+    float offsetRollDest;
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
@@ -234,6 +240,7 @@ public:
     float getTotalLevelScore() const;
     bool hasTriggeredStartup() const;
     float getScoring() const;
+    TutorialManager* getTutorialMgr() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
     void setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed);

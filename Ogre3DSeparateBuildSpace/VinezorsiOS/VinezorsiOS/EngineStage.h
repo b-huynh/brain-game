@@ -45,6 +45,8 @@ public:
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
     
+    virtual void activateReturnFromPopup();
+    
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);
 	virtual void mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
@@ -80,7 +82,7 @@ protected:
     
     void setup();
     void dealloc();
-    void setPause(bool value);
+    void setPause(bool value, bool targetAllSounds = true);
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
 };

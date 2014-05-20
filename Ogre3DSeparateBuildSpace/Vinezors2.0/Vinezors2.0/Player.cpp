@@ -14,17 +14,18 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0)
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
+    tutorialMgr = new TutorialManager();
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress()
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0)
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
@@ -33,6 +34,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
         soundPods[i] = NULL;
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
+    tutorialMgr = new TutorialManager();
 }
 
 LevelSet* Player::getLevels() const
@@ -469,6 +471,11 @@ float Player::getScoring() const
     return 5000.0 * nvalue;
 }
 
+TutorialManager* Player::getTutorialMgr() const
+{
+    return tutorialMgr;
+}
+
 void Player::setRunningSpeed(int val1, int val2, int val3, int val4, int nav)
 {
     skillLevel.runSpeed1 = val1;
@@ -659,6 +666,8 @@ void Player::updateTimeWarp(float elapsed)
                 t->timeBonusEntity = NULL;
                 vines[0]->entireVine->removeAndDestroyChild("timeBonusNode");
                 t->timeBonusNode = NULL;
+                
+                tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_TIME_WARP);
             }
             else {
                 t->mainTimer += elapsed;
@@ -1001,10 +1010,11 @@ void Player::offsetShip(float elapsed)
         vines[0]->previoust = vines[0]->aftert;
         vines[0]->afterID = closest->getTunnelSliceID();
         vines[0]->aftert = tunnel->getTLeftOffsetCurrent();
+        
+#if !defined(OGRE_IS_IOS)
         vines[0]->setQuaternion(getCombinedRotAndRoll());
         Vector3 centerPos = closest->getCenter(vines[0]->aftert);
         
-#if !defined(OGRE_IS_IOS)
         // For desktop builds, don't include Brandon's swipe controller,
         // This is the original standard 1 swipe per panel movement.
         // For desktop builds, this is left or right arrow key.
@@ -1066,10 +1076,21 @@ void Player::offsetShip(float elapsed)
          vines[0]->setForward(closest->getForward());
          vines[0]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[0]->transition);
 #else
+        Vector3 centerPos = closest->getCenter(vines[0]->aftert);
+        
         // Brandon's swipe control offsets ship based on camera
         float radius = tunnel->getCurrent()->getWallLength() / 1.5;
         vines[0]->setForward(closest->getForward());
-        vines[0]->setPos(getCamPos() + getCamForward() * 25 + (getCamUpward() * -1 * radius));
+    
+        Quaternion vineRot;
+        // Offset the ship from the camera roll
+        vineRot = Quaternion(Degree(offsetRoll), getCamForward());
+        Vector3 vineDir = vineRot * (getCamUpward() * -1);
+        vines[0]->setPos(getCamPos() + getCamForward() * globals.tunnelSegmentDepth * vineOffset + (vineDir * radius));
+        
+        // Orient the ship for the offset
+        vineRot = Quaternion(Degree(offsetRoll / 2), getCamForward());
+        vines[0]->setQuaternion(getCombinedRotAndRoll() * vineRot);
 #endif
         
         vines[0]->update(elapsed); // Mostly for animating the navigation around the tunnel
@@ -1581,6 +1602,30 @@ void Player::unpause()
 void Player::pause()
 {
     saveCam();
+    if (soundFeedbackGreat)
+        soundFeedbackGreat->pause();
+    if (soundFeedbackGood)
+        soundFeedbackGood->pause();
+    if (soundFeedbackBad)
+        soundFeedbackBad->pause();
+    if (soundPods[POD_SIGNAL_1])
+        soundPods[POD_SIGNAL_1]->pause();
+    if (soundPods[POD_SIGNAL_2])
+        soundPods[POD_SIGNAL_2]->pause();
+    if (soundPods[POD_SIGNAL_3])
+        soundPods[POD_SIGNAL_3]->pause();
+    if (soundPods[POD_SIGNAL_4])
+        soundPods[POD_SIGNAL_4]->pause();
+    if (soundPods[POD_SIGNAL_HOLDOUT])
+        soundPods[POD_SIGNAL_HOLDOUT]->pause();
+    if (soundPods[POD_SIGNAL_UNKNOWN])
+        soundPods[POD_SIGNAL_UNKNOWN]->pause();
+    if (soundCollision)
+        soundCollision->pause();
+    if (soundStartup)
+        soundStartup->pause();
+    if (soundBoost)
+        soundBoost->pause();
 }
 
 void Player::setSounds(bool mode)
@@ -1814,9 +1859,8 @@ void Player::update(float elapsed)
                     flyOutCamSpeed -= 0.5f;
                 }
                 
-                move(Vector3(0,0,-flyOutCamSpeed));
-                //move(vines[0]->getForward() * flyOutCamSpeed);
-                Vector3 moveOffset = /*vines[0]->getForward()*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+                move(getCamForward() * flyOutCamSpeed);
+                Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
                 
                 // rotate about y
                 moveOffset = Vector3(Math::Cos(Degree(flyOutAngleY))*moveOffset.x+Math::Sin(Degree(flyOutAngleY))*moveOffset.z,moveOffset.y,-Math::Sin(Degree(flyOutAngleY))*moveOffset.x+Math::Cos(Degree(flyOutAngleY))*moveOffset.z);
@@ -1856,8 +1900,8 @@ void Player::update(float elapsed)
         else {
             flyOutCounter += elapsed;
             flyOutCamSpeed = globals.globalModifierCamSpeed*finalSpeed*elapsed;
-            move(Vector3(0,0,-flyOutCamSpeed));
-            Vector3 moveOffset = /*getCamForward(true)*/ Vector3(0,0,-1) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+            move(getCamForward() * flyOutCamSpeed);
+            Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
             vines[0]->move(moveOffset);
         }
         return;
@@ -1895,13 +1939,10 @@ void Player::update(float elapsed)
                     flyOutSpeed -= flyOutIncr;
                 }
             }
-            vines[0]->move(Vector3(0,-flyOutSpeed,0));
+            vines[0]->move(getCamUpward() * -flyOutSpeed);
         }
         return;
     }
-    
-    
-    
     
     // Determine the speed of the player for this update
     decideFinalSpeed(elapsed);
@@ -2429,6 +2470,8 @@ bool Player::saveProgress(std::string file)
             out << levelProgress[i][j] << std::endl;
     }
     
+    out << (*tutorialMgr) << std::endl;
+    
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
     
@@ -2458,17 +2501,23 @@ bool Player::loadProgress(std::string savePath)
             }
         }
         
+        saveFile >> (*tutorialMgr);
+        
         globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
     } else {
         globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = false;
     }
+    
+    tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_WELCOME);
+    
     saveFile.close();
     return ret;
 }
 
 Player::~Player()
 {
-    destroyPowerUps(); 
+    destroyPowerUps();
+    delete tutorialMgr;
 }

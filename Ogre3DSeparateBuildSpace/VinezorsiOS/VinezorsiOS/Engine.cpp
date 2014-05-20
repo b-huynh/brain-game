@@ -74,6 +74,16 @@ void Engine::activatePerformEndLongPress()
     
 }
 
+void Engine::activatePerformBeginShortPress()
+{
+    
+}
+
+void Engine::activatePerformEndShortPress()
+{
+    
+}
+
 void Engine::activateMoved(float x, float y, float dx, float dy)
 {
     
@@ -90,6 +100,11 @@ void Engine::activateReleased(float x, float y, float dx,  float dy)
 }
 
 void Engine::activateVelocity(float vel)
+{
+    
+}
+
+void Engine::activateReturnFromPopup()
 {
     
 }

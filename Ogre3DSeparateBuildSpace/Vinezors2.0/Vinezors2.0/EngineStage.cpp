@@ -50,8 +50,14 @@ void EngineStage::update(float elapsed)
         {
             setup();
             setPause(true);
-            globals.appendMessage("\n\nSet Your Speed", MESSAGE_NORMAL);
+            if (tunnel->getMode() != STAGE_MODE_RECESS || tunnel->getMode() != STAGE_MODE_TEACHING)
+                globals.appendMessage("\n\nSet Your Speed", MESSAGE_NORMAL);
             stageState = STAGE_STATE_PAUSE;
+            
+            hud->update(elapsed);
+            hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
+            hud->notifyGoButton(false);
             break;
         }
         case STAGE_STATE_RUNNING:
@@ -77,7 +83,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->setOverlay(2, false);
+            hud->notifyGoButton(false);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -90,6 +96,13 @@ void EngineStage::update(float elapsed)
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
+            // See by the end of this frame if we have a tutorial popup, if so pause the game, keep the music running
+            if (player->getTutorialMgr()->isVisible())
+            {
+                setPause(true, false);
+                globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
+                stageState = STAGE_STATE_PAUSE;
+            }
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -107,14 +120,17 @@ void EngineStage::update(float elapsed)
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
-            int sliderSpeed = hud->getSpeedSlider()->getIndex();
-            globals.initCamSpeed = Util::clamp(sliderSpeed, globals.minCamSpeed, globals.maxCamSpeed);
-            player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+            if (!player->hasTriggeredStartup())
+            {
+                int sliderSpeed = hud->getSpeedSlider()->getIndex();
+                globals.initCamSpeed = Util::clamp(sliderSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+                player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+            }
             
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->setOverlay(2, true);
+            hud->notifyGoButton(true);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -122,7 +138,6 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
-            hud->setOverlay(2, false);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             break;
@@ -139,7 +154,16 @@ void EngineStage::update(float elapsed)
     }
 }
 
-Direction getDirByRoll (int roll)
+float normalizedAngle(int theta)
+{
+    while (theta > 360)
+        theta -= 360;
+    while (theta < 0)
+        theta += 360;
+    return theta;
+}
+
+Direction getDirByRoll(int roll)
 {
     while (roll > 360)
         roll -= 360;
@@ -147,15 +171,44 @@ Direction getDirByRoll (int roll)
     while (roll < 0)
         roll += 360;
     
-    if (roll < 22.5) return SOUTH;
-    if (roll < 67.5) return SOUTHWEST;
-    if (roll < 112.5) return WEST;
-    if (roll < 157.5) return NORTHWEST;
-    if (roll < 202.5) return NORTH;
-    if (roll < 247.5) return NORTHEAST;
-    if (roll < 292.5) return EAST;
-    if (roll < 337.5) return SOUTHEAST;
-    if (roll < 360) return SOUTH;
+    if (roll <= 22.5) return SOUTH;
+    if (roll <= 67.5) return SOUTHWEST;
+    if (roll <= 112.5) return WEST;
+    if (roll <= 157.5) return NORTHWEST;
+    if (roll <= 202.5) return NORTH;
+    if (roll <= 247.5) return NORTHEAST;
+    if (roll <= 292.5) return EAST;
+    if (roll <= 337.5) return SOUTHEAST;
+    if (roll <= 360.0) return SOUTH;
+    return NO_DIRECTION;
+}
+
+bool isPathable(SectionInfo info, int roll)
+{
+    while (roll > 360)
+        roll -= 360;
+    
+    while (roll < 0)
+        roll += 360;
+    
+    if (roll < 45)
+        return info.sidesUsed[SOUTH] && info.sidesUsed[SOUTHEAST];
+    else if (roll < 90)
+        return info.sidesUsed[SOUTHEAST] && info.sidesUsed[EAST];
+    else if (roll < 135)
+        return info.sidesUsed[EAST] && info.sidesUsed[NORTHEAST];
+    else if (roll < 180)
+        return info.sidesUsed[NORTHEAST] && info.sidesUsed[NORTH];
+    else if (roll < 225)
+        return info.sidesUsed[NORTH] && info.sidesUsed[NORTHWEST];
+    else if (roll < 270)
+        return info.sidesUsed[NORTHWEST] && info.sidesUsed[WEST];
+    else if (roll < 315)
+        return info.sidesUsed[WEST] && info.sidesUsed[SOUTHWEST];
+    else if (roll < 360)
+        return info.sidesUsed[SOUTHWEST] && info.sidesUsed[SOUTH];
+    
+    return false;
 }
 
 void EngineStage::activatePerformLeftMove()
@@ -197,24 +250,27 @@ void EngineStage::activatePerformLeftMove(int angle)
             if (!tunnel->isDone())// && player->setVineDirRequest(Util::rightOf(player->getVineDest())))
             {
                 SectionInfo info = tunnel->getCurrent()->getSectionInfo();
-                int numSides = 0;
-                for (int i = 0; i < NUM_DIRECTIONS; ++i)
-                    if (info.sidesUsed[i])
-                        ++numSides;
+                TunnelSlice* next = tunnel->getNext(1);
                 
-                int control;
-                if (numSides == 8) control = 4;
-                else if (numSides == 7) control = 3;
-                else if (numSides == 5) control = 2;
-                else if (numSides == 3) control = 1;
-                else control = 0;
-                float lock = control * (45);
+                // Perform Player Movement
+                int val = player->getCamRoll();
+                int nval = val + angle;
+                if (isPathable(info, nval) &&
+                    (!next || isPathable(next->getSectionInfo(), nval)))
+                    player->setCamRoll(normalizedAngle(nval));
+                else
+                {
+                    // resolve overshooting by setting the player directly on the panel
+                    int discreteDegrees = Util::getDegrees(getDirByRoll(val)) - 1;
+                    if (isPathable(info, discreteDegrees) &&
+                        (!next || isPathable(next->getSectionInfo(), discreteDegrees)))
+                    {
+                        player->setCamRoll(discreteDegrees); // resolve overshooting
+                    }
+                    spinVelocity = 0.0;
+                }
                 
-                float val = player->getCamRoll();
-                if (val < lock || numSides == 8)
-                    player->setCamRoll(val + angle);
-                
-                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
             }
             break;
         }
@@ -270,24 +326,27 @@ void EngineStage::activatePerformRightMove(int angle)
             if (!tunnel->isDone())
             {
                 SectionInfo info = tunnel->getCurrent()->getSectionInfo();
-                int numSides = 0;
-                for (int i = 0; i < NUM_DIRECTIONS; ++i)
-                    if (info.sidesUsed[i])
-                        ++numSides;
+                TunnelSlice* next = tunnel->getNext(1);
                 
-                int control;
-                if (numSides == 8) control = 4;
-                else if (numSides == 7) control = 3;
-                else if (numSides == 5) control = 2;
-                else if (numSides == 3) control = 1;
-                else control = 0;
-                float lock = control * (-45);
+                // Perform Player Movement
+                int val = player->getCamRoll();
+                int nval = val - angle;
+                if (isPathable(info, nval) &&
+                    (!next || isPathable(next->getSectionInfo(), nval)))
+                    player->setCamRoll(normalizedAngle(nval));
+                else
+                {
+                    // resolve overshooting by setting the player directly on the panel
+                    int discreteDegrees = Util::getDegrees(getDirByRoll(val)) + 1;
+                    if (isPathable(info, discreteDegrees) &&
+                        (!next || isPathable(next->getSectionInfo(), discreteDegrees)))
+                    {
+                        player->setCamRoll(discreteDegrees); // resolve overshooting
+                    }
+                    spinVelocity = 0.0;
+                }
                 
-                float val = player->getCamRoll();
-                if (val > lock || numSides == 8)
-                    player->setCamRoll(val - angle);
-                
-                player->setVineDirRequest(getDirByRoll(player->getCamRoll()));
+                player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
             }
             break;
         }
@@ -480,7 +539,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             {
                 // If game hasn't started yet, go back to init prompt
                 // Otherwise, go to gameplay
-                if (!player->hasTriggeredStartup())
+                if (!player->hasTriggeredStartup() || hud->isGoButtonActive())
                 {
                     stageState = STAGE_STATE_PAUSE;
                 }
@@ -589,7 +648,7 @@ void EngineStage::activatePerformEndLongPress()
 //
 void EngineStage::activateMoved(float x, float y, float dx, float dy)
 {
-    if (stageState == STAGE_STATE_PAUSE)
+    if (stageState == STAGE_STATE_PAUSE && !player->hasTriggeredStartup())
     {
         HudSlider* speedSlider = NULL;
         if (hud) speedSlider = hud->getSpeedSlider();
@@ -616,7 +675,7 @@ void EngineStage::activateMoved(float x, float y, float dx, float dy)
 
 void EngineStage::activatePressed(float x, float y)
 {
-    if (stageState == STAGE_STATE_PAUSE)
+    if (stageState == STAGE_STATE_PAUSE && !player->hasTriggeredStartup())
     {
         HudSlider* speedSlider = NULL;
         if (hud) speedSlider = hud->getSpeedSlider();
@@ -655,7 +714,7 @@ void EngineStage::activatePressed(float x, float y)
 
 void EngineStage::activateReleased(float x, float y, float dx, float dy)
 {
-    if (stageState == STAGE_STATE_PAUSE)
+    if (stageState == STAGE_STATE_PAUSE && !player->hasTriggeredStartup())
     {
         HudSlider* speedSlider = NULL;
         if (hud) speedSlider = hud->getSpeedSlider();
@@ -684,7 +743,7 @@ void EngineStage::activateVelocity(float vel)
 {
     float maxVel = 4500.0;
     
-    std::cout << "SPIN VELOCITY: " << vel << std::endl;
+    //std::cout << "SPIN VELOCITY: " << vel << std::endl;
     if (vel != 0.0) this->spinVelocity = abs(vel);
     damping = 1.035;
     if (vel < 0.0) spinClockwise = false;
@@ -693,6 +752,10 @@ void EngineStage::activateVelocity(float vel)
     
     if (abs(spinVelocity) >= maxVel)
         spinVelocity = maxVel;
+}
+
+void EngineStage::activateReturnFromPopup()
+{
 }
 
 #if !defined(OGRE_IS_IOS)
@@ -1107,6 +1170,24 @@ void EngineStage::setup()
     if (lightNode)
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
+    // Set tutorial slides for certain thingies
+    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getHighestCriteria() <= 0)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ZERO_BACK);
+    if (tunnel->getHighestCriteria() == 1)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ONE_BACK);
+    if (tunnel->getHighestCriteria() == 2)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TWO_BACK);
+    if (tunnel->getPhase() == 'A')
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_COLOR_SOUND);
+    if (tunnel->getPhase() == 'B')
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SHAPE_SOUND);
+    if (tunnel->getPhase() == 'C')
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SOUND_ONLY);
+    if (tunnel->getPhase() == 'D')
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
+
+        
+
     spinVelocity = 0.0f;
     damping = 0.0f;
 }
@@ -1119,13 +1200,73 @@ void EngineStage::updateSpin(float elapsed)
     const float PI = 3.14;
     dTheta = (dTheta * 180.0) / PI;
     
-    Radian theta = Ogre::Radian((int)dTheta);
-    
+    // Perform Player Movement
     if (spinClockwise) {
         this->activatePerformRightMove((int)dTheta);
-        theta = -theta;
+        player->offsetRollDest = -dTheta;
     } else {
         this->activatePerformLeftMove((int)dTheta);
+        player->offsetRollDest = dTheta;
+    }
+    
+    // Avoid moving into empty panels ahead of us
+    TunnelSlice* next = tunnel->getNext(1);
+    if (next)
+    {
+        SectionInfo nextInfo = next->getSectionInfo();
+        float curRoll = player->getCamRoll();
+        //float curRoll = player->getCamRoll() + player->offsetRoll;
+        if (!isPathable(nextInfo, curRoll))
+        {
+            // Look for the closest panel using 15 degree delta steps
+            float thetaDistEstimate = 15.0;
+            while (thetaDistEstimate <= 180.0)
+            {
+                if (isPathable(nextInfo, curRoll - thetaDistEstimate))
+                {
+                    thetaDistEstimate = -thetaDistEstimate;
+                    break;
+                }
+                if (isPathable(nextInfo, curRoll + thetaDistEstimate))
+                {
+                    break;
+                }
+                thetaDistEstimate += 15.0;
+            }
+            
+            // Limit the force to 45 degrees
+            if (thetaDistEstimate > 45.0)
+                thetaDistEstimate = 45.0;
+            if (thetaDistEstimate < -45.0)
+                thetaDistEstimate = -45.0;
+            
+            // Assign new roll
+            float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
+            curRoll = curRoll + recoverRollSpeed * elapsed;
+            
+            // Resolve overshooting (if we are back on pathable ground)
+            if (isPathable(nextInfo, curRoll))
+            {
+                curRoll = Util::getDegrees(getDirByRoll(curRoll));
+            }
+            player->setCamRoll(curRoll);
+            //player->setCamRoll(curRoll - player->offsetRoll);
+        }
+    }
+    
+    // Animating the offset banking
+    double bankingAnimationSpeed = 30.0;
+    if (player->offsetRoll < player->offsetRollDest)
+    {
+        player->offsetRoll += bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll > player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
+    }
+    else if (player->offsetRoll > player->offsetRollDest)
+    {
+        player->offsetRoll -= bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll < player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
     }
 }
 
@@ -1153,11 +1294,12 @@ void EngineStage::dealloc()
     }
 }
 
-void EngineStage::setPause(bool value)
+void EngineStage::setPause(bool value, bool targetAllSounds)
 {
     if (value)
     {
-        OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
+        if (targetAllSounds)
+            OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
         
         // Display current level index
@@ -1173,7 +1315,8 @@ void EngineStage::setPause(bool value)
     else
     {
         player->unpause();
-        OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
+        if (targetAllSounds)
+            OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
         globals.clearMessage();
         Ogre::ControllerManager::getSingleton().setTimeFactor(1);
     }

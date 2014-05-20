@@ -172,6 +172,11 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::update(float elapsed)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        player->getTutorialMgr()->update(elapsed);
+        return;
+    }
     engineStateMgr->update(elapsed);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->update(elapsed);
@@ -248,6 +253,7 @@ void OgreApp::endGame()
 
 void OgreApp::requestResize()
 {
+    player->getTutorialMgr()->adjust();
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->requestResize();
 }
@@ -305,6 +311,11 @@ void OgreApp::runDemo()
 void OgreApp::activatePerformLeftMove()
 {
     player->addAction(ACTION_SWIPE_LEFT);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
+    
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformLeftMove();
 }
@@ -312,6 +323,10 @@ void OgreApp::activatePerformLeftMove()
 void OgreApp::activatePerformRightMove()
 {
     player->addAction(ACTION_SWIPE_RIGHT);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformRightMove();
 }
@@ -319,6 +334,10 @@ void OgreApp::activatePerformRightMove()
 void OgreApp::activatePerformSwipeUp()
 {
     // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformSwipeUp();
 }
@@ -326,6 +345,10 @@ void OgreApp::activatePerformSwipeUp()
 void OgreApp::activatePerformSwipeDown()
 {
     // NOTE: NO ACTION RECORDED FOR UP AND DOWN SWIPES
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformSwipeDown();
 }
@@ -333,6 +356,10 @@ void OgreApp::activatePerformSwipeDown()
 void OgreApp::activatePerformDoubleTap(float x, float y)
 {
     //player->addAction(ACTION_DOUBLE_TAP);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     //Engine* activeEngine = engineStateMgr->getActiveEngine();
     //if (activeEngine) activeEngine->activatePerformDoubleTap(x, y);
 }
@@ -340,6 +367,17 @@ void OgreApp::activatePerformDoubleTap(float x, float y)
 void OgreApp::activatePerformSingleTap(float x, float y)
 {
     player->addAction(ACTION_SINGLE_TAP);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        player->getTutorialMgr()->processInput(Vector2(x, y));
+        if (player->getTutorialMgr()->isHidden())
+        {
+            Engine* activeEngine = engineStateMgr->getActiveEngine();
+            if (activeEngine)
+                activeEngine->activateReturnFromPopup();
+        }
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) {
         activeEngine->activatePerformSingleTap(x, y);
@@ -350,6 +388,10 @@ void OgreApp::activatePerformSingleTap(float x, float y)
 void OgreApp::activatePerformPinch()
 {
     player->addAction(ACTION_PINCH);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformPinch();
 }
@@ -357,28 +399,61 @@ void OgreApp::activatePerformPinch()
 void OgreApp::activatePerformBeginLongPress()
 {
     player->addAction(ACTION_TAP_HOLD);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformBeginLongPress();
     if (activeEngine) activeEngine->activateVelocity(0.0);
-    
-    //Engine* activeEngine = engineStateMgr->getActiveEngine();
-    //if (activeEngine) activeEngine->activatePerformBeginLongPress();
 }
 
 void OgreApp::activatePerformEndLongPress()
 {
-    //Engine* activeEngine = engineStateMgr->getActiveEngine();
-    //if (activeEngine) activeEngine->activatePerformEndLongPress();
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformEndLongPress();
 }
 
+void OgreApp::activatePerformBeginShortPress()
+{
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformBeginShortPress();
+}
+
+void OgreApp::activatePerformEndShortPress()
+{
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformEndShortPress();
+}
 
 void OgreApp::activateMoved(float x, float y, float dx, float dy)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateMoved(x, y, dx, dy);
 }
 
 void OgreApp::activatePressed(float x, float y)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) {
         activeEngine->activatePressed(x, y);
@@ -388,12 +463,20 @@ void OgreApp::activatePressed(float x, float y)
 
 void OgreApp::activateReleased(float x, float y, float dx, float dy)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateReleased(x, y, dx, dy);
 }
 
 void OgreApp::activateVelocity(float vel)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateVelocity(vel);
 }
@@ -403,6 +486,10 @@ void OgreApp::activateVelocity(float vel)
 bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
 {
     OgreFramework::getSingletonPtr()->mouseMoved(evt);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseMoved(evt);
     if (activeEngine) activeEngine->activateMoved(evt.state.X.abs, evt.state.Y.abs, evt.state.X.rel, evt.state.Y.rel);
@@ -412,6 +499,11 @@ bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
 bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     OgreFramework::getSingletonPtr()->mousePressed(evt, id);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        player->getTutorialMgr()->processInput(Vector2(evt.state.X.abs, evt.state.Y.abs));
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mousePressed(evt, id);
     if (activeEngine) activeEngine->activatePressed(evt.state.X.abs, evt.state.Y.abs);
@@ -421,6 +513,10 @@ bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 bool OgreApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 {
     OgreFramework::getSingletonPtr()->mouseReleased(evt, id);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseReleased(evt, id);
     if (activeEngine) activeEngine->activateReleased(evt.state.X.abs, evt.state.Y.abs, evt.state.X.rel, evt.state.Y.rel);
@@ -430,6 +526,10 @@ bool OgreApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
 {
 	OgreFramework::getSingletonPtr()->keyPressed(keyEventRef);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->keyPressed(keyEventRef);
 	return true;
@@ -439,6 +539,10 @@ bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
 
 bool OgreApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 {
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
 	OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->keyReleased(keyEventRef);
