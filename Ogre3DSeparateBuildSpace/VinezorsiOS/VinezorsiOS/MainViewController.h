@@ -12,7 +12,7 @@
 
 @interface MainViewController : UIViewController  <UIGestureRecognizerDelegate>
 
-- (void)startWithWindow:(UIWindow*)window:(NSString*)str :(BOOL)isOn;
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn;
 - (void)update:(id)sender;
 - (void)stop;
 - (void)inactivate;
@@ -32,6 +32,10 @@
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender;
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender;
 - (IBAction)handlePan:(UIPanGestureRecognizer*)sender;
+- (IBAction)handleLongPress:(UILongPressGestureRecognizer*)sender;
+- (IBAction)handleShortPress:(UILongPressGestureRecognizer*)sender;
 - (void)cleanup;
+
+@property (nonatomic, copy) NSString *capital;
 
 @end

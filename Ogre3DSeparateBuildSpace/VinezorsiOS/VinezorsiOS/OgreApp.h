@@ -110,6 +110,8 @@ public:
     void activatePerformPinch();
     void activatePerformBeginLongPress();
     void activatePerformEndLongPress();
+    void activatePerformBeginShortPress();
+    void activatePerformEndShortPress();
     
     void activateMoved(float x, float y, float dx, float dy);
 	void activatePressed(float x, float y);

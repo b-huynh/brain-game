@@ -29,9 +29,9 @@ public:
     }
     
     virtual void activatePerformLeftMove();
-    virtual void activatePerformLeftMove(int angle);
+    virtual void activatePerformLeftMove(float angle);
     virtual void activatePerformRightMove();
-    virtual void activatePerformRightMove(int angle);
+    virtual void activatePerformRightMove(float angle);
     virtual void activatePerformSwipeUp();
     virtual void activatePerformSwipeDown();
     virtual void activatePerformDoubleTap(float x, float y);
@@ -44,6 +44,8 @@ public:
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
+    
+    virtual void activateReturnFromPopup();
     
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual void mouseMoved(const OIS::MouseEvent &evt);
@@ -80,7 +82,7 @@ protected:
     
     void setup();
     void dealloc();
-    void setPause(bool value);
+    void setPause(bool value, bool targetAllSounds = true);
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
 };

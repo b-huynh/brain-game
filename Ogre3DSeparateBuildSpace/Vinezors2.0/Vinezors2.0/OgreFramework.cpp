@@ -176,12 +176,15 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
+    /*
+     // Loaded & destroyed online. Note: if you go back to these, make sure to change it to stream
     m_pSoundMgr->createSound("MusicMenu", "VideoGameSong4.ogg", false, true, true);
     m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
     m_pSoundMgr->createSound("Music5", "SoundOfWind.ogg", false, true, true);
+     */
     m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);

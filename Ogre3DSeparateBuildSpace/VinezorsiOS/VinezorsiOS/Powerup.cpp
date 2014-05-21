@@ -27,22 +27,12 @@ TractorBeam::~TractorBeam()
 }
 
 TimeWarp::TimeWarp(float timeout, float timebonustimeout, float timebonus, float maxangle)
-    : Powerup(timeout), origFov(Degree()), origAngle(0.0f), currentAngle(0.0f), maxAngle(maxangle), angleIncrement(1.0f), slowdown(0.2f), zoomIn(0), origOffset(0.0f), currentOffset(0.0f), offsetIncrement(0.02f), offsetLimit(0.3f), timeBonus(timebonus), timeBonusTimeout(timebonustimeout), xFlySpeed(-0.8f), yFlySpeed(0.5f), scaleFactor(0.9f), timeBonusNode(NULL), timeBonusEntity(NULL) {}
+    : Powerup(timeout), origFov(Degree()), origAngle(0.0f), currentAngle(0.0f), maxAngle(maxangle), angleIncrement(1.0f), slowdown(0.2f), zoomIn(0), origOffset(0.0f), currentOffset(0.0f), offsetIncrement(0.02f), offsetLimit(0.3f), timeBonus(timebonus), timeBonusTimeout(timebonustimeout), currentTimeVal(0), timeVal(20) {}
 
 void TimeWarp::reset()
 {
     available = false;
     active = false;
-    
-    if (timeBonusNode || timeBonusEntity)
-    {
-        timeBonusNode->detachObject(timeBonusEntity);
-        timeBonusNode->getCreator()->destroyEntity(timeBonusEntity);
-        timeBonusEntity = NULL;
-        timeBonusNode->getParent()->removeChild(timeBonusNode);
-        timeBonusNode->getCreator()->destroySceneNode(timeBonusNode);
-        timeBonusNode = NULL;
-    }
 }
 
 TimeWarp::~TimeWarp()

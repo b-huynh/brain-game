@@ -24,7 +24,7 @@ material General/WallBindingA
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_AlienPipes.png
+				texture LevelBinding/TunnelTile_R_Windows.png
 			}
 		}
 	}
@@ -40,7 +40,7 @@ material General/WallBindingB
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_R_Windows.png
+				texture LevelBinding/TunnelTile_AlienPipes.png
 			}
 		}
 	}
@@ -52,11 +52,11 @@ material General/WallBindingC
 	{
         pass
 		{
-            lighting on
+            lighting off
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_sand1.png
+				texture LevelBinding/TunnelTile_ice6.png
 			}
 		}
 	}

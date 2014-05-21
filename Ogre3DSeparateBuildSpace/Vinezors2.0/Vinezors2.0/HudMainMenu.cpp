@@ -32,6 +32,7 @@ void HudMainMenu::init()
 void HudMainMenu::adjust()
 {
     initOverlay();
+    player->getTutorialMgr()->adjust();
 }
 
 void HudMainMenu::update(float elapsed)

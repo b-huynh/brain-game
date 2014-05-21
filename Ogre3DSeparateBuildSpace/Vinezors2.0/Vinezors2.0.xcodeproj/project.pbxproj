@@ -24,6 +24,8 @@
 		5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D3041C318431C3800BD26C0 /* Hud.cpp */; };
 		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
 		5DA3B27418BB10E4001BFBB9 /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3B27318BB10E4001BFBB9 /* Networking.mm */; };
+		5DC3698C19256B3600E5A53D /* TutorialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC3698A19256B3600E5A53D /* TutorialManager.cpp */; };
+		5DC3698F1926097600E5A53D /* HudElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC3698D1926097600E5A53D /* HudElements.cpp */; };
 		5DCDDD8B191062EC00CF67F1 /* PlayerLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD89191062EC00CF67F1 /* PlayerLevel.cpp */; };
 		5DCDDD8E1910637800CF67F1 /* PlayerProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD8C1910637800CF67F1 /* PlayerProgress.cpp */; };
 		5DD5E04C18FF7EAD0063491A /* EngineStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD5E04A18FF7EAD0063491A /* EngineStage.cpp */; };
@@ -116,6 +118,10 @@
 		5D3041C418431C3800BD26C0 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
 		5DA3B27218BB10E4001BFBB9 /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
 		5DA3B27318BB10E4001BFBB9 /* Networking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Networking.mm; sourceTree = "<group>"; };
+		5DC3698A19256B3600E5A53D /* TutorialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TutorialManager.cpp; sourceTree = "<group>"; };
+		5DC3698B19256B3600E5A53D /* TutorialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialManager.h; sourceTree = "<group>"; };
+		5DC3698D1926097600E5A53D /* HudElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudElements.cpp; sourceTree = "<group>"; };
+		5DC3698E1926097600E5A53D /* HudElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudElements.h; sourceTree = "<group>"; };
 		5DCDDD801910136E00CF67F1 /* GeneralGUI.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneralGUI.material; sourceTree = "<group>"; };
 		5DCDDD811910136E00CF67F1 /* GeneralPod.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneralPod.material; sourceTree = "<group>"; };
 		5DCDDD821910136E00CF67F1 /* GeneralSkyplane.material */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneralSkyplane.material; sourceTree = "<group>"; };
@@ -224,6 +230,8 @@
 				5DCDDD8A191062EC00CF67F1 /* PlayerLevel.h */,
 				5DCDDD8C1910637800CF67F1 /* PlayerProgress.cpp */,
 				5DCDDD8D1910637800CF67F1 /* PlayerProgress.h */,
+				5DC3698A19256B3600E5A53D /* TutorialManager.cpp */,
+				5DC3698B19256B3600E5A53D /* TutorialManager.h */,
 			);
 			name = Player;
 			sourceTree = "<group>";
@@ -231,6 +239,8 @@
 		5D04AD3319006C2600E0A98B /* BaseClasses */ = {
 			isa = PBXGroup;
 			children = (
+				5DC3698D1926097600E5A53D /* HudElements.cpp */,
+				5DC3698E1926097600E5A53D /* HudElements.h */,
 				5D3041C318431C3800BD26C0 /* Hud.cpp */,
 				5D3041C418431C3800BD26C0 /* Hud.h */,
 				5D04AD2719003C4900E0A98B /* Engine.cpp */,
@@ -502,6 +512,7 @@
 				5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */,
 				5D04AD391900B05100E0A98B /* EngineLevelSelection.cpp in Sources */,
 				5D04AD2919003C4900E0A98B /* Engine.cpp in Sources */,
+				5DC3698F1926097600E5A53D /* HudElements.cpp in Sources */,
 				B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */,
 				5D1EFEB4190B2B1100E865D6 /* LevelSet.cpp in Sources */,
 				5D04AD4D1901148300E0A98B /* EngineMainMenu.cpp in Sources */,
@@ -511,6 +522,7 @@
 				5D04AD4A1901147900E0A98B /* HudMainMenu.cpp in Sources */,
 				5D04AD301900543500E0A98B /* HudLevelSelection.cpp in Sources */,
 				5D2D423518CE497F0035786C /* Score.cpp in Sources */,
+				5DC3698C19256B3600E5A53D /* TutorialManager.cpp in Sources */,
 				5DE122DC17F0DC6700E49916 /* Player.cpp in Sources */,
 				5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */,
 				5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */,

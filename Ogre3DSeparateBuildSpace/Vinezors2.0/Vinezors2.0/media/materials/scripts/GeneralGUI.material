@@ -1,3 +1,37 @@
+material General/ScreenBackground1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture screenbackground1.png
+        }
+      } 
+    }
+}
+
+material General/ScreenBackground2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture screenbackground2_noborder.png
+        }
+      } 
+    }
+}
+
 material General/ButtonBackground
 {
     technique
@@ -327,6 +361,40 @@ material General/ButtonGoGray
         texture_unit
         {
             texture buttongoGRAY.png
+        }
+      } 
+    }
+}
+
+material General/CheckboxGreen
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture checkbox_check.png
+        }
+      } 
+    }
+}
+
+material General/CheckboxBlank
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture checkbox_empty.png
         }
       } 
     }
@@ -1063,22 +1131,6 @@ material General/LevelBar3Fill
     }
 }
 
-material General/SliderRangeHorizontal
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture sliderrange.png
-        }
-      } 
-    }
-}
 material General/SliderRangeVertical
 {
     technique
@@ -1090,7 +1142,7 @@ material General/SliderRangeVertical
         depth_write off
         texture_unit
         {
-            texture sliderrange_rotated.png
+            texture speed_slide.png
         }
       } 
     }
@@ -1107,7 +1159,7 @@ material General/SliderBall
         depth_write off
         texture_unit
         {
-            texture sliderbutton.png
+            texture speed_dial.png
         }
       } 
     }

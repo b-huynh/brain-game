@@ -24,7 +24,7 @@ void Engine::activatePerformLeftMove()
     
 }
 
-void Engine::activatePerformLeftMove(int angle)
+void Engine::activatePerformLeftMove(float angle)
 {
     
 }
@@ -34,7 +34,7 @@ void Engine::activatePerformRightMove()
     
 }
 
-void Engine::activatePerformRightMove(int angle)
+void Engine::activatePerformRightMove(float angle)
 {
     
 }
@@ -74,6 +74,16 @@ void Engine::activatePerformEndLongPress()
     
 }
 
+void Engine::activatePerformBeginShortPress()
+{
+    
+}
+
+void Engine::activatePerformEndShortPress()
+{
+    
+}
+
 void Engine::activateMoved(float x, float y, float dx, float dy)
 {
     
@@ -90,6 +100,11 @@ void Engine::activateReleased(float x, float y, float dx,  float dy)
 }
 
 void Engine::activateVelocity(float vel)
+{
+    
+}
+
+void Engine::activateReturnFromPopup()
 {
     
 }

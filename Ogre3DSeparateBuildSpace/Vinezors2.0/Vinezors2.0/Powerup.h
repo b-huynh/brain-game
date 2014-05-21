@@ -59,12 +59,9 @@ struct TimeWarp : public Powerup {
     float timeBonus;
     float timeBonusTimeout;
     
-    float xFlySpeed;
-    float yFlySpeed;
-    float scaleFactor;
+    int currentTimeVal;
+    int timeVal;
     
-    SceneNode* timeBonusNode;
-    Entity* timeBonusEntity;
     
     virtual PowerupType getPowerupType() const
     { return POWERUP_TIME_WARP; }

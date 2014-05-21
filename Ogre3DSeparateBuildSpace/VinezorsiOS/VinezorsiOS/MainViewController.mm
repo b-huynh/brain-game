@@ -19,6 +19,8 @@
 // sometimes cause input lag.
 #define USE_CADISPLAYLINK 0
 
+//#define CONTROL_SPIN_DEBUG_OUTPUT
+
 // private category
 @interface MainViewController ()
 {
@@ -79,6 +81,10 @@
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
     
+    UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
+    shortPressRecognizer.minimumPressDuration = 0.01;
+    [self.view addGestureRecognizer:shortPressRecognizer];
+    
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
     longPressRecognizer.minimumPressDuration = 0.20;
     [self.view addGestureRecognizer:longPressRecognizer];
@@ -91,6 +97,7 @@
     panRecognizer.delegate = self;
     pinchRecognizer.delegate = self;
     longPressRecognizer.delegate = self;
+    shortPressRecognizer.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -99,10 +106,12 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*)window:(NSString*)str :(BOOL)isOn
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn
 {
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
+ 
+    NSLog(@"Yeah: %d %d\n", width, height);
     
     screenWidth = width;
     screenHeight = height;
@@ -147,6 +156,7 @@
     //
     // Let's first retrieve it
     UIViewController* ogreViewController = window.rootViewController;
+    
     NSAssert(ogreViewController.view == mOgreView, @"Ogre's created view controller owns the given view.");
     NSAssert(ogreViewController.interfaceOrientation == self.interfaceOrientation, @"Ogre's view controller has the same device orientation");
     
@@ -170,6 +180,12 @@
                                                                       metrics:nil
                                                                         views:views]];
     [self.view layoutIfNeeded];
+    
+    // After days and days of research, this is the resolution to being able to start
+    // in landscape view in Ogre...
+    // http://stackoverflow.com/questions/1350233/rotate-uiview-in-cocoa-touch
+    CGAffineTransform transform = CGAffineTransformMakeRotation(2 * M_PI);
+    mOgreView.transform = transform;
     
     if (mDisplayLinkSupported)
     {
@@ -334,8 +350,11 @@
     {
         mApplication->activateVelocity(0.0);
         mApplication->activatePressed(p.x, p.y);
+        
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"T: (%f, %f)", dp.x, dp.y);
         NSLog(@"Beginning Pan");
+#endif
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
@@ -354,8 +373,10 @@
         CGFloat dot = (v.x * v.x) + (v.y * v.y);
         CGFloat magnitude = sqrtf(dot);
         
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"Speed: %f", magnitude);
         NSLog(@"V: (%f, %f)", v.x, v.y);
+#endif
         
         if (clockwise) {
             mApplication->activateVelocity(magnitude);
@@ -381,8 +402,10 @@
         CGFloat dot = (v.x * v.x) + (v.y * v.y);
         CGFloat magnitude = sqrtf(dot);
         
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"Speed: %f", magnitude);
         NSLog(@"V: (%f, %f)", v.x, v.y);
+#endif
         
         if (clockwise) {
             mApplication->activateVelocity(magnitude);
@@ -391,8 +414,10 @@
         }
         mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
         
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"End Pan");
         NSLog(@"V: (%f, %f)", v.x, v.y);
+#endif
     }
 }
 
@@ -404,18 +429,47 @@
         mApplication->activatePerformEndLongPress();
 }
 
+- (IBAction)handleShortPress:(UILongPressGestureRecognizer*)sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan)
+        mApplication->activatePerformBeginShortPress();
+    else if (sender.state == UIGestureRecognizerStateEnded)
+        mApplication->activatePerformEndShortPress();
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
     return YES;
 }
 
 - (NSUInteger)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAll;
+    NSUInteger mask = 0;
+    return mask | UIInterfaceOrientationMaskLandscape;
 }
 
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationLandscapeLeft;
+- (BOOL)shouldAutoRotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight;
 }
+
+- (BOOL)shouldAutorotate {
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
+}
+
+/*
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:self.capital forKey:@"UYLKeyCapital"];
+    [super encodeRestorableStateWithCoder:coder];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    self.capital = [coder decodeObjectForKey:@"UYLKeyCapital"];
+    [super decodeRestorableStateWithCoder:coder];
+}
+ */
 
 - (void)cleanup
 {

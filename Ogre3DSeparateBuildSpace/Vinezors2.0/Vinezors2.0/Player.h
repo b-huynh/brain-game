@@ -19,6 +19,7 @@
 #include "PlayerLevel.h"
 #include "PlayerProgress.h"
 #include "LevelSet.h"
+#include "TutorialManager.h"
 
 class Player
 {
@@ -59,11 +60,11 @@ private:
     Vector3 oldPos;
 	Vector3 camPos;
     Quaternion oldRot;
-    int oldRoll;
+    float oldRoll;
     Quaternion camRot;
-    int camRoll;
+    float camRoll;
     Quaternion desireRot;
-    int desireRoll;
+    float desireRoll;
     float baseSpeed;
     float bonusSpeed;
     float finalSpeed;
@@ -169,7 +170,12 @@ private:
     
     // Level Results
     std::vector< std::vector<PlayerProgress> > levelProgress;
+    
+    // Tutorials
+    TutorialManager* tutorialMgr;
 public:
+    float offsetRoll;
+    float offsetRollDest;
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
@@ -201,11 +207,11 @@ public:
 	Vector3 getCamPos() const;
     Vector3 getPos() const;
 	Quaternion getOldRot() const;
-    int getOldRoll() const;
+    float getOldRoll() const;
 	Quaternion getCamRot() const;
-	int getCamRoll() const;
+	float getCamRoll() const;
 	Quaternion getDesireRot() const;
-	int getDesireRoll() const;
+	float getDesireRoll() const;
 	float getBaseSpeed() const;
 	float getFinalSpeed() const;
 	float getTotalSpeed() const;
@@ -234,6 +240,7 @@ public:
     float getTotalLevelScore() const;
     bool hasTriggeredStartup() const;
     float getScoring() const;
+    TutorialManager* getTutorialMgr() const;
     
     void setRunningSpeed(int val1, int val2, int val3, int val4, int nav);
     void setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed);
@@ -259,11 +266,11 @@ public:
 	void setCamPos(Vector3 value);
     void setPos(Vector3 value);
 	void setOldRot(Quaternion value);
-    void setOldRoll(int value);
+    void setOldRoll(float value);
 	void setCamRot(Quaternion value);
-    void setCamRoll(int value);
+    void setCamRoll(float value);
 	void setDesireRot(Quaternion value);
-    void setDesireRoll(int value);
+    void setDesireRoll(float value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
@@ -282,6 +289,8 @@ public:
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
+    float getStartMusicTimer() const;
+    void playMusic() const;
     void unpause();
     void pause();
     
@@ -325,6 +334,7 @@ public:
     void setPowerUp(std::string pwr, bool value);
     bool isPowerUpAvailable(std::string pwr);
     bool isPowerUpActive(std::string pwr);
+    Powerup* getPowerUpPtr(std::string pwr);
     void performPowerUp(std::string pwr);
     void destroyPowerUps();
     void resetPowerUps();
@@ -341,6 +351,8 @@ public:
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
     bool loadProgress(std::string savePath);
+    
+    bool winFlag;
     
     ~Player();
 };

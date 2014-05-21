@@ -152,6 +152,7 @@ public:
 	TunnelSlice* getFront() const;
 	TunnelSlice* getBack() const;
 	TunnelSlice* getNext(int i) const;
+    std::vector<TunnelSlice*> getNSlices(int n) const;
 	int getSpawnIndex() const;
 	int getSpawnCombo() const;
 	int getSpawnLimit() const;

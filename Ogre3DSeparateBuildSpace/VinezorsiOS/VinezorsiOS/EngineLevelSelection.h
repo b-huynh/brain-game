@@ -29,6 +29,7 @@ public:
     
     virtual void activatePerformSwipeUp();
     virtual void activatePerformSwipeDown();
+    
     virtual void activatePerformSingleTap(float x, float y);
     virtual void activatePerformPinch();
     

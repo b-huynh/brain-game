@@ -89,7 +89,7 @@ public:
 #ifdef OGRE_IS_IOS
     bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #else
-	bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+	bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
 #endif
 	void updateOgre(float timeSinceLastFrame);
     

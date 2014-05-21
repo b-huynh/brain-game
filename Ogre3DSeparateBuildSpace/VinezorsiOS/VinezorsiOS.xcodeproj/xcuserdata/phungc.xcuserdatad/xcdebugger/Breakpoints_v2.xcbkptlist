@@ -35,28 +35,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "VinezorsiOS/AppDelegate.mm"
-            timestampString = "413692213.15535"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "-applicationDidFinishLaunching:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "421186946.833428"
+            timestampString = "422305654.01407"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "326"
-            endingLineNumber = "326">
+            startingLineNumber = "327"
+            endingLineNumber = "327"
+            landmarkName = "OgreApp::activatePerformRightMove()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -75,28 +61,12 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "VinezorsiOS/AppDelegate.mm"
-            timestampString = "415229128.536817"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "12"
-            endingLineNumber = "12"
-            landmarkName = "-applicationDidFinishLaunching:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "421665477.42362"
+            timestampString = "422317329.099444"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "609"
-            endingLineNumber = "609">
+            startingLineNumber = "629"
+            endingLineNumber = "629">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -150,12 +120,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "420437069.787902"
+            timestampString = "422305654.01407"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "OgreApp::setupDemoScene()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/HudStage.cpp"
+            timestampString = "422397167.971109"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "609"
+            endingLineNumber = "609"
+            landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

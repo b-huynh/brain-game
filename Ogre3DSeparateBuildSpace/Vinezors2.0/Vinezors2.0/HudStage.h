@@ -23,6 +23,10 @@ public:
     virtual void init();
     virtual void adjust();
     virtual void update(float elapsed);
+    
+    // Used to change the background of the go button
+    bool isGoButtonActive() const;
+    void notifyGoButton(bool active);
 protected:
     Player* player;
     Tunnel* tunnel;
@@ -42,20 +46,29 @@ protected:
     PanelOverlayElement* goBackground;
     PanelOverlayElement* sliderRangeBackground;
     PanelOverlayElement* sliderBallBackground;
-    PanelOverlayElement* popupWindowBackground;
-    PanelOverlayElement* popupSubWindowBackground;
     
     std::vector<PanelOverlayElement*> collectionBar;
     PanelOverlayElement* GUITopPanel;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
+    TextAreaOverlayElement* label2prompt;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
     TextAreaOverlayElement* label5;
+    TextAreaOverlayElement* label5prompt;
     TextAreaOverlayElement* label6;
     TextAreaOverlayElement* label7;
     
+    OverlayContainer* timeWarpContainer;
+    TextAreaOverlayElement* timeWarpLabel;
+    
+    OverlayContainer* endTallyContainer;
+    TextAreaOverlayElement* endTallyTimeLabel;
+    TextAreaOverlayElement* endTallyScoreLabel;
+    
+    PanelOverlayElement* nbackDisplayBackground;
+    TextAreaOverlayElement* nbackDisplayLabel;
     PanelOverlayElement* toggleEntireBackground;
     PanelOverlayElement* toggle1Background;
     PanelOverlayElement* toggle2Background;
@@ -77,6 +90,8 @@ protected:
     PanelOverlayElement* levelSelectButtonBackground;
     
     HudSlider* speedSlider;
+    
+    bool goButtonActive;
     
     void link(Player* player, Tunnel* tunnel);
     void unlink();
