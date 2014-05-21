@@ -320,7 +320,7 @@ namespace Util
     };
     
     float clamp(float val, float min, float max);
-    int getDegrees(Direction dir);
+    float getDegrees(Direction dir);
     Direction leftOf(Direction dir);
     Direction rightOf(Direction dir);
     Direction oppositeOf(Direction dir);
@@ -333,6 +333,8 @@ namespace Util
     Direction randDirection();
     Direction randDirection(const bool sides[NUM_DIRECTIONS]);
     Vector3 randVector3();
+    
+    std::string getMusicFile(const std::string & musicName);
     
     int randRangeInt(int min, int max);
     float randRangeFloat(float min, float max);

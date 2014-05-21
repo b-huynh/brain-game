@@ -151,12 +151,12 @@ void TutorialManager::setSlides(const std::vector<TutorialSlide> & slides)
     for (int i = 0; i < slides.size(); ++i)
         this->slides.push_back(slides[i]);
     slideNo = 0;
-    updateOverlay();
     if (slides.size() > 0)
     {
         show();
         yoffset = -0.50;
         adjust();
+        updateOverlay();
     }
 }
 
@@ -281,20 +281,18 @@ void TutorialManager::adjust()
     float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.250, 0.350), Vector2(dimen, dimen), popupGoLeftBackground, NULL);
     buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.350, 0.350), Vector2(dimen, dimen), popupGoRightBackground, NULL);
-    popupGoLeftBackground->setMaterialName("General/ButtonGoUp");
-    popupGoRightBackground->setMaterialName("General/ButtonGoDown");
     
     popupText->setMetricsMode(GMM_RELATIVE);
     popupText->setAlignment(TextAreaOverlayElement::Left);
     popupText->setPosition(0.025, 0.025);
-    popupText->setCharHeight(0.025);
+    popupText->setCharHeight(0.025 * FONT_SZ_MULT);
     popupText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     popupText->setFontName("Arial");
     
     popupSlideNoText->setMetricsMode(GMM_RELATIVE);
     popupSlideNoText->setAlignment(TextAreaOverlayElement::Left);
     popupSlideNoText->setPosition(0.025, 0.400);
-    popupSlideNoText->setCharHeight(0.025);
+    popupSlideNoText->setCharHeight(0.025 * FONT_SZ_MULT);
     popupSlideNoText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     popupSlideNoText->setFontName("Arial");
 }

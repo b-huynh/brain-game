@@ -24,7 +24,7 @@ void Engine::activatePerformLeftMove()
     
 }
 
-void Engine::activatePerformLeftMove(int angle)
+void Engine::activatePerformLeftMove(float angle)
 {
     
 }
@@ -34,7 +34,7 @@ void Engine::activatePerformRightMove()
     
 }
 
-void Engine::activatePerformRightMove(int angle)
+void Engine::activatePerformRightMove(float angle)
 {
     
 }

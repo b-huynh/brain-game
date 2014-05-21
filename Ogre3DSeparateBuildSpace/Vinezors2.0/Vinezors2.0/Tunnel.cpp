@@ -219,6 +219,21 @@ TunnelSlice* Tunnel::getNext(int i) const
 	return *it;
 }
 
+// Note: includes current tunnel slice
+std::vector<TunnelSlice*> Tunnel::getNSlices(int n) const
+{
+    std::vector<TunnelSlice*> ret;
+    std::list<TunnelSlice*>::iterator it = current;
+    for (int i = 0; i < n; ++i)
+    {
+        if (it == segments.end())
+            break;;
+        ret.push_back(*it);
+        it++;
+    }
+	return ret;
+}
+
 int Tunnel::getSpawnIndex() const
 {
     return spawnIndex;

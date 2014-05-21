@@ -521,7 +521,6 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    goBackground->setMaterialName("General/ButtonGo");  // constantly changed every frame, this is useless, refer to notifyGoButton(...)
     //sliderRangeBackground->setMaterialName("General/SliderRangeHorizontal");
     sliderRangeBackground->setMaterialName("General/SliderRangeVertical");
     sliderBallBackground->setMaterialName("General/SliderBall");

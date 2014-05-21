@@ -172,7 +172,7 @@ Quaternion Player::getOldRot() const
 	return oldRot;
 }
 
-int Player::getOldRoll() const
+float Player::getOldRoll() const
 {
     return oldRoll;
 }
@@ -182,7 +182,7 @@ Quaternion Player::getCamRot() const
 	return camRot;
 }
 
-int Player::getCamRoll() const
+float Player::getCamRoll() const
 {
     return camRoll;
 }
@@ -192,7 +192,7 @@ Quaternion Player::getDesireRot() const
 	return desireRot;
 }
 
-int Player::getDesireRoll() const
+float Player::getDesireRoll() const
 {
     return desireRoll;
 }
@@ -1071,7 +1071,6 @@ void Player::offsetShip(float elapsed)
             
             targetPos1 = p1 + (p2 - p1) * (1.0 + tunnel->getTLeftOffsetCurrent());
             targetPos2 = p3 + (p4 - p3) * (1.0 + tunnel->getTLeftOffsetCurrent());
-         
          }
          vines[0]->setForward(closest->getForward());
          vines[0]->setPos(targetPos1 + (targetPos2 - targetPos1) * vines[0]->transition);
@@ -1306,7 +1305,7 @@ void Player::setOldRot(Quaternion value)
 	oldRot = value;
 }
 
-void Player::setOldRoll(int value)
+void Player::setOldRoll(float value)
 {
     oldRoll = value;
 }
@@ -1316,7 +1315,7 @@ void Player::setCamRot(Quaternion value)
 	camRot = value;
 }
 
-void Player::setCamRoll(int value)
+void Player::setCamRoll(float value)
 {
     camRoll = value;
 }
@@ -1326,7 +1325,7 @@ void Player::setDesireRot(Quaternion value)
 	desireRot = value;
 }
 
-void Player::setDesireRoll(int value)
+void Player::setDesireRoll(float value)
 {
     desireRoll = value;
 }
@@ -1476,15 +1475,14 @@ void Player::newTunnel(const std::string & nameMusic)
     OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
     OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
     
-    OgreOggSound::OgreOggISound* soundMusicTemp = NULL;
-    if (nameMusic != "")
-        soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound(nameMusic);
-    if (soundMusic != soundMusicTemp)
+    if (nameMusic != "" && (!soundMusic || nameMusic != soundMusic->getName()))
     {
-        if (soundMusic) soundMusic->stop();
-        soundMusic = soundMusicTemp;
-        startMusicTimer = 2.0;
+        if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
+        soundMusic = NULL;
+        soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
+    
+    startMusicTimer = 2.0;
 
     if (soundMusic) soundMusic->setVolume(globals.volumeMusic);
     if (soundPods[POD_SIGNAL_1]) soundPods[POD_SIGNAL_1]->setVolume(globals.volumeSignal1);
@@ -1527,16 +1525,17 @@ void Player::newTunnel(const std::string & nameMusic)
 
 void Player::startMenu()
 {
-    OgreOggSound::OgreOggISound* soundMusicTemp = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("MusicMenu");
-    if (soundMusic != soundMusicTemp)
+    std::string nameMusic = "MusicMenu";
+    if (nameMusic != "" && (!soundMusic || nameMusic != soundMusic->getName()))
     {
         OgreFramework::getSingletonPtr()->m_pSoundMgr->resumeAllPausedSounds();
         OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
         
-        soundMusic = soundMusicTemp;
-        if (soundMusic) soundMusic->play();
+        if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
+        soundMusic = NULL;
+        soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
-    
+    if (soundMusic) soundMusic->play();
 }
 
 void Player::move(Vector3 delta)
@@ -1578,19 +1577,21 @@ void Player::playPodSound(int index) const
 {
     if (soundPods[index])
     {
-        /*
-        // Stop any other sounds so that the player gets to hear the next pod signal sound clearly
-        // ---------------------------------------------------------------------------------------
-        if (soundFeedbackGreat) soundFeedbackGreat->stop();
-        if (soundFeedbackGood) soundFeedbackGood->stop();
-        if (soundFeedbackBad) soundFeedbackBad->stop();
-        if (soundCollision) soundCollision->stop();
-        for (int i = 0; i < soundPods.size(); ++i)
-            if (soundPods[i]) soundPods[i]->stop();
-        // ---------------------------------------------------------------------------------------
-         */
         soundPods[index]->stop();
         soundPods[index]->play();
+    }
+}
+
+float Player::getStartMusicTimer() const
+{
+    return startMusicTimer;
+}
+
+void Player::playMusic() const
+{
+    if (soundMusic)
+    {
+        soundMusic->play();
     }
 }
 
@@ -1825,7 +1826,7 @@ void Player::update(float elapsed)
         soundStartup->play();
         triggerStartup = false;
     }
-    if (soundMusic && !soundMusic->isPlaying())
+    if (soundMusic)
     {
         startMusicTimer -= elapsed;
         if (startMusicTimer <= 0.0)

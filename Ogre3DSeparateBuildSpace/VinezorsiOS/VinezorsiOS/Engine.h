@@ -38,9 +38,9 @@ public:
     // Optional functions to extend from
     // The functions below are interrupt handlers
     virtual void activatePerformLeftMove();
-    virtual void activatePerformLeftMove(int angle);
+    virtual void activatePerformLeftMove(float angle);
     virtual void activatePerformRightMove();
-    virtual void activatePerformRightMove(int angle);
+    virtual void activatePerformRightMove(float angle);
     virtual void activatePerformSwipeUp();
     virtual void activatePerformSwipeDown();
     virtual void activatePerformDoubleTap(float x, float y);

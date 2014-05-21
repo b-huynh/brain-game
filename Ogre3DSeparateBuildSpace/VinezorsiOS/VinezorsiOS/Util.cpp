@@ -154,21 +154,21 @@ Util::ConfigGlobal::ConfigGlobal()
     //navMap[0] = NavigationLevel(0, 4, 3);
     
     navMap = std::vector<NavigationLevel>(23);
-    /*
+    
      // Debug Nav Levels
-    navMap[0] = NavigationLevel(0, 4, 0);
-    navMap[1] = NavigationLevel(1, 3, 0);
-    navMap[2] = NavigationLevel(2, 2, 0);
-    navMap[3] = NavigationLevel(3, 1, 0);
-    navMap[4] = NavigationLevel(4, 4, 0);
-    navMap[5] = NavigationLevel(5, 2, 0);
-    navMap[6] = NavigationLevel(6, 4, 0);
-    navMap[7] = NavigationLevel(7, 1, 0);
-    navMap[8] = NavigationLevel(8, 1, 0);
-    navMap[9] = NavigationLevel(9, 3, 0);
-    navMap[10] = NavigationLevel(10, 3, 0);
-    navMap[11] = NavigationLevel(11, 4, 0);
-    */
+    navMap[0] = NavigationLevel(0, 4, 3);
+    navMap[1] = NavigationLevel(1, 3, 3);
+    navMap[2] = NavigationLevel(2, 2, 2);
+    navMap[3] = NavigationLevel(3, 1, 1);
+    navMap[4] = NavigationLevel(4, 4, 3);
+    navMap[5] = NavigationLevel(5, 2, 2);
+    navMap[6] = NavigationLevel(6, 4, 3);
+    navMap[7] = NavigationLevel(7, 1, 1);
+    navMap[8] = NavigationLevel(8, 1, 1);
+    navMap[9] = NavigationLevel(9, 3, 3);
+    navMap[10] = NavigationLevel(10, 3, 3);
+    navMap[11] = NavigationLevel(11, 4, 3);
+    /*
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -192,7 +192,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[20] = NavigationLevel(20, 3, 5);
     navMap[21] = NavigationLevel(21, 3, 6);
     navMap[22] = NavigationLevel(22, 4, 7);
-    
+    */
     navIndex = 0;
     
     speedMap[1] = 5.0;
@@ -726,7 +726,7 @@ float Util::clamp(float val, float min, float max)
 }
 
 // Returns the degrees from 0-359 for a direction where SOUTH is 0
-int Util::getDegrees(Direction dir)
+float Util::getDegrees(Direction dir)
 {
 	switch (dir)
 	{
@@ -958,6 +958,25 @@ Vector3 Util::randVector3()
     Vector3 temp(0, 1, 0);
     return temp.randomDeviant(Degree(randRangeFloat(0.0, 180.0)));
 }
+
+// Returns the name of the music file given the music name in game
+std::string Util::getMusicFile(const std::string & musicName)
+{
+    if (musicName == "MusicMenu")
+        return "VideoGameSong4.ogg";
+    else if (musicName == "Music1")
+        return "Dots5_converted.ogg";
+    else if (musicName == "Music2")
+        return "Squares5_converted.ogg";
+    else if (musicName == "Music3")
+        return "Fireworks2_converted.ogg";
+    else if (musicName == "Music4")
+        return "Flourish2_converted.ogg";
+    else if (musicName == "Music5")
+        return "SoundOfWind.ogg";
+    return "";
+}
+
 
 int Util::randRangeInt(int min, int max)
 {

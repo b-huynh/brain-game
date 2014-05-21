@@ -87,6 +87,7 @@ void HudSlider::setSlider(std::string name, Overlay* olay, Vector2 pos1, Vector2
     p1 = pos1;
     p2 = Vector2::ZERO;
     p2cache = p2;
+    p2dest = p2;
     orientation = orient;
     dim1 = dimension1;
     dim2 = dimension2;
@@ -200,6 +201,7 @@ void HudSlider::setBallPosition(Vector2 value)
         p2 = Vector2(value.x, Util::clamp(value.y, 0.0, getRangeWidth()));
     else
         p2 = Vector2(Util::clamp(value.x, 0.0, getRangeWidth()), value.y);
+    p2dest = p2;
     ballRef->setPosition(p2.x, p2.y);
 }
 
@@ -220,6 +222,25 @@ Vector2 HudSlider::getBallPosition() const
     return p2;
 }
 
+// set the destination so that p2pos animates its way to p2dest
+void HudSlider::setBallDestination(Vector2 value)
+{
+    if (orientation)
+        p2dest = Vector2(value.x, Util::clamp(value.y, 0.0, getRangeWidth()));
+    else
+        p2dest = Vector2(Util::clamp(value.x, 0.0, getRangeWidth()), value.y);
+}
+
+void HudSlider::setBallDestination(int slot)
+{
+    Vector2 pos;
+    if (orientation)
+        pos = Vector2(p2.x, (max - slot) * (getRangeWidth()) / (slots - 1));
+    else
+        pos = Vector2((slot - min) * (getRangeWidth()) / (slots - 1), p2.y);
+    setBallDestination(pos);
+}
+
 // Returns a discrete index based on the ball's position
 int HudSlider::getIndex() const
 {
@@ -227,5 +248,15 @@ int HudSlider::getIndex() const
         return max - p2.y / getRangeWidth() * (slots - 1);
     else
         return p2.x / getRangeWidth() * (slots - 1) + min;
+}
+
+void HudSlider::update(float elapsed)
+{
+    Vector2 dir = (p2dest - p2) * 10;
+    if (dir.squaredLength() >= 0.001)
+    {
+        p2 += (dir * elapsed);
+        ballRef->setPosition(p2.x, p2.y);
+    }
 }
 

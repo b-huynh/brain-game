@@ -60,11 +60,11 @@ private:
     Vector3 oldPos;
 	Vector3 camPos;
     Quaternion oldRot;
-    int oldRoll;
+    float oldRoll;
     Quaternion camRot;
-    int camRoll;
+    float camRoll;
     Quaternion desireRot;
-    int desireRoll;
+    float desireRoll;
     float baseSpeed;
     float bonusSpeed;
     float finalSpeed;
@@ -207,11 +207,11 @@ public:
 	Vector3 getCamPos() const;
     Vector3 getPos() const;
 	Quaternion getOldRot() const;
-    int getOldRoll() const;
+    float getOldRoll() const;
 	Quaternion getCamRot() const;
-	int getCamRoll() const;
+	float getCamRoll() const;
 	Quaternion getDesireRot() const;
-	int getDesireRoll() const;
+	float getDesireRoll() const;
 	float getBaseSpeed() const;
 	float getFinalSpeed() const;
 	float getTotalSpeed() const;
@@ -266,11 +266,11 @@ public:
 	void setCamPos(Vector3 value);
     void setPos(Vector3 value);
 	void setOldRot(Quaternion value);
-    void setOldRoll(int value);
+    void setOldRoll(float value);
 	void setCamRot(Quaternion value);
-    void setCamRoll(int value);
+    void setCamRoll(float value);
 	void setDesireRot(Quaternion value);
-    void setDesireRoll(int value);
+    void setDesireRoll(float value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
     void setToggleBack(int value);
@@ -289,6 +289,8 @@ public:
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
+    float getStartMusicTimer() const;
+    void playMusic() const;
     void unpause();
     void pause();
     

@@ -172,6 +172,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 
 void OgreApp::update(float elapsed)
 {
+    OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
     if (player->getTutorialMgr()->isVisible())
     {
         player->getTutorialMgr()->update(elapsed);
@@ -199,8 +200,8 @@ void OgreApp::setupDemoScene()
     // create a font resource
     ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     resourceText->setParameter("type", "truetype");
-    resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
-    //resourceText->setParameter("source", "NEUROPOL.ttf");
+    //resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
+    resourceText->setParameter("source", "NEUROPOL.ttf");
     resourceText->setParameter("size", "16");
     resourceText->setParameter("resolution", "96");
     resourceText->load();
@@ -379,10 +380,8 @@ void OgreApp::activatePerformSingleTap(float x, float y)
         return;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
-    if (activeEngine) {
+    if (activeEngine)
         activeEngine->activatePerformSingleTap(x, y);
-        activeEngine->activateVelocity(0.0);
-    }
 }
 
 void OgreApp::activatePerformPinch()
@@ -405,7 +404,6 @@ void OgreApp::activatePerformBeginLongPress()
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformBeginLongPress();
-    if (activeEngine) activeEngine->activateVelocity(0.0);
 }
 
 void OgreApp::activatePerformEndLongPress()
@@ -426,6 +424,7 @@ void OgreApp::activatePerformBeginShortPress()
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activatePerformBeginShortPress();
+    if (activeEngine) activeEngine->activateVelocity(0.0);
 }
 
 void OgreApp::activatePerformEndShortPress()
@@ -455,10 +454,8 @@ void OgreApp::activatePressed(float x, float y)
         return;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
-    if (activeEngine) {
+    if (activeEngine)
         activeEngine->activatePressed(x, y);
-        activeEngine->activateVelocity(0.0);
-    }
 }
 
 void OgreApp::activateReleased(float x, float y, float dx, float dy)

@@ -53,6 +53,13 @@ void HudStage::update(float elapsed)
         label3->setCaption("");
     
     label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
+    if (player->hasTriggeredStartup())
+    {
+        speedSlider->setBallDestination(player->getFinalSpeed());
+        speedSlider->update(elapsed);
+    }
+    speedSlider->adjust();
+    
     if (player->getScore() < 100000)
         label5->setCaption("Score: " + Util::toStringInt(player->getScore()));
     else
@@ -417,45 +424,45 @@ void HudStage::initOverlay()
     label1->setMetricsMode(GMM_PIXELS);
     label1->setAlignment(TextAreaOverlayElement::Center);
     label1->setPosition(globals.label1_posX, globals.label1_posY);
-    label1->setCharHeight(globals.screenHeight / 40);
+    label1->setCharHeight(globals.screenHeight / 40 * FONT_SZ_MULT);
     label1->setFontName("Arial");
     label1->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     
     label2->setMetricsMode(GMM_RELATIVE);
     label2->setPosition(0.060, 0.04);
-    label2->setCharHeight(0.025);
+    label2->setCharHeight(0.025 * FONT_SZ_MULT);
     label2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label2->setFontName("Arial");
     
     label3->setMetricsMode(GMM_RELATIVE);
     label3->setPosition(0.060, 0.08);
-    label3->setCharHeight(0.02);
+    label3->setCharHeight(0.02 * FONT_SZ_MULT);
     label3->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_RELATIVE);
     label4->setPosition(0.775, 0.04);
-    label4->setCharHeight(0.02);
+    label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("Arial");
     
     label5->setMetricsMode(GMM_RELATIVE);
     label5->setPosition(0.775, 0.08);
-    label5->setCharHeight(0.02);
+    label5->setCharHeight(0.02 * FONT_SZ_MULT);
     label5->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label5->setFontName("Arial");
     
     label6->setMetricsMode(GMM_PIXELS);
     label6->setAlignment(TextAreaOverlayElement::Center);
     label6->setPosition(globals.label6_posX, globals.label6_posY);
-    label6->setCharHeight(globals.screenHeight / 50);
+    label6->setCharHeight(globals.screenHeight / 50 * FONT_SZ_MULT);
     label6->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label6->setFontName("Arial");
     
     label7->setMetricsMode(GMM_PIXELS);
     label7->setAlignment(TextAreaOverlayElement::Center);
     label7->setPosition(globals.label7_posX, globals.label7_posY);
-    label7->setCharHeight(globals.screenHeight / 50);
+    label7->setCharHeight(globals.screenHeight / 50 * FONT_SZ_MULT);
     label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label7->setFontName("Arial");
     
@@ -480,7 +487,7 @@ void HudStage::initOverlay()
     
     float gheight = 0.10;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.020, 0.750), Vector2(gwidth, gheight), goBackground, NULL);
+    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.60), Vector2(gwidth, gheight), goBackground, NULL);
     
     buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.45), Vector2(0.08, 0.08), toggle1Background, NULL);
     buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.55), Vector2(0.08, 0.08), toggle2Background, NULL);
@@ -498,8 +505,6 @@ void HudStage::initOverlay()
     buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.42), Vector2(qwidth, qheight), nextButtonBackground, NULL);
     buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.54), Vector2(qwidth, qheight), restartButtonBackground, NULL);
     buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.66), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
-    
-    speedSlider->adjust();
     
     toggleIndicator->setMetricsMode(GMM_RELATIVE);
     toggleIndicator->setDimensions(0.08, 0.08);
@@ -521,7 +526,6 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    goBackground->setMaterialName("General/ButtonGo");  // constantly changed every frame, this is useless, refer to notifyGoButton(...)
     //sliderRangeBackground->setMaterialName("General/SliderRangeHorizontal");
     sliderRangeBackground->setMaterialName("General/SliderRangeVertical");
     sliderBallBackground->setMaterialName("General/SliderBall");
@@ -609,9 +613,16 @@ bool HudStage::isGoButtonActive() const
 void HudStage::notifyGoButton(bool active)
 {
     goButtonActive = active;
+    buttons[BUTTON_GO].setActive(goButtonActive);
     if (goButtonActive)
+    {
+        buttons[BUTTON_GO].show();
         goBackground->setMaterialName("General/ButtonGo");
+    }
     else
+    {
+        buttons[BUTTON_GO].hide();
         goBackground->setMaterialName("General/ButtonGoGray");
+    }
 }
 

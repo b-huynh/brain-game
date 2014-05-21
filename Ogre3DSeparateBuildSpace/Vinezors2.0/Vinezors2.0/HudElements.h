@@ -55,6 +55,7 @@ struct HudSlider
     PanelOverlayElement* ballRef;
     
     Vector2 p2cache; // transition
+    Vector2 p2dest; // destination for animation
     
     bool selected;
     
@@ -67,8 +68,12 @@ struct HudSlider
     float getRangeWidth() const;
     void setBallPosition(Vector2 value);
     void setBallPosition(int slot);
+    void setBallDestination(Vector2 value);
+    void setBallDestination(int slot);
     Vector2 getBallPosition() const;
     int getIndex() const;
+    
+    void update(float elapsed);
 };
 
 #endif /* defined(__Vinezors2_0__HudElements__) */

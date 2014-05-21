@@ -221,7 +221,7 @@ void HudLevelSelection::initOverlay()
             levelItemNames[i][j]->setMetricsMode(GMM_RELATIVE);
             levelItemNames[i][j]->setAlignment(TextAreaOverlayElement::Center);
             levelItemNames[i][j]->setPosition(0.06, -0.02);
-            levelItemNames[i][j]->setCharHeight(0.025);
+            levelItemNames[i][j]->setCharHeight(0.025 * FONT_SZ_MULT);
             levelItemNames[i][j]->setFontName("Arial");
         }
     }
@@ -233,7 +233,7 @@ void HudLevelSelection::initOverlay()
             levelItemScores[i][j]->setMetricsMode(GMM_RELATIVE);
             levelItemScores[i][j]->setAlignment(TextAreaOverlayElement::Center);
             levelItemScores[i][j]->setPosition(0.050, 0.105);
-            levelItemScores[i][j]->setCharHeight(0.016);
+            levelItemScores[i][j]->setCharHeight(0.016 * FONT_SZ_MULT);
             levelItemScores[i][j]->setFontName("Arial");
         }
     }
@@ -243,7 +243,7 @@ void HudLevelSelection::initOverlay()
         levelSetStars[i]->setMetricsMode(GMM_RELATIVE);
         levelSetStars[i]->setAlignment(TextAreaOverlayElement::Center);
         levelSetStars[i]->setPosition(0.15, 0.05);
-        levelSetStars[i]->setCharHeight(0.025);
+        levelSetStars[i]->setCharHeight(0.025 * FONT_SZ_MULT);
         levelSetStars[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
         levelSetStars[i]->setFontName("Arial");
     }
@@ -253,7 +253,7 @@ void HudLevelSelection::initOverlay()
         levelSetScores[i]->setMetricsMode(GMM_RELATIVE);
         levelSetScores[i]->setAlignment(TextAreaOverlayElement::Center);
         levelSetScores[i]->setPosition(0.25, 0.05);
-        levelSetScores[i]->setCharHeight(0.025);
+        levelSetScores[i]->setCharHeight(0.025 * FONT_SZ_MULT);
         levelSetScores[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
         levelSetScores[i]->setFontName("Arial");
     }
@@ -267,14 +267,14 @@ void HudLevelSelection::initOverlay()
     levelTotalScore->setMetricsMode(GMM_RELATIVE);
     levelTotalScore->setAlignment(TextAreaOverlayElement::Center);
     levelTotalScore->setPosition(0.150, 0.040);
-    levelTotalScore->setCharHeight(0.04);
+    levelTotalScore->setCharHeight(0.04 * FONT_SZ_MULT);
     levelTotalScore->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     levelTotalScore->setFontName("Arial");
     
     textEnableTutorialsPrompt->setMetricsMode(GMM_RELATIVE);
     textEnableTutorialsPrompt->setAlignment(TextAreaOverlayElement::Center);
     textEnableTutorialsPrompt->setPosition(-0.150, 0.025);
-    textEnableTutorialsPrompt->setCharHeight(0.025);
+    textEnableTutorialsPrompt->setCharHeight(0.025 * FONT_SZ_MULT);
     textEnableTutorialsPrompt->setDimensions(0.80, 0.20);
     textEnableTutorialsPrompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     textEnableTutorialsPrompt->setFontName("Arial");
