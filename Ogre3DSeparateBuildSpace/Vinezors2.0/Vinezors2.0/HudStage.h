@@ -52,9 +52,11 @@ protected:
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
+    TextAreaOverlayElement* label2prompt;
     TextAreaOverlayElement* label3;
     TextAreaOverlayElement* label4;
     TextAreaOverlayElement* label5;
+    TextAreaOverlayElement* label5prompt;
     TextAreaOverlayElement* label6;
     TextAreaOverlayElement* label7;
     
@@ -65,6 +67,8 @@ protected:
     TextAreaOverlayElement* endTallyTimeLabel;
     TextAreaOverlayElement* endTallyScoreLabel;
     
+    PanelOverlayElement* nbackDisplayBackground;
+    TextAreaOverlayElement* nbackDisplayLabel;
     PanelOverlayElement* toggleEntireBackground;
     PanelOverlayElement* toggle1Background;
     PanelOverlayElement* toggle2Background;

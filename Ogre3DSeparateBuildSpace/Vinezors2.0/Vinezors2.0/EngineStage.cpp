@@ -1248,7 +1248,7 @@ void EngineStage::updateSpin(float elapsed)
             thetaDistEstimate += DELTA_DEGREE;
         }
         
-        thetaDistEstimate = thetaDistEstimate / (2.0 * (3 - depthDist));
+        thetaDistEstimate = thetaDistEstimate * (3 - depthDist);
         
         // Limit the force to 45 degrees
         if (thetaDistEstimate > 45.0)
@@ -1260,13 +1260,11 @@ void EngineStage::updateSpin(float elapsed)
         float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
         curRoll = curRoll + recoverRollSpeed * elapsed;
         
-        /*
         // Resolve overshooting (if we are back on pathable ground)
         if (isPathable(info, curRoll))
         {
             curRoll = Util::getDegrees(getDirByRoll(curRoll));
         }
-         */
         player->setCamRoll(curRoll);
     }
     

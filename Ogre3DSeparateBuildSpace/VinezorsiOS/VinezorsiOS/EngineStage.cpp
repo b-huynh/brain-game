@@ -57,6 +57,8 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
+            hud->setOverlay(2, false);
+            hud->setOverlay(3, false);
             hud->notifyGoButton(false);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -140,6 +142,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
+            hud->notifyGoButton(false);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             break;
@@ -924,6 +927,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_C:
         {
+            player->setPowerUp("TimeWarp", true);
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TimeWarp");
             break;
         }
@@ -1028,10 +1032,10 @@ void EngineStage::setup()
         {
             nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_HOLDOUT, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_HOLDOUT, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_HOLDOUT, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_HOLDOUT, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.appendMessage("\nObtain matches by Color!", MESSAGE_NORMAL);
@@ -1054,10 +1058,10 @@ void EngineStage::setup()
         {
             nmode = STAGE_MODE_COLLECTION;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_HOLDOUT, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
 
             //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
             globals.setMessage("Obtain matches by only sound!", MESSAGE_NORMAL);
@@ -1079,9 +1083,9 @@ void EngineStage::setup()
             globals.signalTypes.clear();
             
             if (level.initCamSpeed <= 15) // For starting slower stages, be nicer
-                globals.stageTotalCollections = (globals.speedMap[level.minCamSpeed] + globals.speedMap[level.maxCamSpeed]) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
             else
-                globals.stageTotalCollections = (globals.speedMap[level.minCamSpeed] + globals.speedMap[level.maxCamSpeed]) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
             //globals.setBigMessage("Recess!");
             globals.setMessage("Reach the end! Grab Fuel Cells!", MESSAGE_NORMAL);
             break;
@@ -1244,7 +1248,7 @@ void EngineStage::updateSpin(float elapsed)
             thetaDistEstimate += DELTA_DEGREE;
         }
         
-        thetaDistEstimate = thetaDistEstimate / (2.0 * (3 - depthDist));
+        thetaDistEstimate = thetaDistEstimate * (3 - depthDist);
         
         // Limit the force to 45 degrees
         if (thetaDistEstimate > 45.0)
@@ -1256,13 +1260,11 @@ void EngineStage::updateSpin(float elapsed)
         float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
         curRoll = curRoll + recoverRollSpeed * elapsed;
         
-        /*
         // Resolve overshooting (if we are back on pathable ground)
         if (isPathable(info, curRoll))
         {
             curRoll = Util::getDegrees(getDirByRoll(curRoll));
         }
-         */
         player->setCamRoll(curRoll);
     }
     

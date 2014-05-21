@@ -57,7 +57,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1415"
             endingLineNumber = "1415"
-            landmarkName = "Player::initToggleBack()"
+            landmarkName = "Player::newTunnel(const std::string &amp; nameMusic)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -286,12 +286,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "394"
-            endingLineNumber = "394"
-            landmarkName = "HudStage::initOverlay()"
+            startingLineNumber = "419"
+            endingLineNumber = "419"
+            landmarkName = "HudStage::alloc()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -302,12 +302,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "416"
-            endingLineNumber = "416"
-            landmarkName = "HudStage::initOverlay()"
+            startingLineNumber = "441"
+            endingLineNumber = "441"
+            landmarkName = "HudStage::dealloc()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -382,11 +382,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "421885242.410761"
+            timestampString = "422389283.349698"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "HudStage::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -414,11 +414,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "525"
-            endingLineNumber = "525"
+            startingLineNumber = "540"
+            endingLineNumber = "540"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -430,11 +430,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
+            startingLineNumber = "243"
+            endingLineNumber = "243"
             landmarkName = "HudStage::alloc()"
             landmarkType = "5">
          </BreakpointContent>
@@ -478,11 +478,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "284"
-            endingLineNumber = "284"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "HudStage::alloc()"
             landmarkType = "5">
          </BreakpointContent>
@@ -494,12 +494,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "422341350.995494"
+            timestampString = "422396090.800998"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
-            landmarkName = "HudStage::dealloc()"
+            startingLineNumber = "375"
+            endingLineNumber = "375"
+            landmarkName = "HudStage::alloc()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

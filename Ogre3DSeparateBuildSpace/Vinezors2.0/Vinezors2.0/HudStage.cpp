@@ -40,6 +40,26 @@ void HudStage::adjust()
 
 void HudStage::update(float elapsed)
 {
+    std::string GUIToggleNumber = "General/GUIToggleTextNumber";
+    toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
+    toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
+    toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
+    // toggle4 is always n-back 0
+    
+    if (!tunnel->needsCleaning())
+        resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
+    else
+        resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
+    
+    LevelSet* levels = player->getLevels();
+    int levelRow = player->getLevelRequestRow();
+    int levelCol = player->getLevelRequestCol();
+    int level = levels->getLevelNo(levelRow, levelCol);
+    if (player->isLevelAvailable(level + 1))
+        nextButtonBackground->setMaterialName("General/NextButtonRound");
+    else
+        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
+    
     if( player->winFlag ) {
         setOverlay(3, true);
         
@@ -52,19 +72,15 @@ void HudStage::update(float elapsed)
         label2->setColour(ColourValue(1.0,1.0,0.0));
         label5->setColour(ColourValue(1.0,1.0,0.0));
         
-        label2->setCaption("Time: " + Util::toStringInt(timeLeft));
+        label2->setCaption(Util::toStringInt(timeLeft));
         endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
         
-        
-        if (player->getScore() < 100000)
-            label5->setCaption("Score: " + Util::toStringInt(player->getScore()));
-        else
-            label5->setCaption(Util::toStringInt(player->getScore()));
+        label5->setCaption(Util::toStringInt(player->getScore()));
         
         endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
         
         if( timeLeft <= 0.0f ) {
-            label2->setCaption("Time: 0");
+            label2->setCaption("0");
             endTallyTimeLabel->setCaption("Time  0");
             tunnel->setCleaning(true);
             player->winFlag = false;
@@ -80,25 +96,22 @@ void HudStage::update(float elapsed)
     label1->setCaption(globals.messageBig);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
-    label2->setCaption("Time: " + Util::toStringInt(timeLeft));
+    label2->setCaption(Util::toStringInt(timeLeft));
 
     if (tunnel->getMode() == STAGE_MODE_RECESS)
-        label3->setCaption("Complete: " + Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
+        label3->setCaption(Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
     else
         label3->setCaption("");
     
-    label4->setCaption("Speed: " + Util::toStringInt(player->getFinalSpeed()));
+    label4->setCaption(Util::toStringInt(player->getBaseSpeed()));
     if (player->hasTriggeredStartup())
     {
-        speedSlider->setBallDestination(player->getFinalSpeed());
+        speedSlider->setBallDestination(player->getBaseSpeed());
         speedSlider->update(elapsed);
     }
     speedSlider->adjust();
     
-    if (player->getScore() < 100000)
-        label5->setCaption("Score: " + Util::toStringInt(player->getScore()));
-    else
-        label5->setCaption(Util::toStringInt(player->getScore()));
+    label5->setCaption(Util::toStringInt(player->getScore()));
     label6->setCaption(globals.message);
     label7->setCaption("");
     
@@ -107,18 +120,18 @@ void HudStage::update(float elapsed)
         
         if( t->zoomIn == 0 ) {
             setOverlay(2, false);
-            timeWarpLabel->setCharHeight(0.05);
-            timeWarpContainer->setPosition(0.35, 0.15);
+            timeWarpLabel->setCharHeight(0.05 * FONT_SZ_MULT);
+            timeWarpContainer->setPosition(0.50, 0.15);
         }
         else if( t->zoomIn == 1 ) {
             setOverlay(2, true);
-            timeWarpLabel->setCharHeight(timeWarpLabel->getCharHeight()-0.0005);
-            timeWarpContainer->setPosition(timeWarpContainer->getLeft()+0.001, timeWarpContainer->getTop()+0.0005);
+            timeWarpLabel->setCharHeight(timeWarpLabel->getCharHeight()-0.0005 * FONT_SZ_MULT);
+            //timeWarpContainer->setPosition(timeWarpContainer->getLeft()+0.001 * FONT_SZ_MULT, timeWarpContainer->getTop()+0.0005 * FONT_SZ_MULT);
         }
         else {
             setOverlay(2, true);
             label2->setColour(ColourValue(1.0,1.0,0.0));
-            label2->setCharHeight(0.030);
+            label2->setCharHeight(0.030 * FONT_SZ_MULT);
         }
         
         std::string val;
@@ -130,7 +143,7 @@ void HudStage::update(float elapsed)
     else {
         setOverlay(2, false);
         label2->setColour(ColourValue(1.0,1.0,1.0));
-        label2->setCharHeight(0.025);
+        label2->setCharHeight(0.025 * FONT_SZ_MULT);
     }
     
     
@@ -146,16 +159,16 @@ void HudStage::update(float elapsed)
     switch (player->getToggleBack())
     {
         case 0:
-            toggleIndicator->setPosition(0.895, 0.45);
+            toggleIndicator->setPosition(0.897, 0.31);
             break;
         case 1:
-            toggleIndicator->setPosition(0.895, 0.55);
+            toggleIndicator->setPosition(0.897, 0.43);
             break;
         case 2:
-            toggleIndicator->setPosition(0.895, 0.65);
+            toggleIndicator->setPosition(0.897, 0.55);
             break;
         case 3:
-            toggleIndicator->setPosition(0.895, 0.75);
+            toggleIndicator->setPosition(0.897, 0.67);
             break;
     }
     
@@ -178,10 +191,32 @@ void HudStage::update(float elapsed)
         if (i < criterias.size())
         {
             std::string scoreName = "General/GUICollection";
-            if (criterias[i].nback <= 0)
-                scoreName += Util::toStringInt(0);
-            else
-                scoreName += Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
+            
+            // For togglebacks
+            //if (criterias[i].nback <= 0)
+            //    scoreName += Util::toStringInt(0);
+            //else
+            //    scoreName += Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
+            
+            // For just a single n-back and task
+            switch (tunnel->getPhase())
+            {
+                case 'A':
+                    scoreName += "0";
+                    break;
+                case 'B':
+                    scoreName += "1";
+                    break;
+                case 'C':
+                    scoreName += "2";
+                    break;
+                case 'D':
+                    scoreName += "3";
+                    break;
+                default:
+                    scoreName += "0";
+                    break;
+            }
             
             if (criterias[i].collected)
                 scoreName += "Filled";
@@ -194,26 +229,6 @@ void HudStage::update(float elapsed)
             collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
         }
     }
-    
-    std::string GUIToggleNumber = "General/GUIToggleTextNumber";
-    toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
-    toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
-    toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
-    // toggle4 is always n-back 0
-    
-    if (!tunnel->needsCleaning())
-        resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    else
-        resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
-    
-    LevelSet* levels = player->getLevels();
-    int levelRow = player->getLevelRequestRow();
-    int levelCol = player->getLevelRequestCol();
-    int level = levels->getLevelNo(levelRow, levelCol);
-    if (player->isLevelAvailable(level + 1))
-        nextButtonBackground->setMaterialName("General/NextButtonRound");
-    else
-        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
 }
 
 void HudStage::alloc()
@@ -259,12 +274,16 @@ void HudStage::alloc()
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel1"));
     label2 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel2"));
+    label2prompt = static_cast<TextAreaOverlayElement*>(
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel2Prompt"));
     label3 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel3"));
     label4 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel4"));
     label5 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel5"));
+    label5prompt = static_cast<TextAreaOverlayElement*>(
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel5Prompt"));
     label6 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel6"));
     label7 = static_cast<TextAreaOverlayElement*>(
@@ -275,8 +294,11 @@ void HudStage::alloc()
     endTallyTimeLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyTimeLabel"));
     endTallyScoreLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreLabel"));
     
-    toggleEntireBackground = static_cast<PanelOverlayElement*>(
-                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggleEntireBackground"));
+    nbackDisplayBackground = static_cast<PanelOverlayElement*>(
+                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNBackDisplayBackground"));
+    nbackDisplayLabel = static_cast<TextAreaOverlayElement*>(
+                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageNBackDisplayLabel"));
+    
     // Note: These overlay elements are linked to a button, if we end up deleting these and NULLing it, it should be NULLed in the associated button as well
     toggle1Background = static_cast<PanelOverlayElement*>(
                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle1Background"));
@@ -343,25 +365,28 @@ void HudStage::alloc()
     for (int i = 0; i < collectionBar.size(); ++i)
         overlay1->add2D(collectionBar[i]);
     
-    //overlay1->add2D(toggleEntireBackground);
     overlay1->add2D(powerup1Background);
     overlay1->add2D(powerup2Background);
     overlay1->add2D(powerup3Background);
-    overlay1->add2D(toggle1Background);
-    overlay1->add2D(toggle2Background);
-    overlay1->add2D(toggle3Background);
-    overlay1->add2D(toggle4Background);
-    toggle1Background->addChild(toggle1TextArt);
-    toggle2Background->addChild(toggle2TextArt);
-    toggle3Background->addChild(toggle3TextArt);
-    toggle4Background->addChild(toggle4TextArt);
+    overlay1->add2D(nbackDisplayBackground);
+    nbackDisplayBackground->addChild(nbackDisplayLabel);
+    //overlay1->add2D(toggle1Background);
+    //overlay1->add2D(toggle2Background);
+    //overlay1->add2D(toggle3Background);
+    //overlay1->add2D(toggle4Background);
+    //toggle1Background->addChild(toggle1TextArt);
+    //toggle2Background->addChild(toggle2TextArt);
+    //toggle3Background->addChild(toggle3TextArt);
+    //toggle4Background->addChild(toggle4TextArt);
     overlay1->add2D(toggleIndicator);
     overlay1->add2D(panelText);
     panelText->addChild(label1);
     panelText->addChild(label2);
+    panelText->addChild(label2prompt);
     panelText->addChild(label3);
     panelText->addChild(label4);
     panelText->addChild(label5);
+    panelText->addChild(label5prompt);
     panelText->addChild(label6);
     panelText->addChild(label7);
     overlay2->add2D(resumeButtonBackground);
@@ -385,7 +410,7 @@ void HudStage::alloc()
     //                       globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Vertical Slider
-    speedSlider->setSlider("speed", overlays[0], Vector2(0.030, 0.200), Vector2(0.075, 0.500), Vector2(0.075, 0.075), true,
+    speedSlider->setSlider("speed", overlays[0], Vector2(0.04, 0.25), Vector2(0.03, 0.55), Vector2(0.03, 0.09), true,
                            globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
@@ -414,15 +439,18 @@ void HudStage::dealloc()
     collectionBar.clear();
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label1);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label2);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label2prompt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label3);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label4);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label5);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label5prompt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label6);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreLabel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggleEntireBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1TextArt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2TextArt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle3TextArt);
@@ -509,19 +537,6 @@ void HudStage::initOverlay()
         collectionBar[i]->setMetricsMode(GMM_RELATIVE);
         collectionBar[i]->setPosition(x + wpadding, y);
         collectionBar[i]->setDimensions(width, height);
-        if (i < criterias.size())
-        {
-            std::string scoreName = "General/GUICollection" + Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
-            if (criterias[i].collected)
-                scoreName += "Filled";
-            else
-                scoreName += "Blank";
-            collectionBar[i]->setMaterialName(scoreName);
-        }
-        else
-        {
-            collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
-        }
         x += 2 * wpadding + width;
     }
     
@@ -533,28 +548,54 @@ void HudStage::initOverlay()
     label1->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     
     label2->setMetricsMode(GMM_RELATIVE);
-    label2->setPosition(0.060, 0.04);
+    label2->setAlignment(TextAreaOverlayElement::Left);
+    label2->setPosition(0.05, 0.035);
+    //label2->setAlignment(TextAreaOverlayElement::Right);
+    //label2->setPosition(0.21, 0.04);
     label2->setCharHeight(0.025 * FONT_SZ_MULT);
     label2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label2->setFontName("Arial");
     
+    label2prompt->setMetricsMode(GMM_RELATIVE);
+    label2prompt->setAlignment(TextAreaOverlayElement::Left);
+    label2prompt->setPosition(0.06, 0.08);
+    //label2prompt->setAlignment(TextAreaOverlayElement::Center);
+    //label2prompt->setPosition(0.12, 0.08);
+    label2prompt->setCharHeight(0.02 * FONT_SZ_MULT);
+    label2prompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    label2prompt->setFontName("Arial");
+    label2prompt->setCaption("Time");
+    
     label3->setMetricsMode(GMM_RELATIVE);
-    label3->setPosition(0.060, 0.08);
+    label3->setAlignment(TextAreaOverlayElement::Right);
+    label3->setPosition(0.20, 0.08);
     label3->setCharHeight(0.02 * FONT_SZ_MULT);
     label3->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label3->setFontName("Arial");
     
     label4->setMetricsMode(GMM_RELATIVE);
-    label4->setPosition(0.775, 0.04);
+    label4->setAlignment(TextAreaOverlayElement::Center);
+    label4->setPosition(0.042, 0.175);
     label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("Arial");
     
     label5->setMetricsMode(GMM_RELATIVE);
-    label5->setPosition(0.775, 0.08);
-    label5->setCharHeight(0.02 * FONT_SZ_MULT);
+    label5->setAlignment(TextAreaOverlayElement::Right);
+    label5->setPosition(0.92, 0.035);
+    label5->setCharHeight(0.025 * FONT_SZ_MULT);
     label5->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label5->setFontName("Arial");
+    
+    label5prompt->setMetricsMode(GMM_RELATIVE);
+    label5prompt->setAlignment(TextAreaOverlayElement::Right);
+    label5prompt->setPosition(0.92, 0.08);
+    //label5prompt->setAlignment(TextAreaOverlayElement::Center);
+    //label5prompt->setPosition(0.85, 0.08);
+    label5prompt->setCharHeight(0.02 * FONT_SZ_MULT);
+    label5prompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    label5prompt->setFontName("Arial");
+    label5prompt->setCaption("Score");
     
     label6->setMetricsMode(GMM_PIXELS);
     label6->setAlignment(TextAreaOverlayElement::Center);
@@ -570,27 +611,26 @@ void HudStage::initOverlay()
     label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     label7->setFontName("Arial");
     
-    
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);
+    timeWarpLabel->setAlignment(TextAreaOverlayElement::Center);
     timeWarpLabel->setPosition(0, 0);
-    timeWarpLabel->setCharHeight(0.05);
+    timeWarpLabel->setCharHeight(0.05 * FONT_SZ_MULT);
     timeWarpLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     timeWarpLabel->setFontName("Arial");
     
     endTallyTimeLabel->setMetricsMode(GMM_PIXELS);
     endTallyTimeLabel->setAlignment(TextAreaOverlayElement::Left);
     endTallyTimeLabel->setPosition(0, 0);
-    endTallyTimeLabel->setCharHeight(globals.screenHeight/40);
+    endTallyTimeLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
     endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyTimeLabel->setFontName("Arial");
     
     endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
     endTallyScoreLabel->setPosition(200, 20);
-    endTallyScoreLabel->setCharHeight(globals.screenHeight/40);
+    endTallyScoreLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("Arial");
-    
     
     toggle1TextArt->setMetricsMode(GMM_RELATIVE);
     toggle1TextArt->setPosition(0.0250, 0.0025);
@@ -609,16 +649,18 @@ void HudStage::initOverlay()
     toggle4TextArt->setDimensions(0.03, 0.08);
     toggle4TextArt->setMaterialName("General/GUIToggleTextNumber0");
     
-    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_PIXELS, Vector2(globals.pauseButton_posX, globals.pauseButton_posY), Vector2(globals.pauseButton_width, globals.pauseButton_height), pauseBackground, NULL);
+    float pauseheight = 0.075;
+    float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
+    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
     float gheight = 0.10;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.60), Vector2(gwidth, gheight), goBackground, NULL);
     
-    buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.45), Vector2(0.08, 0.08), toggle1Background, NULL);
-    buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.55), Vector2(0.08, 0.08), toggle2Background, NULL);
-    buttons[BUTTON_TOGGLE3].setButton("toggle3", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.65), Vector2(0.08, 0.08), toggle3Background, NULL);
-    buttons[BUTTON_TOGGLE4].setButton("toggle4", overlays[0], GMM_RELATIVE, Vector2(0.895, 0.75), Vector2(0.08, 0.08), toggle4Background, NULL);
+    buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.31), Vector2(0.08, 0.08), toggle1Background, NULL);
+    buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.43), Vector2(0.08, 0.08), toggle2Background, NULL);
+    buttons[BUTTON_TOGGLE3].setButton("toggle3", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.55), Vector2(0.08, 0.08), toggle3Background, NULL);
+    buttons[BUTTON_TOGGLE4].setButton("toggle4", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.67), Vector2(0.08, 0.08), toggle4Background, NULL);
     float pheight = 0.12;
     float pwidth = pheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_POWERUP1].setButton("powerup1", overlays[0], GMM_RELATIVE, Vector2(0.015, 0.45), Vector2(pwidth, pheight), powerup1Background, NULL);
@@ -668,10 +710,35 @@ void HudStage::initOverlay()
     restartButtonBackground->setMaterialName("General/RestartButtonRound");
     levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
     
-    toggleEntireBackground->setMetricsMode(GMM_RELATIVE);
-    toggleEntireBackground->setPosition(0.775, 0.25);
-    toggleEntireBackground->setDimensions(0.20, 0.50);
-    toggleEntireBackground->setMaterialName("General/BaseGray");
+    nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
+    nbackDisplayBackground->setPosition(0.897, 0.175);
+    nbackDisplayBackground->setDimensions(0.08, 0.08);
+    switch (tunnel->getPhase())
+    {
+        case 'A':
+            nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
+            break;
+        case 'B':
+            nbackDisplayBackground->setMaterialName("General/GUIToggleButton1");
+            break;
+        case 'C':
+            nbackDisplayBackground->setMaterialName("General/GUIToggleButton2");
+            break;
+        case 'D':
+            nbackDisplayBackground->setMaterialName("General/GUIToggleButton3");
+            break;
+        default:
+            nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
+            break;
+    }
+    
+    nbackDisplayLabel->setMetricsMode(GMM_RELATIVE);
+    nbackDisplayLabel->setAlignment(TextAreaOverlayElement::Center);
+    nbackDisplayLabel->setPosition(0.04, 0.0225);
+    nbackDisplayLabel->setCharHeight(0.03 * FONT_SZ_MULT);
+    nbackDisplayLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    nbackDisplayLabel->setFontName("Arial");
+    nbackDisplayLabel->setCaption(Util::toStringInt(tunnel->getHighestCriteria()));
     
     // NOTE: should have a button member function called inactivate so it deactivates
     // in the queryGUI function! Hiding currently works since the effect of toggle

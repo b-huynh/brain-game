@@ -151,7 +151,10 @@ void HudSlider::adjust()
     if (globals.screenWidth > globals.screenHeight)
     {
         rheight = dim2.y;
-        rwidth = rheight * globals.screenHeight / globals.screenWidth;
+        // to not square out
+        rwidth = dim2.x;
+        // to square out
+        //rwidth = rheight * globals.screenHeight / globals.screenWidth;
         if (orientation)
         {
             swidth = rwidth;
@@ -166,7 +169,8 @@ void HudSlider::adjust()
     else
     {
         rwidth = dim2.x;
-        rheight = rwidth * globals.screenWidth / globals.screenHeight;
+        rheight = dim2.y;
+        //rheight = rwidth * globals.screenWidth / globals.screenHeight;
         if (orientation)
         {
             swidth = rwidth;

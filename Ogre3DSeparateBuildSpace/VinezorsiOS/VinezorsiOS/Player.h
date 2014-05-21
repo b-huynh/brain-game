@@ -334,6 +334,7 @@ public:
     void setPowerUp(std::string pwr, bool value);
     bool isPowerUpAvailable(std::string pwr);
     bool isPowerUpActive(std::string pwr);
+    Powerup* getPowerUpPtr(std::string pwr);
     void performPowerUp(std::string pwr);
     void destroyPowerUps();
     void resetPowerUps();
@@ -350,6 +351,8 @@ public:
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
     bool loadProgress(std::string savePath);
+    
+    bool winFlag;
     
     ~Player();
 };

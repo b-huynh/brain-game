@@ -156,6 +156,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap = std::vector<NavigationLevel>(23);
     
      // Debug Nav Levels
+    /*
     navMap[0] = NavigationLevel(0, 4, 3);
     navMap[1] = NavigationLevel(1, 3, 3);
     navMap[2] = NavigationLevel(2, 2, 2);
@@ -168,7 +169,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[9] = NavigationLevel(9, 3, 3);
     navMap[10] = NavigationLevel(10, 3, 3);
     navMap[11] = NavigationLevel(11, 4, 3);
-    /*
+     */
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -192,7 +193,6 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[20] = NavigationLevel(20, 3, 5);
     navMap[21] = NavigationLevel(21, 3, 6);
     navMap[22] = NavigationLevel(22, 4, 7);
-    */
     navIndex = 0;
     
     speedMap[1] = 0.5;
@@ -234,7 +234,7 @@ Util::ConfigGlobal::ConfigGlobal()
     speedMap[37] = 0.5;
     speedMap[38] = 0.5;
     speedMap[39] = 0.5;
-    speedMap[40] = 0.0;
+    speedMap[40] = 0.5;
     speedMap[41] = 0.0;
     speedMap[42] = 0.0;
     speedMap[43] = 0.0;
@@ -346,9 +346,9 @@ void Util::ConfigGlobal::set()
     label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
     
-    pauseButton_posX = screenWidth - screenHeight / 12;
-    pauseButton_posY = screenHeight - screenHeight / 12;
-    pauseButton_width = screenWidth / 15;
+    pauseButton_posX = screenWidth - screenWidth / 6;
+    pauseButton_posY = screenHeight - screenHeight / 6;
+    pauseButton_width = screenWidth / 20;
     pauseButton_height = pauseButton_width;
 }
 

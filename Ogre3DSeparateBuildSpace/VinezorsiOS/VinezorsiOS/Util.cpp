@@ -156,6 +156,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap = std::vector<NavigationLevel>(23);
     
      // Debug Nav Levels
+    /*
     navMap[0] = NavigationLevel(0, 4, 3);
     navMap[1] = NavigationLevel(1, 3, 3);
     navMap[2] = NavigationLevel(2, 2, 2);
@@ -168,7 +169,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[9] = NavigationLevel(9, 3, 3);
     navMap[10] = NavigationLevel(10, 3, 3);
     navMap[11] = NavigationLevel(11, 4, 3);
-    /*
+     */
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 2, 1);
@@ -192,9 +193,59 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[20] = NavigationLevel(20, 3, 5);
     navMap[21] = NavigationLevel(21, 3, 6);
     navMap[22] = NavigationLevel(22, 4, 7);
-    */
     navIndex = 0;
     
+    speedMap[1] = 0.5;
+    speedMap[2] = 0.5;
+    speedMap[3] = 0.5;
+    speedMap[4] = 0.5;
+    speedMap[5] = 0.5;
+    speedMap[6] = 0.5;
+    speedMap[7] = 0.5;
+    speedMap[8] = 0.5;
+    speedMap[9] = 0.5;
+    speedMap[10] = 3.0;
+    speedMap[11] = 2.0;
+    speedMap[12] = 1.0;
+    speedMap[13] = 2.0;
+    speedMap[14] = 1.0;
+    speedMap[15] = 2.0;
+    speedMap[16] = 1.0;
+    speedMap[17] = 2.0;
+    speedMap[18] = 1.0;
+    speedMap[19] = 1.0;
+    speedMap[20] = 1.0;
+    speedMap[21] = 1.0;
+    speedMap[22] = 1.0;
+    speedMap[23] = 1.0;
+    speedMap[24] = 1.0;
+    speedMap[25] = 0.5;
+    speedMap[26] = 0.5;
+    speedMap[27] = 0.5;
+    speedMap[28] = 0.5;
+    speedMap[29] = 0.5;
+    speedMap[30] = 0.5;
+    speedMap[31] = 0.5;
+    speedMap[32] = 0.5;
+    speedMap[33] = 0.5;
+    speedMap[34] = 0.5;
+    speedMap[35] = 0.5;
+    speedMap[36] = 0.5;
+    speedMap[37] = 0.5;
+    speedMap[38] = 0.5;
+    speedMap[39] = 0.5;
+    speedMap[40] = 0.5;
+    speedMap[41] = 0.0;
+    speedMap[42] = 0.0;
+    speedMap[43] = 0.0;
+    speedMap[44] = 0.0;
+    speedMap[45] = 0.0;
+    speedMap[46] = 0.0;
+    speedMap[47] = 0.0;
+    speedMap[48] = 0.0;
+    speedMap[49] = 0.0;
+    speedMap[50] = 0.0;
+    /*
     speedMap[1] = 5.0;
     speedMap[2] = 5.0;
     speedMap[3] = 5.0;
@@ -255,6 +306,7 @@ Util::ConfigGlobal::ConfigGlobal()
     speedMap[58] = 40.0;
     speedMap[59] = 40.0;
     speedMap[60] = 40.0;
+     */
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -294,9 +346,9 @@ void Util::ConfigGlobal::set()
     label7_posX = screenWidth / 7.5;
     label7_posY = screenHeight - screenHeight / 10;
     
-    pauseButton_posX = screenWidth - screenHeight / 12;
-    pauseButton_posY = screenHeight - screenHeight / 12;
-    pauseButton_width = screenWidth / 15;
+    pauseButton_posX = screenWidth - screenWidth / 6;
+    pauseButton_posY = screenHeight - screenHeight / 6;
+    pauseButton_width = screenWidth / 20;
     pauseButton_height = pauseButton_width;
 }
 

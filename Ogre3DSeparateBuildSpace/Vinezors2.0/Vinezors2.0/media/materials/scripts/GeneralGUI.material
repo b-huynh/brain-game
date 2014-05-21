@@ -1131,22 +1131,6 @@ material General/LevelBar3Fill
     }
 }
 
-material General/SliderRangeHorizontal
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture sliderrange.png
-        }
-      } 
-    }
-}
 material General/SliderRangeVertical
 {
     technique
@@ -1158,7 +1142,7 @@ material General/SliderRangeVertical
         depth_write off
         texture_unit
         {
-            texture sliderrange_rotated.png
+            texture speed_slide.png
         }
       } 
     }
@@ -1175,7 +1159,7 @@ material General/SliderBall
         depth_write off
         texture_unit
         {
-            texture sliderbutton.png
+            texture speed_dial.png
         }
       } 
     }
