@@ -14,7 +14,7 @@ using namespace std;
 extern Util::ConfigGlobal globals;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -25,7 +25,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
@@ -612,21 +612,6 @@ void Player::updateTimeWarp(float elapsed)
                 if( t->mainTimer >= t->mainTimeout ) {
                     t->mainTimer = 0.0f;
                     t->zoomIn = 1;
-                    
-                    t->timeBonusNode = vines[0]->entireVine->createChildSceneNode("timeBonusNode");
-                    t->timeBonusNode->translate(Vector3(0.0,5.0f,5.0f));
-                    
-                    float timeBonusWidth = 8.0f;
-                    float timeBonusHeight = 4.0f;
-                    Ogre::Plane timeBonusPlane;
-                    timeBonusPlane.normal = Ogre::Vector3::UNIT_Z;
-                    timeBonusPlane.d = 0;
-                    Ogre::MeshPtr timeBonusPlaneMeshPtr = Ogre::MeshManager::getSingleton().createPlane("timeBonusPlane",Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, timeBonusPlane, timeBonusWidth, timeBonusHeight, 10, 10, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
-                    
-                    t->timeBonusEntity = t->timeBonusNode->getCreator()->createEntity("timeBonusEntity", timeBonusPlaneMeshPtr);
-                    t->timeBonusNode->attachObject(t->timeBonusEntity);
-                    
-                    t->timeBonusEntity->getSubEntity(0)->setMaterialName("General/TimeBonusMaterial");
                 }
                 else {
                     t->mainTimer += elapsed;
@@ -656,23 +641,15 @@ void Player::updateTimeWarp(float elapsed)
         }
         else {
             if( t->mainTimer >= t->timeBonusTimeout ) {
-                if (!tunnel->isDone()) tunnel->addToTimePenalty(-t->timeBonus);
-                
                 t->zoomIn = 0;
                 t->active = false;
-                
-                t->timeBonusNode->detachObject(t->timeBonusEntity);
-                t->timeBonusNode->getCreator()->destroyEntity(t->timeBonusEntity);
-                t->timeBonusEntity = NULL;
-                vines[0]->entireVine->removeAndDestroyChild("timeBonusNode");
-                t->timeBonusNode = NULL;
                 
                 tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_TIME_WARP);
             }
             else {
-                t->mainTimer += elapsed;
-                t->timeBonusNode->translate(Vector3(t->xFlySpeed,t->yFlySpeed,0.0f));
-                t->timeBonusNode->scale(Vector3(t->scaleFactor,t->scaleFactor,0.0f));
+                t->mainTimer += t->timeBonusTimeout/t->timeVal;
+                t->currentTimeVal--;
+                if( !tunnel->isDone() ) tunnel->addToTimePenalty(-1);
             }
         }
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
@@ -699,6 +676,8 @@ void Player::performTimeWarp()
         t->mainTimer = 0.0f;
         t->active = true;
         t->available = false;
+        
+        t->currentTimeVal = t->timeVal;
     }
 }
 
@@ -1837,6 +1816,7 @@ void Player::update(float elapsed)
     
     
     //*******//
+    if( winFlag ) return;
     if( tunnel->getEval() == PASS && tunnel->getFlyOut() ) {
         if( endAnimationBegin ) {
             if( flyOutCounter >= endAnimationSuccessDuration ) {
@@ -1845,7 +1825,9 @@ void Player::update(float elapsed)
                 flyOutAngleX = 0.0f;
                 flyOutAngleY = 0.0f;
                 flyLeft = true;
-                tunnel->setCleaning(true);
+                
+                winFlag = true;
+                //tunnel->setCleaning(true);
                 
                 boostTimer = 0.0;
                 soundBoost->stop();
@@ -1860,8 +1842,12 @@ void Player::update(float elapsed)
                     flyOutCamSpeed -= 0.5f;
                 }
                 
-                move(getCamForward() * flyOutCamSpeed);
-                Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+                move(getCamForward(true) * flyOutCamSpeed);
+                
+                Vector3 pos = vines[0]->getEntireVine()->getPosition();
+                
+                Vector3 moveOffset = /*getCamForward(true)*/Vector3::NEGATIVE_UNIT_Z * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+    
                 
                 // rotate about y
                 moveOffset = Vector3(Math::Cos(Degree(flyOutAngleY))*moveOffset.x+Math::Sin(Degree(flyOutAngleY))*moveOffset.z,moveOffset.y,-Math::Sin(Degree(flyOutAngleY))*moveOffset.x+Math::Cos(Degree(flyOutAngleY))*moveOffset.z);
@@ -1870,8 +1856,8 @@ void Player::update(float elapsed)
                 moveOffset = Vector3(moveOffset.x,Math::Cos(Degree(flyOutAngleX))*moveOffset.y-Math::Sin(Degree(flyOutAngleX))*moveOffset.z,Math::Sin(Degree(flyOutAngleX))*moveOffset.y+Math::Cos(Degree(flyOutAngleX))*moveOffset.z);
             
                 
-                vines[0]->move(moveOffset);
-                
+                // THANKS CALVIN FOR MAKING THIS POSSIBLE... THIS ANIMATION WOULD HAVE NEVER WORKED IF IT WERE NOT FOR YOUR AMAZING AND BRILLIANT MIND!!! -Manny
+                vines[0]->move(getCombinedRotAndRoll()*moveOffset); //<---
                 
                 if( flyLeft ) {
                     if( flyOutAngleY+1.5f > 12.0f ) {
@@ -1901,8 +1887,8 @@ void Player::update(float elapsed)
         else {
             flyOutCounter += elapsed;
             flyOutCamSpeed = globals.globalModifierCamSpeed*finalSpeed*elapsed;
-            move(getCamForward() * flyOutCamSpeed);
-            Vector3 moveOffset = getCamForward() * globals.globalModifierCamSpeed*finalSpeed*elapsed;
+            move(getCamForward(true) * flyOutCamSpeed);
+            Vector3 moveOffset = getCamForward(true) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
             vines[0]->move(moveOffset);
         }
         return;
@@ -2023,6 +2009,14 @@ bool Player::isPowerUpActive( std::string pwr )
         return powerups[pwr]->active;
     
     return false;
+}
+
+Powerup* Player::getPowerUpPtr( std::string pwr )
+{
+    if( powerups.find(pwr) != powerups.end() )
+        return powerups[pwr];
+    
+    return NULL;
 }
 
 void Player::performPowerUp( std::string pwr )

@@ -442,8 +442,9 @@ void Pod::uncloakPod()
             break;
         case POD_COLOR_HOLDOUT:
             materialName = "General/PodWhite";
+            break;
         default:
-            materialName = "General/PodWhite";
+            materialName = "General/PodPurple";
             break;
     }
     if (podTaken)

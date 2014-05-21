@@ -10,12 +10,26 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421727150.018646"
+            timestampString = "422332239.385788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1673"
-            endingLineNumber = "1673"
-            landmarkName = "Player::update(float elapsed)"
+            startingLineNumber = "1652"
+            endingLineNumber = "1652">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vinezors2.0/Player.cpp"
+            timestampString = "422332239.385788"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1710"
+            endingLineNumber = "1710"
+            landmarkName = "Player::checkCollisions()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +40,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421727150.018646"
+            timestampString = "422332239.385788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1731"
-            endingLineNumber = "1731"
-            landmarkName = "Player::update(float elapsed)"
+            startingLineNumber = "1649"
+            endingLineNumber = "1649"
+            landmarkName = "Player::removeVines()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -42,28 +56,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421727150.018646"
+            timestampString = "422332239.385788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1670"
-            endingLineNumber = "1670"
-            landmarkName = "Player::update(float elapsed)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "421727150.018646"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1573"
-            endingLineNumber = "1573"
-            landmarkName = "Player::decideFinalSpeed(float elapsed)"
+            startingLineNumber = "1552"
+            endingLineNumber = "1552"
+            landmarkName = "Player::getCombinedRotAndRoll()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
