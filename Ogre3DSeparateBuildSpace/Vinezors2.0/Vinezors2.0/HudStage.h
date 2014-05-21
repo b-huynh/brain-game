@@ -61,6 +61,10 @@ protected:
     OverlayContainer* timeWarpContainer;
     TextAreaOverlayElement* timeWarpLabel;
     
+    OverlayContainer* endTallyContainer;
+    TextAreaOverlayElement* endTallyTimeLabel;
+    TextAreaOverlayElement* endTallyScoreLabel;
+    
     PanelOverlayElement* toggleEntireBackground;
     PanelOverlayElement* toggle1Background;
     PanelOverlayElement* toggle2Background;

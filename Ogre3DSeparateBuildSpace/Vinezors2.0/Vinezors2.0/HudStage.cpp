@@ -40,6 +40,41 @@ void HudStage::adjust()
 
 void HudStage::update(float elapsed)
 {
+    if( player->winFlag ) {
+        setOverlay(3, true);
+        
+        tunnel->addToTimePenalty(2.0f);
+        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
+        
+        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
+        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
+        
+        label2->setColour(ColourValue(1.0,1.0,0.0));
+        label5->setColour(ColourValue(1.0,1.0,0.0));
+        
+        label2->setCaption("Time: " + Util::toStringInt(timeLeft));
+        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
+        
+        
+        if (player->getScore() < 100000)
+            label5->setCaption("Score: " + Util::toStringInt(player->getScore()));
+        else
+            label5->setCaption(Util::toStringInt(player->getScore()));
+        
+        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
+        
+        if( timeLeft <= 0.0f ) {
+            label2->setCaption("Time: 0");
+            endTallyTimeLabel->setCaption("Time  0");
+            tunnel->setCleaning(true);
+            player->winFlag = false;
+        }
+        
+        return;
+    }
+    if( tunnel->isDone() ) return;
+    
+    
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
 
     label1->setCaption(globals.messageBig);
@@ -60,7 +95,37 @@ void HudStage::update(float elapsed)
     label6->setCaption(globals.message);
     label7->setCaption("");
     
-    timeWarpLabel->setCaption("+20 Seconds");
+    if( player->isPowerUpActive("TimeWarp") ) {
+        TimeWarp* t = (TimeWarp*)player->getPowerUpPtr("TimeWarp");
+        
+        if( t->zoomIn == 0 ) {
+            setOverlay(2, false);
+            timeWarpLabel->setCharHeight(0.05);
+            timeWarpContainer->setPosition(0.35, 0.15);
+        }
+        else if( t->zoomIn == 1 ) {
+            setOverlay(2, true);
+            timeWarpLabel->setCharHeight(timeWarpLabel->getCharHeight()-0.0005);
+            timeWarpContainer->setPosition(timeWarpContainer->getLeft()+0.001, timeWarpContainer->getTop()+0.0005);
+        }
+        else {
+            setOverlay(2, true);
+            label2->setColour(ColourValue(1.0,1.0,0.0));
+            label2->setCharHeight(0.030);
+        }
+        
+        std::string val;
+        if( t->currentTimeVal < 10 ) val = " "+Util::toStringInt(t->currentTimeVal);
+        else val = Util::toStringInt(t->currentTimeVal);
+        
+        timeWarpLabel->setCaption("+" + val + " Seconds");
+    }
+    else {
+        setOverlay(2, false);
+        label2->setColour(ColourValue(1.0,1.0,1.0));
+        label2->setCharHeight(0.025);
+    }
+    
     
     // Set Progress Bar indicator position for the appropriate mode
     float barWidth = barHP->getWidth();
@@ -200,6 +265,8 @@ void HudStage::alloc()
     
     timeWarpLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextTimeWarpLabel"));
     
+    endTallyTimeLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyTimeLabel"));
+    endTallyScoreLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreLabel"));
     
     toggleEntireBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggleEntireBackground"));
@@ -253,6 +320,11 @@ void HudStage::alloc()
     timeWarpContainer->addChild(timeWarpLabel);
     
     
+    Overlay* overlay4 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("EndTallyOverlay");
+    endTallyContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "EndTallyInterface"));
+    overlay4->add2D(endTallyContainer);
+    endTallyContainer->addChild(endTallyTimeLabel);
+    endTallyContainer->addChild(endTallyScoreLabel);
     
     //overlay1->add2D(healthArea);
     //overlay1->add2D(barHP);
@@ -297,6 +369,7 @@ void HudStage::alloc()
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
     overlays.push_back(overlay3);
+    overlays.push_back(overlay4);
     
     speedSlider = new HudSlider();
     
@@ -340,6 +413,8 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label6);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeLabel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggleEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1TextArt);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2TextArt);
@@ -359,9 +434,11 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyContainer);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[2]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[3]);
     if (speedSlider) delete speedSlider;
     speedSlider = NULL;
 }
@@ -374,8 +451,12 @@ void HudStage::initOverlay()
     panelText->setDimensions(10, 10);
     
     timeWarpContainer->setMetricsMode(GMM_RELATIVE);
-    timeWarpContainer->setPosition(0.5, 0.5);
+    timeWarpContainer->setPosition(0.35, 0.15);
     timeWarpContainer->setDimensions(0.25, 0.25);
+    
+    endTallyContainer->setMetricsMode(GMM_RELATIVE);
+    endTallyContainer->setPosition(0.375, 0.15);
+    endTallyContainer->setDimensions(0.25, 0.25);
     
     healthArea->setMetricsMode(GMM_RELATIVE);
     healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
@@ -486,8 +567,22 @@ void HudStage::initOverlay()
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);
     timeWarpLabel->setPosition(0, 0);
     timeWarpLabel->setCharHeight(0.05);
-    timeWarpLabel->setColour(ColourValue::ColourValue(0.75, 0.0, 0.0));
+    timeWarpLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     timeWarpLabel->setFontName("Arial");
+    
+    endTallyTimeLabel->setMetricsMode(GMM_PIXELS);
+    endTallyTimeLabel->setAlignment(TextAreaOverlayElement::Left);
+    endTallyTimeLabel->setPosition(0, 0);
+    endTallyTimeLabel->setCharHeight(globals.screenHeight/40);
+    endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
+    endTallyTimeLabel->setFontName("Arial");
+    
+    endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
+    endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
+    endTallyScoreLabel->setPosition(200, 20);
+    endTallyScoreLabel->setCharHeight(globals.screenHeight/40);
+    endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
+    endTallyScoreLabel->setFontName("Arial");
     
     
     toggle1TextArt->setMetricsMode(GMM_RELATIVE);

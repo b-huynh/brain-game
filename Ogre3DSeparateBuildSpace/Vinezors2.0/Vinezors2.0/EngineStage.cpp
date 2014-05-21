@@ -57,7 +57,8 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->setOverlay(2, true);
+            hud->setOverlay(2, false);
+            hud->setOverlay(3, false);
             hud->notifyGoButton(false);
             break;
         }
@@ -84,7 +85,6 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->setOverlay(2, true);
             hud->notifyGoButton(false);
             
             // Graphical view changes from camera, light, and skybox
@@ -132,7 +132,6 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->setOverlay(2, true);
             hud->notifyGoButton(true);
             break;
         }
@@ -141,7 +140,6 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
-            hud->setOverlay(2, true);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             break;
@@ -927,6 +925,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_C:
         {
+            player->setPowerUp("TimeWarp", true);
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TimeWarp");
             break;
         }

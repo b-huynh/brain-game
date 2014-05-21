@@ -24,7 +24,7 @@ material General/WallBindingA
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_AlienPipes.png
+				texture LevelBinding/TunnelTile_R_Windows.png
 			}
 		}
 	}
@@ -40,7 +40,7 @@ material General/WallBindingB
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_R_Windows.png
+				texture LevelBinding/TunnelTile_AlienPipes.png
 			}
 		}
 	}
@@ -56,7 +56,7 @@ material General/WallBindingC
 
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_ice4.png
+				texture LevelBinding/TunnelTile_ice6.png
 			}
 		}
 	}
