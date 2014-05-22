@@ -1771,7 +1771,7 @@ void Tunnel::update(float elapsed)
                     pods[i]->setVisibleIndicator(getPodIsGood() && player->getGodMode());
                 }
 #endif
-                if (pods[i]->getPodTrigger())
+                if (pods[i]->getPodTrigger() && pods[i]->getMeshType() == POD_HAZARD)
                     player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_OBSTACLE);
             }
         }

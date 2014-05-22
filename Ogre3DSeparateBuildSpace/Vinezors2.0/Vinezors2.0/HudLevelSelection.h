@@ -36,7 +36,9 @@ protected:
     };
     
     // Overlay items for GAME_STATE_MENU
-    PanelOverlayElement* levelSelectPrompt;
+    PanelOverlayElement* levelSelectEntireBackground;
+    PanelOverlayElement* levelSelectPromptBackground;
+    TextAreaOverlayElement* levelSelectPromptText;
     
     // Container of all the overlay elements to make this level selection icon
     std::vector< std::vector<PanelOverlayElement*> > levelItemBackgrounds;
@@ -44,6 +46,7 @@ protected:
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemNames;
     std::vector< std::vector<TextAreaOverlayElement*> > levelItemScores;
     
+    std::vector<TextAreaOverlayElement*> levelSetNames;
     std::vector<TextAreaOverlayElement*> levelSetStars;
     std::vector<TextAreaOverlayElement*> levelSetScores;
     PanelOverlayElement* levelTotalScoreBackground;
@@ -52,6 +55,7 @@ protected:
     PanelOverlayElement* buttonGoUpBackground;
     PanelOverlayElement* buttonGoDownBackground;
     PanelOverlayElement* buttonEnableTutorialsBackground;
+    PanelOverlayElement* checkDisplayEnableTutorialsBackground;
     TextAreaOverlayElement* textEnableTutorialsPrompt;
     
     void link(Player* player);

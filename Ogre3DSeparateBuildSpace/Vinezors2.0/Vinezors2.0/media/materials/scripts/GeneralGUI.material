@@ -32,6 +32,38 @@ material General/ScreenBackground2
     }
 }
 
+material General/ScreenBackgroundLevelSelect
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture level_menu.jpg
+        }
+      } 
+    }
+}
+
+material General/ScreenBackgroundMainMenu
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture title1.jpg
+        }
+      } 
+    }
+}
+
 material General/ButtonBackground
 {
     technique
@@ -224,7 +256,7 @@ material General/PauseButton
         depth_write off
         texture_unit
         {
-            texture pause_button.png
+            texture pause.png
         }
       } 
     }
@@ -275,7 +307,7 @@ material General/ButtonGoDown
         depth_write off
         texture_unit
         {
-            texture buttongoright1.png
+            texture arrowR.png
         }
       } 
     }
@@ -292,7 +324,7 @@ material General/ButtonGoDownGray
         depth_write off
         texture_unit
         {
-            texture buttongoright1GRAY.png
+            texture arrowR.png
         }
       } 
     }
@@ -309,7 +341,7 @@ material General/ButtonGoUp
         depth_write off
         texture_unit
         {
-            texture buttongoleft1.png
+            texture arrowL.png
         }
       } 
     }
@@ -326,7 +358,7 @@ material General/ButtonGoUpGray
         depth_write off
         texture_unit
         {
-            texture buttongoleft1GRAY.png
+            texture arrowL.png
         }
       } 
     }
@@ -497,6 +529,23 @@ material General/ExitButton
 			texture_unit
 			{
 				texture buttonexit.png
+			}
+		}
+	}
+}
+
+material General/ExitButton2
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture close.png
 			}
 		}
 	}
@@ -1063,6 +1112,23 @@ material General/PlanetUnavailable
     }
 }
 
+material General/LevelBarUnavailable
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture blocked.png
+        }
+      } 
+    }
+}
+
 material General/LevelBar0Fill
 {
     technique
@@ -1074,7 +1140,7 @@ material General/LevelBar0Fill
         depth_write off
         texture_unit
         {
-            texture lvlprgress_03.png
+            texture empty.png
         }
       } 
     }
@@ -1091,7 +1157,7 @@ material General/LevelBar1Fill
         depth_write off
         texture_unit
         {
-            texture lvlprgress_13.png
+            texture full2.png
         }
       } 
     }
@@ -1108,7 +1174,7 @@ material General/LevelBar2Fill
         depth_write off
         texture_unit
         {
-            texture lvlprgress_23.png
+            texture full4.png
         }
       } 
     }
@@ -1125,7 +1191,7 @@ material General/LevelBar3Fill
         depth_write off
         texture_unit
         {
-            texture lvlprgress_33.png
+            texture level2complete.png
         }
       } 
     }

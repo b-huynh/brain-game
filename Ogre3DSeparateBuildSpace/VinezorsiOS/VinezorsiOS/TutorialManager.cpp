@@ -96,10 +96,9 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
     switch (type)
     {
         case TUTORIAL_SLIDES_WELCOME:
-            ret.push_back(TutorialSlide("Welcome to Recall!\nI da best\n\nrawr", "General/ScreenBackground2"));
-            ret.push_back(TutorialSlide("Me\nNever Fear", "General/ScreenBackground2"));
-            ret.push_back(TutorialSlide("Weee\n\n\n\nHah\n\nha", "General/ScreenBackground2"));
-            ret.push_back(TutorialSlide("Meow\n\n\n     meeeeeeeow\n\n\n meeeow", "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Welcome to Recall!"), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("We tutorial windows can explain elements of the game as they are introduced to you."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Click the Play button in this screen to begin.\n\nYou may re-enable/disable these tutorials."), "General/ScreenBackground2"));
             break;
         case TUTORIAL_SLIDES_ZERO_BACK:
             ret.push_back(TutorialSlide(insertNL("Swipe to grab the fuel cells to go faster!\n\nComplete the level before time runs out!"), "General/ScreenBackground2"));
@@ -204,7 +203,7 @@ void TutorialManager::update(float elapsed)
 {
     if (yoffset < 0.0)
     {
-        float yspeed = (-yoffset) * 2.5;
+        float yspeed = (-yoffset) * 3.5;
         if (yspeed < 0.05) yspeed = 0.05;
         yoffset += (yspeed * elapsed);
         if (yoffset > 0.0)
@@ -264,6 +263,12 @@ void TutorialManager::processInput(Vector2 target)
             hide();
         }
     }
+    else if (query == "exit")
+    {
+        slides.clear();
+        slideNo = 0;
+        hide();
+    }
 }
 
 void TutorialManager::adjust()
@@ -277,10 +282,12 @@ void TutorialManager::adjust()
     popupSubWindowBackground->setPosition(0.025, 0.025);
     popupSubWindowBackground->setDimensions(0.450, 0.450);
     
-    float percsize = 0.10;
-    float dimen = globals.screenWidth < globals.screenHeight ? percsize * globals.screenWidth / globals.screenHeight : percsize * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.250, 0.350), Vector2(dimen, dimen), popupGoLeftBackground, NULL);
-    buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.350, 0.350), Vector2(dimen, dimen), popupGoRightBackground, NULL);
+    float bw = 0.075;
+    float bh = bw * globals.screenWidth / globals.screenHeight;
+    buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.250, 0.350), Vector2(bw, bh), popupGoLeftBackground, NULL);
+    buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.350, 0.350), Vector2(bw, bh), popupGoRightBackground, NULL);
+    buttons[BUTTON_EXIT].setButton("exit", popupOverlay, GMM_RELATIVE, Vector2(0.150, 0.350), Vector2(bw, bh), popupExitBackground, NULL);
+    popupExitBackground->setMaterialName("General/ExitButton2");
     
     popupText->setMetricsMode(GMM_RELATIVE);
     popupText->setAlignment(TextAreaOverlayElement::Left);
@@ -333,8 +340,9 @@ void TutorialManager::alloc()
                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TutorialPopupGoLeftBackground"));
     popupGoRightBackground = static_cast<PanelOverlayElement*>(
                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TutorialPopupGoRightBackground"));
-    
-                                                                 
+    popupExitBackground = static_cast<PanelOverlayElement*>(
+                                                            OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TutorialPopupExitBackground"));
+
     // Allocate Resources
     popupText = static_cast<TextAreaOverlayElement*>(
                                                      OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText"));
@@ -345,10 +353,11 @@ void TutorialManager::alloc()
     popupWindowBackground->addChild(popupSubWindowBackground);
     popupSubWindowBackground->addChild(popupGoLeftBackground);
     popupSubWindowBackground->addChild(popupGoRightBackground);
+    popupSubWindowBackground->addChild(popupExitBackground);
     popupSubWindowBackground->addChild(popupText);
     popupSubWindowBackground->addChild(popupSlideNoText);
     
-    buttons = std::vector<HudButton>(2);
+    buttons = std::vector<HudButton>(3);
     
     // Set this overlay as the frontmost item on the screen
     adjust();

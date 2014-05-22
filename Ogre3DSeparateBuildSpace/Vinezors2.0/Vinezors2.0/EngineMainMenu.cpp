@@ -56,11 +56,11 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "credits")
     {
-        engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
+        //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }
     else if (queryGUI == "exit")
     {
-        engineStateMgr->requestPopEngine();
+        //engineStateMgr->requestPopEngine();
     }
 }
 

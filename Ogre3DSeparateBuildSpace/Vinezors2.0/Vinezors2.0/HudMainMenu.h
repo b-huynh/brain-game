@@ -29,6 +29,8 @@ protected:
     };
     
     // Overlay items for GAME_STATE_MENU
+    PanelOverlayElement* mainMenuEntireBackground;
+    
     PanelOverlayElement* mainTitle;
     PanelOverlayElement* playButtonBackground;
     PanelOverlayElement* creditsButtonBackground;

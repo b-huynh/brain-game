@@ -1563,7 +1563,12 @@ void Util::setSkyboxAndFog(std::string nameSkybox)
     }
     else
     {
-        std::cerr << "WARNING: UNKNOWN SKYBOX " << nameSkybox << std::endl;
+        Plane plane;
+        plane.d = 80;
+        plane.normal = Ogre::Vector3(0, 0, 1);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(false, plane, nameSkybox, 1, 1, true);
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
+        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
     }
 }
 

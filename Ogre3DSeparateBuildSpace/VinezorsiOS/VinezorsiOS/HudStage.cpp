@@ -40,6 +40,19 @@ void HudStage::adjust()
 
 void HudStage::update(float elapsed)
 {
+    if (tunnel->getMode() == STAGE_MODE_RECESS)
+        label3->setCaption(Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
+    else
+        label3->setCaption("");
+    
+    label4->setCaption(Util::toStringInt(player->getBaseSpeed()));
+    if (player->hasTriggeredStartup())
+    {
+        speedSlider->setBallDestination(player->getBaseSpeed());
+        speedSlider->update(elapsed);
+    }
+    speedSlider->adjust();
+    
     std::string GUIToggleNumber = "General/GUIToggleTextNumber";
     toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
     toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
@@ -97,19 +110,6 @@ void HudStage::update(float elapsed)
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
     label2->setCaption(Util::toStringInt(timeLeft));
-
-    if (tunnel->getMode() == STAGE_MODE_RECESS)
-        label3->setCaption(Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
-    else
-        label3->setCaption("");
-    
-    label4->setCaption(Util::toStringInt(player->getBaseSpeed()));
-    if (player->hasTriggeredStartup())
-    {
-        speedSlider->setBallDestination(player->getBaseSpeed());
-        speedSlider->update(elapsed);
-    }
-    speedSlider->adjust();
     
     label5->setCaption(Util::toStringInt(player->getScore()));
     label6->setCaption(globals.message);
@@ -549,7 +549,7 @@ void HudStage::initOverlay()
     
     label2->setMetricsMode(GMM_RELATIVE);
     label2->setAlignment(TextAreaOverlayElement::Left);
-    label2->setPosition(0.05, 0.035);
+    label2->setPosition(0.05, 0.040);
     //label2->setAlignment(TextAreaOverlayElement::Right);
     //label2->setPosition(0.21, 0.04);
     label2->setCharHeight(0.025 * FONT_SZ_MULT);
@@ -558,7 +558,7 @@ void HudStage::initOverlay()
     
     label2prompt->setMetricsMode(GMM_RELATIVE);
     label2prompt->setAlignment(TextAreaOverlayElement::Left);
-    label2prompt->setPosition(0.06, 0.08);
+    label2prompt->setPosition(0.06, 0.085);
     //label2prompt->setAlignment(TextAreaOverlayElement::Center);
     //label2prompt->setPosition(0.12, 0.08);
     label2prompt->setCharHeight(0.02 * FONT_SZ_MULT);
@@ -568,7 +568,7 @@ void HudStage::initOverlay()
     
     label3->setMetricsMode(GMM_RELATIVE);
     label3->setAlignment(TextAreaOverlayElement::Right);
-    label3->setPosition(0.20, 0.08);
+    label3->setPosition(0.20, 0.085);
     label3->setCharHeight(0.02 * FONT_SZ_MULT);
     label3->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label3->setFontName("Arial");
@@ -582,14 +582,14 @@ void HudStage::initOverlay()
     
     label5->setMetricsMode(GMM_RELATIVE);
     label5->setAlignment(TextAreaOverlayElement::Right);
-    label5->setPosition(0.92, 0.035);
+    label5->setPosition(0.92, 0.040);
     label5->setCharHeight(0.025 * FONT_SZ_MULT);
     label5->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label5->setFontName("Arial");
     
     label5prompt->setMetricsMode(GMM_RELATIVE);
     label5prompt->setAlignment(TextAreaOverlayElement::Right);
-    label5prompt->setPosition(0.92, 0.08);
+    label5prompt->setPosition(0.92, 0.085);
     //label5prompt->setAlignment(TextAreaOverlayElement::Center);
     //label5prompt->setPosition(0.85, 0.08);
     label5prompt->setCharHeight(0.02 * FONT_SZ_MULT);
@@ -653,9 +653,9 @@ void HudStage::initOverlay()
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
-    float gheight = 0.10;
+    float gheight = 0.20;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.60), Vector2(gwidth, gheight), goBackground, NULL);
+    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50), Vector2(gwidth, gheight), goBackground, NULL);
     
     buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.31), Vector2(0.08, 0.08), toggle1Background, NULL);
     buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.43), Vector2(0.08, 0.08), toggle2Background, NULL);

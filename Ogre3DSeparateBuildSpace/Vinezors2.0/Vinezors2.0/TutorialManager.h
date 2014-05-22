@@ -32,6 +32,7 @@ private:
     
     PanelOverlayElement* popupGoLeftBackground;
     PanelOverlayElement* popupGoRightBackground;
+    PanelOverlayElement* popupExitBackground;
     
     TextAreaOverlayElement* popupText;
     TextAreaOverlayElement* popupSlideNoText;
@@ -45,7 +46,7 @@ private:
     // Similar to Hud Base Class
     std::vector<HudButton> buttons;
     enum ButtonSet {
-        BUTTON_GOLEFT, BUTTON_GORIGHT
+        BUTTON_GOLEFT, BUTTON_GORIGHT, BUTTON_EXIT
     };
     
     float yoffset;
