@@ -213,6 +213,21 @@ bool isPathable(SectionInfo info, float roll)
     return false;
 }
 
+TunnelSlice* closestUnpathable(Tunnel* tunnel, int numSegments, float roll, int & depthDist)
+{
+    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
+    depthDist = 0;
+    for (; depthDist < nextset.size(); ++depthDist)
+    {
+        SectionInfo info = nextset[depthDist]->getSectionInfo();
+        if (!isPathable(info, roll))
+        {
+            return nextset[depthDist];
+        }
+    }
+    return NULL;
+}
+
 void EngineStage::activatePerformLeftMove()
 {
     switch (stageState)
@@ -776,10 +791,25 @@ void EngineStage::activateVelocity(float vel)
 
 void EngineStage::activateAngleTurn(float angle)
 {
-    //Convert to degrees;
-    double dT = (angle * 180.0) / Ogre::Math::PI;
-    float roll = player->getCamRoll();
-    player->setCamRoll(roll + dT);
+    
+    if (tunnel && !tunnel->isDone())
+    {
+        SectionInfo info = tunnel->getCurrent()->getSectionInfo();
+        TunnelSlice* next = tunnel->getNext(1);
+        
+        //Convert to degrees;
+        double dT = (angle * 180.0) / Ogre::Math::PI;
+        float roll = player->getCamRoll();
+        
+        // If unpathable upahead, don't allow player to traverse through
+        int depthDist = 0;
+        TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
+        if (!unpathable)//isPathable(info, roll + dT))
+        {
+            player->setCamRoll(roll + dT);
+            player->offsetRoll += dT / 6;
+        }
+    }
 }
 
 void EngineStage::activateReturnFromPopup()
@@ -1244,18 +1274,8 @@ void EngineStage::updateSpin(float elapsed)
     
     const float DELTA_DEGREE = 15.0;
     float curRoll = player->getCamRoll();
-    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
-    TunnelSlice* unpathable = NULL;
     int depthDist = 0;
-    for (; depthDist < nextset.size(); ++depthDist)
-    {
-        SectionInfo info = nextset[depthDist]->getSectionInfo();
-        if (!isPathable(info, curRoll))
-        {
-            unpathable = nextset[depthDist];
-            break;
-        }
-    }
+    TunnelSlice* unpathable = closestUnpathable(tunnel, 3, curRoll, depthDist);
     if (unpathable)
     {
         SectionInfo info = unpathable->getSectionInfo();
