@@ -28,6 +28,12 @@ private:
     SceneNode* indicatorNode;           // Indicator used to tell player it is a good target
     ParticleSystem* indicatorEffect;
     
+    int hazardID;
+    SceneNode* bPFXNode;
+    ParticleSystem* bPFX;    // Particle system for barrier
+    float bPFXwidth;
+    float bPFXblue;
+    
     Vector3 base;
     Vector3 tip;
     PodSignal podSignal;

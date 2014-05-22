@@ -81,6 +81,23 @@ material General/ButtonBackground
     }
 }
 
+material General/EndTallyBackground
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture score_splash.png
+        }
+      } 
+    }
+}
+
 material General/LevelSelectButtonRound
 {
     technique

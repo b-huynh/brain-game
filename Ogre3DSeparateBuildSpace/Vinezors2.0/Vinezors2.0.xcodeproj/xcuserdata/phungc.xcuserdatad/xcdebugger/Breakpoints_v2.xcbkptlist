@@ -307,7 +307,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "439"
             endingLineNumber = "439"
-            landmarkName = "HudStage::dealloc()"
+            landmarkName = "HudStage::alloc()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -435,7 +435,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "241"
             endingLineNumber = "241"
-            landmarkName = "HudStage::alloc()"
+            landmarkName = "HudStage::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
