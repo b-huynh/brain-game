@@ -651,7 +651,7 @@ void HudStage::initOverlay()
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
-    float gheight = 0.40;
+    float gheight = 0.50;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50 - gheight / 2), Vector2(gwidth, gheight), goBackground, NULL);
     

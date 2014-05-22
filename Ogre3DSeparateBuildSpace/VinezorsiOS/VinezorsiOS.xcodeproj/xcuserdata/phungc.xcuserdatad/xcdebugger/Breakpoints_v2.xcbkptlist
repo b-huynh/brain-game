@@ -145,5 +145,51 @@
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/EngineStage.cpp"
+            timestampString = "422494821.904538"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1262"
+            endingLineNumber = "1262"
+            landmarkName = "EngineStage::setup()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "EngineStage::setup()"
+                  moduleName = "Vines-Space"
+                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildGRAND/VinezorsiOS/VinezorsiOS/EngineStage.cpp"
+                  timestampString = "422490551.562291"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1248"
+                  endingLineNumber = "1248"
+                  offsetFromSymbolStart = "3542">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "EngineStage::setup()"
+                  moduleName = "Vines-Space"
+                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildGRAND/VinezorsiOS/VinezorsiOS/EngineStage.cpp"
+                  timestampString = "422490553.553757"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1248"
+                  endingLineNumber = "1248"
+                  offsetFromSymbolStart = "3538">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

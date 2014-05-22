@@ -73,48 +73,11 @@ void HudStage::update(float elapsed)
     else
         nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
     
-    if( player->winFlag ) {
-        setOverlay(3, true);
-        
-        tunnel->addToTimePenalty(2.0f);
-        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
-        
-        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
-        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
-        
-        label2->setColour(ColourValue(1.0,1.0,0.0));
-        label5->setColour(ColourValue(1.0,1.0,0.0));
-        
-        label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
-        
-        label5->setCaption(Util::toStringInt(player->getScore()));
-        
-        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
-        
-        if( timeLeft <= 0.0f ) {
-            label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time  0");
-            tunnel->setCleaning(true);
-            player->winFlag = false;
-        }
-        
-        return;
-    }
-    if( tunnel->isDone() ) return;
-    
-    
+    // Order matters, will be overwritten by time warp or end score
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
-
-    label1->setCaption(globals.messageBig);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
     label2->setCaption(Util::toStringInt(timeLeft));
-    
-    label5->setCaption(Util::toStringInt(player->getScore()));
-    label6->setCaption(globals.message);
-    label7->setCaption("");
-    
     if( player->isPowerUpActive("TimeWarp") ) {
         TimeWarp* t = (TimeWarp*)player->getPowerUpPtr("TimeWarp");
         
@@ -146,6 +109,41 @@ void HudStage::update(float elapsed)
         label2->setCharHeight(0.025 * FONT_SZ_MULT);
     }
     
+    if( player->winFlag ) {
+        setOverlay(3, true);
+        
+        tunnel->addToTimePenalty(2.0f);
+        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
+        
+        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
+        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
+        
+        label2->setColour(ColourValue(1.0,1.0,0.0));
+        label5->setColour(ColourValue(1.0,1.0,0.0));
+        
+        label2->setCaption(Util::toStringInt(timeLeft));
+        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
+        
+        label5->setCaption(Util::toStringInt(player->getScore()));
+        
+        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
+        
+        if( timeLeft <= 0.0f ) {
+            label2->setCaption("0");
+            endTallyTimeLabel->setCaption("Time  0");
+            tunnel->setCleaning(true);
+            player->winFlag = false;
+        }
+        
+        return;
+    }
+    if( tunnel->isDone() ) return;
+
+    label1->setCaption(globals.messageBig);
+    
+    label5->setCaption(Util::toStringInt(player->getScore()));
+    label6->setCaption(globals.message);
+    label7->setCaption("");
     
     // Set Progress Bar indicator position for the appropriate mode
     float barWidth = barHP->getWidth();
@@ -653,9 +651,9 @@ void HudStage::initOverlay()
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
-    float gheight = 0.20;
+    float gheight = 0.40;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50), Vector2(gwidth, gheight), goBackground, NULL);
+    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50 - gheight / 2), Vector2(gwidth, gheight), goBackground, NULL);
     
     buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.31), Vector2(0.08, 0.08), toggle1Background, NULL);
     buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.43), Vector2(0.08, 0.08), toggle2Background, NULL);

@@ -763,35 +763,50 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
 
 void EngineStage::activateVelocity(float vel)
 {
-    float maxVel = 4500.0;
-    
     //std::cout << "SPIN VELOCITY: " << vel << std::endl;
     //if (vel != 0.0) this->spinVelocity = abs(vel);
+
+    //damping = 1.035;
+    //damping = 1.135;
+    //damping = 1.05;
+    damping = 1.1;
     
-    spinVelocity = abs(vel);
-    damping = 1.035;
+    // spin velocity target gets set in activateAngleTurn(...)
+    spinVelocityTarget = abs(vel);
     
+    freeMotion = true;
     if (vel < 0.0)
         spinClockwise = false;
     else if (vel > 0.0)
         spinClockwise = true;
     else
     {
-        spinVelocity = 0.0;
-        damping = 10.0;
+        // 0.0 vel means force stop in this algorithm
+        // So turn off everything! Make damping so high you scream
+        
+        // This'll eventually turn off by damping in update...
+        //freeMotion = false;
+        //spinVelocity = 0.0;
+        
+        spinVelocityTarget = 0.0;
+        //damping = 10.0;
+        //damping = 5.0;
+        damping = 2.0;
+        //damping = 1.5;
+        //damping = 1.2;
+        
         if (lastAngles.size() >= NUM_ANGLES_SAVED) {
             player->setCamRoll(lastAngles[ANGLE_LOOKBACK]);
             std::cerr << "Using last angle" << std::endl;
         }
     }
     
-    if (abs(spinVelocity) >= maxVel)
-        spinVelocity = maxVel;
+    if (abs(spinVelocityTarget) >= maxVel)
+        spinVelocityTarget = maxVel;
 }
 
 void EngineStage::activateAngleTurn(float angle)
 {
-    
     if (tunnel && !tunnel->isDone())
     {
         SectionInfo info = tunnel->getCurrent()->getSectionInfo();
@@ -804,10 +819,10 @@ void EngineStage::activateAngleTurn(float angle)
         // If unpathable upahead, don't allow player to traverse through
         int depthDist = 0;
         TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
-        if (!unpathable)//isPathable(info, roll + dT))
+        if (!unpathable)
         {
             player->setCamRoll(roll + dT);
-            player->offsetRoll += dT / 6;
+            player->offsetRollDest = dT;
         }
     }
 }
@@ -1245,27 +1260,60 @@ void EngineStage::setup()
     if (tunnel->getPhase() == 'D')
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
 
-        
-
     spinVelocity = 0.0f;
+    spinVelocityTarget = 0.0f;
     damping = 0.0f;
+    freeMotion = false;
 }
 
 void EngineStage::updateSpin(float elapsed)
 {
-    spinVelocity /= damping;
+    maxVel = 4500.0;
+    
+    std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
+    
+    const float MAX_ACC = 50000;
+    
+    // Update towards velocity target
+    if (spinVelocity < spinVelocityTarget)
+        spinVelocity += (MAX_ACC * elapsed);
+    
+    // Don't exceed the velocity target
+    if (spinVelocity >= spinVelocityTarget && spinVelocityTarget > 0.0)
+    {
+        spinVelocity = spinVelocityTarget;
+        spinVelocityTarget = 0.0;
+    }
+    
+    // Bound velocity to a max
+    if (spinVelocity >= maxVel)
+        spinVelocity = maxVel;
     
     float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
     const float PI = 3.14;
     dTheta = (dTheta * 180.0) / PI;
     
+    // Damp the current vel
+    spinVelocity /= damping;
+    
+    // Zero out vel that is close to stop
+    if (spinVelocity <= 100.0 && spinVelocityTarget <= 0.0)
+        spinVelocity = 0.0;
+    
+    // Notify free motion is off
+    if (spinVelocity <= 0.0)
+        freeMotion = false;
+    
     // Perform Player Movement
-    if (spinClockwise) {
-        this->activatePerformRightMove(dTheta);
-        player->offsetRollDest = -dTheta;
-    } else {
-        this->activatePerformLeftMove(dTheta);
-        player->offsetRollDest = dTheta;
+    if (freeMotion)
+    {
+        if (spinClockwise) {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = -dTheta;
+        } else {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = dTheta;
+        }
     }
     
     lastAngles.insert(lastAngles.begin(), player->getCamRoll());

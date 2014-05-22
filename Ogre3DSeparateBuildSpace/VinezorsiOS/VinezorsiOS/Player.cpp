@@ -649,7 +649,10 @@ void Player::updateTimeWarp(float elapsed)
             else {
                 t->mainTimer += t->timeBonusTimeout/t->timeVal;
                 t->currentTimeVal--;
-                if( !tunnel->isDone() ) tunnel->addToTimePenalty(-1);
+                
+                // Only add to the clock if the stage is not over,
+                // or, add it ot a winning player for more points
+                if( !tunnel->isDone() || tunnel->getEval() == PASS ) tunnel->addToTimePenalty(-1);
             }
         }
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
@@ -1812,9 +1815,27 @@ void Player::update(float elapsed)
             soundMusic->play();
     }
     
+    // Determine the speed of the player for this update
+    decideFinalSpeed(elapsed);
     
-    
-    
+    updateBadFuelPickUp(elapsed);
+    updateBoost(elapsed);
+    updateGlowExtraction(elapsed);
+#ifdef DEBUG_MODE
+    vines[0]->setPowerIndication(godMode);
+#endif
+    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
+        if( (it->first).compare("TimeWarp") == 0 ) {
+            updateTimeWarp(elapsed);
+        }
+        else if( (it->first).compare("TractorBeam") == 0 ) {
+            updateTractorBeam(elapsed);
+        }
+        else if( (it->first).compare("Shields") == 0 ) {
+            updateShields(elapsed);
+        }
+    }
+
     //*******//
     if( winFlag ) return;
     if( tunnel->getEval() == PASS && tunnel->getFlyOut() ) {
@@ -1929,27 +1950,6 @@ void Player::update(float elapsed)
             vines[0]->move(getCamUpward() * -flyOutSpeed);
         }
         return;
-    }
-    
-    // Determine the speed of the player for this update
-    decideFinalSpeed(elapsed);
-    
-    updateBadFuelPickUp(elapsed);
-    updateBoost(elapsed);
-    updateGlowExtraction(elapsed);
-#ifdef DEBUG_MODE
-    vines[0]->setPowerIndication(godMode);
-#endif
-    for(std::map<std::string,Powerup*>::iterator it=powerups.begin(); it != powerups.end(); ++it) {
-        if( (it->first).compare("TimeWarp") == 0 ) {
-            updateTimeWarp(elapsed);
-        }
-        else if( (it->first).compare("TractorBeam") == 0 ) {
-            updateTractorBeam(elapsed);
-        }
-        else if( (it->first).compare("Shields") == 0 ) {
-            updateShields(elapsed);
-        }
     }
     
     // Interpolate the camera to get smooth transitions

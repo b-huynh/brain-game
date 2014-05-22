@@ -77,9 +77,12 @@ protected:
     HudStage* hud;
     
     //State of tunnel spin
+    float maxVel;
+    float spinVelocityTarget;
     float spinVelocity;
     float damping;
     bool spinClockwise;
+    bool freeMotion;
     std::vector<float> lastAngles;
     
     void setup();
