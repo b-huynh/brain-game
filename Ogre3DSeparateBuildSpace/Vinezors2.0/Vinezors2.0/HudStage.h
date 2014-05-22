@@ -66,6 +66,7 @@ protected:
     OverlayContainer* endTallyContainer;
     TextAreaOverlayElement* endTallyTimeLabel;
     TextAreaOverlayElement* endTallyScoreLabel;
+    PanelOverlayElement* endTallyBackground;
     
     PanelOverlayElement* nbackDisplayBackground;
     TextAreaOverlayElement* nbackDisplayLabel;
