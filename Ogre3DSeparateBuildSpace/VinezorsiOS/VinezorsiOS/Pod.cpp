@@ -557,8 +557,10 @@ void Pod::generateIndicator()
                     break;
             }
             
-            ParticleEmitter* indicatorEmitter = indicatorEffect->getEmitter(0); // Assuming only one emitter
-            indicatorEmitter->setColour(emitterColor);
+            ParticleEmitter* indicatorEmitter1 = indicatorEffect->getEmitter(0);
+            ParticleEmitter* indicatorEmitter2 = indicatorEffect->getEmitter(1);
+            indicatorEmitter1->setColour(emitterColor);
+            indicatorEmitter2->setColour(emitterColor);
         }
         else {
             std::string indicatorName = "General/GoodPodIndicator";
