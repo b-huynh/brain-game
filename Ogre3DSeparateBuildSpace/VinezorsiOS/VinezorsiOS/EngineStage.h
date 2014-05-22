@@ -44,6 +44,7 @@ public:
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
+    virtual void activateAngleTurn(float angle);
     
     virtual void activateReturnFromPopup();
     
@@ -79,6 +80,7 @@ protected:
     float spinVelocity;
     float damping;
     bool spinClockwise;
+    std::vector<float> lastAngles;
     
     void setup();
     void dealloc();

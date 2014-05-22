@@ -40,6 +40,8 @@
     
     unsigned int screenWidth;
     unsigned int screenHeight;
+    float angleCurrent;
+    float anglePrevious;
 }
 
 @property (retain) NSTimer *mTimer;
@@ -346,10 +348,28 @@
     CGPoint dp = [sender translationInView:sender.view];
     CGPoint v = [sender velocityInView:sender.view];
     
+    CGFloat centerX = screenHeight / 2.0;
+    CGFloat centerY = screenWidth / 2.0;
+    
+    CGFloat vX = 0;
+    CGFloat vY = -centerY;
+    
+    CGFloat uX = centerX - p.x;
+    CGFloat uY = centerY - p.y;
+    
+    CGFloat UDotV = (uX * vX) + (uY * vY);
+    CGFloat UDotU = (uX * uX) + (uY * uY);
+    CGFloat VDotV = (vX * vX) + (vY * vY);
+    CGFloat val = (UDotV) / (sqrtf(UDotU) * sqrtf(VDotV));
+    CGFloat angle = acosf(val);
+    
     if (sender.state == UIGestureRecognizerStateBegan)
     {
         mApplication->activateVelocity(0.0);
         mApplication->activatePressed(p.x, p.y);
+        
+        angleCurrent = angle;
+        anglePrevious = angleCurrent;
         
 #ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"T: (%f, %f)", dp.x, dp.y);
@@ -358,6 +378,15 @@
     }
     else if (sender.state == UIGestureRecognizerStateChanged)
     {
+        angleCurrent = angle;
+        CGFloat dT = angleCurrent - anglePrevious;
+        dT = fabs(dT);
+        anglePrevious = angleCurrent;
+        
+//#ifdef CONTROL_SPIN_DEBUG_OUTPUT
+        NSLog(@"DT: %f", dT);
+//#endif
+        
         /* Calculate Cross Product from center to Velocity vector */
         CGFloat centerX = screenWidth / 2.0;
         CGFloat centerY = screenHeight / 2.0;
@@ -379,9 +408,11 @@
 #endif
         
         if (clockwise) {
-            mApplication->activateVelocity(magnitude);
+            //mApplication->activateVelocity(magnitude);
+            mApplication->activateAngleTurn(-dT);
         } else {
-            mApplication->activateVelocity(-magnitude);
+            //mApplication->activateVelocity(-magnitude);
+            mApplication->activateAngleTurn(dT);
         }
         mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
     }

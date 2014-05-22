@@ -743,19 +743,43 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
     }
 }
 
+#define NUM_ANGLES_SAVED 3
+#define ANGLE_LOOKBACK 0
+
 void EngineStage::activateVelocity(float vel)
 {
     float maxVel = 4500.0;
     
     //std::cout << "SPIN VELOCITY: " << vel << std::endl;
-    if (vel != 0.0) this->spinVelocity = abs(vel);
+    //if (vel != 0.0) this->spinVelocity = abs(vel);
+    
+    spinVelocity = abs(vel);
     damping = 1.035;
-    if (vel < 0.0) spinClockwise = false;
-    else if (vel > 0.0) spinClockwise = true;
-    else damping = 5.0;
+    
+    if (vel < 0.0)
+        spinClockwise = false;
+    else if (vel > 0.0)
+        spinClockwise = true;
+    else
+    {
+        spinVelocity = 0.0;
+        damping = 10.0;
+        if (lastAngles.size() >= NUM_ANGLES_SAVED) {
+            player->setCamRoll(lastAngles[ANGLE_LOOKBACK]);
+            std::cerr << "Using last angle" << std::endl;
+        }
+    }
     
     if (abs(spinVelocity) >= maxVel)
         spinVelocity = maxVel;
+}
+
+void EngineStage::activateAngleTurn(float angle)
+{
+    //Convert to degrees;
+    double dT = (angle * 180.0) / Ogre::Math::PI;
+    float roll = player->getCamRoll();
+    player->setCamRoll(roll + dT);
 }
 
 void EngineStage::activateReturnFromPopup()
@@ -1213,6 +1237,10 @@ void EngineStage::updateSpin(float elapsed)
         this->activatePerformLeftMove(dTheta);
         player->offsetRollDest = dTheta;
     }
+    
+    lastAngles.insert(lastAngles.begin(), player->getCamRoll());
+    while (lastAngles.size() > NUM_ANGLES_SAVED)
+        lastAngles.pop_back();
     
     const float DELTA_DEGREE = 15.0;
     float curRoll = player->getCamRoll();
