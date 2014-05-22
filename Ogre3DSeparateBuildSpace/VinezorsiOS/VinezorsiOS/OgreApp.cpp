@@ -478,6 +478,16 @@ void OgreApp::activateVelocity(float vel)
     if (activeEngine) activeEngine->activateVelocity(vel);
 }
 
+void OgreApp::activateAngleTurn(float angle)
+{
+    if (player->getTutorialMgr()->isVisible())
+    {
+        return;
+    }
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activateAngleTurn(angle);
+}
+
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
 // Note to mimic IOS mechanisms, Mouse Handler events call two functions
 bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
