@@ -618,7 +618,7 @@ void HudStage::initOverlay()
     
     endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
-    endTallyScoreLabel->setPosition(288, 55);
+    endTallyScoreLabel->setPosition(288, 65);
     endTallyScoreLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("Arial");

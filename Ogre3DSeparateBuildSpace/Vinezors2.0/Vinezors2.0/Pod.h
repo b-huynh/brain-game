@@ -32,7 +32,7 @@ private:
     SceneNode* bPFXNode;
     ParticleSystem* bPFX;    // Particle system for barrier
     float bPFXwidth;
-    float bPFXblue;
+    float bPFXcolor;
     
     Vector3 base;
     Vector3 tip;
