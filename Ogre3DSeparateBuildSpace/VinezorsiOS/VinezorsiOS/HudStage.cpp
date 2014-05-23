@@ -64,16 +64,6 @@ void HudStage::update(float elapsed)
     else
         resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
     
-    LevelSet* levels = player->getLevels();
-    int levelRow = player->getLevelRequestRow();
-    int levelCol = player->getLevelRequestCol();
-    int level = levels->getLevelNo(levelRow, levelCol);
-    if (player->isLevelAvailable(level + 1))
-        nextButtonBackground->setMaterialName("General/NextButtonRound");
-    else
-        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
-    
-    // Order matters, will be overwritten by time warp or end score
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
@@ -122,15 +112,15 @@ void HudStage::update(float elapsed)
         label5->setColour(ColourValue(1.0,1.0,0.0));
         
         label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
+        endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
         
         label5->setCaption(Util::toStringInt(player->getScore()));
         
-        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
+        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "   Score");
         
         if( timeLeft <= 0.0f ) {
             label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time  0");
+            endTallyTimeLabel->setCaption("Time    0");
             tunnel->setCleaning(true);
             player->winFlag = false;
         }
@@ -349,6 +339,8 @@ void HudStage::alloc()
     
     Overlay* overlay4 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("EndTallyOverlay");
     endTallyContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "EndTallyInterface"));
+    endTallyBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "EndTallyBackground"));
+    overlay4->add2D(endTallyBackground);
     overlay4->add2D(endTallyContainer);
     endTallyContainer->addChild(endTallyTimeLabel);
     endTallyContainer->addChild(endTallyScoreLabel);
@@ -465,6 +457,7 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(restartButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyContainer);
@@ -488,7 +481,7 @@ void HudStage::initOverlay()
     timeWarpContainer->setDimensions(0.25, 0.25);
     
     endTallyContainer->setMetricsMode(GMM_RELATIVE);
-    endTallyContainer->setPosition(0.375, 0.15);
+    endTallyContainer->setPosition(0.35, 0.15);
     endTallyContainer->setDimensions(0.25, 0.25);
     
     healthArea->setMetricsMode(GMM_RELATIVE);
@@ -618,17 +611,23 @@ void HudStage::initOverlay()
     
     endTallyTimeLabel->setMetricsMode(GMM_PIXELS);
     endTallyTimeLabel->setAlignment(TextAreaOverlayElement::Left);
-    endTallyTimeLabel->setPosition(0, 0);
+    endTallyTimeLabel->setPosition(0, 7);
     endTallyTimeLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
     endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyTimeLabel->setFontName("Arial");
     
     endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
-    endTallyScoreLabel->setPosition(200, 20);
+    endTallyScoreLabel->setPosition(288, 55);
     endTallyScoreLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("Arial");
+    
+    endTallyBackground->setMaterialName("General/EndTallyBackground");
+    endTallyBackground->setMetricsMode(GMM_RELATIVE);
+    //endTallyBackground->setHorizontalAlignment(GHA_CENTER);
+    endTallyBackground->setPosition(0.30, 0.125);
+    endTallyBackground->setDimensions(0.45,0.20);
     
     toggle1TextArt->setMetricsMode(GMM_RELATIVE);
     toggle1TextArt->setPosition(0.0250, 0.0025);
@@ -667,10 +666,10 @@ void HudStage::initOverlay()
     
     float qheight = 0.10;
     float qwidth = 0.30;
-    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.30), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
-    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.42), Vector2(qwidth, qheight), nextButtonBackground, NULL);
-    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.54), Vector2(qwidth, qheight), restartButtonBackground, NULL);
-    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.66), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
+    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.35), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.47), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.59), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.71), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
     toggleIndicator->setMetricsMode(GMM_RELATIVE);
     toggleIndicator->setDimensions(0.08, 0.08);

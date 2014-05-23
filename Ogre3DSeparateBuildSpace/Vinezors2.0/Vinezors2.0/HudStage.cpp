@@ -64,46 +64,6 @@ void HudStage::update(float elapsed)
     else
         resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
     
-    LevelSet* levels = player->getLevels();
-    int levelRow = player->getLevelRequestRow();
-    int levelCol = player->getLevelRequestCol();
-    int level = levels->getLevelNo(levelRow, levelCol);
-    if (player->isLevelAvailable(level + 1))
-        nextButtonBackground->setMaterialName("General/NextButtonRound");
-    else
-        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
-    
-    // Order matters, will be overwritten by time warp or end score
-    if( player->winFlag ) {
-        setOverlay(3, true);
-        
-        tunnel->addToTimePenalty(2.0f);
-        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
-        
-        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
-        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
-        
-        label2->setColour(ColourValue(1.0,1.0,0.0));
-        label5->setColour(ColourValue(1.0,1.0,0.0));
-        
-        label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
-        
-        label5->setCaption(Util::toStringInt(player->getScore()));
-        
-        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "   Score");
-        
-        if( timeLeft <= 0.0f ) {
-            label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time    0");
-            tunnel->setCleaning(true);
-            player->winFlag = false;
-        }
-        
-        return;
-    }
-    if( tunnel->isDone() ) return;
-    
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
@@ -152,15 +112,15 @@ void HudStage::update(float elapsed)
         label5->setColour(ColourValue(1.0,1.0,0.0));
         
         label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
+        endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
         
         label5->setCaption(Util::toStringInt(player->getScore()));
         
-        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
+        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "   Score");
         
         if( timeLeft <= 0.0f ) {
             label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time  0");
+            endTallyTimeLabel->setCaption("Time    0");
             tunnel->setCleaning(true);
             player->winFlag = false;
         }
