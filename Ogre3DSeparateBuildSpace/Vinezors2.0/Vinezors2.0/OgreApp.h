@@ -118,7 +118,7 @@ public:
 	void activateReleased(float x, float y, float dx, float dy);
     
     void activateVelocity(float v);
-    void activateAngleTurn(float angle);
+    void activateAngleTurn(float angle, float v);
     
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual bool mouseMoved(const OIS::MouseEvent &evt);

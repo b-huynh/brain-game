@@ -766,12 +766,8 @@ void EngineStage::activateVelocity(float vel)
     //std::cout << "SPIN VELOCITY: " << vel << std::endl;
     //if (vel != 0.0) this->spinVelocity = abs(vel);
 
-    //damping = 1.035;
-    //damping = 1.135;
-    //damping = 1.05;
-    damping = 1.1;
-    
-    // spin velocity target gets set in activateAngleTurn(...)
+    damping = 1.035;
+
     spinVelocityTarget = abs(vel);
     
     freeMotion = true;
@@ -789,11 +785,7 @@ void EngineStage::activateVelocity(float vel)
         //spinVelocity = 0.0;
         
         spinVelocityTarget = 0.0;
-        //damping = 10.0;
-        //damping = 5.0;
-        damping = 2.0;
-        //damping = 1.5;
-        //damping = 1.2;
+        damping = 10.0;
         
         if (lastAngles.size() >= NUM_ANGLES_SAVED) {
             player->setCamRoll(lastAngles[ANGLE_LOOKBACK]);
@@ -805,13 +797,10 @@ void EngineStage::activateVelocity(float vel)
         spinVelocityTarget = maxVel;
 }
 
-void EngineStage::activateAngleTurn(float angle)
+void EngineStage::activateAngleTurn(float angle, float vel)
 {
     if (tunnel && !tunnel->isDone())
     {
-        SectionInfo info = tunnel->getCurrent()->getSectionInfo();
-        TunnelSlice* next = tunnel->getNext(1);
-        
         //Convert to degrees;
         double dT = (angle * 180.0) / Ogre::Math::PI;
         float roll = player->getCamRoll();
@@ -1272,37 +1261,45 @@ void EngineStage::updateSpin(float elapsed)
     
     std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
     
-    const float MAX_ACC = 50000;
-    
-    // Update towards velocity target
-    if (spinVelocity < spinVelocityTarget)
-        spinVelocity += (MAX_ACC * elapsed);
-    
-    // Don't exceed the velocity target
-    if (spinVelocity >= spinVelocityTarget && spinVelocityTarget > 0.0)
+    if (freeMotion)
     {
-        spinVelocity = spinVelocityTarget;
-        spinVelocityTarget = 0.0;
+        if (spinVelocityTarget > 0.0)
+        {
+            const float MAX_ACC = 30000;
+        
+            // Update towards velocity target
+            if (spinVelocity < spinVelocityTarget)
+                spinVelocity += (MAX_ACC * elapsed);
+        
+            // Don't exceed the velocity target
+            if (spinVelocity >= spinVelocityTarget)
+            {
+                spinVelocity = spinVelocityTarget;
+                spinVelocityTarget = 0.0;
+            }
+        
+            // Bound velocity to a max
+            if (spinVelocity >= maxVel)
+                spinVelocity = maxVel;
+        }
+        else
+        {
+            // Damp the current vel
+            spinVelocity /= damping;
+        
+            // Zero out vel that is close to stop
+            if (spinVelocity <= 100.0)
+                spinVelocity = 0.0;
+        
+            // Notify free motion is off
+            if (spinVelocity <= 0.0)
+                freeMotion = false;
+        }
     }
-    
-    // Bound velocity to a max
-    if (spinVelocity >= maxVel)
-        spinVelocity = maxVel;
     
     float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
     const float PI = 3.14;
-    dTheta = (dTheta * 180.0) / PI;
-    
-    // Damp the current vel
-    spinVelocity /= damping;
-    
-    // Zero out vel that is close to stop
-    if (spinVelocity <= 100.0 && spinVelocityTarget <= 0.0)
-        spinVelocity = 0.0;
-    
-    // Notify free motion is off
-    if (spinVelocity <= 0.0)
-        freeMotion = false;
+    dTheta = (dTheta * 180.0) / Ogre::Math::PI;
     
     // Perform Player Movement
     if (freeMotion)

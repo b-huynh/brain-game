@@ -104,7 +104,7 @@ void Engine::activateVelocity(float vel)
   
 }
 
-void Engine::activateAngleTurn(float angle)
+void Engine::activateAngleTurn(float angle, float vel)
 {
     
 }

@@ -478,14 +478,15 @@ void OgreApp::activateVelocity(float vel)
     if (activeEngine) activeEngine->activateVelocity(vel);
 }
 
-void OgreApp::activateAngleTurn(float angle)
+void OgreApp::activateAngleTurn(float angle, float vel)
 {
     if (player->getTutorialMgr()->isVisible())
     {
         return;
     }
+    
     Engine* activeEngine = engineStateMgr->getActiveEngine();
-    if (activeEngine) activeEngine->activateAngleTurn(angle);
+    if (activeEngine) activeEngine->activateAngleTurn(angle, vel);
 }
 
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS

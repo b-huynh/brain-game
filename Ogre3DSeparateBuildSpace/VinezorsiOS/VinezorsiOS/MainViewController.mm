@@ -408,11 +408,9 @@
 #endif
         
         if (clockwise) {
-            //mApplication->activateVelocity(magnitude);
-            mApplication->activateAngleTurn(-dT);
+            mApplication->activateAngleTurn(-dT, magnitude);
         } else {
-            //mApplication->activateVelocity(-magnitude);
-            mApplication->activateAngleTurn(dT);
+            mApplication->activateAngleTurn(dT, magnitude);
         }
         mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
     }

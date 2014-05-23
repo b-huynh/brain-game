@@ -44,7 +44,7 @@ public:
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
-    virtual void activateAngleTurn(float angle);
+    virtual void activateAngleTurn(float angle, float vel);
     
     virtual void activateReturnFromPopup();
     
