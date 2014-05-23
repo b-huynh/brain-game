@@ -17,12 +17,12 @@ static int glowID = 0;
 static int indicatorID = 0;
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXblue(1.0f)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
 {
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXblue(1.0f)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
 {
     loadPod();
 }
@@ -189,32 +189,32 @@ void Pod::loadHazard()
     
     headContentEntity->getSubEntity(0)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(1)->setMaterialName("Obelisk/LightGray");
-    headContentEntity->getSubEntity(2)->setMaterialName("Obelisk/TransparentRed");
+    headContentEntity->getSubEntity(2)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(3)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(4)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(5)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(6)->setMaterialName("Obelisk/Yellow");
+    headContentEntity->getSubEntity(6)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(7)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(8)->setMaterialName("Obelisk/Yellow");
+    headContentEntity->getSubEntity(8)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(9)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(10)->setMaterialName("Obelisk/LightGray");
     headContentEntity->getSubEntity(11)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(12)->setMaterialName("Obelisk/Red");
-    headContentEntity->getSubEntity(13)->setMaterialName("Obelisk/Red");
+    headContentEntity->getSubEntity(12)->setMaterialName("Obelisk/Cyan");
+    headContentEntity->getSubEntity(13)->setMaterialName("Obelisk/Cyan");
     headContentEntity->getSubEntity(14)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(15)->setMaterialName("Obelisk/LightGray");
     headContentEntity->getSubEntity(16)->setMaterialName("Obelisk/LightGray");
     headContentEntity->getSubEntity(17)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(18)->setMaterialName("Obelisk/TransparentRed");
+    headContentEntity->getSubEntity(18)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(19)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(20)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(21)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(22)->setMaterialName("Obelisk/Yellow");
+    headContentEntity->getSubEntity(22)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(23)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(24)->setMaterialName("Obelisk/Yellow");
+    headContentEntity->getSubEntity(24)->setMaterialName("Obelisk/TransparentCyan");
     headContentEntity->getSubEntity(25)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(26)->setMaterialName("Obelisk/Red");
-    headContentEntity->getSubEntity(27)->setMaterialName("Obelisk/Red");
+    headContentEntity->getSubEntity(26)->setMaterialName("Obelisk/Cyan");
+    headContentEntity->getSubEntity(27)->setMaterialName("Obelisk/Cyan");
     
 
     head->attachObject(headContentEntity);
@@ -303,12 +303,12 @@ void Pod::setToGrowth(float t)
     }
     else if (mtype == POD_HAZARD)
     {
-        head->setScale(Vector3(1.2, 1.2 * t, 1.2));
+        head->setScale(Vector3(1.25, 1.15 * t, 1.25));
         if( t >= 1.0f && !bPFXNode) {
             bPFXNode = head->createChildSceneNode("BarrierPFXNode" + Util::toStringInt(hazardID));
             bPFX = bPFXNode->getCreator()->createParticleSystem("BarrierPFX" + Util::toStringInt(hazardID), "Barrier/PFX");
             bPFXNode->attachObject(bPFX);
-            bPFXNode->translate(Vector3(0,3,0));
+            bPFXNode->translate(Vector3(0,2.85f,0));
         }
     }
     else if (mtype == POD_POWERUP)
@@ -740,11 +740,11 @@ void Pod::update(float elapsed)
     
     if( bPFXNode ) {
         bPFX->getEmitter(0)->setParameter("width",Util::toStringFloat(bPFXwidth));
-        bPFX->getEmitter(0)->setColour(ColourValue(1.0f,1.0f,bPFXblue));
+        bPFX->getEmitter(0)->setColour(ColourValue(bPFXcolor,1.0f,1.0f));
         if( bPFXwidth+0.75f < 4.0f ) bPFXwidth += 0.75f;
         else bPFXwidth = 4.0f;
-        if( bPFXblue-0.05f > 0.0f ) bPFXblue -= 0.05f;
-        else bPFXblue = 0.0f;
+        if( bPFXcolor-0.05f > 0.0f ) bPFXcolor -= 0.05f;
+        else bPFXcolor = 0.0f;
     }
 }
 
