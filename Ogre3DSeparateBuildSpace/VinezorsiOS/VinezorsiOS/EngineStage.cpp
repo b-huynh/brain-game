@@ -277,8 +277,8 @@ void EngineStage::activatePerformLeftMove(float angle)
                 else
                 {
                     // resolve overshooting by setting the player directly on the panel
-                    float discreteDegrees = Util::getDegrees(getDirByRoll(val)) - 1;
-                    if (isPathable(info, discreteDegrees))
+                    float discreteDegrees = Util::getDegrees(getDirByRoll(val));
+                    if (isPathable(info, discreteDegrees - 1)) // border case call, so shift it over a little bit
                     {
                         player->setCamRoll(discreteDegrees); // resolve overshooting
                     }
@@ -348,11 +348,11 @@ void EngineStage::activatePerformRightMove(float angle)
                 else
                 {
                     // resolve overshooting by setting the player directly on the panel
-                    float discreteDegrees = Util::getDegrees(getDirByRoll(val)) + 1;
-                    if (isPathable(info, discreteDegrees))
+                    float discreteDegrees = Util::getDegrees(getDirByRoll(val));
+                    if (isPathable(info, discreteDegrees + 1)) //border case call, so shift it over a little bit
                     {
                         // Subtract 1 due to discrete angle values
-                        player->setCamRoll(discreteDegrees - 1); // resolve overshooting
+                        player->setCamRoll(discreteDegrees); // resolve overshooting
                     }
                 }
             }
@@ -763,11 +763,14 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
 
 void EngineStage::activateVelocity(float vel)
 {
-    //std::cout << "SPIN VELOCITY: " << vel << std::endl;
+    std::cout << "SPIN VELOCITY: " << vel << std::endl;
     //if (vel != 0.0) this->spinVelocity = abs(vel);
 
     damping = 1.035;
+    float minVel = 100.0;
 
+    if (abs(vel) <= minVel)
+        vel = 0.0;
     spinVelocityTarget = abs(vel);
     
     freeMotion = true;
@@ -1259,7 +1262,7 @@ void EngineStage::updateSpin(float elapsed)
 {
     maxVel = 4500.0;
     
-    std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
+    //std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
     
     if (freeMotion)
     {
