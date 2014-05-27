@@ -1546,7 +1546,7 @@ Quaternion Player::getRot() const
 Quaternion Player::getRoll() const
 {
     Quaternion q;
-    q.FromAngleAxis(Degree(camRoll), globals.tunnelReferenceForward);
+    q.FromAngleAxis(Degree(camRoll - offsetRoll / 2.0), globals.tunnelReferenceForward);
     return q;
 }
 

@@ -609,17 +609,17 @@ void HudStage::initOverlay()
     timeWarpLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     timeWarpLabel->setFontName("Arial");
     
-    endTallyTimeLabel->setMetricsMode(GMM_PIXELS);
+    endTallyTimeLabel->setMetricsMode(GMM_RELATIVE);
     endTallyTimeLabel->setAlignment(TextAreaOverlayElement::Left);
-    endTallyTimeLabel->setPosition(0, 7);
-    endTallyTimeLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
+    endTallyTimeLabel->setPosition(0.0, 0.015);
+    endTallyTimeLabel->setCharHeight(0.024 * FONT_SZ_MULT);
     endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyTimeLabel->setFontName("Arial");
     
-    endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
+    endTallyScoreLabel->setMetricsMode(GMM_RELATIVE);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
-    endTallyScoreLabel->setPosition(288, 65);
-    endTallyScoreLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
+    endTallyScoreLabel->setPosition(0.365, 0.11);
+    endTallyScoreLabel->setCharHeight(0.024 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("Arial");
     

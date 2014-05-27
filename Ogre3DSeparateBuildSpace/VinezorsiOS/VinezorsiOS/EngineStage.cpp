@@ -802,6 +802,8 @@ void EngineStage::activateVelocity(float vel)
 
 void EngineStage::activateAngleTurn(float angle, float vel)
 {
+    std::cout << "ANGLE: " << angle << std::endl;
+    
     if (tunnel && !tunnel->isDone())
     {
         //Convert to degrees;
@@ -1361,53 +1363,9 @@ void EngineStage::updateSpin(float elapsed)
         {
             curRoll = Util::getDegrees(getDirByRoll(curRoll));
         }
-        player->setCamRoll(curRoll);
     }
     
-    /*
-    // Avoid moving into empty panels ahead of us
-    TunnelSlice* next = tunnel->getNext(1);
-    if (next)
-    {
-        SectionInfo nextInfo = next->getSectionInfo();
-        float curRoll = player->getCamRoll();
-        if (!isPathable(nextInfo, curRoll))
-        {
-            // Look for the closest panel using 15 degree delta steps
-            float thetaDistEstimate = DELTA_DEGREE;
-            while (thetaDistEstimate <= 180.0)
-            {
-                if (isPathable(nextInfo, curRoll - thetaDistEstimate))
-                {
-                    thetaDistEstimate = -thetaDistEstimate;
-                    break;
-                }
-                if (isPathable(nextInfo, curRoll + thetaDistEstimate))
-                {
-                    break;
-                }
-                thetaDistEstimate += DELTA_DEGREE;
-            }
-            
-            // Limit the force to 45 degrees
-            if (thetaDistEstimate > 45.0)
-                thetaDistEstimate = 45.0;
-            if (thetaDistEstimate < -45.0)
-                thetaDistEstimate = -45.0;
-            
-            // Assign new roll
-            float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
-            curRoll = curRoll + recoverRollSpeed * elapsed;
-            
-            // Resolve overshooting (if we are back on pathable ground)
-            if (isPathable(nextInfo, curRoll))
-            {
-                curRoll = Util::getDegrees(getDirByRoll(curRoll));
-            }
-            player->setCamRoll(curRoll);
-        }
-    }
-     */
+    player->setCamRoll(curRoll);
     
     // Animating the offset banking
     double bankingAnimationSpeed = 30.0;
