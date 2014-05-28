@@ -1417,6 +1417,13 @@ void Tunnel::renewSegment(SectionInfo sectionInfo)
     for (int i = 0; i < oldNumPods && activePods.size() > 0; ++i)
         activePods.pop_front();
     
+    if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 5 && Util::getNumSides(sectionInfo.sidesUsed) == 3 )
+        nsegment->makeDecreasingTransition = true;
+    else if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 7 && Util::getNumSides(sectionInfo.sidesUsed) == 5 )
+        nsegment->makeDecreasingTransition = true;
+    else if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 8 && Util::getNumSides(sectionInfo.sidesUsed) == 7 )
+        nsegment->makeDecreasingTransition = true;
+    
     nsegment->rejuvenate(segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, getMaterialName());
     ++segmentCounter;
     

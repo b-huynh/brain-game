@@ -119,6 +119,8 @@ public:
     
     SceneNode* gateDoorNodes[8];
     Entity* gateDoorEntities[8];
+    
+    bool makeDecreasingTransition;
 };
 
 #endif /* defined(__Testing__TunnelSlice__) */
