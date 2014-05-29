@@ -64,6 +64,17 @@ void HudStage::update(float elapsed)
     else
         resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
     
+    LevelSet* levels = player->getLevels();
+    int row = player->getLevelRequestRow();
+    int col = player->getLevelRequestCol();
+    int level = levels->getLevelNo(row, col);
+    int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
+    if (player->isLevelAvailable(nlevel))
+        nextButtonBackground->setMaterialName("General/NextButtonRound");
+    else
+        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
+    
+    
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
@@ -116,6 +127,15 @@ void HudStage::update(float elapsed)
         
         label5->setCaption(Util::toStringInt(player->getScore()));
         
+        /*
+         // Displays best score in front until cur score exceeds it
+        int bestScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
+        int curScore = player->getScore();
+        if (curScore > bestScore)
+            endTallyScoreLabel->setCaption(Util::toStringInt(curScore) + "   Score");
+        else
+            endTallyScoreLabel->setCaption(Util::toStringInt(bestScore) + "   Score");
+        */
         endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "   Score");
         
         if( timeLeft <= 0.0f ) {
@@ -407,6 +427,7 @@ void HudStage::alloc()
     // Otherwise, use the suggested speed
     PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
     speedSlider->adjust();
+    std::cout << "Performance: " << levelPerformance.initSpeedSetting << std::endl;
     if (levelPerformance.initSpeedSetting >= 0)
         speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
     else
@@ -650,7 +671,7 @@ void HudStage::initOverlay()
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
-    float gheight = 0.40;
+    float gheight = 0.35;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
     buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50 - gheight / 2), Vector2(gwidth, gheight), goBackground, NULL);
     

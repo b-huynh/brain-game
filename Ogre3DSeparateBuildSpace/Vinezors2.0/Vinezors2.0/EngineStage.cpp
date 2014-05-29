@@ -122,13 +122,17 @@ void EngineStage::update(float elapsed)
                 player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
             
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             if (!player->hasTriggeredStartup())
             {
                 int sliderSpeed = hud->getSpeedSlider()->getIndex();
                 globals.initCamSpeed = Util::clamp(sliderSpeed, globals.minCamSpeed, globals.maxCamSpeed);
                 player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+                
+                // Save them results for people who replay
+                player->saveSpeedSettings();
             }
             
             hud->update(elapsed);
@@ -276,6 +280,7 @@ void EngineStage::activatePerformLeftMove(float angle)
                     player->setCamRoll(normalizedAngle(nval));
                 else
                 {
+                    activateVelocity(0.0);
                     // resolve overshooting by setting the player directly on the panel
                     float discreteDegrees = Util::getDegrees(getDirByRoll(val));
                     if (isPathable(info, discreteDegrees - 1)) // border case call, so shift it over a little bit
@@ -347,6 +352,7 @@ void EngineStage::activatePerformRightMove(float angle)
                     player->setCamRoll(normalizedAngle(nval));
                 else
                 {
+                    activateVelocity(0.0);
                     // resolve overshooting by setting the player directly on the panel
                     float discreteDegrees = Util::getDegrees(getDirByRoll(val));
                     if (isPathable(info, discreteDegrees + 1)) //border case call, so shift it over a little bit
@@ -420,6 +426,7 @@ void EngineStage::activatePerformDoubleTap(float x, float y)
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
+            player->performBoost();
             break;
         case STAGE_STATE_PAUSE:
             break;
@@ -634,7 +641,8 @@ void EngineStage::activatePerformBeginLongPress()
             break;
         case STAGE_STATE_RUNNING:
         {
-            player->performBoost();
+            // In single tap now
+            //player->performBoost();
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -802,6 +810,8 @@ void EngineStage::activateVelocity(float vel)
 
 void EngineStage::activateAngleTurn(float angle, float vel)
 {
+    //std::cout << "ANGLE: " << angle << std::endl;
+    
     if (tunnel && !tunnel->isDone())
     {
         //Convert to degrees;
@@ -978,7 +988,8 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_Z:
         {
-            activatePerformBeginLongPress();
+            if (stageState == STAGE_STATE_RUNNING)
+                player->performBoost();
             break;
         }
         case OIS::KC_X:
@@ -1077,8 +1088,6 @@ void EngineStage::setup()
     
     //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
     //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
-    globals.maxCamSpeed = skillLevel.maxSpeed;
     
     globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
     globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
@@ -1237,6 +1246,11 @@ void EngineStage::setup()
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
     // Set tutorial slides for certain thingies
+    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_CONTROL_MECHANICS);
+    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getHighestCriteria() <= 0)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HUD_DISPLAY1);
+    else
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HUD_DISPLAY2);
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getHighestCriteria() <= 0)
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ZERO_BACK);
     if (tunnel->getHighestCriteria() == 1)
@@ -1361,53 +1375,9 @@ void EngineStage::updateSpin(float elapsed)
         {
             curRoll = Util::getDegrees(getDirByRoll(curRoll));
         }
-        player->setCamRoll(curRoll);
     }
     
-    /*
-    // Avoid moving into empty panels ahead of us
-    TunnelSlice* next = tunnel->getNext(1);
-    if (next)
-    {
-        SectionInfo nextInfo = next->getSectionInfo();
-        float curRoll = player->getCamRoll();
-        if (!isPathable(nextInfo, curRoll))
-        {
-            // Look for the closest panel using 15 degree delta steps
-            float thetaDistEstimate = DELTA_DEGREE;
-            while (thetaDistEstimate <= 180.0)
-            {
-                if (isPathable(nextInfo, curRoll - thetaDistEstimate))
-                {
-                    thetaDistEstimate = -thetaDistEstimate;
-                    break;
-                }
-                if (isPathable(nextInfo, curRoll + thetaDistEstimate))
-                {
-                    break;
-                }
-                thetaDistEstimate += DELTA_DEGREE;
-            }
-            
-            // Limit the force to 45 degrees
-            if (thetaDistEstimate > 45.0)
-                thetaDistEstimate = 45.0;
-            if (thetaDistEstimate < -45.0)
-                thetaDistEstimate = -45.0;
-            
-            // Assign new roll
-            float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
-            curRoll = curRoll + recoverRollSpeed * elapsed;
-            
-            // Resolve overshooting (if we are back on pathable ground)
-            if (isPathable(nextInfo, curRoll))
-            {
-                curRoll = Util::getDegrees(getDirByRoll(curRoll));
-            }
-            player->setCamRoll(curRoll);
-        }
-    }
-     */
+    player->setCamRoll(curRoll);
     
     // Animating the offset banking
     double bankingAnimationSpeed = 30.0;

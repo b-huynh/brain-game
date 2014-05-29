@@ -82,7 +82,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     Ogre::NameValuePairList params;
     params["externalWindowHandle"] = Ogre::StringConverter::toString((unsigned long)uiWindow);
     params["externalViewHandle"] = Ogre::StringConverter::toString((unsigned long)uiView);
-    params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
+    //params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
     
     m_pRenderWnd = m_pRoot->createRenderWindow("", width, height, false, &params);
     

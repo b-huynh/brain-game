@@ -12,8 +12,13 @@
 #include "Util.h"
 
 // Number of Columns and Rows
-#define NUM_TASKS 6
-#define NUM_LEVELS 8
+#ifdef DEMO_BUILD
+    #define NUM_TASKS 1
+    #define NUM_LEVELS 1
+#else
+    #define NUM_TASKS 6
+    #define NUM_LEVELS 8
+#endif
 
 struct CollectionCriteria
 {

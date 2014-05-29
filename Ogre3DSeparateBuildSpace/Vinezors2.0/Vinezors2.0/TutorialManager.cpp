@@ -93,6 +93,9 @@ void TutorialManager::disable()
 std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) const
 {
     std::vector<TutorialSlide> ret;
+#ifdef DEMO_BUILD
+    return ret;
+#else
     switch (type)
     {
         case TUTORIAL_SLIDES_WELCOME:
@@ -100,8 +103,29 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide(insertNL("We tutorial windows can explain elements of the game as they are introduced to you."), "General/ScreenBackground2"));
             ret.push_back(TutorialSlide(insertNL("Click the Play button in this screen to begin.\n\nYou may re-enable/disable these tutorials."), "General/ScreenBackground2"));
             break;
+        case TUTORIAL_SLIDES_HUD_DISPLAY1:
+            ret.push_back(TutorialSlide(insertNL("Time Display:\nThe top-left number displays the time you have left to complete the level."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Score Display:\nThe top-right number displays the amount of points you earn. Earn points by collecting good targets, you also earn points with time left on the clock."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Collection Bar:\nThe chain of 8 are not necessary in this stage. Travel to finish as indicated with the percent completion display at the top-left."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Good Targets:\nPick up the raspberry cells. All raspberry cells are good targets."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Speed Meter:\nThe dial on the left indicates your running speed. You may adjust this in the beginning to your liking."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Pause for Break:\n You may pause the game tapping on the button at the bottom right."), "General/ScreenBackground2"));
+            break;
+        case TUTORIAL_SLIDES_HUD_DISPLAY2:
+            ret.push_back(TutorialSlide(insertNL("Time Display:\nThe top-left number displays the time you have left to complete the level."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Score Display:\nThe top-right number displays the amount of points you earn. Earn points by collecting good targets, you also earn points with time left on the clock."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Collection Bar:\nThe chain of 8 at the top are either filled-in or empty. You must collect 8 good targets and fill-in all 8."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Good Targets:\nPick up targets that match the signal N-steps back with the N value shown in the window on the right."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Speed Meter:\nThe dial on the left indicates your running speed. You may adjust this in the beginning to your liking."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Pause for Break:\n You may pause the game tapping on the button at the bottom right."), "General/ScreenBackground2"));
+            break;
+        case TUTORIAL_SLIDES_CONTROL_MECHANICS:
+            ret.push_back(TutorialSlide(insertNL("Interface with the tunnel to navigate.\nYou can drag the tunnel around moving the ship"), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("You can spin around with a bit of speed.\nSpin by dragging the tunnel in an arc and let go to spin."), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("While the tunnel is spinning, you can force a hard stop by pressing onto the screen."), "General/ScreenBackground2"));
+            break;
         case TUTORIAL_SLIDES_ZERO_BACK:
-            ret.push_back(TutorialSlide(insertNL("Swipe to grab the fuel cells to go faster!\n\nComplete the level before time runs out!"), "General/ScreenBackground2"));
+            ret.push_back(TutorialSlide(insertNL("Challenge:\nMove and grab the fuel cells to go faster!\n\nComplete the level before time runs out!"), "General/ScreenBackground2"));
             break;
         case TUTORIAL_SLIDES_ONE_BACK:
             ret.push_back(TutorialSlide(insertNL("Gather matching signals! A matching one-back is the signal the same as the one you passed.\n\nGather enough matches before time runs out!"), "General/ScreenBackground2"));
@@ -132,6 +156,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             break;
     }
     return ret;
+#endif
 }
 
 // Appends the set of slides if it has not been seen yet
@@ -203,8 +228,8 @@ void TutorialManager::update(float elapsed)
 {
     if (yoffset < 0.0)
     {
-        float yspeed = (-yoffset) * 3.5;
-        if (yspeed < 0.05) yspeed = 0.05;
+        float yspeed = (-yoffset) * 5.0;
+        if (yspeed < 0.10) yspeed = 0.10;
         yoffset += (yspeed * elapsed);
         if (yoffset > 0.0)
             yoffset = 0.0;
@@ -274,7 +299,7 @@ void TutorialManager::processInput(Vector2 target)
 void TutorialManager::adjust()
 {
     popupWindowBackground->setMetricsMode(GMM_RELATIVE);
-    popupWindowBackground->setPosition(0.250, yoffset + 0.110);
+    popupWindowBackground->setPosition(0.250, yoffset + 0.125);
     popupWindowBackground->setDimensions(0.50, 0.50);
     popupWindowBackground->setMaterialName("General/ScreenBackground1");
     

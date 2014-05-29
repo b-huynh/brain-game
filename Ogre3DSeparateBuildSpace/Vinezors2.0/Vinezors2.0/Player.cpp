@@ -396,7 +396,7 @@ int Player::getMenuRowIndex() const
 // Returns the total rating of a row-set of levels
 int Player::getTotalLevelRating(int row) const
 {
-    if (row < 0 && row >= levelProgress.size()) return 0;
+    if (row < 0 || row >= levelProgress.size()) return 0;
     int total = 0;
     for (int col = 0; col < levelProgress[row].size(); ++col)
         if (levelProgress[row][col].rating >= 0)
@@ -407,7 +407,7 @@ int Player::getTotalLevelRating(int row) const
 // Returns the total score of a row-set of levels
 float Player::getTotalLevelScore(int row) const
 {
-    if (row < 0 && row >= levelProgress.size()) return 0.0;
+    if (row < 0 || row >= levelProgress.size()) return 0.0;
     float total = 0.0;
     for (int col = 0; col < levelProgress[row].size(); ++col)
         if (levelProgress[row][col].score >= 0.0)
@@ -1330,6 +1330,7 @@ void Player::setToggleBack(int value)
 void Player::setGodMode(bool value)
 {
     godMode = value;
+    vines[0]->setPowerIndication(godMode);
 }
 
 void Player::setLevelRequestRow(int value)
@@ -1518,6 +1519,12 @@ void Player::startMenu()
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
     if (soundMusic) soundMusic->play();
+}
+
+void Player::saveSpeedSettings()
+{
+    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    levelResult->initSpeedSetting = globals.initCamSpeed;
 }
 
 void Player::move(Vector3 delta)
@@ -2074,7 +2081,9 @@ void Player::saveAllResults(Evaluation eval)
 #define SCORE_PER_SECOND 100
     
     // Calculate total score which is current plus time left
-    score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
+    //
+    // This is now done in animation loop, so don't use it
+    //score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
     
     // Assign the correct rating based on tunnel results
     int nrating = -1;
@@ -2123,9 +2132,9 @@ void Player::saveAllResults(Evaluation eval)
         // Assign other level progress info here since it is a new score
     }
     // Update other level results/settings
-    levelResult->initSpeedSetting = initSpeed;
+    levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
     levelResult->setRating(nrating); // Assign rating last
-    
+
     setSkillLevel(skillLevel);
     saveStage(globals.logPath);
     saveActions(globals.actionPath);

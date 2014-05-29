@@ -95,7 +95,7 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
 
 void EngineLevelSelection::activatePerformPinch()
 {
-#ifdef DEBUG_MODE
+#if defined(DEBUG_MODE) || defined(DEMO_BUILD)
     if (player->isLevelAvailable(NUM_LEVELS * NUM_TASKS - 1))
     {
         PlayerProgress value;

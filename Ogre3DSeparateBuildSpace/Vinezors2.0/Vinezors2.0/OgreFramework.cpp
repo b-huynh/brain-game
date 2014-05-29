@@ -169,8 +169,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     //m_pTrayMgr->hideCursor();
-    m_pTrayMgr->setListener(this);
-    m_pTrayMgr->setTrayPadding(10.0);
+    //m_pTrayMgr->setListener(this);
+    //m_pTrayMgr->setTrayPadding(10.0);
     
     Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
     

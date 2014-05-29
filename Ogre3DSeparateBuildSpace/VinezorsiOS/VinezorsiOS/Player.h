@@ -301,6 +301,7 @@ public:
     void initToggleBack();
     void newTunnel(const std::string & nameMusic);
     void startMenu();
+    void saveSpeedSettings();
     
 	void move(Vector3 delta);
     void changeMovementMode();

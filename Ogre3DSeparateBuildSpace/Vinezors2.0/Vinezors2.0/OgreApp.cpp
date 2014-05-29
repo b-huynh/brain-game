@@ -356,13 +356,13 @@ void OgreApp::activatePerformSwipeDown()
 
 void OgreApp::activatePerformDoubleTap(float x, float y)
 {
-    //player->addAction(ACTION_DOUBLE_TAP);
+    player->addAction(ACTION_DOUBLE_TAP);
     if (player->getTutorialMgr()->isVisible())
     {
         return;
     }
-    //Engine* activeEngine = engineStateMgr->getActiveEngine();
-    //if (activeEngine) activeEngine->activatePerformDoubleTap(x, y);
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine) activeEngine->activatePerformDoubleTap(x, y);
 }
 
 void OgreApp::activatePerformSingleTap(float x, float y)

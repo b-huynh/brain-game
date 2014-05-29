@@ -54,9 +54,12 @@ public:
     TutorialManager();
     ~TutorialManager();
     
-    const int NUM_TUTORIAL_SLIDES = 10;
+    const int NUM_TUTORIAL_SLIDES = 13;
     enum TutorialSlidesType {
         TUTORIAL_SLIDES_WELCOME,
+        TUTORIAL_SLIDES_HUD_DISPLAY1,
+        TUTORIAL_SLIDES_HUD_DISPLAY2,
+        TUTORIAL_SLIDES_CONTROL_MECHANICS,
         TUTORIAL_SLIDES_ZERO_BACK,
         TUTORIAL_SLIDES_ONE_BACK,
         TUTORIAL_SLIDES_TWO_BACK,
