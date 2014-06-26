@@ -55,7 +55,7 @@ void HudButton::setButton(std::string name, Overlay* olay, GuiMetricsMode metric
         textRef->setAlignment(TextAreaOverlayElement::Center);
         textRef->setCharHeight(1.0f / 40.0f);
         textRef->setPosition(pos.x + dim.x / 2, pos.y + dim.y / 2);
-        textRef->setFontName("Arial");
+        textRef->setFontName("MainSmall");
         textRef->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     }
 }
@@ -151,7 +151,6 @@ void HudSlider::adjust()
     if (globals.screenWidth > globals.screenHeight)
     {
         rheight = dim2.y;
-        // to not square out
         rwidth = dim2.x;
         // to square out
         //rwidth = rheight * globals.screenHeight / globals.screenWidth;
@@ -249,9 +248,95 @@ void HudSlider::setBallDestination(int slot)
 int HudSlider::getIndex() const
 {
     if (orientation)
-        return max - p2.y / getRangeWidth() * (slots - 1);
+        return max - p2.y / getRangeWidth() * (slots - 1) + Util::EPSILON;
     else
-        return p2.x / getRangeWidth() * (slots - 1) + min;
+        return p2.x / getRangeWidth() * (slots - 1) + min + Util::EPSILON;
+}
+
+int HudSlider::getRange() const
+{
+    return slots;
+}
+
+int HudSlider::getMin() const
+{
+    return min;
+}
+
+int HudSlider::getMax() const
+{
+    return max;
+}
+
+// The following deal with injecting coordinates to simulate a slider
+//
+void HudSlider::activateMoved(float x, float y, float dx, float dy)
+{
+    Vector2 np;
+#if !defined(OGRE_IS_IOS)
+    if (orientation)
+        np = p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+    else
+        np = p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#else
+    if (orientation)
+        np = p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+    else
+        np = p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#endif
+    setBallPosition(np);
+            
+    //std::cout << "move " << p2.x << " " << globals.convertToPercentScreen(Vector2(dx, 0.0)).x << std::endl;;
+}
+
+void HudSlider::activatePressed(float x, float y)
+{
+    Vector2 pos = globals.convertToPercentScreen(Vector2(x, y));
+            
+    // Case for tapping into the slider which makes ball jump to position
+    if (isInsideRange(pos))
+    {
+        // Project position to range
+        if (orientation)
+        {
+            float ny = pos.y - p1.y - dim2.y / 2;
+            setBallPosition(Vector2(p2.x, ny));
+        }
+        else
+        {
+            float nx = pos.x - p1.x - dim2.x / 2;
+            setBallPosition(Vector2(nx, p2.y));
+        }
+    }
+            
+    // Initialize p2cache first time we touch ball
+    // p2cache is better since iOS tracking uses total dx which is more accurate
+    // then passing in a dx everytime
+    if (isInsideBall(pos))
+    {
+        selected = true;
+        p2cache = p2;
+    }
+    //std::cout << "press\n";
+}
+
+void HudSlider::activateReleased(float x, float y, float dx, float dy)
+{
+    selected = false;
+    Vector2 np;
+#if !defined(OGRE_IS_IOS)
+    if (orientation)
+        np = p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
+    else
+        np = p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#else
+    if (orientation)
+        np = p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+    else
+        np = p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
+#endif
+    setBallPosition(np);
+    //std::cout << "release\n";
 }
 
 void HudSlider::update(float elapsed)

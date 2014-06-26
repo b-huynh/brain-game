@@ -157,7 +157,6 @@ public:
 	int getSpawnCombo() const;
 	int getSpawnLimit() const;
 	int getNumTargets() const;
-	int getTotalCollections() const;
 	int getSignalsLeft() const;
 	int getSectionIndex() const;
 	int getPodIndex() const;
@@ -210,6 +209,8 @@ public:
     bool isDone() const;
     void setDone(Evaluation eval);
     void setSpawnCombo(int level);
+    void setSpawnLimit(int value);
+    void setNumTargets(int value);
     void upgradeControl();
     void addToTimePenalty(float value);
     void setVisible(bool value);

@@ -98,6 +98,23 @@ material General/EndTallyBackground
     }
 }
 
+material General/PauseNav
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_nav.png
+        }
+      } 
+    }
+}
+
 material General/LevelSelectButtonRound
 {
     technique
@@ -517,6 +534,23 @@ material General/CreditsButton
 	}
 }
 
+material General/ControlSettingsButton
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttoncontrolsettings.png
+        }
+      } 
+    }
+}
+
 material General/BackButton
 {
 	technique
@@ -528,10 +562,27 @@ material General/BackButton
             depth_write off
 			texture_unit
 			{
-				texture buttonback.png
+				texture buttonroundback.png
 			}
 		}
 	}
+}
+
+material General/DefaultsButton
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture buttonrounddefaults.png
+        }
+      } 
+    }
 }
 
 material General/ExitButton
@@ -1214,7 +1265,41 @@ material General/LevelBar3Fill
     }
 }
 
-material General/SliderRangeVertical
+material General/BasicSliderRangeHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderrange.png
+        }
+      } 
+    }
+}
+
+material General/BasicSliderBall
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture sliderbutton.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderRangeVertical
 {
     technique
     {
@@ -1231,7 +1316,7 @@ material General/SliderRangeVertical
     }
 }
 
-material General/SliderBall
+material General/SpeedSliderBall
 {
     technique
     {

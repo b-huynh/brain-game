@@ -156,6 +156,7 @@ private:
     OgreOggSound::OgreOggISound* soundCollision;
     OgreOggSound::OgreOggISound* soundStartup;
     OgreOggSound::OgreOggISound* soundBoost;
+    OgreOggSound::OgreOggISound* soundButtonPress;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
@@ -173,7 +174,18 @@ private:
     
     // Tutorials
     TutorialManager* tutorialMgr;
+    
 public:
+    // Settings Parameters
+    float musicVolume;
+    float soundVolume;
+    float maxVel;
+    float minVelStopper;
+    float dampingDecayFree;
+    float dampingDecayStop;
+    float dampingDropFree;
+    float dampingDropStop;
+    
     float offsetRoll;
     float offsetRollDest;
     
@@ -289,8 +301,10 @@ public:
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
+    void reactGUI() const;
     float getStartMusicTimer() const;
     void playMusic() const;
+    void setVolume();
     void unpause();
     void pause();
     
@@ -352,6 +366,8 @@ public:
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
     bool loadProgress(std::string savePath);
+    
+    void initSettings();
     
     bool winFlag;
     

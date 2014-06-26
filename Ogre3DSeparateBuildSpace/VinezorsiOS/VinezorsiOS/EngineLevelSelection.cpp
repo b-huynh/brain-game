@@ -65,13 +65,15 @@ void EngineLevelSelection::activatePerformSwipeDown()
 void EngineLevelSelection::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
-    
+    if (queryGUI != "")
+        player->reactGUI();
     if (testForLevelButtons(queryGUI))
     {
         
     }
     else if (queryGUI == "back")
     {
+        player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
     }
     else if (queryGUI == "godown")

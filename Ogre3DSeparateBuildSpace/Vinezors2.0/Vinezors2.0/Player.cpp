@@ -22,6 +22,10 @@ Player::Player()
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
     tutorialMgr = new TutorialManager();
+    
+    musicVolume = 0.50f;
+    soundVolume = 0.50f;
+    initSettings();
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
@@ -35,6 +39,10 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
     tutorialMgr = new TutorialManager();
+    
+    musicVolume = 0.50f;
+    soundVolume = 0.50f;
+    initSettings();
 }
 
 LevelSet* Player::getLevels() const
@@ -364,6 +372,9 @@ bool Player::isLevelAvailable(int level) const
     int totalRatingCur = getTotalLevelRating(levelRow);
     int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
     
+    // This column is sound only, deactivate it if sound volume in settings is off
+    if (levelCol == 3 && soundVolume <= 0.0)
+        return false;
     if (!levels->hasLevel(levelRow - 1, levelCol))
         return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
     if (!hasLevelProgress(levelRow - 1, levelCol))
@@ -930,7 +941,6 @@ void Player::testPodGiveFeedback(Pod* test)
         }
         ++numWrongTotal;
         
-        //tunnel->loseRandomCriteria();
         //beginBadFuelPickUp();
         
         if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
@@ -938,6 +948,7 @@ void Player::testPodGiveFeedback(Pod* test)
         hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
         
         tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+        //tunnel->loseRandomCriteria();
         
         numCorrectCombo = 0;
         ++numWrongCombo;
@@ -947,9 +958,6 @@ void Player::testPodGiveFeedback(Pod* test)
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         numCorrectBonus = 0;
-        
-        //score -= std::pow(5.0, 4);
-        //if (score < 0.0) score = 0.0;
     }
     else if (!goodPod && !test->isPodTaken())
     {
@@ -1466,18 +1474,8 @@ void Player::newTunnel(const std::string & nameMusic)
     }
     
     startMusicTimer = 2.0;
-
-    if (soundMusic) soundMusic->setVolume(globals.volumeMusic);
-    if (soundPods[POD_SIGNAL_1]) soundPods[POD_SIGNAL_1]->setVolume(globals.volumeSignal1);
-    if (soundPods[POD_SIGNAL_2]) soundPods[POD_SIGNAL_2]->setVolume(globals.volumeSignal2);
-    if (soundPods[POD_SIGNAL_3]) soundPods[POD_SIGNAL_3]->setVolume(globals.volumeSignal3);
-    if (soundPods[POD_SIGNAL_4]) soundPods[POD_SIGNAL_4]->setVolume(globals.volumeSignal4);
-    if (soundFeedbackGreat) soundFeedbackGreat->setVolume(globals.volumeFeedbackGood);
-    if (soundFeedbackGood) soundFeedbackGood->setVolume(globals.volumeFeedbackGood);
-    if (soundFeedbackBad) soundFeedbackBad->setVolume(globals.volumeFeedbackBad);
-    if (soundCollision) soundCollision->setVolume(globals.volumeFeedbackCollision);
-    if (soundBoost) soundBoost->setVolume(globals.volumeBoost);
-    if (soundStartup) soundStartup->setVolume(globals.volumeStartup);
+    
+    setVolume();
     
     // initalize player ship location
     tunnel->setOffsetIterators(camPos, vineOffset);
@@ -1518,13 +1516,27 @@ void Player::startMenu()
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
-    if (soundMusic) soundMusic->play();
+    if (soundMusic)
+    {
+        soundMusic->play();
+    }
+    setVolume();
 }
 
+// Save speed settings from speed dial
 void Player::saveSpeedSettings()
 {
-    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
-    levelResult->initSpeedSetting = globals.initCamSpeed;
+    // Save speed settings for every other stage as well.
+    // Players prefer it carries over to every other level instead of just the level played itself.
+    for (int i = 0; i < levelProgress.size(); ++i)
+        for (int j = 0; j < levelProgress[i].size(); ++j)
+        {
+            PlayerProgress* levelResult = &(levelProgress[i][j]);
+            levelResult->initSpeedSetting = globals.initCamSpeed;
+        }
+    // Save speed settings for just the stage
+    //PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    //levelResult->initSpeedSetting = globals.initCamSpeed;
 }
 
 void Player::move(Vector3 delta)
@@ -1571,6 +1583,15 @@ void Player::playPodSound(int index) const
     }
 }
 
+void Player::reactGUI() const
+{
+    if (soundButtonPress)
+    {
+        soundButtonPress->stop();
+        soundButtonPress->play();
+    }
+}
+
 float Player::getStartMusicTimer() const
 {
     return startMusicTimer;
@@ -1582,6 +1603,23 @@ void Player::playMusic() const
     {
         soundMusic->play();
     }
+}
+
+void Player::setVolume()
+{
+    if (soundMusic) soundMusic->setVolume(musicVolume);
+    if (soundPods[POD_SIGNAL_1]) soundPods[POD_SIGNAL_1]->setVolume(soundVolume);
+    if (soundPods[POD_SIGNAL_2]) soundPods[POD_SIGNAL_2]->setVolume(soundVolume);
+    if (soundPods[POD_SIGNAL_3]) soundPods[POD_SIGNAL_3]->setVolume(soundVolume);
+    if (soundPods[POD_SIGNAL_4]) soundPods[POD_SIGNAL_4]->setVolume(soundVolume);
+    if (soundPods[POD_SIGNAL_HOLDOUT]) soundPods[POD_SIGNAL_HOLDOUT]->setVolume(soundVolume);
+    if (soundFeedbackGreat) soundFeedbackGreat->setVolume(soundVolume);
+    if (soundFeedbackGood) soundFeedbackGood->setVolume(soundVolume);
+    if (soundFeedbackBad) soundFeedbackBad->setVolume(soundVolume);
+    if (soundCollision) soundCollision->setVolume(soundVolume);
+    if (soundBoost) soundBoost->setVolume(soundVolume);
+    if (soundStartup) soundStartup->setVolume(soundVolume);
+    if (soundButtonPress) soundButtonPress->setVolume(soundVolume);
 }
 
 void Player::unpause()
@@ -1616,6 +1654,8 @@ void Player::pause()
         soundStartup->pause();
     if (soundBoost)
         soundBoost->pause();
+    if (soundButtonPress)
+        soundButtonPress->pause();
 }
 
 void Player::setSounds(bool mode)
@@ -1634,6 +1674,7 @@ void Player::setSounds(bool mode)
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
+        soundButtonPress = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundButtonPress");
     }
     else // false means no pod sounds
     {
@@ -1645,7 +1686,9 @@ void Player::setSounds(bool mode)
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
+        soundButtonPress = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundButtonPress");
     }
+    setVolume();
 }
 
 void Player::addVine(Vine *vine)
@@ -1924,6 +1967,7 @@ void Player::update(float elapsed)
     else if( tunnel->getEval() == FAIL && tunnel->getFlyOut() ) {
         if( !soundStart ) {
             OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("LevelFail");
+            sound->setVolume(musicVolume);
             sound->play();
             soundStart = true;
         }
@@ -2475,6 +2519,14 @@ bool Player::saveProgress(std::string file)
     }
     
     out << (*tutorialMgr) << std::endl;
+    out << musicVolume << " "
+        << soundVolume << " "
+        << maxVel << " "
+        << minVelStopper << " "
+        << dampingDecayFree << " "
+        << dampingDecayStop << " "
+        << dampingDropFree << " "
+        << dampingDropStop << std::endl;
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -2506,6 +2558,14 @@ bool Player::loadProgress(std::string savePath)
         }
         
         saveFile >> (*tutorialMgr);
+        saveFile >> musicVolume
+                 >> soundVolume
+                 >> maxVel
+                 >> minVelStopper
+                 >> dampingDecayFree
+                 >> dampingDecayStop
+                 >> dampingDropFree
+                 >> dampingDropStop;
         
         globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
@@ -2518,6 +2578,17 @@ bool Player::loadProgress(std::string savePath)
     
     saveFile.close();
     return ret;
+}
+
+// Initializes control settings
+void Player::initSettings()
+{
+    maxVel = 4500.0f;   // Maximum motion velocity                  original: 4500.0f
+    minVelStopper = 1000.0f;    // Stop gliding at center of panels       original2 : 900.0f
+    dampingDecayFree = 0.9500f; // Free Motion damping multiplier          original: 0.9661f
+    dampingDecayStop = 0.5000f; // Stop Motion damping multiplier           original: 0.1000f
+    dampingDropFree = 50.0f;    // Free Motion damping linear drop          original2 : 50.0f
+    dampingDropStop = 50.0f;    // Stop Motion damping linear drop          original2 : 50.0f
 }
 
 Player::~Player()

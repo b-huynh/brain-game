@@ -25,7 +25,7 @@ protected:
     Player* player;
     
     enum Buttons {
-        BUTTON_PLAY, BUTTON_CREDITS, BUTTON_EXIT
+        BUTTON_PLAY, BUTTON_CREDITS, BUTTON_SETTINGS
     };
     
     // Overlay items for GAME_STATE_MENU
@@ -34,7 +34,7 @@ protected:
     PanelOverlayElement* mainTitle;
     PanelOverlayElement* playButtonBackground;
     PanelOverlayElement* creditsButtonBackground;
-    PanelOverlayElement* exitButtonBackground;
+    PanelOverlayElement* settingsButtonBackground;
     
     void link(Player* player);
     void unlink();

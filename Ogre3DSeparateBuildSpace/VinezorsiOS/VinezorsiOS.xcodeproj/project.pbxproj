@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3F5A87BA18BE90F0003C6741 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F5A87B918BE90F0003C6741 /* Images.xcassets */; };
 		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
+		5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */; };
+		5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */; };
 		5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EAEB11864D54B004C9756 /* Hud.cpp */; };
 		5D2A13B018B82E8E002D8C6F /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D2A13AF18B82E8E002D8C6F /* Networking.mm */; };
 		5D2D422F18CE32BA0035786C /* Score.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2D422D18CE32BA0035786C /* Score.cpp */; };
@@ -28,6 +30,8 @@
 		5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025519080FEE00F73DC3 /* Powerup.cpp */; };
 		5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */; };
 		5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */; };
+		5DDD51D9195CBE5F00F82DBF /* HudMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */; };
+		5DDD51DC195CBE6A00F82DBF /* EngineMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */; };
 		5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF1087118C41BF800FD25E4 /* Player.cpp */; };
 		5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF141CC190C8F9500AF2960 /* LevelSet.cpp */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
@@ -61,6 +65,10 @@
 		3F5A87B918BE90F0003C6741 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Vines-Space/Images.xcassets"; sourceTree = "<group>"; };
 		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineControlsSettings.cpp; sourceTree = "<group>"; };
+		5D196F54193D0E920042DEA0 /* EngineControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineControlSettings.h; sourceTree = "<group>"; };
+		5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudControlSettings.cpp; sourceTree = "<group>"; };
+		5D196F57193D0E990042DEA0 /* HudControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudControlSettings.h; sourceTree = "<group>"; };
 		5D1EAEB11864D54B004C9756 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
 		5D1EAEB21864D54B004C9756 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
 		5D2A13AE18B82E8E002D8C6F /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
@@ -93,11 +101,14 @@
 		5D46025119080ED500F73DC3 /* HudLevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudLevelSelection.h; sourceTree = "<group>"; };
 		5D46025519080FEE00F73DC3 /* Powerup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Powerup.cpp; sourceTree = "<group>"; };
 		5D46025619080FEE00F73DC3 /* Powerup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Powerup.h; sourceTree = "<group>"; };
-		5DC3697E192549D400E5A53D /* Vines-Space.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Vines-Space.entitlements"; path = "Vines-Space/Vines-Space.entitlements"; sourceTree = "<group>"; };
 		5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLevel.cpp; sourceTree = "<group>"; };
 		5DCDDD901911719200CF67F1 /* PlayerLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerLevel.h; sourceTree = "<group>"; };
 		5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerProgress.cpp; sourceTree = "<group>"; };
 		5DCDDD921911719200CF67F1 /* PlayerProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerProgress.h; sourceTree = "<group>"; };
+		5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudMainSettings.cpp; sourceTree = "<group>"; };
+		5DDD51D8195CBE5F00F82DBF /* HudMainSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudMainSettings.h; sourceTree = "<group>"; };
+		5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineMainSettings.cpp; sourceTree = "<group>"; };
+		5DDD51DB195CBE6A00F82DBF /* EngineMainSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineMainSettings.h; sourceTree = "<group>"; };
 		5DF1087118C41BF800FD25E4 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		5DF141CC190C8F9500AF2960 /* LevelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSet.cpp; sourceTree = "<group>"; };
 		5DF141CD190C8F9500AF2960 /* LevelSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSet.h; sourceTree = "<group>"; };
@@ -106,7 +117,7 @@
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
 		5DF598AC188537FD00F85646 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		5DF598AD188537FD00F85646 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
-		5DF9407317F4AF360082C239 /* Vines-Space.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vines-Space.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DF9407317F4AF360082C239 /* RecallGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5DF9407A17F4AF360082C239 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -163,6 +174,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D196F52193D0E490042DEA0 /* EngineControlSettings */ = {
+			isa = PBXGroup;
+			children = (
+				5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */,
+				5D196F57193D0E990042DEA0 /* HudControlSettings.h */,
+				5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */,
+				5D196F54193D0E920042DEA0 /* EngineControlSettings.h */,
+			);
+			name = EngineControlSettings;
+			sourceTree = "<group>";
+		};
 		5D260D6D18A9CCC6006C91AC /* Framework */ = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +243,8 @@
 				5D46023219080E5A00F73DC3 /* EngineMainMenu */,
 				5D46023119080E5300F73DC3 /* EngineStage */,
 				5D46022F19080E3700F73DC3 /* EngineLevelSelection */,
+				5D196F52193D0E490042DEA0 /* EngineControlSettings */,
+				5DDD51D6195CBE0E00F82DBF /* EngineMainSettings */,
 			);
 			name = EngineModes;
 			sourceTree = "<group>";
@@ -306,10 +330,20 @@
 			name = Player;
 			sourceTree = "<group>";
 		};
+		5DDD51D6195CBE0E00F82DBF /* EngineMainSettings */ = {
+			isa = PBXGroup;
+			children = (
+				5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */,
+				5DDD51D8195CBE5F00F82DBF /* HudMainSettings.h */,
+				5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */,
+				5DDD51DB195CBE6A00F82DBF /* EngineMainSettings.h */,
+			);
+			name = EngineMainSettings;
+			sourceTree = "<group>";
+		};
 		5DF9406917F4AF360082C239 = {
 			isa = PBXGroup;
 			children = (
-				5DC3697E192549D400E5A53D /* Vines-Space.entitlements */,
 				3F5A87B918BE90F0003C6741 /* Images.xcassets */,
 				5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */,
 				5DF9408017F4AF360082C239 /* VinezorsiOS */,
@@ -321,7 +355,7 @@
 		5DF9407417F4AF360082C239 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5DF9407317F4AF360082C239 /* Vines-Space.app */,
+				5DF9407317F4AF360082C239 /* RecallGame.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -386,9 +420,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5DF9407217F4AF360082C239 /* Vines-Space */ = {
+		5DF9407217F4AF360082C239 /* RecallGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Vines-Space" */;
+			buildConfigurationList = 5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "RecallGame" */;
 			buildPhases = (
 				5DF9406E17F4AF360082C239 /* Sources */,
 				5DF9406F17F4AF360082C239 /* Frameworks */,
@@ -399,9 +433,9 @@
 			);
 			dependencies = (
 			);
-			name = "Vines-Space";
+			name = RecallGame;
 			productName = VinezorsiOS;
-			productReference = 5DF9407317F4AF360082C239 /* Vines-Space.app */;
+			productReference = 5DF9407317F4AF360082C239 /* RecallGame.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -443,7 +477,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5DF9407217F4AF360082C239 /* Vines-Space */,
+				5DF9407217F4AF360082C239 /* RecallGame */,
 			);
 		};
 /* End PBXProject section */
@@ -489,12 +523,14 @@
 			files = (
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
 				5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */,
+				5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
 				5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */,
 				5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */,
 				5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */,
+				5DDD51DC195CBE6A00F82DBF /* EngineMainSettings.cpp in Sources */,
 				5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */,
 				5D46023F19080E8500F73DC3 /* EngineLevelSelection.cpp in Sources */,
 				5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */,
@@ -502,6 +538,7 @@
 				5D46023C19080E7F00F73DC3 /* EngineStage.cpp in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
 				5D2D422F18CE32BA0035786C /* Score.cpp in Sources */,
+				5DDD51D9195CBE5F00F82DBF /* HudMainSettings.cpp in Sources */,
 				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
 				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
 				5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */,
@@ -515,6 +552,7 @@
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
 				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
 				5D46024519080E8E00F73DC3 /* EngineStateManager.cpp in Sources */,
+				5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */,
 				5D46023919080E7900F73DC3 /* EngineMainMenu.cpp in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
 				5D46024419080E8E00F73DC3 /* Engine.cpp in Sources */,
@@ -573,6 +611,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -612,6 +651,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -624,7 +664,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
@@ -645,6 +685,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
@@ -657,7 +698,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
@@ -678,6 +719,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
@@ -694,7 +736,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Vines-Space" */ = {
+		5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "RecallGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DF940E017F4AF370082C239 /* Debug */,

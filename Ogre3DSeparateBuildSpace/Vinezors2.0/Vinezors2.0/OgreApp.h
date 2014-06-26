@@ -120,6 +120,9 @@ public:
     void activateVelocity(float v);
     void activateAngleTurn(float angle, float v);
     
+    void saveState();
+    void loadState();
+    
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
     virtual bool mouseMoved(const OIS::MouseEvent &evt);
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);

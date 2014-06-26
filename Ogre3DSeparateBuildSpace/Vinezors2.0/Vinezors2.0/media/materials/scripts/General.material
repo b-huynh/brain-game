@@ -237,3 +237,20 @@ material General/TimeBonusMaterial
         }
     }
 }
+
+material General/ScreenOfArrows
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture TutorialArrows.png
+            }
+        }
+    }
+}

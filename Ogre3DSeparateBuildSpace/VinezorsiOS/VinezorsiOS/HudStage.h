@@ -85,6 +85,7 @@ protected:
     PanelOverlayElement* powerup2Background;
     PanelOverlayElement* powerup3Background;
     
+    PanelOverlayElement* pauseNavigationBackground;
     PanelOverlayElement* resumeButtonBackground;
     PanelOverlayElement* nextButtonBackground;
     PanelOverlayElement* restartButtonBackground;

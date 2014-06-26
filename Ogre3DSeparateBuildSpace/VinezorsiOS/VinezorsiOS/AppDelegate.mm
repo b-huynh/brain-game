@@ -9,14 +9,15 @@
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
+    NSLog(@"Launch");
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
 #ifdef AUTO_START
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
 #ifdef DEMO_BUILD
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100":TRUE];
-#else
     [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101":TRUE];
+#else
+    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100":TRUE];
 #endif
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
@@ -30,19 +31,21 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+    NSLog(@"Terminate");
     if (self.mViewControllerMain) [self.mViewControllerMain stop];
-    
     [[UIApplication sharedApplication] performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    NSLog(@"Resign");
     if (self.mViewControllerMain) [self.mViewControllerMain inactivate];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    NSLog(@"Active");
     if (self.mViewControllerMain) [self.mViewControllerMain activate];
 }
 
@@ -61,7 +64,7 @@
 {
     return YES;
 }
-*/
+ */
 
 - (void)go:(NSString*)str :(BOOL)isOn
 {

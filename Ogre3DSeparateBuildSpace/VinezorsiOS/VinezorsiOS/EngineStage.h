@@ -66,7 +66,7 @@ protected:
     // RUNNING: actual gameplay
     // PROMPT: end prompt and manual pause prompt
     // DONE: cleanup of game state
-    enum StageState { STAGE_STATE_INIT, STAGE_STATE_PAUSE, STAGE_STATE_RUNNING, STAGE_STATE_PROMPT, STAGE_STATE_DONE };
+    enum StageState { STAGE_STATE_INIT, STAGE_STATE_PAUSE, STAGE_STATE_RUNNING, STAGE_STATE_PROMPT, STAGE_STATE_READY, STAGE_STATE_DONE };
     
     StageState stageState;
     
@@ -76,13 +76,25 @@ protected:
 	Player* player;
     HudStage* hud;
     
-    //State of tunnel spin
+    float readyTimer;
+    
+    // Parameters of tunnel Spin
     float maxVel;
+    float minVelFree;
+    float minVelStopper;
+    float dampingDecayFree;
+    float dampingDecayStop;
+    float dampingDropFree;
+    float dampingDropStop;
+    
+    // State of tunnel spin
     float spinVelocityTarget;
     float spinVelocity;
-    float damping;
+    float dampingDecay;
+    float dampingDrop;
     bool spinClockwise;
     bool freeMotion;
+    float freeAngleTraveled;
     std::vector<float> lastAngles;
     
     void setup();

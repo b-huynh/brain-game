@@ -31,7 +31,7 @@ void EngineMainMenu::enter()
     player->startMenu();
     
     // Set skybox
-    Util::setSkyboxAndFog("General/PurpleSpaceSkyPlane");
+    Util::setSkyboxAndFog("");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -50,6 +50,8 @@ void EngineMainMenu::update(float elapsed)
 void EngineMainMenu::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
+    if (queryGUI != "")
+        player->reactGUI();
     if (queryGUI == "play")
     {
         engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
@@ -58,8 +60,9 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     {
         //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }
-    else if (queryGUI == "exit")
+    else if (queryGUI == "settings")
     {
+        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
         //engineStateMgr->requestPopEngine();
     }
 }

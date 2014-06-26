@@ -50,8 +50,8 @@ void HudMainMenu::alloc()
                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuPlayButtonBackground"));
     creditsButtonBackground = static_cast<PanelOverlayElement*>(
                                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuCreditsButtonBackground"));
-    exitButtonBackground = static_cast<PanelOverlayElement*>(
-                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuExitButtonBackground"));
+    settingsButtonBackground = static_cast<PanelOverlayElement*>(
+                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuSettingsButtonBackground"));
  
     buttons = std::vector<HudButton>(3);
     
@@ -61,7 +61,7 @@ void HudMainMenu::alloc()
     //overlay1->add2D(mainTitle);
     overlay1->add2D(playButtonBackground);
     overlay1->add2D(creditsButtonBackground);
-    overlay1->add2D(exitButtonBackground);
+    overlay1->add2D(settingsButtonBackground);
     overlays.push_back(overlay1);
 }
 
@@ -72,7 +72,7 @@ void HudMainMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(mainTitle);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(creditsButtonBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(exitButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(settingsButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
@@ -91,10 +91,10 @@ void HudMainMenu::initOverlay()
     
     //playButtonBackground->setMaterialName("General/PlayButton");
     //creditsButtonBackground->setMaterialName("General/CreditsButton");
-    //exitButtonBackground->setMaterialName("General/ExitButton");
+    //settingsButtonBackground->setMaterialName("General/ExitButton");
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.40), Vector2(0.12, 0.08), playButtonBackground, NULL);
     buttons[BUTTON_CREDITS].setButton("credits", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.49), Vector2(0.15, 0.08), creditsButtonBackground, NULL);
-    buttons[BUTTON_EXIT].setButton("exit", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.58), Vector2(0.18, 0.08), exitButtonBackground, NULL);
+    buttons[BUTTON_SETTINGS].setButton("settings", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.58), Vector2(0.18, 0.08), settingsButtonBackground, NULL);
 }
 
 void HudMainMenu::link(Player* player)

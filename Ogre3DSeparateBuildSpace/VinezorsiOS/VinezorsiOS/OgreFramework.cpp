@@ -82,7 +82,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     Ogre::NameValuePairList params;
     params["externalWindowHandle"] = Ogre::StringConverter::toString((unsigned long)uiWindow);
     params["externalViewHandle"] = Ogre::StringConverter::toString((unsigned long)uiView);
-    //params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
+    params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
     
     m_pRenderWnd = m_pRoot->createRenderWindow("", width, height, false, &params);
     
@@ -165,6 +165,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundPod4", "pod2.wav", false, false, true);            // Daisy
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
+    m_pSoundMgr->createSound("SoundButtonPress", "button4.wav", false, false, true);
     m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
     
     m_pSoundMgr->createSound("GateOpen", "gateopen.wav", false, false, true);

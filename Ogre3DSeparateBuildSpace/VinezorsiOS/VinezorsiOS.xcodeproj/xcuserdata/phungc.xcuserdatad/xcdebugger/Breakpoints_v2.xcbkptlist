@@ -11,6 +11,24 @@
             continueAfterRunningActions = "No"
             symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
             moduleName = "">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject doesNotRecognizeSelector:]"
+                  moduleName = "libobjc.A.dylib"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
+                  moduleName = "CoreFoundation"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -36,12 +54,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "422305654.01407"
+            timestampString = "425513571.997133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "327"
             endingLineNumber = "327"
-            landmarkName = "OgreApp::activatePerformRightMove()"
+            landmarkName = "OgreApp::activatePerformLeftMove()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -62,11 +80,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "422499346.649631"
+            timestampString = "425513571.997133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "630"
-            endingLineNumber = "630">
+            startingLineNumber = "631"
+            endingLineNumber = "631">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -136,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "422925329.990751"
+            timestampString = "425506181.042315"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "630"
-            endingLineNumber = "630"
+            startingLineNumber = "633"
+            endingLineNumber = "633"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -152,12 +170,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "422915952.907505"
+            timestampString = "425516455.383148"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1260"
-            endingLineNumber = "1260"
-            landmarkName = "EngineStage::setup()"
+            startingLineNumber = "1288"
+            endingLineNumber = "1288"
+            landmarkName = "EngineStage::updateSpin(float elapsed)"
             landmarkType = "5">
             <Locations>
                <Location
@@ -198,13 +216,73 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/Player.cpp"
-            timestampString = "422917800.391322"
+            timestampString = "425518215.770679"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
-            landmarkName = "Player::getTotalLevelRating(int row)"
+            startingLineNumber = "395"
+            endingLineNumber = "395">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/EngineStage.cpp"
+            timestampString = "423526240.64574"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "EngineStage::update(float elapsed)"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/EngineStage.cpp"
+            timestampString = "423526252.255255"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "EngineStage::update(float elapsed)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "EngineStage::update(float)"
+                  moduleName = "Vines-Space"
+                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildGrand/VinezorsiOS/VinezorsiOS/EngineStage.cpp"
+                  timestampString = "423526299.863307"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "1208">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "EngineStage::update(float)"
+                  moduleName = "Vines-Space"
+                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildGrand/VinezorsiOS/VinezorsiOS/EngineStage.cpp"
+                  timestampString = "423526301.766961"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "1212">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

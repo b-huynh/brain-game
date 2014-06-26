@@ -16,11 +16,12 @@
 
 struct TutorialSlide
 {
-    std::string message;
-    std::string background;
+    std::string message;    // Text for popup-window
+    std::string background; // Material for tutorial popup-window
+    std::string screen;     // Material for entire screen if one, otherwise ""
     
     TutorialSlide() : message(""), background("") {}
-    TutorialSlide(std::string msg, std::string bg) : message(msg), background(bg) {}
+    TutorialSlide(std::string msg, std::string bg, std::string screen) : message(msg), background(bg), screen(screen) {}
 };
 
 class TutorialManager
@@ -39,6 +40,10 @@ private:
     
     std::vector<TutorialSlide> slides;
     std::vector<bool> visitedSlide;
+    
+    // For slides that need the entire screen
+    PanelOverlayElement* entireScreenBackground;
+    
     bool enableSlides;
     int slideNo;
     
@@ -54,11 +59,10 @@ public:
     TutorialManager();
     ~TutorialManager();
     
-    const int NUM_TUTORIAL_SLIDES = 13;
+    const int NUM_TUTORIAL_SLIDES = 12;
     enum TutorialSlidesType {
         TUTORIAL_SLIDES_WELCOME,
         TUTORIAL_SLIDES_HUD_DISPLAY1,
-        TUTORIAL_SLIDES_HUD_DISPLAY2,
         TUTORIAL_SLIDES_CONTROL_MECHANICS,
         TUTORIAL_SLIDES_ZERO_BACK,
         TUTORIAL_SLIDES_ONE_BACK,
@@ -80,7 +84,7 @@ public:
     void setSlides(TutorialSlidesType type);
     bool hasPreviousSlide() const;
     bool hasNextSlide() const;
-    void setPreviousSlide();
+    bool setPreviousSlide();
     void setNextSlide();
     void updateOverlay();
     void update(float elapsed);
@@ -92,7 +96,7 @@ public:
     bool isHidden() const;
     bool isVisible() const;
     std::string queryButtons(Vector2 target) const;
-    void processInput(Vector2 target);
+    bool processInput(Vector2 target);
     void adjust();
     
     void dealloc();

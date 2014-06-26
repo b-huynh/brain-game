@@ -196,15 +196,21 @@ void OgreApp::setupDemoScene()
     seed = time(0);
     srand(seed);
     
-    // The code snippet below is used to output text
-    // create a font resource
-    ResourcePtr resourceText = OgreFramework::getSingletonPtr()->m_pFontMgr->create("Arial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-    resourceText->setParameter("type", "truetype");
-    //resourceText->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
-    resourceText->setParameter("source", "NEUROPOL.ttf");
-    resourceText->setParameter("size", "16");
-    resourceText->setParameter("resolution", "96");
-    resourceText->load();
+    // create font resources
+    ResourcePtr resourceText1 = OgreFramework::getSingletonPtr()->m_pFontMgr->create("MainSmall", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    resourceText1->setParameter("type", "truetype");
+    //resourceText1->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
+    resourceText1->setParameter("source", "NEUROPOL.ttf");
+    resourceText1->setParameter("size", "16");
+    resourceText1->setParameter("resolution", "96");
+    resourceText1->load();
+    
+    ResourcePtr resourceText2 = OgreFramework::getSingletonPtr()->m_pFontMgr->create("MainBig", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    resourceText2->setParameter("type", "truetype");
+    resourceText2->setParameter("source", "Philosopher-Bold.ttf");
+    resourceText2->setParameter("size", "16");
+    resourceText2->setParameter("resolution", "256");
+    resourceText2->load();
     
     Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "sphereMesh", 1.0, 8, 8);
     Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "cylinderMesh", 1.0, 1.0, 8);
@@ -370,7 +376,8 @@ void OgreApp::activatePerformSingleTap(float x, float y)
     player->addAction(ACTION_SINGLE_TAP);
     if (player->getTutorialMgr()->isVisible())
     {
-        player->getTutorialMgr()->processInput(Vector2(x, y));
+        if (player->getTutorialMgr()->processInput(Vector2(x, y)))
+            player->reactGUI();
         if (player->getTutorialMgr()->isHidden())
         {
             Engine* activeEngine = engineStateMgr->getActiveEngine();
@@ -487,6 +494,16 @@ void OgreApp::activateAngleTurn(float angle, float vel)
     
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateAngleTurn(angle, vel);
+}
+
+void OgreApp::saveState()
+{
+    player->saveProgress(globals.savePath);
+}
+
+void OgreApp::loadState()
+{
+    // Player loads stuff separately
 }
 
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS

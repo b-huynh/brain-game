@@ -147,7 +147,7 @@ void HudLevelSelection::alloc()
     buttonEnableTutorialsBackground->addChild(checkDisplayEnableTutorialsBackground);
     //buttonEnableTutorialsBackground->addChild(textEnableTutorialsPrompt);
     overlays.push_back(overlay1);
-     
+    
 }
 
 void HudLevelSelection::dealloc()
@@ -192,7 +192,7 @@ void HudLevelSelection::initOverlay()
     levelSelectEntireBackground->setPosition(0.0, 0.0);
     levelSelectEntireBackground->setDimensions(1.0, 1.0);
     levelSelectEntireBackground->setMaterialName("General/ScreenBackgroundLevelSelect");
-
+    
     levelSelectPromptBackground->setMetricsMode(GMM_RELATIVE);
     levelSelectPromptBackground->setPosition(0.225, 0.025);
     levelSelectPromptBackground->setDimensions(0.525, 0.200);
@@ -202,7 +202,7 @@ void HudLevelSelection::initOverlay()
     levelSelectPromptText->setAlignment(TextAreaOverlayElement::Center);
     levelSelectPromptText->setPosition(0.270, 0.085);
     levelSelectPromptText->setCharHeight(0.046 * FONT_SZ_MULT);
-    levelSelectPromptText->setFontName("Arial");
+    levelSelectPromptText->setFontName("MainSmall");
     levelSelectPromptText->setCaption("Level Selection");
     
     float sx = 0.200;
@@ -251,7 +251,7 @@ void HudLevelSelection::initOverlay()
             levelItemNames[i][j]->setAlignment(TextAreaOverlayElement::Center);
             levelItemNames[i][j]->setPosition(0.06, -0.02);
             levelItemNames[i][j]->setCharHeight(0.025 * FONT_SZ_MULT);
-            levelItemNames[i][j]->setFontName("Arial");
+            levelItemNames[i][j]->setFontName("MainSmall");
         }
     }
     // Set orientations for the score per level
@@ -263,7 +263,7 @@ void HudLevelSelection::initOverlay()
             levelItemScores[i][j]->setAlignment(TextAreaOverlayElement::Center);
             levelItemScores[i][j]->setPosition(0.050, 0.12);
             levelItemScores[i][j]->setCharHeight(0.014 * FONT_SZ_MULT);
-            levelItemScores[i][j]->setFontName("Arial");
+            levelItemScores[i][j]->setFontName("MainSmall");
         }
     }
     // Set orientations for n-level
@@ -274,7 +274,7 @@ void HudLevelSelection::initOverlay()
         levelSetNames[i]->setPosition(-0.04, 0.03);
         levelSetNames[i]->setCharHeight(0.030 * FONT_SZ_MULT);
         levelSetNames[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-        levelSetNames[i]->setFontName("Arial");
+        levelSetNames[i]->setFontName("MainSmall");
         levelSetNames[i]->setCaption("1");
         
     }
@@ -286,7 +286,7 @@ void HudLevelSelection::initOverlay()
         levelSetStars[i]->setPosition(0.1375, 0.0550);
         levelSetStars[i]->setCharHeight(0.018 * FONT_SZ_MULT);
         levelSetStars[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-        levelSetStars[i]->setFontName("Arial");
+        levelSetStars[i]->setFontName("MainSmall");
     }
     // Set orientations for total score earned per row
     for (int i = 0; i < levelSetScores.size(); ++i)
@@ -296,7 +296,7 @@ void HudLevelSelection::initOverlay()
         levelSetScores[i]->setPosition(0.1910, 0.1025);
         levelSetScores[i]->setCharHeight(0.020 * FONT_SZ_MULT);
         levelSetScores[i]->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-        levelSetScores[i]->setFontName("Arial");
+        levelSetScores[i]->setFontName("MainSmall");
     }
     
     // Display Text
@@ -308,9 +308,9 @@ void HudLevelSelection::initOverlay()
     levelTotalScore->setMetricsMode(GMM_RELATIVE);
     levelTotalScore->setAlignment(TextAreaOverlayElement::Right);
     levelTotalScore->setPosition(0.26, 0.05);
-    levelTotalScore->setCharHeight(0.038 * FONT_SZ_MULT);
+    levelTotalScore->setCharHeight(0.030 * FONT_SZ_MULT);
     levelTotalScore->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    levelTotalScore->setFontName("Arial");
+    levelTotalScore->setFontName("MainSmall");
     
     textEnableTutorialsPrompt->setMetricsMode(GMM_RELATIVE);
     textEnableTutorialsPrompt->setAlignment(TextAreaOverlayElement::Center);
@@ -318,7 +318,7 @@ void HudLevelSelection::initOverlay()
     textEnableTutorialsPrompt->setCharHeight(0.020 * FONT_SZ_MULT);
     textEnableTutorialsPrompt->setDimensions(0.80, 0.20);
     textEnableTutorialsPrompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    textEnableTutorialsPrompt->setFontName("Arial");
+    textEnableTutorialsPrompt->setFontName("MainSmall");
     textEnableTutorialsPrompt->setCaption("Tutorials");
     
     // Display Text

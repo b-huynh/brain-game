@@ -746,7 +746,7 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
-    std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
+    std::string logPath = Util::getIOSDir() + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #else
     std::string logPath = Util::getOSXDir() + "/" + playerName + "/"

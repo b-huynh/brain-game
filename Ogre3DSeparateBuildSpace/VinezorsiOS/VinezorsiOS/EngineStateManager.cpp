@@ -11,6 +11,8 @@
 #include "EngineLevelSelection.h"
 #include "EngineMainMenu.h"
 #include "EngineCredits.h"
+#include "EngineMainSettings.h"
+#include "EngineControlSettings.h"
 #include <iostream>
 
 EngineStateManager::EngineStateManager()
@@ -60,6 +62,20 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
             Engine* top = getActiveEngine();
             if (top) top->exit();
             gameEngineStack.push_back(new EngineCredits(this, player));
+            break;
+        }
+        case ENGINE_MAIN_SETTINGS:
+        {
+            Engine* top = getActiveEngine();
+            if (top) top->exit();
+            gameEngineStack.push_back(new EngineMainSettings(this, player));
+            break;
+        }
+        case ENGINE_CONTROL_SETTINGS:
+        {
+            Engine* top = getActiveEngine();
+            if (top) top->exit();
+            gameEngineStack.push_back(new EngineControlSettings(this, player));
             break;
         }
         default:

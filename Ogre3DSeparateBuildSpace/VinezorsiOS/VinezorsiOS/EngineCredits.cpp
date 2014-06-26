@@ -50,6 +50,8 @@ void EngineCredits::update(float elapsed)
 void EngineCredits::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
+    if (queryGUI != "")
+        player->reactGUI();
     if (queryGUI == "back")
     {
         engineStateMgr->requestPopEngine();

@@ -254,16 +254,6 @@ int Tunnel::getNumTargets() const
     return numTargets;
 }
 
-// Number of required targets to pick up.
-// Note: this is different from collection criteria,
-// as this value has no required n-back specification.
-//
-// Therefore, this is the number of required good feedbacks
-int Tunnel::getTotalCollections() const
-{
-    return globals.stageTotalCollections;
-}
-
 int Tunnel::getSignalsLeft() const
 {
     return spawnLimit - podIndex;
@@ -685,7 +675,8 @@ float Tunnel::getTimeLeft() const
 // Return percent complete based off the number of signals left to pass
 float Tunnel::getPercentComplete() const
 {
-    float percentComplete = static_cast<float>((getSpawnLimit() - getSignalsLeft())) / getSpawnLimit();
+    float percentComplete = static_cast<float>(player->getNumCorrectTotal()) / getNumTargets();
+    //float percentComplete = static_cast<float>((getSpawnLimit() - getSignalsLeft())) / getSpawnLimit();
     percentComplete = Util::clamp(percentComplete, 0.0, 100.0);
     return percentComplete;
 }
@@ -824,8 +815,10 @@ void Tunnel::checkIfDone()
         }
         else //if (getMode() == STAGE_MODE_RECESS)
         {
-            if (spawnLimit > 0 && getSignalsLeft() <= 0)
+            if (player->getNumCorrectTotal() >= getNumTargets())
                 setDone(PASS);
+            //if (spawnLimit > 0 && getSignalsLeft() <= 0)
+            //    setDone(PASS);
             else if (stageTime > 0 && getTimeLeft() <= 0)
                 setDone(FAIL);//setDone(EVEN);
         }
@@ -856,6 +849,16 @@ void Tunnel::setDone(Evaluation eval)
 void Tunnel::setSpawnCombo(int level)
 {
     spawnCombo = level;
+}
+
+void Tunnel::setSpawnLimit(int value)
+{
+    spawnLimit = value;
+}
+
+void Tunnel::setNumTargets(int value)
+{
+    numTargets = value;
 }
 
 // Used in Time/Speed Trial and is called everytime a new section is added
@@ -1684,7 +1687,7 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
     else
     {
         numTargets = globals.stageTotalCollections;
-        spawnLimit = globals.stageTotalCollections;
+        //spawnLimit = globals.stageTotalCollections;
     }
     
     //determineMaterial();
@@ -1841,6 +1844,7 @@ void Tunnel::gateAnimation(float elapsed)
                 if( gateDelayTimer >= gateDelay ) {
                     activateGreen = true;
                     OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("GateOpen");
+                    sound->setVolume(player->soundVolume);
                     sound->play();
                 }
                 else {
@@ -1856,6 +1860,7 @@ void Tunnel::gateAnimation(float elapsed)
                         gateDelayTimer = 0.0f;
                         tSpeed = 0.0f;
                         OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("LevelPass");
+                        sound->setVolume(player->musicVolume);
                         sound->play();
                     }
                     else {
@@ -1886,6 +1891,7 @@ void Tunnel::gateAnimation(float elapsed)
                 if( gateDelayTimer >= gateDelay ) {
                     activateGreen = true;
                     OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("GateClose");
+                    sound->setVolume(player->soundVolume);
                     sound->play();
                 }
                 else {

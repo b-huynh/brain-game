@@ -25,7 +25,7 @@
 @interface MainViewController ()
 {
     NSTimer* mTimer;
-    OgreApp* mApplication;
+    OgreApp mApplication;
     
     // Use of the CADisplayLink class is the preferred method for controlling your animation timing.
     // CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
@@ -115,7 +115,7 @@
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
  
-    NSLog(@"Yeah: %d %d\n", width, height);
+    NSLog(@"Frame: %d %d\n", width, height);
     
     screenWidth = width;
     screenHeight = height;
@@ -138,9 +138,9 @@
     
     try
     {
-        mApplication = new OgreApp();
-        if (isOn) mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
-        else mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+        //mApplication = OgreApp();
+        if (isOn) mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
+        else mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times
@@ -223,6 +223,7 @@
 - (void)inactivate
 {
     OgreFramework::getSingletonPtr()->m_pRenderWnd->setActive(false);
+    mApplication.saveState();
     Ogre::Root::getSingleton().saveConfig();
 }
 
@@ -233,32 +234,26 @@
 
 - (void)update:(id)sender
 {
+    //NSLog(@"Update");
     if(!OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
         return;
+    //NSLog(@"Pass");
     
     if(!OgreFramework::getSingletonPtr()->isOgreToBeShutDown() &&
        Ogre::Root::getSingletonPtr() && Ogre::Root::getSingleton().isInitialised())
     {
-		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
-		{
-			mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+        //mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
             
-            mApplication->update(mDeltaTime);
-            OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
+        mApplication.update(mDeltaTime);
+        OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
             
-			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
+        OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             
-			mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
-		}
-        if (mOgreView.resized)
-        {
-            mApplication->requestResize();
-        }
+        //mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
     }
-    else
+    if (mOgreView.resized)
     {
-        [self cleanup];
-        [[UIApplication sharedApplication] performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
+        mApplication.requestResize();
     }
 }
 
@@ -268,7 +263,7 @@
     UITouch *touch = [[event allTouches] anyObject];
     start = [touch locationInView:self.view];
     
-    mApplication->activateTouchPress(start.x, start.y);
+    mApplication.activateTouchPress(start.x, start.y);
 }
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -276,7 +271,7 @@
     UITouch *touch = [[event allTouches] anyObject];
     end = [touch locationInView:self.view];
     
-    mApplication->activateTouchRelease(end.x, end.y);
+    mApplication.activateTouchRelease(end.x, end.y);
 }
 
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
@@ -284,39 +279,39 @@
     UITouch *touch = [[event allTouches] anyObject];
     CGPoint loc = [touch locationInView:self.view];
     
-    mApplication->activateTouchMove(loc.x - end.x, loc.y - end.y);
+    mApplication.activateTouchMove(loc.x - end.x, loc.y - end.y);
     
     end = loc;
 }
 
 - (IBAction)handleSwipeLeft:(UISwipeGestureRecognizer*)sender
 {
-    //mApplication->activatePerformLeftMove();
+    //mApplication.activatePerformLeftMove();
 }
 
 - (IBAction)handleSwipeRight:(UISwipeGestureRecognizer*)sender
 {
-    //mApplication->activatePerformRightMove();
+    //mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender
 {
     CGFloat dx = end.x - start.x;
-    mApplication->activateTouchRelease(dx, end.y - start.y);
+    mApplication.activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
-        mApplication->activatePerformLeftMove();
+        mApplication.activatePerformLeftMove();
     else if (dx > 1.0)
-        mApplication->activatePerformRightMove();
+        mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeUp:(UISwipeGestureRecognizer*)sender
 {
     CGFloat dx = end.x - start.x;
-    mApplication->activateTouchRelease(dx, end.y - start.y);
+    mApplication.activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
-        mApplication->activatePerformLeftMove();
+        mApplication.activatePerformLeftMove();
     else if (dx > 1.0)
-        mApplication->activatePerformRightMove();
+        mApplication.activatePerformRightMove();
 }
 */
 
@@ -324,14 +319,14 @@
 {
     CGPoint loc = [sender locationInView:self.view];
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformDoubleTap(loc.x, loc.y);
+        mApplication.activatePerformDoubleTap(loc.x, loc.y);
 }
 
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender
 {
     CGPoint loc = [sender locationInView:self.view];
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformSingleTap(loc.x, loc.y);
+        mApplication.activatePerformSingleTap(loc.x, loc.y);
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender
@@ -340,7 +335,7 @@
     {
         NSLog(@"%f\n", sender.scale);
         if (sender.scale <= 0.75 || sender.scale >= 1.5)
-            mApplication->activatePerformPinch();
+            mApplication.activatePerformPinch();
     }
 }
 
@@ -367,8 +362,8 @@
     
     if (sender.state == UIGestureRecognizerStateBegan)
     {
-        mApplication->activateVelocity(0.0);
-        mApplication->activatePressed(p.x, p.y);
+        mApplication.activateVelocity(0.0);
+        mApplication.activatePressed(p.x, p.y);
         
         angleCurrent = angle;
         anglePrevious = angleCurrent;
@@ -385,9 +380,9 @@
         dT = fabs(dT);
         anglePrevious = angleCurrent;
         
-//#ifdef CONTROL_SPIN_DEBUG_OUTPUT
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"DT: %f", dT);
-//#endif
+#endif
         
         /* Calculate Cross Product from center to Velocity vector */
         CGFloat centerX = screenWidth / 2.0;
@@ -410,11 +405,11 @@
 #endif
         
         if (clockwise) {
-            mApplication->activateAngleTurn(-dT, magnitude);
+            mApplication.activateAngleTurn(-dT, magnitude);
         } else {
-            mApplication->activateAngleTurn(dT, magnitude);
+            mApplication.activateAngleTurn(dT, magnitude);
         }
-        mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
+        mApplication.activateMoved(p.x, p.y, dp.x, dp.y);
     }
     else
     {
@@ -439,11 +434,11 @@
 #endif
         
         if (clockwise) {
-            mApplication->activateVelocity(magnitude);
+            mApplication.activateVelocity(magnitude);
         } else {
-            mApplication->activateVelocity(-magnitude);
+            mApplication.activateVelocity(-magnitude);
         }
-        mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
+        mApplication.activateReleased(p.x, p.y, dp.x, dp.y);
         
 #ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"End Pan");
@@ -455,17 +450,17 @@
 - (IBAction)handleLongPress:(UILongPressGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan)
-        mApplication->activatePerformBeginLongPress();
+        mApplication.activatePerformBeginLongPress();
     else if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformEndLongPress();
+        mApplication.activatePerformEndLongPress();
 }
 
 - (IBAction)handleShortPress:(UILongPressGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan)
-        mApplication->activatePerformBeginShortPress();
+        mApplication.activatePerformBeginShortPress();
     else if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformEndShortPress();
+        mApplication.activatePerformEndShortPress();
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
@@ -491,20 +486,18 @@
 /*
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:self.capital forKey:@"UYLKeyCapital"];
     [super encodeRestorableStateWithCoder:coder];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    self.capital = [coder decodeObjectForKey:@"UYLKeyCapital"];
     [super decodeRestorableStateWithCoder:coder];
 }
- */
+*/
 
 - (void)cleanup
 {
-    mApplication->endGame();
+    mApplication.endGame();
     try
     {
         Ogre::Root::getSingleton().queueEndRendering();
