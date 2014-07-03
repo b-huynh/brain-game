@@ -153,6 +153,164 @@ void TunnelSlice::initWalls()
     }
     
     
+    
+    
+    float wallLength = getWallLength();
+    float scaleValue = 0.7f;
+    Vector3 leftbarrierOffset = Vector3(-scaleValue,scaleValue,0);
+    Vector3 rightbarrierOffset = leftbarrierOffset * Vector3(-1,1,1);
+    if( countSides == 3 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength / 2, 0);
+        
+        leftWall = sliceNode->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
+        leftWall->translate(move);
+        leftWall->translate(leftbarrierOffset);
+        leftWall->scale(scaleValue,scaleValue,width/2);
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWall->attachObject(leftWallEntity);
+
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength / 2, 0);
+        
+        rightWall = sliceNode->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
+        rightWall->translate(move);
+        rightWall->translate(rightbarrierOffset);
+        rightWall->scale(scaleValue,scaleValue,width/2);
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWall->attachObject(rightWallEntity);
+    }
+    else if( countSides == 5 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength / 2, 0);
+        
+        leftWall = sliceNode->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
+        leftWall->translate(move);
+        leftWall->translate(Util::EulerRotate(leftbarrierOffset,Degree(-45),'z'));
+        leftWall->scale(scaleValue,scaleValue,width/2);
+        leftWall->roll(Degree(-45));
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWall->attachObject(leftWallEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength / 2, 0);
+        
+        rightWall = sliceNode->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
+        rightWall->translate(move);
+        rightWall->translate(Util::EulerRotate(rightbarrierOffset,Degree(45),'z'));
+        rightWall->scale(scaleValue,scaleValue,width/2);
+        rightWall->roll(Degree(45));
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWall->attachObject(rightWallEntity);
+    }
+    else if( countSides == 7 ) {
+        move = Vector3(-wallLength / 2, wallLength  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
+        
+        leftWall = sliceNode->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
+        leftWall->translate(move);
+        leftWall->translate(Util::EulerRotate(leftbarrierOffset,Degree(-90),'z'));
+        leftWall->scale(scaleValue,scaleValue,width/2);
+        leftWall->roll(Degree(-90));
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWall->attachObject(leftWallEntity);
+        
+        
+        move = Vector3(wallLength / 2, wallLength  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
+        
+        rightWall = sliceNode->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
+        rightWall->translate(move);
+        rightWall->translate(Util::EulerRotate(rightbarrierOffset,Degree(90),'z'));
+        rightWall->scale(scaleValue,scaleValue,width/2);
+        rightWall->roll(Degree(90));
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "boxMesh");
+        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWall->attachObject(rightWallEntity);
+    }
+    
+    // Transitions
+    float tWidthOffset = 0.3;
+    float tHeightOffset = wallLength/16;
+    float tDepthOffset = -width/2;
+    Vector3 scaleAmount = Vector3(1,3.775,14);
+    if( makeDecreasingTransition && countSides == 3 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        topLeftIntermediate = sliceNode->createChildSceneNode("leftTransition" + Util::toStringInt(intermediateMeshID));
+        topLeftIntermediate->translate(move);
+        topLeftIntermediate->scale(scaleAmount);
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("leftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topLeftIntermediate->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        topRightIntermediate = sliceNode->createChildSceneNode("rightTransition" + Util::toStringInt(intermediateMeshID));
+        topRightIntermediate->translate(move);
+        topRightIntermediate->scale(scaleAmount);
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("rightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topRightIntermediate->attachObject(rightTransitionEntity);
+        
+        topLeftIntermediate->yaw(Degree(180));
+        topRightIntermediate->yaw(Degree(180));
+    }
+    if( makeDecreasingTransition && countSides == 5 ) {
+    
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(-45), 'z'));
+        topLeftIntermediate = sliceNode->createChildSceneNode("leftTransition" + Util::toStringInt(intermediateMeshID));
+        topLeftIntermediate->translate(move);
+        topLeftIntermediate->scale(scaleAmount);
+        topLeftIntermediate->roll(Degree(-45));
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("leftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topLeftIntermediate->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(45), 'z'));
+        topRightIntermediate = sliceNode->createChildSceneNode("rightTransition" + Util::toStringInt(intermediateMeshID));
+        topRightIntermediate->translate(move);
+        topRightIntermediate->scale(scaleAmount);
+        topRightIntermediate->roll(Degree(45));
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("rightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topRightIntermediate->attachObject(rightTransitionEntity);
+
+        topLeftIntermediate->yaw(Degree(180));
+        topRightIntermediate->yaw(Degree(180));
+    }
+    if( makeDecreasingTransition && countSides == 7 ) {
+        move = Vector3(0,wallLength * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)) + tHeightOffset, width/4);
+        
+        topIntermediate = sliceNode->createChildSceneNode("topTransition" + Util::toStringInt(intermediateMeshID));
+        topIntermediate->translate(move);
+        topIntermediate->scale(5,1.25,3);
+        Entity* topIntermediateEntity = sliceNode->getCreator()->createEntity("topTransitionEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        topIntermediateEntity->setMaterialName("Railing/Cyan");
+        topIntermediate->attachObject(topIntermediateEntity);
+    }
+    
+    
+    
+    
+    /*
     float wallLength = getWallLength();
     float heightOffset = 2.0f;
     float widthOffset = 1.5f;
@@ -312,6 +470,7 @@ void TunnelSlice::initWalls()
         topIntermediateEntity->setMaterialName("Railing/DarkGray");
         topIntermediate->attachObject(topIntermediateEntity);
     }
+    */
     
     /*
      // The bottom initializes a node for each direction and attaches a plane mesh to them
@@ -786,6 +945,269 @@ void TunnelSlice::connect(TunnelSlice* next)
     Vector3 tr = Vector3(Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY);
     
     
+    float scaleValue = 0.7f;
+    Vector3 leftbarrierOffset = Vector3(-scaleValue,scaleValue,0);
+    Vector3 rightbarrierOffset = leftbarrierOffset * Vector3(-1,1,1);
+    Vector3 leftConnector1Offset = Vector3(-scaleValue,scaleValue,-width/2);
+    Vector3 rightConnector1Offset = leftConnector1Offset * Vector3(-1,1,1);
+    Vector3 leftConnector2Offset = Vector3(-scaleValue,scaleValue,width/2);
+    Vector3 rightConnector2Offset = leftConnector2Offset * Vector3(-1,1,1);
+    if( Util::getNumSides(sidesUsed) == 3 ) {
+        move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, -width);
+        
+        leftIntermediate = sliceNode->createChildSceneNode("leftIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        leftIntermediate->translate(move);
+        leftIntermediate->translate(leftbarrierOffset);
+        leftIntermediate->scale(scaleValue,scaleValue,width/2);
+        
+        bottomLeftIntermediate = sliceNode->createChildSceneNode("leftConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftIntermediate->translate(move);
+        bottomLeftIntermediate->translate(leftConnector1Offset);
+        bottomLeftIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        
+        bottomLeftWall = sliceNode->createChildSceneNode("leftConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftWall->translate(move);
+        bottomLeftWall->translate(leftConnector2Offset);
+        bottomLeftWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        
+        Entity* leftIntermediateEntity = sliceNode->getCreator()->createEntity("leftIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector1Entity = sliceNode->getCreator()->createEntity("leftConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector2Entity = sliceNode->getCreator()->createEntity("leftConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        leftIntermediateEntity->setMaterialName("Railing/Cyan");
+        leftConnector1Entity->setMaterialName("Railing/Cyan");
+        leftConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        leftIntermediate->attachObject(leftIntermediateEntity);
+        bottomLeftIntermediate->attachObject(leftConnector1Entity);
+        bottomLeftWall->attachObject(leftConnector2Entity);
+        
+        move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength1 / 2, -width);
+        
+        rightIntermediate = sliceNode->createChildSceneNode("rightIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        rightIntermediate->translate(move);
+        rightIntermediate->translate(rightbarrierOffset);
+        rightIntermediate->scale(scaleValue,scaleValue,width/2);
+        
+        bottomRightIntermediate = sliceNode->createChildSceneNode("rightConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightIntermediate->translate(move);
+        bottomRightIntermediate->translate(rightConnector1Offset);
+        bottomRightIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        
+        bottomRightWall = sliceNode->createChildSceneNode("rightConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightWall->translate(move);
+        bottomRightWall->translate(rightConnector2Offset);
+        bottomRightWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        
+        Entity* rightIntermediateEntity = sliceNode->getCreator()->createEntity("rightIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector1Entity = sliceNode->getCreator()->createEntity("rightConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector2Entity = sliceNode->getCreator()->createEntity("rightConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        rightIntermediateEntity->setMaterialName("Railing/Cyan");
+        rightConnector1Entity->setMaterialName("Railing/Cyan");
+        rightConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        rightIntermediate->attachObject(rightIntermediateEntity);
+        bottomRightIntermediate->attachObject(rightConnector1Entity);
+        bottomRightWall->attachObject(rightConnector2Entity);
+    }
+    else if( Util::getNumSides(sidesUsed) == 5 ) {
+        move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, -width);
+        
+        leftIntermediate = sliceNode->createChildSceneNode("leftIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        leftIntermediate->translate(move);
+        leftIntermediate->translate(Util::EulerRotate(leftbarrierOffset,Degree(-45),'z'));
+        leftIntermediate->scale(scaleValue,scaleValue,width/2);
+        leftIntermediate->roll(Degree(-45));
+        
+        bottomLeftIntermediate = sliceNode->createChildSceneNode("leftConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftIntermediate->translate(move);
+        bottomLeftIntermediate->translate(Util::EulerRotate(leftConnector1Offset,Degree(-45),'z'));
+        bottomLeftIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomLeftIntermediate->roll(Degree(-45));
+        
+        bottomLeftWall = sliceNode->createChildSceneNode("leftConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftWall->translate(move);
+        bottomLeftWall->translate(Util::EulerRotate(leftConnector2Offset,Degree(-45),'z'));
+        bottomLeftWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomLeftWall->roll(Degree(-45));
+        
+        Entity* leftIntermediateEntity = sliceNode->getCreator()->createEntity("leftIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector1Entity = sliceNode->getCreator()->createEntity("leftConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector2Entity = sliceNode->getCreator()->createEntity("leftConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        leftIntermediateEntity->setMaterialName("Railing/Cyan");
+        leftConnector1Entity->setMaterialName("Railing/Cyan");
+        leftConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        leftIntermediate->attachObject(leftIntermediateEntity);
+        bottomLeftIntermediate->attachObject(leftConnector1Entity);
+        bottomLeftWall->attachObject(leftConnector2Entity);
+        
+        move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, -width);
+        
+        rightIntermediate = sliceNode->createChildSceneNode("rightIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        rightIntermediate->translate(move);
+        rightIntermediate->translate(Util::EulerRotate(rightbarrierOffset,Degree(45),'z'));
+        rightIntermediate->scale(scaleValue,scaleValue,width/2);
+        rightIntermediate->roll(Degree(45));
+        
+        bottomRightIntermediate = sliceNode->createChildSceneNode("rightConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightIntermediate->translate(move);
+        bottomRightIntermediate->translate(Util::EulerRotate(rightConnector1Offset,Degree(45),'z'));
+        bottomRightIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomRightIntermediate->roll(Degree(45));
+        
+        bottomRightWall = sliceNode->createChildSceneNode("rightConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightWall->translate(move);
+        bottomRightWall->translate(Util::EulerRotate(rightConnector2Offset,Degree(45),'z'));
+        bottomRightWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomRightWall->roll(Degree(45));
+        
+        Entity* rightIntermediateEntity = sliceNode->getCreator()->createEntity("rightIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector1Entity = sliceNode->getCreator()->createEntity("rightConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector2Entity = sliceNode->getCreator()->createEntity("rightConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        rightIntermediateEntity->setMaterialName("Railing/Cyan");
+        rightConnector1Entity->setMaterialName("Railing/Cyan");
+        rightConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        rightIntermediate->attachObject(rightIntermediateEntity);
+        bottomRightIntermediate->attachObject(rightConnector1Entity);
+        bottomRightWall->attachObject(rightConnector2Entity);
+    }
+    else if( Util::getNumSides(sidesUsed) == 7 ) {
+        move = Vector3(-wallLength1 / 2, wallLength1  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), -width);
+        
+        leftIntermediate = sliceNode->createChildSceneNode("leftIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        leftIntermediate->translate(move);
+        leftIntermediate->translate(Util::EulerRotate(leftbarrierOffset,Degree(-90),'z'));
+        leftIntermediate->scale(scaleValue,scaleValue,width/2);
+        leftIntermediate->roll(Degree(-90));
+        
+        bottomLeftIntermediate = sliceNode->createChildSceneNode("leftConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftIntermediate->translate(move);
+        bottomLeftIntermediate->translate(Util::EulerRotate(leftConnector1Offset,Degree(-90),'z'));
+        bottomLeftIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomLeftIntermediate->roll(Degree(-90));
+        
+        bottomLeftWall = sliceNode->createChildSceneNode("leftConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomLeftWall->translate(move);
+        bottomLeftWall->translate(Util::EulerRotate(leftConnector2Offset,Degree(-90),'z'));
+        bottomLeftWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomLeftWall->roll(Degree(-90));
+        
+        Entity* leftIntermediateEntity = sliceNode->getCreator()->createEntity("leftIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector1Entity = sliceNode->getCreator()->createEntity("leftConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* leftConnector2Entity = sliceNode->getCreator()->createEntity("leftConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        leftIntermediateEntity->setMaterialName("Railing/Cyan");
+        leftConnector1Entity->setMaterialName("Railing/Cyan");
+        leftConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        leftIntermediate->attachObject(leftIntermediateEntity);
+        bottomLeftIntermediate->attachObject(leftConnector1Entity);
+        bottomLeftWall->attachObject(leftConnector2Entity);
+        
+        move = Vector3(wallLength1 / 2, wallLength1  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), -width);
+        
+        rightIntermediate = sliceNode->createChildSceneNode("rightIntermediateNode" + Util::toStringInt(intermediateMeshID));
+        rightIntermediate->translate(move);
+        rightIntermediate->translate(Util::EulerRotate(rightbarrierOffset,Degree(90),'z'));
+        rightIntermediate->scale(scaleValue,scaleValue,width/2);
+        rightIntermediate->roll(Degree(90));
+        
+        bottomRightIntermediate = sliceNode->createChildSceneNode("rightConnector1Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightIntermediate->translate(move);
+        bottomRightIntermediate->translate(Util::EulerRotate(rightConnector1Offset,Degree(90),'z'));
+        bottomRightIntermediate->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomRightIntermediate->roll(Degree(90));
+        
+        bottomRightWall = sliceNode->createChildSceneNode("rightConnector2Node" + Util::toStringInt(intermediateMeshID));
+        bottomRightWall->translate(move);
+        bottomRightWall->translate(Util::EulerRotate(rightConnector2Offset,Degree(90),'z'));
+        bottomRightWall->scale(scaleValue*2,scaleValue*2,scaleValue*4);
+        bottomRightWall->roll(Degree(90));
+        
+        Entity* rightIntermediateEntity = sliceNode->getCreator()->createEntity("rightIntermediateEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector1Entity = sliceNode->getCreator()->createEntity("rightConnector1Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        Entity* rightConnector2Entity = sliceNode->getCreator()->createEntity("rightConnector2Entity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        rightIntermediateEntity->setMaterialName("Railing/Cyan");
+        rightConnector1Entity->setMaterialName("Railing/Cyan");
+        rightConnector2Entity->setMaterialName("Railing/Cyan");
+        
+        rightIntermediate->attachObject(rightIntermediateEntity);
+        bottomRightIntermediate->attachObject(rightConnector1Entity);
+        bottomRightWall->attachObject(rightConnector2Entity);
+    }
+    
+    
+    
+    //Transitions
+    float tWidthOffset = 0.3;
+    float tHeightOffset = wallLength1/16;
+    float tDepthOffset = -width/4;
+    Vector3 scaleAmount = Vector3(1,3.775,14);
+    if( Util::getNumSides(sidesUsed) == 3 && Util::getNumSides(next->sidesUsed) == 5 ) {
+        
+        move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        topLeftIntermediate = sliceNode->createChildSceneNode("leftTransition" + Util::toStringInt(intermediateMeshID));
+        topLeftIntermediate->translate(move);
+        topLeftIntermediate->scale(scaleAmount);
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("leftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topLeftIntermediate->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        topRightIntermediate = sliceNode->createChildSceneNode("rightTransition" + Util::toStringInt(intermediateMeshID));
+        topRightIntermediate->translate(move);
+        topRightIntermediate->scale(scaleAmount);
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("rightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topRightIntermediate->attachObject(rightTransitionEntity);
+    }
+    else if( Util::getNumSides(sidesUsed) == 5 && Util::getNumSides(next->sidesUsed) == 7 ) {
+        
+        move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(-45), 'z'));
+        topLeftIntermediate = sliceNode->createChildSceneNode("leftTransition" + Util::toStringInt(intermediateMeshID));
+        topLeftIntermediate->translate(move);
+        topLeftIntermediate->scale(scaleAmount);
+        topLeftIntermediate->roll(Degree(-45));
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("leftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topLeftIntermediate->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(45), 'z'));
+        topRightIntermediate = sliceNode->createChildSceneNode("rightTransition" + Util::toStringInt(intermediateMeshID));
+        topRightIntermediate->translate(move);
+        topRightIntermediate->scale(scaleAmount);
+        topRightIntermediate->roll(Degree(45));
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("rightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        topRightIntermediate->attachObject(rightTransitionEntity);
+    }
+    else if( Util::getNumSides(sidesUsed) == 7 && Util::getNumSides(next->sidesUsed) == 8 ) {
+        
+        move = Vector3(0,wallLength1 * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)) + tHeightOffset, -width - width/2);
+        
+        topIntermediate = sliceNode->createChildSceneNode("topTransition" + Util::toStringInt(intermediateMeshID));
+        topIntermediate->translate(move);
+        topIntermediate->scale(5,1.25,3);
+        Entity* topIntermediateEntity = sliceNode->getCreator()->createEntity("topTransitionEntity" + Util::toStringInt(intermediateMeshID), "boxMesh");
+        topIntermediateEntity->setMaterialName("Railing/Cyan");
+        topIntermediate->attachObject(topIntermediateEntity);
+    }
+    
+    
+    
+    /*
     float heightOffset = 2.0f;
     float widthOffset = 1.5f;
     if( Util::getNumSides(sidesUsed) == 3 ) {
@@ -940,6 +1362,8 @@ void TunnelSlice::connect(TunnelSlice* next)
         topIntermediateEntity->setMaterialName("Railing/DarkGray");
         topIntermediate->attachObject(topIntermediateEntity);
     }
+    */
+    
     
     
     move = Vector3(-wallLength1 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength1 / 2, 0);

@@ -26,7 +26,7 @@ public:
     
     // Used to change the background of the go button
     bool isGoButtonActive() const;
-    void notifyGoButton(bool active);
+    void setGoButtonState(bool active, bool color = true);
 protected:
     Player* player;
     Tunnel* tunnel;

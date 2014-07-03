@@ -50,9 +50,9 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_INIT:
         {
             setup();
-            setPause(true);
             if (tunnel->getMode() != STAGE_MODE_RECESS || tunnel->getMode() != STAGE_MODE_TEACHING)
-                globals.appendMessage("\n\nSet Your Speed", MESSAGE_NORMAL);
+                globals.setMessage("Set and Verify your Speed", MESSAGE_NORMAL);
+            setPause(true);
             stageState = STAGE_STATE_PAUSE;
             
             globals.setBigMessage("");
@@ -61,7 +61,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(1, false);
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
@@ -88,7 +88,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -108,6 +108,7 @@ void EngineStage::update(float elapsed)
                 globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
                 stageState = STAGE_STATE_PAUSE;
             }
+            
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -139,7 +140,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->notifyGoButton(true);
+            hud->setGoButtonState(true, speedVerified);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -150,7 +151,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
             break;
         }
         case STAGE_STATE_READY:
@@ -176,7 +177,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, false);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
             break;
         }
         case STAGE_STATE_DONE:
@@ -526,9 +527,12 @@ void EngineStage::activatePerformSingleTap(float x, float y)
              */
             if (queryGUI == "pause")
             {
-                setPause(true);
-                player->reactGUI();
-                stageState = STAGE_STATE_PROMPT;
+                if (!player->winFlag)
+                {
+                    setPause(true);
+                    player->reactGUI();
+                    stageState = STAGE_STATE_PROMPT;
+                }
             }
             break;
         }
@@ -538,15 +542,30 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             
             if (queryGUI == "go")
             {
-                stageState = STAGE_STATE_READY;
-                readyTimer = 3.00f;
-                player->reactGUI();
+                if (speedVerified)
+                {
+                    stageState = STAGE_STATE_READY;
+                    readyTimer = 3.00f;
+                    player->reactGUI();
+                }
+                else
+                {
+                    player->reactGUI();
+                }
             }
             else if (queryGUI == "pause")
             {
                 setPause(true);
                 player->reactGUI();
                 stageState = STAGE_STATE_PROMPT;
+            }
+            else
+            {
+                // Allows single tap on dial without dragging slider to be a way to verify
+                HudSlider* speedSlider = NULL;
+                if (hud) speedSlider = hud->getSpeedSlider();
+                if (speedSlider && !player->hasTriggeredStartup() && speedSlider->isInsideBall(globals.convertToPercentScreen(Vector2(x, y))))
+                    setSpeedVerified();
             }
             break;
         }
@@ -558,16 +577,19 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             {
                 // If game hasn't started yet, go back to init prompt
                 // Otherwise, go to gameplay
-                if (hud->isGoButtonActive())
+                if (!player->hasTriggeredStartup())
                 {
                     stageState = STAGE_STATE_PAUSE;
-                    if (player->hasTriggeredStartup() && player->getStartMusicTimer() <= 0.0)
+                    if (player->getStartMusicTimer() <= 0.0)
                         player->playMusic();
                 }
                 else if (!tunnel->needsCleaning())
                 {
                     stageState = STAGE_STATE_READY;
-                    readyTimer = 3.00f;
+                    if (!tunnel->isDone())
+                        readyTimer = 3.00f;
+                    else
+                        readyTimer = 0.0f;
                 }
                 player->reactGUI();
             }
@@ -745,6 +767,7 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
         if (speedSlider && speedSlider->selected)
         {
             speedSlider->activateReleased(x, y, dx, dy);
+            setSpeedVerified();
         }
     }
 }
@@ -760,6 +783,8 @@ void EngineStage::activateVelocity(float vel)
     dampingDecay = dampingDecayFree;
     dampingDrop = dampingDropFree;
     
+    if (abs(vel) <= minVelFree)
+        vel = 0.0;
     spinVelocityTarget = abs(vel);
     
     freeMotion = true;
@@ -1090,9 +1115,6 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.appendMessage("\nObtain matches by Color", MESSAGE_NORMAL);
             break;
         }
         case 'B':
@@ -1103,9 +1125,6 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.appendMessage("Obtain matches by Shape", MESSAGE_NORMAL);
             break;
         }
         case 'C':
@@ -1116,9 +1135,6 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
-
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
             break;
         }
         case 'D':
@@ -1128,9 +1144,6 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
             break;
         case 'E':
             nmode = STAGE_MODE_RECESS;
@@ -1140,14 +1153,10 @@ void EngineStage::setup()
                 globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
             else
                 globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            //globals.setBigMessage("Recess!");
-            globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
             break;
         case 'F':
             nmode = STAGE_MODE_TEACHING;
             globals.signalTypes.clear();
-            //globals.setBigMessage("Training!");
-            globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
             break;
     }
     globals.initCamSpeed = level.initCamSpeed;
@@ -1247,8 +1256,10 @@ void EngineStage::setup()
     if (tunnel->getPhase() == 'D')
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
 
+    speedVerified = false;
     // Spin Parameters
     maxVel = player->maxVel;
+    minVelFree = player->minVelFree;
     minVelStopper = player->minVelStopper;
     dampingDecayFree = player->dampingDecayFree;
     dampingDecayStop = player->dampingDecayStop;
@@ -1299,7 +1310,11 @@ void EngineStage::updateSpin(float elapsed)
             // Damp the current vel
             spinVelocity *= dampingDecay;
             spinVelocity -= dampingDrop;
-        
+            
+            // Zero out vel that is close to stop
+            if (spinVelocity <= minVelFree)
+                spinVelocity = 0.0;
+            
             // Notify free motion is off
             if (spinVelocity <= 0.0)
             {
@@ -1409,6 +1424,37 @@ void EngineStage::updateSpin(float elapsed)
     }
 
     player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
+}
+
+void EngineStage::setSpeedVerified()
+{
+    if (!speedVerified)
+    {
+        globals.clearMessage();
+        StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+        switch (level.phase)
+        {
+            case 'A':
+                globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
+                break;
+            case 'B':
+                globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
+                break;
+            case 'C':
+                globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
+                break;
+            case 'D':
+                globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
+                break;
+            case 'E':
+                globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
+                break;
+            case 'F':
+                globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
+            break;
+        }
+    }
+    speedVerified = true;
 }
 
 void EngineStage::dealloc()

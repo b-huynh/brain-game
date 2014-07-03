@@ -46,6 +46,11 @@ void HudMainSettings::update(float elapsed)
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxGreen");
     else
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxBlank");
+    
+    if (player->soundVolume <= 0.0)
+        soundVolumeSliderWarning->setCaption("Certain features are disabled with sound off");
+    else
+        soundVolumeSliderWarning->setCaption("");
 }
 
 void HudMainSettings::alloc()
@@ -65,6 +70,7 @@ void HudMainSettings::alloc()
     soundVolumeSliderBallBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSoundVolumeSliderBallBackground"));
     soundVolumeSliderText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSoundVolumeText"));
     soundVolumeSliderDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSoundVolumeDisplay"));
+    soundVolumeSliderWarning = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSoundVolumeWarning"));
     
     enableTutorialsEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsEnableTutorialsEntireBackground"));
     enableTutorialsTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsEnableTutorialsTextDisplay"));;
@@ -86,6 +92,7 @@ void HudMainSettings::alloc()
     soundVolumeSliderRangeBackground->addChild(soundVolumeSliderBallBackground);
     soundVolumeSliderRangeBackground->addChild(soundVolumeSliderText);
     soundVolumeSliderRangeBackground->addChild(soundVolumeSliderDisplay);
+    soundVolumeSliderRangeBackground->addChild(soundVolumeSliderWarning);
     
     overlay1->add2D(enableTutorialsEntireBackground);
     enableTutorialsEntireBackground->addChild(enableTutorialsTextDisplay);
@@ -123,6 +130,7 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderBallBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderWarning);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsButtonBackground);
@@ -171,6 +179,13 @@ void HudMainSettings::initOverlay()
     soundVolumeSliderText->setCharHeight(0.026 * FONT_SZ_MULT);
     soundVolumeSliderText->setFontName("MainSmall");
     soundVolumeSliderText->setCaption("Sound Volume");
+    
+    soundVolumeSliderWarning->setMetricsMode(GMM_RELATIVE);
+    soundVolumeSliderWarning->setAlignment(TextAreaOverlayElement::Left);
+    soundVolumeSliderWarning->setPosition(0.26, -0.03);
+    soundVolumeSliderWarning->setCharHeight(0.018 * FONT_SZ_MULT);
+    soundVolumeSliderWarning->setFontName("MainSmall");
+    soundVolumeSliderWarning->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
     
     enableTutorialsEntireBackground->setMetricsMode(GMM_RELATIVE);
     enableTutorialsEntireBackground->setPosition(0.30, 0.55);

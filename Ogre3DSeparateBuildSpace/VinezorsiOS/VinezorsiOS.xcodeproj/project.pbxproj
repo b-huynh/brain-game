@@ -447,7 +447,7 @@
 				LastUpgradeCheck = 0500;
 				TargetAttributes = {
 					5DF9407217F4AF360082C239 = {
-						DevelopmentTeam = 9GN2WT7Q58;
+						DevelopmentTeam = 242KYAS2N4;
 						SystemCapabilities = {
 							com.apple.DataProtection = {
 								enabled = 0;
@@ -685,7 +685,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
@@ -719,7 +719,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;

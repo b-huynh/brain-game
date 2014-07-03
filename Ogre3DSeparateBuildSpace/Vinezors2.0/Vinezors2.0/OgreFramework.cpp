@@ -188,6 +188,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundMissFeedback", "misstriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod1", "pod4.wav", false, false, true);           // Rose
     m_pSoundMgr->createSound("SoundPod2", "pod3.wav", false, false, true);            // Iris

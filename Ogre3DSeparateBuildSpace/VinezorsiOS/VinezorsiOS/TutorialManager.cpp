@@ -104,10 +104,10 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide(insertNL("Click the Play button in this screen to begin.\n\nYou may re-enable/disable these tutorials."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_HUD_DISPLAY1:
-            ret.push_back(TutorialSlide(insertNL("You can monitor your progress with the display above. Take your time to identify the other elements in the heads-up display before continuing."), "General/ScreenBackground2", "General/ScreenOfArrows"));
+            ret.push_back(TutorialSlide(insertNL("Please identify the key elements in the heads-up display.\nNote: the progress bar above shows your success towards completing the level."), "General/ScreenBackground2", "General/ScreenOfArrows"));
             break;
         case TUTORIAL_SLIDES_CONTROL_MECHANICS:
-            ret.push_back(TutorialSlide(insertNL("Interface with the tunnel to navigate.\nYou can drag the tunnel around moving the ship"), "General/ScreenBackground2", ""));
+            ret.push_back(TutorialSlide(insertNL("Interface with the tunnel to navigate.\nYou can drag the tunnel around moving the ship."), "General/ScreenBackground2", ""));
             ret.push_back(TutorialSlide(insertNL("You can spin around with a bit of speed.\nSpin by dragging the tunnel in an arc and let go to spin."), "General/ScreenBackground2", ""));
             ret.push_back(TutorialSlide(insertNL("While the tunnel is spinning, you can force a hard stop by pressing onto the screen."), "General/ScreenBackground2", ""));
             break;
@@ -115,11 +115,11 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide(insertNL("Challenge:\nMove and grab the fuel cells to go faster.\n\nComplete the level before time runs out."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_ONE_BACK:
-            ret.push_back(TutorialSlide(insertNL("Gather matching signals. A matching one-back is the signal the same as the one you passed.\n\nGather enough matches before time runs out!"), "General/ScreenBackground2", ""));
+            ret.push_back(TutorialSlide(insertNL("Gather matching signals. A matching one-back is the signal the same as the one you passed.\n\nGather enough matches before time runs out."), "General/ScreenBackground2", ""));
             ret.push_back(TutorialSlide(insertNL("If you select an incorrect match,\nyou will move slower and lose time to complete the stage."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_TWO_BACK:
-            ret.push_back(TutorialSlide(insertNL("Gather matching two-backs. A two back match is a signal matching every other signals.\n\nGather enough matches before time runs out!"), "General/ScreenBackground2", ""));
+            ret.push_back(TutorialSlide(insertNL("Gather matching two-backs. A two back match is a signal matching every other signals.\n\nGather enough matches before time runs out."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_COLOR_SOUND:
             ret.push_back(TutorialSlide(insertNL("Challenge:\nLook for matches through color and sound."), "General/ScreenBackground2", ""));
@@ -229,7 +229,7 @@ void TutorialManager::update(float elapsed)
 {
     if (yoffset < 0.0)
     {
-        float yspeed = (-yoffset) * 10.0;
+        float yspeed = (-yoffset) * 5.0;
         if (yspeed < 0.25) yspeed = 0.25;
         yoffset += (yspeed * elapsed);
         if (yoffset > 0.0)
@@ -306,8 +306,8 @@ void TutorialManager::adjust()
     popupWindowBackground->setMaterialName("General/ScreenBackground1");
     
     popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
-    popupSubWindowBackground->setPosition(0.025, 0.025);
-    popupSubWindowBackground->setDimensions(0.450, 0.450);
+    popupSubWindowBackground->setPosition(0.250, yoffset + 0.20);
+    popupSubWindowBackground->setDimensions(0.50, 0.50);
     
     entireScreenBackground->setMetricsMode(GMM_RELATIVE);
     entireScreenBackground->setPosition(0.0, 0.0);
@@ -315,21 +315,21 @@ void TutorialManager::adjust()
     
     float bw = 0.075;
     float bh = bw * globals.screenWidth / globals.screenHeight;
-    buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.250, 0.350), Vector2(bw, bh), popupGoLeftBackground, NULL);
-    buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.350, 0.350), Vector2(bw, bh), popupGoRightBackground, NULL);
-    buttons[BUTTON_EXIT].setButton("exit", popupOverlay, GMM_RELATIVE, Vector2(0.150, 0.350), Vector2(bw, bh), popupExitBackground, NULL);
+    buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.175, 0.375), Vector2(bw, bh), popupGoLeftBackground, NULL);
+    buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.275, 0.375), Vector2(bw, bh), popupGoRightBackground, NULL);
+    buttons[BUTTON_EXIT].setButton("exit", popupOverlay, GMM_RELATIVE, Vector2(0.375, 0.375), Vector2(bw, bh), popupExitBackground, NULL);
     popupExitBackground->setMaterialName("General/ExitButton2");
     
     popupText->setMetricsMode(GMM_RELATIVE);
     popupText->setAlignment(TextAreaOverlayElement::Left);
-    popupText->setPosition(0.025, 0.025);
+    popupText->setPosition(0.050, 0.030);
     popupText->setCharHeight(0.025 * FONT_SZ_MULT);
     popupText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     popupText->setFontName("MainSmall");
     
     popupSlideNoText->setMetricsMode(GMM_RELATIVE);
     popupSlideNoText->setAlignment(TextAreaOverlayElement::Left);
-    popupSlideNoText->setPosition(0.025, 0.400);
+    popupSlideNoText->setPosition(0.050, 0.405);
     popupSlideNoText->setCharHeight(0.025 * FONT_SZ_MULT);
     popupSlideNoText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     popupSlideNoText->setFontName("MainSmall");
@@ -377,8 +377,9 @@ void TutorialManager::alloc()
     popupSlideNoText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialSlideNoText"));
     entireScreenBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TutorialScreenBackground"));
     popupOverlay->add2D(entireScreenBackground);
+    popupOverlay->add2D(popupSubWindowBackground);
     popupOverlay->add2D(popupWindowBackground);
-    popupWindowBackground->addChild(popupSubWindowBackground);
+    //popupWindowBackground->addChild(popupSubWindowBackground);
     popupSubWindowBackground->addChild(popupGoLeftBackground);
     popupSubWindowBackground->addChild(popupGoRightBackground);
     popupSubWindowBackground->addChild(popupExitBackground);

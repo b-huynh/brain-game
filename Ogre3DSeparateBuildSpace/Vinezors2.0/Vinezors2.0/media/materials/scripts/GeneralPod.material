@@ -143,9 +143,13 @@ material General/PodGreen
         {
             lighting on
  
-            ambient 0.1 0.3 0.1 1
-            diffuse 0.2 0.8 0.2 1
-            emissive 0.1 0.2 0.1 1
+            ambient 0.1 0.3 0.15 1
+            diffuse 0.2 0.6 0.3 1
+            emissive 0.067 0.2 0.1 1
+            
+            //ambient 0.1 0.3 0.1 1
+            //diffuse 0.2 0.8 0.2 1
+            //emissive 0.1 0.2 0.1 1
         }
     }
 }
@@ -158,8 +162,8 @@ material General/PodGreenTransparent
         {
             lighting on
             
-            ambient 0.1 0.3 0.1 0.3
-            diffuse 0.1 0.8 0.1 0.3
+            ambient 0.1 0.3 0.15 0.3
+            diffuse 0.2 0.6 0.3 0.3
             scene_blend alpha_blend
             depth_write off
         }

@@ -137,6 +137,7 @@ bool HudSlider::isInsideBall(Vector2 target) const
         check.x /= globals.screenWidth;
         check.y /= globals.screenHeight;
     }
+
     return (target.x >= check.x && target.x <= check.x + dim2.x &&
             target.y >= check.y && target.y <= check.y + dim2.y);
 }
@@ -285,8 +286,6 @@ void HudSlider::activateMoved(float x, float y, float dx, float dy)
         np = p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
     setBallPosition(np);
-            
-    //std::cout << "move " << p2.x << " " << globals.convertToPercentScreen(Vector2(dx, 0.0)).x << std::endl;;
 }
 
 void HudSlider::activatePressed(float x, float y)
@@ -308,7 +307,7 @@ void HudSlider::activatePressed(float x, float y)
             setBallPosition(Vector2(nx, p2.y));
         }
     }
-            
+    
     // Initialize p2cache first time we touch ball
     // p2cache is better since iOS tracking uses total dx which is more accurate
     // then passing in a dx everytime
@@ -317,7 +316,6 @@ void HudSlider::activatePressed(float x, float y)
         selected = true;
         p2cache = p2;
     }
-    //std::cout << "press\n";
 }
 
 void HudSlider::activateReleased(float x, float y, float dx, float dy)
@@ -336,7 +334,6 @@ void HudSlider::activateReleased(float x, float y, float dx, float dy)
         np = p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
 #endif
     setBallPosition(np);
-    //std::cout << "release\n";
 }
 
 void HudSlider::update(float elapsed)

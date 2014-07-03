@@ -153,6 +153,7 @@ private:
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
     OgreOggSound::OgreOggISound* soundFeedbackGood;
     OgreOggSound::OgreOggISound* soundFeedbackBad;
+    OgreOggSound::OgreOggISound* soundFeedbackMiss;
     OgreOggSound::OgreOggISound* soundCollision;
     OgreOggSound::OgreOggISound* soundStartup;
     OgreOggSound::OgreOggISound* soundBoost;
@@ -176,10 +177,13 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
+    bool fadeMusic;
+    
     // Settings Parameters
     float musicVolume;
     float soundVolume;
     float maxVel;
+    float minVelFree; // not recorded and set by player
     float minVelStopper;
     float dampingDecayFree;
     float dampingDecayStop;
@@ -304,6 +308,7 @@ public:
     void reactGUI() const;
     float getStartMusicTimer() const;
     void playMusic() const;
+    void stopMusic();
     void setVolume();
     void unpause();
     void pause();

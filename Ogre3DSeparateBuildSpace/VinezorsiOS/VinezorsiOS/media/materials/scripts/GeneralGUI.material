@@ -9,7 +9,7 @@ material General/ScreenBackground1
         depth_write off
         texture_unit
         {
-            texture screenbackground1.png
+            texture tutorial_frame.png
         }
       } 
     }
@@ -26,7 +26,7 @@ material General/ScreenBackground2
         depth_write off
         texture_unit
         {
-            texture screenbackground2_noborder.png
+            texture tutorial_screen.png
         }
       } 
     }
@@ -98,7 +98,7 @@ material General/EndTallyBackground
     }
 }
 
-material General/PauseNav
+material General/PauseNav1
 {
     technique
     {
@@ -109,7 +109,58 @@ material General/PauseNav
         depth_write off
         texture_unit
         {
-            texture pause_nav.png
+            texture pause_nav1.png
+        }
+      } 
+    }
+}
+
+material General/PauseNav2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_nav2.png
+        }
+      } 
+    }
+}
+
+material General/PauseNav3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_nav3.png
+        }
+      } 
+    }
+}
+
+material General/PauseNav4
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture pause_nav4.png
         }
       } 
     }

@@ -13,8 +13,26 @@ using namespace std;
 
 extern Util::ConfigGlobal globals;
 
+float flyOutCounter;
+float flyOutDuration;
+float endAnimationSuccessDuration;
+float endAnimationFailDuration;
+bool endAnimationBegin;
+
+float flyOutSpeed;
+float flyOutIncr;
+bool flyOutSpeedUp;
+
+float flyOutCamSpeed;
+float flyOutAngleY;
+float flyOutAngleX;
+
+bool flyLeft;
+
+bool soundStart;
+
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
+: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -23,13 +41,14 @@ Player::Player()
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
+    fadeMusic = false;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     initSettings();
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
+: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), winFlag(false)
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
@@ -40,6 +59,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
+    fadeMusic = true;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     initSettings();
@@ -967,6 +987,30 @@ void Player::testPodGiveFeedback(Pod* test)
     else if (goodPod && !test->isPodTaken()) // Missed good
     {
         ++numMissedTotal;
+        
+        if (tunnel->getMode() != STAGE_MODE_RECESS && tunnel->getMode() != STAGE_MODE_TEACHING)
+        {
+            if (soundFeedbackMiss)
+            {
+                soundFeedbackMiss->stop();
+                soundFeedbackMiss->play();
+            }
+        
+            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+            else hp += globals.HPNegativeWrongAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
+        
+            numCorrectCombo = 0;
+            ++numWrongCombo;
+            if (numWrongCombo % globals.numToSpeedDown == 0)
+            {
+                baseSpeed -= globals.speedMap[baseSpeed];
+                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            }
+            numCorrectBonus = 0;
+        }   
     }
     // Check for combo mode
     //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
@@ -1473,6 +1517,26 @@ void Player::newTunnel(const std::string & nameMusic)
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
     
+    // End animation parameters
+    flyOutCounter = 0.0f;
+    flyOutDuration = 0.25f;
+    endAnimationSuccessDuration = 3.0f;
+    endAnimationFailDuration = 1.5f;
+    endAnimationBegin = false;
+    
+    flyOutSpeed = 0.0f;
+    flyOutIncr = 0.01f;
+    flyOutSpeedUp = true;
+    
+    flyOutCamSpeed = 0.0f;
+    flyOutAngleY = 0.0f;
+    flyOutAngleX = 0.0f;
+    
+    flyLeft = true;
+    soundStart = false;
+    
+    winFlag = false;
+    fadeMusic = false;
     startMusicTimer = 2.0;
     
     setVolume();
@@ -1605,6 +1669,14 @@ void Player::playMusic() const
     }
 }
 
+void Player::stopMusic()
+{
+    if (soundMusic)
+    {
+        fadeMusic = true;
+    }
+}
+
 void Player::setVolume()
 {
     if (soundMusic) soundMusic->setVolume(musicVolume);
@@ -1616,6 +1688,7 @@ void Player::setVolume()
     if (soundFeedbackGreat) soundFeedbackGreat->setVolume(soundVolume);
     if (soundFeedbackGood) soundFeedbackGood->setVolume(soundVolume);
     if (soundFeedbackBad) soundFeedbackBad->setVolume(soundVolume);
+    if (soundFeedbackMiss) soundFeedbackMiss->setVolume(soundVolume);
     if (soundCollision) soundCollision->setVolume(soundVolume);
     if (soundBoost) soundBoost->setVolume(soundVolume);
     if (soundStartup) soundStartup->setVolume(soundVolume);
@@ -1636,6 +1709,8 @@ void Player::pause()
         soundFeedbackGood->pause();
     if (soundFeedbackBad)
         soundFeedbackBad->pause();
+    if (soundFeedbackMiss)
+        soundFeedbackMiss->pause();
     if (soundPods[POD_SIGNAL_1])
         soundPods[POD_SIGNAL_1]->pause();
     if (soundPods[POD_SIGNAL_2])
@@ -1665,6 +1740,7 @@ void Player::setSounds(bool mode)
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
         soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
         soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+        soundFeedbackMiss = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundMissFeedback");
         soundPods[POD_SIGNAL_1] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod1");
         soundPods[POD_SIGNAL_2] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod2");
         soundPods[POD_SIGNAL_3] = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundPod3");
@@ -1681,6 +1757,7 @@ void Player::setSounds(bool mode)
         soundFeedbackGreat = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGreatFeedback");
         soundFeedbackGood = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundGoodFeedback");
         soundFeedbackBad = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+        soundFeedbackMiss = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundMissFeedback");
         for (int i = 0; i < NUM_POD_SIGNALS; ++i)
             soundPods[i] = NULL;
         soundCollision = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundCollision");
@@ -1830,24 +1907,6 @@ void Player::addAction(ActionCode actType)
     actions.push_back(act);
 }
 
-float flyOutCounter = 0.0f;
-float flyOutDuration = 0.25f;
-float endAnimationSuccessDuration = 3.0f;
-float endAnimationFailDuration = 1.5f;
-bool endAnimationBegin = false;
-
-float flyOutSpeed = 0.0f;
-float flyOutIncr = 0.01f;
-bool flyOutSpeedUp = true;
-
-float flyOutCamSpeed = 0.0f;
-float flyOutAngleY = 0.0f;
-float flyOutAngleX = 0.0f;
-
-bool flyLeft = true;
-
-bool soundStart = false;
-
 void Player::update(float elapsed)
 {
     totalElapsed += elapsed;
@@ -1863,6 +1922,13 @@ void Player::update(float elapsed)
         startMusicTimer -= elapsed;
         if (startMusicTimer <= 0.0)
             soundMusic->play();
+        if (fadeMusic)
+        {
+            float vol = soundMusic->getVolume();
+            vol -= (0.5 * musicVolume) * elapsed;
+            if (vol < 0.0) vol = 0.0;
+            soundMusic->setVolume(vol);
+        }
     }
     
     // Determine the speed of the player for this update
@@ -2583,12 +2649,21 @@ bool Player::loadProgress(std::string savePath)
 // Initializes control settings
 void Player::initSettings()
 {
-    maxVel = 4500.0f;   // Maximum motion velocity                  original: 4500.0f
-    minVelStopper = 1000.0f;    // Stop gliding at center of panels       original2 : 900.0f
-    dampingDecayFree = 0.9500f; // Free Motion damping multiplier          original: 0.9661f
-    dampingDecayStop = 0.5000f; // Stop Motion damping multiplier           original: 0.1000f
-    dampingDropFree = 50.0f;    // Free Motion damping linear drop          original2 : 50.0f
-    dampingDropStop = 50.0f;    // Stop Motion damping linear drop          original2 : 50.0f
+    //maxVel = 4500.0f;   // Maximum motion velocity                  original: 4500.0f
+    //minVelStopper = 1000.0f;    // Stop gliding at center of panels       original2 : 900.0f
+    //dampingDecayFree = 0.9500f; // Free Motion damping multiplier          original: 0.9661f
+    //dampingDecayStop = 0.5000f; // Stop Motion damping multiplier           original: 0.1000f
+    //dampingDropFree = 50.0f;    // Free Motion damping linear drop          original2 : 50.0f
+    //dampingDropStop = 50.0f;    // Stop Motion damping linear drop          original2 : 50.0f
+    
+    // VBZ
+    maxVel = 4500.0f;   // Maximum motion velocity
+    minVelFree = 200.0f;
+    minVelStopper = 1150.0f;    // Stop gliding at center of panels
+    dampingDecayFree = 0.937f; // Free Motion damping multiplier
+    dampingDecayStop = 0.500f; // Stop Motion damping multiplier
+    dampingDropFree = 25.0f;    // Free Motion damping linear drop
+    dampingDropStop = 50.0f;    // Stop Motion damping linear drop
 }
 
 Player::~Player()

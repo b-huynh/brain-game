@@ -64,10 +64,10 @@ Util::ConfigGlobal::ConfigGlobal()
     podStemRadius = tunnelSegmentWidth / 100.0;
     podStemLength = tunnelWallLength / 2.0;
     podRotateSpeed = 5.0;
-    podCollisionMin = 0.20;
-    podCollisionMax = 0.40;
-    distractorCollisionMin = 0.25;
-    distractorCollisionMax = 0.35;
+    podCollisionMin = 0.25; // 0.20
+    podCollisionMax = 0.65; // 0.40
+    distractorCollisionMin = 0.40; // 0.25
+    distractorCollisionMax = 0.50; // 0.35
     podBinSize1 = 10;
     podBinSize2 = 5;
     podBinSize3 = 3;
@@ -360,8 +360,8 @@ Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
 void Util::ConfigGlobal::initPaths()
 {
 #if defined(OGRE_IS_IOS)
-    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
-    configPath = Util::getIOSDir() + "/" + playerName + "/" + "config.json";
+    savePath = Util::getIOSDir() + "/" + playerName + ".save";
+    configPath = Util::getIOSDir() + "/config.json";
     configBackup = Util::getIOSDir() + "/config.json";
 #else
     savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
@@ -1619,7 +1619,7 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
-void PodInfo::performHoldout(char phase)
+void PodInfo::performHoldout(char phase, bool sound)
 {
     //float rand_holdOut = Ogre::Math::UnitRandom();
     float rand_signal = Ogre::Math::UnitRandom();
@@ -1628,7 +1628,10 @@ void PodInfo::performHoldout(char phase)
         switch(phase) {
             case 'A':   // levels that normally have color and sound active
                 if( rand_signal < 0.5f ) {
-                    podColor = POD_COLOR_HOLDOUT;
+                    if (sound)
+                        podColor = POD_COLOR_HOLDOUT;
+                    else
+                        podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: color" << std::endl;
                 }
                 else {
@@ -1638,7 +1641,10 @@ void PodInfo::performHoldout(char phase)
                 break;
             case 'B':   // levels that normally have shape and sound active
                 if( rand_signal < 0.5f ) {
-                    podShape = POD_SHAPE_HOLDOUT;
+                    if (sound)
+                        podShape = POD_SHAPE_HOLDOUT;
+                    else
+                        podSound = POD_SOUND_HOLDOUT;
                     std::cout << "Hold out: shape" << std::endl;
                 }
                 else {
@@ -1649,32 +1655,42 @@ void PodInfo::performHoldout(char phase)
             case 'C':   // levels that normally have sound only active
                 break;
             case 'D':   // levels that normally have all three signals active
-                if( rand_signal < 0.167f ) {
-                    podColor = POD_COLOR_HOLDOUT;
-                    podShape = POD_SHAPE_HOLDOUT;
-                    std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                if (sound)
+                {
+                    if( rand_signal < 0.167f ) {
+                        podColor = POD_COLOR_HOLDOUT;
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                    }
+                    else if( rand_signal < 0.333f ) {
+                        podSound = POD_SOUND_HOLDOUT;
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: sound and shape (color only)" << std::endl;
+                    }
+                    else if( rand_signal < 0.500f ) {
+                        podColor = POD_COLOR_HOLDOUT;
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: color and sound (shape only)" << std::endl;
+                    }
+                    else if( rand_signal < 0.667f ) {
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color (shape and sound only)" << std::endl;
+                    }
+                    else if( rand_signal < 0.824f ) {
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape (color and sound only)" << std::endl;
+                    }
+                    else {
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                    }
                 }
-                else if( rand_signal < 0.333f ) {
-                    podSound = POD_SOUND_HOLDOUT;
-                    podShape = POD_SHAPE_HOLDOUT;
-                    std::cout << "Hold out: sound and shape (color only)" << std::endl;
-                }
-                else if( rand_signal < 0.500f ) {
-                    podColor = POD_COLOR_HOLDOUT;
-                    podSound = POD_SOUND_HOLDOUT;
-                    std::cout << "Hold out: color and sound (shape only)" << std::endl;
-                }
-                else if( rand_signal < 0.667f ) {
-                    podColor = POD_COLOR_HOLDOUT;
-                    std::cout << "Hold out: color (shape and sound only)" << std::endl;
-                }
-                else if( rand_signal < 0.824f ) {
-                    podShape = POD_SHAPE_HOLDOUT;
-                    std::cout << "Hold out: shape (color and sound only)" << std::endl;
-                }
-                else {
-                    podSound = POD_SOUND_HOLDOUT;
-                    std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                else
+                {
+                    if (rand_signal < 0.5f)
+                        podColor = POD_COLOR_HOLDOUT;
+                    else
+                        podShape = POD_SHAPE_HOLDOUT;
                 }
             case 'E':   // recess levels
                 break;
@@ -1684,5 +1700,18 @@ void PodInfo::performHoldout(char phase)
                 break;
         }
     }
+}
 
+Vector3 Util::EulerRotate(Vector3 v, Degree d, char Axis)
+{
+    switch(Axis) {
+        case 'x':
+            return Vector3(v.x, v.y * Math::Cos(d) - v.z * Math::Sin(d), v.y * Math::Sin(d) + v.z * Math::Cos(d));
+        case 'y':
+            return Vector3(v.x * Math::Cos(d) + v.z * Math::Sin(d), v.y, -v.x * Math::Sin(d) + v.z * Math::Cos(d));
+        case 'z':
+            return Vector3(v.x * Math::Cos(d) - v.y * Math::Sin(d), v.x * Math::Sin(d) + v.y * Math::Cos(d), v.z);
+        default:
+            return Vector3(0,0,0);
+    }
 }

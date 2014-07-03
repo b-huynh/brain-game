@@ -59,21 +59,22 @@ void HudStage::update(float elapsed)
     toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
     // toggle4 is always n-back 0
 
-    //if (!tunnel->needsCleaning())
-    //    resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    //else
-    //    resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
-    
+    // Set up pause navigation texture with appropriate active buttons
     LevelSet* levels = player->getLevels();
     int row = player->getLevelRequestRow();
     int col = player->getLevelRequestCol();
     int level = levels->getLevelNo(row, col);
     int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
-    //if (player->isLevelAvailable(nlevel))
-    //    nextButtonBackground->setMaterialName("General/NextButtonRound");
-    //else
-    //    nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
-    
+    bool nextAvail = player->isLevelAvailable(nlevel);
+    bool resumeAvail = !tunnel->needsCleaning();
+    if (nextAvail && resumeAvail)
+        pauseNavigationBackground->setMaterialName("General/PauseNav1");
+    else if (!nextAvail && resumeAvail)
+        pauseNavigationBackground->setMaterialName("General/PauseNav2");
+    else if (nextAvail && !resumeAvail)
+        pauseNavigationBackground->setMaterialName("General/PauseNav3");
+    else
+        pauseNavigationBackground->setMaterialName("General/PauseNav4");
     
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
@@ -592,6 +593,7 @@ void HudStage::initOverlay()
     label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("MainSmall");
+    label4->setCaption(Util::toStringInt(speedSlider->getIndex()));
     
     label5->setMetricsMode(GMM_RELATIVE);
     label5->setAlignment(TextAreaOverlayElement::Right);
@@ -670,7 +672,6 @@ void HudStage::initOverlay()
     
     float pauseNavHeight = 0.45;
     float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
-    pauseNavigationBackground->setMaterialName("General/PauseNav");
     pauseNavigationBackground->setMetricsMode(GMM_RELATIVE);
     pauseNavigationBackground->setPosition(0.50 - pauseNavWidth / 2, 0.50 - pauseNavHeight / 2);
     pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
@@ -828,19 +829,17 @@ bool HudStage::isGoButtonActive() const
     return goButtonActive;
 }
 
-void HudStage::notifyGoButton(bool active)
+void HudStage::setGoButtonState(bool active, bool color)
 {
     goButtonActive = active;
     buttons[BUTTON_GO].setActive(goButtonActive);
     if (goButtonActive)
-    {
         buttons[BUTTON_GO].show();
-        goBackground->setMaterialName("General/ButtonGo");
-    }
     else
-    {
         buttons[BUTTON_GO].hide();
+    if (color)
+        goBackground->setMaterialName("General/ButtonGo");
+    else
         goBackground->setMaterialName("General/ButtonGoGray");
-    }
 }
 

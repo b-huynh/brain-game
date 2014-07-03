@@ -1250,7 +1250,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                ret.performHoldout(phase);
+                ret.performHoldout(phase, player->soundVolume > 0.0);
             }
             
             ++holdoutIndex;
@@ -1309,7 +1309,9 @@ std::vector<PodInfo> Tunnel::getNextPowerupInfo(SectionInfo segment, const std::
     //if (powerups.size() <= 0) return ret;
     //power = powerups[rand() % powerups.size()];
     
-    if (getTimeLeft() >= 5.0 && getTimeLeft() <= 25.0)
+    // Assumes number of satisfied criteria is always 8
+    if (getTimeLeft() >= 5.0 && getTimeLeft() <= 25.0 &&
+        player->getNumCorrectTotal() >= 2 * player->getNumWrongTotal())
         power = POWERUP_TIME_WARP;
     
     if (availDirs.size() > 0 && extractPowerup(power))
@@ -1420,6 +1422,7 @@ void Tunnel::renewSegment(SectionInfo sectionInfo)
     for (int i = 0; i < oldNumPods && activePods.size() > 0; ++i)
         activePods.pop_front();
     
+    nsegment->makeDecreasingTransition = false;
     if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 5 && Util::getNumSides(sectionInfo.sidesUsed) == 3 )
         nsegment->makeDecreasingTransition = true;
     else if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 7 && Util::getNumSides(sectionInfo.sidesUsed) == 5 )
@@ -1846,6 +1849,7 @@ void Tunnel::gateAnimation(float elapsed)
                     OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("GateOpen");
                     sound->setVolume(player->soundVolume);
                     sound->play();
+                    player->stopMusic();
                 }
                 else {
                     gateDelayTimer += elapsed;

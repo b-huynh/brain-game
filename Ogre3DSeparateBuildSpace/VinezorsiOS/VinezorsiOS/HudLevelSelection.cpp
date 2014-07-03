@@ -459,6 +459,11 @@ void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, Pan
     }
     else
     {
+        if (player->hasLevelProgress(levelSelect))
+        {
+            PlayerProgress progress = player->getLevelProgress(levelSelect);
+            if (progress.rating >= 0) levelScore->setCaption(Util::toStringInt(progress.score));
+        }
         levelBackground->setMaterialName("General/LevelBarUnavailable");
         //levelItem->setMaterialName("General/PlanetUnavailable");
         levelName->setColour(ColourValue::ColourValue(0.5, 0.5, 0.5));

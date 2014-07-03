@@ -16,7 +16,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEMO_BUILD
-#define DEBUG_MODE
+//#define DEBUG_MODE
 //#define NETWORKING
 #define FONT_SZ_MULT 1.75
 
@@ -96,7 +96,7 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
     
-    void performHoldout(char phase);
+    void performHoldout(char phase, bool sound);
 };
 
 // Vine Info
@@ -359,6 +359,8 @@ namespace Util
     
     void tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float lengthPerTarget, float approxTotalTime, float bestTime);
     float getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments);
+    
+    Vector3 EulerRotate(Vector3 v, Degree d, char Axis);
 };
 
 

@@ -48,6 +48,7 @@ protected:
     PanelOverlayElement* soundVolumeSliderBallBackground;
     TextAreaOverlayElement* soundVolumeSliderText;
     TextAreaOverlayElement* soundVolumeSliderDisplay;
+    TextAreaOverlayElement* soundVolumeSliderWarning;
     
     PanelOverlayElement* enableTutorialsEntireBackground;
     TextAreaOverlayElement* enableTutorialsTextDisplay;
