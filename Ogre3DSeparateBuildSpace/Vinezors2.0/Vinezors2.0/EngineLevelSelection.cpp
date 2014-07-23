@@ -107,7 +107,7 @@ void EngineLevelSelection::activatePerformPinch()
     else
     {
         PlayerProgress value;
-        value.rating = 3;
+        value.rating = 5;
         player->setAllProgressTo(value);
     }
 #endif
@@ -166,7 +166,7 @@ void EngineLevelSelection::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_L:
         {
             PlayerProgress value;
-            value.rating = 3;
+            value.rating = 5;
             player->setAllProgressTo(value);
             break;
         }

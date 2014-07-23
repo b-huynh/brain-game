@@ -812,6 +812,8 @@ void Tunnel::checkIfDone()
                 setDone(FAIL);//setDone(EVEN);
             else if (stageTime > 0 && getTimeLeft() <= 0)
                 setDone(FAIL);//setDone(EVEN);
+            else if (player->getHP() <= globals.HPNegativeLimit)
+                setDone(FAIL);
         }
         else //if (getMode() == STAGE_MODE_RECESS)
         {
@@ -1065,6 +1067,12 @@ int Tunnel::getHighestCriteria() const
     return ret;
 }
 
+// Return the n-back of the first item in the collection criteria list
+int Tunnel::getFirstCriteria() const
+{
+    return collectionCriteria.size() > 0 ? collectionCriteria[0].nback : 0;
+}
+
 // Returns the number of required collection criterias
 int Tunnel::getNumRequiredCriteria() const
 {
@@ -1111,7 +1119,6 @@ SectionInfo Tunnel::getNextSegmentInfo(SectionInfo sectionInfo) const
 PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
 {
     PodInfo ret;
-    
     int index = types.size();
     if (getMode() == STAGE_MODE_TEACHING || getMode() == STAGE_MODE_RECESS)
     {

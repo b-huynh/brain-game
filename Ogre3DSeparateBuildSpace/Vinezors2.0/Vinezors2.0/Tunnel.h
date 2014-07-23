@@ -232,6 +232,7 @@ public:
     bool setAllCriteriaTo(bool value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
+    int getFirstCriteria() const; // just get the n-back of the first item, efficient then scanning list
     int getNumRequiredCriteria() const;
     int getNumSatisfiedCriteria() const;
 	void removeSegment();

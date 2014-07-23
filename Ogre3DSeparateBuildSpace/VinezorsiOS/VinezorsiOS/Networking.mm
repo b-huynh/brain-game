@@ -19,7 +19,7 @@ bool configStageType(std::string configPath, std::string configKey)
     NSError* error;
     NSString* nsConfigPath = [NSString stringWithUTF8String:configPath.c_str()];
     NSString* jsonString = [[NSString alloc] initWithContentsOfFile:nsConfigPath encoding:NSUTF8StringEncoding error:NULL];
-
+    
     if (!jsonString) {
         std::cerr << "ERROR: Could not read contents of file" << std::endl;
         return false;
@@ -105,12 +105,18 @@ bool uploadFile(std::string filePath, std::string user)
         return false;
     }
     
+    // Use unique vendor ID to store log files in server
+    
     NSString* fileName = [_logPath lastPathComponent];
+#if defined(OGRE_IS_IOS)
+    NSString *userName;
+    userName = [UIDevice currentDevice].identifierForVendor.UUIDString; // For IOS 6.0 & greater
+#else
     NSString* userName = [NSString stringWithUTF8String:user.c_str()];
+#endif
     NSData* theData = [str dataUsingEncoding:NSUTF8StringEncoding];
     
     //Create URL request
-    //NSString* urlString = [NSString stringWithFormat: @"http://192.168.2.9:8080/log/%@", userName];
     NSString* urlString = [NSString stringWithFormat: @"http://138.23.175.177:8080/log/%@", userName];
     NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
     [request setURL:[NSURL URLWithString:urlString]];
@@ -151,13 +157,18 @@ bool uploadFile(std::string filePath, std::string user)
  */
 bool syncLogs()
 {
-    NSString* username = [NSString stringWithUTF8String:globals.playerName.c_str()];
+#if defined(OGRE_IS_IOS)
+    NSString *userName;
+    userName = [UIDevice currentDevice].identifierForVendor.UUIDString; // For IOS 6.0 & greater
+#else
+    NSString* userName = [NSString stringWithUTF8String:globals.playerName.c_str()];
+#endif
     NSString* logpath = [NSString stringWithUTF8String:globals.logPath.c_str()];
     logpath = [logpath stringByDeletingLastPathComponent];
     NSArray* logExtensions = @[@"log", @"act", @"session"];
     
     //Get list of files that are already on the server
-    NSString* liststring = [NSString stringWithFormat:@"http://138.23.175.177:8080/listlogs/%@",username];
+    NSString* liststring = [NSString stringWithFormat:@"http://138.23.175.177:8080/listlogs/%@",userName];
     NSURL* listurl = [NSURL URLWithString:liststring];
     NSURLRequest* request = [NSURLRequest requestWithURL:listurl];
     NSData* response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
@@ -202,11 +213,3 @@ bool syncLogs()
     
     return true;
 }
-
-
-
-
-
-
-
-

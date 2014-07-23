@@ -16,7 +16,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEMO_BUILD
-//#define DEBUG_MODE
+#define DEBUG_MODE
 //#define NETWORKING
 #define FONT_SZ_MULT 1.75
 
