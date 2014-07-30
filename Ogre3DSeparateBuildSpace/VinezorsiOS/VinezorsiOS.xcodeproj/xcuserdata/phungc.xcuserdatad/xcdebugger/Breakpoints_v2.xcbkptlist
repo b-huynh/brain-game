@@ -36,13 +36,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "427236426.67564"
+            timestampString = "428269823.345784"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "329"
-            endingLineNumber = "329"
-            landmarkName = "OgreApp::activatePerformLeftMove()"
-            landmarkType = "5">
+            startingLineNumber = "333"
+            endingLineNumber = "333">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -62,11 +60,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "427236426.67564"
+            timestampString = "428269823.345784"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "633"
-            endingLineNumber = "633">
+            startingLineNumber = "637"
+            endingLineNumber = "637">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -152,11 +150,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "427843337.251069"
+            timestampString = "428363502.902949"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1304"
-            endingLineNumber = "1304">
+            startingLineNumber = "1305"
+            endingLineNumber = "1305">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -200,7 +198,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "417"
-            endingLineNumber = "417">
+            endingLineNumber = "417"
+            landmarkName = "Player::isLevelAvailable(int level)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

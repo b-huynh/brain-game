@@ -408,7 +408,7 @@ bool Player::isLevelAvailable(int level) const
     int rowRequirementPrev = levels->getTotalRowRequirement(levelRow - 1);
     
     //std::cout << levelRow << "," << levelCol << " " << rowRequirementCur << " " << totalRatingCur << std::endl;
-    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 3)
+    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 5)
     {
         // For the last level, unlock it only if we are close
         return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
@@ -527,6 +527,13 @@ void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
     this->maxSpeed = maxSpeed;
     baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
     finalSpeed = getTotalSpeed();
+    
+    // Update for logs
+    if (sessions.size() > 0)
+    {
+        sessions.back().runSpeedIn = baseSpeed;
+        sessions.back().runSpeedOut = -1;
+    }
 }
 
 void Player::setSeed(unsigned value)
@@ -1229,7 +1236,8 @@ void Player::recordInfo()
             // This code block is to record data of the pods
             Result result;
             memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
-            result.eventID = tunnel->getStageNo();
+            result.eventID = globals.stageID;
+            result.levelID = tunnel->getStageNo();
             result.taskType = tunnel->getPhase() - 'A';
             //result.nback = tunnel->getNBack();        // Is always 3 due to collection criterias
             result.nback = tunnel->getFirstCriteria();  // more accurate for before
@@ -1484,28 +1492,21 @@ void Player::newTunnel(const std::string & nameMusic)
     selectedTarget = NULL;
     
     Session sess;
-    sess.sessionNo = skillLevel.sessionID;
-    sess.eventID = tunnel->getStageNo();
+    sess.eventID = globals.stageID;
+    sess.levelID = tunnel->getStageNo();
     sess.taskType = tunnel->getPhase() - 'A';
-    sess.stageTime = tunnel->getStageTime();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         sess.nback = 0;
     else
-        sess.nback = tunnel->getNBack();
-    if (tunnel->getPhase() == 'A')
-        sess.rep = skillLevel.set1Rep;
-    else if (tunnel->getPhase() == 'B')
-        sess.rep = skillLevel.set2Rep;
-    else if (tunnel->getPhase() == 'C')
-        sess.rep = skillLevel.set3Rep;
-    else
-        sess.rep = -1;
+        // nback variable in tunnel not accurate due to holdout
+        // Examine nback on a criteria will do for now.
+        sess.nback = tunnel->getFirstCriteria();
+    // Redundant to set speed here, the speed slider may adjust value making this inaccurate.
+    // It is instead updated in set starting speed
     sess.runSpeedIn = baseSpeed;
     sess.runSpeedOut = -1;
-    sess.maxSpeed = maxSpeed;
-    sess.navScore = skillLevel.navigation;
     sess.TP = -1;
     sess.FP = -1;
     sess.TN = -1;
@@ -1906,7 +1907,8 @@ void Player::decideFinalSpeed(float elapsed)
 void Player::addAction(ActionCode actType)
 {
     Action act;
-    act.eventID = tunnel ? tunnel->getStageNo() : -1;
+    act.eventID = globals.stageID;
+    act.levelID = tunnel ? tunnel->getStageNo() : -1;
     act.action = actType;
     act.timestamp = static_cast<int>(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     act.baseSpeed = baseSpeed;
@@ -2266,6 +2268,7 @@ void Player::saveAllResults(Evaluation eval)
     saveActions(globals.actionPath);
     saveSession(globals.sessionPath);
     saveProgress(globals.savePath);
+    globals.stageID++;
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -2303,6 +2306,7 @@ bool Player::saveStage(std::string file)
             out << "% SegEncSW" << endl;
             out << "% SegEncW" << endl;
             out << "% Event Number { 0, inf }" << endl;
+            out << "% Level Number { 0, inf }" << endl;
             out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Holdout, 4=Recess }" << endl;
             out << "% N-Back { 0, inf }" << endl;
             out << "% Navigation Level { 0, inf }" << endl;
@@ -2324,7 +2328,7 @@ bool Player::saveStage(std::string file)
             out << "% Segment Angle { 0, inf }" << endl;
             out << "% Segment Panels { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber TaskType N-Back Navigation PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed NavScore SegmentDir SegmentAngle SegmentPanels" << endl;
+            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back Navigation PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed NavScore SegmentDir SegmentAngle SegmentPanels" << endl;
         }
         
         for (std::list<Result>::iterator it = results.begin(); it != results.end(); ++it) {
@@ -2337,6 +2341,7 @@ bool Player::saveStage(std::string file)
                 out << it->segmentEncoding[i] << " ";
             }
             out << it->eventID << " "
+            << it->levelID << " "
             << it->taskType << " "
             << it->nback << " "
             << it->navigation << " "
@@ -2399,18 +2404,20 @@ bool Player::saveActions(std::string file)
             out << "% debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Event Number { 0, inf }" << endl;
+            out << "% Level Number { 0, inf }" << endl;
             out << "% Action Type { 0=None, 1=SingleTap, 2=DoubleTap, 3=HoldTap, 4=SwipeLeft, 5=SwipeRight, 6=Pinch }" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "% Base Speed { 0, inf }" << endl;
             out << "% Final Speed { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% EventNumber ActionType Timestamp BaseSpeed FinalSpeed" << endl;
+            out << "% EventNumber LevelNumber ActionType Timestamp BaseSpeed FinalSpeed" << endl;
         }
         
         for (std::list<Action>::iterator it = actions.begin(); it != actions.end(); ++it) {
             //out << SOUTH << " "
             
             out << it->eventID << " "
+            << it->levelID << " "
             << it->action << " "
             << it->timestamp << " "
             << it->baseSpeed << " "
@@ -2461,18 +2468,14 @@ bool Player::saveSession(std::string file)
             out << "% Session Log: " << endl;
             out << "% debug seed: " << seed << endl;
             out << "%" << endl;
-            out << "% Session Number { 0, inf }" << endl;
             out << "% Event Number { 0, inf }" << endl;
-            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Navigation, 4=Speed, 5=Training 6=Recess, 7=Special 2-Back }" << endl;
-            out << "% Intended Stage Duration (s)" << endl;
+            out << "% Level Number { 0, inf }" << endl;
+            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Holdout, 4=Recess }" << endl;
             out << "% TSin - Timestamp In (ms)" << endl;
             out << "% TSout - Timestamp Out (ms)" << endl;
             out << "% N-Back { 0, inf }" << endl;
-            out << "% Rep { -1, inf }" << endl;
             out << "% RunSpeedIn { 0, inf }" << endl;
             out << "% RunSpeedOut { 0, inf }" << endl;
-            out << "% MaxSpeed { 0, inf }" << endl;
-            out << "% NavScore { 0, inf }" << endl;
             out << "% TP - Total Picked and Match { 0, inf }" << endl;
             out << "% FP - Total Picked and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
@@ -2480,21 +2483,17 @@ bool Player::saveSession(std::string file)
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore TP FP TN FN ObsHit ObsAvoid " << endl;
+            out << "% EventNumber LevelNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore TP FP TN FN ObsHit ObsAvoid " << endl;
         }
         
-        out << sessions.back().sessionNo << " "
-        << sessions.back().eventID << " "
+        out << sessions.back().eventID << " "
+        << sessions.back().levelID << " "
         << sessions.back().taskType << " "
-        << sessions.back().stageTime << " "
         << sessions.back().timestampIn << " "
         << sessions.back().timestampOut << " "
         << sessions.back().nback << " "
-        << sessions.back().rep << " "
         << sessions.back().runSpeedIn << " "
         << sessions.back().runSpeedOut << " "
-        << sessions.back().maxSpeed << " "
-        << sessions.back().navScore << " "
         << sessions.back().TP << " "
         << sessions.back().FP << " "
         << sessions.back().TN << " "

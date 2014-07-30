@@ -122,8 +122,8 @@ void HudStage::update(float elapsed)
         tunnel->addToTimePenalty(2.0f);
         float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
         
-        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
-        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
+        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+ 100.0f * player->getScoring());
+        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+ 200.0f * player->getScoring());
         
         label2->setColour(ColourValue(1.0,1.0,0.0));
         label5->setColour(ColourValue(1.0,1.0,0.0));

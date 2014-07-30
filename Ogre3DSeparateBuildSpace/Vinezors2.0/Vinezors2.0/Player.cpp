@@ -468,42 +468,39 @@ bool Player::hasTriggeredStartup() const
     return !triggerStartup;
 }
 
-// Returns the score of a positive target using the tunnel n-back
-//
-// Later, if points vary by target in a stage, we should pass in
-// the signal that was selected.
+// Returns a multiplier of the score
 float Player::getScoring() const
 {
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
-        return 50.0;
+        return 1.0;
     
     int nvalue = tunnel->getNBackToggle();
     switch (nvalue)
     {
         case 0:
-            return 50.0;
+            return 1.0;
         case 1:
-            return 100.0;
+            return 2.0;
         case 2:
-            return 250.0;
+            return 5.0;
         case 3:
-            return 500.0;
+            return 10.0;
         case 4:
-            return 1000.0;
+            return 20.0;
         case 5:
-            return 2000.0;
+            return 40.0;
         case 6:
-            return 4000.0;
+            return 80.0;
         case 7:
-            return 6000.0;
+            return 120.0;
         case 8:
-            return 8000.0;
+            return 160.0;
         case 9:
-            return 10000.0;
+            return 200.0;
         case 10:
-            return 15000.0;
+            return 300.0;
     }
-    return 5000.0 * nvalue;
+    return 100.0 * (nvalue - 7);
 }
 
 TutorialManager* Player::getTutorialMgr() const
