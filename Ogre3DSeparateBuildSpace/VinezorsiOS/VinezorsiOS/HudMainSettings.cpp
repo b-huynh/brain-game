@@ -47,6 +47,11 @@ void HudMainSettings::update(float elapsed)
     else
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxBlank");
     
+    if (player->syncDataToServer)
+        syncDataButtonBackground->setMaterialName("General/CheckboxGreen");
+    else
+        syncDataButtonBackground->setMaterialName("General/CheckboxBlank");
+    
     if (player->soundVolume <= 0.0)
         soundVolumeSliderWarning->setCaption("Certain features are disabled with sound off");
     else
@@ -76,6 +81,10 @@ void HudMainSettings::alloc()
     enableTutorialsTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsEnableTutorialsTextDisplay"));;
     enableTutorialsButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsEnableTutorialsButtonBackground"));
     
+    syncDataEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSyncDataEntireBackground"));
+    syncDataTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSyncDataTextDisplay"));;
+    syncDataButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSyncDataButtonBackground"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -98,6 +107,10 @@ void HudMainSettings::alloc()
     enableTutorialsEntireBackground->addChild(enableTutorialsTextDisplay);
     overlay1->add2D(enableTutorialsButtonBackground); // Buttons can't be set relative to others
     
+    overlay1->add2D(syncDataEntireBackground);
+    syncDataEntireBackground->addChild(syncDataTextDisplay);
+    overlay1->add2D(syncDataButtonBackground); // Buttons can't be set relative to others
+    
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(controlSettingsButtonBackground);
     overlays.push_back(overlay1);
@@ -111,7 +124,7 @@ void HudMainSettings::alloc()
                                 0, 100, 101, musicVolumeSliderRangeBackground, musicVolumeSliderBallBackground);
     soundVolumeSlider->setSlider("soundvolume", overlays[0], Vector2(0.10, 0.25), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
                                  0, 100, 101, soundVolumeSliderRangeBackground, soundVolumeSliderBallBackground);
-    
+
     positionSliderBalls();
 }
 
@@ -134,6 +147,9 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableTutorialsButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataEntireBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
     if (musicVolumeSlider) delete musicVolumeSlider; musicVolumeSlider = NULL;
@@ -188,7 +204,7 @@ void HudMainSettings::initOverlay()
     soundVolumeSliderWarning->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
     
     enableTutorialsEntireBackground->setMetricsMode(GMM_RELATIVE);
-    enableTutorialsEntireBackground->setPosition(0.30, 0.55);
+    enableTutorialsEntireBackground->setPosition(0.20, 0.50);
     enableTutorialsEntireBackground->setDimensions(0.60, 0.10);
     
     enableTutorialsTextDisplay->setMetricsMode(GMM_RELATIVE);
@@ -197,6 +213,17 @@ void HudMainSettings::initOverlay()
     enableTutorialsTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     enableTutorialsTextDisplay->setFontName("MainSmall");
     enableTutorialsTextDisplay->setCaption("Enable Tutorials");
+    
+    syncDataEntireBackground->setMetricsMode(GMM_RELATIVE);
+    syncDataEntireBackground->setPosition(0.20, 0.60);
+    syncDataEntireBackground->setDimensions(0.60, 0.10);
+    
+    syncDataTextDisplay->setMetricsMode(GMM_RELATIVE);
+    syncDataTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    syncDataTextDisplay->setPosition(0.0, 0.05);
+    syncDataTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    syncDataTextDisplay->setFontName("MainSmall");
+    syncDataTextDisplay->setCaption("Share Gameplay Data to Server");
     
     musicVolumeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
     musicVolumeSliderBallBackground->setMaterialName("General/BasicSliderBall");
@@ -214,7 +241,15 @@ void HudMainSettings::initOverlay()
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.625, 0.600), Vector2(pw, ph), enableTutorialsButtonBackground, NULL);
+        buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.550), Vector2(pw, ph), enableTutorialsButtonBackground, NULL);
+    }
+    
+    // The Sync Data Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLESYNCDATA].setButton("checksyncdata", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.650), Vector2(pw, ph), syncDataButtonBackground, NULL);
     }
 }
 

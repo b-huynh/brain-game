@@ -307,8 +307,8 @@
 			children = (
 				5D4B508C195CE63F00912FC9 /* HudControlSettings.cpp */,
 				5D4B508D195CE63F00912FC9 /* HudControlSettings.h */,
-				5D4B5088195CE63F00912FC9 /* EngineControlSettings.h */,
 				5D4B5089195CE63F00912FC9 /* EngineControlsSettings.cpp */,
+				5D4B5088195CE63F00912FC9 /* EngineControlSettings.h */,
 			);
 			name = ControlSettings;
 			sourceTree = "<group>";

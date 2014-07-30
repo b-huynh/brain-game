@@ -1276,7 +1276,7 @@ material General/LevelBar1Fill
         depth_write off
         texture_unit
         {
-            texture full2.png
+            texture full1.png
         }
       } 
     }
@@ -1293,7 +1293,7 @@ material General/LevelBar2Fill
         depth_write off
         texture_unit
         {
-            texture full4.png
+            texture full2.png
         }
       } 
     }
@@ -1310,7 +1310,41 @@ material General/LevelBar3Fill
         depth_write off
         texture_unit
         {
-            texture level2complete.png
+            texture full3.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar4Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture full4.png
+        }
+      } 
+    }
+}
+
+material General/LevelBar5Fill
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture full5.png
         }
       } 
     }

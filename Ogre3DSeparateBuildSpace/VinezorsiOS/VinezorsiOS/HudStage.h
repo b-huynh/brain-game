@@ -66,6 +66,7 @@ protected:
     OverlayContainer* endTallyContainer;
     TextAreaOverlayElement* endTallyTimeLabel;
     TextAreaOverlayElement* endTallyScoreLabel;
+    TextAreaOverlayElement* endTallyScoreValue;
     PanelOverlayElement* endTallyBackground;
     
     PanelOverlayElement* nbackDisplayBackground;
@@ -100,6 +101,8 @@ protected:
     virtual void alloc();
     virtual void dealloc();
     virtual void initOverlay();
+    
+    void setCollectionBar(bool instant, float elapsed);
 };
 
 #endif /* defined(__Vinezors2_0__HudStage__) */

@@ -42,8 +42,10 @@ Player::Player()
     tutorialMgr = new TutorialManager();
     
     fadeMusic = false;
+    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
+    syncDataToServer = false;
     initSettings();
 }
 
@@ -60,8 +62,10 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     tutorialMgr = new TutorialManager();
     
     fadeMusic = true;
+    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
+    syncDataToServer = false;
     initSettings();
 }
 
@@ -404,7 +408,7 @@ bool Player::isLevelAvailable(int level) const
     int rowRequirementPrev = levels->getTotalRowRequirement(levelRow - 1);
     
     //std::cout << levelRow << "," << levelCol << " " << rowRequirementCur << " " << totalRatingCur << std::endl;
-    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 3)
+    if (totalRatingPrev >= rowRequirementPrev && previousRating >= 5)
     {
         // For the last level, unlock it only if we are close
         return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
@@ -523,6 +527,13 @@ void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
     this->maxSpeed = maxSpeed;
     baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
     finalSpeed = getTotalSpeed();
+    
+    // Update for logs
+    if (sessions.size() > 0)
+    {
+        sessions.back().runSpeedIn = baseSpeed;
+        sessions.back().runSpeedOut = -1;
+    }
 }
 
 void Player::setSeed(unsigned value)
@@ -963,11 +974,12 @@ void Player::testPodGiveFeedback(Pod* test)
         
         //beginBadFuelPickUp();
         
+        xsTimer = 1.0f;
         if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
         else hp += globals.HPNegativeWrongAnswer;
         hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
         
-        tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+        //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
         //tunnel->loseRandomCriteria();
         
         numCorrectCombo = 0;
@@ -996,10 +1008,11 @@ void Player::testPodGiveFeedback(Pod* test)
                 soundFeedbackMiss->play();
             }
         
+            /*
             if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
             else hp += globals.HPNegativeWrongAnswer;
             hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        
+            */
             tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
         
             numCorrectCombo = 0;
@@ -1223,9 +1236,11 @@ void Player::recordInfo()
             // This code block is to record data of the pods
             Result result;
             memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
-            result.eventID = tunnel->getStageNo();
+            result.eventID = globals.stageID;
+            result.levelID = tunnel->getStageNo();
             result.taskType = tunnel->getPhase() - 'A';
-            result.nback = tunnel->getNBack();
+            //result.nback = tunnel->getNBack();        // Is always 3 due to collection criterias
+            result.nback = tunnel->getFirstCriteria();  // more accurate for before
             result.navigation = tunnel->getCurrentNavLevel();
             result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
             result.podInfo = targetinfo;
@@ -1477,28 +1492,21 @@ void Player::newTunnel(const std::string & nameMusic)
     selectedTarget = NULL;
     
     Session sess;
-    sess.sessionNo = skillLevel.sessionID;
-    sess.eventID = tunnel->getStageNo();
+    sess.eventID = globals.stageID;
+    sess.levelID = tunnel->getStageNo();
     sess.taskType = tunnel->getPhase() - 'A';
-    sess.stageTime = tunnel->getStageTime();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         sess.nback = 0;
     else
-        sess.nback = tunnel->getNBack();
-    if (tunnel->getPhase() == 'A')
-        sess.rep = skillLevel.set1Rep;
-    else if (tunnel->getPhase() == 'B')
-        sess.rep = skillLevel.set2Rep;
-    else if (tunnel->getPhase() == 'C')
-        sess.rep = skillLevel.set3Rep;
-    else
-        sess.rep = -1;
+        // nback variable in tunnel not accurate due to holdout
+        // Examine nback on a criteria will do for now.
+        sess.nback = tunnel->getFirstCriteria();
+    // Redundant to set speed here, the speed slider may adjust value making this inaccurate.
+    // It is instead updated in set starting speed
     sess.runSpeedIn = baseSpeed;
     sess.runSpeedOut = -1;
-    sess.maxSpeed = maxSpeed;
-    sess.navScore = skillLevel.navigation;
     sess.TP = -1;
     sess.FP = -1;
     sess.TN = -1;
@@ -1899,7 +1907,8 @@ void Player::decideFinalSpeed(float elapsed)
 void Player::addAction(ActionCode actType)
 {
     Action act;
-    act.eventID = tunnel ? tunnel->getStageNo() : -1;
+    act.eventID = globals.stageID;
+    act.levelID = tunnel ? tunnel->getStageNo() : -1;
     act.action = actType;
     act.timestamp = static_cast<int>(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     act.baseSpeed = baseSpeed;
@@ -1953,8 +1962,11 @@ void Player::update(float elapsed)
     }
 
     //*******//
+    // If score is being calculated, do not continue
     if( winFlag ) return;
-    if( tunnel->getEval() == PASS && tunnel->getFlyOut() ) {
+    // Winning animation
+    if( tunnel->getEval() == PASS && tunnel->getFlyOut() )
+    {
         if( endAnimationBegin ) {
             if( flyOutCounter >= endAnimationSuccessDuration ) {
                 flyOutCounter = 0.0f;
@@ -2028,9 +2040,10 @@ void Player::update(float elapsed)
             Vector3 moveOffset = getCamForward(true) * globals.globalModifierCamSpeed*finalSpeed*elapsed;
             vines[0]->move(moveOffset);
         }
-        return;
     }
-    else if( tunnel->getEval() == FAIL && tunnel->getFlyOut() ) {
+    // Losing animation
+    else if( tunnel->getEval() == FAIL && tunnel->getFlyOut() )
+    {
         if( !soundStart ) {
             OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("LevelFail");
             sound->setVolume(musicVolume);
@@ -2066,30 +2079,31 @@ void Player::update(float elapsed)
             }
             vines[0]->move(getCamUpward() * -flyOutSpeed);
         }
-        return;
     }
-    
-    // Interpolate the camera to get smooth transitions
-    TunnelSlice* next = tunnel->getNext(1);
-    if (next)
+    else // Game is still going
     {
-        Vector3 endOfSlice = next->getEnd();
-        Vector3 dir = (endOfSlice - camPos).normalisedCopy();
-        Vector3 delta = dir * (globals.globalModifierCamSpeed * finalSpeed * elapsed);
-        move(delta);
-        camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
-    }
-    
-    // Orient the ship in front of the camera at all times
-    offsetShip(elapsed);
-    
-    if (!tunnel->isDone())
-    {
-        // Check for collisions for player and the tunnel
-        checkCollisions();
+        // Interpolate the camera to get smooth transitions
+        TunnelSlice* next = tunnel->getNext(1);
+        if (next)
+        {
+            Vector3 endOfSlice = next->getEnd();
+            Vector3 dir = (endOfSlice - camPos).normalisedCopy();
+            Vector3 delta = dir * (globals.globalModifierCamSpeed * finalSpeed * elapsed);
+            move(delta);
+            camRot = oldRot.Slerp(1 - (endOfSlice - camPos).length() / (endOfSlice - oldPos).length(), oldRot, desireRot);
+        }
         
-        // Record the segment info player has passed
-        recordInfo();
+        // Orient the ship in front of the camera at all times
+        offsetShip(elapsed);
+        
+        if (!tunnel->isDone())
+        {
+            // Check for collisions for player and the tunnel
+            checkCollisions();
+            
+            // Record the segment info player has passed
+            recordInfo();
+        }
     }
 }
 
@@ -2199,7 +2213,7 @@ void Player::saveAllResults(Evaluation eval)
     int nrating = -1;
     if (eval == PASS)
     {
-        nrating = 3;
+        nrating = 5;
         incrementNumStagesWon();
     }
     else
@@ -2209,22 +2223,26 @@ void Player::saveAllResults(Evaluation eval)
         if (tunnel->getMode() == STAGE_MODE_RECESS)
         {
             float percentComplete = tunnel->getPercentComplete();
-            if (percentComplete >= 0.9)
+            if (percentComplete >= 0.90)
+                nrating = 4;
+            else if (percentComplete >= 0.75)
+                nrating = 3;
+            else if (percentComplete >= 0.50)
                 nrating = 2;
-            else if (percentComplete >= 0.7)
-                nrating = 1;
             else
-                nrating = 0;
+                nrating = 1;
         }
         else
         {
             int collected = tunnel->getNumSatisfiedCriteria();
-            if (collected >= 5)
-                nrating = 2;
+            if (collected >= 9)
+                nrating = 4;
+            else if (collected >= 6)
+                nrating = 3;
             else if (collected >= 3)
-                nrating = 1;
+                nrating = 2;
             else
-                nrating = 0;
+                nrating = 1;
         }
     }
     PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
@@ -2244,12 +2262,13 @@ void Player::saveAllResults(Evaluation eval)
     // Update other level results/settings
     levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
     levelResult->setRating(nrating); // Assign rating last
-
+    
     setSkillLevel(skillLevel);
     saveStage(globals.logPath);
     saveActions(globals.actionPath);
     saveSession(globals.sessionPath);
     saveProgress(globals.savePath);
+    globals.stageID++;
 }
 
 //Returns false if failed to save to file, true otherwise
@@ -2287,7 +2306,8 @@ bool Player::saveStage(std::string file)
             out << "% SegEncSW" << endl;
             out << "% SegEncW" << endl;
             out << "% Event Number { 0, inf }" << endl;
-            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Navigation, 4=Speed, 5=Training 6=Recess, 7=Special 2-Back }" << endl;
+            out << "% Level Number { 0, inf }" << endl;
+            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Holdout, 4=Recess }" << endl;
             out << "% N-Back { 0, inf }" << endl;
             out << "% Navigation Level { 0, inf }" << endl;
             out << "% Player Loc { 0=Northwest ... 7=West }" << endl;
@@ -2308,7 +2328,7 @@ bool Player::saveStage(std::string file)
             out << "% Segment Angle { 0, inf }" << endl;
             out << "% Segment Panels { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber TaskType N-Back Navigation PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed NavScore SegmentDir SegmentAngle SegmentPanels" << endl;
+            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back Navigation PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed NavScore SegmentDir SegmentAngle SegmentPanels" << endl;
         }
         
         for (std::list<Result>::iterator it = results.begin(); it != results.end(); ++it) {
@@ -2321,6 +2341,7 @@ bool Player::saveStage(std::string file)
                 out << it->segmentEncoding[i] << " ";
             }
             out << it->eventID << " "
+            << it->levelID << " "
             << it->taskType << " "
             << it->nback << " "
             << it->navigation << " "
@@ -2383,18 +2404,20 @@ bool Player::saveActions(std::string file)
             out << "% debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Event Number { 0, inf }" << endl;
+            out << "% Level Number { 0, inf }" << endl;
             out << "% Action Type { 0=None, 1=SingleTap, 2=DoubleTap, 3=HoldTap, 4=SwipeLeft, 5=SwipeRight, 6=Pinch }" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "% Base Speed { 0, inf }" << endl;
             out << "% Final Speed { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% EventNumber ActionType Timestamp BaseSpeed FinalSpeed" << endl;
+            out << "% EventNumber LevelNumber ActionType Timestamp BaseSpeed FinalSpeed" << endl;
         }
         
         for (std::list<Action>::iterator it = actions.begin(); it != actions.end(); ++it) {
             //out << SOUTH << " "
             
             out << it->eventID << " "
+            << it->levelID << " "
             << it->action << " "
             << it->timestamp << " "
             << it->baseSpeed << " "
@@ -2445,18 +2468,14 @@ bool Player::saveSession(std::string file)
             out << "% Session Log: " << endl;
             out << "% debug seed: " << seed << endl;
             out << "%" << endl;
-            out << "% Session Number { 0, inf }" << endl;
             out << "% Event Number { 0, inf }" << endl;
-            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Navigation, 4=Speed, 5=Training 6=Recess, 7=Special 2-Back }" << endl;
-            out << "% Intended Stage Duration (s)" << endl;
+            out << "% Level Number { 0, inf }" << endl;
+            out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Holdout, 4=Recess }" << endl;
             out << "% TSin - Timestamp In (ms)" << endl;
             out << "% TSout - Timestamp Out (ms)" << endl;
             out << "% N-Back { 0, inf }" << endl;
-            out << "% Rep { -1, inf }" << endl;
             out << "% RunSpeedIn { 0, inf }" << endl;
             out << "% RunSpeedOut { 0, inf }" << endl;
-            out << "% MaxSpeed { 0, inf }" << endl;
-            out << "% NavScore { 0, inf }" << endl;
             out << "% TP - Total Picked and Match { 0, inf }" << endl;
             out << "% FP - Total Picked and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
@@ -2464,21 +2483,17 @@ bool Player::saveSession(std::string file)
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore TP FP TN FN ObsHit ObsAvoid " << endl;
+            out << "% EventNumber LevelNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore TP FP TN FN ObsHit ObsAvoid " << endl;
         }
         
-        out << sessions.back().sessionNo << " "
-        << sessions.back().eventID << " "
+        out << sessions.back().eventID << " "
+        << sessions.back().levelID << " "
         << sessions.back().taskType << " "
-        << sessions.back().stageTime << " "
         << sessions.back().timestampIn << " "
         << sessions.back().timestampOut << " "
         << sessions.back().nback << " "
-        << sessions.back().rep << " "
         << sessions.back().runSpeedIn << " "
         << sessions.back().runSpeedOut << " "
-        << sessions.back().maxSpeed << " "
-        << sessions.back().navScore << " "
         << sessions.back().TP << " "
         << sessions.back().FP << " "
         << sessions.back().TN << " "
@@ -2496,86 +2511,14 @@ bool Player::saveSession(std::string file)
     return true;
 }
 
-/*
-// Save based on adaptive player skill level from study
-bool Player::saveProgress(std::string file, bool updateSessionID)
-{
-    std::ofstream out;
-    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
-    bool ret = false;
-    
-    if (updateSessionID)
-        skillLevel.sessionID++;
-    
-    out << skillLevel.sessionID << std::endl;
-    out << skillLevel.set1 << std::endl;
-    out << skillLevel.set2 << std::endl;
-    out << skillLevel.set3 << std::endl;
-    out << skillLevel.set1Rep << std::endl;
-    out << skillLevel.set2Rep << std::endl;
-    out << skillLevel.set3Rep << std::endl;
-    out << skillLevel.set1Notify << std::endl;
-    out << skillLevel.set2Notify << std::endl;
-    out << skillLevel.set3Notify << std::endl;
-    out << skillLevel.navigation << std::endl;
-    out << skillLevel.minSpeed << std::endl;
-    out << skillLevel.averageSpeed << std::endl;
-    out << skillLevel.maxSpeed << std::endl;
-    out << skillLevel.runSpeed1 << std::endl;
-    out << skillLevel.runSpeed2 << std::endl;
-    out << skillLevel.runSpeed3 << std::endl;
-    std::cout << "Writing Stage ID: " << file << std::endl;
-    ret = out.good();
-    
-    out.close();
-    return ret;
-}
- 
-// Load based on adaptive player skill level from study
-bool Player::loadProgress(std::string savePath)
-{
-    std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
-    
-    if (saveFile.good()) {
-        saveFile >> skillLevel.sessionID;
-        saveFile >> skillLevel.set1;
-        saveFile >> skillLevel.set2;
-        saveFile >> skillLevel.set3;
-        saveFile >> skillLevel.set1Rep;
-        saveFile >> skillLevel.set2Rep;
-        saveFile >> skillLevel.set3Rep;
-        saveFile >> skillLevel.set1Notify;
-        saveFile >> skillLevel.set2Notify;
-        saveFile >> skillLevel.set3Notify;
-        saveFile >> skillLevel.navigation;
-        saveFile >> skillLevel.minSpeed;
-        saveFile >> skillLevel.averageSpeed;
-        saveFile >> skillLevel.maxSpeed;
-        saveFile >> skillLevel.runSpeed1;
-        saveFile >> skillLevel.runSpeed2;
-        saveFile >> skillLevel.runSpeed3;
-        
-        std::cout << "Starting from last session StageID " << globals.currStageID << std::endl;
-        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        globals.currStageID = 0;
-        std::cout << "Starting from StageID " << globals.currStageID << std::endl;
-        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    saveFile.close();
-    return ret;
-}
-*/
-
 // Save based on player results in level progression
 bool Player::saveProgress(std::string file)
 {
     std::ofstream out;
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = true;
+    
+    out << "V1.1" << std::endl;
     
     out << levelProgress.size() << std::endl;
     for (int i = 0; i < levelProgress.size(); ++i)
@@ -2586,13 +2529,14 @@ bool Player::saveProgress(std::string file)
     
     out << (*tutorialMgr) << std::endl;
     out << musicVolume << " "
-        << soundVolume << " "
-        << maxVel << " "
-        << minVelStopper << " "
-        << dampingDecayFree << " "
-        << dampingDecayStop << " "
-        << dampingDropFree << " "
-        << dampingDropStop << std::endl;
+    << soundVolume << " "
+    << syncDataToServer << " "
+    << maxVel << " "
+    << minVelStopper << " "
+    << dampingDecayFree << " "
+    << dampingDecayStop << " "
+    << dampingDropFree << " "
+    << dampingDropStop << std::endl;
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -2602,7 +2546,8 @@ bool Player::saveProgress(std::string file)
 }
 
 // Load based on player results in level progression
-bool Player::loadProgress(std::string savePath)
+// Version 1.0
+bool Player::loadProgress1_0(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
     bool ret = false;
@@ -2625,13 +2570,13 @@ bool Player::loadProgress(std::string savePath)
         
         saveFile >> (*tutorialMgr);
         saveFile >> musicVolume
-                 >> soundVolume
-                 >> maxVel
-                 >> minVelStopper
-                 >> dampingDecayFree
-                 >> dampingDecayStop
-                 >> dampingDropFree
-                 >> dampingDropStop;
+        >> soundVolume
+        >> maxVel
+        >> minVelStopper
+        >> dampingDecayFree
+        >> dampingDecayStop
+        >> dampingDropFree
+        >> dampingDropStop;
         
         globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
         ret = true;
@@ -2644,6 +2589,75 @@ bool Player::loadProgress(std::string savePath)
     
     saveFile.close();
     return ret;
+}
+
+// Load based on player results in level progression
+// Version 1.1
+bool Player::loadProgress1_1(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    bool ret = false;
+    
+    if (saveFile.good()) {
+        std::string input;
+        saveFile >> input; // Receive version string
+        
+        int size;
+        saveFile >> size;
+        
+        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
+        for (int i = 0; i < levelProgress.size(); ++i)
+        {
+            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
+            for (int j = 0; j < levelProgress[i].size(); ++j)
+            {
+                std::cout << "Level: " << i << "," << j << std::endl;
+                saveFile >> levelProgress[i][j];
+                std::cout << levelProgress[i][j] << std::endl;
+            }
+        }
+        
+        saveFile >> (*tutorialMgr);
+        saveFile >> musicVolume
+        >> soundVolume
+        >> syncDataToServer
+        >> maxVel
+        >> minVelStopper
+        >> dampingDecayFree
+        >> dampingDecayStop
+        >> dampingDropFree
+        >> dampingDropStop;
+        
+        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = true;
+    } else {
+        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
+        ret = false;
+    }
+    
+    tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_WELCOME);
+    
+    saveFile.close();
+    return ret;
+}
+
+// Loads player progress. First it decides which version,
+// the save file is and calls the correct function
+bool Player::loadProgress(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    
+    if (saveFile.good()) {
+        std::string input;
+        saveFile >> input;
+        
+        saveFile.close();
+        if (input == "V1.1")
+            return loadProgress1_1(savePath);
+        else
+            return loadProgress1_0(savePath);
+    }
+    return false;
 }
 
 // Initializes control settings

@@ -91,6 +91,7 @@ private:
     struct Result {
         char segmentEncoding[NUM_DIRECTIONS];
         int eventID;
+        int levelID;
         int taskType;
         int nback;
         int navigation;
@@ -106,24 +107,21 @@ private:
     };
     struct Action {
         int eventID;
+        int levelID;
         ActionCode action;
         int timestamp;
         int baseSpeed;
         int finalSpeed;
     };
     struct Session {
-        int sessionNo;
         int eventID;
+        int levelID;
         int taskType;
-        int stageTime;
         int timestampIn;
         int timestampOut;
         int nback;
-        int rep;
         int runSpeedIn;
         int runSpeedOut;
-        int maxSpeed;
-        int navScore;
         int TP;
         int FP;
         int TN;
@@ -178,10 +176,12 @@ private:
     
 public:
     bool fadeMusic;
+    float xsTimer; // timer for the three X's display
     
     // Settings Parameters
     float musicVolume;
     float soundVolume;
+    bool syncDataToServer;
     float maxVel;
     float minVelFree; // not recorded and set by player
     float minVelStopper;
@@ -370,6 +370,8 @@ public:
     bool saveSession(std::string file);
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
+    bool loadProgress1_0(std::string savePath);
+    bool loadProgress1_1(std::string savePath);
     bool loadProgress(std::string savePath);
     
     void initSettings();
