@@ -168,7 +168,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)                 //collection criteria
         level.collectionCriteria.push_back(CollectionCriteria(1));
     level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
