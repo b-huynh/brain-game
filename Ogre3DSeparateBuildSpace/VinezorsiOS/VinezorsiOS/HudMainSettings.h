@@ -57,6 +57,7 @@ protected:
     PanelOverlayElement* syncDataEntireBackground;
     TextAreaOverlayElement* syncDataTextDisplay;
     PanelOverlayElement* syncDataButtonBackground;
+    TextAreaOverlayElement* syncDataInternetNotification;
     
     void link(Player* player);
     void unlink();

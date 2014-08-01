@@ -376,7 +376,7 @@ public:
     
     void initSettings();
     
-    bool winFlag;
+    bool endFlag;
     
     ~Player();
 };

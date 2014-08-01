@@ -30,6 +30,7 @@ struct CollectionCriteria
 
 struct StageRequest
 {
+    int levelNo;
     int nback;
     float stageTime;
     std::vector<NavigationLevel> navLevels;
@@ -46,7 +47,7 @@ struct StageRequest
     float minCamSpeed;
     float maxCamSpeed;
     
-    StageRequest() : nback(0), stageTime(120.0), navLevels(), collectionCriteria(), powerups(), nameTunnelTile(""), nameSkybox(""), nameMusic(""), tunnelSectionsPerNavLevel(10), phase('A'), hasHoldout(false), holdoutFrequency(4), initCamSpeed(20.0), minCamSpeed(15.0), maxCamSpeed(25.0) {}
+    StageRequest() : levelNo(0), nback(0), stageTime(120.0), navLevels(), collectionCriteria(), powerups(), nameTunnelTile(""), nameSkybox(""), nameMusic(""), tunnelSectionsPerNavLevel(10), phase('A'), hasHoldout(false), holdoutFrequency(4), initCamSpeed(20.0), minCamSpeed(15.0), maxCamSpeed(25.0) {}
 };
 
 class LevelSet

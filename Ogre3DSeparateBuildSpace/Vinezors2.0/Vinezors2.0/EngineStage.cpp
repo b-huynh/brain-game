@@ -525,7 +525,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
              */
             if (queryGUI == "pause")
             {
-                if (!player->winFlag)
+                if (!player->endFlag)
                 {
                     setPause(true);
                     player->reactGUI();
@@ -1174,7 +1174,8 @@ void EngineStage::setup()
                         globals.tunnelSegmentDepth,
                         globals.tunnelMinAngleTurn,
                         globals.tunnelMaxAngleTurn,
-                        1, // replace or remove...
+                        globals.stageID,    // The n-th tunnel the player is playing
+                        player->getLevels()->getLevelNo(player->getLevelRequestRow(), player->getLevelRequestCol()), // The level number in the level set
                         nmode,
                         level.phase, // replace or remove...
                         nlevel,

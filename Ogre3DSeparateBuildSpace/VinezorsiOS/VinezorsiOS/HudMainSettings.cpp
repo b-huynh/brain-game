@@ -48,9 +48,15 @@ void HudMainSettings::update(float elapsed)
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxBlank");
     
     if (player->syncDataToServer)
+    {
         syncDataButtonBackground->setMaterialName("General/CheckboxGreen");
+        syncDataInternetNotification->setCaption("A Wi-Fi connection must be enabled for this option");
+    }
     else
+    {
         syncDataButtonBackground->setMaterialName("General/CheckboxBlank");
+        syncDataInternetNotification->setCaption("");
+    }
     
     if (player->soundVolume <= 0.0)
         soundVolumeSliderWarning->setCaption("Certain features are disabled with sound off");
@@ -84,6 +90,7 @@ void HudMainSettings::alloc()
     syncDataEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSyncDataEntireBackground"));
     syncDataTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSyncDataTextDisplay"));;
     syncDataButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSyncDataButtonBackground"));
+    syncDataInternetNotification = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsSyncDataInternetNotification"));;
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
@@ -110,6 +117,7 @@ void HudMainSettings::alloc()
     overlay1->add2D(syncDataEntireBackground);
     syncDataEntireBackground->addChild(syncDataTextDisplay);
     overlay1->add2D(syncDataButtonBackground); // Buttons can't be set relative to others
+    syncDataEntireBackground->addChild(syncDataInternetNotification);
     
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(controlSettingsButtonBackground);
@@ -150,6 +158,7 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(syncDataInternetNotification);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
     if (musicVolumeSlider) delete musicVolumeSlider; musicVolumeSlider = NULL;
@@ -224,6 +233,13 @@ void HudMainSettings::initOverlay()
     syncDataTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     syncDataTextDisplay->setFontName("MainSmall");
     syncDataTextDisplay->setCaption("Share Gameplay Data to Server");
+    
+    syncDataInternetNotification->setMetricsMode(GMM_RELATIVE);
+    syncDataInternetNotification->setAlignment(TextAreaOverlayElement::Left);
+    syncDataInternetNotification->setPosition(0.0, 0.09);
+    syncDataInternetNotification->setCharHeight(0.018 * FONT_SZ_MULT);
+    syncDataInternetNotification->setFontName("MainSmall");
+    syncDataInternetNotification->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
     
     musicVolumeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
     musicVolumeSliderBallBackground->setMaterialName("General/BasicSliderBall");

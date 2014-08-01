@@ -18,6 +18,7 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleMain = "GABC";
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
+    stageID = 0;
     sessionTime = 1800.00;
     stageTime = 120.0;
     stageTotalSignals = 300;

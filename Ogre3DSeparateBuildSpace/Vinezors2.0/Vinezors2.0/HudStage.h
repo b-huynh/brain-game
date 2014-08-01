@@ -96,6 +96,9 @@ protected:
     
     bool goButtonActive;
     
+    bool bestScoreAnimationFlag;
+    float bestScoreAnimationTimer;
+    
     void link(Player* player, Tunnel* tunnel);
     void unlink();
     virtual void alloc();

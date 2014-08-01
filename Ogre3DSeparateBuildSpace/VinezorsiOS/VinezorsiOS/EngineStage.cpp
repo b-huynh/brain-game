@@ -525,7 +525,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
              */
             if (queryGUI == "pause")
             {
-                if (!player->winFlag)
+                if (!player->endFlag)
                 {
                     setPause(true);
                     player->reactGUI();
