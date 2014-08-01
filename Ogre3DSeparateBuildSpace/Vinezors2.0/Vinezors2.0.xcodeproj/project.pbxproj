@@ -484,7 +484,7 @@
 		B63D37E917DE87EB001A7191 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = B63D37EC17DE87EB001A7191 /* Build configuration list for PBXProject "Vinezors2.0" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -591,7 +591,6 @@
 		B63D382717DE87EB001A7191 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/lib/release\"",
@@ -618,6 +617,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
 				OGRE_SDK_ROOT = "~/OgreSDKOSX";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lOIS",
 					"-framework",
@@ -633,7 +633,6 @@
 		B63D382817DE87EB001A7191 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -676,12 +675,15 @@
 		B63D382A17DE87EB001A7191 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../OgreSDKOSX/lib/release\"",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGRE_SDK_ROOT = "~/OgreSDKOSX";
 				OTHER_LDFLAGS = "$(inherited)";
 			};
 			name = Debug;
@@ -689,12 +691,15 @@
 		B63D382B17DE87EB001A7191 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../OgreSDKOSX/lib/release\"",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGRE_SDK_ROOT = "~/OgreSDKOSX";
 				OTHER_LDFLAGS = "$(inherited)";
 			};
 			name = Release;

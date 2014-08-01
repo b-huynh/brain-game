@@ -45,6 +45,7 @@ Player::Player()
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
+    holdout = 0.25f;
     syncDataToServer = false;
     initSettings();
 }
@@ -65,6 +66,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
+    holdout = 0.25f;
     syncDataToServer = false;
     initSettings();
 }

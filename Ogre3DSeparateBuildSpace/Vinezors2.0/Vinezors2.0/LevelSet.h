@@ -55,7 +55,8 @@ class LevelSet
 private:
     std::vector<std::vector<StageRequest> > stageList;
 public:
-    LevelSet() : stageList() {}
+    float holdoutFreqvar;
+    LevelSet() : stageList(), holdoutFreqvar(4) {}
     
     // Returns true whether the level exists.
     // Refer to player.h isLevelAvailable to determine whether the player reqs meet playability

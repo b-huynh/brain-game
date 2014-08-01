@@ -1,0 +1,33 @@
+material General/TutorialSlideHoldout1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxHoldout1.jpg
+        }
+      } 
+    }
+}
+
+material General/TutorialSlideHoldout2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxHoldout2.jpg
+        }
+      } 
+    }
+}
