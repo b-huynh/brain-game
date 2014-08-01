@@ -54,6 +54,7 @@ class LevelSet
 private:
     std::vector<std::vector<StageRequest> > stageList;
 public:
+    float holdoutFreqvar;
     LevelSet() : stageList() {}
     
     // Returns true whether the level exists.

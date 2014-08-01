@@ -24,6 +24,8 @@ public:
     
     HudSlider* musicVolumeSlider;
     HudSlider* soundVolumeSlider;
+    HudSlider* holdoutSlider;
+    
 protected:
     Player* player;
     
@@ -43,6 +45,12 @@ protected:
     PanelOverlayElement* musicVolumeSliderBallBackground;
     TextAreaOverlayElement* musicVolumeSliderText;
     TextAreaOverlayElement* musicVolumeSliderDisplay;
+    
+    //Holdout Slider
+    PanelOverlayElement* holdoutSliderRangeBackground;
+    PanelOverlayElement* holdoutSliderBallBackground;
+    TextAreaOverlayElement* holdoutSliderText;
+    TextAreaOverlayElement* holdoutSliderDisplay;
     
     PanelOverlayElement* soundVolumeSliderRangeBackground;
     PanelOverlayElement* soundVolumeSliderBallBackground;

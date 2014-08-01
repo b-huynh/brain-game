@@ -183,6 +183,7 @@ public:
     // Settings Parameters
     float musicVolume;
     float soundVolume;
+    float holdout;
     bool syncDataToServer;
     float maxVel;
     float minVelFree; // not recorded and set by player
