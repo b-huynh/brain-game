@@ -51,6 +51,8 @@ void EngineMainSettings::update(float elapsed)
     player->musicVolume = hud->musicVolumeSlider->getIndex() / 100.0f;
     player->soundVolume = hud->soundVolumeSlider->getIndex() / 100.0f;
     player->holdout = hud->holdoutSlider->getIndex() / 100.0f;
+    player->holdoutLB = hud->holdoutLBSlider->getIndex() / 100.0f;
+    player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
     player->setVolume();
 }
 
@@ -96,6 +98,14 @@ void EngineMainSettings::activateMoved(float x, float y, float dx, float dy)
         {
             hud->holdoutSlider->activateMoved(x, y, dx, dy);
         }
+        else if (hud->holdoutLBSlider && hud->holdoutLBSlider->selected)
+        {
+            hud->holdoutLBSlider->activateMoved(x, y, dx, dy);
+        }
+        else if (hud->holdoutUBSlider && hud->holdoutUBSlider->selected)
+        {
+            hud->holdoutUBSlider->activateMoved(x, y, dx, dy);
+        }
     }
 }
 
@@ -115,6 +125,14 @@ void EngineMainSettings::activatePressed(float x, float y)
         {
             hud->holdoutSlider->activatePressed(x, y);
         }
+        if (hud->holdoutLBSlider)
+        {
+            hud->holdoutLBSlider->activatePressed(x, y);
+        }
+        if (hud->holdoutUBSlider)
+        {
+            hud->holdoutUBSlider->activatePressed(x, y);
+        }
     }
 }
 
@@ -133,6 +151,14 @@ void EngineMainSettings::activateReleased(float x, float y, float dx, float dy)
         else if (hud->holdoutSlider && hud->holdoutSlider->selected)
         {
             hud->holdoutSlider->activateReleased(x, y, dx, dy);
+        }
+        else if (hud->holdoutLBSlider && hud->holdoutLBSlider->selected)
+        {
+            hud->holdoutLBSlider->activateReleased(x, y, dx, dy);
+        }
+        else if (hud->holdoutUBSlider && hud->holdoutUBSlider->selected)
+        {
+            hud->holdoutUBSlider->activateReleased(x, y, dx, dy);
         }
     }
 }

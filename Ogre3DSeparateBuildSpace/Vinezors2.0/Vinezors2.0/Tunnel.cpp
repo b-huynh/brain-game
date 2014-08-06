@@ -1243,7 +1243,26 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
         
+        bool timevar = false;
+        float timefreq;
         
+        //Percentage of stage time being withheld
+        float starttime=10;
+        float endtime=50;
+        
+        //Holdout time bounds
+        float holdouttimelb = stageTime - stageTime*starttime/100;
+        float holdouttimeub = stageTime - stageTime*endtime/100;
+        
+        std::cout<<"LowerBound: "<<holdouttimelb<<std::endl;
+        std::cout<<"UpperBound: "<<holdouttimeub<<std::endl;
+        
+        //setHoldout(hasHoldout, timefreq);
+        if(getTimeLeft()<=holdouttimelb && getTimeLeft()>=holdouttimeub){setHoldout(true, 1);}
+        else {setHoldout(false, 1);}
+        
+        std::cout<<"Total Time Elapsed: "<<getTimeLeft()<<std::endl;
+        std::cout<<"hasHoldout: "<<hasHoldout<<std::endl;
         if( hasHoldout ) {
             if( holdoutCounter >= holdoutFrequency ) {
                 float rand = Ogre::Math::UnitRandom();

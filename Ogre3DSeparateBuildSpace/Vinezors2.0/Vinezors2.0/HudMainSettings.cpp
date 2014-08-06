@@ -42,6 +42,8 @@ void HudMainSettings::update(float elapsed)
     musicVolumeSliderDisplay->setCaption(Util::toStringInt(player->musicVolume * 100));
     soundVolumeSliderDisplay->setCaption(Util::toStringInt(player->soundVolume * 100));
     holdoutSliderDisplay->setCaption(Util::toStringInt(player->holdout * 100));
+    holdoutLBSliderDisplay->setCaption(Util::toStringInt(player->holdoutLB * 100));
+    holdoutUBSliderDisplay->setCaption(Util::toStringInt(player->holdoutUB * 100));
     
     
     if (player->getTutorialMgr()->isEnabled())
@@ -74,6 +76,15 @@ void HudMainSettings::alloc()
     holdoutSliderText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutText"));
     holdoutSliderDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutDisplay"));
 
+    holdoutLBSliderRangeBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsholdoutLBSliderRangeBackground"));
+    holdoutLBSliderBallBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsholdoutLBSliderBallBackground"));
+    holdoutLBSliderText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutLBText"));
+    holdoutLBSliderDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutLBDisplay"));
+    
+    holdoutUBSliderRangeBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsholdoutUBSliderRangeBackground"));
+    holdoutUBSliderBallBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsholdoutUBSliderBallBackground"));
+    holdoutUBSliderText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutUBText"));
+    holdoutUBSliderDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsholdoutUBDisplay"));
     
     soundVolumeSliderRangeBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSoundVolumeSliderRangeBackground"));
     soundVolumeSliderBallBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsSoundVolumeSliderBallBackground"));
@@ -102,6 +113,16 @@ void HudMainSettings::alloc()
     holdoutSliderRangeBackground->addChild(holdoutSliderText);
     holdoutSliderRangeBackground->addChild(holdoutSliderDisplay);
     
+    overlay1->add2D(holdoutLBSliderRangeBackground);
+    holdoutLBSliderRangeBackground->addChild(holdoutLBSliderBallBackground);
+    holdoutLBSliderRangeBackground->addChild(holdoutLBSliderText);
+    holdoutLBSliderRangeBackground->addChild(holdoutLBSliderDisplay);
+    
+    overlay1->add2D(holdoutUBSliderRangeBackground);
+    holdoutUBSliderRangeBackground->addChild(holdoutUBSliderBallBackground);
+    holdoutUBSliderRangeBackground->addChild(holdoutUBSliderText);
+    holdoutUBSliderRangeBackground->addChild(holdoutUBSliderDisplay);
+    
     overlay1->add2D(soundVolumeSliderRangeBackground);
     soundVolumeSliderRangeBackground->addChild(soundVolumeSliderBallBackground);
     soundVolumeSliderRangeBackground->addChild(soundVolumeSliderText);
@@ -119,14 +140,18 @@ void HudMainSettings::alloc()
     musicVolumeSlider = new HudSlider();
     soundVolumeSlider = new HudSlider();
     holdoutSlider = new HudSlider();
+    holdoutLBSlider = new HudSlider();
+    holdoutUBSlider = new HudSlider();
     
     // Horizontal slider
     
-    musicVolumeSlider->setSlider("musicvolume", overlays[0], Vector2(0.10, 0.40), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    musicVolumeSlider->setSlider("musicvolume", overlays[0], Vector2(0.10, 0.25), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
                                 0, 100, 101, musicVolumeSliderRangeBackground, musicVolumeSliderBallBackground);
-    soundVolumeSlider->setSlider("soundvolume", overlays[0], Vector2(0.10, 0.25), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    soundVolumeSlider->setSlider("soundvolume", overlays[0], Vector2(0.10, 0.15), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
                                  0, 100, 101, soundVolumeSliderRangeBackground, soundVolumeSliderBallBackground);
-    holdoutSlider->setSlider("holdout", overlays[0], Vector2(0.10, 0.55), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false, 0, 100, 101, holdoutSliderRangeBackground, holdoutSliderBallBackground);
+    holdoutSlider->setSlider("holdout", overlays[0], Vector2(0.10, 0.35), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false, 0, 100, 101, holdoutSliderRangeBackground, holdoutSliderBallBackground);
+    holdoutLBSlider->setSlider("holdoutLB", overlays[0], Vector2(0.10, 0.45), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false, 0, 100, 101, holdoutLBSliderRangeBackground, holdoutLBSliderBallBackground);
+    holdoutUBSlider->setSlider("holdoutUB", overlays[0], Vector2(0.10, 0.55), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false, 0, 100, 101, holdoutUBSliderRangeBackground, holdoutUBSliderBallBackground);
 
     
     positionSliderBalls();
@@ -148,6 +173,16 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutSliderBallBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutSliderText);
     // OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLBSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLBSliderRangeBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLBSliderBallBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLBSliderText);
+    // OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLBSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutUBSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutUBSliderRangeBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutUBSliderBallBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutUBSliderText);
+    // OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutUBSliderDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderRangeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderBallBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(soundVolumeSliderText);
@@ -161,6 +196,8 @@ void HudMainSettings::dealloc()
     if (musicVolumeSlider) delete musicVolumeSlider; musicVolumeSlider = NULL;
     if (soundVolumeSlider) delete soundVolumeSlider; soundVolumeSlider = NULL;
     if (holdoutSlider) delete holdoutSlider; holdoutSlider = NULL;
+    if (holdoutLBSlider) delete holdoutLBSlider; holdoutLBSlider = NULL;
+    if (holdoutUBSlider) delete holdoutUBSlider; holdoutUBSlider = NULL;
 }
 
 void HudMainSettings::initOverlay()
@@ -203,6 +240,32 @@ void HudMainSettings::initOverlay()
     holdoutSliderText->setFontName("MainSmall");
     holdoutSliderText->setCaption("Holdout Frequency");
     
+    holdoutLBSliderDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutLBSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutLBSliderDisplay->setPosition(0.70, 0.01);
+    holdoutLBSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
+    holdoutLBSliderDisplay->setFontName("MainSmall");
+    
+    holdoutLBSliderText->setMetricsMode(GMM_RELATIVE);
+    holdoutLBSliderText->setAlignment(TextAreaOverlayElement::Left);
+    holdoutLBSliderText->setPosition(0.00, -0.03);
+    holdoutLBSliderText->setCharHeight(0.026 * FONT_SZ_MULT);
+    holdoutLBSliderText->setFontName("MainSmall");
+    holdoutLBSliderText->setCaption("Holdout Lower Bound");
+    
+    holdoutUBSliderDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutUBSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutUBSliderDisplay->setPosition(0.70, 0.01);
+    holdoutUBSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
+    holdoutUBSliderDisplay->setFontName("MainSmall");
+    
+    holdoutUBSliderText->setMetricsMode(GMM_RELATIVE);
+    holdoutUBSliderText->setAlignment(TextAreaOverlayElement::Left);
+    holdoutUBSliderText->setPosition(0.00, -0.03);
+    holdoutUBSliderText->setCharHeight(0.026 * FONT_SZ_MULT);
+    holdoutUBSliderText->setFontName("MainSmall");
+    holdoutUBSliderText->setCaption("Holdout Upper Bound");
+    
     soundVolumeSliderDisplay->setMetricsMode(GMM_RELATIVE);
     soundVolumeSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
     soundVolumeSliderDisplay->setPosition(0.70, 0.01);
@@ -240,6 +303,10 @@ void HudMainSettings::initOverlay()
     soundVolumeSliderBallBackground->setMaterialName("General/BasicSliderBall");
     holdoutSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
     holdoutSliderBallBackground->setMaterialName("General/BasicSliderBall");
+    holdoutLBSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
+    holdoutLBSliderBallBackground->setMaterialName("General/BasicSliderBall");
+    holdoutUBSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
+    holdoutUBSliderBallBackground->setMaterialName("General/BasicSliderBall");
     
     backButtonBackground->setMaterialName("General/BackButton");
     controlSettingsButtonBackground->setMaterialName("General/ControlSettingsButton");
@@ -265,6 +332,10 @@ void HudMainSettings::positionSliderBalls()
     soundVolumeSlider->setBallPosition(player->soundVolume * 100);
     holdoutSlider->adjust();
     holdoutSlider->setBallPosition(player->holdout * 100);
+    holdoutLBSlider->adjust();
+    holdoutLBSlider->setBallPosition(player->holdoutLB * 100);
+    holdoutUBSlider->adjust();
+    holdoutUBSlider->setBallPosition(player->holdoutUB * 100);
 }
 
 void HudMainSettings::link(Player* player)
