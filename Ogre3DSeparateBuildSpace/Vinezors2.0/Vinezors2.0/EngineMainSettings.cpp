@@ -78,6 +78,10 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
         else
             tutorialMgr->enable();
     }
+    else if (queryGUI == "checksyncdata")
+    {
+        player->syncDataToServer = !player->syncDataToServer;
+    }
 }
 
 // The following deal with injecting coordinates to simulate a slider

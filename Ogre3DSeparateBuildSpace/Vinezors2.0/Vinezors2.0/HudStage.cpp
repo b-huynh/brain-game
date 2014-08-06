@@ -14,7 +14,7 @@
 extern Util::ConfigGlobal globals;
 
 HudStage::HudStage(Player* player, Tunnel* tunnel)
-: Hud(), goButtonActive(false)
+: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f)
 {
     link(player, tunnel);
     init();
@@ -114,34 +114,79 @@ void HudStage::update(float elapsed)
         label2->setCharHeight(0.025 * FONT_SZ_MULT);
     }
     
-    // If player is going through score calculation animation go through this
-    if(player->winFlag)
+    // Grow and shrink score display if it is a high score
+    if (bestScoreAnimationFlag)
     {
-        setOverlay(3, true);
+        bestScoreAnimationTimer += elapsed;
+        float sz = 0.024;
+        float dsz = 0.002 * Ogre::Math::Sin(3 * Ogre::Math::PI * bestScoreAnimationTimer) + 0.002;
+        endTallyScoreValue->setCharHeight((sz + dsz) * FONT_SZ_MULT);
+        endTallyScoreValue->setPosition(0.19, 0.11 - dsz);
         
-        tunnel->addToTimePenalty(2.0f);
-        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
+        endTallyScoreLabel->setCharHeight((sz + dsz) * FONT_SZ_MULT);
+        endTallyScoreLabel->setPosition(0.355 + dsz, 0.11 - dsz);
+    }
+    
+    // If player is going through score calculation animation go through this
+    if(player->endFlag)
+    {
+        if (tunnel->getEval() == PASS)
+        {
+            setOverlay(3, true);
         
-        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+ 100.0f * player->getScoring());
-        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+ 200.0f * player->getScoring());
+            tunnel->addToTimePenalty(2.0f);
+            float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
         
-        label2->setColour(ColourValue(1.0,1.0,0.0));
-        label5->setColour(ColourValue(1.0,1.0,0.0));
+            if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
+            else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
         
-        label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
+            label2->setColour(ColourValue(1.0,1.0,0.0));
+            label5->setColour(ColourValue(1.0,1.0,0.0));
+            
+            label2->setCaption(Util::toStringInt(timeLeft));
+            endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
         
-        label5->setCaption(Util::toStringInt(player->getScore()));
+            label5->setCaption(Util::toStringInt(player->getScore()));
+            
+            float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
+            endTallyScoreLabel->setCaption("Best");
+            if (player->getScore() > highScore)
+            {
+                highScore = player->getScore();
+                bestScoreAnimationFlag = true;
+            }
+            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
         
-        // Displays best score in front until cur score exceeds it
-        endTallyScoreLabel->setCaption("Score");
-        endTallyScoreValue->setCaption(Util::toStringInt(player->getScore()));
-        
-        if( timeLeft <= 0.0f ) {
-            label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time    0");
+            if( timeLeft <= 0.0f ) {
+                label2->setCaption("0");
+                endTallyTimeLabel->setCaption("Time    0");
+                tunnel->setCleaning(true);
+                player->endFlag = false;
+            }
+        }
+        else
+        {
+            setOverlay(3, true);
+            
+            label2->setColour(ColourValue(1.0,1.0,0.0));
+            label5->setColour(ColourValue(1.0,1.0,0.0));
+            
+            label2->setCaption(Util::toStringInt(timeLeft));
+            endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
+            
+            label5->setCaption(Util::toStringInt(player->getScore()));
+            
+            float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
+            endTallyScoreLabel->setCaption("Best");
+            if (player->getScore() > highScore)
+            {
+                highScore = player->getScore();
+                bestScoreAnimationFlag = true;
+            }
+            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+            
             tunnel->setCleaning(true);
-            player->winFlag = false;
+            player->endFlag = false;
         }
     }
     // Update these message as long as the tunnel generation is not over
@@ -549,7 +594,8 @@ void HudStage::initOverlay()
     
     endTallyScoreLabel->setMetricsMode(GMM_RELATIVE);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
-    endTallyScoreLabel->setPosition(0.365, 0.11);
+    //endTallyScoreLabel->setPosition(0.365, 0.11);
+    endTallyScoreLabel->setPosition(0.355, 0.11);
     endTallyScoreLabel->setCharHeight(0.024 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("MainSmall");
@@ -586,7 +632,7 @@ void HudStage::initOverlay()
     float pauseNavHeight = 0.45;
     float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
     pauseNavigationBackground->setMetricsMode(GMM_RELATIVE);
-    pauseNavigationBackground->setPosition(0.50 - pauseNavWidth / 2, 0.50 - pauseNavHeight / 2);
+    pauseNavigationBackground->setPosition(0.50 - pauseNavWidth / 2, 0.54 - pauseNavHeight / 2);
     pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
     
     float pauseheight = 0.10;
@@ -609,10 +655,10 @@ void HudStage::initOverlay()
     
     float qheight = 0.085;
     float qwidth = qheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.3675), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
-    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54, 0.46), Vector2(qwidth, qheight), nextButtonBackground, NULL);
-    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.46), Vector2(qwidth, qheight), restartButtonBackground, NULL);
-    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.55), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
+    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.4075), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54, 0.50), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.50), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
     toggleIndicator->setMetricsMode(GMM_RELATIVE);
     toggleIndicator->setDimensions(0.08, 0.08);

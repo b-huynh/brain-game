@@ -91,6 +91,7 @@ private:
     struct Result {
         char segmentEncoding[NUM_DIRECTIONS];
         int eventID;
+        int levelID;
         int taskType;
         int nback;
         int navigation;
@@ -106,24 +107,21 @@ private:
     };
     struct Action {
         int eventID;
+        int levelID;
         ActionCode action;
         int timestamp;
         int baseSpeed;
         int finalSpeed;
     };
     struct Session {
-        int sessionNo;
         int eventID;
+        int levelID;
         int taskType;
-        int stageTime;
         int timestampIn;
         int timestampOut;
         int nback;
-        int rep;
         int runSpeedIn;
         int runSpeedOut;
-        int maxSpeed;
-        int navScore;
         int TP;
         int FP;
         int TN;
@@ -381,7 +379,7 @@ public:
     
     void initSettings();
     
-    bool winFlag;
+    bool endFlag;
     
     ~Player();
 };

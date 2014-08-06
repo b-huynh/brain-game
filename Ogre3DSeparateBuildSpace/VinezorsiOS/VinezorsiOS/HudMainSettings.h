@@ -24,6 +24,8 @@ public:
     
     HudSlider* musicVolumeSlider;
     HudSlider* soundVolumeSlider;
+    HudSlider* holdoutSlider;
+    
 protected:
     Player* player;
     
@@ -44,6 +46,12 @@ protected:
     TextAreaOverlayElement* musicVolumeSliderText;
     TextAreaOverlayElement* musicVolumeSliderDisplay;
     
+    //Holdout Slider
+    PanelOverlayElement* holdoutSliderRangeBackground;
+    PanelOverlayElement* holdoutSliderBallBackground;
+    TextAreaOverlayElement* holdoutSliderText;
+    TextAreaOverlayElement* holdoutSliderDisplay;
+    
     PanelOverlayElement* soundVolumeSliderRangeBackground;
     PanelOverlayElement* soundVolumeSliderBallBackground;
     TextAreaOverlayElement* soundVolumeSliderText;
@@ -57,6 +65,7 @@ protected:
     PanelOverlayElement* syncDataEntireBackground;
     TextAreaOverlayElement* syncDataTextDisplay;
     PanelOverlayElement* syncDataButtonBackground;
+    TextAreaOverlayElement* syncDataInternetNotification;
     
     void link(Player* player);
     void unlink();

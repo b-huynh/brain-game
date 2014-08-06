@@ -190,7 +190,7 @@ void OgreApp::setupDemoScene()
 {
     globals.initPaths();
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    syncConfig();
+    //syncConfig();
 #endif
     
     seed = time(0);
@@ -253,7 +253,7 @@ void OgreApp::endGame()
     player->saveStage(globals.logPath);
     player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    syncLogs(); //Attempt to sync recently save log file.
+    syncLogs();
 #endif
     OgreFramework::getSingletonPtr()->requestOgreShutdown();
 }

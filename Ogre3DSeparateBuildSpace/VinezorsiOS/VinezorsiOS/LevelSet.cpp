@@ -173,7 +173,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)                 //collection criteria
         level.collectionCriteria.push_back(CollectionCriteria(1));
     level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
@@ -206,7 +206,8 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    std::cout<<"Level Set at: "<<holdoutFreqvar<<std::endl;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -348,7 +349,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -490,7 +491,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -632,7 +633,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -774,7 +775,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -916,7 +917,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1058,7 +1059,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1200,7 +1201,7 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    level.holdoutFrequency = 4;
+    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;

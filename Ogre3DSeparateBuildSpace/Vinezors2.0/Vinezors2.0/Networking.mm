@@ -137,7 +137,22 @@ bool uploadFile(std::string filePath, std::string user)
     [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:body];
     
+    
+    
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[[[NSOperationQueue alloc] init] autorelease]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               
+                               if (data == nil || [((NSHTTPURLResponse*)response) statusCode] != 200) {
+                                   NSLog(@"CONNECTION ERROR: Could not upload to %@", urlString);
+                               }
+                               
+                               NSString* returnString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                               NSLog(@"RECEIVED: %@", returnString);
+                           }];
+    /*
     NSHTTPURLResponse* response = nil;
+     
     NSData* returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
     
     if (returnData == nil || [response statusCode] != 200) {
@@ -146,7 +161,8 @@ bool uploadFile(std::string filePath, std::string user)
     }
     
     NSString* returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
-    NSLog(@"RECIEVED: %@", returnString);
+    NSLog(@"RECEIVED: %@", returnString);
+     */
     
     return true;
 }
@@ -171,6 +187,50 @@ bool syncLogs()
     NSString* liststring = [NSString stringWithFormat:@"http://138.23.175.177:8080/listlogs/%@",userName];
     NSURL* listurl = [NSURL URLWithString:liststring];
     NSURLRequest* request = [NSURLRequest requestWithURL:listurl];
+    
+    [NSURLConnection sendAsynchronousRequest:request
+                                    queue:[[[NSOperationQueue alloc] init] autorelease]
+                        completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               
+                            if ([data length] <= 0 || connectionError != nil) {
+                                NSLog(@"CONNECTION ERROR: Could not get loglist from server");
+                                return;
+                            }
+                            
+                            NSError* error;
+                            NSDictionary* json = [NSJSONSerialization
+                                                  JSONObjectWithData:data
+                                                  options:kNilOptions
+                                                  error:&connectionError];
+                            NSArray* filesOnServer = [json objectForKey:@"files"];
+                            
+                            //Enumerate the directory
+                            NSDirectoryEnumerator* enumerator = [[NSFileManager defaultManager] enumeratorAtPath:logpath];
+                            if (enumerator == nil) {
+                                NSLog(@"CONNECTION ERROR: Subject folder probably doesn't exist");
+                                return;
+                            }
+                            
+                            while(NSString* file = [enumerator nextObject]) {
+                                NSString* filePath = [NSString stringWithFormat:@"%@/%@",logpath,file];
+                                NSString* fileExtension = [filePath pathExtension];
+                                
+                                //Check if it's a file or directory.
+                                BOOL isDir = NO;
+                                [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir];
+                                
+                                if (!isDir && //Not a directory
+                                    ![filesOnServer containsObject:file] && //Not on server already
+                                    [logExtensions containsObject:fileExtension]) //Is correct file extension
+                                {
+                                    if (!uploadFile(std::string([filePath UTF8String]), globals.playerName)) {
+                                        NSLog(@"CONNECTION ERROR: Could not upload file %@", filePath);
+                                    }
+                                }
+                            }
+                        }];
+    
+    /*
     NSData* response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     
     if (!response) {
@@ -210,6 +270,7 @@ bool syncLogs()
             }
         }
     }
+     */
     
     return true;
 }

@@ -31,9 +31,9 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 3;
+    static const int NUM_UNIQUE_BUTTONS = 4;
     enum Buttons {
-        BUTTON_BACK, BUTTON_CONTROL_SETTINGS, BUTTON_ENABLETUTORIALS
+        BUTTON_BACK, BUTTON_CONTROL_SETTINGS, BUTTON_ENABLETUTORIALS, BUTTON_ENABLESYNCDATA
     };
     
     // Overlay items for GAME_STATE_MENU
@@ -73,6 +73,11 @@ protected:
     PanelOverlayElement* enableTutorialsEntireBackground;
     TextAreaOverlayElement* enableTutorialsTextDisplay;
     PanelOverlayElement* enableTutorialsButtonBackground;
+    
+    PanelOverlayElement* syncDataEntireBackground;
+    TextAreaOverlayElement* syncDataTextDisplay;
+    PanelOverlayElement* syncDataButtonBackground;
+    TextAreaOverlayElement* syncDataInternetNotification;
     
     void link(Player* player);
     void unlink();

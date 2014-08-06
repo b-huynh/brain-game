@@ -73,7 +73,8 @@ public:
     std::list<Pod*> activePods; // Animating pods
     
     // Stage attributes
-    int stageNo;
+    int playNo; //distinguish different tunnel playthroughs in log file
+    int stageNo; // level number in level set
     StageMode mode;
     char phase;
     float stageTime;
@@ -127,7 +128,7 @@ public:
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int playNo, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -194,6 +195,7 @@ public:
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
+    int getPlayNo() const;
     int getStageNo() const;
     char getPhase() const;
     void determineMaterial();
