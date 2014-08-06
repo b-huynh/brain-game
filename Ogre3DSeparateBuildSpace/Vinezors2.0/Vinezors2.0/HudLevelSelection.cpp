@@ -438,7 +438,11 @@ void HudLevelSelection::setLevelButton(PanelOverlayElement* levelBackground, Pan
         if (player->hasLevelProgress(levelSelect))
         {
             PlayerProgress progress = player->getLevelProgress(levelSelect);
-            if (progress.rating >= 3)
+            if (progress.rating >= 5)
+                levelBackground->setMaterialName("General/LevelBar5Fill");
+            else if (progress.rating >= 4)
+                levelBackground->setMaterialName("General/LevelBar4Fill");
+            else if (progress.rating >= 3)
                 levelBackground->setMaterialName("General/LevelBar3Fill");
             else if (progress.rating == 2)
                 levelBackground->setMaterialName("General/LevelBar2Fill");

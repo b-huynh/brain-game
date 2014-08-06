@@ -190,7 +190,7 @@ void OgreApp::setupDemoScene()
 {
     globals.initPaths();
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    syncConfig();
+    //syncConfig();
 #endif
     
     seed = time(0);
@@ -242,7 +242,7 @@ void OgreApp::setupDemoScene()
     engineStateMgr = new EngineStateManager();
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);
     
-#if defined(OGRE_IS_IOS) && (NETWORKING)
+#if defined(OGRE_IS_IOS) && defined(NETWORKING)
     syncLogs();
 #endif
 }
@@ -253,7 +253,7 @@ void OgreApp::endGame()
     player->saveStage(globals.logPath);
     player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    syncLogs(); //Attempt to sync recently save log file.
+    syncLogs();
 #endif
     OgreFramework::getSingletonPtr()->requestOgreShutdown();
 }
@@ -513,7 +513,7 @@ bool OgreApp::mouseMoved(const OIS::MouseEvent &evt)
     OgreFramework::getSingletonPtr()->mouseMoved(evt);
     if (player->getTutorialMgr()->isVisible())
     {
-        return;
+        return true;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseMoved(evt);
@@ -527,7 +527,7 @@ bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     if (player->getTutorialMgr()->isVisible())
     {
         player->getTutorialMgr()->processInput(Vector2(evt.state.X.abs, evt.state.Y.abs));
-        return;
+        return true;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mousePressed(evt, id);
@@ -540,7 +540,7 @@ bool OgreApp::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     OgreFramework::getSingletonPtr()->mouseReleased(evt, id);
     if (player->getTutorialMgr()->isVisible())
     {
-        return;
+        return true;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->mouseReleased(evt, id);
@@ -553,7 +553,7 @@ bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
 	OgreFramework::getSingletonPtr()->keyPressed(keyEventRef);
     if (player->getTutorialMgr()->isVisible())
     {
-        return;
+        return true;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->keyPressed(keyEventRef);
@@ -566,7 +566,7 @@ bool OgreApp::keyReleased(const OIS::KeyEvent &keyEventRef)
 {
     if (player->getTutorialMgr()->isVisible())
     {
-        return;
+        return true;
     }
 	OgreFramework::getSingletonPtr()->keyReleased(keyEventRef);
     Engine* activeEngine = engineStateMgr->getActiveEngine();

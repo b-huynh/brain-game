@@ -50,8 +50,6 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_INIT:
         {
             setup();
-            if (tunnel->getMode() != STAGE_MODE_RECESS || tunnel->getMode() != STAGE_MODE_TEACHING)
-                globals.setMessage("Set and Verify your Speed", MESSAGE_NORMAL);
             setPause(true);
             stageState = STAGE_STATE_PAUSE;
             
@@ -527,7 +525,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
              */
             if (queryGUI == "pause")
             {
-                if (!player->winFlag)
+                if (!player->endFlag)
                 {
                     setPause(true);
                     player->reactGUI();
@@ -662,7 +660,12 @@ void EngineStage::activatePerformPinch()
 {
 #ifdef DEBUG_MODE
 #if defined(OGRE_IS_IOS)
-    if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+    if (stageState == STAGE_STATE_RUNNING)
+    {
+        player->setGodMode(!player->getGodMode());
+        std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        //tunnel->setDone(PASS);
+    }
     else
 #endif
     {
@@ -1171,7 +1174,8 @@ void EngineStage::setup()
                         globals.tunnelSegmentDepth,
                         globals.tunnelMinAngleTurn,
                         globals.tunnelMaxAngleTurn,
-                        1, // replace or remove...
+                        globals.stageID,    // The n-th tunnel the player is playing
+                        player->getLevels()->getLevelNo(player->getLevelRequestRow(), player->getLevelRequestCol()), // The level number in the level set
                         nmode,
                         level.phase, // replace or remove...
                         nlevel,
@@ -1255,8 +1259,31 @@ void EngineStage::setup()
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SOUND_ONLY);
     if (tunnel->getPhase() == 'D')
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
-
-    speedVerified = false;
+    
+    switch (level.phase)
+    {
+        case 'A':
+            globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
+            break;
+        case 'B':
+            globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
+            break;
+        case 'C':
+            globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
+            break;
+        case 'D':
+            globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
+            break;
+        case 'E':
+            globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
+            break;
+        case 'F':
+            globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
+            break;
+    }
+    globals.appendMessage("\n\nSet and Verify your Speed", MESSAGE_NORMAL);
+    speedVerified = true;
+    
     // Spin Parameters
     maxVel = player->maxVel;
     minVelFree = player->minVelFree;

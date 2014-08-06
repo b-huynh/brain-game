@@ -39,6 +39,8 @@ void EngineMainSettings::enter()
 
 void EngineMainSettings::exit()
 {
+    player->getLevels()->holdoutFreqvar=1/player->holdout;
+    std::cout<<1/player->holdout<<std::endl;
     dealloc();
 }
 
@@ -48,6 +50,7 @@ void EngineMainSettings::update(float elapsed)
     
     player->musicVolume = hud->musicVolumeSlider->getIndex() / 100.0f;
     player->soundVolume = hud->soundVolumeSlider->getIndex() / 100.0f;
+    player->holdout = hud->holdoutSlider->getIndex() / 100.0f;
     player->setVolume();
 }
 
@@ -73,6 +76,10 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
         else
             tutorialMgr->enable();
     }
+    else if (queryGUI == "checksyncdata")
+    {
+        player->syncDataToServer = !player->syncDataToServer;
+    }
 }
 
 // The following deal with injecting coordinates to simulate a slider
@@ -89,6 +96,10 @@ void EngineMainSettings::activateMoved(float x, float y, float dx, float dy)
         {
             hud->soundVolumeSlider->activateMoved(x, y, dx, dy);
         }
+        else if (hud->holdoutSlider && hud->holdoutSlider->selected)
+        {
+            hud->holdoutSlider->activateMoved(x, y, dx, dy);
+        }
     }
 }
 
@@ -104,6 +115,10 @@ void EngineMainSettings::activatePressed(float x, float y)
         {
             hud->soundVolumeSlider->activatePressed(x, y);
         }
+        if (hud->holdoutSlider)
+        {
+            hud->holdoutSlider->activatePressed(x, y);
+        }
     }
 }
 
@@ -118,6 +133,10 @@ void EngineMainSettings::activateReleased(float x, float y, float dx, float dy)
         else if (hud->soundVolumeSlider && hud->soundVolumeSlider->selected)
         {
             hud->soundVolumeSlider->activateReleased(x, y, dx, dy);
+        }
+        else if (hud->holdoutSlider && hud->holdoutSlider->selected)
+        {
+            hud->holdoutSlider->activateReleased(x, y, dx, dy);
         }
     }
 }

@@ -18,6 +18,7 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleMain = "GABC";
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
+    stageID = 0;
     sessionTime = 1800.00;
     stageTime = 120.0;
     stageTotalSignals = 300;
@@ -80,15 +81,15 @@ Util::ConfigGlobal::ConfigGlobal()
     nback = 2;
     control = 1;
     historyMode = -1;
-    startingHP = 0;
-    HPNegativeLimit = -10;
-    HPPositiveLimit = 10;
-    HPNegativeCorrectAnswer = 2;
+    startingHP = 3;
+    HPNegativeLimit = 0;
+    HPPositiveLimit = 5;
+    HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
-    HPNegativeDistractor = -1;
-    HPPositiveCorrectAnswer = 1;
-    HPPositiveWrongAnswer = -2;
-    HPPositiveDistractor = -1;
+    HPNegativeDistractor = 0;
+    HPPositiveCorrectAnswer = 0;
+    HPPositiveWrongAnswer = -1;
+    HPPositiveDistractor = 0;
     wrongAnswerTimePenalty = 10.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 10.0;
@@ -1596,22 +1597,19 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.maxCamSpeed = globals.initCamSpeed + globals.HPPositiveLimit / 2;
     globals.stageTime = approxTotalTime - bestTime;
     
-    std::cout << "HP Positive: " << globals.HPPositiveLimit << std::endl;
-    std::cout << "Speeda: " << globals.maxCamSpeed << std::endl;
-    
     globals.stageTotalSignals = 180; // Enough for constant speed of 30
     globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
     globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
     globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
     globals.stageTotalTargetsVariance = 0;
     
-    globals.startingHP = 0;
-    globals.HPPositiveCorrectAnswer = 1;
-    globals.HPNegativeCorrectAnswer = 1;
+    globals.startingHP = 3;
+    globals.HPPositiveCorrectAnswer = 0;
+    globals.HPNegativeCorrectAnswer = 0;
     globals.HPPositiveWrongAnswer = -1;
     globals.HPNegativeWrongAnswer = -1;
-    globals.HPPositiveDistractor = 0;
-    globals.HPNegativeDistractor = 0;
+    globals.HPPositiveDistractor = -1;
+    globals.HPNegativeDistractor = -1;
 }
 
 float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments)
