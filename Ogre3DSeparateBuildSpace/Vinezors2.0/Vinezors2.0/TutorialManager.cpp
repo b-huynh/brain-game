@@ -131,7 +131,6 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide(insertNL("Challenge:\nLook for matches through listening to only sound."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_HOLDOUT:
-            //ret.push_back(TutorialSlide("", "General/TutorialSlideHoldout1", ""));
             ret.push_back(TutorialSlide(insertNL("Challenge:\nSignals will randomly cloak their color, shape, or sound. Pay attention to more than one feature to identify matches."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_OBSTACLE:
