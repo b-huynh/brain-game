@@ -43,6 +43,10 @@ int LevelSet::getLevelRow(int level) const
     return level / NUM_TASKS;
 }
 
+float LevelSet::get_holdoutFreqvar(){
+    return LevelSet::holdoutFreqvar;
+}
+
 int LevelSet::getLevelCol(int level) const
 {
     return level % NUM_TASKS;

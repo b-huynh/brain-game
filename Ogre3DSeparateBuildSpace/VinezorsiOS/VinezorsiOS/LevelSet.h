@@ -66,6 +66,7 @@ public:
     
     StageRequest retrieveLevel(int levelSelect) const;
     StageRequest retrieveLevel(int row, int col) const;
+    float get_holdoutFreqvar();
     int getLevelNo(int row, int col) const; // Level Selection (row, col) -> (n-back, task)
     int getLevelRow(int level) const;
     int getLevelCol(int level) const;

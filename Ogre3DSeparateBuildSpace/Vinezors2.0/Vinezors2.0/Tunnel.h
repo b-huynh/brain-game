@@ -263,6 +263,8 @@ public:
     void update(float elapsed);
     void respondToToggleCheat();
     
+    void setHoldout(bool val);
+    void setHoldout(int holdoutFrequency);
     void setHoldout(bool val, int holdoutFrequency);
     
     void gateAnimation(float elapsed);

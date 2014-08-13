@@ -182,6 +182,8 @@ public:
     float musicVolume;
     float soundVolume;
     float holdout;
+    float holdoutLB;
+    float holdoutUB;
     bool syncDataToServer;
     float maxVel;
     float minVelFree; // not recorded and set by player

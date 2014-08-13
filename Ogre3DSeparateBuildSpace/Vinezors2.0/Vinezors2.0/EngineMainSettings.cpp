@@ -40,7 +40,9 @@ void EngineMainSettings::enter()
 void EngineMainSettings::exit()
 {
     player->getLevels()->holdoutFreqvar=1/player->holdout;
-    std::cout<<1/player->holdout<<std::endl;
+    player->getLevels()->initializeLevelSet();
+    std::cout<<"Holdout: "<<1/player->holdout<<"   LowerBound: "<<player->holdoutLB <<"   UpperBound: "<<player->holdoutUB<<std::endl;
+    
     dealloc();
 }
 

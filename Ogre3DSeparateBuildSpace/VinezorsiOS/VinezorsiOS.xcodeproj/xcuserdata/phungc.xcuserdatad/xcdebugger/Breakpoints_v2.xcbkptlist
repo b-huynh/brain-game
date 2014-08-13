@@ -277,7 +277,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "768"
             endingLineNumber = "768"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -293,7 +293,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "796"
             endingLineNumber = "796"
-            landmarkName = "HudStage::setGoButtonState(bool active, bool color)"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -309,7 +309,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "795"
             endingLineNumber = "795"
-            landmarkName = "HudStage::setGoButtonState(bool active, bool color)"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
