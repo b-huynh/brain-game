@@ -81,7 +81,7 @@ Util::ConfigGlobal::ConfigGlobal()
     nback = 2;
     control = 1;
     historyMode = -1;
-    startingHP = 3;
+    startingHP = 5;
     HPNegativeLimit = 0;
     HPPositiveLimit = 5;
     HPNegativeCorrectAnswer = 0;
@@ -1603,7 +1603,7 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
     globals.stageTotalTargetsVariance = 0;
     
-    globals.startingHP = 3;
+    globals.startingHP = 5;
     globals.HPPositiveCorrectAnswer = 0;
     globals.HPNegativeCorrectAnswer = 0;
     globals.HPPositiveWrongAnswer = -1;

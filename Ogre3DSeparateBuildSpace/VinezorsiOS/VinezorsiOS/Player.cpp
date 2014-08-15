@@ -479,7 +479,7 @@ float Player::getScoring() const
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         return 50.0;
     
-    int nvalue = tunnel->getNBackToggle();
+    int nvalue = tunnel->getNBackToggle(getToggleBack());
     switch (nvalue)
     {
         case 0:
@@ -918,106 +918,155 @@ void Player::testPodGiveFeedback(Pod* test)
         return;
     test->setPodTested(true);
     
-    bool goodPod = tunnel->getPodIsGood();
-
-    // Determine whether the player got it right or not
-    if (goodPod && test->isPodTaken()) {
-        if (tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getMode() == STAGE_MODE_RECESS)
+    bool nbackPod = tunnel->getPodIsGood(0);
+    bool correctSelection = (nbackPod && getToggleBack() == 0) ||
+                            (!nbackPod && getToggleBack() != 0) ||
+                            tunnel->getMode() == STAGE_MODE_RECESS;
+    bool podTaken = test->isPodTaken();
+    
+#ifdef SPECIAL_PLAY
+    if (nbackPod && correctSelection)
+    {
+        ++numCorrectTotal;
+        ++numCorrectCombo;
+        numWrongCombo = 0;
+        if (podTaken)
+        {
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
+                if (soundFeedbackGood)
+                {
+                    soundFeedbackGood->stop();
+                    soundFeedbackGood->play();
+                }
+            }
+            else
+            {
+                if (soundFeedbackGreat)
+                {
+                    soundFeedbackGreat->stop();
+                    soundFeedbackGreat->play();
+                }
+            }
+            
+            tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3);
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
+                baseSpeed += globals.speedMap[baseSpeed];
+                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            }
+            
+            if (getToggleBack() == 0)
+            {
+                if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
+                else hp += globals.HPNegativeCorrectAnswer;
+                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+            }
+            
+            // Determine Score
+            score += getScoring();
+        }
+    }
+    else if ((nbackPod && !correctSelection) ||
+             (!nbackPod && !correctSelection))
+    {
+        numCorrectCombo = 0;
+        if (!nbackPod && !correctSelection)
+            ++numWrongCombo;
+        if (nbackPod && !correctSelection)
+            ++numMissedTotal;
+        numCorrectBonus = 0;
+        if (podTaken)
+        {
+            if (soundFeedbackBad)
+            {
+                soundFeedbackBad->stop();
+                soundFeedbackBad->play();
+            }
+            ++numWrongTotal;
+            
+            xsTimer = 1.0f;
+            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+            else hp += globals.HPNegativeWrongAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+        }
+    }
+    else //if (!nbackpod && correctSelection)
+    {
+        numSafeTotal++;
+        numCorrectBonus++;
+        if (podTaken)
         {
             if (soundFeedbackGood)
             {
                 soundFeedbackGood->stop();
                 soundFeedbackGood->play();
             }
+            
+            tunnel->satisfyCriteria(-1, 1);
+            
+            // Determine Score
+            score += 50.0f;
         }
-        else
+    }
+#else
+    if (nbackPod && correctSelection)
+    {
+        if (podTaken)
         {
-            if (soundFeedbackGreat)
+            ++numCorrectTotal;
+            ++numCorrectCombo;
+            numWrongCombo = 0;
+            
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
             {
-                soundFeedbackGreat->stop();
-                soundFeedbackGreat->play();
+                if (soundFeedbackGood)
+                {
+                    soundFeedbackGood->stop();
+                    soundFeedbackGood->play();
+                }
             }
+            else
+            {
+                if (soundFeedbackGreat)
+                {
+                    soundFeedbackGreat->stop();
+                    soundFeedbackGreat->play();
+                }
+            }
+            
+            if (tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3))
+            {
+                 baseSpeed += globals.speedMap[baseSpeed];
+                 baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            }
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
+                baseSpeed += globals.speedMap[baseSpeed];
+                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            }
+            
+            if (getToggleBack() == 0)
+            {
+                if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
+                else hp += globals.HPNegativeCorrectAnswer;
+                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+            }
+            
+            // Determine Score
+            score += getScoring();
         }
-        ++numCorrectTotal;
-
-        if (tunnel->satisfyCriteria(tunnel->getNBackToggle()) || tunnel->getMode() == STAGE_MODE_RECESS)
-        {
-            baseSpeed += globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-        }
-        
-        if (getToggleBack() == 0)
-        {
-            if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
-            else hp += globals.HPNegativeCorrectAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        }
-        ++numCorrectCombo;
-        numWrongCombo = 0;
-        
-        if (tunnel->getMode() == STAGE_MODE_PROFICIENCY &&
-            numCorrectCombo % globals.numToSpeedUp == 0)
-        {
-            baseSpeed += globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-        }
-        
-        // Determine Score
-        score += getScoring();
-    }
-    else if (!goodPod && test->isPodTaken())
-    {
-        if (soundFeedbackBad)
-        {
-            soundFeedbackBad->stop();
-            soundFeedbackBad->play();
-        }
-        ++numWrongTotal;
-        
-        //beginBadFuelPickUp();
-        
-        xsTimer = 1.0f;
-        if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-        else hp += globals.HPNegativeWrongAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        
-        //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
-        //tunnel->loseRandomCriteria();
-        
-        numCorrectCombo = 0;
-        ++numWrongCombo;
-        if (numWrongCombo % globals.numToSpeedDown == 0)
-        {
-            baseSpeed -= globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-        }
-        numCorrectBonus = 0;
-    }
-    else if (!goodPod && !test->isPodTaken())
-    {
-        numSafeTotal++;
-        numCorrectBonus++;
-    }
-    else if (goodPod && !test->isPodTaken()) // Missed good
-    {
-        ++numMissedTotal;
-        
-        if (tunnel->getMode() != STAGE_MODE_RECESS && tunnel->getMode() != STAGE_MODE_TEACHING)
+        else if (tunnel->getMode() != STAGE_MODE_RECESS)
         {
             if (soundFeedbackMiss)
             {
                 soundFeedbackMiss->stop();
                 soundFeedbackMiss->play();
             }
-        
-            /*
-            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-            else hp += globals.HPNegativeWrongAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-            */
             tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
-        
+            
             numCorrectCombo = 0;
+            ++numMissedTotal;
             ++numWrongCombo;
             if (numWrongCombo % globals.numToSpeedDown == 0)
             {
@@ -1025,10 +1074,81 @@ void Player::testPodGiveFeedback(Pod* test)
                 baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
             }
             numCorrectBonus = 0;
-        }   
+        }
     }
+    else if ((nbackPod && !correctSelection) ||
+             (!nbackPod && !correctSelection))
+    {
+        numCorrectCombo = 0;
+        if (!nbackPod && !correctSelection)
+            ++numWrongCombo;
+        if (nbackPod && !correctSelection)
+            ++numMissedTotal;
+        numCorrectBonus = 0;
+        if (podTaken)
+        {
+            if (soundFeedbackBad)
+            {
+                soundFeedbackBad->stop();
+                soundFeedbackBad->play();
+            }
+            ++numWrongTotal;
+            
+            //beginBadFuelPickUp();
+            
+            xsTimer = 1.0f;
+            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+            else hp += globals.HPNegativeWrongAnswer;
+            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+            
+            //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+            //tunnel->loseRandomCriteria();
+            
+            baseSpeed -= globals.speedMap[baseSpeed];
+            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+        }
+        else if (!podTaken && nbackPod)
+        {
+            if (soundFeedbackMiss)
+            {
+                soundFeedbackMiss->stop();
+                soundFeedbackMiss->play();
+            }
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
+            
+            numCorrectCombo = 0;
+            ++numMissedTotal;
+            ++numWrongCombo;
+            if (numWrongCombo % globals.numToSpeedDown == 0)
+            {
+                baseSpeed -= globals.speedMap[baseSpeed];
+                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            }
+            numCorrectBonus = 0;
+        }
+    }
+    else if (!nbackPod && correctSelection)
+    {
+        numSafeTotal++;
+        numCorrectBonus++;
+        if (podTaken)
+        {
+            if (soundFeedbackGood)
+            {
+                soundFeedbackGood->stop();
+                soundFeedbackGood->play();
+            }
+            
+            // Determine Score
+            score += 50.0f;
+        }
+    }
+#endif
+    
     // Check for combo mode
     //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
+    // Reset toggle-back to 0-back
+    if (tunnel->getMode() != STAGE_MODE_RECESS) setToggleBack(3);
 }
 
 void Player::determineSpawnCombo()
@@ -1241,8 +1361,7 @@ void Player::recordInfo()
             result.eventID = globals.stageID;
             result.levelID = tunnel->getStageNo();
             result.taskType = tunnel->getPhase() - 'A';
-            //result.nback = tunnel->getNBack();        // Is always 3 due to collection criterias
-            result.nback = tunnel->getFirstCriteria();  // more accurate for before
+            result.nback = tunnel->getNBack();
             result.navigation = tunnel->getCurrentNavLevel();
             result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
             result.podInfo = targetinfo;
@@ -1464,7 +1583,8 @@ void Player::initToggleBack()
     else
         toggle = tunnel->getNBack() - minNBack;
     
-    setToggleBack(toggle);
+    //setToggleBack(toggle);
+    setToggleBack(3);
 }
 
 void Player::newTunnel(const std::string & nameMusic)
@@ -1502,9 +1622,7 @@ void Player::newTunnel(const std::string & nameMusic)
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         sess.nback = 0;
     else
-        // nback variable in tunnel not accurate due to holdout
-        // Examine nback on a criteria will do for now.
-        sess.nback = tunnel->getFirstCriteria();
+        sess.nback = tunnel->getNBack();
     // Redundant to set speed here, the speed slider may adjust value making this inaccurate.
     // It is instead updated in set starting speed
     sess.runSpeedIn = baseSpeed;
@@ -2231,20 +2349,25 @@ void Player::saveAllResults(Evaluation eval)
                 nrating = 3;
             else if (percentComplete >= 0.50)
                 nrating = 2;
-            else
+            else if (percentComplete >= 0.20)
                 nrating = 1;
+            else
+                nrating = 0;
         }
         else
         {
-            int collected = tunnel->getNumSatisfiedCriteria();
-            if (collected >= 9)
+            int numFull = tunnel->getNumSatisfiedCriteria();
+            if (numFull > 15)
                 nrating = 4;
-            else if (collected >= 6)
+            else if (numFull > 10)
                 nrating = 3;
-            else if (collected >= 3)
+            else if (numFull > 5)
                 nrating = 2;
-            else
+            else if (numFull > 0)
                 nrating = 1;
+            else
+                nrating = 0;
+            
         }
     }
     PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
@@ -2271,6 +2394,7 @@ void Player::saveAllResults(Evaluation eval)
     saveSession(globals.sessionPath);
     saveProgress(globals.savePath);
     globals.stageID++;
+    std::cout << "Tunnel Time: " << tunnel->getTotalElapsed() << std::endl;
 }
 
 //Returns false if failed to save to file, true otherwise

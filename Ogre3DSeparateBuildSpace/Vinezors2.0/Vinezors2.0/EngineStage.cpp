@@ -56,10 +56,11 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
+            hud->setOverlay(1, true);
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
@@ -85,8 +86,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -137,8 +138,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(true, speedVerified);
+            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -150,6 +151,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.0);
             break;
         }
         case STAGE_STATE_READY:
@@ -174,8 +176,8 @@ void EngineStage::update(float elapsed)
                 globals.setBigMessage("3");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_DONE:
@@ -457,7 +459,7 @@ void EngineStage::activatePerformDoubleTap(float x, float y)
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
-            player->performBoost();
+            //player->performBoost();
             break;
         case STAGE_STATE_PAUSE:
             break;
@@ -530,6 +532,25 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(true);
                     player->reactGUI();
                     stageState = STAGE_STATE_PROMPT;
+                }
+            }
+            else
+            {
+                std::cout << x << "," << y << std::endl;
+                if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                    if ((x <= globals.screenWidth / 5 || x >= globals.screenWidth - globals.screenWidth / 5) &&
+                        (y >= globals.screenHeight - globals.screenHeight / 5))
+                    {
+                        player->setToggleBack(0);
+                        /*
+                        if (player->getToggleBack() == 0)
+                            player->setToggleBack(3);
+                        else
+                            player->setToggleBack(0);
+                        */
+                        tunnel->respondToToggleCheat();
+                    }
                 }
             }
             break;
@@ -922,6 +943,11 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_SPACE:
         {
             player->setKeySpace(true);
+            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                player->setToggleBack(0);
+                tunnel->respondToToggleCheat();
+            }
             break;
         }
         case OIS::KC_LEFT:
@@ -946,7 +972,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_1:
         {
-            if (tunnel && tunnel->isMultiCollectionTask())
+            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 player->setToggleBack(3);
                 tunnel->respondToToggleCheat();
@@ -955,7 +981,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_2:
         {
-            if (tunnel && tunnel->isMultiCollectionTask())
+            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 player->setToggleBack(2);
                 tunnel->respondToToggleCheat();
@@ -964,7 +990,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_3:
         {
-            if (tunnel && tunnel->isMultiCollectionTask())
+            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 player->setToggleBack(1);
                 tunnel->respondToToggleCheat();
@@ -973,12 +999,9 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_4:
         {
-            if (tunnel && tunnel->isMultiCollectionTask())
+            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
             {
-                // Bad hack but
-                // Don't show 3-Back for multi-collection tasks of 1 or less.
-                if (player->getLevelRequestRow() > 0)
-                    player->setToggleBack(0);
+                player->setToggleBack(0);
                 tunnel->respondToToggleCheat();
             }
             break;
@@ -1113,11 +1136,11 @@ void EngineStage::setup()
         case 'A':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.stage >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            globals.signalTypes = (level.nback >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            if(level.stage >= 3)
+            if(level.nback >= 3)
             {
                 globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW,POD_SHAPE_UNKNOWN, POD_SOUND_4));
             }
@@ -1126,11 +1149,11 @@ void EngineStage::setup()
         case 'B':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.stage >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            globals.signalTypes = (level.nback >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
-            if(level.stage >= 3)
+            if(level.nback >= 3)
             {
                 globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             }
@@ -1139,11 +1162,11 @@ void EngineStage::setup()
         case 'C':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.stage >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            globals.signalTypes = (level.nback >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            if(level.stage >= 3)
+            if(level.nback >= 3)
             {
                 globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             }
@@ -1151,11 +1174,11 @@ void EngineStage::setup()
         }
         case 'D':
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.stage >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            globals.signalTypes = (level.nback >= 3) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            if(level.stage >= 3)
+            if(level.nback >= 3)
             {
                 globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             }

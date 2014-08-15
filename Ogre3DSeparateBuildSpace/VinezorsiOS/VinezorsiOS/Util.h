@@ -18,6 +18,7 @@
 //#define DEMO_BUILD
 #define DEBUG_MODE
 //#define NETWORKING
+//#define SPECIAL_PLAY
 #define FONT_SZ_MULT 1.75
 
 #include <string>

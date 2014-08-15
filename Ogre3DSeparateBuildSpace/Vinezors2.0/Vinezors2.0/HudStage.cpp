@@ -14,7 +14,7 @@
 extern Util::ConfigGlobal globals;
 
 HudStage::HudStage(Player* player, Tunnel* tunnel)
-: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f)
+: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f)
 {
     link(player, tunnel);
     init();
@@ -77,6 +77,34 @@ void HudStage::update(float elapsed)
         pauseNavigationBackground->setMaterialName("General/PauseNav3");
     else
         pauseNavigationBackground->setMaterialName("General/PauseNav4");
+    
+    if (overlays[1]->isVisible())
+    {
+        float minySpeed = 0.25;
+        float yspeed = (pauseNavOffsetDest - pauseNavOffset) * 5.0;
+        if (pauseNavOffset > pauseNavOffsetDest)
+        {
+            if (yspeed > -minySpeed) yspeed = -minySpeed;
+            pauseNavOffset += (yspeed * elapsed);
+            if (pauseNavOffset < pauseNavOffsetDest)
+                pauseNavOffset = pauseNavOffsetDest;
+        }
+        else if (pauseNavOffset < pauseNavOffsetDest)
+        {
+            if (yspeed < minySpeed) yspeed = minySpeed;
+            pauseNavOffset += (yspeed * elapsed);
+            if (pauseNavOffset > pauseNavOffsetDest)
+                pauseNavOffset = pauseNavOffsetDest;
+        }
+        
+        float pauseNavHeight = 0.45;
+        float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
+        float pauseNavX = 0.50 - pauseNavWidth / 2;
+        float pauseNavY = 0.54 - pauseNavHeight / 2 + pauseNavOffset;
+        pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
+        pauseBaseBackground->setPosition(0.30, 0.60 + pauseNavOffset);
+        
+    }
     
     // Update powerup GUI
     float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
@@ -277,7 +305,17 @@ void HudStage::alloc()
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem9")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem10")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem11")));
-    
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem12")));
+#ifdef SPECIAL_PLAY
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem13")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem14")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem15")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem16")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem17")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem18")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem19")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem20")));
+#endif
     GUITopPanel = static_cast<PanelOverlayElement*>(
                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUITopPanel"));
     
@@ -340,6 +378,8 @@ void HudStage::alloc()
     powerup3Background = static_cast<PanelOverlayElement*>(
                                                            OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Powerup3Background"));
     
+    pauseBaseBackground = static_cast<PanelOverlayElement*>(
+                                                            OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseBaseBackground"));
     pauseNavigationBackground = static_cast<PanelOverlayElement*>(
                                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseNavigationBackground"));
     resumeButtonBackground = static_cast<PanelOverlayElement*>(
@@ -375,7 +415,8 @@ void HudStage::alloc()
     overlay1->add2D(GUITopPanel);
     
     overlay1->add2D(pauseBackground);
-    for (int i = 0; i < collectionBar.size(); ++i)
+    //for (int i = 0; i < collectionBar.size(); ++i)
+    for (int i = collectionBar.size() - 1; i >= 0; --i)
         overlay1->add2D(collectionBar[i]);
     
     overlay1->add2D(powerup1Background);
@@ -402,11 +443,12 @@ void HudStage::alloc()
     panelText->addChild(label5prompt);
     panelText->addChild(label6);
     panelText->addChild(label7);
+    overlay2->add2D(pauseBaseBackground);
     overlay2->add2D(pauseNavigationBackground);
-    overlay2->add2D(resumeButtonBackground);
-    overlay2->add2D(nextButtonBackground);
-    overlay2->add2D(restartButtonBackground);
-    overlay2->add2D(levelSelectButtonBackground);
+    pauseNavigationBackground->addChild(resumeButtonBackground);
+    pauseNavigationBackground->addChild(nextButtonBackground);
+    pauseNavigationBackground->addChild(restartButtonBackground);
+    pauseNavigationBackground->addChild(levelSelectButtonBackground);
     
     overlay1->add2D(goBackground);
     overlay1->add2D(sliderRangeBackground);
@@ -479,6 +521,7 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup1Background);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup2Background);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup3Background);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBaseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseNavigationBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(resumeButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
@@ -633,9 +676,15 @@ void HudStage::initOverlay()
     
     float pauseNavHeight = 0.45;
     float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
+    float pauseNavX = 0.50 - pauseNavWidth / 2;
+    float pauseNavY = 0.54 - pauseNavHeight / 2 + pauseNavOffset;
     pauseNavigationBackground->setMetricsMode(GMM_RELATIVE);
-    pauseNavigationBackground->setPosition(0.50 - pauseNavWidth / 2, 0.54 - pauseNavHeight / 2);
+    pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
     pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
+    
+    pauseBaseBackground->setMetricsMode(GMM_RELATIVE);
+    pauseBaseBackground->setPosition(0.30, 0.60 + pauseNavOffset);
+    pauseBaseBackground->setDimensions(0.40, 0.40);
     
     float pauseheight = 0.10;
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
@@ -657,10 +706,16 @@ void HudStage::initOverlay()
     
     float qheight = 0.085;
     float qwidth = qheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.4075), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
-    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54, 0.50), Vector2(qwidth, qheight), nextButtonBackground, NULL);
-    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.50), Vector2(qwidth, qheight), restartButtonBackground, NULL);
-    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
+    // Sets positions in local 2D space (relative to entire pause nav)
+    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675 - pauseNavX, 0.4075 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54 - pauseNavX, 0.50 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395 - pauseNavX, 0.50 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675 - pauseNavX, 0.59 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
+    // Sets positions in global 2D space
+    //buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.4075), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    //buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54, 0.50), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    //buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.50), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    //buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
     toggleIndicator->setMetricsMode(GMM_RELATIVE);
     toggleIndicator->setDimensions(0.08, 0.08);
@@ -691,6 +746,7 @@ void HudStage::initOverlay()
     powerup1Background->setMaterialName("General/GUIPowerupButtonBlank");
     powerup2Background->setMaterialName("General/GUIPowerupButtonBlank");
     powerup3Background->setMaterialName("General/GUIPowerupButtonBlank");
+    pauseBaseBackground->setMaterialName("General/PauseBase");
     
     //resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
     //nextButtonBackground->setMaterialName("General/NextButtonRound");
@@ -804,38 +860,44 @@ void HudStage::setGoButtonState(bool active, bool color)
         goBackground->setMaterialName("General/ButtonGoGray");
 }
 
+void HudStage::setPauseNavDest(float navOffset)
+{
+    pauseNavOffsetDest = navOffset;
+}
+
 // Sets the collection bar positions and images.
 // If instant parameter is true, the positions will be set instantly,
 // otherwise it will animate towards their designated location at a speed.
 void HudStage::setCollectionBar(bool instant, float elapsed)
 {
+#ifdef SPECIAL_PLAY
     int numSatisfied = tunnel->getNumSatisfiedCriteria();
     
     // How many has the player collected?
     int starPhase = 0;
-    if (numSatisfied < 3)
+    if (numSatisfied < 5)
         starPhase = 0;
-    else if (numSatisfied < 6)
+    else if (numSatisfied < 10)
         starPhase = 1;
-    else if (numSatisfied < 9)
+    else if (numSatisfied < 15)
         starPhase = 2;
-    else if (numSatisfied < 12)
+    else if (numSatisfied < 20)
         starPhase = 3;
     else
         starPhase = 4;
     
     // Designate positions for each collection item
-    float x = 0.2925;
+    float x = 0.2850;
     float y = 0.035;
-    float wpadding = 0.0125;
+    float wpadding = 0.0050;
     float width = 0.0425;
     float height = 0.075;
     // When we win or lose, almost all of them are collapsed,
     // so we want to re-adjust so it looks evenly split.
     if (tunnel->isDone() && tunnel->getMode() != STAGE_MODE_RECESS)
     {
-        x = 0.3125;
-        wpadding = 0.0250;
+        x = 0.2900; //x = 0.3125;
+        wpadding = 0.0200; //0.0250;
         starPhase = 4;
     }
     
@@ -863,7 +925,129 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
             }
         }
         
-        if (i / 3 == starPhase || (i + 1) % 3 == 0)
+        // Check to see if we should print our next tablet to the right
+        //
+        // is this tablet in the set that should be expanded?
+        if (i / 5 == starPhase ||
+            // Is the next tablet in a new set and is it not the trophy tablet?
+            ((i + 1) % 5 == 0 && ((i + 1) != 20 || starPhase >= 4)))
+            x += 2 * wpadding + width;
+            
+        // Assign an image based on what type of collection and whether it is collected
+        if (i < criterias.size())
+        {
+            std::string scoreName = "General/GUICollection";
+            
+            // For togglebacks
+            //if (criterias[i].nback <= 0)
+            //    scoreName += Util::toStringInt(0);
+            //else
+            //    scoreName += Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
+            
+            // For just a single n-back and task
+            switch (i / 5)
+            {
+                case 0:
+                    scoreName += "0";
+                    break;
+                case 1:
+                    scoreName += "1";
+                    break;
+                case 2:
+                    scoreName += "2";
+                    break;
+                case 3:
+                    scoreName += "3";
+                    break;
+                default:
+                    scoreName += "0";
+                    break;
+            }
+            if (criterias[i].collected == 1)
+                scoreName += "Filled1";
+            else if (criterias[i].collected == 2)
+                scoreName += "Filled2";
+            else if (criterias[i].collected == 3)
+                scoreName += "Filled3";
+            else
+                scoreName += "Blank";
+            
+            collectionBar[i]->setMaterialName(scoreName);
+        }
+        else
+        {
+            if (tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                if (tunnel->getEval() == PASS)
+                    collectionBar[i]->setMaterialName("General/GUICollectionTrophyFull");
+                else
+                    collectionBar[i]->setMaterialName("General/GUICollectionTrophyEmpty");
+            }
+            else
+                collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
+        }
+    }
+#else
+    int numSatisfied = tunnel->getNumSatisfiedCriteria();
+    
+    // How many has the player collected?
+    int starPhase = 0;
+    if (numSatisfied < 3)
+        starPhase = 0;
+    else if (numSatisfied < 6)
+        starPhase = 1;
+    else if (numSatisfied < 9)
+        starPhase = 2;
+    else if (numSatisfied < 12)
+        starPhase = 3;
+    else
+        starPhase = 4;
+    
+    // Designate positions for each collection item
+    float x = 0.2925;
+    float y = 0.035;
+    float wpadding = 0.0125;
+    float width = 0.0425;
+    float height = 0.075;
+    // When we win or lose, almost all of them are collapsed,
+    // so we want to re-adjust so it looks evenly split.
+    if (tunnel->isDone() && tunnel->getMode() != STAGE_MODE_RECESS)
+    {
+        x = 0.2900; //x = 0.3125;
+        wpadding = 0.0200; //0.0250;
+        starPhase = 4;
+    }
+    
+    std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
+    for (int i = 0; i < collectionBar.size(); ++i)
+    {
+        collectionBar[i]->setMetricsMode(GMM_RELATIVE);
+        collectionBar[i]->setDimensions(width, height);
+        if (instant)
+        {
+            collectionBar[i]->setPosition(x + wpadding, y);
+        }
+        else
+        {
+            // Move from current position towards destination
+            Vector2 to = Vector2(x + wpadding, y);
+            Vector2 from = Vector2(collectionBar[i]->getLeft(), collectionBar[i]->getTop());
+            Vector2 delta = (to - from);
+            if (delta.squaredLength() <= 0.000005f)
+                collectionBar[i]->setPosition(to.x, to.y);
+            else
+            {
+                Vector2 npos = from + delta * 3 * elapsed;
+                collectionBar[i]->setPosition(npos.x, npos.y);
+            }
+        }
+        
+        // Check to see if we should print our next tablet to the right
+        //
+        // is this tablet in the set that should be expanded?
+        if (i / 3 == starPhase ||
+            // Is the next tablet in a new set and is it not the trophy tablet?
+            ((i + 1) % 3 == 0 && ((i + 1) != 12 || starPhase >= 4)))
             x += 2 * wpadding + width;
         
         // Assign an image based on what type of collection and whether it is collected
@@ -896,16 +1080,29 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
                     scoreName += "0";
                     break;
             }
-            
-            if (criterias[i].collected)
-                scoreName += "Filled";
+            if (criterias[i].collected == 1)
+                scoreName += "Filled1";
+            else if (criterias[i].collected == 2)
+                scoreName += "Filled2";
+            else if (criterias[i].collected == 3)
+                scoreName += "Filled3";
             else
                 scoreName += "Blank";
+            
             collectionBar[i]->setMaterialName(scoreName);
         }
         else
         {
-            collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
+            if (tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                if (tunnel->getEval() == PASS)
+                    collectionBar[i]->setMaterialName("General/GUICollectionTrophyFull");
+                else
+                    collectionBar[i]->setMaterialName("General/GUICollectionTrophyEmpty");
+            }
+            else
+                collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
         }
     }
+#endif
 }

@@ -9,7 +9,7 @@ material General/TutorialSlideHoldout1
         depth_write off
         texture_unit
         {
-            texture TextboxHoldout1.jpg
+            texture back_slide.png
         }
       } 
     }
