@@ -183,6 +183,7 @@ public:
     float soundVolume;
     float holdout;
     bool syncDataToServer;
+    
     float maxVel;
     float minVelFree; // not recorded and set by player
     float minVelStopper;
@@ -190,6 +191,7 @@ public:
     float dampingDecayStop;
     float dampingDropFree;
     float dampingDropStop;
+    bool inverted;
     
     float offsetRoll;
     float offsetRollDest;
@@ -373,6 +375,7 @@ public:
     bool saveProgress(std::string file);
     bool loadProgress1_0(std::string savePath);
     bool loadProgress1_1(std::string savePath);
+    bool loadProgress1_2(std::string savePath);
     bool loadProgress(std::string savePath);
     
     void initSettings();

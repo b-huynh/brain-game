@@ -90,9 +90,9 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 10.0;
+    wrongAnswerTimePenalty = 20.0;
     distractorSpeedPenalty = 1.0;
-    distractorTimePenalty = 10.0;
+    distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;

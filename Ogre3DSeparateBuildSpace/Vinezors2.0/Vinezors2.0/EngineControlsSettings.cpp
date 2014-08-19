@@ -68,6 +68,10 @@ void EngineControlSettings::activatePerformSingleTap(float x, float y)
     {
         hud->resetDefaults();
     }
+    else if (queryGUI == "inverted")
+    {
+        player->inverted = !player->inverted;
+    }
 }
 
 // The following deal with injecting coordinates to simulate a slider

@@ -33,7 +33,7 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 2;
+    static const int NUM_UNIQUE_BUTTONS = 3;
     enum Buttons {
         BUTTON_BACK, BUTTON_DEFAULTS, BUTTON_INVERTED
     };
@@ -74,6 +74,10 @@ protected:
     PanelOverlayElement* dampingDropStopSliderBallBackground;
     TextAreaOverlayElement* dampingDropStopSliderText;
     TextAreaOverlayElement* dampingDropStopSliderDisplay;
+    
+    PanelOverlayElement* invertedEntireBackground;
+    TextAreaOverlayElement* invertedTextDisplay;
+    PanelOverlayElement* invertedButtonBackground;
     
     void link(Player* player);
     void unlink();

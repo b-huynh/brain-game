@@ -47,6 +47,7 @@ Player::Player()
     soundVolume = 0.50f;
     holdout = 0.25f;
     syncDataToServer = false;
+    inverted = true;
     initSettings();
 }
 
@@ -68,6 +69,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     soundVolume = 0.50f;
     holdout = 0.25f;
     syncDataToServer = false;
+    inverted = true;
     initSettings();
 }
 
@@ -1015,7 +1017,7 @@ void Player::testPodGiveFeedback(Pod* test)
             else hp += globals.HPNegativeWrongAnswer;
             hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
             */
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
         
             numCorrectCombo = 0;
             ++numWrongCombo;

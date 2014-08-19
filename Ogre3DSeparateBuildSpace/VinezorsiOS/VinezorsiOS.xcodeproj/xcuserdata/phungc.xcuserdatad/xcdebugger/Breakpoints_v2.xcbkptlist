@@ -311,7 +311,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "796"
             endingLineNumber = "796"
-            landmarkName = "HudStage::setGoButtonState(bool active, bool color)"
+            landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -327,7 +327,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "795"
             endingLineNumber = "795"
-            landmarkName = "HudStage::setGoButtonState(bool active, bool color)"
+            landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

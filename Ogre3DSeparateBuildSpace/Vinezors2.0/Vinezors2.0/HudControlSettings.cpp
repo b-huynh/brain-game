@@ -9,6 +9,8 @@
 #include "HudControlSettings.h"
 #include "Player.h"
 
+extern Util::ConfigGlobal globals;
+
 HudControlSettings::HudControlSettings(Player* player)
 :Hud()
 {
@@ -37,6 +39,11 @@ void HudControlSettings::adjust()
 
 void HudControlSettings::update(float elapsed)
 {
+    if (player->inverted)
+        invertedButtonBackground->setMaterialName("General/CheckboxGreen");
+    else
+        invertedButtonBackground->setMaterialName("General/CheckboxBlank");
+    
     maxVelSliderDisplay->setCaption(Util::toStringInt(player->maxVel));
     minVelStopperSliderDisplay->setCaption(Util::toStringInt(player->minVelStopper));
     dampingDecayFreeSliderDisplay->setCaption(Util::toStringFloat(player->dampingDecayFree));
@@ -89,6 +96,10 @@ void HudControlSettings::alloc()
     dampingDropStopSliderText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ControlSettingsDampingDropStopText"));
     dampingDropStopSliderDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ControlSettingsDampingDropStopDisplay"));
     
+    invertedEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ControlSettingsInvertedEntireBackground"));
+    invertedTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ControlSettingsInvertedTextDisplay"));;
+    invertedButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ControlSettingsInvertedButtonBackground"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -125,6 +136,10 @@ void HudControlSettings::alloc()
     dampingDropStopSliderRangeBackground->addChild(dampingDropStopSliderBallBackground);
     dampingDropStopSliderRangeBackground->addChild(dampingDropStopSliderText);
     dampingDropStopSliderRangeBackground->addChild(dampingDropStopSliderDisplay);
+    
+    overlay1->add2D(invertedEntireBackground);
+    invertedEntireBackground->addChild(invertedTextDisplay);
+    overlay1->add2D(invertedButtonBackground);
     
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(defaultsButtonBackground);
@@ -190,6 +205,9 @@ void HudControlSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(dampingDropStopSliderBallBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(dampingDropStopSliderText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(dampingDropStopSliderDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(invertedEntireBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(invertedTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(invertedButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
     if (maxVelSlider) delete maxVelSlider; maxVelSlider = NULL;
@@ -292,6 +310,17 @@ void HudControlSettings::initOverlay()
     dampingDropStopSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     dampingDropStopSliderDisplay->setFontName("MainSmall");
     
+    invertedEntireBackground->setMetricsMode(GMM_RELATIVE);
+    invertedEntireBackground->setPosition(0.20, 0.75);
+    invertedEntireBackground->setDimensions(0.60, 0.10);
+    
+    invertedTextDisplay->setMetricsMode(GMM_RELATIVE);
+    invertedTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    invertedTextDisplay->setPosition(0.0, 0.05);
+    invertedTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    invertedTextDisplay->setFontName("MainSmall");
+    invertedTextDisplay->setCaption("Inverted Navigation");
+    
     maxVelSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
     maxVelSliderBallBackground->setMaterialName("General/BasicSliderBall");
     minVelStopperSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
@@ -309,6 +338,15 @@ void HudControlSettings::initOverlay()
     defaultsButtonBackground->setMaterialName("General/DefaultsButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.15, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_DEFAULTS].setButton("defaults", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.90), Vector2(0.30, 0.08), defaultsButtonBackground, NULL);
+    
+    // The Enable Tutorial Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_INVERTED].setButton("inverted", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.800), Vector2(pw, ph), invertedButtonBackground, NULL);
+    }
+    
 }
 
 void HudControlSettings::positionSliderBalls()

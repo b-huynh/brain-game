@@ -56,10 +56,11 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
+            hud->setOverlay(1, true);
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
@@ -85,8 +86,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -137,8 +138,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(true, speedVerified);
+            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -150,6 +151,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.0);
             break;
         }
         case STAGE_STATE_READY:
@@ -174,8 +176,8 @@ void EngineStage::update(float elapsed)
                 globals.setBigMessage("3");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_DONE:
@@ -832,6 +834,8 @@ void EngineStage::activateAngleTurn(float angle, float vel)
         
         // If unpathable upahead, don't allow player to traverse through
         int depthDist = 0;
+        if (!player->inverted)
+            dT = -dT;
         TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
         if (!unpathable)
         {
@@ -1370,7 +1374,8 @@ void EngineStage::updateSpin(float elapsed)
     // Perform Player Movement
     if (freeMotion)
     {
-        if (spinClockwise) {
+        if ((spinClockwise && player->inverted) ||
+            (!spinClockwise && !player->inverted)) {
             this->activatePerformRightMove(dTheta);
             player->offsetRollDest = -dTheta;
             freeAngleTraveled -= dTheta;
