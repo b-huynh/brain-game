@@ -96,13 +96,10 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
 #ifdef DEMO_BUILD
     return ret;
 #else
+    
+    
     switch (type)
     {
-        case TUTORIAL_SLIDES_WELCOME:
-            ret.push_back(TutorialSlide(insertNL("Welcome to Recall"), "General/ScreenBackground2", ""));
-            ret.push_back(TutorialSlide(insertNL("These tutorial windows can explain elements of the game as they are introduced to you."), "General/ScreenBackground2", ""));
-            ret.push_back(TutorialSlide(insertNL("Click the Play button in this screen to begin.\n\nYou may re-enable/disable these tutorials."), "General/ScreenBackground2", ""));
-            break;
         case TUTORIAL_SLIDES_HUD_DISPLAY1:
             ret.push_back(TutorialSlide(insertNL("Please identify the key elements in the heads-up display.\nNote: the progress bar above shows your success towards completing the level."), "General/ScreenBackground2", "General/ScreenOfArrows"));
             break;
@@ -131,6 +128,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide(insertNL("Challenge:\nLook for matches through listening to only sound."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_HOLDOUT:
+            //ret.push_back(TutorialSlide("", "General/TutorialSlideHoldout1", ""));
             ret.push_back(TutorialSlide(insertNL("Challenge:\nSignals will randomly cloak their color, shape, or sound. Pay attention to more than one feature to identify matches."), "General/ScreenBackground2", ""));
             break;
         case TUTORIAL_SLIDES_OBSTACLE:

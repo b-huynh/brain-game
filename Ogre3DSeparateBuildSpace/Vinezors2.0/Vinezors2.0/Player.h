@@ -185,6 +185,7 @@ public:
     float holdoutLB;
     float holdoutUB;
     bool syncDataToServer;
+    
     float maxVel;
     float minVelFree; // not recorded and set by player
     float minVelStopper;
@@ -192,6 +193,7 @@ public:
     float dampingDecayStop;
     float dampingDropFree;
     float dampingDropStop;
+    bool inverted;
     
     float offsetRoll;
     float offsetRollDest;
