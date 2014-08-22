@@ -184,9 +184,7 @@ void Pod::loadHazard()
     Vector3 v = tip - base;
     
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
-    
     headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
-    
     headContentEntity->getSubEntity(0)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(1)->setMaterialName("Obelisk/LightGray");
     headContentEntity->getSubEntity(2)->setMaterialName("Obelisk/TransparentCyan");
@@ -215,8 +213,6 @@ void Pod::loadHazard()
     headContentEntity->getSubEntity(25)->setMaterialName("Obelisk/DarkGray");
     headContentEntity->getSubEntity(26)->setMaterialName("Obelisk/Cyan");
     headContentEntity->getSubEntity(27)->setMaterialName("Obelisk/Cyan");
-    
-
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);

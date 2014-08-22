@@ -125,6 +125,8 @@ public:
     
     float gateDelayTimer;
     float gateDelay;
+    
+    float tutorialTimer;
 public:
 	Tunnel();
     

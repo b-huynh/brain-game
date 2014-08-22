@@ -76,7 +76,6 @@ protected:
 	Player* player;
     HudStage* hud;
     
-    bool speedVerified; // player verified speed
     float readyTimer;
     
     // Parameters of tunnel Spin
@@ -103,7 +102,7 @@ protected:
     void setPause(bool value, bool targetAllSounds = true);
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
-    void setSpeedVerified();
+    void setTaskPrompt();
 };
 
 #endif /* defined(__Vinezors2_0__EngineStage__) */

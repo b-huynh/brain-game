@@ -38,15 +38,14 @@ private:
     TextAreaOverlayElement* popupText;
     TextAreaOverlayElement* popupSlideNoText;
     
+    std::vector<TutorialSlide> queue;
     std::vector<TutorialSlide> slides;
     std::vector<bool> visitedSlide;
-    
-    // For slides that need the entire screen
-    PanelOverlayElement* entireScreenBackground;
     
     bool enableSlides;
     int slideNo;
     
+    float startTimer;
     
     // Similar to Hud Base Class
     std::vector<HudButton> buttons;
@@ -59,20 +58,21 @@ public:
     TutorialManager();
     ~TutorialManager();
     
-    const int NUM_TUTORIAL_SLIDES = 12;
+    const int NUM_TUTORIAL_SLIDES = 14;
     enum TutorialSlidesType {
-        TUTORIAL_SLIDES_WELCOME,
-        TUTORIAL_SLIDES_HUD_DISPLAY1,
-        TUTORIAL_SLIDES_CONTROL_MECHANICS,
-        TUTORIAL_SLIDES_ZERO_BACK,
-        TUTORIAL_SLIDES_ONE_BACK,
-        TUTORIAL_SLIDES_TWO_BACK,
-        TUTORIAL_SLIDES_COLOR_SOUND,
-        TUTORIAL_SLIDES_SHAPE_SOUND,
-        TUTORIAL_SLIDES_SOUND_ONLY,
-        TUTORIAL_SLIDES_HOLDOUT,
-        TUTORIAL_SLIDES_OBSTACLE,
-        TUTORIAL_SLIDES_TIME_WARP
+        TUTORIAL_SLIDES_TEXTBOX_NAVIGATION,
+        TUTORIAL_SLIDES_TEXTBOX_1BACK,
+        TUTORIAL_SLIDES_TEXTBOX_2BACK,
+        TUTORIAL_SLIDES_TEXTBOX_HOLDOUT,
+        TUTORIAL_SLIDES_TEXTBOX_SEEING_MATCH,
+        TUTORIAL_SLIDES_TEXTBOX_MISSING_MATCH,
+        TUTORIAL_SLIDES_TEXTBOX_INCORRECT_MATCH,
+        TUTORIAL_SLIDES_TEXTBOX_OBSTACLE,
+        TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY,
+        TUTORIAL_SLIDES_TEXTBOX_3_2A,
+        TUTORIAL_SLIDES_TEXTBOX_3_2B,
+        TUTORIAL_SLIDES_TEXTBOX_HOLDOUT1,
+        TUTORIAL_SLIDES_TEXTBOX_HOLDOUT2,
     };
     
     bool isEnabled() const;
@@ -80,6 +80,8 @@ public:
     void disable();
     
     std::vector<TutorialSlide> getSlides(TutorialSlidesType type) const;
+    void prepareSlides(const std::vector<TutorialSlide> & slides, float startTimer = 0.0f);
+    void prepareSlides(TutorialSlidesType type, float startTimer = 0.0f);
     void setSlides(const std::vector<TutorialSlide> & slides);
     void setSlides(TutorialSlidesType type);
     bool hasPreviousSlide() const;
@@ -87,6 +89,7 @@ public:
     bool setPreviousSlide();
     void setNextSlide();
     void updateOverlay();
+    void updateOverride(float elapsed);
     void update(float elapsed);
     
     // Show or hide popup tutorial slides. If tutorial slides are active,

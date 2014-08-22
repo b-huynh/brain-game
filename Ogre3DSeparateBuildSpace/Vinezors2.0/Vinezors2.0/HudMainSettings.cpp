@@ -61,7 +61,7 @@ void HudMainSettings::update(float elapsed)
     }
     
     if (player->soundVolume <= 0.0)
-        soundVolumeSliderWarning->setCaption("Certain features are disabled with sound off");
+        soundVolumeSliderWarning->setCaption("Certain features will be disabled");
     else
         soundVolumeSliderWarning->setCaption("");
 }
@@ -69,6 +69,8 @@ void HudMainSettings::update(float elapsed)
 void HudMainSettings::alloc()
 {
     // Allocate Resources
+    mainSettingsBackdrop1 = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsBackdrop1"));
+    mainSettingsBackdrop2 = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsBackdrop2"));
     mainSettingsTitleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsTitleBackground"));
     mainSettingsTitleText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsTitleText"));
     backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsBackButtonBackground"));
@@ -105,6 +107,8 @@ void HudMainSettings::alloc()
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("MainSettingsOverlay");
+    overlay1->add2D(mainSettingsBackdrop1);
+    overlay1->add2D(mainSettingsBackdrop2);
     overlay1->add2D(mainSettingsTitleBackground);
     mainSettingsTitleBackground->addChild(mainSettingsTitleText);
     
@@ -143,11 +147,11 @@ void HudMainSettings::alloc()
     
     // Horizontal slider
     
-    musicVolumeSlider->setSlider("musicvolume", overlays[0], Vector2(0.10, 0.40), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    musicVolumeSlider->setSlider("musicvolume", overlays[0], Vector2(0.10, 0.35), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                 0, 100, 101, musicVolumeSliderRangeBackground, musicVolumeSliderBallBackground);
-    soundVolumeSlider->setSlider("soundvolume", overlays[0], Vector2(0.10, 0.25), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    soundVolumeSlider->setSlider("soundvolume", overlays[0], Vector2(0.10, 0.20), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                  0, 100, 101, soundVolumeSliderRangeBackground, soundVolumeSliderBallBackground);
-    holdoutSlider->setSlider("holdout", overlays[0], Vector2(0.10, 0.55), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false, 0, 100, 101, holdoutSliderRangeBackground, holdoutSliderBallBackground);
+    holdoutSlider->setSlider("holdout", overlays[0], Vector2(0.10, 0.50), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false, 0, 100, 101, holdoutSliderRangeBackground, holdoutSliderBallBackground);
 
     positionSliderBalls();
 }
@@ -155,6 +159,8 @@ void HudMainSettings::alloc()
 void HudMainSettings::dealloc()
 {
     // Delete children first, then parents
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(mainSettingsBackdrop1);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(mainSettingsBackdrop2);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(mainSettingsTitleBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(mainSettingsTitleText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
@@ -190,8 +196,18 @@ void HudMainSettings::dealloc()
 void HudMainSettings::initOverlay()
 {
     // Link and set resources
+    mainSettingsBackdrop1->setMetricsMode(GMM_RELATIVE);
+    mainSettingsBackdrop1->setPosition(0.00, 0.025);
+    mainSettingsBackdrop1->setDimensions(1.00, 0.95);
+    mainSettingsBackdrop1->setMaterialName("General/TutorialBackdrop");
+    
+    //mainSettingsBackdrop2->setMetricsMode(GMM_RELATIVE);
+    //mainSettingsBackdrop2->setPosition(0.00, 0.625);
+    //mainSettingsBackdrop2->setDimensions(1.00, 0.35);
+    //mainSettingsBackdrop2->setMaterialName("General/TutorialBackdrop");
+    
     mainSettingsTitleBackground->setMetricsMode(GMM_RELATIVE);
-    mainSettingsTitleBackground->setPosition(0.30, 0.05);
+    mainSettingsTitleBackground->setPosition(0.30, 0.025);
     mainSettingsTitleBackground->setDimensions(0.40, 0.20);
     
     mainSettingsTitleText->setMetricsMode(GMM_RELATIVE);
@@ -203,7 +219,7 @@ void HudMainSettings::initOverlay()
     
     musicVolumeSliderDisplay->setMetricsMode(GMM_RELATIVE);
     musicVolumeSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    musicVolumeSliderDisplay->setPosition(0.70, 0.01);
+    musicVolumeSliderDisplay->setPosition(0.65, 0.00);
     musicVolumeSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     musicVolumeSliderDisplay->setFontName("MainSmall");
     
@@ -216,7 +232,7 @@ void HudMainSettings::initOverlay()
     
     holdoutSliderDisplay->setMetricsMode(GMM_RELATIVE);
     holdoutSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    holdoutSliderDisplay->setPosition(0.70, 0.01);
+    holdoutSliderDisplay->setPosition(0.65, 0.00);
     holdoutSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     holdoutSliderDisplay->setFontName("MainSmall");
     
@@ -229,7 +245,7 @@ void HudMainSettings::initOverlay()
     
     soundVolumeSliderDisplay->setMetricsMode(GMM_RELATIVE);
     soundVolumeSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    soundVolumeSliderDisplay->setPosition(0.70, 0.01);
+    soundVolumeSliderDisplay->setPosition(0.65, 0.00);
     soundVolumeSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     soundVolumeSliderDisplay->setFontName("MainSmall");
     
@@ -276,12 +292,12 @@ void HudMainSettings::initOverlay()
     syncDataInternetNotification->setFontName("MainSmall");
     syncDataInternetNotification->setColour(Ogre::ColourValue(1.0, 1.0, 0.0));
     
-    musicVolumeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    musicVolumeSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    soundVolumeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    soundVolumeSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    holdoutSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    holdoutSliderBallBackground->setMaterialName("General/BasicSliderBall");
+    musicVolumeSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    musicVolumeSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    soundVolumeSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    soundVolumeSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    holdoutSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    holdoutSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
     
     backButtonBackground->setMaterialName("General/BackButton");
     controlSettingsButtonBackground->setMaterialName("General/ControlSettingsButton");

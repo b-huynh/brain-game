@@ -39,6 +39,8 @@ protected:
     };
     
     // Overlay items for GAME_STATE_MENU
+    PanelOverlayElement* controlSettingsBackdrop;
+    
     PanelOverlayElement* controlSettingsTitleBackground;
     TextAreaOverlayElement* controlSettingsTitleText;
     
