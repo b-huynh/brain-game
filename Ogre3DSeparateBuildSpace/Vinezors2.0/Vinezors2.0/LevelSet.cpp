@@ -55,7 +55,7 @@ int LevelSet::getNumLevels() const
 
 int LevelSet::getTotalRowRequirement(int row) const
 {
-    return Util::clamp(8 + row, 8, 15);
+    return Util::clamp(10 + 2 * row, 8, 25);
 }
 
 void LevelSet::initializeLevelSet()

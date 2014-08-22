@@ -500,6 +500,7 @@ void HudStage::alloc()
     player->setBaseSpeed(speedSlider->getIndex());
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
     setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads
+    setSpeedDialState(false);
 }
 
 void HudStage::dealloc()
@@ -763,7 +764,6 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    setSpeedDialState(false);
     toggle1Background->setMaterialName("General/GUIToggleButton3");
     toggle2Background->setMaterialName("General/GUIToggleButton2");
     toggle3Background->setMaterialName("General/GUIToggleButton1");
