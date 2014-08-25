@@ -61,6 +61,7 @@ void HudControlSettings::resetDefaults()
 void HudControlSettings::alloc()
 {
     // Allocate Resources
+    controlSettingsBackdrop = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ControlSettingsBackdrop"));
     controlSettingsTitleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ControlSettingsTitleBackground"));
     controlSettingsTitleText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ControlSettingsTitleText"));
     backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ControlSettingsBackButtonBackground"));
@@ -104,6 +105,7 @@ void HudControlSettings::alloc()
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("ControlSettingsOverlay");
+    overlay1->add2D(controlSettingsBackdrop);
     overlay1->add2D(controlSettingsTitleBackground);
     controlSettingsTitleBackground->addChild(controlSettingsTitleText);
     
@@ -153,22 +155,22 @@ void HudControlSettings::alloc()
     dampingDropStopSlider = new HudSlider();
     
     // Horizontal slider
-    maxVelSlider->setSlider("maxVel", overlays[0], Vector2(0.10, 0.20), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    maxVelSlider->setSlider("maxVel", overlays[0], Vector2(0.10, 0.20), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                             0, 5000, 5001, maxVelSliderRangeBackground, maxVelSliderBallBackground);
     
-    minVelStopperSlider->setSlider("minVelStopper", overlays[0], Vector2(0.10, 0.30), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    minVelStopperSlider->setSlider("minVelStopper", overlays[0], Vector2(0.10, 0.30), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                    0, 2500, 2501, minVelStopperSliderRangeBackground, minVelStopperSliderBallBackground);
     
-    dampingDecayFreeSlider->setSlider("dampingDecayFree", overlays[0], Vector2(0.10, 0.40), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    dampingDecayFreeSlider->setSlider("dampingDecayFree", overlays[0], Vector2(0.10, 0.40), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                       0, 1000, 1001, dampingDecayFreeSliderRangeBackground, dampingDecayFreeSliderBallBackground);
     
-    dampingDecayStopSlider->setSlider("dampingDecayStop", overlays[0], Vector2(0.10, 0.50), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    dampingDecayStopSlider->setSlider("dampingDecayStop", overlays[0], Vector2(0.10, 0.50), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                     0, 1000, 1001, dampingDecayStopSliderRangeBackground, dampingDecayStopSliderBallBackground);
     
-    dampingDropFreeSlider->setSlider("dampingDropFree", overlays[0], Vector2(0.10, 0.60), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    dampingDropFreeSlider->setSlider("dampingDropFree", overlays[0], Vector2(0.10, 0.60), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                      0, 1000, 1001, dampingDropFreeSliderRangeBackground, dampingDropFreeSliderBallBackground);
     
-    dampingDropStopSlider->setSlider("dampingDropStop", overlays[0], Vector2(0.10, 0.70), Vector2(0.60, 0.05), Vector2(0.05, 0.05), false,
+    dampingDropStopSlider->setSlider("dampingDropStop", overlays[0], Vector2(0.10, 0.70), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                                      0, 1000, 1001, dampingDropStopSliderRangeBackground, dampingDropStopSliderBallBackground);
     
     positionSliderBalls();
@@ -177,6 +179,7 @@ void HudControlSettings::alloc()
 void HudControlSettings::dealloc()
 {
     // Delete children first, then parents
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(controlSettingsBackdrop);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(controlSettingsTitleBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(controlSettingsTitleText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
@@ -221,8 +224,13 @@ void HudControlSettings::dealloc()
 void HudControlSettings::initOverlay()
 {
     // Link and set resources
+    controlSettingsBackdrop->setMetricsMode(GMM_RELATIVE);
+    controlSettingsBackdrop->setPosition(0.00, 0.025);
+    controlSettingsBackdrop->setDimensions(1.00, 0.95);
+    controlSettingsBackdrop->setMaterialName("General/TutorialBackdrop");
+    
     controlSettingsTitleBackground->setMetricsMode(GMM_RELATIVE);
-    controlSettingsTitleBackground->setPosition(0.30, 0.05);
+    controlSettingsTitleBackground->setPosition(0.30, 0.025);
     controlSettingsTitleBackground->setDimensions(0.40, 0.20);
     
     controlSettingsTitleText->setMetricsMode(GMM_RELATIVE);
@@ -241,7 +249,7 @@ void HudControlSettings::initOverlay()
     
     maxVelSliderDisplay->setMetricsMode(GMM_RELATIVE);
     maxVelSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    maxVelSliderDisplay->setPosition(0.70, 0.01);
+    maxVelSliderDisplay->setPosition(0.65, 0.00);
     maxVelSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     maxVelSliderDisplay->setFontName("MainSmall");
     
@@ -254,7 +262,7 @@ void HudControlSettings::initOverlay()
     
     minVelStopperSliderDisplay->setMetricsMode(GMM_RELATIVE);
     minVelStopperSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    minVelStopperSliderDisplay->setPosition(0.70, 0.01);
+    minVelStopperSliderDisplay->setPosition(0.65, 0.00);
     minVelStopperSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     minVelStopperSliderDisplay->setFontName("MainSmall");
     
@@ -267,7 +275,7 @@ void HudControlSettings::initOverlay()
     
     dampingDecayFreeSliderDisplay->setMetricsMode(GMM_RELATIVE);
     dampingDecayFreeSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    dampingDecayFreeSliderDisplay->setPosition(0.70, 0.01);
+    dampingDecayFreeSliderDisplay->setPosition(0.65, 0.00);
     dampingDecayFreeSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     dampingDecayFreeSliderDisplay->setFontName("MainSmall");
     
@@ -280,7 +288,7 @@ void HudControlSettings::initOverlay()
     
     dampingDecayStopSliderDisplay->setMetricsMode(GMM_RELATIVE);
     dampingDecayStopSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    dampingDecayStopSliderDisplay->setPosition(0.70, 0.01);
+    dampingDecayStopSliderDisplay->setPosition(0.65, 0.00);
     dampingDecayStopSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     dampingDecayStopSliderDisplay->setFontName("MainSmall");
     
@@ -293,7 +301,7 @@ void HudControlSettings::initOverlay()
     
     dampingDropFreeSliderDisplay->setMetricsMode(GMM_RELATIVE);
     dampingDropFreeSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    dampingDropFreeSliderDisplay->setPosition(0.70, 0.01);
+    dampingDropFreeSliderDisplay->setPosition(0.65, 0.00);
     dampingDropFreeSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     dampingDropFreeSliderDisplay->setFontName("MainSmall");
     
@@ -306,7 +314,7 @@ void HudControlSettings::initOverlay()
     
     dampingDropStopSliderDisplay->setMetricsMode(GMM_RELATIVE);
     dampingDropStopSliderDisplay->setAlignment(TextAreaOverlayElement::Center);
-    dampingDropStopSliderDisplay->setPosition(0.70, 0.01);
+    dampingDropStopSliderDisplay->setPosition(0.65, 0.00);
     dampingDropStopSliderDisplay->setCharHeight(0.026 * FONT_SZ_MULT);
     dampingDropStopSliderDisplay->setFontName("MainSmall");
     
@@ -321,18 +329,18 @@ void HudControlSettings::initOverlay()
     invertedTextDisplay->setFontName("MainSmall");
     invertedTextDisplay->setCaption("Inverted Navigation");
     
-    maxVelSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    maxVelSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    minVelStopperSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    minVelStopperSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    dampingDecayFreeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    dampingDecayFreeSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    dampingDecayStopSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    dampingDecayStopSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    dampingDropFreeSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    dampingDropFreeSliderBallBackground->setMaterialName("General/BasicSliderBall");
-    dampingDropStopSliderRangeBackground->setMaterialName("General/BasicSliderRangeHorizontal");
-    dampingDropStopSliderBallBackground->setMaterialName("General/BasicSliderBall");
+    maxVelSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    maxVelSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    minVelStopperSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    minVelStopperSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    dampingDecayFreeSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    dampingDecayFreeSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    dampingDecayStopSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    dampingDecayStopSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    dampingDropFreeSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    dampingDropFreeSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
+    dampingDropStopSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    dampingDropStopSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
     
     backButtonBackground->setMaterialName("General/BackButton");
     defaultsButtonBackground->setMaterialName("General/DefaultsButton");

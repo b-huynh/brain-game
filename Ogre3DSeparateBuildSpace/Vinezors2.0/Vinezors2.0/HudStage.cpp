@@ -55,10 +55,10 @@ void HudStage::update(float elapsed)
     
     setCollectionBar(false, elapsed);
     
-    std::string GUIToggleNumber = "General/GUIToggleTextNumber";
-    toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
-    toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
-    toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
+    //std::string GUIToggleNumber = "General/GUIToggleTextNumber";
+    //toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
+    //toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
+    //toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
     // toggle4 is always n-back 0
     
     // Set up pause navigation texture with appropriate active buttons
@@ -461,10 +461,10 @@ void HudStage::alloc()
     panelText->addChild(label5prompt);
     panelText->addChild(label6);
     panelText->addChild(label7);
-    overlay2->add2D(goBaseBackground);
-    overlay2->add2D(goBackground);
     overlay2->add2D(pauseBaseBackground);
     overlay2->add2D(pauseNavigationBackground);
+    overlay2->add2D(goBaseBackground);
+    overlay2->add2D(goBackground);
     pauseNavigationBackground->addChild(resumeButtonBackground);
     pauseNavigationBackground->addChild(nextButtonBackground);
     pauseNavigationBackground->addChild(restartButtonBackground);
@@ -500,6 +500,7 @@ void HudStage::alloc()
     player->setBaseSpeed(speedSlider->getIndex());
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
     setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads
+    setSpeedDialState(false);
 }
 
 void HudStage::dealloc()
@@ -763,8 +764,6 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeVertical");
-    sliderBallBackground->setMaterialName("General/SpeedSliderBall");
     toggle1Background->setMaterialName("General/GUIToggleButton3");
     toggle2Background->setMaterialName("General/GUIToggleButton2");
     toggle3Background->setMaterialName("General/GUIToggleButton1");
@@ -896,6 +895,15 @@ void HudStage::setGoButtonState(bool active, bool color)
 void HudStage::setPauseNavDest(float navOffset)
 {
     pauseNavOffsetDest = navOffset;
+}
+
+void HudStage::setSpeedDialState(bool active)
+{
+    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeVertical");
+    if (active)
+        sliderBallBackground->setMaterialName("General/SpeedSliderBall");
+    else
+        sliderBallBackground->setMaterialName("General/SpeedSliderBallOff");
 }
 
 // Sets the collection bar positions and images.

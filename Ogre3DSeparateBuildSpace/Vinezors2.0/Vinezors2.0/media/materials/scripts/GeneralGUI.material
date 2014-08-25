@@ -358,7 +358,7 @@ material General/PauseButton
         depth_write off
         texture_unit
         {
-            texture pause.png
+            texture pauseButtonBlue.png
         }
       } 
     }
@@ -409,7 +409,7 @@ material General/ButtonGoDown
         depth_write off
         texture_unit
         {
-            texture arrowR.png
+            texture nextButtonBlue.png
         }
       } 
     }
@@ -426,7 +426,7 @@ material General/ButtonGoDownGray
         depth_write off
         texture_unit
         {
-            texture arrowR.png
+            texture nextButtonBlue.png
         }
       } 
     }
@@ -681,8 +681,7 @@ material General/ExitButton2
             depth_write off
 			texture_unit
 			{
-                texture close.png
-				//texture exitButtonBlue.png
+				texture exitButtonBlue.png
 			}
 		}
 	}
@@ -1601,6 +1600,59 @@ material General/SpeedSliderBall
         texture_unit
         {
             texture speed_dial.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallOff
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial_off.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderRangeHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_slide_extended.png
+            rotate 90
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial.png
+            rotate 90
         }
       } 
     }

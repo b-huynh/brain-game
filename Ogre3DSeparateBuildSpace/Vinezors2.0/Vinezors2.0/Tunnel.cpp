@@ -1737,8 +1737,6 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
                 pods[j]->setVisibleIndicator(getPodIsGood() && player->getGodMode());
             }
 #endif
-            if (pods[j]->getPodTrigger() && pods[j]->getMeshType() == POD_HAZARD)
-                player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_OBSTACLE);
         }
         ++it;
     }
@@ -1796,8 +1794,16 @@ void Tunnel::update(float elapsed)
                     pods[i]->setVisibleIndicator(getPodIsGood() && player->getGodMode());
                 }
 #endif
+                // First time you saw your first correct item? TELL THEM
+                if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex) && getMode() != STAGE_MODE_RECESS)
+                {
+                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SEEING_MATCH, 0.5f);
+                }
+                // First time you saw an obstacle? TELL THEM WHAT IT IS
                 if (pods[i]->getPodTrigger() && pods[i]->getMeshType() == POD_HAZARD)
-                    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_OBSTACLE);
+                {
+                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_OBSTACLE, 0.5f);
+                }
             }
         }
         nextSliceN = getNext(globals.podAppearance + 1);

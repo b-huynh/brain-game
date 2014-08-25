@@ -79,22 +79,25 @@ private:
     
     int toggleBack; // 0, 1, or 2
     
+    // Logging Info:
+    // Encoding on each panel where a lower number can be overridden by a higher number
     static const char ENC_NO_PANEL = '0';
-    static const char ENC_YES_PANEL = '1';
-    static const char ENC_TARGET = '2';
-    static const char ENC_FAKE = '3';
-    static const char ENC_OBSTACLE_NO_HIT = '4';
-    static const char ENC_OBSTACLE_YES_HIT = '5';
-    static const char ENC_PLAYER_STATIC = '6';
-    static const char ENC_PLAYER_CORRECT = '7';
-    static const char ENC_PLAYER_WRONG = '8';
+    static const char ENC_EMPTY_PANEL = '1';
+    static const char ENC_PLAYER = '2';
+    static const char ENC_MATCH = '3';
+    static const char ENC_NONMATCH = '4';
+    static const char ENC_OBSTACLE = '5';
+    static const char ENC_TIMEWARP = '6';
+    // Results recorded at each segment in a tunnel
     struct Result {
         char segmentEncoding[NUM_DIRECTIONS];
         int eventID;
         int levelID;
         int taskType;
         int nback;
-        int navigation;
+        int playerRollBase;
+        int playerRollOffset;
+        int playerRollSpeed;
         Direction playerLoc;
         PodInfo podInfo;
         SectionInfo sectionInfo;
@@ -103,8 +106,8 @@ private:
         float maxSpeed;
         float baseSpeed;
         float finalSpeed;
-        int navScore;
     };
+    // Player actions recorded here (does not track panning)
     struct Action {
         int eventID;
         int levelID;
@@ -113,6 +116,7 @@ private:
         int baseSpeed;
         int finalSpeed;
     };
+    // Stores information about each tunnel level
     struct Session {
         int eventID;
         int levelID;
@@ -128,6 +132,7 @@ private:
         int FN;
         int obsHit;
         int obsAvoided;
+        int score;
     };
     std::list<Result> results;
     std::list<Action> actions;
@@ -193,6 +198,7 @@ public:
     float dampingDropStop;
     bool inverted;
     
+    float rollSpeed;
     float offsetRoll;
     float offsetRollDest;
     
@@ -377,6 +383,8 @@ public:
     bool loadProgress1_1(std::string savePath);
     bool loadProgress1_2(std::string savePath);
     bool loadProgress(std::string savePath);
+    
+    std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
     
     void initSettings();
     
