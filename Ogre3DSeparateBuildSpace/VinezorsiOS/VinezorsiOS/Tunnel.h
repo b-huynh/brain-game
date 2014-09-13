@@ -228,8 +228,9 @@ public:
     void setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel);
     void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
     bool satisfyCriteria(int nback, int amount);
+    bool killCriteria(int amount);
     int loseRandomCriteria();
-    bool isCriteriaSatisfied() const;
+    bool areCriteriaFilled() const;
     bool isMultiCollectionTask() const;
     bool setAllCriteriaTo(int value);
     int getLowestCriteria() const;
@@ -237,6 +238,7 @@ public:
     int getFirstCriteria() const; // just get the n-back of the first item, efficient then scanning list
     int getNumRequiredCriteria() const;
     int getNumSatisfiedCriteria() const;
+    int getStarPhase() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;

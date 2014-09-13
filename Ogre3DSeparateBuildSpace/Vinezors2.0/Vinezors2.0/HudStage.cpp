@@ -316,8 +316,14 @@ void HudStage::alloc()
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem19")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem20")));
 #endif
-    GUITopPanel = static_cast<PanelOverlayElement*>(
-                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUITopPanel"));
+    
+    // Allocate the hud elements
+    HudEntire = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudEntire"));
+    HudTopPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudTopPanel"));
+    HudLeftPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftPanel"));
+    HudRightPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightPanel"));
+    HudLeftZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftZapper"));
+    HudRightZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightZapper"));
     
     // Create text area
     label1 = static_cast<TextAreaOverlayElement*>(
@@ -412,7 +418,12 @@ void HudStage::alloc()
     endTallyContainer->addChild(endTallyScoreLabel);
     endTallyContainer->addChild(endTallyScoreValue);
     
-    overlay1->add2D(GUITopPanel);
+    overlay1->add2D(HudEntire);
+    overlay1->add2D(HudLeftPanel);
+    overlay1->add2D(HudRightPanel);
+    overlay1->add2D(HudTopPanel);
+    overlay1->add2D(HudLeftZapper);
+    overlay1->add2D(HudRightZapper);
     
     overlay1->add2D(pauseBackground);
     //for (int i = 0; i < collectionBar.size(); ++i)
@@ -466,7 +477,7 @@ void HudStage::alloc()
     //                       globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Vertical Slider
-    speedSlider->setSlider("speed", overlays[0], Vector2(0.04, 0.25), Vector2(0.03, 0.55), Vector2(0.03, 0.09), true,
+    speedSlider->setSlider("speed", overlays[0], Vector2(0.225, 0.45), Vector2(0.55, 0.03), Vector2(0.09, 0.03), false,
                            globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
@@ -490,7 +501,12 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderRangeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderBallBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUITopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudEntire);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudTopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftZapper);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightZapper);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
     collectionBar.clear();
@@ -555,10 +571,44 @@ void HudStage::initOverlay()
     endTallyContainer->setPosition(0.35, 0.15);
     endTallyContainer->setDimensions(0.25, 0.25);
     
-    GUITopPanel->setMetricsMode(GMM_RELATIVE);
-    GUITopPanel->setPosition(0.0, 0.0);
-    GUITopPanel->setDimensions(1.0, 1.0);
-    GUITopPanel->setMaterialName("General/GUIMainHud");
+    // imgw = 2048 px = 1
+    // imgh = 1536 px = 1
+    // left hud (xoffset,yoffset) = (0 px, 90 px) = (0.0%, 0.0586%)
+    // left hud (xdim, ydim) = (460 px, 1370 px) = (0.2246%, 0.8919%)
+    // right hud (xoffset,yoffset) = (imgw - xdim, yoffset) = (0.7754%, 0.0586%)
+    // right hud dim = left hud dim
+    // top hud (xoffset, yoffset) = (imgw / 2 - top hud xdim / 2, 44) = (70 px, 44 px) = (0.0342, 0.0286)
+    // top hud (xdim, ydim) = (1907 px, 173 px) = (0.9312%, 0.1126%)
+    
+    // left dip (xoffset, yoffset) = (32 px, 240 px) = (0.0156%, 0.1562)
+    // left dip (xdim, ydim) = (156 px, 1064 px) = (0.0762, 0.6926)
+    // right zapper (xoffset, yoffset) = (1840 px, 428 px) = (0.8984%, 0.2786%)
+    // right zapper (xdim, ydim) = (164 px, 772 px) = (0.08%, 0.5026%)
+    
+    HudLeftPanel->setMetricsMode(GMM_RELATIVE);
+    HudLeftPanel->setPosition(0.0, 0.0586);
+    HudLeftPanel->setDimensions(0.2256, 0.8919);
+    HudLeftPanel->setMaterialName("General/GUIMainHudLeft");
+    
+    HudTopPanel->setMetricsMode(GMM_RELATIVE);
+    HudTopPanel->setPosition(0.0342, 0.0286);
+    HudTopPanel->setDimensions(0.9312, 0.1126);
+    HudTopPanel->setMaterialName("General/GUIMainHudBar");
+    
+    HudRightPanel->setMetricsMode(GMM_RELATIVE);
+    HudRightPanel->setPosition(0.7744, 0.0586);
+    HudRightPanel->setDimensions(0.2256, 0.8919);
+    HudRightPanel->setMaterialName("General/GUIMainHudRight");
+    
+    HudLeftZapper->setMetricsMode(GMM_RELATIVE);
+    HudLeftZapper->setPosition(0.0216, 0.2786);
+    HudLeftZapper->setDimensions(0.08, 0.5026);
+    HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
+    
+    HudRightZapper->setMetricsMode(GMM_RELATIVE);
+    HudRightZapper->setPosition(0.8984, 0.2786);
+    HudRightZapper->setDimensions(0.08, 0.5026);
+    HudRightZapper->setMaterialName("General/GUIMainHudShifter");
     
     label1->setMetricsMode(GMM_RELATIVE);
     label1->setAlignment(TextAreaOverlayElement::Center);
@@ -737,8 +787,8 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeVertical");
-    sliderBallBackground->setMaterialName("General/SpeedSliderBall");
+    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    sliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
     toggle1Background->setMaterialName("General/GUIToggleButton3");
     toggle2Background->setMaterialName("General/GUIToggleButton2");
     toggle3Background->setMaterialName("General/GUIToggleButton1");
@@ -871,20 +921,8 @@ void HudStage::setPauseNavDest(float navOffset)
 void HudStage::setCollectionBar(bool instant, float elapsed)
 {
 #ifdef SPECIAL_PLAY
-    int numSatisfied = tunnel->getNumSatisfiedCriteria();
-    
     // How many has the player collected?
-    int starPhase = 0;
-    if (numSatisfied < 5)
-        starPhase = 0;
-    else if (numSatisfied < 10)
-        starPhase = 1;
-    else if (numSatisfied < 15)
-        starPhase = 2;
-    else if (numSatisfied < 20)
-        starPhase = 3;
-    else
-        starPhase = 4;
+    int starPhase = tunnel->getStarPhase();
     
     // Designate positions for each collection item
     float x = 0.2850;
@@ -969,6 +1007,8 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
                 scoreName += "Filled2";
             else if (criterias[i].collected == 3)
                 scoreName += "Filled3";
+            else if (criterias[i].collected == 4)
+                scoreName = "General/GUICollectionGreyed";
             else
                 scoreName += "Blank";
             
@@ -1088,7 +1128,6 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
                 scoreName += "Filled3";
             else
                 scoreName += "Blank";
-            
             collectionBar[i]->setMaterialName(scoreName);
         }
         else

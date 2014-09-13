@@ -117,7 +117,7 @@
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
 		5DF598AC188537FD00F85646 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		5DF598AD188537FD00F85646 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
-		5DF9407317F4AF360082C239 /* RecallGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DF9407317F4AF360082C239 /* RecallGameShifter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallGameShifter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5DF9407A17F4AF360082C239 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -355,7 +355,7 @@
 		5DF9407417F4AF360082C239 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5DF9407317F4AF360082C239 /* RecallGame.app */,
+				5DF9407317F4AF360082C239 /* RecallGameShifter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -435,7 +435,7 @@
 			);
 			name = RecallGame;
 			productName = VinezorsiOS;
-			productReference = 5DF9407317F4AF360082C239 /* RecallGame.app */;
+			productReference = 5DF9407317F4AF360082C239 /* RecallGameShifter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -684,6 +684,7 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)Shifter";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv7 armv7s";
@@ -718,6 +719,7 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)Shifter";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv7 armv7s";

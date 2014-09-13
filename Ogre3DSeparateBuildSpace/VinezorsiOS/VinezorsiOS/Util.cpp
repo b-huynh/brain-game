@@ -73,7 +73,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podBinSize2 = 5;
     podBinSize3 = 3;
     podNBackChance = 33.0;
-    span = 2;
+    span = 1;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
     seatLength = podHeadRadius * 2;
@@ -81,18 +81,18 @@ Util::ConfigGlobal::ConfigGlobal()
     nback = 2;
     control = 1;
     historyMode = -1;
-    startingHP = 5;
+    startingHP = 3;
     HPNegativeLimit = 0;
-    HPPositiveLimit = 5;
+    HPPositiveLimit = 3;
     HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
     HPNegativeDistractor = 0;
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 10.0;
+    wrongAnswerTimePenalty = 20.0;
     distractorSpeedPenalty = 1.0;
-    distractorTimePenalty = 10.0;
+    distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
@@ -1603,7 +1603,7 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
     globals.stageTotalTargetsVariance = 0;
     
-    globals.startingHP = 5;
+    globals.startingHP = 3;
     globals.HPPositiveCorrectAnswer = 0;
     globals.HPNegativeCorrectAnswer = 0;
     globals.HPPositiveWrongAnswer = -1;

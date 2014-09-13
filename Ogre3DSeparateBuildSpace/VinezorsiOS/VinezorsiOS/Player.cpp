@@ -582,30 +582,61 @@ void Player::updateTractorBeam(float elapsed)
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (selectedTarget && t && t->active)
+    if (t && t->active && t->expireTimer > 0.0)
     {
-        SceneNode* glowNode = selectedTarget->getGlowNode();
+        Vector3 camForward = getCamForward(false);
+        Vector3 camDown = -getCamUpward(false);
         
-        if (selectedTarget->isPodTaken() && glowNode)
+        t->effectModifier = finalSpeed / 20.0f;
+        
+        Vector3 vinePos = vines[0]->entireVine->_getDerivedPosition() + camForward * 5.0 + camDown * 0.25;
+        Vector3 podPos = t->targetPod->getHead()->_getDerivedPosition();
+        
+        if (t->expireTimer <= t->expireCheckpoint)
         {
-            Vector3 vinePos = vines[0]->entireVine->_getDerivedPosition();
-            Vector3 podPos = selectedTarget->getHead()->_getDerivedPosition();
-            
-            Vector3 rotator = (podPos - vinePos).normalisedCopy();
-            
-            Quaternion q = getCamForward(false).getRotationTo(rotator);
-            
-            float distance = (podPos - vinePos).length();
-            t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance-7.0f));
-            t->tractorBeamNode->setPosition(0,0,-distance/2.0-7.0f);
-            
-            t->tractorBeamRotatorNode->setPosition(vines[0]->entireVine->_getDerivedPosition());
-            t->tractorBeamRotatorNode->setOrientation(getCamRot() * q);
-            
-            t->tractorBeamNode->roll(Radian(Degree(15.0f)));
+            t->tractorBeamEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
+            t->tractorBeamPulseEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
         }
+        // Move the pulse node
+        Vector3 glowPos = t->tractorBeamPulseNode->_getDerivedPosition();
+        Vector3 glowLerp = vinePos + (podPos - vinePos) * (t->pulseLen - t->pulseTimer) / t->pulseLen;
+        t->tractorBeamPulseNode->setPosition(glowLerp);
+        
+        // Rotate the beam effect
+        Vector3 rotator = (podPos - vinePos).normalisedCopy();
+        
+        Quaternion q = camForward.getRotationTo(rotator);
+        
+        float distance = (podPos - vinePos).length();
+        t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance - distance / 10 * t->effectModifier));
+        t->tractorBeamEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.1 / t->effectModifier));
+        t->tractorBeamPulseEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.1 / t->effectModifier));
+        t->tractorBeamNode->setPosition(0,0,-distance / 2.0);
+        //t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance - distance / 18.0 * t->effectModifier));
+        //t->tractorBeamEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.2 / t->effectModifier));
+        //t->tractorBeamNode->setPosition(0,0,-distance / 2.0 - distance / 18.0  * t->effectModifier);
+        
+        t->tractorBeamRotatorNode->setPosition(vinePos);
+        t->tractorBeamRotatorNode->setOrientation(getCamRot() * q);
+        
+        t->tractorBeamNode->roll(Radian(Degree(15.0f)));
+
+        // Update timer
+        t->expireTimer -= (elapsed * t->effectModifier);
+        t->pulseTimer -= (elapsed * t->effectModifier);
+        if (t->pulseTimer <= 0.0) t->pulseTimer = t->pulseLen;
+        // If pod is recorded and past, turn off tractor beam
+        // Or better yet, if the ship's forward vector is not in the same direction as (podPos - vinePos)
+        if (camForward.dotProduct(podPos - vinePos) < 0.0)
+            t->expireTimer = 0.0;
     }
-    else if( t && t->active && t->tractorBeamEffect ) {
+    if (t && t->active && t->tractorBeamEffect && t->expireTimer <= 0.0f) {
+        t->tractorBeamPulseNode->detachObject(t->tractorBeamPulseEffect);
+        t->tractorBeamPulseNode->getCreator()->destroyParticleSystem(t->tractorBeamPulseEffect);
+        t->tractorBeamPulseEffect = NULL;
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->removeAndDestroyChild("PulseNode");
+        t->tractorBeamPulseNode = NULL;
+        
         t->tractorBeamNode->detachObject(t->tractorBeamEffect);
         t->tractorBeamNode->getCreator()->destroyParticleSystem(t->tractorBeamEffect);
         t->tractorBeamEffect = NULL;
@@ -614,6 +645,7 @@ void Player::updateTractorBeam(float elapsed)
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->removeAndDestroyChild("BeamRotatorNode");
         t->tractorBeamRotatorNode = NULL;
         t->active = false;
+        t->targetPod = NULL;
     }
 }
 
@@ -621,26 +653,57 @@ void Player::performTractorBeam()
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (!selectedTarget && t && !t->active)
+    if (!t->targetPod && !selectedTarget && t && !t->active)
     {
-        selectedTarget = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
-        if (selectedTarget && !selectedTarget->getGlowNode() && !selectedTarget->isPodTaken())
+        t->targetPod = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
+        if (getToggleBack() > 0 &&
+            t->targetPod && !t->targetPod->isPodTested() && !t->targetPod->isIndicatorVisible() &&
+            !t->targetPod->getGlowNode() && !t->targetPod->isPodTaken())
         {
-            selectedTarget->takePod();
-            setGlowGrabParameters();
-            //if (selectTimer <= 0.0)
-            //    selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
+            setToggleBack(0);
+            tunnel->respondToToggleCheat();
+
+            t->targetPod->takePod();
+            selectedTarget = t->targetPod;
+            setGlowGrabParameters(t->targetPod);
+            if (selectTimer <= 0.0)
+            {
+                selectTimerFlag = true;
+                selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
+            }
             
+            // Generate a pulse glow effect
+            Ogre::ColourValue particleValue = Ogre::ColourValue(0.0, 0.5, 0.3);
+            std::string particleName = "General/GlowPodEllipsoid";
+            
+            // Make independent to avoid rotation orientions when translating.
+            t->tractorBeamPulseNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("PulseNode");
+            t->tractorBeamPulseEffect = t->tractorBeamPulseNode->getCreator()->createParticleSystem("TractorBeamPulseEffect", particleName);
+            ParticleEmitter* tractorBeamGlowEmitter = t->tractorBeamPulseEffect->getEmitter(0); // Assuming only one emitter
+            tractorBeamGlowEmitter->setColour(particleValue);
+            
+            t->tractorBeamPulseNode->attachObject(t->tractorBeamPulseEffect);
+            
+            // Change the tractor beam effect based on speed (faster ships should have beams that expire quicker)
+            t->effectModifier = finalSpeed / 20.0f;
+            // Assign a glow speed for the pulse towards
+            t->pulseLen = 0.25;
+            t->pulseTimer = t->pulseLen;
+            
+            // Assign powerup info
             t->active = true;
             t->available = false;
+            t->expireTimer = 1.0f;
+            t->expireCheckpoint = 0.5;
+            
+            // Generate a beam
             t->tractorBeamRotatorNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("BeamRotatorNode");
             t->tractorBeamNode = t->tractorBeamRotatorNode->createChildSceneNode("BeamNode");
             t->tractorBeamEffect = t->tractorBeamNode->getCreator()->createParticleSystem("Beam", "General/Beam");
             t->tractorBeamEffect->getEmitter(0)->setParameter("depth", "0");
             t->tractorBeamNode->attachObject(t->tractorBeamEffect);
-            
         } else
-            selectedTarget = NULL;
+            t->targetPod = NULL;
     }
 }
 
@@ -875,19 +938,18 @@ void Player::updateGlowExtraction(float elapsed)
     }
 }
 
-void Player::setGlowGrabParameters()
+void Player::setGlowGrabParameters(Pod* pod)
 {
     // Extract a glow that is in the form of a sphere always, not shape of pod.
-    selectedTarget->removeGlow();
-    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    //pod->removeGlow();
+    //pod->generateGlow(pod->getPodInfo().podColor, POD_SHAPE_SPHERE);
     
     // Assign a glow speed towards the player
-    if (selectedTarget->getGlowNode())
+    if (pod->getGlowNode())
     {
-        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
+        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - pod->getGlowNode()->_getDerivedPosition()).length();
         if (finalSpeed > minSpeed)
             glowSpeed *= (finalSpeed / minSpeed);
-        
     }
 }
 
@@ -1087,25 +1149,47 @@ void Player::testPodGiveFeedback(Pod* test)
         numCorrectBonus = 0;
         if (podTaken)
         {
-            if (soundFeedbackBad)
+            if (!nbackPod && !correctSelection)
             {
-                soundFeedbackBad->stop();
-                soundFeedbackBad->play();
+                if (soundFeedbackBad)
+                {
+                    soundFeedbackBad->stop();
+                    soundFeedbackBad->play();
+                }
+                ++numWrongTotal;
+            
+                //beginBadFuelPickUp();
+            
+                xsTimer = 1.0f;
+                if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+                else hp += globals.HPNegativeWrongAnswer;
+                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+            
+                //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                //tunnel->loseRandomCriteria();
+            
+                baseSpeed -= globals.speedMap[baseSpeed];
+                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
             }
-            ++numWrongTotal;
-            
-            //beginBadFuelPickUp();
-            
-            xsTimer = 1.0f;
-            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-            else hp += globals.HPNegativeWrongAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-            
-            //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
-            //tunnel->loseRandomCriteria();
-            
-            baseSpeed -= globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+            else
+            {
+                if (soundFeedbackMiss)
+                {
+                    soundFeedbackMiss->stop();
+                    soundFeedbackMiss->play();
+                }
+                tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                
+                numCorrectCombo = 0;
+                ++numMissedTotal;
+                ++numWrongCombo;
+                if (numWrongCombo % globals.numToSpeedDown == 0)
+                {
+                    baseSpeed -= globals.speedMap[baseSpeed];
+                    baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                }
+                numCorrectBonus = 0;
+            }
         }
         else if (!podTaken && nbackPod)
         {
@@ -1114,7 +1198,7 @@ void Player::testPodGiveFeedback(Pod* test)
                 soundFeedbackMiss->stop();
                 soundFeedbackMiss->play();
             }
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
             
             numCorrectCombo = 0;
             ++numMissedTotal;
@@ -1322,8 +1406,8 @@ void Player::recordInfo()
                     {
                         selectTimerFlag = true;
                         selectedTarget = test;;
-                        if (selectTimer <= 0.0) // Make sure it's not being grabbed already
-                            setGlowGrabParameters();
+                        //if (selectTimer <= 0.0) // Make sure it's not being grabbed already
+                        //    setGlowGrabParameters(selectedTarget);
                         if (selectTimer <= 0.0 || selectTimer > 0.1)
                             selectTimer = 0.1;
                     }
@@ -2338,8 +2422,7 @@ void Player::saveAllResults(Evaluation eval)
     }
     else
     {
-        // Recess is based off of distance (number of signals left to pass)
-        // Every other is a collection task which we will use the default 3, 5, 8
+        // Recess is based off of a high number of collection (% collected)
         if (tunnel->getMode() == STAGE_MODE_RECESS)
         {
             float percentComplete = tunnel->getPercentComplete();
@@ -2356,18 +2439,7 @@ void Player::saveAllResults(Evaluation eval)
         }
         else
         {
-            int numFull = tunnel->getNumSatisfiedCriteria();
-            if (numFull > 15)
-                nrating = 4;
-            else if (numFull > 10)
-                nrating = 3;
-            else if (numFull > 5)
-                nrating = 2;
-            else if (numFull > 0)
-                nrating = 1;
-            else
-                nrating = 0;
-            
+            nrating = tunnel->getStarPhase();
         }
     }
     PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);

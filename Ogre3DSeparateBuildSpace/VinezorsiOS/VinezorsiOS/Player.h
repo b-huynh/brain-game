@@ -342,7 +342,7 @@ public:
     bool triggerShields();
     void performShields();
     void updateGlowExtraction(float elapsed);
-    void setGlowGrabParameters();
+    void setGlowGrabParameters(Pod* pod);
     void beginBadFuelPickUp();
     void updateBadFuelPickUp(float elapsed);
     void testPodGiveFeedback(Pod* test);

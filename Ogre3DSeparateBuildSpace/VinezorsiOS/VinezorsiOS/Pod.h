@@ -110,6 +110,7 @@ public:
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     void setVisibleIndicator(bool value);
+    bool isIndicatorVisible() const;
     
     void removeGlow();
     void removeIndicator();

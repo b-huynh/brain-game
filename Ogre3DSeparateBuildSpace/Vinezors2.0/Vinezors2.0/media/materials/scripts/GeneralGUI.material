@@ -721,7 +721,7 @@ material General/GUITopPanel
 	}
 }
 
-material General/GUIMainHud
+material General/GUIMainHudLeft
 {
 	technique
 	{
@@ -732,7 +732,75 @@ material General/GUIMainHud
             depth_write off
 			texture_unit
 			{
-				texture hud.png
+				texture hud-eblue_left.png
+			}
+		}
+	}
+}
+
+material General/GUIMainHudBar
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_top.png
+			}
+		}
+	}
+}
+
+material General/GUIMainHudRight
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_right.png
+			}
+		}
+	}
+}
+
+material General/GUIMainHudDip
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_dip.png
+			}
+		}
+	}
+}
+
+material General/GUIMainHudShifter
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_zapper.png
 			}
 		}
 	}
@@ -1537,6 +1605,7 @@ material General/LevelBar5Fill
     }
 }
 
+
 material General/BasicSliderRangeHorizontal
 {
     technique
@@ -1600,6 +1669,59 @@ material General/SpeedSliderBall
         texture_unit
         {
             texture speed_dial.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallOff
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial_off.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderRangeHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_slide_extended.png
+            rotate 90
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial.png
+            rotate 90
         }
       } 
     }

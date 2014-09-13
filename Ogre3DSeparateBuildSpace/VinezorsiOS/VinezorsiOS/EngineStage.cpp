@@ -943,11 +943,6 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_SPACE:
         {
             player->setKeySpace(true);
-            if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
-            {
-                player->setToggleBack(0);
-                tunnel->respondToToggleCheat();
-            }
             break;
         }
         case OIS::KC_LEFT:
@@ -1029,6 +1024,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_X:
         {
+            player->setPowerUp("TractorBeam", true);
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TractorBeam");
             break;
         }

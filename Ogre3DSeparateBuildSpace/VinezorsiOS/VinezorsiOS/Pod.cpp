@@ -485,7 +485,7 @@ void Pod::uncloakPod()
             materialName = "General/PodPurple";
             break;
     }
-    if (podTaken)
+    if (podTaken || isIndicatorVisible())
         materialName += "Transparent";
     setSkin();
 }
@@ -607,7 +607,6 @@ void Pod::generateIndicator()
         
         indicatorNode->attachObject(indicatorEffect);
         ++indicatorID;
-        
     }
 }
 
@@ -644,7 +643,15 @@ void Pod::setPodTrigger(bool value)
 void Pod::setVisibleIndicator(bool value)
 {
     if (indicatorNode && podShape != POD_SHAPE_HOLDOUT)
+    {
         indicatorNode->setVisible(value);
+        uncloakPod();
+    }
+}
+
+bool Pod::isIndicatorVisible() const
+{
+    return indicatorNode && indicatorNode->getAttachedObject(0)->isVisible();
 }
 
 void Pod::removeGlow()

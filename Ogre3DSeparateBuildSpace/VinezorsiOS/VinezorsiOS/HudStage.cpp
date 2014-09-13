@@ -871,20 +871,8 @@ void HudStage::setPauseNavDest(float navOffset)
 void HudStage::setCollectionBar(bool instant, float elapsed)
 {
 #ifdef SPECIAL_PLAY
-    int numSatisfied = tunnel->getNumSatisfiedCriteria();
-    
     // How many has the player collected?
-    int starPhase = 0;
-    if (numSatisfied < 5)
-        starPhase = 0;
-    else if (numSatisfied < 10)
-        starPhase = 1;
-    else if (numSatisfied < 15)
-        starPhase = 2;
-    else if (numSatisfied < 20)
-        starPhase = 3;
-    else
-        starPhase = 4;
+    int starPhase = tunnel->getStarPhase();
     
     // Designate positions for each collection item
     float x = 0.2850;
@@ -969,6 +957,8 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
                 scoreName += "Filled2";
             else if (criterias[i].collected == 3)
                 scoreName += "Filled3";
+            else if (criterias[i].collected == 4)
+                scoreName = "General/GUICollectionGreyed";
             else
                 scoreName += "Blank";
             
@@ -1088,7 +1078,6 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
                 scoreName += "Filled3";
             else
                 scoreName += "Blank";
-            
             collectionBar[i]->setMaterialName(scoreName);
         }
         else

@@ -809,8 +809,13 @@ void Tunnel::checkIfDone()
             getMode() == STAGE_MODE_COLLECTION ||
             getMode() == STAGE_MODE_TEACHING)
         {
-            if (isCriteriaSatisfied())
-                setDone(PASS);
+            if (areCriteriaFilled())
+            {
+                if (getStarPhase() >= 4)
+                    setDone(PASS);
+                else
+                    setDone(FAIL);
+            }
             //else if (player->getHP() >= globals.HPPositiveLimit)
             //    setDone(PASS);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
@@ -997,7 +1002,17 @@ bool Tunnel::satisfyCriteria(int n, int amount)
     bool somethingWasSatisfied = false;
     for (int i = 0; i < collectionCriteria.size() && amount > 0; ++i)
     {
-        if ((n == -1 || n == collectionCriteria[i].nback) && collectionCriteria[i].collected < 3)
+        if (collectionCriteria[i].collected == 4 && amount >= 3)
+        {
+            amount = 5;
+            for (; i < collectionCriteria.size() && amount > 0; ++i)
+            {
+                collectionCriteria[i].collected = 0;
+                --amount;
+            }
+            break;
+        }
+        else if ((n == -1 || n == collectionCriteria[i].nback) && collectionCriteria[i].collected < 3)
         {
             int extract = amount;
             
@@ -1010,6 +1025,24 @@ bool Tunnel::satisfyCriteria(int n, int amount)
         }
     }
     return somethingWasSatisfied;
+}
+
+// Makes a criteria unavailable to fill in, this is the value 4 (to sort of represent overfilling)
+//
+// if -1 is passed in for the parameter, any criteria can be killed (except one that is not completed)
+bool Tunnel::killCriteria(int amount)
+{
+    bool somethingWasKilled = false;
+    for (int i = collectionCriteria.size() - 1; i >= 0 && amount > 0; --i)
+    {
+        if (collectionCriteria[i].collected != 4)
+        {
+            collectionCriteria[i].collected = 4; // 4 represents killed
+            amount -= 1;
+            somethingWasKilled = true;
+        }
+    }
+    return somethingWasKilled;
 }
 
 // Randomly set a collected item to uncollected and returns that index
@@ -1032,8 +1065,8 @@ int Tunnel::loseRandomCriteria()
         return -1;
 }
 
-// Checks whether all collection criterias are satisfied
-bool Tunnel::isCriteriaSatisfied() const
+// Checks whether all collection criterias are completed or X'ed
+bool Tunnel::areCriteriaFilled() const
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
     {
@@ -1098,9 +1131,41 @@ int Tunnel::getNumSatisfiedCriteria() const
 {
     int ret = 0;
     for (int i = 0; i < collectionCriteria.size(); ++i)
-        if (collectionCriteria[i].collected >= 3)
+        if (collectionCriteria[i].collected >= 3 &&
+            collectionCriteria[i].collected != 4)
             ret++;
     return ret;
+}
+
+// Determines how many stars/merit the player has earned so far
+int Tunnel::getStarPhase() const
+{
+    int numSatisfied = getNumSatisfiedCriteria();
+    int starPhase = 0;
+#ifdef SPECIAL_PLAY
+    if (numSatisfied < 5)
+        starPhase = 0;
+    else if (numSatisfied < 10)
+        starPhase = 1;
+    else if (numSatisfied < 15)
+        starPhase = 2;
+    else if (numSatisfied < 20)
+        starPhase = 3;
+    else
+        starPhase = 4;
+#else
+    if (numSatisfied < 3)
+        starPhase = 0;
+    else if (numSatisfied < 6)
+        starPhase = 1;
+    else if (numSatisfied < 9)
+        starPhase = 2;
+    else if (numSatisfied < 12)
+        starPhase = 3;
+    else
+        starPhase = 4;
+#endif
+    return starPhase;
 }
 
 void Tunnel::removeSegment()
@@ -1988,7 +2053,9 @@ void Tunnel::respondToToggleCheat()
 {
     Pod* pod = getNearestPod(globals.podAppearance + 1);
     if (pod)
+    {
         pod->setVisibleIndicator(player->getToggleBack() == 0);
+    }
     /*
 #ifdef DEBUG_MODE
     Pod* pod = getNearestPod(globals.podAppearance + 1);

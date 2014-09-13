@@ -55,22 +55,22 @@ particle_system General/StarExplode
 particle_system General/Beam
  {
     material        General/Star
-    particle_width  1
-    particle_height 1
+    particle_width  5
+    particle_height 5
     cull_each       true
-    quota           3000
+    quota           250
     billboard_type  point
     local_space	    true
  
     // Area emitter
     emitter Ring
     {
-        emission_rate   5000
-        time_to_live    1
+        emission_rate   10000
+        time_to_live    0.2
         colour 0.0 0.3 0.5
-        width           2
-        height          2
-        depth           50
+        width           0.5
+        height          0.5
+        depth           50.0
     }
  }
 
@@ -129,10 +129,10 @@ particle_system General/GlowPodBox
 particle_system General/GlowPodEllipsoid
  {
     material        General/Star
-    particle_width  3
-    particle_height 3
+    particle_width  5
+    particle_height 5
     cull_each       true
-    quota           80
+    quota           100
     billboard_type  point
     local_space	    true
  
@@ -140,9 +140,9 @@ particle_system General/GlowPodEllipsoid
     emitter Ellipsoid
     {
         angle           30
-        emission_rate   200
-        time_to_live_min 0.5
-        time_to_live_max 0.5
+        emission_rate   1000
+        time_to_live_min 0.1
+        time_to_live_max 0.1
         direction       0 1 0
         velocity       0.001
         colour 0.0 0.0 0.0
@@ -155,10 +155,10 @@ particle_system General/GlowPodEllipsoid
 particle_system General/GoodPodIndicator
  {
     material        General/Star
-    particle_width  2
-    particle_height 2
+    particle_width  10
+    particle_height 10
     cull_each       true
-    quota           500
+    quota           150
     billboard_type  point
     local_space	    true
  
@@ -166,18 +166,18 @@ particle_system General/GoodPodIndicator
     emitter HollowEllipsoid
     {
         angle           180
-        emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
+        emission_rate   250
+        time_to_live_min 0.5
+        time_to_live_max 1.0
         direction       0 1 0
-        velocity       0.0
-        colour 1.0 1.0 1.0
+        velocity       5.0
+        colour 0.0 0.3 0.5
 	width		1
 	height		1
 	depth		1
-	inner_width	9
-	inner_height	9
-	inner_depth	9
+	inner_width	2
+	inner_height	2
+	inner_depth	2
     }
  }
  
