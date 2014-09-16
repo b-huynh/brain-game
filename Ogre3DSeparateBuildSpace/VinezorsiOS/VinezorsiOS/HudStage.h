@@ -52,7 +52,12 @@ protected:
     PanelOverlayElement* sliderBallBackground;
     
     std::vector<PanelOverlayElement*> collectionBar;
-    PanelOverlayElement* GUITopPanel;
+    PanelOverlayElement* HudEntire;
+    PanelOverlayElement* HudTopPanel;
+    PanelOverlayElement* HudLeftPanel;
+    PanelOverlayElement* HudRightPanel;
+    PanelOverlayElement* HudLeftDip;
+    PanelOverlayElement* HudRightZapper;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;

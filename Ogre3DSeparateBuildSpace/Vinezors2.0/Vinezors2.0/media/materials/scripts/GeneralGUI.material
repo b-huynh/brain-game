@@ -26,7 +26,8 @@ material General/ScreenBackground2
         depth_write off
         texture_unit
         {
-            texture tutorial_screen.png
+            texture screenbackground2.png
+            //texture tutorial_screen.png
         }
       } 
     }
@@ -110,6 +111,8 @@ material General/PauseBase
         texture_unit
         {
             texture nav_base.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -721,7 +724,7 @@ material General/GUITopPanel
 	}
 }
 
-material General/GUIMainHud
+material General/GUIMainHudLeft
 {
 	technique
 	{
@@ -732,7 +735,85 @@ material General/GUIMainHud
             depth_write off
 			texture_unit
 			{
-				texture hud.png
+				texture hud-eblue_left.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudBar
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_top.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudRight
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_right.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudDip
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_dip.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudShifter
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_shifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -1243,6 +1324,8 @@ material General/GUIToggleButton0
 			texture_unit
 			{
 				texture speed0slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1260,6 +1343,8 @@ material General/GUIToggleButton1
 			texture_unit
 			{
 				texture speed1slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1277,6 +1362,8 @@ material General/GUIToggleButton2
 			texture_unit
 			{
 				texture speed2slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1294,6 +1381,8 @@ material General/GUIToggleButton3
 			texture_unit
 			{
 				texture speed3slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1537,6 +1626,7 @@ material General/LevelBar5Fill
     }
 }
 
+
 material General/BasicSliderRangeHorizontal
 {
     technique
@@ -1549,6 +1639,8 @@ material General/BasicSliderRangeHorizontal
         texture_unit
         {
             texture sliderrange.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1566,6 +1658,8 @@ material General/BasicSliderBall
         texture_unit
         {
             texture sliderbutton.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1583,6 +1677,8 @@ material General/SpeedSliderRangeVertical
         texture_unit
         {
             texture speed_slide.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1600,6 +1696,8 @@ material General/SpeedSliderBall
         texture_unit
         {
             texture speed_dial.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1617,6 +1715,8 @@ material General/SpeedSliderBallOff
         texture_unit
         {
             texture speed_dial_off.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1635,6 +1735,8 @@ material General/SpeedSliderRangeHorizontal
         {
             texture speed_slide_extended.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1653,6 +1755,8 @@ material General/SpeedSliderBallHorizontal
         {
             texture speed_dial.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }

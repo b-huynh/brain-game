@@ -8,6 +8,7 @@
 
 #include "EngineStateManager.h"
 #include "EngineStage.h"
+#include "EngineSchedulerMenu.h"
 #include "EngineLevelSelection.h"
 #include "EngineMainMenu.h"
 #include "EngineCredits.h"
@@ -41,6 +42,13 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
             Engine* top = getActiveEngine();
             if (top) top->exit();
             gameEngineStack.push_back(new EngineStage(this, player));
+            break;
+        }
+        case ENGINE_SCHEDULER_MENU:
+        {
+            Engine* top = getActiveEngine();
+            if (top) top->exit();
+            gameEngineStack.push_back(new EngineSchedulerMenu(this, player));
             break;
         }
         case ENGINE_LEVEL_SELECTION:

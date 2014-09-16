@@ -35,8 +35,6 @@ protected:
     
     enum ButtonSet {
         BUTTON_PAUSE, BUTTON_GO,
-        BUTTON_TOGGLE1, BUTTON_TOGGLE2, BUTTON_TOGGLE3, BUTTON_TOGGLE4,
-        BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3,
         BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
     };
     
@@ -52,7 +50,12 @@ protected:
     PanelOverlayElement* sliderBallBackground;
     
     std::vector<PanelOverlayElement*> collectionBar;
-    PanelOverlayElement* GUITopPanel;
+    PanelOverlayElement* HudEntire;
+    PanelOverlayElement* HudTopPanel;
+    PanelOverlayElement* HudLeftPanel;
+    PanelOverlayElement* HudRightPanel;
+    PanelOverlayElement* HudLeftDip;
+    PanelOverlayElement* HudRightZapper;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
