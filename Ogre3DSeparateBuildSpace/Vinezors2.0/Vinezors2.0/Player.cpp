@@ -45,9 +45,10 @@ Player::Player()
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.01f;
+    holdoutLB = 1.00f;
+    holdoutUB = 1.00f;
     syncDataToServer = false;
-    inverted = true;
     initSettings();
 }
 
@@ -56,6 +57,13 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
+    
+    //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
+    
+    levels->ManLevelSet(0, 1, 3, 10, 50);
+    
+    levels->ManLevelSet(1, 1, 2, 30, 70);
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -67,9 +75,10 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.01f;
+    holdoutLB = 1.00f;
+    holdoutUB = 1.00f;
     syncDataToServer = false;
-    inverted = true;
     initSettings();
 }
 
@@ -1017,7 +1026,7 @@ void Player::testPodGiveFeedback(Pod* test)
             else hp += globals.HPNegativeWrongAnswer;
             hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
             */
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
         
             numCorrectCombo = 0;
             ++numWrongCombo;

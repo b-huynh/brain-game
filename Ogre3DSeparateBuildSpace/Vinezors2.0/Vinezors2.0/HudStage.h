@@ -28,6 +28,7 @@ public:
     bool isGoButtonActive() const;
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
+    void setSpeedDialState(bool active);
 protected:
     Player* player;
     Tunnel* tunnel;

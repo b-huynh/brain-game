@@ -147,11 +147,11 @@ void HudMainSettings::alloc()
     
     overlay1->add2D(enableTutorialsEntireBackground);
     enableTutorialsEntireBackground->addChild(enableTutorialsTextDisplay);
-    overlay1->add2D(enableTutorialsButtonBackground);
+    overlay1->add2D(enableTutorialsButtonBackground); // Buttons can't be set relative to others
     
     overlay1->add2D(syncDataEntireBackground);
     syncDataEntireBackground->addChild(syncDataTextDisplay);
-    overlay1->add2D(syncDataButtonBackground);
+    overlay1->add2D(syncDataButtonBackground); // Buttons can't be set relative to others
     syncDataEntireBackground->addChild(syncDataInternetNotification);
     
     overlay1->add2D(backButtonBackground);

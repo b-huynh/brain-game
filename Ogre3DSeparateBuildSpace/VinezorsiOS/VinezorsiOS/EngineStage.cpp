@@ -56,11 +56,10 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, true);
+            hud->setOverlay(1, false);
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
-            hud->setPauseNavDest(0.7);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
@@ -86,8 +85,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
-            hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -138,8 +137,8 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
             hud->setGoButtonState(true, speedVerified);
-            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_PROMPT:
@@ -151,7 +150,6 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavDest(0.0);
             break;
         }
         case STAGE_STATE_READY:
@@ -176,8 +174,8 @@ void EngineStage::update(float elapsed)
                 globals.setBigMessage("3");
             hud->update(elapsed);
             hud->setOverlay(0, true);
+            hud->setOverlay(1, false);
             hud->setGoButtonState(false);
-            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_DONE:
@@ -834,8 +832,6 @@ void EngineStage::activateAngleTurn(float angle, float vel)
         
         // If unpathable upahead, don't allow player to traverse through
         int depthDist = 0;
-        if (!player->inverted)
-            dT = -dT;
         TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
         if (!unpathable)
         {
@@ -1112,21 +1108,83 @@ void EngineStage::setup()
     StageMode nmode = STAGE_MODE_PROFICIENCY;
     StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
     int nlevel = level.nback;
+    
+    nmode = STAGE_MODE_COLLECTION;
+    
+    
+    int numColors=0;
+    int numShapes=0;
+    int numSounds=0;
+    
+    for(int i=POD_COLOR_UNKNOWN; i<=POD_COLOR_HOLDOUT; i++) {
+        numColors=i-1;
+    }
+    
+    for(int i=POD_SHAPE_UNKNOWN; i<=POD_SHAPE_HOLDOUT; i++) {
+        numShapes=i-1;
+    }
+    
+    for(int i=POD_SOUND_UNKNOWN; i<=POD_SOUND_HOLDOUT; i++) {
+        numSounds=i-1;
+    }
+    
+    std::cout << "Available Features: " << numColors << " "<< numShapes << " "<< numSounds << std::endl;
+    
+    
     switch (level.phase)
     {
         case 'A':
         {
             nmode = STAGE_MODE_COLLECTION;
+            
+            if(level.pods!=0){
+                int numofPods = std::min(numColors, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i+1), POD_SHAPE_UNKNOWN, (PodSound)(i+1)));
+                }
+                break;
+            }
+            
+            
+            
+            
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
+            
+            std::cout<< globals.signalTypes.size()<<"<-SignalType size          -- \n";
+            
             break;
         }
         case 'B':
         {
             nmode = STAGE_MODE_COLLECTION;
+            
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, (PodShape)(i+1), (PodSound)(i+1)));
+                }
+                break;
+            }
+            
+            std::cout<<"            Not supposed to be reached at all: " << std::endl;
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
@@ -1137,6 +1195,21 @@ void EngineStage::setup()
         case 'C':
         {
             nmode = STAGE_MODE_COLLECTION;
+            
+            if(level.pods!=0){
+                int numofPods = std::min(numSounds, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, (PodSound)(i+1)));
+                }
+                break;
+            }
+            
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
@@ -1146,6 +1219,23 @@ void EngineStage::setup()
         }
         case 'D':
             nmode = STAGE_MODE_COLLECTION;
+            
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, numColors);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i+1), (PodShape)(i+1), (PodSound)(i+1)));
+                }
+                break;
+            }
+            
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
@@ -1362,8 +1452,7 @@ void EngineStage::updateSpin(float elapsed)
     // Perform Player Movement
     if (freeMotion)
     {
-        if ((spinClockwise && player->inverted) ||
-            (!spinClockwise && !player->inverted)) {
+        if (spinClockwise) {
             this->activatePerformRightMove(dTheta);
             player->offsetRollDest = -dTheta;
             freeAngleTraveled -= dTheta;

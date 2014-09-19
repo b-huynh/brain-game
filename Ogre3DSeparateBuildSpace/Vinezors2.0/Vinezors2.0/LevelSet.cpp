@@ -62,6 +62,41 @@ int LevelSet::getTotalRowRequirement(int row) const
     return Util::clamp(8 + row, 8, 15);
 }
 
+StageRequest::StageRequest()
+{
+    levelNo = 0;
+    pods = 0;
+    nback = 0;
+    stageTime = 120.0;
+    nameTunnelTile = "";
+    nameSkybox = "";
+    nameMusic = "";
+    tunnelSectionsPerNavLevel = 10;
+    phase = 'A';
+    hasHoldout = false;
+    holdoutFrequency = 4;
+    initCamSpeed = 20.0;
+    minCamSpeed = 15.0;
+    maxCamSpeed = 25.0;
+    holdoutStart = 0;
+    holdoutEnd = 0;
+
+
+}
+
+void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldstrt, float hldend)
+{
+    StageRequest level;
+    level = stageList[lvl][phs];
+    level.pods = pds;
+    level.holdoutStart = hldstrt/ 100.0f;
+    level.holdoutEnd = hldend/ 100.0f;
+    stageList[lvl][phs] = level;
+    
+    
+}
+
+
 void LevelSet::initializeLevelSet()
 {
     stageList = std::vector<std::vector<StageRequest> >(NUM_LEVELS, std::vector<StageRequest>(NUM_TASKS));
@@ -228,10 +263,8 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
-        level.collectionCriteria.push_back(CollectionCriteria(1));
-    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
-        level.collectionCriteria.push_back(CollectionCriteria(2));
+    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i) level.collectionCriteria.push_back(CollectionCriteria(1));
+    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i) level.collectionCriteria.push_back(CollectionCriteria(2));
     level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";

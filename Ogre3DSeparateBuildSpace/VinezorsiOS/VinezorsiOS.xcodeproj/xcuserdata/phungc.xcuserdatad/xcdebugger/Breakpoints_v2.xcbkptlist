@@ -40,7 +40,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "333"
-            endingLineNumber = "333">
+            endingLineNumber = "333"
+            landmarkName = "OgreApp::activatePerformRightMove()"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -134,11 +136,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "427846040.471678"
+            timestampString = "430356666.979982"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "648"
-            endingLineNumber = "648"
+            startingLineNumber = "649"
+            endingLineNumber = "649"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -154,7 +156,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1305"
-            endingLineNumber = "1305">
+            endingLineNumber = "1305"
+            landmarkName = "EngineStage::setup()"
+            landmarkType = "5">
             <Locations>
                <Location
                   shouldBeEnabled = "No"

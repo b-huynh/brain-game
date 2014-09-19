@@ -1,3 +1,20 @@
+material General/TutorialBackdrop
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture back_drop.png
+        }
+      } 
+    }
+}
+
 material General/TutorialTextbox1-1
 {
     technique
@@ -240,3 +257,92 @@ material General/TutorialTextboxHoldout2
       } 
     }
 }
+<<<<<<< HEAD
+=======
+
+material General/TutorialTextboxSeeingMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxSeeingMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxMissingMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxMissingMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxIncorrectMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxIncorrectMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxObstacle
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxObstacle.png
+        }
+      } 
+    }
+}
+
+
+material General/TutorialTextboxSoundOnly
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxSoundOnly.png
+        }
+      } 
+    }
+}
+>>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8

@@ -31,6 +31,9 @@ struct CollectionCriteria
 struct StageRequest
 {
     int levelNo;
+    int pods=0;
+    float holdoutStart;
+    float holdoutEnd;
     int nback;
     float stageTime;
     std::vector<NavigationLevel> navLevels;
@@ -41,14 +44,18 @@ struct StageRequest
     std::string nameMusic;
     int tunnelSectionsPerNavLevel;
     char phase;
+    
     bool hasHoldout;
     int holdoutFrequency;
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
     
-    StageRequest() : levelNo(0), nback(0), stageTime(120.0), navLevels(), collectionCriteria(), powerups(), nameTunnelTile(""), nameSkybox(""), nameMusic(""), tunnelSectionsPerNavLevel(10), phase('A'), hasHoldout(false), holdoutFrequency(4), initCamSpeed(20.0), minCamSpeed(15.0), maxCamSpeed(25.0) {}
+  //  std::vector<>
+    
+    StageRequest();
 };
+
 
 class LevelSet
 {
@@ -72,6 +79,8 @@ public:
     int getLevelCol(int level) const;
     int getNumLevels() const;
     int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
+    void ManLevelSet(int lvl, int phs, int pds, float hldstrt, float hldend) ;
+    
     void initializeLevelSet();
 };
 

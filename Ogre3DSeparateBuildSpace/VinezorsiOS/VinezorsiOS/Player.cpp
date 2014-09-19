@@ -45,9 +45,10 @@ Player::Player()
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.01f;
+    holdoutLB = 1.00f;
+    holdoutUB = 1.00f;
     syncDataToServer = false;
-    inverted = true;
     initSettings();
 }
 
@@ -56,6 +57,13 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
+    
+    //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
+    
+    levels->ManLevelSet(0, 1, 3, 10, 50);
+    
+    levels->ManLevelSet(1, 1, 2, 1, 100);
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -67,9 +75,10 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.01f;
+    holdoutLB = 1.00f;
+    holdoutUB = 1.00f;
     syncDataToServer = false;
-    inverted = true;
     initSettings();
 }
 
@@ -1017,7 +1026,7 @@ void Player::testPodGiveFeedback(Pod* test)
             else hp += globals.HPNegativeWrongAnswer;
             hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
             */
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
         
             numCorrectCombo = 0;
             ++numWrongCombo;
@@ -2522,7 +2531,7 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = true;
     
-    out << "V1.2" << std::endl;
+    out << "V1.1" << std::endl;
     
     out << levelProgress.size() << std::endl;
     for (int i = 0; i < levelProgress.size(); ++i)
@@ -2540,8 +2549,7 @@ bool Player::saveProgress(std::string file)
     << dampingDecayFree << " "
     << dampingDecayStop << " "
     << dampingDropFree << " "
-    << dampingDropStop << " "
-    << inverted << std::endl;
+    << dampingDropStop << std::endl;
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -2646,57 +2654,6 @@ bool Player::loadProgress1_1(std::string savePath)
     return ret;
 }
 
-// Load based on player results in level progression
-// Version 1.2 - contains inverted player setting
-bool Player::loadProgress1_2(std::string savePath)
-{
-    std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
-    
-    if (saveFile.good()) {
-        std::string input;
-        saveFile >> input; // Receive version string
-        
-        int size;
-        saveFile >> size;
-        
-        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
-        for (int i = 0; i < levelProgress.size(); ++i)
-        {
-            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
-            for (int j = 0; j < levelProgress[i].size(); ++j)
-            {
-                std::cout << "Level: " << i << "," << j << std::endl;
-                saveFile >> levelProgress[i][j];
-                std::cout << levelProgress[i][j] << std::endl;
-            }
-        }
-        
-        saveFile >> (*tutorialMgr);
-        saveFile >> musicVolume
-        >> soundVolume
-        >> syncDataToServer
-        >> maxVel
-        >> minVelStopper
-        >> dampingDecayFree
-        >> dampingDecayStop
-        >> dampingDropFree
-        >> dampingDropStop
-        >> inverted;
-        
-        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    
-    tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_WELCOME);
-    
-    saveFile.close();
-    return ret;
-}
-
 // Loads player progress. First it decides which version,
 // the save file is and calls the correct function
 bool Player::loadProgress(std::string savePath)
@@ -2708,8 +2665,6 @@ bool Player::loadProgress(std::string savePath)
         saveFile >> input;
         
         saveFile.close();
-        if (input == "V1.2")
-            return loadProgress1_2(savePath);
         if (input == "V1.1")
             return loadProgress1_1(savePath);
         else
