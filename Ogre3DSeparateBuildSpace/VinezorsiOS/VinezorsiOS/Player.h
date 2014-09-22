@@ -20,6 +20,7 @@
 #include "PlayerProgress.h"
 #include "LevelSet.h"
 #include "TutorialManager.h"
+#include "LevelScheduler.h"
 
 class Player
 {
@@ -393,6 +394,23 @@ public:
     void initSettings();
     
     bool endFlag;
+    
+    // =====================
+    // Scheduler Stuffs
+    // =========================================================
+    LevelScheduler* scheduler;
+    std::pair<StageRequest, PlayerProgress>* levelRequest;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice1;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice2;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    
+    void feedLevelRequestFromSchedule();
+    
+    // iterate through the levelProgress vector, link each level in the LevelSet
+    void linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList);
+    
+    // "Grade" the level to see if player should repeat, go back, or advance
+    void assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade);
     
     ~Player();
 };

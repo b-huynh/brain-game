@@ -60,7 +60,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             
@@ -89,7 +89,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             
@@ -143,7 +143,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(true, true);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             break;
@@ -157,7 +157,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.0);
             break;
@@ -185,7 +185,7 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             hud->setSpeedDialState(false);
@@ -592,6 +592,11 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     }
                     player->reactGUI();
                 }
+                else
+                {
+                    engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
+                    player->reactGUI();
+                }
             }
             else if (queryGUI == "restart")
             {
@@ -645,6 +650,10 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             break;
         }
         case STAGE_STATE_DONE:
+            // scheduler grading done in here
+            // also need to save nback levels after finishing a level
+            // have a done screen after a certain time limit is reached
+            // player->assessLevelPerformance(player->levelRequest);
             break;
     }
 }
@@ -1076,7 +1085,17 @@ void EngineStage::setup()
     globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
     
     StageMode nmode = STAGE_MODE_PROFICIENCY;
-    StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+    
+    StageRequest level;
+    if( player->levelRequest )
+    {
+        level = player->levelRequest->first;
+    }
+    else
+    {
+        level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+    }
+    
     int nlevel = level.nback;
     switch (level.phase)
     {
@@ -1463,4 +1482,5 @@ void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
     player->saveAllResults(eval);
+    player->assessLevelPerformance(player->levelRequest);
 }

@@ -126,21 +126,26 @@ void EngineSchedulerMenu::dealloc()
 
 bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
 {
+//    std::vector< std::pair<StageRequest, PlayerProgress> > choices = player->scheduler->generateChoices();
+    player->feedLevelRequestFromSchedule();
     if (queryGUI == "selection0")
     {
-        player->setLevelRequest(0, 1);
+        // player->setLevelRequest(0, 1);
+        player->levelRequest = &player->scheduleChoice1;
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         return true;
     }
     else if (queryGUI == "selection1")
     {
-        player->setLevelRequest(0, 2);
+//        player->setLevelRequest(0, 2);
+        player->levelRequest = &player->scheduleChoice2;
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         return true;
     }
     else if (queryGUI == "selection2")
     {
-        player->setLevelRequest(0, 3);
+//        player->setLevelRequest(0, 3);
+        player->levelRequest = &player->scheduleChoice3;
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         return true;
     }

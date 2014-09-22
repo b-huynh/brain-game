@@ -10,6 +10,7 @@
 #define __Vinezors2_0__PlayerProgress__
 
 #include <fstream>
+#include "LevelSet.h"
 
 // Tracks player performance on specific levels
 struct PlayerProgress
@@ -28,6 +29,8 @@ struct PlayerProgress
     int exitSpeed;
     
     int initSpeedSetting;
+    
+    StageRequest* level;
     
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);

@@ -58,6 +58,9 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
+    
+    scheduler = new LevelScheduler();
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -2229,6 +2232,8 @@ void Player::saveAllResults(Evaluation eval)
     //score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
     
     // Assign the correct rating based on tunnel results
+    scheduler->saveNBL();
+    
     int nrating = -1;
     if (eval == PASS)
     {
@@ -2264,7 +2269,17 @@ void Player::saveAllResults(Evaluation eval)
                 nrating = 1;
         }
     }
-    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    
+    PlayerProgress* levelResult;
+    if( scheduler )
+    {
+        levelResult = &levelRequest->second;
+    }
+    else
+    {
+        levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    }
+    
     // If level has never been done before or we have a new high score, then save stats
     if (levelResult->rating < 0 || score > levelResult->score)
     {
@@ -2755,6 +2770,72 @@ void Player::initSettings()
     dampingDecayStop = 0.500f; // Stop Motion damping multiplier
     dampingDropFree = 25.0f;    // Free Motion damping linear drop
     dampingDropStop = 50.0f;    // Stop Motion damping linear drop
+}
+
+void Player::feedLevelRequestFromSchedule()
+{
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices();
+    scheduleChoice1 = choices[0];
+    scheduleChoice2 = choices[1];
+    scheduleChoice3 = choices[2];
+//    // assign the level to be played in the same position as the iterator or the schedule
+//    levelRequest = &scheduler->schedule[0][0].first;
+//    
+//    // Increment to the next stagerequest
+//    scheduler->scheduleIt++;
+//    
+//    // if the schedule reaches the end, wrap it back to beginning
+//    if( scheduler->scheduleIt == scheduler->schedule.end() )
+//        scheduler->scheduleIt = scheduler->schedule.begin();
+}
+
+void Player::linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList)
+{
+    // Iterate through levelProg
+    for (int i = 0; i < levelProgress.size(); ++i)
+    {
+        for(int j = 0; j < levelProgress[i].size(); ++j)
+        {
+            // On each PlayerProg in levelProg, assign StageRequest* level
+            levelProgress[i][j].level = &stageList[i][j];
+        }
+    }
+}
+
+// Grades level and updates nBackLevel of scheduler using the accuracy formula
+void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade)
+{
+    // first and second parts of the explicit pair
+    StageRequest level = levelToGrade->first;
+    PlayerProgress assessment = levelToGrade->second;
+    
+    // Formula for accuracy = TP / TP + TN + FP
+    double accuracy = assessment.numCorrect / (assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+    
+    // The amount to incread/decrease nBack by based on accuracy (-1 <= nBackDelta <= 1)
+    double nBackDelta = (accuracy - 0.75) / 0.25;
+    if(nBackDelta < -1) nBackDelta = -1;
+    
+    // Find out what phase they're in
+    switch ( level.phase ) {
+        case 'E':
+            scheduler->nBackLevelE += nBackDelta;
+            break;
+        case 'A':
+            scheduler->nBackLevelA += nBackDelta;
+            break;
+        case 'B':
+            scheduler->nBackLevelB += nBackDelta;
+            break;
+        case 'C':
+            scheduler->nBackLevelC += nBackDelta;
+            break;
+        case 'D':
+            scheduler->nBackLevelD += nBackDelta;
+            break;
+        default:
+            break;
+    }
 }
 
 Player::~Player()

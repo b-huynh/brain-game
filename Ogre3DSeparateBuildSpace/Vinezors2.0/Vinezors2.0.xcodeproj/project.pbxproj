@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E19432219CA3F7B00F63638 /* LevelScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E19432019CA3F7B00F63638 /* LevelScheduler.cpp */; };
 		5D04AD2919003C4900E0A98B /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2719003C4900E0A98B /* Engine.cpp */; };
 		5D04AD2C1900523200E0A98B /* HudStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2A1900523200E0A98B /* HudStage.cpp */; };
 		5D04AD301900543500E0A98B /* HudLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD2E1900543500E0A98B /* HudLevelSelection.cpp */; };
@@ -95,6 +96,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3E19432019CA3F7B00F63638 /* LevelScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelScheduler.cpp; sourceTree = "<group>"; };
+		3E19432119CA3F7B00F63638 /* LevelScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelScheduler.h; sourceTree = "<group>"; };
 		5D04AD2719003C4900E0A98B /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Engine.cpp; sourceTree = "<group>"; };
 		5D04AD2819003C4900E0A98B /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Engine.h; sourceTree = "<group>"; };
 		5D04AD2A1900523200E0A98B /* HudStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStage.cpp; sourceTree = "<group>"; };
@@ -404,6 +407,8 @@
 				B6C64C1F17DE8C5B0092CA8E /* Util.h */,
 				5D1EFEB2190B2B1100E865D6 /* LevelSet.cpp */,
 				5D1EFEB3190B2B1100E865D6 /* LevelSet.h */,
+				3E19432019CA3F7B00F63638 /* LevelScheduler.cpp */,
+				3E19432119CA3F7B00F63638 /* LevelScheduler.h */,
 				5D299E3D18A061D60014CFA9 /* LevelManager.cpp */,
 				5D299E3E18A061D60014CFA9 /* LevelManager.h */,
 			);
@@ -570,6 +575,7 @@
 				5D04AD54190122F100E0A98B /* EngineCredits.cpp in Sources */,
 				5D8A4B0919C780B20016908C /* HudSchedulerMenu.cpp in Sources */,
 				5D04AD2C1900523200E0A98B /* HudStage.cpp in Sources */,
+				3E19432219CA3F7B00F63638 /* LevelScheduler.cpp in Sources */,
 				5D04AD51190121B000E0A98B /* HudCredits.cpp in Sources */,
 				5D4B5090195CE63F00912FC9 /* EngineControlsSettings.cpp in Sources */,
 				B6C64C4617DE8C5B0092CA8E /* OgreFramework.cpp in Sources */,

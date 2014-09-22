@@ -59,7 +59,12 @@ int LevelSet::getNumLevels() const
 
 int LevelSet::getTotalRowRequirement(int row) const
 {
-    return Util::clamp(8 + row, 8, 15);
+    return Util::clamp(10 + 2 * row, 8, 25);
+}
+
+std::vector<std::vector<StageRequest> > LevelSet::getStageList() const
+{
+    return stageList;
 }
 
 void LevelSet::initializeLevelSet()
@@ -75,7 +80,7 @@ void LevelSet::initializeLevelSet()
     /////////////////////
     
     level = StageRequest();
-    level.levelNo = 0;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -103,7 +108,7 @@ void LevelSet::initializeLevelSet()
     /// Level 0   1-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 0;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -113,7 +118,6 @@ void LevelSet::initializeLevelSet()
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
-    //level.tunnelSectionsPerNavLevel = 5;
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'E';
     level.initCamSpeed = 10;
@@ -125,7 +129,7 @@ void LevelSet::initializeLevelSet()
     /// Level 1   1-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 1;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -149,7 +153,7 @@ void LevelSet::initializeLevelSet()
     /// Level 2   1-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 2;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -173,7 +177,7 @@ void LevelSet::initializeLevelSet()
     /// Level 3   1-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 3;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -197,7 +201,7 @@ void LevelSet::initializeLevelSet()
     /// Level 4   1-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 4;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -223,7 +227,7 @@ void LevelSet::initializeLevelSet()
     /// Level 5   1-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 5;
+    level.stageNo++;
     level.nback = 1;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -249,7 +253,7 @@ void LevelSet::initializeLevelSet()
     /// Level 6   2-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 6;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -270,7 +274,7 @@ void LevelSet::initializeLevelSet()
     /// Level 7   2-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 7;
+    level.stageNo++;
     level.nback = 2;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -294,7 +298,7 @@ void LevelSet::initializeLevelSet()
     /// Level 8   2-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 8;
+    level.stageNo++;
     level.nback = 2;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -318,7 +322,7 @@ void LevelSet::initializeLevelSet()
     /// Level 9   2-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 9;
+    level.stageNo++;
     level.nback = 2;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -342,7 +346,7 @@ void LevelSet::initializeLevelSet()
     /// Level 10  2-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 10;
+    level.stageNo++;
     level.nback = 2;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -368,7 +372,7 @@ void LevelSet::initializeLevelSet()
     /// Level 11  2-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 11;
+    level.stageNo++;
     level.nback = 2;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -394,7 +398,7 @@ void LevelSet::initializeLevelSet()
     /// Level 12  3-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 12;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -415,7 +419,7 @@ void LevelSet::initializeLevelSet()
     /// Level 13  3-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 13;
+    level.stageNo++;
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -439,7 +443,7 @@ void LevelSet::initializeLevelSet()
     /// Level 14  3-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 14;
+    level.stageNo++;
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -463,7 +467,7 @@ void LevelSet::initializeLevelSet()
     /// Level 15  3-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 15;
+    level.stageNo++;
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -487,7 +491,7 @@ void LevelSet::initializeLevelSet()
     /// Level 16  3-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 16;
+    level.stageNo++;
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -513,7 +517,7 @@ void LevelSet::initializeLevelSet()
     /// Level 17  3-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 17;
+    level.stageNo++;
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -539,7 +543,7 @@ void LevelSet::initializeLevelSet()
     /// Level 18  4-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 18;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -560,7 +564,7 @@ void LevelSet::initializeLevelSet()
     /// Level 19  4-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 19;
+    level.stageNo++;
     level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -584,7 +588,7 @@ void LevelSet::initializeLevelSet()
     /// Level 20  4-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 20;
+    level.stageNo++;
     level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -608,7 +612,7 @@ void LevelSet::initializeLevelSet()
     /// Level 21  4-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 21;
+    level.stageNo++;
     level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -632,7 +636,7 @@ void LevelSet::initializeLevelSet()
     /// Level 22  4-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 22;
+    level.stageNo++;
     level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -658,7 +662,7 @@ void LevelSet::initializeLevelSet()
     /// Level 23  4-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 23;
+    level.stageNo++;
     level.nback = 4;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -684,7 +688,7 @@ void LevelSet::initializeLevelSet()
     /// Level 24  5-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 24;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
@@ -705,7 +709,7 @@ void LevelSet::initializeLevelSet()
     /// Level 25  5-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 25;
+    level.stageNo++;
     level.nback = 5;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -729,7 +733,7 @@ void LevelSet::initializeLevelSet()
     /// Level 26  5-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 26;
+    level.stageNo++;
     level.nback = 5;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -753,7 +757,7 @@ void LevelSet::initializeLevelSet()
     /// Level 27  5-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 27;
+    level.stageNo++;
     level.nback = 5;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -777,7 +781,7 @@ void LevelSet::initializeLevelSet()
     /// Level 28  5-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 28;
+    level.stageNo++;
     level.nback = 5;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -803,7 +807,7 @@ void LevelSet::initializeLevelSet()
     /// Level 29  5-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 29;
+    level.stageNo++;
     level.nback = 5;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -829,7 +833,7 @@ void LevelSet::initializeLevelSet()
     /// Level 30  6-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 30;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -850,7 +854,7 @@ void LevelSet::initializeLevelSet()
     /// Level 31  6-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 31;
+    level.stageNo++;
     level.nback = 6;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -874,7 +878,7 @@ void LevelSet::initializeLevelSet()
     /// Level 32  6-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 32;
+    level.stageNo++;
     level.nback = 6;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
@@ -898,7 +902,7 @@ void LevelSet::initializeLevelSet()
     /// Level 33  6-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 33;
+    level.stageNo++;
     level.nback = 6;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -922,7 +926,7 @@ void LevelSet::initializeLevelSet()
     /// Level 34  6-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 34;
+    level.stageNo++;
     level.nback = 6;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -948,7 +952,7 @@ void LevelSet::initializeLevelSet()
     /// Level 35  6-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 35;
+    level.stageNo++;
     level.nback = 6;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -974,7 +978,7 @@ void LevelSet::initializeLevelSet()
     /// Level 36  7-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 36;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -995,7 +999,7 @@ void LevelSet::initializeLevelSet()
     /// Level 37  7-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 37;
+    level.stageNo++;
     level.nback = 7;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -1019,7 +1023,7 @@ void LevelSet::initializeLevelSet()
     /// Level 38  7-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 38;
+    level.stageNo++;
     level.nback = 7;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1043,7 +1047,7 @@ void LevelSet::initializeLevelSet()
     /// Level 39  7-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 39;
+    level.stageNo++;
     level.nback = 7;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -1067,7 +1071,7 @@ void LevelSet::initializeLevelSet()
     /// Level 40  7-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 40;
+    level.stageNo++;
     level.nback = 7;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -1093,7 +1097,7 @@ void LevelSet::initializeLevelSet()
     /// Level 41  7-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 41;
+    level.stageNo++;
     level.nback = 7;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -1119,7 +1123,7 @@ void LevelSet::initializeLevelSet()
     /// Level 42  8-A ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 42;
+    level.stageNo++;
     level.nback = 0;
     level.stageTime = 90.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1140,7 +1144,7 @@ void LevelSet::initializeLevelSet()
     /// Level 43  8-B ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 43;
+    level.stageNo++;
     level.nback = 8;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -1164,7 +1168,7 @@ void LevelSet::initializeLevelSet()
     /// Level 44  8-C ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 44;
+    level.stageNo++;
     level.nback = 8;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1188,7 +1192,7 @@ void LevelSet::initializeLevelSet()
     /// Level 45  8-D ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 45;
+    level.stageNo++;
     level.nback = 8;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -1212,7 +1216,7 @@ void LevelSet::initializeLevelSet()
     /// Level 46  8-E ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 46;
+    level.stageNo++;
     level.nback = 8;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -1238,7 +1242,7 @@ void LevelSet::initializeLevelSet()
     /// Level 47  8-F ///
     /////////////////////
     level = StageRequest();
-    level.levelNo = 47;
+    level.stageNo++;
     level.nback = 8;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -1259,5 +1263,152 @@ void LevelSet::initializeLevelSet()
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
     stageList[7][5] = level;
+    
+    
+    
+    
+    // UNTESTED NEW LEVELS
+    
+    /////////////////////
+    /// Level 48  9-A ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 0;
+    level.stageNo++;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(10, 0, 0));
+    level.nameTunnelTile = "General/WallBindingG";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music4";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'E';
+    level.initCamSpeed = 15;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][0] = level;
+    
+    /////////////////////
+    /// Level 49  9-B ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 9;
+    level.stageNo++;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(9));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingA";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music2";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'A';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][1] = level;
+    
+    /////////////////////
+    /// Level 50  9-C ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 9;
+    level.stageNo++;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(9));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingB";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music1";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'B';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][2] = level;
+    
+    /////////////////////
+    /// Level 51  9-D ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 9;
+    level.stageNo++;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 1, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(9));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingC";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music5";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'C';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][3] = level;
+    
+    /////////////////////
+    /// Level 52  9-E ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 9;
+    level.stageNo++;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(9));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingD";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music3";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.hasHoldout = true;
+    level.holdoutFrequency = 4;
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][4] = level;
+    
+    /////////////////////
+    /// Level 53  9-F ///
+    /////////////////////
+    level = StageRequest();
+    level.nback = 9;
+    level.stageNo++;
+    level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 2));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(9));
+    for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(10));
+    level.powerups.push_back(POWERUP_TIME_WARP);
+    level.nameTunnelTile = "General/WallBindingD";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music3";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    stageList[8][5] = level;
 #endif
 }
