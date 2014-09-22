@@ -187,6 +187,8 @@ public:
     float musicVolume;
     float soundVolume;
     float holdout;
+    float holdoutLB;
+    float holdoutUB;
     bool syncDataToServer;
     
     float maxVel;
@@ -259,6 +261,8 @@ public:
     PlayerProgress getLevelProgress(int row, int col) const;
     bool isLevelAvailable(int level) const;
     bool isLevelAvailable(int row, int col) const;
+    bool isNextLevelAvailable() const;
+    int getNextLevel() const;
     int getMenuRowIndex() const;
     int getTotalLevelRating(int row) const;
     float getTotalLevelScore(int row) const;

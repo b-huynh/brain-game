@@ -56,14 +56,6 @@ void HudStage::update(float elapsed)
     setCollectionBar(false, elapsed);
     
     // Set up pause navigation texture with appropriate active buttons
-    LevelSet* levels = player->getLevels();
-    int row = player->getLevelRequestRow();
-    int col = player->getLevelRequestCol();
-    int level = levels->getLevelNo(row, col);
-    int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
-    //bool nextAvail = player->isLevelAvailable(nlevel);
-    bool nextAvail = false;
-    bool resumeAvail = !tunnel->needsCleaning();
     if (nextAvail && resumeAvail)
         pauseNavigationBackground->setMaterialName("General/PauseNav1");
     else if (!nextAvail && resumeAvail)
@@ -166,7 +158,7 @@ void HudStage::update(float elapsed)
     }
     
     // Grow and shrink score display if it is a high score
-    if (bestScoreAnimationFlag && tunnel->needsCleaning()   )
+    if (bestScoreAnimationFlag)
     {
         bestScoreAnimationTimer += elapsed;
         float sz = 0.024;
@@ -176,44 +168,42 @@ void HudStage::update(float elapsed)
         
         endTallyScoreLabel->setCharHeight((sz + dsz) * FONT_SZ_MULT);
         endTallyScoreLabel->setPosition(0.355 + dsz, 0.11 - dsz);
-        endTallyScoreLabel->setCaption("Best");
     }
     
     // If player is going through score calculation animation go through this
     if(player->endFlag)
     {
-        label7->setCaption("");
         if (tunnel->getEval() == PASS)
         {
             setOverlay(3, true);
-            
+        
             tunnel->addToTimePenalty(2.0f);
             float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
-            
+        
             if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
             else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
-            
+        
             label2->setColour(ColourValue(1.0,1.0,0.0));
             label5->setColour(ColourValue(1.0,1.0,0.0));
             
             label2->setCaption(Util::toStringInt(timeLeft));
-            endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
-            
+            endTallyTimeLabel->setCaption("Time");
+            endTallyTimeValue->setCaption(Util::toStringInt(timeLeft));
+        
             label5->setCaption(Util::toStringInt(player->getScore()));
             
             float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
-            endTallyScoreLabel->setPosition(0.365, 0.11);
-            endTallyScoreLabel->setCaption("Score");
+            endTallyScoreLabel->setCaption("Best");
             if (player->getScore() > highScore)
             {
                 highScore = player->getScore();
                 bestScoreAnimationFlag = true;
             }
-            endTallyScoreValue->setCaption(Util::toStringInt(player->getScore()));
-            
+            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+        
             if( timeLeft <= 0.0f ) {
                 label2->setCaption("0");
-                endTallyTimeLabel->setCaption("Time    0");
+                endTallyTimeValue->setCaption("0");
                 tunnel->setCleaning(true);
                 player->endFlag = false;
             }
@@ -226,19 +216,19 @@ void HudStage::update(float elapsed)
             label5->setColour(ColourValue(1.0,1.0,0.0));
             
             label2->setCaption(Util::toStringInt(timeLeft));
-            endTallyTimeLabel->setCaption("Time    " + Util::toStringInt(timeLeft));
+            endTallyTimeLabel->setCaption("Time");
+            endTallyTimeValue->setCaption(Util::toStringInt(timeLeft));
             
             label5->setCaption(Util::toStringInt(player->getScore()));
             
             float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
-            endTallyScoreLabel->setPosition(0.365, 0.11);
-            endTallyScoreLabel->setCaption("Score");
+            endTallyScoreLabel->setCaption("Best");
             if (player->getScore() > highScore)
             {
                 highScore = player->getScore();
                 bestScoreAnimationFlag = true;
             }
-            endTallyScoreValue->setCaption(Util::toStringInt(player->getScore()));
+            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
             
             tunnel->setCleaning(true);
             player->endFlag = false;
@@ -333,6 +323,8 @@ void HudStage::alloc()
     
     endTallyTimeLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyTimeLabel"));
     
+    endTallyTimeValue = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyTimeValue"));
+    
     endTallyScoreLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreLabel"));
     
     endTallyScoreValue = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreValue"));
@@ -372,6 +364,7 @@ void HudStage::alloc()
     overlay4->add2D(endTallyBackground);
     overlay4->add2D(endTallyContainer);
     endTallyContainer->addChild(endTallyTimeLabel);
+    endTallyContainer->addChild(endTallyTimeValue);
     endTallyContainer->addChild(endTallyScoreLabel);
     endTallyContainer->addChild(endTallyScoreValue);
     
@@ -467,6 +460,7 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeLabel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeValue);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreValue);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayBackground);
@@ -511,7 +505,6 @@ void HudStage::initOverlay()
     HudEntire->setDimensions(1.0, 1.0);
     HudEntire->setMaterialName("General/GUIMainHud");
     */
-    
     
     // imgw = 2048 px = 1
     // imgh = 1536 px = 1
@@ -613,7 +606,7 @@ void HudStage::initOverlay()
     
     label7->setMetricsMode(GMM_RELATIVE);
     label7->setAlignment(TextAreaOverlayElement::Center);
-    label7->setPosition(0.5, 0.2);
+    label7->setPosition(0.5, 0.3);
     label7->setCharHeight(0.064 * FONT_SZ_MULT);
     label7->setFontName("MainSmall");
     
@@ -631,8 +624,17 @@ void HudStage::initOverlay()
     endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyTimeLabel->setFontName("MainSmall");
     
+    endTallyTimeValue->setMetricsMode(GMM_RELATIVE);
+    endTallyTimeValue->setAlignment(TextAreaOverlayElement::Center);
+    endTallyTimeValue->setPosition(0.150, 0.015);
+    endTallyTimeValue->setCharHeight(0.024 * FONT_SZ_MULT);
+    endTallyTimeValue->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
+    endTallyTimeValue->setFontName("MainSmall");
+    
     endTallyScoreLabel->setMetricsMode(GMM_RELATIVE);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
+    //endTallyScoreLabel->setPosition(0.365, 0.11);
+    endTallyScoreLabel->setPosition(0.355, 0.11);
     endTallyScoreLabel->setCharHeight(0.024 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("MainSmall");
@@ -780,6 +782,12 @@ void HudStage::setSpeedDialState(bool active)
         sliderBallBackground->setMaterialName("General/SpeedSliderBallOff");
 }
 
+void HudStage::setPauseNavSettings(bool nextAvail, bool resumeAvail)
+{
+    this->nextAvail = nextAvail;
+    this->resumeAvail = resumeAvail;
+}
+
 // Sets the collection bar positions and images.
 // If instant parameter is true, the positions will be set instantly,
 // otherwise it will animate towards their designated location at a speed.
@@ -806,13 +814,12 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
     float wpadding = 0.0125;
     float width = 0.0425;
     float height = 0.075;
-    // When we win or lose, almost all of them are collapsed,
+    // When we win, almost all of them are collapsed,
     // so we want to re-adjust so it looks evenly split.
-    if (tunnel->isDone() && tunnel->getMode() != STAGE_MODE_RECESS)
+    if (starPhase == 4)
     {
         x = 0.3125;
         wpadding = 0.0250;
-        starPhase = 4;
     }
     
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
@@ -841,7 +848,7 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
         
         if (i / 3 == starPhase || (i + 1) % 3 == 0)
             x += 2 * wpadding + width;
-        
+
         // Assign an image based on what type of collection and whether it is collected
         if (i < criterias.size())
         {

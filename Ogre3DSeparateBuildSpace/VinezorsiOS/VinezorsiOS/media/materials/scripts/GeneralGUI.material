@@ -26,7 +26,8 @@ material General/ScreenBackground2
         depth_write off
         texture_unit
         {
-            texture tutorial_screen.png
+            texture screenbackground2.png
+            //texture tutorial_screen.png
         }
       } 
     }

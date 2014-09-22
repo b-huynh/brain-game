@@ -29,6 +29,7 @@ public:
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
+    void setPauseNavSettings(bool nextAvail, bool resumeAvail);
 protected:
     Player* player;
     Tunnel* tunnel;
@@ -72,6 +73,7 @@ protected:
     
     OverlayContainer* endTallyContainer;
     TextAreaOverlayElement* endTallyTimeLabel;
+    TextAreaOverlayElement* endTallyTimeValue;
     TextAreaOverlayElement* endTallyScoreLabel;
     TextAreaOverlayElement* endTallyScoreValue;
     PanelOverlayElement* endTallyBackground;
@@ -110,6 +112,9 @@ protected:
     
     bool bestScoreAnimationFlag;
     float bestScoreAnimationTimer;
+    
+    bool nextAvail;
+    bool resumeAvail;
     
     void link(Player* player, Tunnel* tunnel);
     void unlink();

@@ -46,6 +46,8 @@ Player::Player()
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
+    holdoutLB = 0.0f;
+    holdoutUB = 0.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -68,6 +70,8 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
+    holdoutLB = 0.0f;
+    holdoutUB = 0.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -428,6 +432,21 @@ bool Player::isLevelAvailable(int row, int col) const
 {
     int level = levels->getLevelNo(row, col);
     return isLevelAvailable(level);
+}
+
+// Given level request row and col, is the next level available to play in the 2D level select grid?
+bool Player::isNextLevelAvailable() const
+{
+    return isLevelAvailable(getNextLevel());
+}
+
+// Given level request row and col, return the next level in the sequence for the 2D level select grid
+int Player::getNextLevel() const
+{
+    int row = getLevelRequestRow();
+    int col = getLevelRequestCol();
+    int level = levels->getLevelNo(row, col);
+    return ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
 }
 
 int Player::getMenuRowIndex() const
@@ -2538,6 +2557,9 @@ bool Player::saveProgress(std::string file)
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
     out << "maxVel" << " " << maxVel << std::endl;
     out << "minVelStopper" << " " << minVelStopper << std::endl;
+    out << "holdout" << " " << holdout << std::endl;
+    out << "holdoutLB" << " " << holdoutLB << std::endl;
+    out << "holdoutUB" << " " << holdoutUB << std::endl;
     out << "dampingDecayFree" << " " << dampingDecayFree << std::endl;
     out << "dampingDecayStop" << " " << dampingDecayStop << std::endl;
     out << "dampingDropFree" << " " << dampingDropFree << std::endl;
@@ -2696,6 +2718,12 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> maxVel;
     else if (paramName == "minVelStopper")
         in >> minVelStopper;
+    else if (paramName == "holdout")
+        in >> holdout;
+    else if (paramName == "holdoutLB")
+        in >> holdoutLB;
+    else if (paramName == "holdoutUB")
+        in >> holdoutUB;
     else if (paramName == "dampingDecayFree")
         in >> dampingDecayFree;
     else if (paramName == "dampingDecayStop")

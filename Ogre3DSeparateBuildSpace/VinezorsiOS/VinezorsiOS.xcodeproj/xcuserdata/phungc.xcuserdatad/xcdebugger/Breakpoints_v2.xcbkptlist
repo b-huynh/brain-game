@@ -157,7 +157,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1305"
             endingLineNumber = "1305"
-            landmarkName = "EngineStage::setup()"
+            landmarkName = "EngineStage::updateSpin(float elapsed)"
             landmarkType = "5">
             <Locations>
                <Location
@@ -281,7 +281,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "768"
             endingLineNumber = "768"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -297,7 +297,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "796"
             endingLineNumber = "796"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -313,7 +313,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "795"
             endingLineNumber = "795"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

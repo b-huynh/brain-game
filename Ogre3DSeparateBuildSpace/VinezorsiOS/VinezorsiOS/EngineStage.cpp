@@ -60,6 +60,8 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+                                     !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -87,6 +89,8 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+                                     !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
@@ -139,6 +143,8 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(true, true);
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+                                     !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             break;
         }
@@ -151,6 +157,8 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+                                     !tunnel->needsCleaning());
             hud->setPauseNavDest(0.0);
             break;
         }
@@ -177,6 +185,8 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
+            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION && player->isNextLevelAvailable(),
+                                     !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             hud->setSpeedDialState(false);
             break;
@@ -564,22 +574,24 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else if (queryGUI == "next")
             {
-                LevelSet* levels = player->getLevels();
-                int row = player->getLevelRequestRow();
-                int col = player->getLevelRequestCol();
-                int level = levels->getLevelNo(row, col);
-                int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
-                if (player->isLevelAvailable(nlevel))
+                // If we came from the level select menu, extract the next level from that 2D grid.
+                // Otherwise, we came from a different set of levels
+                if (engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION)
                 {
-                    row = levels->getLevelRow(nlevel);
-                    col = levels->getLevelCol(nlevel);
-                    player->setLevelRequest(row, col);
-                    stageState = STAGE_STATE_INIT;
+                    if (player->isNextLevelAvailable())
+                    {
+                        LevelSet* levels = player->getLevels();
+                        int nlevel = player->getNextLevel();
+                        int row = levels->getLevelRow(nlevel);
+                        int col = levels->getLevelCol(nlevel);
+                        player->setLevelRequest(row, col);
+                        stageState = STAGE_STATE_INIT;
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
+                    player->reactGUI();
                 }
-                player->reactGUI();
             }
             else if (queryGUI == "restart")
             {
@@ -829,11 +841,14 @@ void EngineStage::activateReturnFromPopup()
     // We throw them into a countdown before resuming
     if (stageState == STAGE_STATE_RUNNING)
     {
+        // Save camera state to avoid odd camera jump when unpausing
+        player->pause();
         stageState = STAGE_STATE_READY;
         readyTimer = 3.00f;
     }
     else if (stageState == STAGE_STATE_PAUSE)
     {
+        // Turn on speed dial after they viewed tutorials
         setTaskPrompt();
         hud->setSpeedDialState(true);
     }

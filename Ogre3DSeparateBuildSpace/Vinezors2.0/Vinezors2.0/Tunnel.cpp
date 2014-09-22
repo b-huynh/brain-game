@@ -1248,7 +1248,78 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
         
+        bool timevar = false;
+        float timefreq;
         
+        //Percentage of stage time being withheld
+        float starttime=player->holdoutLB;
+        float endtime=player->holdoutUB;
+            
+        
+        //Holdout time bounds
+        float holdouttimelb = stageTime - stageTime*starttime;
+        float holdouttimeub = stageTime - stageTime*endtime;
+       
+        //~~~~~~~~~~~~~~~~~~
+        //find difference between upper and hlower time//////
+        //find quarter of time//////
+        
+        //find holdout frequency
+        //find quarter of frequency
+        //~~~~~~~~~~~~~~~~~~
+        
+        
+        
+        
+        float transitiontime = abs(holdouttimeub - holdouttimelb);
+        float quartertime = transitiontime/4;
+        
+        float frequencyquarter = 0;
+        
+
+        
+        frequencyquarter = player->holdout*100/4;
+        
+        std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
+        
+        
+        std::cout<<"                ("<<holdouttimelb<<","<<holdouttimeub<<")"<<std::endl;
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //setHoldout(hasHoldout, timefreq);
+        
+         
+        if(getTimeLeft()<=holdouttimelb-quartertime*3) {
+            setHoldout(true, 100/(frequencyquarter*4));
+            std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
+            setHoldout(true, 100/frequencyquarter*3);
+            std::cout<<"                        HOLDOUT 50%-75% --->"<<Tunnel::holdoutFrequency <<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb-quartertime) {
+            setHoldout(true, 100/(frequencyquarter*2));
+            std::cout<<"                        HOLDOUT 25%-50% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb) {
+            setHoldout(true, 100/frequencyquarter);
+            std::cout<<"                        HOLDOUT 0-25%. --->"<<Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft()>=holdouttimelb) {
+            setHoldout(false);
+            std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
+        }
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~
+        if(getTimeLeft()<=holdouttimelb) {
+            setHoldout(true);
+        }
+        else {
+            setHoldout(false);
+        }
+        
+        std::cout<<"                ("<<getTimeLeft()<<")"<<std::endl;
+        std::cout<<"                        hasHoldout: "<<hasHoldout<< " Level: " << player->getLevels()->holdoutFreqvar <<std::endl;
         if( hasHoldout ) {
             if( holdoutCounter >= holdoutFrequency ) {
                 float rand = Ogre::Math::UnitRandom();
@@ -1745,7 +1816,13 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 void Tunnel::update(float elapsed)
 {
     if (!isDone() && !player->isPowerUpActive("TimeWarp"))
-        totalElapsed += elapsed;
+    {
+        // If a player is going faster, let time go faster as well
+        // sort of like exhausting more fuel at faster speeds
+        float tsModifier = player->getBaseSpeed() / 15.0f; // 15.0 speed is baseline
+        totalElapsed += elapsed * tsModifier;
+        //totalElapsed += elapsed;
+    }
     
     // Animate Pod Growing outwards or Growing inwards
     const float GROWTH_SPEED = player->getFinalSpeed() / 10.0;
@@ -1795,7 +1872,7 @@ void Tunnel::update(float elapsed)
                 }
 #endif
                 // First time you saw your first correct item? TELL THEM
-                if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex) && getMode() != STAGE_MODE_RECESS)
+                if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex) && getMode() != STAGE_MODE_RECESS && nback == 1)
                 {
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SEEING_MATCH, 0.5f);
                 }
@@ -1970,8 +2047,23 @@ void Tunnel::respondToToggleCheat()
 void Tunnel::setHoldout(bool val, int freq)
 {
     hasHoldout = val;
+    
+    holdoutFrequency = freq;
+    
+}
+
+void Tunnel::setHoldout(bool val)
+{
+    hasHoldout = val;
+
+}
+
+
+void Tunnel::setHoldout( int freq)
+{
     holdoutFrequency = freq;
 }
+
 
 Tunnel::~Tunnel()
 {

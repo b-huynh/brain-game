@@ -29,14 +29,13 @@ public:
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
+    void setPauseNavSettings(bool nextAvail, bool resumeAvail);
 protected:
     Player* player;
     Tunnel* tunnel;
     
     enum ButtonSet {
         BUTTON_PAUSE, BUTTON_GO,
-        BUTTON_TOGGLE1, BUTTON_TOGGLE2, BUTTON_TOGGLE3, BUTTON_TOGGLE4,
-        BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3,
         BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
     };
     
@@ -74,6 +73,7 @@ protected:
     
     OverlayContainer* endTallyContainer;
     TextAreaOverlayElement* endTallyTimeLabel;
+    TextAreaOverlayElement* endTallyTimeValue;
     TextAreaOverlayElement* endTallyScoreLabel;
     TextAreaOverlayElement* endTallyScoreValue;
     PanelOverlayElement* endTallyBackground;
@@ -112,6 +112,9 @@ protected:
     
     bool bestScoreAnimationFlag;
     float bestScoreAnimationTimer;
+    
+    bool nextAvail;
+    bool resumeAvail;
     
     void link(Player* player, Tunnel* tunnel);
     void unlink();

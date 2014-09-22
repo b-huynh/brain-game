@@ -43,6 +43,10 @@ int LevelSet::getLevelRow(int level) const
     return level / NUM_TASKS;
 }
 
+float LevelSet::get_holdoutFreqvar(){
+    return LevelSet::holdoutFreqvar;
+}
+
 int LevelSet::getLevelCol(int level) const
 {
     return level % NUM_TASKS;
@@ -209,7 +213,6 @@ void LevelSet::initializeLevelSet()
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
     level.hasHoldout = true;
-    std::cout<<"Level Set at: "<<holdoutFreqvar<<std::endl;
     level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;

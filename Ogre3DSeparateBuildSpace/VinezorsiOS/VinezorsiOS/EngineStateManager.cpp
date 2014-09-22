@@ -8,6 +8,7 @@
 
 #include "EngineStateManager.h"
 #include "EngineStage.h"
+#include "EngineSchedulerMenu.h"
 #include "EngineLevelSelection.h"
 #include "EngineMainMenu.h"
 #include "EngineCredits.h"
@@ -27,6 +28,13 @@ void EngineStateManager::update(float elapsed)
     cleanup.clear();
 }
 
+Engine* EngineStateManager::peek(int depth)
+{
+    int ind = gameEngineStack.size() - depth - 1;
+    if (ind < 0) return NULL;
+    else return gameEngineStack[ind];
+}
+
 Engine* EngineStateManager::getActiveEngine() const
 {
     return gameEngineStack.size() > 0 ? gameEngineStack[gameEngineStack.size() - 1] : NULL;
@@ -41,6 +49,13 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
             Engine* top = getActiveEngine();
             if (top) top->exit();
             gameEngineStack.push_back(new EngineStage(this, player));
+            break;
+        }
+        case ENGINE_SCHEDULER_MENU:
+        {
+            Engine* top = getActiveEngine();
+            if (top) top->exit();
+            gameEngineStack.push_back(new EngineSchedulerMenu(this, player));
             break;
         }
         case ENGINE_LEVEL_SELECTION:

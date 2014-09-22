@@ -28,6 +28,13 @@ void EngineStateManager::update(float elapsed)
     cleanup.clear();
 }
 
+Engine* EngineStateManager::peek(int depth)
+{
+    int ind = gameEngineStack.size() - depth - 1;
+    if (ind < 0) return NULL;
+    else return gameEngineStack[ind];
+}
+
 Engine* EngineStateManager::getActiveEngine() const
 {
     return gameEngineStack.size() > 0 ? gameEngineStack[gameEngineStack.size() - 1] : NULL;
