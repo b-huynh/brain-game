@@ -1483,4 +1483,5 @@ void EngineStage::completeStage(Evaluation forced)
     Evaluation eval = tunnel->getEval();
     player->saveAllResults(eval);
     player->assessLevelPerformance(player->levelRequest);
+    player->scheduler->removeBin(player->levelRequest->first.phaseX, player->levelRequest->first.difficultyX);
 }

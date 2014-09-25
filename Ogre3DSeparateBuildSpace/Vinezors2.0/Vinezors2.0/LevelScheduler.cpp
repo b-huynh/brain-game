@@ -6,6 +6,7 @@
 //
 //
 //________________________________________________________________________________________
+
 #include <iostream>
 #include "LevelScheduler.h"
 
@@ -19,11 +20,12 @@ using namespace std;
  Creates a new scheduler
  */
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
-: schedule(), scheduleIt(NULL), scheduleHistory()
+: scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL)
 {
     // Reads save file and reassigns nBackLevelX with saved values
     if( !readNBL() )
     {
+        // If the file doesn't exist then it will assign the default values (1)
         this->nBackLevelA = nBackLevelA;
         this->nBackLevelB = nBackLevelB;
         this->nBackLevelC = nBackLevelC;
@@ -181,20 +183,145 @@ bool LevelScheduler::readNBL()
 //}
 //________________________________________________________________________________________
 
+void LevelScheduler::populateBins()
+{
+    const int MAX_BIN_SIZE = 3;
+    
+    if(!binA) binA = new std::list<Bin>();
+    if(!binB) binB = new std::list<Bin>();
+    if(!binC) binC = new std::list<Bin>();
+    if(!binD) binD = new std::list<Bin>();
+    if(!binE) binE = new std::list<Bin>();
+
+    for(int i = 0; i < MAX_BIN_SIZE; ++i)
+    {
+        switch ( (StageDifficulty)i ) {
+            case DIFFICULTY_EASY:
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY));
+                break;
+            case DIFFICULTY_NORMAL:
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL));
+                break;
+            case DIFFICULTY_HARD:
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD));
+                break;
+            default:
+                break;
+        }
+    }
+}
+//________________________________________________________________________________________
+
+
+void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX)
+{
+    switch (phaseX) {
+        case PHASE_COLLECT:
+            binE->remove(Bin(phaseX, difficultyX));
+            break;
+        
+        case PHASE_COLOR_SOUND:
+            binA->remove(Bin(phaseX, difficultyX));
+            break;
+            
+        case PHASE_SHAPE_SOUND:
+            binB->remove(Bin(phaseX, difficultyX));
+            break;
+            
+        case PHASE_SOUND_ONLY:
+            binC->remove(Bin(phaseX, difficultyX));
+            break;
+            
+        case PHASE_HOLDOUT:
+            binD->remove(Bin(phaseX, difficultyX));
+            break;
+            
+        default:
+            break;
+    }
+}
+//________________________________________________________________________________________
+
+
+
+/**
+ Picks a random bin and returns it. If the bin is empty, it will recursively pick another. (Poor implementation but works for now)
+ 
+ @return - A bin that has at least 1 element.
+ */
+std::list<Bin>* LevelScheduler::pickRandomBin()
+{
+    const int MIN_BIN = 0, MAX_BIN = 4;
+    int binNum = rand_num(MIN_BIN, MAX_BIN);
+    enum binNums { binNumA, binNumB, binNumC, binNumD, binNumE };
+    
+    // Keep track of the total number of elements in the bins.
+    // If there are no elements left, populate the bin with more.
+    int totalBinItems = 0;
+    if(binA && binB && binC && binD && binE)
+    {
+        totalBinItems = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
+    }
+    if (totalBinItems == 0) populateBins();
+    
+    switch (binNum) {
+        case binNumA:
+            if(binA->empty()) return pickRandomBin();
+            return binA;
+            break;
+        case binNumB:
+            if(binB->empty()) return pickRandomBin();
+            return binB;
+            break;
+        case binNumC:
+            if(binC->empty()) return pickRandomBin();
+            return binC;
+            break;
+        case binNumD:
+            if(binD->empty()) return pickRandomBin();
+            return binD;
+            break;
+        case binNumE:
+            if(binE->empty()) return pickRandomBin();
+            return binE;
+            break;
+        default:
+            break;
+    }
+}
+
 std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices()
 {
+    
     // Modifiers for each difficulty nBack
     const double N_BACK_EASY = 0.7;
     const double N_BACK_NORMAL = 0.0;
     const double N_BACK_HARD = -0.7;
     
-    cout << "current nBack Levels" << endl
-    << "A: " << nBackLevelA << endl
-    << "B: " << nBackLevelB << endl
-    << "C: " << nBackLevelC << endl
-    << "D: " << nBackLevelD << endl
-    << "E: " << nBackLevelE << endl
-    << "-----------------------------------" << endl;
+    
+    /* For debugging purposes */
+    cout <<  "/--------------------------------\\" << endl
+         <<  "|       Current nBack Levels     |" << endl
+         << "\\--------------------------------/" << endl
+         << "A: " << nBackLevelA << endl
+         << "B: " << nBackLevelB << endl
+         << "C: " << nBackLevelC << endl
+         << "D: " << nBackLevelD << endl
+         << "E: " << nBackLevelE << endl
+         <<  "__________________________________" << endl;
+    // */
     
     
     std::vector< std::pair<StageRequest, PlayerProgress> > result;
@@ -202,11 +329,17 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     LevelPhase phase;
     StageDifficulty difficulty;
     int nBackRounded;
+    int binIndex;
     
     for(int i = 0; i < 3; ++i)
     {
-        phase = (LevelPhase)rand_num(0, 4);
-        difficulty = (StageDifficulty)rand_num(0, 2);
+        std::list<Bin>& binRef = *pickRandomBin();
+        std::list<Bin>::iterator binIt = binRef.begin();
+        binIndex = rand_num(0, binRef.size() - 1);
+        for(int i = 0; i < binIndex; ++i, ++binIt);
+        
+        phase = binIt->phaseX;
+        difficulty = binIt->difficultyX;
         
         switch ( phase ) {
             case PHASE_COLLECT:
@@ -290,12 +423,13 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         if(nBackRounded < 1) nBackRounded = 1;
         node.first.generateStageRequest(nBackRounded, phase, difficulty);
+        // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
     }
     
-    schedule.push_back(result);
     return result;
 }
+//________________________________________________________________________________________
 
 /**
  Simple random number generator that returns a random number between lower and upper
@@ -306,6 +440,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
  */
 int LevelScheduler::rand_num(int lower, int upper)
 {
+    srand(time(NULL));
     return rand() % (upper - lower + 1) + lower;
 }
 //________________________________________________________________________________________

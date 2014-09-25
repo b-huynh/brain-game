@@ -44,6 +44,8 @@ struct StageRequest
     std::string nameMusic;
     int tunnelSectionsPerNavLevel;
     char phase;
+    LevelPhase phaseX;
+    StageDifficulty difficultyX;
     bool hasHoldout;
     int holdoutFrequency;
     float initCamSpeed;
@@ -55,8 +57,7 @@ struct StageRequest
     {
         if ( stageNo == sr.stageNo )
             return true;
-        else
-            return false;
+        return false;
     }
     
     void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X)
@@ -72,6 +73,9 @@ struct StageRequest
         ret->initCamSpeed = 10;
         ret->minCamSpeed = 10;
         ret->maxCamSpeed = 40;
+        ret->phaseX = PHASE_X;
+        ret->difficultyX = DIFFICULTY_X;
+        
         // Chooses what phase and difficulty to generate for ret
         switch( PHASE_X )
         {
