@@ -30,6 +30,7 @@ struct PlayerProgress
     
     int initSpeedSetting;
     
+    float accuracy;
     float nbackDelta;
     StageRequest* level;
     

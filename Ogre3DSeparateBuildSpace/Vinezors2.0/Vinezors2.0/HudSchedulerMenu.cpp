@@ -221,7 +221,6 @@ void HudSchedulerMenu::initOverlay()
         float iconWidth = iconSize * ((float)globals.screenHeight / globals.screenWidth);
         
         buttons[NUM_UNIQUE_BUTTONS + NUM_SELECTIONS + i].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(0.10 + 0.10 * i, 0.15), Vector2(iconWidth, iconHeight), historyOverlayPanels[i].entireBackground, NULL);
-        historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBarUnavailable");
         
         historyOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
@@ -265,7 +264,6 @@ void HudSchedulerMenu::initOverlay()
     
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton");
-    playButtonBackground->setMaterialName("General/PlayButtonGray");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.15, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.90), Vector2(0.30, 0.08), playButtonBackground, NULL);
     

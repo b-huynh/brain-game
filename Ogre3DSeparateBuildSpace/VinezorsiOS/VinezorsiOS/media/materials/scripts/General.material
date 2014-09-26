@@ -256,7 +256,7 @@ material General/TimeBonusMaterial
     }
 }
 
-material General/ScreenOfArrows
+material General/BlueSphereIcon
 {
     technique
     {
@@ -267,7 +267,28 @@ material General/ScreenOfArrows
             depth_write off
             texture_unit
             {
-                texture TutorialArrows.png
+                texture brightbluesphere.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/YellowSphereIcon
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture brightyellowsphere.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
         }
     }

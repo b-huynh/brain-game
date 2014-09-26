@@ -1161,10 +1161,8 @@ void EngineStage::setup()
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
             
-            if (level.initCamSpeed <= 15) // For starting slower stages, be nicer
-                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            else
-                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
+            // With 15 baseline at 90 seconds, ~30 pods will be introduced
+            globals.stageTotalCollections = 25;
             break;
         case 'F':
             nmode = STAGE_MODE_TEACHING;
