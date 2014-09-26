@@ -31,6 +31,7 @@ struct PlayerProgress
     int initSpeedSetting;
     
     float nbackDelta;
+    double nBackSkill;
     StageRequest* level;
     
     // returns true if the new rating overwrites the old rating

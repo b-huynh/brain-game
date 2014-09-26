@@ -22,11 +22,11 @@ using namespace std;
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
 : scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL)
 {
-        this->nBackLevelA = 0.0f;
-        this->nBackLevelB = 0.0f;
-        this->nBackLevelC = 0.0f;
-        this->nBackLevelD = 0.0f;
-        this->nBackLevelE = 0.0f;   
+        this->nBackLevelA = 1.0f;
+        this->nBackLevelB = 1.0f;
+        this->nBackLevelC = 1.0f;
+        this->nBackLevelD = 1.0f;
+        this->nBackLevelE = 1.0f;
 }
 
 //________________________________________________________________________________________
@@ -289,6 +289,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     std::pair<StageRequest, PlayerProgress> node;
     LevelPhase phase;
     StageDifficulty difficulty;
+    double playerSkill;
     int nBackRounded;
     int binIndex;
     
@@ -301,9 +302,12 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         phase = binIt->phaseX;
         difficulty = binIt->difficultyX;
+        cout << "\n\n================================\n\nPhase: " << phase << endl;
+        cout << "Difficulty: " << difficulty << endl;
         
         switch ( phase ) {
             case PHASE_COLLECT:
+                playerSkill = nBackLevelE;
                 switch (difficulty) {
                     case DIFFICULTY_EASY:
                         nBackRounded = (int)round(nBackLevelE + N_BACK_EASY);
@@ -319,6 +323,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 }
                 break;
             case PHASE_COLOR_SOUND:
+                playerSkill = nBackLevelA;
                 switch (difficulty) {
                     case DIFFICULTY_EASY:
                         nBackRounded = (int)round(nBackLevelA + N_BACK_EASY);
@@ -334,6 +339,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 }
                 break;
             case PHASE_SHAPE_SOUND:
+                playerSkill = nBackLevelB;
                 switch (difficulty) {
                     case DIFFICULTY_EASY:
                         nBackRounded = (int)round(nBackLevelB + N_BACK_EASY);
@@ -349,6 +355,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 }
                 break;
             case PHASE_SOUND_ONLY:
+                playerSkill = nBackLevelC;
                 switch (difficulty) {
                     case DIFFICULTY_EASY:
                         nBackRounded = (int)round(nBackLevelC + N_BACK_EASY);
@@ -364,6 +371,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 }
                 break;
             case PHASE_HOLDOUT:
+                playerSkill = nBackLevelD;
                 switch (difficulty) {
                     case DIFFICULTY_EASY:
                         nBackRounded = (int)round(nBackLevelD + N_BACK_EASY);
@@ -384,6 +392,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         if(nBackRounded < 1) nBackRounded = 1;
         node.first.generateStageRequest(nBackRounded, phase, difficulty);
+        node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
     }
@@ -401,7 +410,6 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
  */
 int LevelScheduler::rand_num(int lower, int upper)
 {
-    srand(time(NULL));
     return rand() % (upper - lower + 1) + lower;
 }
 //________________________________________________________________________________________
