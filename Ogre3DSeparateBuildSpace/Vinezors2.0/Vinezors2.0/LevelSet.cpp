@@ -1412,3 +1412,215 @@ void LevelSet::initializeLevelSet()
     stageList[8][5] = level;
 #endif
 }
+
+std::vector<NavigationLevel> StageRequest::generateRandomEasyNavigation()
+{
+    std::vector<NavigationLevel> ret;
+    const int NUM_NAVIGATION_SETS = 10;
+    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
+    switch (rvalue)
+    {
+        case 0:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 1:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 2:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 3:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 4:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+        case 5:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 6:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 7:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 8:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 9:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+    }
+    return ret;
+}
+std::vector<NavigationLevel> StageRequest::generateRandomNormalNavigation()
+{
+    std::vector<NavigationLevel> ret;
+    const int NUM_NAVIGATION_SETS = 10;
+    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
+    switch (rvalue)
+    {
+        case 0:
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+        case 1:
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            break;
+        case 2:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            break;
+        case 3:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            break;
+        case 4:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 5:
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            break;
+        case 6:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 7:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 8:
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+        case 9:
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+    }
+    return ret;
+}
+
+std::vector<NavigationLevel> StageRequest::generateRandomHardNavigation()
+{
+    std::vector<NavigationLevel> ret;
+    const int NUM_NAVIGATION_SETS = 10;
+    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
+    switch (rvalue)
+    {
+        case 0:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 2));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            break;
+        case 1:
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            break;
+        case 2:
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 3, 2));
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 4, 1));
+            break;
+        case 3:
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 2));
+            break;
+        case 4:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 3, 2));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            break;
+        case 5:
+            ret.push_back(NavigationLevel(0, 2, 0));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            ret.push_back(NavigationLevel(0, 2, 2));
+            ret.push_back(NavigationLevel(0, 1, 1));
+            break;
+        case 6:
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 2));
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 2, 2));
+            break;
+        case 7:
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+        case 8:
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 2, 1));
+            ret.push_back(NavigationLevel(0, 2, 2));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
+        case 9:
+            ret.push_back(NavigationLevel(0, 3, 1));
+            ret.push_back(NavigationLevel(0, 4, 1));
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 4, 1));
+            break;
+    }
+    return ret;
+}

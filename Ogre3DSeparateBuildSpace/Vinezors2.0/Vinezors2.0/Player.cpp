@@ -2854,6 +2854,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             break;
     }
     
+    levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nbackDelta = nBackDelta;
     scheduler->removeBin(levelRequest->first.phaseX, levelRequest->first.difficultyX);
     scheduler->scheduleHistory.push_back(*levelRequest);

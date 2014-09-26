@@ -247,7 +247,7 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.names->setPosition(0.025, 0.025);
     levelDetails.names->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.names->setFontName("MainSmall");
-    levelDetails.names->setCaption("Type:\nN-Back:\nCollection:\nNavigation:\nHoldout:\nLength:\n\nCollected:\nMistakes:\nAvoided:\nMissed:");
+    levelDetails.names->setCaption("Type:\nN-Back:\nCollection:\nNavigation:\nHoldout:\nLength:\n\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:");
     
     levelDetails.values->setMetricsMode(GMM_RELATIVE);
     levelDetails.values->setAlignment(TextAreaOverlayElement::Right);
@@ -335,6 +335,7 @@ void HudSchedulerMenu::setSelection()
     std::string holdout;        // Holdout description
     std::string length;         // Length of level
     
+    std::string accuracy;
     std::string collected;      // Targets player collected
     std::string mistakes;       // Non-targets player collected
     std::string avoided;        // Non-targets player avoided
@@ -364,13 +365,26 @@ void HudSchedulerMenu::setSelection()
         collection = Util::toStringInt(level.collectionCriteria.size());
     else
         collection = "-";
-    navigation = "medium";
+    
+    switch (level.difficultyX)
+    {
+        case DIFFICULTY_EASY:
+            navigation = "easy";
+            break;
+        case DIFFICULTY_NORMAL:
+            navigation = "normal";
+            break;
+        case DIFFICULTY_HARD:
+            navigation = "hard";
+            break;
+    }
     holdout = level.hasHoldout ? "yes" : "no";
     length = Util::toStringInt(level.stageTime);
     
     // Check if player ever played the level
     if (progress.rating < 0)
     {
+        accuracy = "-";
         collected = "-";
         mistakes = "-";
         avoided = "-";
@@ -378,6 +392,7 @@ void HudSchedulerMenu::setSelection()
     }
     else
     {
+        accuracy = Util::toStringInt(progress.accuracy * 100.0);
         collected = Util::toStringInt(progress.numCorrect);
         mistakes = Util::toStringInt(progress.numWrong);
         avoided = Util::toStringInt(progress.numSafe);
@@ -392,6 +407,7 @@ void HudSchedulerMenu::setSelection()
                                     holdout + "\n" +
                                     length + "\n" +
                                     "\n" +
+                                    accuracy + "\n" +
                                     collected + "\n" +
                                     mistakes + "\n" +
                                     avoided + "\n" +

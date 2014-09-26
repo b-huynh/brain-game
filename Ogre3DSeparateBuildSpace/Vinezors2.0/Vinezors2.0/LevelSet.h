@@ -86,7 +86,7 @@ struct StageRequest
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
         const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
-        const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 12;
+        const int EASY_COLLECTIONS = 6, NORMAL_COLLECTIONS = 9, HARD_COLLECTIONS = 12;
         StageRequest* ret = this;
         ret->init(); // Reset everything to clear lists if they're still populated
         ret->nback = nback;
@@ -107,26 +107,17 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
                     case DIFFICULTY_NORMAL:
                         ret->stageTime = NORMAL_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
                     case DIFFICULTY_HARD:
                         ret->stageTime = HARD_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
                     default:
@@ -144,30 +135,21 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_NORMAL:
                         ret->stageTime = NORMAL_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_HARD:
                         ret->stageTime = HARD_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -188,30 +170,21 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_NORMAL:
                         ret->stageTime = NORMAL_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_HARD:
                         ret->stageTime = HARD_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -232,30 +205,21 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_NORMAL:
                         ret->stageTime = NORMAL_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_HARD:
                         ret->stageTime = HARD_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -276,30 +240,21 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+                        generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_NORMAL:
                         ret->stageTime = NORMAL_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
                         
                     case DIFFICULTY_HARD:
                         ret->stageTime = HARD_TIME;
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-                        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -319,6 +274,33 @@ struct StageRequest
                 break;
         }
     }
+    
+    std::vector<NavigationLevel> generateNavigationLevels(StageDifficulty navigationDifficulty)
+    {
+        std::vector<NavigationLevel> ret;
+        switch (navigationDifficulty)
+        {
+            case DIFFICULTY_EASY:
+                ret = generateRandomEasyNavigation();
+                break;
+            case DIFFICULTY_NORMAL:
+                ret = generateRandomNormalNavigation();
+                break;
+            case DIFFICULTY_HARD:
+                ret = generateRandomHardNavigation();
+                break;
+            default:
+                ret.push_back(NavigationLevel(0, 1, 0));
+                ret.push_back(NavigationLevel(0, 2, 0));
+                ret.push_back(NavigationLevel(0, 3, 0));
+                ret.push_back(NavigationLevel(0, 4, 0));
+                break;
+        }
+        return ret;
+    }
+    std::vector<NavigationLevel> generateRandomEasyNavigation();
+    std::vector<NavigationLevel> generateRandomNormalNavigation();
+    std::vector<NavigationLevel> generateRandomHardNavigation();
     
     StageRequest()
     {
