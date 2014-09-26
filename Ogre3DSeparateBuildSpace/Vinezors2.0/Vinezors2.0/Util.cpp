@@ -90,7 +90,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 20.0;
+    wrongAnswerTimePenalty = 10.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
@@ -99,6 +99,7 @@ Util::ConfigGlobal::ConfigGlobal()
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
     maxCamSpeed = 40.0;
+    baselineSpeed = 15.0;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -1359,15 +1360,19 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     
     manual->position(-length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 0);
     manual->position(length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 0);
     manual->position(length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 1);
     manual->position(-length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 1);
     manual->quad(3, 2, 1, 0);
     manual->end();
@@ -1402,6 +1407,7 @@ void Util::createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, fl
     Vector3 p2 = Vector3(length / 2, 0, -depth / 2);
     Vector3 p3 = Vector3(length / 2, 0, depth / 2);
     Vector3 p4 = Vector3(-length / 2, 0, depth / 2);
+    
     Vector3 normal = Vector3(0, 1, 0);
     
     p1 = loc + rot * p1;

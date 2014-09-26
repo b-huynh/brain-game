@@ -10,6 +10,8 @@ material General/ScreenBackground1
         texture_unit
         {
             texture tutorial_frame.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -28,6 +30,8 @@ material General/ScreenBackground2
         {
             texture screenbackground2.png
             //texture tutorial_screen.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -198,6 +202,8 @@ material General/LevelSelectButtonRound
         texture_unit
         {
             texture buttonroundlevelselect.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -215,6 +221,8 @@ material General/NextButtonRound
         texture_unit
         {
             texture buttonroundnext.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -232,6 +240,8 @@ material General/NextButtonRoundGRAY
         texture_unit
         {
             texture buttonroundnextGRAY.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -249,6 +259,8 @@ material General/RestartButtonRound
         texture_unit
         {
             texture buttonroundrestart.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -266,6 +278,8 @@ material General/ResumeButtonRound
         texture_unit
         {
             texture buttonroundresume.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -283,68 +297,8 @@ material General/ResumeButtonRoundGRAY
         texture_unit
         {
             texture buttonroundresumeGRAY.png
-        }
-      } 
-    }
-}
-
-material General/BarColors
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_green_gray.png
-        }
-      } 
-    }
-}
-
-material General/BarColors2
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_blue_gray.png
-        }
-      } 
-    }
-}
-
-material General/BarColors3
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_purple_size.png
-        }
-      } 
-    }
-}
-
-material General/Indicator
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture indicatorwhite.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -362,6 +316,8 @@ material General/PauseButton
         texture_unit
         {
             texture pauseButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -379,6 +335,8 @@ material General/PauseButtonYellow
         texture_unit
         {
             texture pause_buttonyellow.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -396,6 +354,8 @@ material General/PauseButtonGray
         texture_unit
         {
             texture pause_buttongray.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -413,6 +373,8 @@ material General/ButtonGoDown
         texture_unit
         {
             texture nextButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -430,6 +392,8 @@ material General/ButtonGoDownGray
         texture_unit
         {
             texture nextButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -447,6 +411,8 @@ material General/ButtonGoUp
         texture_unit
         {
             texture arrowL.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -464,6 +430,8 @@ material General/ButtonGoUpGray
         texture_unit
         {
             texture arrowL.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -481,6 +449,8 @@ material General/ButtonGo
         texture_unit
         {
             texture buttongo.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -498,6 +468,8 @@ material General/ButtonGoGray
         texture_unit
         {
             texture buttongoGRAY.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -582,7 +554,28 @@ material General/PlayButton
             depth_write off
 			texture_unit
 			{
-				texture buttonplay.png
+				texture buttonroundplay.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/PlayButtonGray
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonroundplayGRAY.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -600,6 +593,8 @@ material General/CreditsButton
 			texture_unit
 			{
 				texture buttoncredits.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -617,6 +612,8 @@ material General/ControlSettingsButton
         texture_unit
         {
             texture buttoncontrolsettings.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -634,6 +631,8 @@ material General/BackButton
 			texture_unit
 			{
 				texture buttonroundback.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -651,6 +650,8 @@ material General/DefaultsButton
         texture_unit
         {
             texture buttonrounddefaults.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -668,6 +669,8 @@ material General/ExitButton
 			texture_unit
 			{
 				texture buttonexit.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -685,6 +688,8 @@ material General/ExitButton2
 			texture_unit
 			{
 				texture exitButtonBlue.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}

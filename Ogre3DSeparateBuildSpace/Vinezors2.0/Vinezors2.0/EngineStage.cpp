@@ -1191,6 +1191,7 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
+    globals.wrongAnswerTimePenalty = level.stageTime / 12.0;
     tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
 
@@ -1482,5 +1483,4 @@ void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
     player->saveAllResults(eval);
-    player->assessLevelPerformance(player->levelRequest);
 }

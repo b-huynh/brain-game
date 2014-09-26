@@ -37,6 +37,10 @@ Player::Player()
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    
+    scheduler = new LevelScheduler();
+    levelRequest = NULL;    
+    
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
     tutorialMgr = new TutorialManager();
@@ -46,8 +50,8 @@ Player::Player()
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
-    holdoutLB = 0.0f;
-    holdoutUB = 0.0f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -60,6 +64,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levels->initializeLevelSet();
     
     scheduler = new LevelScheduler();
+    levelRequest = NULL;
     
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -73,8 +78,8 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
-    holdoutLB = 0.0f;
-    holdoutUB = 0.0f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -738,6 +743,8 @@ void Player::performTimeWarp()
     TimeWarp* t = dynamic_cast<TimeWarp*>(powerups["TimeWarp"]);
     
     if ( t && !t->active ) {
+        t->timeBonus = globals.wrongAnswerTimePenalty * 2;
+        
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
         
         t->origFov = Degree(cam->getFOVy());
@@ -2232,8 +2239,6 @@ void Player::saveAllResults(Evaluation eval)
     //score += (static_cast<int>(tunnel->getTimeLeft()) * SCORE_PER_SECOND);
     
     // Assign the correct rating based on tunnel results
-    scheduler->saveNBL();
-    
     int nrating = -1;
     if (eval == PASS)
     {
@@ -2271,12 +2276,14 @@ void Player::saveAllResults(Evaluation eval)
     }
     
     PlayerProgress* levelResult;
-    if( scheduler )
+    if(levelRequest)
     {
+        // If assigned a specific level (via scheduler)
         levelResult = &levelRequest->second;
     }
     else
     {
+        // If level played by 2-D grid select
         levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
     }
     
@@ -2296,6 +2303,15 @@ void Player::saveAllResults(Evaluation eval)
     // Update other level results/settings
     levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
     levelResult->setRating(nrating); // Assign rating last
+    
+    // If assigned a specific level to play (via scheduler, assess its performance)
+    // This assessment should be done after PlayerProgress is filled out (which is above) and
+    // before the player's progress is saved to a file (which is just below)
+    if (levelRequest)
+    {
+        assessLevelPerformance(levelRequest);
+        scheduler->scheduleHistory.push_back(*levelRequest);
+    }
     
     setSkillLevel(skillLevel);
     saveStage(globals.logPath);
@@ -2566,7 +2582,8 @@ bool Player::saveProgress(std::string file)
             out << "level" << " " << i << " " << j << " " << levelProgress[i][j] << std::endl;
     }
     
-    out << "tutorial" << " " << (*tutorialMgr) << std::endl;
+    out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
+    out << "scheduler1.0" << " " << (*scheduler) << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
@@ -2705,8 +2722,10 @@ bool Player::loadProgress(std::string savePath)
 
 std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList)
 {
-    if (paramName == "tutorial")
+    if (paramName == "tutorial1.0")
         in >> (*tutorialMgr);
+    else if (paramName == "scheduler1.0")
+        in >> (*scheduler);
     else if (paramName == "levelSize")
     {
         int size;
@@ -2810,7 +2829,9 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     PlayerProgress assessment = levelToGrade->second;
     
     // Formula for accuracy = TP / TP + TN + FP
-    double accuracy = assessment.numCorrect / (assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+    double accuracy = 0.0f;
+    if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
+        accuracy = assessment.numCorrect / (assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
     // The amount to incread/decrease nBack by based on accuracy (-1 <= nBackDelta <= 1)
     double nBackDelta = (accuracy - 0.75) / 0.25;

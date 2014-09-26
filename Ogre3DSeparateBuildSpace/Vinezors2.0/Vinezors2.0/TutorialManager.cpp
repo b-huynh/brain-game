@@ -439,4 +439,3 @@ std::istream& operator>>(std::istream& in, TutorialManager& tutorialMgr)
     }
     return in;
 }
-

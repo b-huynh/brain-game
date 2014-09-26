@@ -59,6 +59,27 @@ struct StageRequest
             return false;
     }
     
+    // clear everything and set defaults
+    void init()
+    {
+        nback = 0;
+        stageNo = 0;
+        stageTime = 120.0f;
+        navLevels.clear();
+        collectionCriteria.clear();
+        powerups.clear();
+        nameTunnelTile = "";
+        nameSkybox = "";
+        nameMusic = "";
+        tunnelSectionsPerNavLevel = 10;
+        phase = 'D';
+        hasHoldout = false;
+        holdoutFrequency = 4;
+        initCamSpeed = 15.0f;
+        minCamSpeed = 10.0f;
+        maxCamSpeed = 40.0f;
+    }
+    
     void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X)
     {
         // These are set for all levels regardless of phase/diffuculty
@@ -66,6 +87,7 @@ struct StageRequest
         const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
         const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 12;
         StageRequest* ret = this;
+        ret->init(); // Reset everything to clear lists if they're still populated
         ret->nback = nback;
         ret->nameSkybox = "General/BlankStarrySkyPlane";
         ret->tunnelSectionsPerNavLevel = 10;

@@ -208,6 +208,7 @@ namespace Util
         float boostModifierCamSpeed;
         float minCamSpeed;
         float maxCamSpeed;
+        float baselineSpeed;
         float nlevelSpeedModifier;
         int numToSpeedUp;
         int numToSpeedDown;

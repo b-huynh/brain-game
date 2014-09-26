@@ -8,8 +8,8 @@
 
 #include "EngineSchedulerMenu.h"
 #include "EngineStateManager.h"
-#include "HudSchedulerMenu.h"
-#include "Player.h"
+#include "LevelSet.h"
+#include "PlayerProgress.h"
 
 extern Util::ConfigGlobal globals;
 
@@ -29,6 +29,8 @@ void EngineSchedulerMenu::enter()
 {
     alloc();
     player->startMenu();
+    
+    player->feedLevelRequestFromSchedule();
     
     // Set skybox
     Util::setSkyboxAndFog("");
@@ -50,7 +52,7 @@ void EngineSchedulerMenu::update(float elapsed)
 
 void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
 {
-    std::string queryGUI = hud->queryButtons(Vector2(x, y));
+    std::string queryGUI = hud->processButtons(Vector2(x, y));
     if (queryGUI != "")
         player->reactGUI();
     if (testForLevelButtons(queryGUI))
@@ -60,6 +62,12 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "back")
     {
         engineStateMgr->requestPopEngine();
+    }
+    else if (queryGUI == "play")
+    {
+        // If a level is selected, then we can continue
+        if (player->levelRequest)
+            engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
 }
 
@@ -126,27 +134,39 @@ void EngineSchedulerMenu::dealloc()
 
 bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
 {
-//    std::vector< std::pair<StageRequest, PlayerProgress> > choices = player->scheduler->generateChoices();
-    player->feedLevelRequestFromSchedule();
     if (queryGUI == "selection0")
     {
-        // player->setLevelRequest(0, 1);
         player->levelRequest = &player->scheduleChoice1;
-        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        hud->setSelection();
         return true;
     }
     else if (queryGUI == "selection1")
     {
-//        player->setLevelRequest(0, 2);
         player->levelRequest = &player->scheduleChoice2;
-        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        hud->setSelection();
         return true;
     }
     else if (queryGUI == "selection2")
     {
-//        player->setLevelRequest(0, 3);
         player->levelRequest = &player->scheduleChoice3;
-        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        hud->setSelection();
+        return true;
+    }
+    else if (queryGUI.substr(0, 7) == "history")
+    {
+        int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
+        
+        // Since we may not be able to fit the entire playthrough on the screen,
+        // display the last 4 or 5 plays
+        int startingScheduleIndex = hud->getStartingSchedulerHistoryIndex();
+        int historyIndexRequest = startingScheduleIndex + iconNo;
+        if (historyIndexRequest < player->scheduler->scheduleHistory.size())
+        {
+            player->levelRequest = &player->scheduler->scheduleHistory[historyIndexRequest];
+            hud->setSelection();
+        }
+        else
+            player->levelRequest = NULL;
         return true;
     }
     return false;

@@ -21,51 +21,13 @@ using namespace std;
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
 : schedule(), scheduleIt(NULL), scheduleHistory()
 {
-    // Reads save file and reassigns nBackLevelX with saved values
-    if( !readNBL() )
-    {
-        this->nBackLevelA = nBackLevelA;
-        this->nBackLevelB = nBackLevelB;
-        this->nBackLevelC = nBackLevelC;
-        this->nBackLevelD = nBackLevelD;
-        this->nBackLevelE = nBackLevelE;
-    }
+        this->nBackLevelA = 0.0f;
+        this->nBackLevelB = 0.0f;
+        this->nBackLevelC = 0.0f;
+        this->nBackLevelD = 0.0f;
+        this->nBackLevelE = 0.0f;
 }
-//________________________________________________________________________________________
 
-
-void LevelScheduler::saveNBL()
-{
-    ofstream outfile(fileName);
-    
-    if(outfile)
-    {
-        outfile << nBackLevelA << endl
-        << nBackLevelB << endl
-        << nBackLevelC << endl
-        << nBackLevelD << endl
-        << nBackLevelE << endl;
-    }
-}
-//________________________________________________________________________________________
-
-
-bool LevelScheduler::readNBL()
-{
-    ifstream infile(fileName);
-    
-    if(infile)
-    {
-        infile >> nBackLevelA >> nBackLevelB >> nBackLevelC >> nBackLevelD >> nBackLevelE;
-        infile.close();
-        return true;
-    }
-    else
-    {
-        infile.close();
-        return false;
-    }
-}
 //________________________________________________________________________________________
 
 /**
@@ -308,4 +270,23 @@ int LevelScheduler::rand_num(int lower, int upper)
 {
     return rand() % (upper - lower + 1) + lower;
 }
+//________________________________________________________________________________________
+
+
+std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
+{
+    std::cout << "Saving Scheduler\n";
+    out << sch.nBackLevelA << " " << sch.nBackLevelB << " " << sch.nBackLevelC << " " << sch.nBackLevelD << " " << sch.nBackLevelE;
+    return out;
+}
+
+//________________________________________________________________________________________
+
+std::istream& operator>>(std::istream& in, LevelScheduler& sch)
+{
+    std::cout << "Loading Scheduler\n";
+    in >> sch.nBackLevelA >> sch.nBackLevelB >> sch.nBackLevelC >> sch.nBackLevelD >> sch.nBackLevelE;
+    return in;
+}
+
 //________________________________________________________________________________________

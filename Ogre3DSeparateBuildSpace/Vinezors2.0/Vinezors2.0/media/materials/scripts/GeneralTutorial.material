@@ -10,6 +10,8 @@ material General/TutorialBackdrop
         texture_unit
         {
             texture back_drop.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -26,9 +28,6 @@ material General/TutorialTextbox1-1
         depth_write off
         texture_unit
         {
-<<<<<<< HEAD
-            texture TextboxHoldout1.jpg
-=======
             texture Textbox1-1.png
         }
       } 
@@ -184,7 +183,6 @@ material General/TutorialTextbox3-1
         texture_unit
         {
             texture Textbox3-1.png
->>>>>>> c83217a1dfa5e5718ea5d44491847f2808b75d92
         }
       } 
     }
@@ -257,7 +255,6 @@ material General/TutorialTextboxHoldout2
       } 
     }
 }
-<<<<<<< HEAD
 
 material General/TutorialTextboxSeeingMatch
 {
@@ -344,5 +341,3 @@ material General/TutorialTextboxSoundOnly
       } 
     }
 }
-=======
->>>>>>> 5084759f226219a614c7799d70c882c5bc4aae9d

@@ -1251,71 +1251,71 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         bool timevar = false;
         float timefreq;
         
-        //Percentage of stage time being withheld
-        float starttime=player->holdoutLB;
-        float endtime=player->holdoutUB;
+        if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f)
+        {
+            //Percentage of stage time being withheld
+            float starttime=player->holdoutLB;
+            float endtime=player->holdoutUB;
             
         
-        //Holdout time bounds
-        float holdouttimelb = stageTime - stageTime*starttime;
-        float holdouttimeub = stageTime - stageTime*endtime;
+            //Holdout time bounds
+            float holdouttimelb = stageTime - stageTime*starttime;
+            float holdouttimeub = stageTime - stageTime*endtime;
        
-        //~~~~~~~~~~~~~~~~~~
-        //find difference between upper and hlower time//////
-        //find quarter of time//////
-        
-        //find holdout frequency
-        //find quarter of frequency
-        //~~~~~~~~~~~~~~~~~~
-        
-        
-        
-        
-        float transitiontime = abs(holdouttimeub - holdouttimelb);
-        float quartertime = transitiontime/4;
-        
-        float frequencyquarter = 0;
-        
-
-        
-        frequencyquarter = player->holdout*100/4;
-        
-        std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
-        
-        
-        std::cout<<"                ("<<holdouttimelb<<","<<holdouttimeub<<")"<<std::endl;
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //setHoldout(hasHoldout, timefreq);
-        
-         
-        if(getTimeLeft()<=holdouttimelb-quartertime*3) {
-            setHoldout(true, 100/(frequencyquarter*4));
-            std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
-            setHoldout(true, 100/frequencyquarter*3);
-            std::cout<<"                        HOLDOUT 50%-75% --->"<<Tunnel::holdoutFrequency <<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb-quartertime) {
-            setHoldout(true, 100/(frequencyquarter*2));
-            std::cout<<"                        HOLDOUT 25%-50% --->"<< Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb) {
-            setHoldout(true, 100/frequencyquarter);
-            std::cout<<"                        HOLDOUT 0-25%. --->"<<Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if (getTimeLeft()>=holdouttimelb) {
-            setHoldout(false);
-            std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
-        }
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~
-        if(getTimeLeft()<=holdouttimelb) {
-            setHoldout(true);
-        }
-        else {
-            setHoldout(false);
+            //~~~~~~~~~~~~~~~~~~
+            //find difference between upper and hlower time//////
+            //find quarter of time//////
+            
+            //find holdout frequency
+            //find quarter of frequency
+            //~~~~~~~~~~~~~~~~~~
+            
+            float transitiontime = abs(holdouttimeub - holdouttimelb);
+            float quartertime = transitiontime/4;
+            
+            float frequencyquarter = 0;
+            
+            
+            
+            frequencyquarter = player->holdout*100/4;
+            
+            std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
+            
+            
+            std::cout<<"                ("<<holdouttimelb<<","<<holdouttimeub<<")"<<std::endl;
+            
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //setHoldout(hasHoldout, timefreq);
+            
+            
+            if(getTimeLeft()<=holdouttimelb-quartertime*3) {
+                setHoldout(true, 100/(frequencyquarter*4));
+                std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;
+            }
+            else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
+                setHoldout(true, 100/frequencyquarter*3);
+                std::cout<<"                        HOLDOUT 50%-75% --->"<<Tunnel::holdoutFrequency <<std::endl;
+            }
+            else if(getTimeLeft()<=holdouttimelb-quartertime) {
+                setHoldout(true, 100/(frequencyquarter*2));
+                std::cout<<"                        HOLDOUT 25%-50% --->"<< Tunnel::holdoutFrequency<<std::endl;
+            }
+            else if(getTimeLeft()<=holdouttimelb) {
+                setHoldout(true, 100/frequencyquarter);
+                std::cout<<"                        HOLDOUT 0-25%. --->"<<Tunnel::holdoutFrequency<<std::endl;
+            }
+            else if (getTimeLeft()>=holdouttimelb) {
+                setHoldout(false);
+                std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
+            }
+            
+            //~~~~~~~~~~~~~~~~~~~~~~~~~
+            if(getTimeLeft()<=holdouttimelb) {
+                setHoldout(true);
+            }
+            else {
+                setHoldout(false);
+            }
         }
         
         std::cout<<"                ("<<getTimeLeft()<<")"<<std::endl;
@@ -1819,7 +1819,7 @@ void Tunnel::update(float elapsed)
     {
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
-        float tsModifier = player->getBaseSpeed() / 15.0f; // 15.0 speed is baseline
+        float tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
         totalElapsed += elapsed * tsModifier;
         //totalElapsed += elapsed;
     }

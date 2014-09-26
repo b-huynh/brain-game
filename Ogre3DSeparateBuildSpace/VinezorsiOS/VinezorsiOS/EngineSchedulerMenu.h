@@ -11,7 +11,8 @@
 
 
 #include "Engine.h"
-#include "LevelSet.h"
+#include "HudSchedulerMenu.h"
+#include "Player.h"
 
 class EngineSchedulerMenu : public Engine
 {
@@ -40,7 +41,7 @@ public:
     virtual void requestResize();
 protected:
 	Player* player;
-    Hud* hud;
+    HudSchedulerMenu* hud;
     
     void alloc();
     void dealloc();

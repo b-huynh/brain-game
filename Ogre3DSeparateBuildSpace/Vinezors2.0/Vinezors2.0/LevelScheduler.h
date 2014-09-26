@@ -35,13 +35,17 @@ struct LevelScheduler
     LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0 );
     
     // Member functions
-    void saveNBL();
-    bool readNBL();
     StageRequest getRandomLevel( LevelSet* levels );
     void initializeSchedule( LevelSet* levels );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
     int rand_num( int lower, int upper );
+    
+    friend std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
+    friend std::istream& operator>>(std::istream& in, LevelScheduler& sch);
 };
+
+std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
+std::istream& operator>>(std::istream& in, LevelScheduler& sch);
 //________________________________________________________________________________________
 
 #endif /* defined(__Vinezors2_0__LevelScheduler__) */
