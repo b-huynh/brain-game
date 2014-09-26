@@ -2822,7 +2822,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // Formula for accuracy = TP / TP + TN + FP
     double accuracy = 0.0f;
     if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
-        accuracy = assessment.numCorrect / (assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+        accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
     // The amount to incread/decrease nBack by based on accuracy (-1 <= nBackDelta <= 1)
     double nBackDelta = (accuracy - 0.75) / 0.25;
@@ -2832,23 +2832,29 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     switch ( level.phase ) {
         case 'E':
             scheduler->nBackLevelE += nBackDelta;
+            if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
             break;
         case 'A':
             scheduler->nBackLevelA += nBackDelta;
+            if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
             break;
         case 'B':
             scheduler->nBackLevelB += nBackDelta;
+            if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
             break;
         case 'C':
             scheduler->nBackLevelC += nBackDelta;
+            if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
             break;
         case 'D':
             scheduler->nBackLevelD += nBackDelta;
+            if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
             break;
         default:
             break;
     }
     
+    levelToGrade->second.nbackDelta = nBackDelta;
     scheduler->removeBin(levelRequest->first.phaseX, levelRequest->first.difficultyX);
     scheduler->scheduleHistory.push_back(*levelRequest);
 }

@@ -196,7 +196,7 @@ void EngineStage::update(float elapsed)
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
             // have a done screen after a certain time limit is reached
-            if (player->levelRequest)
+            if (player->levelRequest)  
             {
                 player->assessLevelPerformance(player->levelRequest);
                 player->saveProgress(globals.savePath);

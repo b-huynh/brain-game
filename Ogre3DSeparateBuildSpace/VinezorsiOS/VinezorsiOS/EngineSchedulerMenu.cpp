@@ -65,8 +65,9 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "play")
     {
-        // If a level is selected, then we can continue
-        if (player->levelRequest)
+        // If a level is selected, then we can continue,
+        // Also make sure it isn't a level selected from the history panel
+        if (player->levelRequest && player->levelRequest->second.rating < 0)
             engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
 }

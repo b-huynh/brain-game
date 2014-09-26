@@ -398,7 +398,8 @@ void HudSchedulerMenu::setSelection()
                                     missed + "\n");
     
     // Turn on the play button since we have a valid level selected
-    playButtonBackground->setMaterialName("General/PlayButton");
+    if (player->levelRequest && player->levelRequest->second.rating < 0)
+        playButtonBackground->setMaterialName("General/PlayButton");
 }
 
 // Set how the levels in the history panel are displayed without them being selected
@@ -429,7 +430,7 @@ void HudSchedulerMenu::setScheduleHistory()
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar1Fill");
             else
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar0Fill");
-            historyOverlayPanels[i].title->setCaption(Util::toStringInt(progress.score));
+            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nbackDelta));
         }
         else if (i == player->scheduler->scheduleHistory.size())
         {

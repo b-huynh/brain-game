@@ -366,11 +366,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/PlayerProgress.cpp"
-            timestampString = "421695823.174228"
+            timestampString = "433457918.973155"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
             landmarkName = "operator&gt;&gt;(std::istream&amp; infile, PlayerProgress &amp; prg)"
             landmarkType = "7">
          </BreakpointContent>
