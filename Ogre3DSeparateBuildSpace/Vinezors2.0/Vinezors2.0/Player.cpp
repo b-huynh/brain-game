@@ -2304,15 +2304,6 @@ void Player::saveAllResults(Evaluation eval)
     levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
     levelResult->setRating(nrating); // Assign rating last
     
-    // If assigned a specific level to play (via scheduler, assess its performance)
-    // This assessment should be done after PlayerProgress is filled out (which is above) and
-    // before the player's progress is saved to a file (which is just below)
-    if (levelRequest)
-    {
-        assessLevelPerformance(levelRequest);
-        scheduler->scheduleHistory.push_back(*levelRequest);
-    }
-    
     setSkillLevel(skillLevel);
     saveStage(globals.logPath);
     saveActions(globals.actionPath);
@@ -2857,6 +2848,9 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         default:
             break;
     }
+    
+    scheduler->removeBin(levelRequest->first.phaseX, levelRequest->first.difficultyX);
+    scheduler->scheduleHistory.push_back(*levelRequest);
 }
 
 Player::~Player()

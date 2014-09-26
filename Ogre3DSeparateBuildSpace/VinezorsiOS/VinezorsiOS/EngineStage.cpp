@@ -193,6 +193,15 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_DONE:
         {
+            // scheduler grading done in here
+            // also need to save nback levels after finishing a level
+            // have a done screen after a certain time limit is reached
+            if (player->levelRequest)
+            {
+                player->assessLevelPerformance(player->levelRequest);
+                player->saveProgress(globals.savePath);
+                player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+            }
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
             break;
@@ -594,7 +603,10 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 }
                 else
                 {
-                    engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
+                    stageState = STAGE_STATE_DONE;
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
                     player->reactGUI();
                 }
             }
@@ -650,10 +662,6 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             break;
         }
         case STAGE_STATE_DONE:
-            // scheduler grading done in here
-            // also need to save nback levels after finishing a level
-            // have a done screen after a certain time limit is reached
-            // player->assessLevelPerformance(player->levelRequest);
             break;
     }
 }
