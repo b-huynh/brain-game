@@ -246,7 +246,7 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.names->setPosition(0.025, 0.025);
     levelDetails.names->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.names->setFontName("MainSmall");
-    levelDetails.names->setCaption("Type:\nN-Back:\nCollection:\nNavigation:\nHoldout:\nLength:\n\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:");
+    levelDetails.names->setCaption("Type:\nN-Back:\nCollection:\nNavigation:\nHoldout:\nLength:\n\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:\nDelta:");
     
     levelDetails.values->setMetricsMode(GMM_RELATIVE);
     levelDetails.values->setAlignment(TextAreaOverlayElement::Right);
@@ -338,6 +338,7 @@ void HudSchedulerMenu::setSelection()
     std::string mistakes;       // Non-targets player collected
     std::string avoided;        // Non-targets player avoided
     std::string missed;         // Targets player avoided
+    std::string delta;
     
     // Assign description value to each variable
     switch (level.phase)
@@ -387,6 +388,7 @@ void HudSchedulerMenu::setSelection()
         mistakes = "-";
         avoided = "-";
         missed = "-";
+        delta ="-";
     }
     else
     {
@@ -395,6 +397,7 @@ void HudSchedulerMenu::setSelection()
         mistakes = Util::toStringInt(progress.numWrong);
         avoided = Util::toStringInt(progress.numSafe);
         missed = Util::toStringInt(progress.numMissed);
+        delta = Util::toStringFloat(progress.nbackDelta);
     }
     
     // Set the text displaying the level details
@@ -409,7 +412,8 @@ void HudSchedulerMenu::setSelection()
                                     collected + "\n" +
                                     mistakes + "\n" +
                                     avoided + "\n" +
-                                    missed + "\n");
+                                    missed + "\n" +
+                                    delta + "\n");
     
     // Turn on the play button since we have a valid level selected
     if (player->levelRequest && player->levelRequest->second.rating < 0)
@@ -444,7 +448,7 @@ void HudSchedulerMenu::setScheduleHistory()
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar1Fill");
             else
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar0Fill");
-            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nbackDelta));
+            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nBackSkill));
         }
         else if (i == player->scheduler->scheduleHistory.size())
         {

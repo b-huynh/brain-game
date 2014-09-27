@@ -106,7 +106,7 @@ struct StageRequest
                 switch (DIFFICULTY_X)
                 {
                     case DIFFICULTY_EASY:
-                        ret->stageTime = EASY_TIME;
+                        ret->stageTime = NORMAL_TIME;
                         ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
@@ -116,7 +116,7 @@ struct StageRequest
                         break;
                         
                     case DIFFICULTY_HARD:
-                        ret->stageTime = HARD_TIME;
+                        ret->stageTime = NORMAL_TIME;
                         ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         

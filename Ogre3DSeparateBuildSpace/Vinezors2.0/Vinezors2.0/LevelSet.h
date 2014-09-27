@@ -106,7 +106,7 @@ struct StageRequest
                 switch (DIFFICULTY_X)
                 {
                     case DIFFICULTY_EASY:
-                        ret->stageTime = EASY_TIME;
+                        ret->stageTime = NORMAL_TIME;
                         ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
@@ -116,7 +116,7 @@ struct StageRequest
                         break;
                         
                     case DIFFICULTY_HARD:
-                        ret->stageTime = HARD_TIME;
+                        ret->stageTime = NORMAL_TIME;
                         ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         break;
                         
@@ -240,7 +240,7 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        generateNavigationLevels(DIFFICULTY_X);
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -272,6 +272,14 @@ struct StageRequest
                 
             default:
                 break;
+        }
+        // Just in case a nav levels
+        if (ret->navLevels.size() <= 0)
+        {
+            ret->navLevels.push_back(NavigationLevel(0, 1, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 4, 0));
         }
     }
     

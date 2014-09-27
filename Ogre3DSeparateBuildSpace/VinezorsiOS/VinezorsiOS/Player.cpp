@@ -2824,30 +2824,72 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
-    // The amount to incread/decrease nBack by based on accuracy (-1 <= nBackDelta <= 1)
-    double nBackDelta = (accuracy - 0.75) / 0.25;
-    if(nBackDelta < -1) nBackDelta = -1;
+    // A score multiplier that changes based on difficulty
+    double weightMultiplier = 0.0;
+    double nBackDifficulty = level.nback - assessment.nBackSkill;
+    std::cout << "\n\n===========================================\n" << level.nback << " - " << assessment.nBackSkill << " = " << nBackDifficulty << endl;
+    switch (level.difficultyX) {
+        case DIFFICULTY_EASY:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.70;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 0.90;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.20;    // hard memory
+            break;
+        case DIFFICULTY_NORMAL:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.75;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.00;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.25;    // hard memory
+            break;
+        case DIFFICULTY_HARD:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.80;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.10;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.30;    // hard memory
+            break;
+        default:
+            break;
+    }
     
+    std::cout << "diff: " << nBackDifficulty << endl;
+    std::cout << "weight multi: " << weightMultiplier << endl;
+    
+    
+    // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
+    double nBackDelta = 0.35 * (accuracy - 0.75) / 0.25;
+    if ( nBackDelta < 0.0 )
+    {
+        if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
+        nBackDelta /= weightMultiplier; // apply multiplier to negative base value
+    }
+    else
+    {
+        nBackDelta *= weightMultiplier; // apply multiplier to positive base value
+    }
+    
+    double playerSkill;
     // Find out what phase they're in
     switch ( level.phase ) {
         case 'E':
             scheduler->nBackLevelE += nBackDelta;
+            playerSkill = scheduler->nBackLevelE;
             if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
             break;
         case 'A':
             scheduler->nBackLevelA += nBackDelta;
+            playerSkill = scheduler->nBackLevelA;
             if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
             break;
         case 'B':
             scheduler->nBackLevelB += nBackDelta;
+            playerSkill = scheduler->nBackLevelB;
             if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
             break;
         case 'C':
             scheduler->nBackLevelC += nBackDelta;
+            playerSkill = scheduler->nBackLevelC;
             if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
             break;
         case 'D':
             scheduler->nBackLevelD += nBackDelta;
+            playerSkill = scheduler->nBackLevelD;
             if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
             break;
         default:
@@ -2856,7 +2898,8 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nbackDelta = nBackDelta;
-    scheduler->removeBin(levelRequest->first.phaseX, levelRequest->first.difficultyX);
+    levelToGrade->second.nBackSkill = playerSkill;
+    scheduler->removeBin(level.phaseX, level.difficultyX);
     scheduler->scheduleHistory.push_back(*levelRequest);
 }
 

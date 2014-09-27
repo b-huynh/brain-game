@@ -1480,6 +1480,12 @@ std::vector<NavigationLevel> StageRequest::generateRandomEasyNavigation()
             ret.push_back(NavigationLevel(0, 1, 0));
             ret.push_back(NavigationLevel(0, 1, 0));
             break;
+        default:
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 1, 0));
+            ret.push_back(NavigationLevel(0, 2, 0));
+            break;
     }
     return ret;
 }
@@ -1549,6 +1555,12 @@ std::vector<NavigationLevel> StageRequest::generateRandomNormalNavigation()
             ret.push_back(NavigationLevel(0, 3, 0));
             ret.push_back(NavigationLevel(0, 4, 0));
             ret.push_back(NavigationLevel(0, 3, 0));
+            break;
+        default:
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
+            ret.push_back(NavigationLevel(0, 4, 0));
             break;
     }
     return ret;
@@ -1620,6 +1632,12 @@ std::vector<NavigationLevel> StageRequest::generateRandomHardNavigation()
             ret.push_back(NavigationLevel(0, 4, 1));
             ret.push_back(NavigationLevel(0, 4, 2));
             ret.push_back(NavigationLevel(0, 4, 1));
+            break;
+        default:
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 4, 2));
+            ret.push_back(NavigationLevel(0, 4, 2));
             break;
     }
     return ret;

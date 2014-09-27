@@ -444,7 +444,7 @@ void HudSchedulerMenu::setScheduleHistory()
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar1Fill");
             else
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar0Fill");
-            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nbackDelta));
+            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nBackSkill));
         }
         else if (i == player->scheduler->scheduleHistory.size())
         {
