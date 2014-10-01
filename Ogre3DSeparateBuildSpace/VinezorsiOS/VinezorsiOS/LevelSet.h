@@ -32,8 +32,12 @@ struct StageRequest
 {
     int levelNo;
     int pods=0;
+    float holdoutPerc=0;
     float holdoutStart;
     float holdoutEnd;
+    bool holdoutSound=0;
+    bool holdoutColor=0;
+    bool holdoutShape=0;
     int nback;
     float stageTime;
     std::vector<NavigationLevel> navLevels;
@@ -79,7 +83,7 @@ public:
     int getLevelCol(int level) const;
     int getNumLevels() const;
     int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
-    void ManLevelSet(int lvl, int phs, int pds, float hldstrt, float hldend) ;
+    void ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hldsnd, String hldclr, String hldshp, std::vector<int> sides, std::vector<int> obs);
     
     void initializeLevelSet();
 };

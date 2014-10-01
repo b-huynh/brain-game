@@ -84,16 +84,28 @@ StageRequest::StageRequest()
 
 }
 
-void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldstrt, float hldend)
+void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs)
 {
     StageRequest level;
     level = stageList[lvl][phs];
     level.pods = pds;
     level.holdoutStart = hldstrt/ 100.0f;
     level.holdoutEnd = hldend/ 100.0f;
-    stageList[lvl][phs] = level;
+    if(hlds == "yes")level.holdoutSound = 1;
+    else level.holdoutSound = 0;
+    if(hldc == "yes")level.holdoutColor = 1;
+    else level.holdoutColor = 0;
+    if(hldsh == "yes")level.holdoutShape = 1;
+    else level.holdoutShape = 0;
     
     
+    for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].control = sds[i];
+    for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].obstacles = obs[i];
+    for (int i =0; i<level.navLevels.size(); i++) {
+        std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
+    }
+    level.holdoutPerc=hldperc;
+    stageList[lvl][phs] = level;    //ALWAYS KEEP LAST
 }
 
 
@@ -114,13 +126,13 @@ void LevelSet::initializeLevelSet()
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    /*level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));*/
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
     level.powerups.push_back(POWERUP_TIME_WARP);
@@ -145,8 +157,7 @@ void LevelSet::initializeLevelSet()
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
-    //level.tunnelSectionsPerNavLevel = 5;
-    level.tunnelSectionsPerNavLevel = 10;
+    level.tunnelSectionsPerNavLevel = 1;
     level.phase = 'E';
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
@@ -162,8 +173,9 @@ void LevelSet::initializeLevelSet()
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(1));
     level.powerups.push_back(POWERUP_TIME_WARP);

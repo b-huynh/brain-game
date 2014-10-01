@@ -59,10 +59,19 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levels->initializeLevelSet();
     
     //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
+    std::vector<int> sides  ;
+    sides.push_back(4);
+    sides.push_back(1);
+    sides.push_back(3);
+    sides.push_back(2);
+    std::vector<int> obstacles  ;
+    obstacles.push_back(4);
+    obstacles.push_back(1);
+    obstacles.push_back(3);
+    obstacles.push_back(2);
+    levels->ManLevelSet(0, 4, 3, 1.0 ,1, 2,"no","no","yes", sides, obstacles);
     
-    levels->ManLevelSet(0, 1, 3, 10, 50);
-    
-    levels->ManLevelSet(1, 1, 2, 1, 100);
+    //levels->ManLevelSet(1, 1, 2, 30, 70);
     
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -1255,6 +1264,7 @@ void Player::recordInfo()
             //result.nback = tunnel->getNBack();        // Is always 3 due to collection criterias
             result.nback = tunnel->getFirstCriteria();  // more accurate for before
             result.navigation = tunnel->getCurrentNavLevel();
+            //std::cout<<"                        GETTING CURRENT NAV LEVEL: "<< tunnel->getFirstCriteria()<<std::endl;
             result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
             result.podInfo = targetinfo;
             result.sectionInfo = sliceInfo;

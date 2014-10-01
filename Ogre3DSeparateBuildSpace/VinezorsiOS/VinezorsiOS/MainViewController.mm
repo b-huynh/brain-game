@@ -85,7 +85,6 @@
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
     
-    /*
     UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
     shortPressRecognizer.minimumPressDuration = 0.01;
     [self.view addGestureRecognizer:shortPressRecognizer];
@@ -93,7 +92,6 @@
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
     longPressRecognizer.minimumPressDuration = 0.20;
     [self.view addGestureRecognizer:longPressRecognizer];
-     */
     
     // Required if double tap should override single tap
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
@@ -102,10 +100,8 @@
     doubleTapRecognizer.delegate = self;
     panRecognizer.delegate = self;
     pinchRecognizer.delegate = self;
-    /*
     longPressRecognizer.delegate = self;
     shortPressRecognizer.delegate = self;
-     */
 }
 
 - (void)didReceiveMemoryWarning

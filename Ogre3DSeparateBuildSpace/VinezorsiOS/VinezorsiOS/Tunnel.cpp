@@ -964,6 +964,10 @@ void Tunnel::setNavigationLevels(int startingNavLevel, int navLimit, int tunnelS
 // Sets navigation levels based on the parameters
 void Tunnel::setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel)
 {
+    std::cout<<"PRESET SIZE: "<< preset.size() << "\n ";
+    for (int i=0; i<preset.size(); i++) {
+        std::cout<<"["<<i<<"]= "<< &preset[i]<<std::endl;
+    }
     navLevels.clear();
     for (int i = 0; i < 25; ++i) // Duplicate copies for repeat
     {
@@ -1276,7 +1280,8 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         float quartertime = transitiontime/4;
         
         float frequencyquarter = 0;
-
+        
+        if(level.holdoutPerc>0&&level.holdoutPerc<5)player->holdout = level.holdoutPerc;
         frequencyquarter = player->holdout*100/4;
         
         //std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
@@ -1328,7 +1333,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                ret.performHoldout(phase, player->soundVolume > 0.0);
+                ret.performHoldout(phase, player->soundVolume > 0.0,level.holdoutSound,level.holdoutColor,level.holdoutShape);
             }
             
             ++holdoutIndex;

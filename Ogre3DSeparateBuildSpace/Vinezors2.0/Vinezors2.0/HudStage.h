@@ -27,8 +27,6 @@ public:
     // Used to change the background of the go button
     bool isGoButtonActive() const;
     void setGoButtonState(bool active, bool color = true);
-    void setPauseNavDest(float navOffset);
-    void setSpeedDialState(bool active);
 protected:
     Player* player;
     Tunnel* tunnel;
@@ -45,8 +43,6 @@ protected:
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
     PanelOverlayElement* pauseBackground;
-    
-    PanelOverlayElement* goBaseBackground;
     PanelOverlayElement* goBackground;
     PanelOverlayElement* sliderRangeBackground;
     PanelOverlayElement* sliderBallBackground;
@@ -90,11 +86,6 @@ protected:
     PanelOverlayElement* powerup2Background;
     PanelOverlayElement* powerup3Background;
     
-    float pauseNavOffset;
-    float pauseNavOffsetDest;
-    float goOffset;
-    float goOffsetDest;
-    PanelOverlayElement* pauseBaseBackground;
     PanelOverlayElement* pauseNavigationBackground;
     PanelOverlayElement* resumeButtonBackground;
     PanelOverlayElement* nextButtonBackground;

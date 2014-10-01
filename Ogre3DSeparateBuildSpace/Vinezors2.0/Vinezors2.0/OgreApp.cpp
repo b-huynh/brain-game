@@ -159,7 +159,8 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
     baseWhiteNoLighting->getTechnique(0)->getPass(0)->setVertexProgram(
                                                                        baseWhiteNoLighting->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
     baseWhiteNoLighting->getTechnique(0)->getPass(0)->setFragmentProgram(
-                                                                         baseWhiteNoLighting->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());    
+                                                                         baseWhiteNoLighting->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());
+    
     
 #endif
     
@@ -172,9 +173,11 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-    player->getTutorialMgr()->update(elapsed);
     if (player->getTutorialMgr()->isVisible())
+    {
+        player->getTutorialMgr()->update(elapsed);
         return;
+    }
     engineStateMgr->update(elapsed);
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->update(elapsed);
@@ -401,7 +404,7 @@ void OgreApp::activatePerformPinch()
 
 void OgreApp::activatePerformBeginLongPress()
 {
-    //player->addAction(ACTION_TAP_HOLD);
+    player->addAction(ACTION_TAP_HOLD);
     if (player->getTutorialMgr()->isVisible())
     {
         return;
@@ -523,14 +526,7 @@ bool OgreApp::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
     OgreFramework::getSingletonPtr()->mousePressed(evt, id);
     if (player->getTutorialMgr()->isVisible())
     {
-        if (player->getTutorialMgr()->processInput(Vector2(evt.state.X.abs, evt.state.Y.abs)))
-            player->reactGUI();
-        if (player->getTutorialMgr()->isHidden())
-        {
-            Engine* activeEngine = engineStateMgr->getActiveEngine();
-            if (activeEngine)
-                activeEngine->activateReturnFromPopup();
-        }
+        player->getTutorialMgr()->processInput(Vector2(evt.state.X.abs, evt.state.Y.abs));
         return true;
     }
     Engine* activeEngine = engineStateMgr->getActiveEngine();
