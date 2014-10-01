@@ -33,7 +33,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float
     setNewControl(control);
     
     // Add time based on n-back since players need more time before they can get targets
-    this->stageTime += 2 * nback;
+    this->stageTime += 4 * nback + 2;
 }
 
 SceneNode* Tunnel::getMainTunnelNode() const

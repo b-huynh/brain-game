@@ -280,9 +280,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "768"
-            endingLineNumber = "768"
-            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
-            landmarkType = "5">
+            endingLineNumber = "768">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -297,7 +295,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "796"
             endingLineNumber = "796"
-            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
+            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -313,7 +311,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "795"
             endingLineNumber = "795"
-            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
+            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

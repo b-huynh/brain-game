@@ -100,13 +100,16 @@ void HudSchedulerMenu::alloc()
     levelOverlayPanels = std::vector<LevelOverlayElement>(NUM_SELECTIONS);
     for (int i = 0; i < levelOverlayPanels.size(); ++i)
     {
-        levelOverlayPanels[i].entireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ScheduleMenuLevelEntireBackground" + Util::toStringInt(i)));        levelOverlayPanels[i].title = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuLevelTitle" + Util::toStringInt(i)));
+        levelOverlayPanels[i].entireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ScheduleMenuLevelEntireBackground" + Util::toStringInt(i)));
+        levelOverlayPanels[i].title = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuLevelTitle" + Util::toStringInt(i)));
+        levelOverlayPanels[i].value = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuLevelValue" + Util::toStringInt(i)));
     }
     historyOverlayPanels = std::vector<LevelOverlayElement>(SCHEDULE_LEN);
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
     {
         historyOverlayPanels[i].entireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ScheduleMenuHistoryEntireBackground" + Util::toStringInt(i)));
         historyOverlayPanels[i].title = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuHistoryTitle" + Util::toStringInt(i)));
+        historyOverlayPanels[i].value = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuHistoryValue" + Util::toStringInt(i)));
     }
     
     levelDetails.entireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ScheduleMenuLevelDetailsEntireBackground"));
@@ -128,11 +131,13 @@ void HudSchedulerMenu::alloc()
     {
         schedulerMenuBackdrop->addChild(levelOverlayPanels[i].entireBackground);
         levelOverlayPanels[i].entireBackground->addChild(levelOverlayPanels[i].title);
+        levelOverlayPanels[i].entireBackground->addChild(levelOverlayPanels[i].value);
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
     {
         schedulerMenuBackdrop->addChild(historyOverlayPanels[i].entireBackground);
         historyOverlayPanels[i].entireBackground->addChild(historyOverlayPanels[i].title);
+        historyOverlayPanels[i].entireBackground->addChild(historyOverlayPanels[i].value);
     }
     overlay1->add2D(levelDetails.entireBackground);
     levelDetails.entireBackground->addChild(levelDetails.title);
@@ -153,11 +158,13 @@ void HudSchedulerMenu::dealloc()
     {
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelOverlayPanels[i].entireBackground);
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelOverlayPanels[i].title);
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelOverlayPanels[i].value);
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
     {
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(historyOverlayPanels[i].entireBackground);
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(historyOverlayPanels[i].title);
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(historyOverlayPanels[i].value);
     }
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.entireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.title);
@@ -180,7 +187,7 @@ void HudSchedulerMenu::initOverlay()
     schedulerMenuTitleText->setPosition(0.20, 0.00);
     schedulerMenuTitleText->setCharHeight(0.046 * FONT_SZ_MULT);
     schedulerMenuTitleText->setFontName("MainSmall");
-    schedulerMenuTitleText->setCaption("Scheduler");
+    schedulerMenuTitleText->setCaption("Flight Trainer");
     
     schedulerMenuBackdrop->setMetricsMode(GMM_RELATIVE);
     schedulerMenuBackdrop->setPosition(0.00, 0.025);
@@ -210,6 +217,12 @@ void HudSchedulerMenu::initOverlay()
         levelOverlayPanels[i].title->setCharHeight(0.025 * FONT_SZ_MULT);
         levelOverlayPanels[i].title->setFontName("MainSmall");
         levelOverlayPanels[i].title->setCaption("Choice " + Util::toStringInt(i + 1));
+        
+        levelOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
+        levelOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
+        levelOverlayPanels[i].value->setPosition(0.0f, 0.0f);
+        levelOverlayPanels[i].value->setCharHeight(0.020 * FONT_SZ_MULT);
+        levelOverlayPanels[i].value->setFontName("MainSmall");
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
     {
@@ -224,9 +237,15 @@ void HudSchedulerMenu::initOverlay()
         
         historyOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
-        historyOverlayPanels[i].title->setPosition(iconWidth / 2.0f, -0.02f);
+        historyOverlayPanels[i].title->setPosition(iconWidth / 2.0f, iconHeight / 2.0f - 0.01f);
         historyOverlayPanels[i].title->setCharHeight(0.020 * FONT_SZ_MULT);
         historyOverlayPanels[i].title->setFontName("MainSmall");
+        
+        historyOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
+        historyOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
+        historyOverlayPanels[i].value->setPosition(iconWidth / 2.0f, -0.02f);
+        historyOverlayPanels[i].value->setCharHeight(0.020 * FONT_SZ_MULT);
+        historyOverlayPanels[i].value->setFontName("MainSmall");
     }
     
     levelDetails.entireBackground->setMetricsMode(GMM_RELATIVE);
@@ -246,7 +265,7 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.names->setPosition(0.025, 0.025);
     levelDetails.names->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.names->setFontName("MainSmall");
-    levelDetails.names->setCaption("Type:\nN-Back:\nCollection:\nNavigation:\nHoldout:\nLength:\n\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:");
+    levelDetails.names->setCaption("Type:\nN-Back:\nLength:\nNavigation:\nHoldout:\n\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:\nMemory:");
     
     levelDetails.values->setMetricsMode(GMM_RELATIVE);
     levelDetails.values->setAlignment(TextAreaOverlayElement::Right);
@@ -307,7 +326,6 @@ void HudSchedulerMenu::clearSelection()
                                     "-" + "\n" +
                                     "-" + "\n" +
                                     "-" + "\n" +
-                                    "-" + "\n" +
                                     "\n" +
                                     "-" + "\n" +
                                     "-" + "\n" +
@@ -328,7 +346,6 @@ void HudSchedulerMenu::setSelection()
     // Grab relevant information about the selected level
     std::string type;           // Type of stage (Color/Sound, Recess, Sound Only, ect.)
     std::string nback;          // N-Back of level (Recess has 0-back)
-    std::string collection;     // Amount required to collect to complete level (Recess depends on speed)
     std::string navigation;     // Navigation difficulty of level
     std::string holdout;        // Holdout description
     std::string length;         // Length of level
@@ -338,6 +355,7 @@ void HudSchedulerMenu::setSelection()
     std::string mistakes;       // Non-targets player collected
     std::string avoided;        // Non-targets player avoided
     std::string missed;         // Targets player avoided
+    std::string delta;
     
     // Assign description value to each variable
     switch (level.phase)
@@ -359,10 +377,6 @@ void HudSchedulerMenu::setSelection()
             break;
     }
     nback = Util::toStringInt(level.nback);
-    if (level.phase != 'E')
-        collection = Util::toStringInt(level.collectionCriteria.size());
-    else
-        collection = "-";
     
     switch (level.difficultyX)
     {
@@ -377,7 +391,12 @@ void HudSchedulerMenu::setSelection()
             break;
     }
     holdout = level.hasHoldout ? "yes" : "no";
-    length = Util::toStringInt(level.stageTime);
+    if (level.collectionCriteria.size() <= 4)
+        length = "short";
+    else if (level.collectionCriteria.size() <= 8)
+        length = "medium";
+    else //if (level.collectionCriteria.size() <= 13)
+        length = "long";
     
     // Check if player ever played the level
     if (progress.rating < 0)
@@ -387,6 +406,7 @@ void HudSchedulerMenu::setSelection()
         mistakes = "-";
         avoided = "-";
         missed = "-";
+        delta ="-";
     }
     else
     {
@@ -395,21 +415,24 @@ void HudSchedulerMenu::setSelection()
         mistakes = Util::toStringInt(progress.numWrong);
         avoided = Util::toStringInt(progress.numSafe);
         missed = Util::toStringInt(progress.numMissed);
+        if (progress.nbackDelta >= 0.0f)
+            delta = "+";
+        delta += Util::toStringFloat(progress.nbackDelta);
     }
     
     // Set the text displaying the level details
     levelDetails.values->setCaption(type + "\n" +
                                     nback + "\n" +
-                                    collection + "\n" +
+                                    length + "\n" +
                                     navigation + "\n" +
                                     holdout + "\n" +
-                                    length + "\n" +
                                     "\n" +
                                     accuracy + "\n" +
                                     collected + "\n" +
                                     mistakes + "\n" +
                                     avoided + "\n" +
-                                    missed + "\n");
+                                    missed + "\n" +
+                                    delta + "\n");
     
     // Turn on the play button since we have a valid level selected
     if (player->levelRequest && player->levelRequest->second.rating < 0)
@@ -444,19 +467,23 @@ void HudSchedulerMenu::setScheduleHistory()
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar1Fill");
             else
                 historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar0Fill");
-            historyOverlayPanels[i].title->setCaption(Util::toStringFloat(progress.nBackSkill));
+            historyOverlayPanels[i].title->setCaption(Util::toStringInt(startingScheduleIndex + i + 1));
+            historyOverlayPanels[i].value->setCaption(Util::toStringFloat(progress.nBackSkill));
+
         }
         else if (i == player->scheduler->scheduleHistory.size())
         {
             // The next we will play should show that it is available or the next one we will be completing
-            historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBar0Fill");
-            historyOverlayPanels[i].title->setCaption("-");
+            historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBarUnavailable");
+            historyOverlayPanels[i].title->setCaption("");
+            historyOverlayPanels[i].value->setCaption("");
         }
         else
         {
             // Not there yet, so show that it is unavailable
             historyOverlayPanels[i].entireBackground->setMaterialName("General/LevelBarUnavailable");
-            historyOverlayPanels[i].title->setCaption("-");
+            historyOverlayPanels[i].title->setCaption("");
+            historyOverlayPanels[i].value->setCaption("");
         }
     }
 }

@@ -86,7 +86,7 @@ struct StageRequest
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
         const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
-        const int EASY_COLLECTIONS = 6, NORMAL_COLLECTIONS = 9, HARD_COLLECTIONS = 12;
+        const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
         StageRequest* ret = this;
         ret->init(); // Reset everything to clear lists if they're still populated
         ret->nback = nback;
@@ -240,7 +240,7 @@ struct StageRequest
                 {
                     case DIFFICULTY_EASY:
                         ret->stageTime = EASY_TIME;
-                        generateNavigationLevels(DIFFICULTY_X);
+                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
                         for (int i = 0; i < EASY_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
@@ -272,6 +272,14 @@ struct StageRequest
                 
             default:
                 break;
+        }
+        // Just in case a nav levels
+        if (ret->navLevels.size() <= 0)
+        {
+            ret->navLevels.push_back(NavigationLevel(0, 1, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+            ret->navLevels.push_back(NavigationLevel(0, 4, 0));
         }
     }
     

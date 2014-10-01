@@ -64,6 +64,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levels->initializeLevelSet();
     
     scheduler = new LevelScheduler();
+    feedLevelRequestFromSchedule();
     levelRequest = NULL;
     
     tunnel = NULL;
@@ -2812,6 +2813,46 @@ void Player::linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > lev
     }
 }
 
+// Returns a multiplier when incrementing or decrementing memory level during assessment
+float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessment)
+{
+    float valMemory = 1.0;
+    float valLength = 1.0;
+    float valNavigation = 1.0;
+    float valHoldout = 1.0;
+    
+    float nBackDifficulty = level.nback - assessment.nBackSkill;
+    if ( nBackDifficulty < 0 )
+        valMemory = 0.5;    // easy memory
+    else if ( nBackDifficulty < 0.5 )
+        valMemory = 1.0;    // normal memory
+    else //if ( nBackDifficulty >= 0.5 )
+        valMemory = 1.5;    // hard memory
+
+    // Not only is it shorter times and stuff, the accuracy requirement
+    // for passing is lower for easy time. So it is a very strong multiplier
+    if (level.collectionCriteria.size() <= 4)
+        valLength = 0.5;    // easy time
+    else if (level.collectionCriteria.size() <= 8)
+        valLength = 1.0;    // normal time
+    else //if (level.collectionCriteria.size() <= 13)
+        valLength = 1.5;    // hard time
+    
+    if (level.difficultyX == DIFFICULTY_EASY)
+        valNavigation = 0.8;   // easy nav
+    else if (level.difficultyX == DIFFICULTY_NORMAL)
+        valNavigation = 1.0;   // normal nav
+    else //(level.difficulty == DIFFICULTY_HARD)
+        valNavigation = 1.2;   // hard nav
+    
+    if (level.hasHoldout)
+        valHoldout = 1.3;
+    else
+        valHoldout = 1.0;
+    
+    return valMemory * valLength * valNavigation * valHoldout;
+}
+
 // Grades level and updates nBackLevel of scheduler using the accuracy formula
 void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade)
 {
@@ -2824,6 +2865,8 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
+    float weightMultiplier = obtainWeightMultiplier(level, assessment);
+    /*
     // A score multiplier that changes based on difficulty
     double weightMultiplier = 0.0;
     double nBackDifficulty = level.nback - assessment.nBackSkill;
@@ -2847,20 +2890,34 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         default:
             break;
     }
+     */
     
-    std::cout << "diff: " << nBackDifficulty << endl;
     std::cout << "weight multi: " << weightMultiplier << endl;
     
+    // Assign an accuracy range that determines success from 0% to 100%
+    // For shorter levels, it's possible to complete the level at lower accuracy.
+    // These are lower bound estimates for those accuracies (also excluding Time Warp)...
+    float accuracyRange = 1.0;
+    if (level.collectionCriteria.size() <= 4)
+        accuracyRange = 0.50;   // short time
+    else if (level.collectionCriteria.size() <= 8)
+        accuracyRange = 0.34;
+    else //if (level.collectionCriteria.size() <= 13)
+        accuracyRange = 0.25;
     
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
-    double nBackDelta = 0.35 * (accuracy - 0.75) / 0.25;
+    double nBackDelta = 0.35 * (accuracy - (1 - accuracyRange)) / accuracyRange;
     if ( nBackDelta < 0.0 )
     {
         if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
+        if (assessment.rating == 5) // If the player completed the level, don't decrease despite accuracy
+            nBackDelta = 0.0;
         nBackDelta /= weightMultiplier; // apply multiplier to negative base value
     }
     else
     {
+        if (assessment.rating != 5) // If the player didn't complete the level, don't increase despite accuracy
+            nBackDelta = 0.0;
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
     }
     
@@ -2869,28 +2926,28 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     switch ( level.phase ) {
         case 'E':
             scheduler->nBackLevelE += nBackDelta;
-            playerSkill = scheduler->nBackLevelE;
             if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
+            playerSkill = scheduler->nBackLevelE;
             break;
         case 'A':
             scheduler->nBackLevelA += nBackDelta;
-            playerSkill = scheduler->nBackLevelA;
             if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+            playerSkill = scheduler->nBackLevelA;
             break;
         case 'B':
             scheduler->nBackLevelB += nBackDelta;
-            playerSkill = scheduler->nBackLevelB;
             if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+            playerSkill = scheduler->nBackLevelB;
             break;
         case 'C':
             scheduler->nBackLevelC += nBackDelta;
-            playerSkill = scheduler->nBackLevelC;
             if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
+            playerSkill = scheduler->nBackLevelC;
             break;
         case 'D':
             scheduler->nBackLevelD += nBackDelta;
-            playerSkill = scheduler->nBackLevelD;
             if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
+            playerSkill = scheduler->nBackLevelD;
             break;
         default:
             break;

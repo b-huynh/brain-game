@@ -167,7 +167,7 @@ void HudStage::update(float elapsed)
         endTallyScoreValue->setPosition(0.19, 0.11 - dsz);
         
         endTallyScoreLabel->setCharHeight((sz + dsz) * FONT_SZ_MULT);
-        endTallyScoreLabel->setPosition(0.355 + dsz, 0.11 - dsz);
+        endTallyScoreLabel->setPosition(0.36 + dsz, 0.11 - dsz);
     }
     
     // If player is going through score calculation animation go through this
@@ -192,14 +192,24 @@ void HudStage::update(float elapsed)
         
             label5->setCaption(Util::toStringInt(player->getScore()));
             
-            float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
-            endTallyScoreLabel->setCaption("Best");
-            if (player->getScore() > highScore)
+            if (player->levelRequest)
             {
-                highScore = player->getScore();
-                bestScoreAnimationFlag = true;
+                // If playing a scheduler level, we will always have a best score since these levels are independent and rarely replayed
+                endTallyScoreLabel->setCaption("Score");
+                endTallyScoreValue->setCaption(Util::toStringInt(player->getScore()));
             }
-            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+            else
+            {
+                endTallyScoreLabel->setCaption("Best");
+                float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
+                // Only animate best score if it is higher than best score and it is not a level from the scheduler
+                if (player->getScore() > highScore)
+                {
+                    highScore = player->getScore();
+                    bestScoreAnimationFlag = true;
+                }
+                endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+            }
         
             if( timeLeft <= 0.0f ) {
                 label2->setCaption("0");
@@ -221,14 +231,24 @@ void HudStage::update(float elapsed)
             
             label5->setCaption(Util::toStringInt(player->getScore()));
             
-            float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
-            endTallyScoreLabel->setCaption("Best");
-            if (player->getScore() > highScore)
+            if (player->levelRequest)
             {
-                highScore = player->getScore();
-                bestScoreAnimationFlag = true;
+                // If playing a scheduler level, we will always have a best score since these levels are independent and rarely replayed
+                endTallyScoreLabel->setCaption("Score");
+                endTallyScoreValue->setCaption(Util::toStringInt(player->getScore()));
             }
-            endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+            else
+            {
+                endTallyScoreLabel->setCaption("Best");
+                float highScore = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol()).score;
+                // Only animate best score if it is higher than best score and it is not a level from the scheduler
+                if (player->getScore() > highScore)
+                {
+                    highScore = player->getScore();
+                    bestScoreAnimationFlag = true;
+                }
+                endTallyScoreValue->setCaption(Util::toStringInt(highScore));
+            }
             
             tunnel->setCleaning(true);
             player->endFlag = false;
@@ -290,6 +310,7 @@ void HudStage::alloc()
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem9")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem10")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem11")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem12")));
     
     // Allocate the hud elements
     HudEntire = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudEntire"));
@@ -376,7 +397,8 @@ void HudStage::alloc()
     overlay1->add2D(HudRightZapper);
     
     overlay1->add2D(pauseBackground);
-    for (int i = 0; i < collectionBar.size(); ++i)
+    //for (int i = 0; i < collectionBar.size(); ++i)
+    for (int i = collectionBar.size() - 1; i >= 0; --i)
         overlay1->add2D(collectionBar[i]);
     
     overlay1->add2D(nbackDisplayBackground);
@@ -634,7 +656,7 @@ void HudStage::initOverlay()
     endTallyScoreLabel->setMetricsMode(GMM_RELATIVE);
     endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
     //endTallyScoreLabel->setPosition(0.365, 0.11);
-    endTallyScoreLabel->setPosition(0.355, 0.11);
+    endTallyScoreLabel->setPosition(0.36, 0.11);
     endTallyScoreLabel->setCharHeight(0.024 * FONT_SZ_MULT);
     endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
     endTallyScoreLabel->setFontName("MainSmall");
@@ -797,29 +819,29 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
     
     // How many has the player collected?
     int starPhase = 0;
-    if (numSatisfied < 3)
+    if (numSatisfied < 4)
         starPhase = 0;
-    else if (numSatisfied < 6)
+    else if (numSatisfied < 8)
         starPhase = 1;
-    else if (numSatisfied < 9)
-        starPhase = 2;
     else if (numSatisfied < 12)
-        starPhase = 3;
+        starPhase = 2;
     else
-        starPhase = 4;
+        starPhase = 3;
     
     // Designate positions for each collection item
-    float x = 0.2925;
+    float x = 0.295;
     float y = 0.035;
-    float wpadding = 0.0125;
+    float wpadding = 0.0075;
     float width = 0.0425;
     float height = 0.075;
-    // When we win, almost all of them are collapsed,
+    // When we win or lose, almost all of them are collapsed,
     // so we want to re-adjust so it looks evenly split.
-    if (starPhase == 4)
+    if ((tunnel->isDone() && tunnel->getMode() != STAGE_MODE_RECESS) ||
+        starPhase == 3)
     {
         x = 0.3125;
         wpadding = 0.0250;
+        starPhase = 3;
     }
     
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
@@ -846,7 +868,13 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
             }
         }
         
-        if (i / 3 == starPhase || (i + 1) % 3 == 0)
+        // Check to see if we should print our next tablet to the right
+        //
+        // is this tablet in the set that should be expanded?
+        //if (i / 4 == starPhase ||
+        //    // Is the next tablet in a new set and is it not the trophy tablet?
+        //    ((i + 1) % 4 == 0 && ((i + 1) != 12 || starPhase >= 3)))
+        if (i / 4 == starPhase || (i + 1) % 4 == 0)
             x += 2 * wpadding + width;
 
         // Assign an image based on what type of collection and whether it is collected
@@ -861,7 +889,7 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
             //    scoreName += Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
             
             // For just a single n-back and task
-            switch (i / 3)
+            switch (i / 4)
             {
                 case 0:
                     scoreName += "0";
@@ -881,9 +909,19 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
             }
             
             if (criterias[i].collected)
-                scoreName += "Filled3";
+            {
+                if (i == 12)
+                    scoreName = "General/GUICollectionTrophyFull";
+                else
+                    scoreName += "Filled3";
+            }
             else
-                scoreName += "Blank";
+            {
+                if (i == 12)
+                    scoreName = "General/GUICollectionTrophyEmpty";
+                else
+                    scoreName += "Blank";
+            }
             collectionBar[i]->setMaterialName(scoreName);
         }
         else

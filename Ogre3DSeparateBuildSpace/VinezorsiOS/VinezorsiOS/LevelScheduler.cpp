@@ -13,7 +13,6 @@
 using namespace std;
 
 #define SCHEDULE_SIZE 5     // Number of levels in a schedule
-#define fileName "nBackLevels.txt"
 //________________________________________________________________________________________
 
 /**

@@ -30,8 +30,6 @@ void EngineSchedulerMenu::enter()
     alloc();
     player->startMenu();
     
-    player->feedLevelRequestFromSchedule();
-    
     // Set skybox
     Util::setSkyboxAndFog("");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));

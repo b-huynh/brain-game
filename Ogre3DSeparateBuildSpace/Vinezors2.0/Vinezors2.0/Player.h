@@ -409,6 +409,9 @@ public:
     // iterate through the levelProgress vector, link each level in the LevelSet
     void linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList);
     
+    // Returns a multiplier when incrementing or decrementing memory level during assessment
+    float obtainWeightMultiplier(StageRequest level, PlayerProgress assessment);
+    
     // "Grade" the level to see if player should repeat, go back, or advance
     void assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade);
     

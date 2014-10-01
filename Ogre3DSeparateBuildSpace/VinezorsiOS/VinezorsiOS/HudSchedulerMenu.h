@@ -52,6 +52,7 @@ protected:
     {
         PanelOverlayElement* entireBackground;
         TextAreaOverlayElement* title;
+        TextAreaOverlayElement* value;
     };
     
     struct DescriptionOverlayElement

@@ -196,11 +196,14 @@ void EngineStage::update(float elapsed)
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
             // have a done screen after a certain time limit is reached
-            if (player->levelRequest)  
+            if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
                 player->assessLevelPerformance(player->levelRequest);
                 player->saveProgress(globals.savePath);
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+                
+                // Grab new choices for player to choose from
+                player->feedLevelRequestFromSchedule();
             }
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
