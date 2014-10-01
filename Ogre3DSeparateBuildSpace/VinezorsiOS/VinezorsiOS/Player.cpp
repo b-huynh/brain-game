@@ -67,6 +67,19 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     feedLevelRequestFromSchedule();
     levelRequest = NULL;
     
+    //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
+    std::vector<int> sides  ;
+    sides.push_back(4);
+    sides.push_back(1);
+    sides.push_back(3);
+    sides.push_back(2);
+    std::vector<int> obstacles  ;
+    obstacles.push_back(4);
+    obstacles.push_back(1);
+    obstacles.push_back(3);
+    obstacles.push_back(2);
+    levels->ManLevelSet(0, 4, 3, 1.0 ,25.0, 75.0,"yes","yes","yes", sides, obstacles);
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -2845,7 +2858,7 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
     else //(level.difficulty == DIFFICULTY_HARD)
         valNavigation = 1.2;   // hard nav
     
-    if (level.hasHoldout)
+    if (level.hasHoldout())
         valHoldout = 1.3;
     else
         valHoldout = 1.0;

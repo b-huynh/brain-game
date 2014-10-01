@@ -1107,58 +1107,104 @@ void EngineStage::setup()
         level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
     }
     
+    int numColors=NUM_POD_SIGNALS - 1;
+    int numShapes=NUM_POD_SIGNALS - 1;
+    int numSounds=NUM_POD_SIGNALS - 1;
+    
+    std::cout << "Available Features: " << numColors << " "<< numShapes << " "<< numSounds << std::endl;
+    
     int nlevel = level.nback;
     switch (level.phase)
     {
         case 'A':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.nback >= 2) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            if(level.pods!=0){
+                int numofPods = std::min(numColors, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i), POD_SHAPE_UNKNOWN, (PodSound)(i)));
+                }
+                break;
+            }
+            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            if(level.nback >= 2)
-            {
-                globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW,POD_SHAPE_UNKNOWN, POD_SOUND_4));
-            }
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
         case 'B':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.nback >= 2) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, (PodShape)(i), (PodSound)(i)));
+                }
+                break;
+            }
+            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
-            if(level.nback >= 2)
-            {
-                globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            }
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
         }
         case 'C':
         {
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.nback >= 2) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            if(level.pods!=0){
+                int numofPods = std::min(numSounds, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, (PodSound)(i)));
+                }
+                break;
+            }
+            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            if(level.nback >= 2)
-            {
-                globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
-            }
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
         case 'D':
             nmode = STAGE_MODE_COLLECTION;
-            globals.signalTypes = (level.nback >= 2) ? std::vector<std::vector<PodInfo> >(4) : std::vector<std::vector<PodInfo> >(3);
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, numColors);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i), (PodShape)(i), (PodSound)(i)));
+                }
+                break;
+            }
+            globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
             globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
             globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
-            if(level.nback >= 2)
-            {
-                globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            }
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
         case 'E':
             nmode = STAGE_MODE_RECESS;
@@ -1201,7 +1247,7 @@ void EngineStage::setup()
     player->link(tunnel);
     
     globals.wrongAnswerTimePenalty = level.stageTime / 12.0;
-    tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
+    //tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
 
     tunnel->setCollectionCriteria(level.collectionCriteria);

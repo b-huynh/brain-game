@@ -67,6 +67,30 @@ std::vector<std::vector<StageRequest> > LevelSet::getStageList() const
     return stageList;
 }
 
+void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs)
+{
+    StageRequest level;
+    level = stageList[lvl][phs];
+    level.pods = pds;
+    level.holdoutStart = hldstrt/ 100.0f;
+    level.holdoutEnd = hldend/ 100.0f;
+    if(hlds == "yes")level.holdoutSound = 1;
+    else level.holdoutSound = 0;
+    if(hldc == "yes")level.holdoutColor = 1;
+    else level.holdoutColor = 0;
+    if(hldsh == "yes")level.holdoutShape = 1;
+    else level.holdoutShape = 0;
+    
+    
+    for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].control = sds[i];
+    for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].obstacles = obs[i];
+    for (int i =0; i<level.navLevels.size(); i++) {
+            std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
+    }
+    level.holdoutPerc=hldperc;
+    stageList[lvl][phs] = level;    //ALWAYS KEEP LAST
+}
+
 void LevelSet::initializeLevelSet()
 {
     stageList = std::vector<std::vector<StageRequest> >(NUM_LEVELS, std::vector<StageRequest>(NUM_TASKS));
@@ -216,8 +240,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -361,8 +383,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -506,8 +526,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -651,8 +669,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -796,8 +812,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -941,8 +955,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1086,8 +1098,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1231,8 +1241,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = holdoutFreqvar;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1378,8 +1386,6 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'D';
-    level.hasHoldout = true;
-    level.holdoutFrequency = 4;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;

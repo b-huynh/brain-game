@@ -390,7 +390,7 @@ void HudSchedulerMenu::setSelection()
             navigation = "hard";
             break;
     }
-    holdout = level.hasHoldout ? "yes" : "no";
+    holdout = level.hasHoldout() ? "yes" : "no";
     if (level.collectionCriteria.size() <= 4)
         length = "short";
     else if (level.collectionCriteria.size() <= 8)

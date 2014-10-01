@@ -37,6 +37,7 @@ struct StageRequest
     int stageNo;
     float stageTime;
     std::vector<NavigationLevel> navLevels;
+    int pods;
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
     std::string nameTunnelTile;
@@ -46,8 +47,14 @@ struct StageRequest
     char phase;
     LevelPhase phaseX;
     StageDifficulty difficultyX;
-    bool hasHoldout;
-    int holdoutFrequency;
+    
+    float holdoutPerc;
+    float holdoutStart;
+    float holdoutEnd;
+    bool holdoutSound;
+    bool holdoutColor;
+    bool holdoutShape;
+    
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
@@ -60,6 +67,11 @@ struct StageRequest
         return false;
     }
     
+    bool hasHoldout() const
+    {
+        return (holdoutSound || holdoutColor || holdoutShape) && holdoutPerc > 0.0f;
+    }
+    
     // clear everything and set defaults
     void init()
     {
@@ -67,6 +79,7 @@ struct StageRequest
         stageNo = 0;
         stageTime = 120.0f;
         navLevels.clear();
+        pods = 0;
         collectionCriteria.clear();
         powerups.clear();
         nameTunnelTile = "";
@@ -74,8 +87,12 @@ struct StageRequest
         nameMusic = "";
         tunnelSectionsPerNavLevel = 10;
         phase = 'D';
-        hasHoldout = false;
-        holdoutFrequency = 4;
+        holdoutPerc = 0.0f;
+        holdoutStart = 0.0f;
+        holdoutEnd = 0.0f;
+        holdoutSound = false;
+        holdoutColor = false;
+        holdoutShape = false;
         initCamSpeed = 15.0f;
         minCamSpeed = 10.0f;
         maxCamSpeed = 40.0f;
@@ -340,6 +357,7 @@ public:
     int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
     // Simple accessor function for private stageList
     std::vector<std::vector<StageRequest> > getStageList() const;
+    void ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs);
     void initializeLevelSet();
 };
 

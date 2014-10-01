@@ -1184,14 +1184,19 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                         candidates.push_back((PodSignal)i);
             
                 // Reroll the next pod if it happens to be a repeat.
-                PodSignal podType = candidates[rand() % candidates.size()];
-                if (types.size() > 0 && types[index - 1].podSignal == podType)
-                    podType = candidates[rand() % candidates.size()];
-                if (podType == repeat1)
+                if (candidates.size() > 0)
                 {
-                    podType = candidates[rand() % candidates.size()];
+                    PodSignal podType = candidates[rand() % candidates.size()];
+                    if (types.size() > 0 && types[index - 1].podSignal == podType)
+                        podType = candidates[rand() % candidates.size()];
+                    if (podType == repeat1)
+                    {
+                        podType = candidates[rand() % candidates.size()];
+                    }
+                    else
+                        final = podType;
                 }
-                final = podType;
+                else final = guarantee;
             }
             else if (setting == GOOD_TARGET)
             {
@@ -1248,78 +1253,76 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
         
+        
         bool timevar = false;
         float timefreq;
         
-        if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f)
-        {
-            //Percentage of stage time being withheld
-            float starttime=player->holdoutLB;
-            float endtime=player->holdoutUB;
-            
+        //Percentage of stage time being withheld
+        float starttime=player->holdoutLB;
+        float endtime=player->holdoutUB;
+        StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
         
-            //Holdout time bounds
-            float holdouttimelb = stageTime - stageTime*starttime;
-            float holdouttimeub = stageTime - stageTime*endtime;
-       
-            //~~~~~~~~~~~~~~~~~~
-            //find difference between upper and hlower time//////
-            //find quarter of time//////
-            
-            //find holdout frequency
-            //find quarter of frequency
-            //~~~~~~~~~~~~~~~~~~
-            
-            float transitiontime = abs(holdouttimeub - holdouttimelb);
-            float quartertime = transitiontime/4;
-            
-            float frequencyquarter = 0;
-            
-            
-            
-            frequencyquarter = player->holdout*100/4;
-            
-            std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
-            
-            
-            std::cout<<"                ("<<holdouttimelb<<","<<holdouttimeub<<")"<<std::endl;
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //setHoldout(hasHoldout, timefreq);
-            
-            
-            if(getTimeLeft()<=holdouttimelb-quartertime*3) {
-                setHoldout(true, 100/(frequencyquarter*4));
-                std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;
-            }
-            else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
-                setHoldout(true, 100/frequencyquarter*3);
-                std::cout<<"                        HOLDOUT 50%-75% --->"<<Tunnel::holdoutFrequency <<std::endl;
-            }
-            else if(getTimeLeft()<=holdouttimelb-quartertime) {
-                setHoldout(true, 100/(frequencyquarter*2));
-                std::cout<<"                        HOLDOUT 25%-50% --->"<< Tunnel::holdoutFrequency<<std::endl;
-            }
-            else if(getTimeLeft()<=holdouttimelb) {
-                setHoldout(true, 100/frequencyquarter);
-                std::cout<<"                        HOLDOUT 0-25%. --->"<<Tunnel::holdoutFrequency<<std::endl;
-            }
-            else if (getTimeLeft()>=holdouttimelb) {
-                setHoldout(false);
-                std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
-            }
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~
-            if(getTimeLeft()<=holdouttimelb) {
-                setHoldout(true);
-            }
-            else {
-                setHoldout(false);
-            }
+        if (level.holdoutStart!=level.holdoutEnd) {
+            starttime = level.holdoutStart;
+            endtime = level.holdoutEnd;
         }
         
-        std::cout<<"                ("<<getTimeLeft()<<")"<<std::endl;
-        std::cout<<"                        hasHoldout: "<<hasHoldout<< " Level: " << player->getLevels()->holdoutFreqvar <<std::endl;
+        if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f) {
+            starttime = player->holdoutLB;
+            endtime = level.holdoutEnd;
+        }
+        
+        
+        //Holdout time bounds
+        float holdouttimelb = stageTime - stageTime*starttime;
+        float holdouttimeub = stageTime - stageTime*endtime;
+        float transitiontime = abs(holdouttimeub - holdouttimelb);
+        float quartertime = transitiontime/4;
+        
+        float frequencyquarter = 0;
+        
+        if(level.holdoutPerc>0&&level.holdoutPerc<5)player->holdout = level.holdoutPerc;
+        frequencyquarter = player->holdout*100/4;
+        
+        std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
+        
+        
+        std::cout<<"                ("<<holdouttimelb<<","<<holdouttimeub<<")"<<std::endl;
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //setHoldout(hasHoldout, timefreq);
+        
+        if(getTimeLeft()<=holdouttimelb-quartertime*3) {
+            setHoldout(true, 100/(frequencyquarter*4));
+            std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
+            setHoldout(true, 100/frequencyquarter*3);
+            std::cout<<"                        HOLDOUT 50%-75% --->"<<Tunnel::holdoutFrequency <<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb-quartertime) {
+            setHoldout(true, 100/(frequencyquarter*2));
+            std::cout<<"                        HOLDOUT 25%-50% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if(getTimeLeft()<=holdouttimelb) {
+            setHoldout(true, 100/frequencyquarter);
+            std::cout<<"                        HOLDOUT 0-25%. --->"<<Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft()>=holdouttimelb) {
+            setHoldout(false);
+            std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
+        }
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~
+        if(getTimeLeft()<=holdouttimelb) {
+            setHoldout(true);
+        }
+        else {
+            setHoldout(false);
+        }
+        
+        std::cout<<"                Time Remaining: ("<<getTimeLeft()<<")"<<std::endl;
+        std::cout<<"                Holdout Active: "<<hasHoldout<<std::endl;
         if( hasHoldout ) {
             if( holdoutCounter >= holdoutFrequency ) {
                 float rand = Ogre::Math::UnitRandom();
@@ -1333,7 +1336,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                ret.performHoldout(phase, player->soundVolume > 0.0);
+                ret.performHoldout(phase, player->soundVolume > 0.0,level.holdoutSound,level.holdoutColor,level.holdoutShape);
             }
             
             ++holdoutIndex;
