@@ -68,12 +68,12 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levelRequest = NULL;
     
     //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
-    std::vector<int> sides  ;
+    std::vector<int> sides;
     sides.push_back(4);
     sides.push_back(1);
     sides.push_back(3);
     sides.push_back(2);
-    std::vector<int> obstacles  ;
+    std::vector<int> obstacles;
     obstacles.push_back(4);
     obstacles.push_back(1);
     obstacles.push_back(3);
