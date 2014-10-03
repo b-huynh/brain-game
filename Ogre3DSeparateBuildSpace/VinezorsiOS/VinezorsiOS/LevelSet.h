@@ -264,7 +264,7 @@ struct StageRequest
                 }
                 // These are always set for sound only levels
                 ret->powerups.push_back(POWERUP_TIME_WARP);
-                ret->nameTunnelTile = "General/WallBindingB";
+                ret->nameTunnelTile = "General/WallBindingC";
                 ret->nameMusic = "Music5";
                 ret->phase = 'C';
                 break;
@@ -293,13 +293,12 @@ struct StageRequest
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
-                        
                     default:
                         break;
                 }
                 // These are always set for holdout level
                 ret->powerups.push_back(POWERUP_TIME_WARP);
-                ret->nameTunnelTile = "General/WallBindingB";
+                ret->nameTunnelTile = "General/WallBindingD";
                 ret->nameMusic = "Music3";
                 ret->phase = 'D';
                 if (holdout)
