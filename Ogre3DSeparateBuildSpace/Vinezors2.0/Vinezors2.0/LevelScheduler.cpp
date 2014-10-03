@@ -139,7 +139,7 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
 
 void LevelScheduler::populateBins()
 {
-    const int MAX_BIN_SIZE = 3;
+    const int NUM_DIFFICULTIES = 3;
     
     if(!binA) binA = new std::list<Bin>();
     if(!binB) binB = new std::list<Bin>();
@@ -147,34 +147,39 @@ void LevelScheduler::populateBins()
     if(!binD) binD = new std::list<Bin>();
     if(!binE) binE = new std::list<Bin>();
 
-    for(int i = 0; i < MAX_BIN_SIZE; ++i)
+    for(int i = 0; i < NUM_DIFFICULTIES; ++i)
     {
         switch ( (StageDifficulty)i ) {
             case DIFFICULTY_EASY:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, false));
                 break;
             case DIFFICULTY_NORMAL:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, false));
                 break;
             case DIFFICULTY_HARD:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, false));
                 break;
             default:
                 break;
         }
     }
+    binA->push_back(Bin(PHASE_COLOR_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    binC->push_back(Bin(PHASE_SOUND_ONLY, (StageDifficulty)(rand() % NUM_DIFFICULTIES), false));
+    binD->push_back(Bin(PHASE_HOLDOUT, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    
 }
 //________________________________________________________________________________________
 
@@ -322,6 +327,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     std::pair<StageRequest, PlayerProgress> node;
     LevelPhase phase;
     StageDifficulty difficulty;
+    bool holdout;
     double playerSkill;
     int nBackRounded;
     
@@ -330,6 +336,8 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         pickRandomMarble( choices );
         phase = choices[i].phaseX;
         difficulty = choices[i].difficultyX;
+        holdout = choices[i].holdout;
+        
 //        cout << "\n\n================================\n\nPhase: " << phase << endl;
 //        cout << "Difficulty: " << difficulty << endl;
         
@@ -418,10 +426,8 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
         }
         
-        int rollHoldout = std::rand() % 10;
-        
         if(nBackRounded < 1) nBackRounded = 1;
-        node.first.generateStageRequest(nBackRounded, phase, difficulty, rollHoldout < 3);
+        node.first.generateStageRequest(nBackRounded, phase, difficulty, holdout);
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);

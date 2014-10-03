@@ -1269,9 +1269,8 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         
         if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f) {
             starttime = player->holdoutLB;
-            endtime = level.holdoutEnd;
+            endtime = player->holdoutUB;
         }
-        
         
         //Holdout time bounds
         float holdouttimelb = stageTime - stageTime*starttime;
@@ -1281,7 +1280,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         
         float frequencyquarter = 0;
         
-        if(level.holdoutPerc>0&&level.holdoutPerc<5)player->holdout = level.holdoutPerc;
+        //if(level.holdoutPerc>0&&level.holdoutPerc<5)player->holdout = level.holdoutPerc;
         frequencyquarter = player->holdout*100/4;
         
         std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
@@ -1336,7 +1335,8 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                ret.performHoldout(phase, player->soundVolume > 0.0,level.holdoutSound,level.holdoutColor,level.holdoutShape);
+                //ret.performHoldout(phase, player->soundVolume > 0.0,level.holdoutSound,level.holdoutColor,level.holdoutShape);
+                ret.performHoldout(phase, player->soundVolume > 0.0);
             }
             
             ++holdoutIndex;

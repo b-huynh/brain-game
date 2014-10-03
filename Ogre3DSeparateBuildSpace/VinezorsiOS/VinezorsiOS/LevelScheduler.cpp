@@ -19,14 +19,8 @@ using namespace std;
  Creates a new scheduler
  */
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
-: scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL)
-{
-        this->nBackLevelA = 1.0f;
-        this->nBackLevelB = 1.0f;
-        this->nBackLevelC = 1.0f;
-        this->nBackLevelD = 1.0f;
-        this->nBackLevelE = 1.0f;
-}
+: scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), timePlayed(0), sessionFinished(false), sessionFinishedAcknowledged(false)
+{}
 
 //________________________________________________________________________________________
 
@@ -145,7 +139,7 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
 
 void LevelScheduler::populateBins()
 {
-    const int MAX_BIN_SIZE = 3;
+    const int NUM_DIFFICULTIES = 3;
     
     if(!binA) binA = new std::list<Bin>();
     if(!binB) binB = new std::list<Bin>();
@@ -153,34 +147,39 @@ void LevelScheduler::populateBins()
     if(!binD) binD = new std::list<Bin>();
     if(!binE) binE = new std::list<Bin>();
 
-    for(int i = 0; i < MAX_BIN_SIZE; ++i)
+    for(int i = 0; i < NUM_DIFFICULTIES; ++i)
     {
         switch ( (StageDifficulty)i ) {
             case DIFFICULTY_EASY:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, false));
                 break;
             case DIFFICULTY_NORMAL:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, false));
                 break;
             case DIFFICULTY_HARD:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, false));
                 break;
             default:
                 break;
         }
     }
+    binA->push_back(Bin(PHASE_COLOR_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    binC->push_back(Bin(PHASE_SOUND_ONLY, (StageDifficulty)(rand() % NUM_DIFFICULTIES), false));
+    binD->push_back(Bin(PHASE_HOLDOUT, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+    
 }
 //________________________________________________________________________________________
 
@@ -229,12 +228,20 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     
     // Keep track of the total number of elements in the bins.
     // If there are no elements left, populate the bin with more.
-    int totalBinItems = 0;
-    if(binA && binB && binC && binD && binE)
-    {
-        totalBinItems = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
+    if(binA && binB && binC && binD && binE) {
+        totalMarbles = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
     }
-    if (totalBinItems == 0) populateBins();
+    if (totalMarbles <= 3) {
+        populateBins();
+        totalMarbles = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
+    }
+    
+    // =========================================================================
+    // Debug output - should be commented out on final release
+        cout << "\n------------------------------------------------" << endl;
+        cout << "Total Bin Marbles: " << totalMarbles << endl;
+        cout << "------------------------------------------------" << endl;
+    // =========================================================================
     
     switch (binNum) {
         case binNumA:
@@ -262,14 +269,46 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     }
 }
 
+// can keep a linear list of marbles to randomly pick from instead
+void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
+{
+    std::list<Bin>& binRef = *pickRandomBin();
+    std::list<Bin>::iterator binIt = binRef.begin();
+    int binIndex = rand_num(0, binRef.size() - 1);
+    for ( int i = 0; i < binIndex; ++i, ++binIt );
+    
+    for ( int i = 0; i < choices.size(); ++i )
+    {
+        if ( *binIt == choices[i] )
+        {
+            
+            // =========================================================================
+            // Debug output - should be commented out on final release
+                cout << "Need to pick extra bin & marble due to duplicate" << endl;
+            // =========================================================================
+            
+            pickRandomMarble(choices);
+            return;
+        }
+    }
+    choices.push_back(*binIt);
+    
+    // =========================================================================
+    // Debug output - should be commented out on final release
+        for(int i = 0; i < choices.size(); ++i)
+        {
+            cout << "Choice " << i << ": " << choices[i].phaseX << ", " << choices[i].difficultyX << endl;
+        }
+    // =========================================================================
+    
+}
+
 std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices()
 {
-    
     // Modifiers for each difficulty nBack
     const double N_BACK_EASY = 0.7;
     const double N_BACK_NORMAL = 0.0;
     const double N_BACK_HARD = -0.7;
-    
     
     /* For debugging purposes */
     cout <<  "/--------------------------------\\" << endl
@@ -283,26 +322,24 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          <<  "__________________________________" << endl;
     // */
     
-    
+    std::vector<Bin> choices;
     std::vector< std::pair<StageRequest, PlayerProgress> > result;
     std::pair<StageRequest, PlayerProgress> node;
     LevelPhase phase;
     StageDifficulty difficulty;
+    bool holdout;
     double playerSkill;
     int nBackRounded;
-    int binIndex;
     
     for(int i = 0; i < 3; ++i)
     {
-        std::list<Bin>& binRef = *pickRandomBin();
-        std::list<Bin>::iterator binIt = binRef.begin();
-        binIndex = rand_num(0, binRef.size() - 1);
-        for(int i = 0; i < binIndex; ++i, ++binIt);
+        pickRandomMarble( choices );
+        phase = choices[i].phaseX;
+        difficulty = choices[i].difficultyX;
+        holdout = choices[i].holdout;
         
-        phase = binIt->phaseX;
-        difficulty = binIt->difficultyX;
-        cout << "\n\n================================\n\nPhase: " << phase << endl;
-        cout << "Difficulty: " << difficulty << endl;
+//        cout << "\n\n================================\n\nPhase: " << phase << endl;
+//        cout << "Difficulty: " << difficulty << endl;
         
         switch ( phase ) {
             case PHASE_COLLECT:
@@ -390,7 +427,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         }
         
         if(nBackRounded < 1) nBackRounded = 1;
-        node.first.generateStageRequest(nBackRounded, phase, difficulty);
+        node.first.generateStageRequest(nBackRounded, phase, difficulty, holdout);
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
