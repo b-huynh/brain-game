@@ -44,19 +44,24 @@ struct LevelScheduler
     // Constructor
     LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0 );
     
-//    std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
-//    std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
+    // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
+    // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
     std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistory;
     std::list<Bin>* binA;
     std::list<Bin>* binB;
     std::list<Bin>* binC;
     std::list<Bin>* binD;
     std::list<Bin>* binE;
+    int totalMarbles;
+    int timePlayed;
+    bool sessionFinished;
+    bool sessionFinishedAcknowledged;
     double nBackLevelA;
     double nBackLevelB;
     double nBackLevelC;
     double nBackLevelD;
     double nBackLevelE;
+    
     
     // Member functions
     StageRequest getRandomLevel( LevelSet* levels );
@@ -65,6 +70,7 @@ struct LevelScheduler
     void populateBins();
     void removeBin(LevelPhase phaseX, StageDifficulty difficultyX);
     std::list<Bin>* pickRandomBin();
+    void pickRandomMarble( std::vector<Bin>& choices );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
     int rand_num( int lower, int upper );
     
