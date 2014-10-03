@@ -98,7 +98,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X)
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, bool holdout)
     {
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
@@ -179,6 +179,15 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingA";
                 ret->nameMusic = "Music2";
                 ret->phase = 'A';
+                if (holdout)
+                {
+                    ret->holdoutPerc = 0.50;
+                    ret->holdoutStart = 0.20;
+                    ret->holdoutEnd = 0.80;
+                    ret->holdoutSound = true;
+                    ret->holdoutColor = true;
+                    ret->holdoutShape = false;
+                }
                 break;
                 //_____________________________________________________________
                 
@@ -214,6 +223,15 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingB";
                 ret->nameMusic = "Music1";
                 ret->phase = 'B';
+                if (holdout)
+                {
+                    ret->holdoutPerc = 0.50;
+                    ret->holdoutStart = 0.20;
+                    ret->holdoutEnd = 0.80;
+                    ret->holdoutSound = true;
+                    ret->holdoutColor = false;
+                    ret->holdoutShape = true;
+                }
                 break;
                 //_____________________________________________________________
                 
@@ -284,6 +302,15 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingB";
                 ret->nameMusic = "Music3";
                 ret->phase = 'D';
+                if (holdout)
+                {
+                    ret->holdoutPerc = 0.50;
+                    ret->holdoutStart = 0.20;
+                    ret->holdoutEnd = 0.80;
+                    ret->holdoutSound = true;
+                    ret->holdoutColor = true;
+                    ret->holdoutShape = true;
+                }
                 break;
                 //_____________________________________________________________
                 
