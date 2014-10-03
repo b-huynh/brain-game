@@ -53,12 +53,15 @@ struct LevelScheduler
     std::list<Bin>* binD;
     std::list<Bin>* binE;
     int totalMarbles;
+    int timePlayed;
+    bool sessionFinished;
+    bool sessionFinishedAcknowledged;
     double nBackLevelA;
     double nBackLevelB;
     double nBackLevelC;
     double nBackLevelD;
     double nBackLevelE;
-    double timePlayed;
+    
     
     // Member functions
     StageRequest getRandomLevel( LevelSet* levels );

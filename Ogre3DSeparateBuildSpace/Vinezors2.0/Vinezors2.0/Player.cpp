@@ -2934,6 +2934,10 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
     }
     
+    scheduler->timePlayed += (sessions.end()->timestampOut - sessions.end()->timestampIn) / 1000;
+    if ( (scheduler->timePlayed / 60) >= 20 )
+        scheduler->sessionFinished = true;
+    
     double playerSkill;
     // Find out what phase they're in
     switch ( level.phase ) {
