@@ -157,7 +157,11 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1305"
             endingLineNumber = "1305"
+<<<<<<< HEAD
             landmarkName = "EngineStage::updateSpin(float elapsed)"
+=======
+            landmarkName = "EngineStage::setup()"
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkType = "5">
             <Locations>
                <Location

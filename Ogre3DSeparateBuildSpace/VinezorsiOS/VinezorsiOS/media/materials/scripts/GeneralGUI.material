@@ -115,8 +115,11 @@ material General/PauseBase
         texture_unit
         {
             texture nav_base.png
+<<<<<<< HEAD
             tex_border_colour 0 0 0 0
             tex_address_mode border
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         }
       } 
     }
@@ -316,8 +319,11 @@ material General/PauseButton
         texture_unit
         {
             texture pauseButtonBlue.png
+<<<<<<< HEAD
             tex_border_colour 0 0 0 0
             tex_address_mode border
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         }
       } 
     }
@@ -373,8 +379,11 @@ material General/ButtonGoDown
         texture_unit
         {
             texture nextButtonBlue.png
+<<<<<<< HEAD
             tex_border_colour 0 0 0 0
             tex_address_mode border
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         }
       } 
     }
@@ -392,8 +401,11 @@ material General/ButtonGoDownGray
         texture_unit
         {
             texture nextButtonBlue.png
+<<<<<<< HEAD
             tex_border_colour 0 0 0 0
             tex_address_mode border
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         }
       } 
     }
@@ -688,8 +700,11 @@ material General/ExitButton2
 			texture_unit
 			{
 				texture exitButtonBlue.png
+<<<<<<< HEAD
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
 			}
 		}
 	}
@@ -836,6 +851,7 @@ material General/GUICollection0Blank
 			texture_unit
 			{
 				texture score0a.png
+<<<<<<< HEAD
 			}
 		}
 	}
@@ -853,6 +869,31 @@ material General/GUICollection0Filled1
 			texture_unit
 			{
 				texture score0b.png
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+			}
+		}
+	}
+}
+
+<<<<<<< HEAD
+material General/GUICollection0Filled2
+=======
+material General/GUICollection0Filled1
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+<<<<<<< HEAD
+=======
+				texture score0b.png
 			}
 		}
 	}
@@ -869,6 +910,7 @@ material General/GUICollection0Filled2
             depth_write off
 			texture_unit
 			{
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
 				texture score0c.png
 			}
 		}
@@ -1040,6 +1082,7 @@ material General/GUICollection3Blank
 			texture_unit
 			{
 				texture score3a.png
+<<<<<<< HEAD
 			}
 		}
 	}
@@ -1074,6 +1117,48 @@ material General/GUICollection3Filled2
 			texture_unit
 			{
 				texture score3c.png
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+			}
+		}
+	}
+}
+
+<<<<<<< HEAD
+material General/GUICollection3Filled3
+=======
+material General/GUICollection3Filled1
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+<<<<<<< HEAD
+=======
+				texture score3b.png
+			}
+		}
+	}
+}
+
+material General/GUICollection3Filled2
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score3c.png
 			}
 		}
 	}
@@ -1090,6 +1175,7 @@ material General/GUICollection3Filled3
             depth_write off
 			texture_unit
 			{
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
 				texture score3d.png
 			}
 		}
@@ -1762,6 +1848,59 @@ material General/SpeedSliderBallHorizontal
             rotate 90
             tex_border_colour 0 0 0 0
             tex_address_mode border
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallOff
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial_off.png
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderRangeHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_slide_extended.png
+            rotate 90
+        }
+      } 
+    }
+}
+
+material General/SpeedSliderBallHorizontal
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture speed_dial.png
+            rotate 90
         }
       } 
     }

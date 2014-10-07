@@ -67,21 +67,17 @@ std::vector<std::vector<StageRequest> > LevelSet::getStageList() const
     return stageList;
 }
 
-void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs)
+void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldstrt, float hldend)
 {
     StageRequest level;
     level = stageList[lvl][phs];
     level.pods = pds;
     level.holdoutStart = hldstrt/ 100.0f;
     level.holdoutEnd = hldend/ 100.0f;
-    if(hlds == "yes")level.holdoutSound = 1;
-    else level.holdoutSound = 0;
-    if(hldc == "yes")level.holdoutColor = 1;
-    else level.holdoutColor = 0;
-    if(hldsh == "yes")level.holdoutShape = 1;
-    else level.holdoutShape = 0;
+    stageList[lvl][phs] = level;
     
     
+<<<<<<< HEAD
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].control = sds[i];
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].obstacles = obs[i];
     for (int i =0; i<level.navLevels.size(); i++) {
@@ -89,6 +85,8 @@ void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hld
     }
     level.holdoutPerc=hldperc;
     stageList[lvl][phs] = level;    //ALWAYS KEEP LAST
+=======
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
 }
 
 void LevelSet::initializeLevelSet()
@@ -142,6 +140,10 @@ void LevelSet::initializeLevelSet()
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
+<<<<<<< HEAD
+=======
+    //level.tunnelSectionsPerNavLevel = 5;
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     level.tunnelSectionsPerNavLevel = 10;
     level.phase = 'E';
     level.initCamSpeed = 10;

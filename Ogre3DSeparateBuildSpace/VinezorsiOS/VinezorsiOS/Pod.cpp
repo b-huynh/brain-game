@@ -186,6 +186,7 @@ void Pod::loadHazard()
     // Though the variable names are not symmetric,
     // Use the stem to be the other obelisk on the other side
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+<<<<<<< HEAD
     stem = entirePod->createChildSceneNode("stemNode" + Util::toStringInt(podID));
     
     headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
@@ -193,6 +194,37 @@ void Pod::loadHazard()
     headContentEntity->setMaterialName("General/BarrierMaterial");
     stemContentEntity->setMaterialName("General/BarrierMaterial");
 
+=======
+    headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
+    headContentEntity->getSubEntity(0)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(1)->setMaterialName("Obelisk/LightGray");
+    headContentEntity->getSubEntity(2)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(3)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(4)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(5)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(6)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(7)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(8)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(9)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(10)->setMaterialName("Obelisk/LightGray");
+    headContentEntity->getSubEntity(11)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(12)->setMaterialName("Obelisk/Cyan");
+    headContentEntity->getSubEntity(13)->setMaterialName("Obelisk/Cyan");
+    headContentEntity->getSubEntity(14)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(15)->setMaterialName("Obelisk/LightGray");
+    headContentEntity->getSubEntity(16)->setMaterialName("Obelisk/LightGray");
+    headContentEntity->getSubEntity(17)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(18)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(19)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(20)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(21)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(22)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(23)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(24)->setMaterialName("Obelisk/TransparentCyan");
+    headContentEntity->getSubEntity(25)->setMaterialName("Obelisk/DarkGray");
+    headContentEntity->getSubEntity(26)->setMaterialName("Obelisk/Cyan");
+    headContentEntity->getSubEntity(27)->setMaterialName("Obelisk/Cyan");
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);

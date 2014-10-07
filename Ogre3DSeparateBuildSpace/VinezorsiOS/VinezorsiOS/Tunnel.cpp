@@ -1280,8 +1280,12 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         float quartertime = transitiontime/4;
         
         float frequencyquarter = 0;
+<<<<<<< HEAD
         
         if(holdoutPerc>0&&holdoutPerc<5)player->holdout = holdoutPerc;
+=======
+
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         frequencyquarter = player->holdout*100/4;
         
         std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
@@ -1336,7 +1340,11 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
+<<<<<<< HEAD
                 ret.performHoldout(phase, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
+=======
+                ret.performHoldout(phase, player->soundVolume > 0.0);
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             }
             
             ++holdoutIndex;

@@ -33,6 +33,13 @@ struct CollectionCriteria
 
 struct StageRequest
 {
+<<<<<<< HEAD
+=======
+    int levelNo;
+    int pods=0;
+    float holdoutStart;
+    float holdoutEnd;
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     int nback;
     int stageNo;
     float stageTime;
@@ -363,9 +370,14 @@ public:
     int getLevelCol(int level) const;
     int getNumLevels() const;
     int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
+<<<<<<< HEAD
     // Simple accessor function for private stageList
     std::vector<std::vector<StageRequest> > getStageList() const;
     void ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs);
+=======
+    void ManLevelSet(int lvl, int phs, int pds, float hldstrt, float hldend) ;
+    
+>>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     void initializeLevelSet();
 };
 
