@@ -1260,17 +1260,18 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         //Percentage of stage time being withheld
         float starttime=player->holdoutLB;
         float endtime=player->holdoutUB;
-        StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+        //StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
         
-        if (level.holdoutStart!=level.holdoutEnd) {
-            starttime = level.holdoutStart;
-            endtime = level.holdoutEnd;
+        if (holdoutStart!=holdoutEnd) {
+            starttime = holdoutStart;
+            endtime = holdoutEnd;
         }
         
         if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f) {
             starttime = player->holdoutLB;
-            endtime = player->holdoutUB;
+            endtime = holdoutEnd;
         }
+        
         
         //Holdout time bounds
         float holdouttimelb = stageTime - stageTime*starttime;
@@ -1280,7 +1281,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         
         float frequencyquarter = 0;
         
-        //if(level.holdoutPerc>0&&level.holdoutPerc<5)player->holdout = level.holdoutPerc;
+        if(holdoutPerc>0&&holdoutPerc<5)player->holdout = holdoutPerc;
         frequencyquarter = player->holdout*100/4;
         
         std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
@@ -1335,8 +1336,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                //ret.performHoldout(phase, player->soundVolume > 0.0,level.holdoutSound,level.holdoutColor,level.holdoutShape);
-                ret.performHoldout(phase, player->soundVolume > 0.0);
+                ret.performHoldout(phase, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
             }
             
             ++holdoutIndex;
@@ -2066,7 +2066,15 @@ void Tunnel::setHoldout( int freq)
 {
     holdoutFrequency = freq;
 }
-
+void Tunnel::setHoldoutSettings( float perc, float start, float end, bool sound, bool color, bool shape)
+{
+    holdoutPerc = perc;
+    holdoutStart = start;
+    holdoutEnd = end;
+    holdoutSound = sound;
+    holdoutColor = color;
+    holdoutShape = shape;
+}
 
 Tunnel::~Tunnel()
 {

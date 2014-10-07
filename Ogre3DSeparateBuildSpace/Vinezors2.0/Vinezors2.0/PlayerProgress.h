@@ -18,9 +18,6 @@ struct PlayerProgress
     // Best rating for the player on this level
     int rating; // 0 = N, 1 = *, 2 = **, 3 = ***
     int score;  // score rating
-    
-    // REMEMBER time speeds up as speed increases... need a new way to measure time
-    // ctime??
     float time; // time left on tunnel
     
     int numCorrect;

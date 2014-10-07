@@ -18,7 +18,7 @@
 		5D04AD51190121B000E0A98B /* HudCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD4F190121B000E0A98B /* HudCredits.cpp */; };
 		5D04AD54190122F100E0A98B /* EngineCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD52190122F100E0A98B /* EngineCredits.cpp */; };
 		5D04AD571901331600E0A98B /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD551901331600E0A98B /* Powerup.cpp */; };
-		5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
+		5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5D1EFEB4190B2B1100E865D6 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EFEB2190B2B1100E865D6 /* LevelSet.cpp */; };
 		5D299E3F18A061D60014CFA9 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D299E3D18A061D60014CFA9 /* LevelManager.cpp */; };
 		5D2D423518CE497F0035786C /* Score.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2D423318CE497F0035786C /* Score.cpp */; };
@@ -29,7 +29,7 @@
 		5D4B5093195CE63F00912FC9 /* HudMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B508E195CE63F00912FC9 /* HudMainSettings.cpp */; };
 		5D542231199ECBBF005F466A /* GeneralGate.material in Resources */ = {isa = PBXBuildFile; fileRef = 5D54222F199ECBBF005F466A /* GeneralGate.material */; };
 		5D542232199ECBBF005F466A /* GeneralTutorial.material in Resources */ = {isa = PBXBuildFile; fileRef = 5D542230199ECBBF005F466A /* GeneralTutorial.material */; };
-		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; };
+		5D5CAAB6180E6BE4008DDE44 /* libOgreOggSound.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9416A17F4D5720082C239 /* libOgreOggSound.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5D8A4B0919C780B20016908C /* HudSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8A4B0719C780B20016908C /* HudSchedulerMenu.cpp */; };
 		5D8A4B0C19C780C60016908C /* EngineSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8A4B0A19C780C60016908C /* EngineSchedulerMenu.cpp */; };
 		5DA3B27418BB10E4001BFBB9 /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3B27318BB10E4001BFBB9 /* Networking.mm */; };
@@ -43,8 +43,8 @@
 		5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122DF17F0DC7B00E49916 /* TunnelSlice.cpp */; };
 		5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE122E117F0DC7B00E49916 /* Vine.cpp */; };
 		5DEB28601899AECB003A90EB /* OgreApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB285E1899AECB003A90EB /* OgreApp.cpp */; };
-		5DF9415E17F4D52E0082C239 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415C17F4D4FC0082C239 /* Ogre.framework */; };
-		5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415017F4D4E70082C239 /* RenderSystem_GL.dylib */; };
+		5DF9415E17F4D52E0082C239 /* Ogre.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415C17F4D4FC0082C239 /* Ogre.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5DF9416517F4D5370082C239 /* RenderSystem_GL.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9415017F4D4E70082C239 /* RenderSystem_GL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B63D37F617DE87EB001A7191 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F517DE87EB001A7191 /* Carbon.framework */; };
 		B63D37F817DE87EB001A7191 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F717DE87EB001A7191 /* Cocoa.framework */; };
 		B63D37FA17DE87EB001A7191 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D37F917DE87EB001A7191 /* IOKit.framework */; };
@@ -513,7 +513,7 @@
 		B63D37E917DE87EB001A7191 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = B63D37EC17DE87EB001A7191 /* Build configuration list for PBXProject "Vinezors2.0" */;
 			compatibilityVersion = "Xcode 3.2";

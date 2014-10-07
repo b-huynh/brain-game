@@ -68,7 +68,7 @@ struct SectionInfo
 };
 
 // Pod Info
-enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP, POD_CRYSTAL };
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_HOLDOUT, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_HOLDOUT, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_HOLDOUT, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
@@ -96,7 +96,6 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
     
-    void performHoldout(char phase, bool sound);
     void performHoldout(char phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
 };
 

@@ -68,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "434062228.766071"
+            timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "253"
-            endingLineNumber = "253">
+            startingLineNumber = "252"
+            endingLineNumber = "252">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -588,11 +588,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "434062228.766071"
+            timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339">
+            startingLineNumber = "338"
+            endingLineNumber = "338">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -625,22 +625,6 @@
             endingLineNumber = "71"
             landmarkName = "class HudSchedulerMenu"
             landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/Pod.cpp"
-            timestampString = "434405407.938638"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
-            landmarkName = "Pod::loadCrystal()"
-            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

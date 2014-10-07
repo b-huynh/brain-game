@@ -96,7 +96,6 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
     {}
     
-    void performHoldout(char phase, bool sound);
     void performHoldout(char phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
 };
 

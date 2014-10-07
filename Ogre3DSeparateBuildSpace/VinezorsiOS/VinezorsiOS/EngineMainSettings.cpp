@@ -39,6 +39,11 @@ void EngineMainSettings::enter()
 
 void EngineMainSettings::exit()
 {
+#ifdef DEBUG_MODE
+    // If in debug mode, modify all levels to have the player holdout frequency.
+    player->getLevels()->holdoutFreqvar=player->holdout;
+    std::cout<<"Holdout: "<<1/player->holdout<<"   LowerBound: "<<player->holdoutLB <<"   UpperBound: "<<player->holdoutUB<<std::endl;
+#endif
     dealloc();
 }
 
