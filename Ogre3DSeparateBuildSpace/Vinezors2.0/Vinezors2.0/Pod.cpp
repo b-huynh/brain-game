@@ -32,7 +32,8 @@ void Pod::loadPod()
     switch (mtype)
     {
         case POD_FUEL:
-            loadFuelCell();
+            //loadFuelCell();
+            loadCrystal();
             break;
         case POD_FLOWER:
             loadFlower();
@@ -79,8 +80,6 @@ void Pod::loadBasicShape()
         case POD_SHAPE_SPHERE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
             head->scale(headRadius, headRadius, headRadius);
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "column.mesh");
-//            head->scale(0.1, 0.1, 0.1);
             break;
         case POD_SHAPE_DIAMOND:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "diamondMesh");
@@ -125,7 +124,7 @@ void Pod::loadFuelCell()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelSphere.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCube.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCube.mesh");;
             break;
         case POD_SHAPE_TRIANGLE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
@@ -155,6 +154,62 @@ void Pod::loadFuelCell()
     
     setToGrowth(0.0);
 }
+
+void Pod::loadCrystal()
+{
+    mtype = POD_CRYSTAL;
+    removeFromScene();
+    
+	float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    
+    materialName = "General/PodUnknown";
+    switch (podShape)
+    {
+        case POD_SHAPE_CONE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_1.mesh");
+            std::cout << headContentEntity->getNumSubEntities() << std::endl;
+            break;
+        case POD_SHAPE_SPHERE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_2.mesh");
+            std::cout << headContentEntity->getNumSubEntities() << std::endl;
+            break;
+        case POD_SHAPE_DIAMOND:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_3.mesh");
+            std::cout << headContentEntity->getNumSubEntities() << std::endl;
+            break;
+        case POD_SHAPE_TRIANGLE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarComplex.mesh");
+            std::cout << headContentEntity->getNumSubEntities() << std::endl;
+            break;
+        case POD_SHAPE_HOLDOUT:
+            generateIndicator();
+            break;
+        default:
+            if( podSignal == POD_SIGNAL_UNKNOWN ) {
+                materialName = "General/PodPurple";
+            }
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarSimple.mesh");
+            //headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/spikyBall.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+            break;
+    }
+    if (podShape != POD_SHAPE_UNKNOWN && podShape != POD_SHAPE_HOLDOUT)
+    {
+        headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+    }
+    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v / 2);
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
 
 void Pod::loadFlower()
 {
@@ -300,6 +355,10 @@ void Pod::setToGrowth(float t)
         head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
 //        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
     }
+    else if (mtype == POD_CRYSTAL)
+    {
+        head->setScale(Vector3(headRadius, t * headRadius, headRadius));
+    }
 }
 
 PodSignal Pod::getPodSignal() const
@@ -416,6 +475,10 @@ void Pod::setSkin()
     }
     else if (mtype == POD_POWERUP)
         headContentEntity->setMaterialName(materialName);
+    else if (mtype == POD_CRYSTAL && podShape != POD_SHAPE_HOLDOUT)
+    {
+        headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+    }
 }
 
 void Pod::takePod()
