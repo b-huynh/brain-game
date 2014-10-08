@@ -1247,7 +1247,6 @@ void EngineStage::setup()
     player->link(tunnel);
     
     globals.wrongAnswerTimePenalty = level.stageTime / 12.0;
-    //tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
     tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
 

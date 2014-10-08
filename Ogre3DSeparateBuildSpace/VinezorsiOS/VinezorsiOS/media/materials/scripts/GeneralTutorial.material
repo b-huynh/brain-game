@@ -10,11 +10,8 @@ material General/TutorialBackdrop
         texture_unit
         {
             texture back_drop.png
-<<<<<<< HEAD
             tex_border_colour 0 0 0 0
             tex_address_mode border
-=======
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
         }
       } 
     }
@@ -343,8 +340,4 @@ material General/TutorialTextboxSoundOnly
         }
       } 
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented

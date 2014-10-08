@@ -129,18 +129,8 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
         case TUTORIAL_SLIDES_TEXTBOX_INCORRECT_MATCH:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxIncorrectMatch", ""));
             break;
-<<<<<<< HEAD
         case TUTORIAL_SLIDES_TEXTBOX_OBSTACLE:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxObstacle", ""));
-=======
-<<<<<<< HEAD
-        case TUTORIAL_SLIDES_HOLDOUT:
-            ret.push_back(TutorialSlide(insertNL("Challenge:\nSignals will randomly cloak their color, shape, or sound. Pay attention to more than one feature to identify matches."), "General/ScreenBackground2", ""));
-=======
-        case TUTORIAL_SLIDES_TEXTBOX_OBSTACLE:
-            ret.push_back(TutorialSlide("", "General/TutorialTextboxObstacle", ""));
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             break;
         case TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxSoundOnly", ""));

@@ -24,16 +24,17 @@
 
 struct Bin
 {
-    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY)
-    : phaseX(phaseX), difficultyX(difficultyX)
+    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, bool holdout = false)
+    : phaseX(phaseX), difficultyX(difficultyX), holdout(holdout)
     {}
     
     LevelPhase phaseX;
     StageDifficulty difficultyX;
+    bool holdout;
     
     bool operator==(const Bin rhs) const
     {
-        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) )
+        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout))
             return true;
         return false;
     }
@@ -42,22 +43,27 @@ struct Bin
 struct LevelScheduler
 {
     // Constructor
-    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0 );
+    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0, double currentHoldout = 20.0 );
     
-//    std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
-//    std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
+    // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
+    // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
     std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistory;
     std::list<Bin>* binA;
     std::list<Bin>* binB;
     std::list<Bin>* binC;
     std::list<Bin>* binD;
     std::list<Bin>* binE;
+    int totalMarbles;
+    int timePlayed;
+    bool sessionFinished;
+    bool sessionFinishedAcknowledged;
     double nBackLevelA;
     double nBackLevelB;
     double nBackLevelC;
     double nBackLevelD;
     double nBackLevelE;
-    float currentHoldout=20;
+    double currentHoldout;
+    
     
     // Member functions
     StageRequest getRandomLevel( LevelSet* levels );
@@ -66,6 +72,7 @@ struct LevelScheduler
     void populateBins();
     void removeBin(LevelPhase phaseX, StageDifficulty difficultyX);
     std::list<Bin>* pickRandomBin();
+    void pickRandomMarble( std::vector<Bin>& choices );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
     int rand_num( int lower, int upper );
     

@@ -68,24 +68,17 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     levelRequest = NULL;
     
     //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
-<<<<<<< HEAD
-    std::vector<int> sides  ;
+    std::vector<int> sides;
     sides.push_back(4);
     sides.push_back(1);
     sides.push_back(3);
     sides.push_back(2);
-    std::vector<int> obstacles  ;
+    std::vector<int> obstacles;
     obstacles.push_back(4);
     obstacles.push_back(1);
     obstacles.push_back(3);
     obstacles.push_back(2);
     levels->ManLevelSet(0, 4, 3, 1.0 ,25.0, 75.0,"yes","yes","yes", sides, obstacles);
-=======
-    
-    levels->ManLevelSet(0, 1, 3, 10, 50);
-    
-    levels->ManLevelSet(1, 1, 2, 1, 100);
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
@@ -1288,16 +1281,10 @@ void Player::recordInfo()
             result.eventID = globals.stageID;
             result.levelID = tunnel->getStageNo();
             result.taskType = tunnel->getPhase() - 'A';
-<<<<<<< HEAD
             result.nback = tunnel->getNBack();
             result.playerRollBase = camRoll;
             result.playerRollOffset = offsetRoll;
             result.playerRollSpeed = rollSpeed;
-=======
-            //result.nback = tunnel->getNBack();        // Is always 3 due to collection criterias
-            result.nback = tunnel->getFirstCriteria();  // more accurate for before
-            result.navigation = tunnel->getCurrentNavLevel();
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
             result.podInfo = targetinfo;
             result.sectionInfo = sliceInfo;
@@ -2947,6 +2934,10 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
     }
     
+    scheduler->timePlayed += (sessions.end()->timestampOut - sessions.end()->timestampIn) / 1000;
+    if ( (scheduler->timePlayed / 60) >= 20 )
+        scheduler->sessionFinished = true;
+    
     double playerSkill;
     // Find out what phase they're in
     switch ( level.phase ) {
@@ -2979,11 +2970,17 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             break;
     }
     
+    if(nBackDelta > 0 &&scheduler->currentHoldout < 80)
+    {
+        scheduler->currentHoldout+=5;
+        if (scheduler->currentHoldout > 80)
+            scheduler->currentHoldout = 80;
+    }
+    
     levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nbackDelta = nBackDelta;
-    if(nBackDelta>0&&scheduler->currentHoldout<80) scheduler->currentHoldout+=10;
-    
     levelToGrade->second.nBackSkill = playerSkill;
+    
     scheduler->removeBin(level.phaseX, level.difficultyX);
     scheduler->scheduleHistory.push_back(*levelRequest);
 }

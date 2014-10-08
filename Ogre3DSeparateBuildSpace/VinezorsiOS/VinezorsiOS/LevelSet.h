@@ -33,13 +33,6 @@ struct CollectionCriteria
 
 struct StageRequest
 {
-<<<<<<< HEAD
-=======
-    int levelNo;
-    int pods=0;
-    float holdoutStart;
-    float holdoutEnd;
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     int nback;
     int stageNo;
     float stageTime;
@@ -105,7 +98,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, float CurSchedhold)
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, double holdout)
     {
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
@@ -121,13 +114,23 @@ struct StageRequest
         ret->maxCamSpeed = 40;
         ret->phaseX = PHASE_X;
         ret->difficultyX = DIFFICULTY_X;
-        ret->holdoutPerc = CurSchedhold;
-        ret->holdoutStart = 20.0;
-        ret->holdoutEnd = 70.0;
-        ret->holdoutSound = 1;
-        ret->holdoutColor = 1;
-        ret->holdoutShape = 1;
-        
+        ret->holdoutPerc = holdout / 100.0;
+        if (holdoutPerc > 0.0)
+        {
+            ret->holdoutStart = 0.20;
+            ret->holdoutEnd = 0.70;
+            ret->holdoutSound = 1;
+            ret->holdoutColor = 1;
+            ret->holdoutShape = 1;
+        }
+        else
+        {
+            ret->holdoutStart = 0.0;
+            ret->holdoutEnd = 0.0;
+            ret->holdoutSound = 0;
+            ret->holdoutColor = 0;
+            ret->holdoutShape = 0;
+        }
         
         // Chooses what phase and difficulty to generate for ret
         switch( PHASE_X )
@@ -260,7 +263,7 @@ struct StageRequest
                 }
                 // These are always set for sound only levels
                 ret->powerups.push_back(POWERUP_TIME_WARP);
-                ret->nameTunnelTile = "General/WallBindingB";
+                ret->nameTunnelTile = "General/WallBindingC";
                 ret->nameMusic = "Music5";
                 ret->phase = 'C';
                 break;
@@ -289,13 +292,12 @@ struct StageRequest
                         for (int i = 0; i < HARD_COLLECTIONS; ++i)
                             ret->collectionCriteria.push_back(CollectionCriteria(nback));
                         break;
-                        
                     default:
                         break;
                 }
                 // These are always set for holdout level
                 ret->powerups.push_back(POWERUP_TIME_WARP);
-                ret->nameTunnelTile = "General/WallBindingB";
+                ret->nameTunnelTile = "General/WallBindingD";
                 ret->nameMusic = "Music3";
                 ret->phase = 'D';
                 break;
@@ -312,7 +314,6 @@ struct StageRequest
             ret->navLevels.push_back(NavigationLevel(0, 3, 0));
             ret->navLevels.push_back(NavigationLevel(0, 4, 0));
         }
-        
     }
     
     std::vector<NavigationLevel> generateNavigationLevels(StageDifficulty navigationDifficulty)
@@ -370,14 +371,9 @@ public:
     int getLevelCol(int level) const;
     int getNumLevels() const;
     int getTotalRowRequirement(int row) const; // Star requirement to unlock next row
-<<<<<<< HEAD
     // Simple accessor function for private stageList
     std::vector<std::vector<StageRequest> > getStageList() const;
     void ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hldstrt, float hldend, String hlds, String hldc, String hldsh, std::vector<int> sds, std::vector<int> obs);
-=======
-    void ManLevelSet(int lvl, int phs, int pds, float hldstrt, float hldend) ;
-    
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
     void initializeLevelSet();
 };
 

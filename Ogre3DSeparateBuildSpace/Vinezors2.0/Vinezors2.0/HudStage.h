@@ -29,10 +29,7 @@ public:
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
-<<<<<<< HEAD
     void setPauseNavSettings(bool nextAvail, bool resumeAvail);
-=======
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
 protected:
     Player* player;
     Tunnel* tunnel;

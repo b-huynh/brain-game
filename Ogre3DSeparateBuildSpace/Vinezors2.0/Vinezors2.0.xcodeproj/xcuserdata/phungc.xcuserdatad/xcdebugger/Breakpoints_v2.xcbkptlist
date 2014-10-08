@@ -52,7 +52,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
@@ -60,21 +59,6 @@
             endingLineNumber = "1477"
             landmarkName = "Player::saveCam()"
             landmarkType = "5">
-=======
-<<<<<<< HEAD
-            timestampString = "428608162.44386"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1440"
-            endingLineNumber = "1440">
-=======
-            timestampString = "430354979.745952"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1437"
-            endingLineNumber = "1437">
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -84,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "433886074.350503"
+            timestampString = "434062228.766071"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252">
+            startingLineNumber = "253"
+            endingLineNumber = "253">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -126,27 +110,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "631"
             endingLineNumber = "631"
-=======
-<<<<<<< HEAD
-            timestampString = "428608162.44386"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "588"
-            endingLineNumber = "588"
-=======
-            timestampString = "430288047.810211"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "593"
-            endingLineNumber = "593"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "Player::updateTractorBeam(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -174,27 +142,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1019"
             endingLineNumber = "1019"
-=======
-<<<<<<< HEAD
-            timestampString = "428608162.44386"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "981"
-            endingLineNumber = "981"
-=======
-            timestampString = "430354979.745952"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "979"
-            endingLineNumber = "979"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "Player::testPodGiveFeedback(Pod* test)"
             landmarkType = "5">
          </BreakpointContent>
@@ -206,27 +158,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1022"
             endingLineNumber = "1022"
-=======
-<<<<<<< HEAD
-            timestampString = "428608162.44386"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "984"
-            endingLineNumber = "984"
-=======
-            timestampString = "430354979.745952"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "982"
-            endingLineNumber = "982"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "Player::testPodGiveFeedback(Pod* test)"
             landmarkType = "5">
          </BreakpointContent>
@@ -270,29 +206,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
             timestampString = "433820459.640164"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "920"
             endingLineNumber = "920"
             landmarkName = "EngineStage::mouseReleased(const OIS::MouseEvent &amp;evt, OIS::MouseButtonID id)"
-=======
-<<<<<<< HEAD
-            timestampString = "426451003.928046"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "856"
-            endingLineNumber = "856"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "894"
-            endingLineNumber = "894"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::mouseMoved(const OIS::MouseEvent &amp;evt)"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -303,75 +222,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
             timestampString = "433820459.640164"
-=======
-<<<<<<< HEAD
-            timestampString = "426451003.928046"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "857"
-            endingLineNumber = "857"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "895"
-            endingLineNumber = "895"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::mouseMoved(const OIS::MouseEvent &amp;evt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
-            timestampString = "426451003.928046"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "855"
-            endingLineNumber = "855"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "893"
-            endingLineNumber = "893"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::mouseMoved(const OIS::MouseEvent &amp;evt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "428546806.175403"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "369"
-            endingLineNumber = "369"
-            landmarkName = "HudStage::alloc()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "428546806.175403"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "921"
@@ -387,29 +238,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
             timestampString = "433820459.640164"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "919"
             endingLineNumber = "919"
             landmarkName = "EngineStage::mouseReleased(const OIS::MouseEvent &amp;evt, OIS::MouseButtonID id)"
-=======
-<<<<<<< HEAD
-            timestampString = "426451003.928046"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "858"
-            endingLineNumber = "858"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "896"
-            endingLineNumber = "896"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::mouseMoved(const OIS::MouseEvent &amp;evt)"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -569,28 +403,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
             endingLineNumber = "63"
-<<<<<<< HEAD
             landmarkName = "LevelSet::getTotalRowRequirement(int row)"
-=======
-            landmarkName = "LevelSet::initializeLevelSet()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/TutorialManager.cpp"
-<<<<<<< HEAD
-            timestampString = "422931169.030268"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
-            landmarkName = "TutorialManager::updateOverlay()"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -604,20 +417,8 @@
             timestampString = "432851159.236048"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-<<<<<<< HEAD
             startingLineNumber = "227"
             endingLineNumber = "227"
-=======
-            startingLineNumber = "211"
-            endingLineNumber = "211"
-=======
-            timestampString = "430273150.776658"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "TutorialManager::updateOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -629,27 +430,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "715"
             endingLineNumber = "715"
-=======
-<<<<<<< HEAD
-            timestampString = "428608162.44386"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "672"
-            endingLineNumber = "672"
-=======
-            timestampString = "430288047.810211"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "677"
-            endingLineNumber = "677"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "Player::updateTimeWarp(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -660,28 +445,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-            filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "426633938.706187"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1296"
-            endingLineNumber = "1296"
-            landmarkName = "EngineStage::setup()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-=======
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             filePath = "Vinezors2.0/EngineLevelSelection.cpp"
             timestampString = "426634009.452029"
             startingColumnNumber = "9223372036854775807"
@@ -747,53 +510,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
             timestampString = "433886074.350503"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1158"
             endingLineNumber = "1158"
             landmarkName = "EngineStage::setup()"
-=======
-<<<<<<< HEAD
-            timestampString = "426634617.384806"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1084"
-            endingLineNumber = "1084"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1122"
-            endingLineNumber = "1122"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::requestResize()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/EngineStage.cpp"
-<<<<<<< HEAD
-            timestampString = "426634618.84452"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1083"
-            endingLineNumber = "1083"
-=======
-            timestampString = "430355311.467893"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1121"
-            endingLineNumber = "1121"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "EngineStage::requestResize()"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -866,19 +588,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-<<<<<<< HEAD
-            timestampString = "433886074.350503"
+            timestampString = "434062228.766071"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "338"
-            endingLineNumber = "338">
-=======
-            timestampString = "430179941.843678"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "336"
-            endingLineNumber = "336">
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+            startingLineNumber = "339"
+            endingLineNumber = "339">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -888,24 +602,15 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.h"
-<<<<<<< HEAD
             timestampString = "432855009.32775"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "394"
             endingLineNumber = "394"
-=======
-            timestampString = "430354580.749595"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "392"
-            endingLineNumber = "392"
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
             landmarkName = "class Player"
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
-<<<<<<< HEAD
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
@@ -922,7 +627,21 @@
             landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
-=======
->>>>>>> parent of ed7f7ff... Full Manual Function Implemented
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vinezors2.0/Pod.cpp"
+            timestampString = "434405407.938638"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "Pod::loadCrystal()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
