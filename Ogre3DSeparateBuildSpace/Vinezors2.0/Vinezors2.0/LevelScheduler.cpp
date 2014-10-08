@@ -18,9 +18,16 @@ using namespace std;
 /**
  Creates a new scheduler
  */
-LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
+LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE, double currentHoldout )
 : scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), timePlayed(0), sessionFinished(false), sessionFinishedAcknowledged(false)
-{}
+{
+    this->nBackLevelA = nBackLevelA;
+    this->nBackLevelB = nBackLevelB;
+    this->nBackLevelC = nBackLevelC;
+    this->nBackLevelD = nBackLevelD;
+    this->nBackLevelE = nBackLevelE;
+    this->currentHoldout = currentHoldout;
+}
 
 //________________________________________________________________________________________
 
@@ -427,7 +434,10 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         }
         
         if(nBackRounded < 1) nBackRounded = 1;
-        node.first.generateStageRequest(nBackRounded, phase, difficulty, holdout);
+        if (holdout)
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, currentHoldout);
+        else
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, 0.0);
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
@@ -454,7 +464,7 @@ int LevelScheduler::rand_num(int lower, int upper)
 std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
 {
     std::cout << "Saving Scheduler\n";
-    out << sch.nBackLevelA << " " << sch.nBackLevelB << " " << sch.nBackLevelC << " " << sch.nBackLevelD << " " << sch.nBackLevelE;
+    out << sch.nBackLevelA << " " << sch.nBackLevelB << " " << sch.nBackLevelC << " " << sch.nBackLevelD << " " << sch.nBackLevelE << " " << sch.currentHoldout;
     return out;
 }
 
@@ -463,7 +473,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
 std::istream& operator>>(std::istream& in, LevelScheduler& sch)
 {
     std::cout << "Loading Scheduler\n";
-    in >> sch.nBackLevelA >> sch.nBackLevelB >> sch.nBackLevelC >> sch.nBackLevelD >> sch.nBackLevelE;
+    in >> sch.nBackLevelA >> sch.nBackLevelB >> sch.nBackLevelC >> sch.nBackLevelD >> sch.nBackLevelE >> sch.currentHoldout;
     return in;
 }
 

@@ -98,7 +98,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, bool holdout)
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, double holdout)
     {
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
@@ -114,6 +114,23 @@ struct StageRequest
         ret->maxCamSpeed = 40;
         ret->phaseX = PHASE_X;
         ret->difficultyX = DIFFICULTY_X;
+        ret->holdoutPerc = holdout / 100.0;
+        if (holdoutPerc > 0.0)
+        {
+            ret->holdoutStart = 0.20;
+            ret->holdoutEnd = 0.70;
+            ret->holdoutSound = 1;
+            ret->holdoutColor = 1;
+            ret->holdoutShape = 1;
+        }
+        else
+        {
+            ret->holdoutStart = 0.0;
+            ret->holdoutEnd = 0.0;
+            ret->holdoutSound = 0;
+            ret->holdoutColor = 0;
+            ret->holdoutShape = 0;
+        }
         
         // Chooses what phase and difficulty to generate for ret
         switch( PHASE_X )
@@ -179,15 +196,6 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingA";
                 ret->nameMusic = "Music2";
                 ret->phase = 'A';
-                if (holdout)
-                {
-                    ret->holdoutPerc = 0.50;
-                    ret->holdoutStart = 0.20;
-                    ret->holdoutEnd = 0.80;
-                    ret->holdoutSound = true;
-                    ret->holdoutColor = true;
-                    ret->holdoutShape = false;
-                }
                 break;
                 //_____________________________________________________________
                 
@@ -223,15 +231,6 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingB";
                 ret->nameMusic = "Music1";
                 ret->phase = 'B';
-                if (holdout)
-                {
-                    ret->holdoutPerc = 0.50;
-                    ret->holdoutStart = 0.20;
-                    ret->holdoutEnd = 0.80;
-                    ret->holdoutSound = true;
-                    ret->holdoutColor = false;
-                    ret->holdoutShape = true;
-                }
                 break;
                 //_____________________________________________________________
                 
@@ -301,15 +300,6 @@ struct StageRequest
                 ret->nameTunnelTile = "General/WallBindingD";
                 ret->nameMusic = "Music3";
                 ret->phase = 'D';
-                if (holdout)
-                {
-                    ret->holdoutPerc = 0.50;
-                    ret->holdoutStart = 0.20;
-                    ret->holdoutEnd = 0.80;
-                    ret->holdoutSound = true;
-                    ret->holdoutColor = true;
-                    ret->holdoutShape = true;
-                }
                 break;
                 //_____________________________________________________________
                 

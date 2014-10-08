@@ -103,6 +103,12 @@ public:
     int holdoutPod;
     int holdoutIndex;
     int holdoutFrequency;
+    float holdoutStart;
+    float holdoutEnd;
+    float holdoutPerc;
+    bool holdoutSound;
+    bool holdoutColor;
+    bool holdoutShape;
     int trackNBackA;
     int trackNBackB;
     int trackNBackC;
@@ -270,6 +276,7 @@ public:
     void setHoldout(bool val);
     void setHoldout(int holdoutFrequency);
     void setHoldout(bool val, int holdoutFrequency);
+    void setHoldoutSettings( float perc, float start, float end, bool sound, bool color, bool shape);
     
     void gateAnimation(float elapsed);
     

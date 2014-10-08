@@ -3088,9 +3088,17 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             break;
     }
     
+    if(nBackDelta > 0 &&scheduler->currentHoldout < 80)
+    {
+        scheduler->currentHoldout+=5;
+        if (scheduler->currentHoldout > 80)
+            scheduler->currentHoldout = 80;
+    }
+    
     levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nbackDelta = nBackDelta;
     levelToGrade->second.nBackSkill = playerSkill;
+    
     scheduler->removeBin(level.phaseX, level.difficultyX);
     scheduler->scheduleHistory.push_back(*levelRequest);
 }
