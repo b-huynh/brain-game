@@ -14,7 +14,7 @@
 extern Util::ConfigGlobal globals;
 
 HudStage::HudStage(Player* player, Tunnel* tunnel)
-: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f)
+: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f), goOffset(0.7f), goOffsetDest(0.7f)
 {
     link(player, tunnel);
     init();
@@ -55,10 +55,10 @@ void HudStage::update(float elapsed)
     
     setCollectionBar(false, elapsed);
     
-    std::string GUIToggleNumber = "General/GUIToggleTextNumber";
-    toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
-    toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
-    toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
+    //std::string GUIToggleNumber = "General/GUIToggleTextNumber";
+    //toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
+    //toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
+    //toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
     // toggle4 is always n-back 0
     
     // Set up pause navigation texture with appropriate active buttons
@@ -78,6 +78,7 @@ void HudStage::update(float elapsed)
     else
         pauseNavigationBackground->setMaterialName("General/PauseNav4");
     
+    // Pause nav animation
     if (overlays[1]->isVisible())
     {
         float minySpeed = 0.25;
@@ -100,10 +101,38 @@ void HudStage::update(float elapsed)
         float pauseNavHeight = 0.45;
         float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
         float pauseNavX = 0.50 - pauseNavWidth / 2;
-        float pauseNavY = 0.54 - pauseNavHeight / 2 + pauseNavOffset;
+        float pauseNavY = 0.55 - pauseNavHeight / 2 + pauseNavOffset;
         pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
-        pauseBaseBackground->setPosition(0.30, 0.60 + pauseNavOffset);
+        pauseBaseBackground->setPosition(0.325, 0.675 + pauseNavOffset);
+    }
+    
+    // Go button animation
+    if (overlays[1]->isVisible())
+    {
+        float minySpeed = 0.25;
+        float yspeed = (goOffsetDest - goOffset) * 5.0;
+        if (goOffset > goOffsetDest)
+        {
+            if (yspeed > -minySpeed) yspeed = -minySpeed;
+            goOffset += (yspeed * elapsed);
+            if (goOffset < goOffsetDest)
+                goOffset = goOffsetDest;
+        }
+        else if (goOffset < goOffsetDest)
+        {
+            if (yspeed < minySpeed) yspeed = minySpeed;
+            goOffset += (yspeed * elapsed);
+            if (goOffset > goOffsetDest)
+                goOffset = goOffsetDest;
+        }
         
+        float gheight = 0.35;
+        float gwidth = gheight * globals.screenHeight / globals.screenWidth;
+        float gx = 0.50 - gwidth / 2;
+        float gy = 0.60 - gheight / 2 + goOffset;
+        goBackground->setPosition(gx, gy);
+        goBaseBackground->setPosition(0.325, 0.675 + goOffset);
+        sliderRangeBackground->setPosition(0.20, 0.35 + goOffset);
     }
     
     // Update powerup GUI
@@ -284,9 +313,10 @@ void HudStage::alloc()
     
     pauseBackground = static_cast<PanelOverlayElement*>(
                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseBackground"));
+    goBaseBackground = static_cast<PanelOverlayElement*>(
+                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageGoBaseBackground"));
     goBackground = static_cast<PanelOverlayElement*>(
                                                      OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageGoBackground"));
-    
     sliderRangeBackground = static_cast<PanelOverlayElement*>(
                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderRangeBackground"));
     sliderBallBackground = static_cast<PanelOverlayElement*>(
@@ -316,8 +346,14 @@ void HudStage::alloc()
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem19")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem20")));
 #endif
-    GUITopPanel = static_cast<PanelOverlayElement*>(
-                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUITopPanel"));
+    
+    // Allocate the hud elements
+    HudEntire = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudEntire"));
+    HudTopPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudTopPanel"));
+    HudLeftPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftPanel"));
+    HudRightPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightPanel"));
+    HudLeftZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftZapper"));
+    HudRightZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightZapper"));
     
     // Create text area
     label1 = static_cast<TextAreaOverlayElement*>(
@@ -347,6 +383,8 @@ void HudStage::alloc()
     
     endTallyScoreValue = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreValue"));
     
+    speedDisplayBackground = static_cast<PanelOverlayElement*>(
+                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSpeedDisplayBackground"));
     nbackDisplayBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNBackDisplayBackground"));
     nbackDisplayLabel = static_cast<TextAreaOverlayElement*>(
@@ -412,7 +450,12 @@ void HudStage::alloc()
     endTallyContainer->addChild(endTallyScoreLabel);
     endTallyContainer->addChild(endTallyScoreValue);
     
-    overlay1->add2D(GUITopPanel);
+    overlay1->add2D(HudEntire);
+    overlay1->add2D(HudLeftPanel);
+    overlay1->add2D(HudRightPanel);
+    overlay1->add2D(HudTopPanel);
+    overlay1->add2D(HudLeftZapper);
+    overlay1->add2D(HudRightZapper);
     
     overlay1->add2D(pauseBackground);
     //for (int i = 0; i < collectionBar.size(); ++i)
@@ -422,6 +465,7 @@ void HudStage::alloc()
     overlay1->add2D(powerup1Background);
     overlay1->add2D(powerup2Background);
     overlay1->add2D(powerup3Background);
+    overlay1->add2D(speedDisplayBackground);
     overlay1->add2D(nbackDisplayBackground);
     nbackDisplayBackground->addChild(nbackDisplayLabel);
     //overlay1->add2D(toggle1Background);
@@ -445,12 +489,13 @@ void HudStage::alloc()
     panelText->addChild(label7);
     overlay2->add2D(pauseBaseBackground);
     overlay2->add2D(pauseNavigationBackground);
+    overlay2->add2D(goBaseBackground);
+    overlay2->add2D(goBackground);
     pauseNavigationBackground->addChild(resumeButtonBackground);
     pauseNavigationBackground->addChild(nextButtonBackground);
     pauseNavigationBackground->addChild(restartButtonBackground);
     pauseNavigationBackground->addChild(levelSelectButtonBackground);
     
-    overlay1->add2D(goBackground);
     overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
     
@@ -461,12 +506,8 @@ void HudStage::alloc()
     
     speedSlider = new HudSlider();
     
-    // Horizontal slider
-    //speedSlider->setSlider("speed", overlays[0], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10), false,
-    //                       globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
-    
-    // Vertical Slider
-    speedSlider->setSlider("speed", overlays[0], Vector2(0.04, 0.25), Vector2(0.03, 0.55), Vector2(0.03, 0.09), true,
+    // Horizontal Slider
+    speedSlider->setSlider("speed", overlays[1], Vector2(0.20, 0.35), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                            globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
@@ -481,6 +522,7 @@ void HudStage::alloc()
     player->setBaseSpeed(speedSlider->getIndex());
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
     setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads
+    setSpeedDialState(false);
 }
 
 void HudStage::dealloc()
@@ -488,9 +530,15 @@ void HudStage::dealloc()
     // Delete children first, then parents
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBaseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderRangeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderBallBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUITopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudEntire);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudTopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftZapper);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightZapper);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
     collectionBar.clear();
@@ -507,6 +555,7 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreValue);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(speedDisplayBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1TextArt);
@@ -555,10 +604,44 @@ void HudStage::initOverlay()
     endTallyContainer->setPosition(0.35, 0.15);
     endTallyContainer->setDimensions(0.25, 0.25);
     
-    GUITopPanel->setMetricsMode(GMM_RELATIVE);
-    GUITopPanel->setPosition(0.0, 0.0);
-    GUITopPanel->setDimensions(1.0, 1.0);
-    GUITopPanel->setMaterialName("General/GUIMainHud");
+    // imgw = 2048 px = 1
+    // imgh = 1536 px = 1
+    // left hud (xoffset,yoffset) = (0 px, 90 px) = (0.0%, 0.0586%)
+    // left hud (xdim, ydim) = (460 px, 1370 px) = (0.2246%, 0.8919%)
+    // right hud (xoffset,yoffset) = (imgw - xdim, yoffset) = (0.7754%, 0.0586%)
+    // right hud dim = left hud dim
+    // top hud (xoffset, yoffset) = (imgw / 2 - top hud xdim / 2, 44) = (70 px, 44 px) = (0.0342, 0.0286)
+    // top hud (xdim, ydim) = (1907 px, 173 px) = (0.9312%, 0.1126%)
+    
+    // left dip (xoffset, yoffset) = (32 px, 240 px) = (0.0156%, 0.1562)
+    // left dip (xdim, ydim) = (156 px, 1064 px) = (0.0762, 0.6926)
+    // right zapper (xoffset, yoffset) = (1840 px, 428 px) = (0.8984%, 0.2786%)
+    // right zapper (xdim, ydim) = (164 px, 772 px) = (0.08%, 0.5026%)
+    
+    HudLeftPanel->setMetricsMode(GMM_RELATIVE);
+    HudLeftPanel->setPosition(0.0, 0.0586);
+    HudLeftPanel->setDimensions(0.2256, 0.8919);
+    HudLeftPanel->setMaterialName("General/GUIMainHudLeft");
+    
+    HudTopPanel->setMetricsMode(GMM_RELATIVE);
+    HudTopPanel->setPosition(0.0342, 0.0286);
+    HudTopPanel->setDimensions(0.9312, 0.1126);
+    HudTopPanel->setMaterialName("General/GUIMainHudBar");
+    
+    HudRightPanel->setMetricsMode(GMM_RELATIVE);
+    HudRightPanel->setPosition(0.7744, 0.0586);
+    HudRightPanel->setDimensions(0.2256, 0.8919);
+    HudRightPanel->setMaterialName("General/GUIMainHudRight");
+    
+    HudLeftZapper->setMetricsMode(GMM_RELATIVE);
+    HudLeftZapper->setPosition(0.0216, 0.2786);
+    HudLeftZapper->setDimensions(0.08, 0.5026);
+    HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
+    
+    HudRightZapper->setMetricsMode(GMM_RELATIVE);
+    HudRightZapper->setPosition(0.8984, 0.2786);
+    HudRightZapper->setDimensions(0.08, 0.5026);
+    HudRightZapper->setMaterialName("General/GUIMainHudShifter");
     
     label1->setMetricsMode(GMM_RELATIVE);
     label1->setAlignment(TextAreaOverlayElement::Center);
@@ -591,7 +674,7 @@ void HudStage::initOverlay()
     
     label4->setMetricsMode(GMM_RELATIVE);
     label4->setAlignment(TextAreaOverlayElement::Center);
-    label4->setPosition(0.042, 0.175);
+    label4->setPosition(0.05, 0.185);
     label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("MainSmall");
@@ -683,8 +766,8 @@ void HudStage::initOverlay()
     pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
     
     pauseBaseBackground->setMetricsMode(GMM_RELATIVE);
-    pauseBaseBackground->setPosition(0.30, 0.60 + pauseNavOffset);
-    pauseBaseBackground->setDimensions(0.40, 0.40);
+    pauseBaseBackground->setPosition(0.325, 0.675 + pauseNavOffset);
+    pauseBaseBackground->setDimensions(0.35, 0.35);
     
     float pauseheight = 0.10;
     float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
@@ -692,7 +775,14 @@ void HudStage::initOverlay()
     
     float gheight = 0.35;
     float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.50 - gheight / 2), Vector2(gwidth, gheight), goBackground, NULL);
+    float gx = 0.50 - gwidth / 2;
+    float gy = 0.50 - gheight / 2 + goOffset;
+    buttons[BUTTON_GO].setButton("go", overlays[1], GMM_RELATIVE, Vector2(gx, gy), Vector2(gwidth, gheight), goBackground, NULL);
+    
+    sliderRangeBackground->setPosition(0.20, 0.35 + goOffset);
+    goBaseBackground->setMetricsMode(GMM_RELATIVE);
+    goBaseBackground->setPosition(0.325, 0.675 + goOffset);
+    goBaseBackground->setDimensions(0.35, 0.35);
     
     buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.31), Vector2(0.08, 0.08), toggle1Background, NULL);
     buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.43), Vector2(0.08, 0.08), toggle2Background, NULL);
@@ -737,8 +827,6 @@ void HudStage::initOverlay()
     }
     
     pauseBackground->setMaterialName("General/PauseButton");
-    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeVertical");
-    sliderBallBackground->setMaterialName("General/SpeedSliderBall");
     toggle1Background->setMaterialName("General/GUIToggleButton3");
     toggle2Background->setMaterialName("General/GUIToggleButton2");
     toggle3Background->setMaterialName("General/GUIToggleButton1");
@@ -747,30 +835,39 @@ void HudStage::initOverlay()
     powerup2Background->setMaterialName("General/GUIPowerupButtonBlank");
     powerup3Background->setMaterialName("General/GUIPowerupButtonBlank");
     pauseBaseBackground->setMaterialName("General/PauseBase");
+    goBaseBackground->setMaterialName("General/PauseBase");
     
     //resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
     //nextButtonBackground->setMaterialName("General/NextButtonRound");
     //restartButtonBackground->setMaterialName("General/RestartButtonRound");
     //levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
     
+    speedDisplayBackground->setMetricsMode(GMM_RELATIVE);
+    speedDisplayBackground->setPosition(0.023, 0.175);
+    speedDisplayBackground->setDimensions(0.075, 0.08);
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
     nbackDisplayBackground->setPosition(0.897, 0.175);
-    nbackDisplayBackground->setDimensions(0.08, 0.08);
+    nbackDisplayBackground->setDimensions(0.075, 0.08);
     switch (tunnel->getPhase())
     {
         case 'A':
+            speedDisplayBackground->setMaterialName("General/GUIToggleButton0");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
             break;
         case 'B':
+            speedDisplayBackground->setMaterialName("General/GUIToggleButton1");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton1");
             break;
         case 'C':
+            speedDisplayBackground->setMaterialName("General/GUIToggleButton2");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton2");
             break;
         case 'D':
+            speedDisplayBackground->setMaterialName("General/GUIToggleButton3");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton3");
             break;
         default:
+            speedDisplayBackground->setMaterialName("General/GUIToggleButton0");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
             break;
     }
@@ -851,9 +948,15 @@ void HudStage::setGoButtonState(bool active, bool color)
     goButtonActive = active;
     buttons[BUTTON_GO].setActive(goButtonActive);
     if (goButtonActive)
+    {
+        goOffsetDest = 0.0;
         buttons[BUTTON_GO].show();
+    }
     else
+    {
+        goOffsetDest = 0.7;
         buttons[BUTTON_GO].hide();
+    }
     if (color)
         goBackground->setMaterialName("General/ButtonGo");
     else
@@ -863,6 +966,15 @@ void HudStage::setGoButtonState(bool active, bool color)
 void HudStage::setPauseNavDest(float navOffset)
 {
     pauseNavOffsetDest = navOffset;
+}
+
+void HudStage::setSpeedDialState(bool active)
+{
+    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    if (active)
+        sliderBallBackground->setMaterialName("General/SpeedSliderBall");
+    else
+        sliderBallBackground->setMaterialName("General/SpeedSliderBallOff");
 }
 
 // Sets the collection bar positions and images.

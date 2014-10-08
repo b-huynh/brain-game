@@ -358,7 +358,7 @@ material General/PauseButton
         depth_write off
         texture_unit
         {
-            texture pause.png
+            texture pauseButtonBlue.png
         }
       } 
     }
@@ -409,7 +409,7 @@ material General/ButtonGoDown
         depth_write off
         texture_unit
         {
-            texture arrowR.png
+            texture nextButtonBlue.png
         }
       } 
     }
@@ -426,7 +426,7 @@ material General/ButtonGoDownGray
         depth_write off
         texture_unit
         {
-            texture arrowR.png
+            texture nextButtonBlue.png
         }
       } 
     }
@@ -681,7 +681,7 @@ material General/ExitButton2
             depth_write off
 			texture_unit
 			{
-				texture close.png
+				texture exitButtonBlue.png
 			}
 		}
 	}
@@ -868,7 +868,7 @@ material General/GUICollection0Filled3
             depth_write off
 			texture_unit
 			{
-				texture score0d.png
+                texture score0d.png
 			}
 		}
 	}
@@ -1669,6 +1669,7 @@ material General/SpeedSliderBall
         texture_unit
         {
             texture speed_dial.png
+            rotate 90
         }
       } 
     }
@@ -1686,6 +1687,7 @@ material General/SpeedSliderBallOff
         texture_unit
         {
             texture speed_dial_off.png
+            rotate 90
         }
       } 
     }

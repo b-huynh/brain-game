@@ -1,4 +1,226 @@
-material General/TutorialSlideHoldout1
+material General/TutorialBackdrop
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture back_drop.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox1-1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox1-1.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox1-2
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox1-2.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox1-3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox1-3.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox2-1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-1.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox2-2a
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-2a.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox2-2b
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-2b.png
+        }
+      } 
+    }
+}
+
+
+material General/TutorialTextbox2-3
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-3.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox2-4
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-4.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox2-5
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox2-5.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox3-1
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox3-1.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox3-2a
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox3-2a.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextbox3-2b
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox3-2b.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxHoldout1
 {
     technique
     {
@@ -15,7 +237,7 @@ material General/TutorialSlideHoldout1
     }
 }
 
-material General/TutorialSlideHoldout2
+material General/TutorialTextboxHoldout2
 {
     technique
     {
@@ -26,7 +248,93 @@ material General/TutorialSlideHoldout2
         depth_write off
         texture_unit
         {
-            texture TextboxHoldout2.jpg
+            texture TextboxHoldout2.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxSeeingMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxSeeingMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxMissingMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxMissingMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxIncorrectMatch
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxIncorrectMatch.png
+        }
+      } 
+    }
+}
+
+material General/TutorialTextboxObstacle
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxObstacle.png
+        }
+      } 
+    }
+}
+
+
+material General/TutorialTextboxSoundOnly
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture TextboxSoundOnly.png
         }
       } 
     }

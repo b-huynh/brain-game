@@ -28,6 +28,7 @@ public:
     bool isGoButtonActive() const;
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
+    void setSpeedDialState(bool active);
 protected:
     Player* player;
     Tunnel* tunnel;
@@ -44,6 +45,8 @@ protected:
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
     PanelOverlayElement* pauseBackground;
+    
+    PanelOverlayElement* goBaseBackground;
     PanelOverlayElement* goBackground;
     PanelOverlayElement* sliderRangeBackground;
     PanelOverlayElement* sliderBallBackground;
@@ -76,6 +79,7 @@ protected:
     TextAreaOverlayElement* endTallyScoreValue;
     PanelOverlayElement* endTallyBackground;
     
+    PanelOverlayElement* speedDisplayBackground;
     PanelOverlayElement* nbackDisplayBackground;
     TextAreaOverlayElement* nbackDisplayLabel;
     PanelOverlayElement* toggleEntireBackground;
@@ -95,6 +99,9 @@ protected:
     
     float pauseNavOffset;
     float pauseNavOffsetDest;
+    
+    float goOffset;
+    float goOffsetDest;
     PanelOverlayElement* pauseBaseBackground;
     PanelOverlayElement* pauseNavigationBackground;
     PanelOverlayElement* resumeButtonBackground;

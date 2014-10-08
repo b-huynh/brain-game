@@ -64,11 +64,11 @@ void HudButton::setButton(std::string name, Overlay* olay, GuiMetricsMode metric
 bool HudButton::isInside(Vector2 target) const
 {
     Vector2 check = p;
-    
-    // For inherited positions
-    if (backgroundRef && backgroundRef->getParent())
-        check = p + Vector2(backgroundRef->getParent()->_getDerivedLeft(),
-                            backgroundRef->getParent()->_getDerivedTop());
+    // For inherited positions, if there is a texture, trust that
+    // position instead
+    if (backgroundRef)
+        check = Vector2(backgroundRef->_getDerivedLeft(),
+                        backgroundRef->_getDerivedTop());
     
     if (metric == GMM_PIXELS)
     {

@@ -55,7 +55,7 @@ int LevelSet::getNumLevels() const
 
 int LevelSet::getTotalRowRequirement(int row) const
 {
-    return Util::clamp(8 + row, 8, 15);
+    return Util::clamp(10 + 2 * row, 8, 25);
 }
 
 void LevelSet::initializeLevelSet()
@@ -106,7 +106,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 0;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(0, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -250,7 +253,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 6;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(2, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -270,7 +276,7 @@ void LevelSet::initializeLevelSet()
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
@@ -295,7 +301,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
     level.powerups.push_back(POWERUP_TIME_WARP);
@@ -392,7 +398,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 12;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(4, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -410,10 +419,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 13;
     level.nback = 3;
     level.stageTime = 120.0;
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
     level.powerups.push_back(POWERUP_TIME_WARP);
@@ -434,10 +443,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 14;
     level.nback = 3;
     level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
     level.powerups.push_back(POWERUP_TIME_WARP);
@@ -459,8 +468,8 @@ void LevelSet::initializeLevelSet()
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
@@ -483,7 +492,7 @@ void LevelSet::initializeLevelSet()
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
@@ -508,7 +517,7 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 17;
     level.nback = 3;
     level.stageTime = 120.0;
-    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -534,7 +543,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 18;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(5, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -676,7 +688,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 24;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(6, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -818,7 +833,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 30;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(7, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 2));
+    level.navLevels.push_back(NavigationLevel(0, 1, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -960,7 +978,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 36;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(8, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 2));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -1102,7 +1123,10 @@ void LevelSet::initializeLevelSet()
     level.levelNo = 42;
     level.nback = 0;
     level.stageTime = 90.0;
-    level.navLevels.push_back(NavigationLevel(9, 0, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 2, 2));
+    level.navLevels.push_back(NavigationLevel(0, 3, 2));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -1123,7 +1147,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
-    level.navLevels.push_back(NavigationLevel(0, 4, 1));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
     level.powerups.push_back(POWERUP_TIME_WARP);

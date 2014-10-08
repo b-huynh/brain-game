@@ -230,10 +230,10 @@ particle_system General/GoodPodIndicator
 particle_system Barrier/PFX
  {
     material        General/WhiteStar
-    particle_width  0.6
-    particle_height 0.6
+    particle_width  0.8
+    particle_height 0.8
     cull_each       true
-    quota           275
+    quota           100
     billboard_type  point
     local_space	    true
  
@@ -241,7 +241,7 @@ particle_system Barrier/PFX
     emitter Box
     {
         angle           180
-        emission_rate   1000
+        emission_rate   500
         time_to_live_min 0.1
         time_to_live_max 0.2
         velocity       0.3

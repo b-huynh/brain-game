@@ -138,7 +138,7 @@ void EngineStage::update(float elapsed)
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setGoButtonState(true, speedVerified);
+            hud->setGoButtonState(true, true);
             hud->setPauseNavDest(0.7);
             break;
         }
@@ -178,6 +178,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
             hud->setPauseNavDest(0.7);
+            hud->setSpeedDialState(false);
             break;
         }
         case STAGE_STATE_DONE:
@@ -529,6 +530,16 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             {
                 if (!player->endFlag)
                 {
+                    hud->setSpeedDialState(false);
+                    
+                    // Display current level index
+                    LevelSet* levels = player->getLevels();
+                    std::string msg = "Level: ";
+                    msg += Util::toStringInt(player->getLevelRequestRow() + 1);
+                    msg += "-";
+                    msg += (char)('A' + player->getLevelRequestCol());
+                    globals.setMessage(msg, MESSAGE_NORMAL);
+                    
                     setPause(true);
                     player->reactGUI();
                     stageState = STAGE_STATE_PROMPT;
@@ -561,19 +572,22 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             
             if (queryGUI == "go")
             {
-                if (speedVerified)
-                {
-                    stageState = STAGE_STATE_READY;
-                    readyTimer = 3.00f;
-                    player->reactGUI();
-                }
-                else
-                {
-                    player->reactGUI();
-                }
+                stageState = STAGE_STATE_READY;
+                readyTimer = 3.00f;
+                player->reactGUI();
             }
             else if (queryGUI == "pause")
             {
+                hud->setSpeedDialState(false);
+                    
+                // Display current level index
+                LevelSet* levels = player->getLevels();
+                std::string msg = "Level: ";
+                msg += Util::toStringInt(player->getLevelRequestRow() + 1);
+                msg += "-";
+                msg += (char)('A' + player->getLevelRequestCol());
+                globals.setMessage(msg, MESSAGE_NORMAL);
+                
                 setPause(true);
                 player->reactGUI();
                 stageState = STAGE_STATE_PROMPT;
@@ -583,8 +597,6 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 // Allows single tap on dial without dragging slider to be a way to verify
                 HudSlider* speedSlider = NULL;
                 if (hud) speedSlider = hud->getSpeedSlider();
-                if (speedSlider && !player->hasTriggeredStartup() && speedSlider->isInsideBall(globals.convertToPercentScreen(Vector2(x, y))))
-                    setSpeedVerified();
             }
             break;
         }
@@ -598,6 +610,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 // Otherwise, go to gameplay
                 if (!player->hasTriggeredStartup())
                 {
+                    hud->setSpeedDialState(true);
                     stageState = STAGE_STATE_PAUSE;
                     if (player->getStartMusicTimer() <= 0.0)
                         player->playMusic();
@@ -655,6 +668,16 @@ void EngineStage::activatePerformSingleTap(float x, float y)
         
             if (queryGUI == "pause")
             {
+                hud->setSpeedDialState(false);
+                
+                // Display current level index
+                LevelSet* levels = player->getLevels();
+                std::string msg = "Level: ";
+                msg += Util::toStringInt(player->getLevelRequestRow() + 1);
+                msg += "-";
+                msg += (char)('A' + player->getLevelRequestCol());
+                globals.setMessage(msg, MESSAGE_NORMAL);
+                
                 setPause(true);
                 player->reactGUI();
                 stageState = STAGE_STATE_PROMPT;
@@ -791,7 +814,6 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
         if (speedSlider && speedSlider->selected)
         {
             speedSlider->activateReleased(x, y, dx, dy);
-            setSpeedVerified();
         }
     }
 }
@@ -853,6 +875,8 @@ void EngineStage::activateAngleTurn(float angle, float vel)
         
         // If unpathable upahead, don't allow player to traverse through
         int depthDist = 0;
+        if (!player->inverted)
+            dT = -dT;
         TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
         if (!unpathable)
         {
@@ -864,6 +888,18 @@ void EngineStage::activateAngleTurn(float angle, float vel)
 
 void EngineStage::activateReturnFromPopup()
 {
+    // To prevent the game from immediately resume without prepping the user
+    // We throw them into a countdown before resuming
+    if (stageState == STAGE_STATE_RUNNING)
+    {
+        stageState = STAGE_STATE_READY;
+        readyTimer = 3.00f;
+    }
+    else if (stageState == STAGE_STATE_PAUSE)
+    {
+        setTaskPrompt();
+        hud->setSpeedDialState(true);
+    }
 }
 
 #if !defined(OGRE_IS_IOS)
@@ -1222,36 +1258,14 @@ void EngineStage::setup()
     player->link(tunnel);
     
     tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
-    if (tunnel->getMode() == STAGE_MODE_RECESS)
-    {
-        // Assign nav levels in an incremental order specified by Liam's formula if the mode is recess
-        // Therefore, the level parameter provided looks at the nav level provided as the starting index
-        tunnel->setNavigationLevels(level.navLevels[0].level, globals.navMap.size() - 1, level.tunnelSectionsPerNavLevel);
-    }
-    else
-    {
-        // Otherwise, nav levels provided by the parameters
-        tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
-    }
+    tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
+
     tunnel->setCollectionCriteria(level.collectionCriteria);
     tunnel->constructTunnel(level.nameTunnelTile, globals.tunnelSections);
     player->newTunnel(level.nameMusic);
     player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
     
     Util::setSkyboxAndFog(level.nameSkybox);
-    
-    /*
-     if (skillLevel.set1Notify)
-     globals.setBigMessage("Congratulations! You earned " + Util::toStringInt(nlevel) + "-Back!");
-     else
-     {
-     if (skillLevel.set1Rep >= 2)
-     globals.setBigMessage(Util::toStringInt(nlevel) + "-Back. Challenge Round!");
-     else
-     globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-     }
-     globals.setMessage("Match by Color!", MESSAGE_NORMAL);
-     */
     
     hud = new HudStage(player, tunnel);
     
@@ -1274,46 +1288,21 @@ void EngineStage::setup()
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
     
     // Set tutorial slides for certain thingies
-    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HUD_DISPLAY1);
-    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_CONTROL_MECHANICS);
-    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getHighestCriteria() <= 0)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ZERO_BACK);
-    if (tunnel->getHighestCriteria() == 1)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ONE_BACK);
+    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION);
+    if (tunnel->getNBack() == 1)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK);
     if (tunnel->getHighestCriteria() == 2)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TWO_BACK);
-    if (tunnel->getPhase() == 'A')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_COLOR_SOUND);
-    if (tunnel->getPhase() == 'B')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SHAPE_SOUND);
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_2BACK);
     if (tunnel->getPhase() == 'C')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SOUND_ONLY);
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY);
     if (tunnel->getPhase() == 'D')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_HOLDOUT);
     
-    switch (level.phase)
+    if (!player->getTutorialMgr()->isVisible())
     {
-        case 'A':
-            globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
-            break;
-        case 'B':
-            globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
-            break;
-        case 'C':
-            globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
-            break;
-        case 'D':
-            globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
-            break;
-        case 'E':
-            globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
-            break;
-        case 'F':
-            globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
-            break;
+        setTaskPrompt();
+        hud->setSpeedDialState(true);
     }
-    globals.appendMessage("\n\nSet and Verify your Speed", MESSAGE_NORMAL);
-    speedVerified = true;
     
     // Spin Parameters
     maxVel = player->maxVel;
@@ -1382,14 +1371,15 @@ void EngineStage::updateSpin(float elapsed)
         }
     }
     
-    float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
-    const float PI = 3.14;
-    dTheta = (dTheta * 180.0) / Ogre::Math::PI;
+    // Convert radians to degree and obtain change in angle
+    player->rollSpeed = (spinVelocity / (globals.screenWidth / 2.0)) * (180.0 / Ogre::Math::PI);
+    float dTheta = player->rollSpeed * elapsed;
     
     // Perform Player Movement
     if (freeMotion)
     {
-        if (spinClockwise) {
+        if ((spinClockwise && player->inverted) ||
+            (!spinClockwise && !player->inverted)) {
             this->activatePerformRightMove(dTheta);
             player->offsetRollDest = -dTheta;
             freeAngleTraveled -= dTheta;
@@ -1484,35 +1474,30 @@ void EngineStage::updateSpin(float elapsed)
     player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
 }
 
-void EngineStage::setSpeedVerified()
+void EngineStage::setTaskPrompt()
 {
-    if (!speedVerified)
+    switch (tunnel->getPhase())
     {
-        globals.clearMessage();
-        StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
-        switch (level.phase)
-        {
-            case 'A':
-                globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
-                break;
-            case 'B':
-                globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
-                break;
-            case 'C':
-                globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
-                break;
-            case 'D':
-                globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
-                break;
-            case 'E':
-                globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
-                break;
-            case 'F':
-                globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
+        case 'A':
+            globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
             break;
-        }
+        case 'B':
+            globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
+            break;
+        case 'C':
+            globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
+            break;
+        case 'D':
+            globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
+            break;
+        case 'E':
+            globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
+            break;
+        case 'F':
+            globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
+            break;
     }
-    speedVerified = true;
+    globals.appendMessage("\n\nSet and Verify your Speed", MESSAGE_NORMAL);
 }
 
 void EngineStage::dealloc()
@@ -1546,14 +1531,6 @@ void EngineStage::setPause(bool value, bool targetAllSounds)
         if (targetAllSounds)
             OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
-        
-        // Display current level index
-        LevelSet* levels = player->getLevels();
-        std::string msg = "Level: ";
-        msg += Util::toStringInt(player->getLevelRequestRow() + 1);
-        msg += "-";
-        msg += (char)('A' + player->getLevelRequestCol());
-        globals.setMessage(msg, MESSAGE_NORMAL);
         
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }

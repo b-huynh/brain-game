@@ -13,11 +13,11 @@
 
 // Number of Columns and Rows
 #ifdef DEMO_BUILD
-    #define NUM_TASKS 1
-    #define NUM_LEVELS 1
+#define NUM_TASKS 1
+#define NUM_LEVELS 1
 #else
-    #define NUM_TASKS 6
-    #define NUM_LEVELS 8
+#define NUM_TASKS 6
+#define NUM_LEVELS 8
 #endif
 
 struct CollectionCriteria

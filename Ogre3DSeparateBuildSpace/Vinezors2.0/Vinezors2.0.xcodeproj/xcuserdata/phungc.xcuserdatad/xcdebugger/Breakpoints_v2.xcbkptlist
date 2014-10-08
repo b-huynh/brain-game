@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "422331419.809665"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71">
+            startingLineNumber = "66"
+            endingLineNumber = "66">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -42,9 +42,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "211"
-            endingLineNumber = "211"
-            landmarkName = "Player::getOldRoll()"
-            landmarkType = "5">
+            endingLineNumber = "211">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -54,12 +52,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Player.cpp"
-            timestampString = "432249286.570534"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1520"
-            endingLineNumber = "1520"
-            landmarkName = "Player::setVineDirRequest(Direction value, bool force)"
+            startingLineNumber = "1464"
+            endingLineNumber = "1464"
+            landmarkName = "Player::recordInfo()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -70,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Util.h"
-            timestampString = "422331419.809665"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "250"
-            endingLineNumber = "250">
+            startingLineNumber = "245"
+            endingLineNumber = "245">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -98,11 +96,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "429147017.472543"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "EngineStage::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -176,12 +174,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "429147017.472543"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "858"
-            endingLineNumber = "858"
-            landmarkName = "EngineStage::activateAngleTurn(float angle, float vel)"
+            startingLineNumber = "851"
+            endingLineNumber = "851"
+            landmarkName = "EngineStage::activateVelocity(float vel)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -192,12 +190,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "429147017.472543"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "859"
-            endingLineNumber = "859"
-            landmarkName = "EngineStage::activateAngleTurn(float angle, float vel)"
+            startingLineNumber = "852"
+            endingLineNumber = "852"
+            landmarkName = "EngineStage::activateVelocity(float vel)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -208,12 +206,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "429147017.472543"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "857"
-            endingLineNumber = "857"
-            landmarkName = "EngineStage::activateAngleTurn(float angle, float vel)"
+            startingLineNumber = "850"
+            endingLineNumber = "850"
+            landmarkName = "EngineStage::activateVelocity(float vel)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,12 +222,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "429147017.472543"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "860"
-            endingLineNumber = "860"
-            landmarkName = "EngineStage::activateAngleTurn(float angle, float vel)"
+            startingLineNumber = "853"
+            endingLineNumber = "853"
+            landmarkName = "EngineStage::activateVelocity(float vel)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -288,11 +286,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "427765458.285485"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "HudStage::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
@@ -320,12 +318,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "420448595.106257"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "HudStage::init()"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "HudStage::~HudStage()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -336,13 +334,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "420448595.106257"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
-            landmarkName = "HudStage::init()"
-            landmarkType = "5">
+            startingLineNumber = "28"
+            endingLineNumber = "28">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -496,11 +492,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "431467812.533962"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1296"
-            endingLineNumber = "1296"
+            startingLineNumber = "1289"
+            endingLineNumber = "1289"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
          </BreakpointContent>
@@ -576,12 +572,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "431467812.533962"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1084"
-            endingLineNumber = "1084"
-            landmarkName = "EngineStage::keyReleased(const OIS::KeyEvent &amp;keyEventRef)"
+            startingLineNumber = "1077"
+            endingLineNumber = "1077"
+            landmarkName = "EngineStage::keyPressed(const OIS::KeyEvent &amp;keyEventRef)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -592,12 +588,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "431467812.533962"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1083"
-            endingLineNumber = "1083"
-            landmarkName = "EngineStage::keyReleased(const OIS::KeyEvent &amp;keyEventRef)"
+            startingLineNumber = "1076"
+            endingLineNumber = "1076"
+            landmarkName = "EngineStage::keyPressed(const OIS::KeyEvent &amp;keyEventRef)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -608,59 +604,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "426634713.355095"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
-            landmarkName = "HudStage::init()"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "HudStage::~HudStage()"
             landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vinezors2.0/HudStage.cpp"
-            timestampString = "426634735.306178"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "HudStage::HudStage(Player* player, Tunnel* tunnel)"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "HudStage::HudStage(Player*, Tunnel*)"
-                  moduleName = "Vinezors2.0"
-                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildLatest/Vinezors2.0/Vinezors2.0/HudStage.cpp"
-                  timestampString = "426634879.772788"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "21"
-                  endingLineNumber = "21"
-                  offsetFromSymbolStart = "4">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "HudStage::HudStage(Player*, Tunnel*)"
-                  moduleName = "Vinezors2.0"
-                  urlString = "file://localhost/Users/phungc/Ogre3DSeparateBuildLatest/Vinezors2.0/Vinezors2.0/HudStage.cpp"
-                  timestampString = "426634879.773331"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "21"
-                  endingLineNumber = "21"
-                  offsetFromSymbolStart = "98">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -670,11 +620,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "431467812.533962"
+            timestampString = "432263023.013157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1156"
-            endingLineNumber = "1156"
+            startingLineNumber = "1149"
+            endingLineNumber = "1149"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
          </BreakpointContent>
@@ -686,11 +636,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/Pod.cpp"
-            timestampString = "431467727.779726"
+            timestampString = "434409055.68437"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "722"
-            endingLineNumber = "722"
+            startingLineNumber = "728"
+            endingLineNumber = "728"
             landmarkName = "Pod::update(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
