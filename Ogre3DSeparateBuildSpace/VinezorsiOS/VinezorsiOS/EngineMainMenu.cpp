@@ -55,9 +55,12 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     if (queryGUI == "play")
     {
         engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        //engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
     }
     else if (queryGUI == "credits")
     {
+        // player->feedLevelRequestFromSchedule();
+        engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
         //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }
     else if (queryGUI == "settings")

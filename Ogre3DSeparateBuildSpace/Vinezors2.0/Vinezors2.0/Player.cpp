@@ -37,6 +37,10 @@ Player::Player()
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    
+    scheduler = new LevelScheduler();
+    levelRequest = NULL;    
+    
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
     tutorialMgr = new TutorialManager();
@@ -46,6 +50,8 @@ Player::Player()
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -56,6 +62,24 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
+    
+    scheduler = new LevelScheduler();
+    feedLevelRequestFromSchedule();
+    levelRequest = NULL;
+    
+    //ManLevelSet(levelnumber, phasenumber, number of distinct pods, % of time to begin holdout ascension, %o of time of holdout at 100%);
+    std::vector<int> sides;
+    sides.push_back(4);
+    sides.push_back(1);
+    sides.push_back(3);
+    sides.push_back(2);
+    std::vector<int> obstacles;
+    obstacles.push_back(4);
+    obstacles.push_back(1);
+    obstacles.push_back(3);
+    obstacles.push_back(2);
+    levels->ManLevelSet(0, 4, 3, 1.0 ,25.0, 75.0,"yes","yes","yes", sides, obstacles);
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -68,6 +92,8 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.25f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
@@ -430,6 +456,21 @@ bool Player::isLevelAvailable(int row, int col) const
     return isLevelAvailable(level);
 }
 
+// Given level request row and col, is the next level available to play in the 2D level select grid?
+bool Player::isNextLevelAvailable() const
+{
+    return isLevelAvailable(getNextLevel());
+}
+
+// Given level request row and col, return the next level in the sequence for the 2D level select grid
+int Player::getNextLevel() const
+{
+    int row = getLevelRequestRow();
+    int col = getLevelRequestCol();
+    int level = levels->getLevelNo(row, col);
+    return ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
+}
+
 int Player::getMenuRowIndex() const
 {
     return menuRowIndex;
@@ -779,6 +820,8 @@ void Player::performTimeWarp()
     TimeWarp* t = dynamic_cast<TimeWarp*>(powerups["TimeWarp"]);
     
     if ( t && !t->active ) {
+        t->timeBonus = globals.wrongAnswerTimePenalty * 2;
+        
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
         
         t->origFov = Degree(cam->getFOVy());
@@ -991,92 +1034,6 @@ void Player::testPodGiveFeedback(Pod* test)
                             tunnel->getMode() == STAGE_MODE_RECESS;
     bool podTaken = test->isPodTaken();
     
-#ifdef SPECIAL_PLAY
-    if (nbackPod && correctSelection)
-    {
-        ++numCorrectTotal;
-        ++numCorrectCombo;
-        numWrongCombo = 0;
-        if (podTaken)
-        {
-            if (tunnel->getMode() == STAGE_MODE_RECESS)
-            {
-                if (soundFeedbackGood)
-                {
-                    soundFeedbackGood->stop();
-                    soundFeedbackGood->play();
-                }
-            }
-            else
-            {
-                if (soundFeedbackGreat)
-                {
-                    soundFeedbackGreat->stop();
-                    soundFeedbackGreat->play();
-                }
-            }
-            
-            tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3);
-            if (tunnel->getMode() == STAGE_MODE_RECESS)
-            {
-                baseSpeed += globals.speedMap[baseSpeed];
-                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-            }
-            
-            if (getToggleBack() == 0)
-            {
-                if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
-                else hp += globals.HPNegativeCorrectAnswer;
-                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-            }
-            
-            // Determine Score
-            score += getScoring();
-        }
-    }
-    else if ((nbackPod && !correctSelection) ||
-             (!nbackPod && !correctSelection))
-    {
-        numCorrectCombo = 0;
-        if (!nbackPod && !correctSelection)
-            ++numWrongCombo;
-        if (nbackPod && !correctSelection)
-            ++numMissedTotal;
-        numCorrectBonus = 0;
-        if (podTaken)
-        {
-            if (soundFeedbackBad)
-            {
-                soundFeedbackBad->stop();
-                soundFeedbackBad->play();
-            }
-            ++numWrongTotal;
-            
-            xsTimer = 1.0f;
-            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-            else hp += globals.HPNegativeWrongAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        }
-    }
-    else //if (!nbackpod && correctSelection)
-    {
-        numSafeTotal++;
-        numCorrectBonus++;
-        if (podTaken)
-        {
-            if (soundFeedbackGood)
-            {
-                soundFeedbackGood->stop();
-                soundFeedbackGood->play();
-            }
-            
-            tunnel->satisfyCriteria(-1, 1);
-            
-            // Determine Score
-            score += 50.0f;
-        }
-    }
-#else
     if (nbackPod && correctSelection)
     {
         if (podTaken)
@@ -1231,7 +1188,6 @@ void Player::testPodGiveFeedback(Pod* test)
             score += 50.0f;
         }
     }
-#endif
     
     // Check for combo mode
     //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
@@ -2449,7 +2405,19 @@ void Player::saveAllResults(Evaluation eval)
             nrating = tunnel->getStarPhase();
         }
     }
-    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    
+    PlayerProgress* levelResult;
+    if(levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        levelResult = &levelRequest->second;
+    }
+    else
+    {
+        // If level played by 2-D grid select
+        levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    }
+    
     // If level has never been done before or we have a new high score, then save stats
     if (levelResult->rating < 0 || score > levelResult->score)
     {
@@ -2737,12 +2705,16 @@ bool Player::saveProgress(std::string file)
             out << "level" << " " << i << " " << j << " " << levelProgress[i][j] << std::endl;
     }
     
-    out << "tutorial" << " " << (*tutorialMgr) << std::endl;
+    out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
+    out << "scheduler1.0" << " " << (*scheduler) << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
     out << "maxVel" << " " << maxVel << std::endl;
     out << "minVelStopper" << " " << minVelStopper << std::endl;
+    out << "holdout" << " " << holdout << std::endl;
+    out << "holdoutLB" << " " << holdoutLB << std::endl;
+    out << "holdoutUB" << " " << holdoutUB << std::endl;
     out << "dampingDecayFree" << " " << dampingDecayFree << std::endl;
     out << "dampingDecayStop" << " " << dampingDecayStop << std::endl;
     out << "dampingDropFree" << " " << dampingDropFree << std::endl;
@@ -2873,8 +2845,10 @@ bool Player::loadProgress(std::string savePath)
 
 std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList)
 {
-    if (paramName == "tutorial")
+    if (paramName == "tutorial1.0")
         in >> (*tutorialMgr);
+    else if (paramName == "scheduler1.0")
+        in >> (*scheduler);
     else if (paramName == "levelSize")
     {
         int size;
@@ -2901,6 +2875,12 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> maxVel;
     else if (paramName == "minVelStopper")
         in >> minVelStopper;
+    else if (paramName == "holdout")
+        in >> holdout;
+    else if (paramName == "holdoutLB")
+        in >> holdoutLB;
+    else if (paramName == "holdoutUB")
+        in >> holdoutUB;
     else if (paramName == "dampingDecayFree")
         in >> dampingDecayFree;
     else if (paramName == "dampingDecayStop")
@@ -2932,6 +2912,187 @@ void Player::initSettings()
     dampingDecayStop = 0.500f; // Stop Motion damping multiplier
     dampingDropFree = 25.0f;    // Free Motion damping linear drop
     dampingDropStop = 50.0f;    // Stop Motion damping linear drop
+}
+
+void Player::feedLevelRequestFromSchedule()
+{
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices();
+    scheduleChoice1 = choices[0];
+    scheduleChoice2 = choices[1];
+    scheduleChoice3 = choices[2];
+//    // assign the level to be played in the same position as the iterator or the schedule
+//    levelRequest = &scheduler->schedule[0][0].first;
+//    
+//    // Increment to the next stagerequest
+//    scheduler->scheduleIt++;
+//    
+//    // if the schedule reaches the end, wrap it back to beginning
+//    if( scheduler->scheduleIt == scheduler->schedule.end() )
+//        scheduler->scheduleIt = scheduler->schedule.begin();
+}
+
+void Player::linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList)
+{
+    // Iterate through levelProg
+    for (int i = 0; i < levelProgress.size(); ++i)
+    {
+        for(int j = 0; j < levelProgress[i].size(); ++j)
+        {
+            // On each PlayerProg in levelProg, assign StageRequest* level
+            levelProgress[i][j].level = &stageList[i][j];
+        }
+    }
+}
+
+// Returns a multiplier when incrementing or decrementing memory level during assessment
+float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessment)
+{
+    float valMemory = 1.0;
+    float valLength = 1.0;
+    float valNavigation = 1.0;
+    float valHoldout = 1.0;
+    
+    float nBackDifficulty = level.nback - assessment.nBackSkill;
+    if ( nBackDifficulty < 0 )
+        valMemory = 0.5;    // easy memory
+    else if ( nBackDifficulty < 0.5 )
+        valMemory = 1.0;    // normal memory
+    else //if ( nBackDifficulty >= 0.5 )
+        valMemory = 1.5;    // hard memory
+
+    // Not only is it shorter times and stuff, the accuracy requirement
+    // for passing is lower for easy time. So it is a very strong multiplier
+    if (level.collectionCriteria.size() <= 4)
+        valLength = 0.5;    // easy time
+    else if (level.collectionCriteria.size() <= 8)
+        valLength = 1.0;    // normal time
+    else //if (level.collectionCriteria.size() <= 13)
+        valLength = 1.5;    // hard time
+    
+    if (level.difficultyX == DIFFICULTY_EASY)
+        valNavigation = 0.8;   // easy nav
+    else if (level.difficultyX == DIFFICULTY_NORMAL)
+        valNavigation = 1.0;   // normal nav
+    else //(level.difficulty == DIFFICULTY_HARD)
+        valNavigation = 1.2;   // hard nav
+    
+    if (level.hasHoldout())
+        valHoldout = 1.3;
+    else
+        valHoldout = 1.0;
+    
+    return valMemory * valLength * valNavigation * valHoldout;
+}
+
+// Grades level and updates nBackLevel of scheduler using the accuracy formula
+void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade)
+{
+    // first and second parts of the explicit pair
+    StageRequest level = levelToGrade->first;
+    PlayerProgress assessment = levelToGrade->second;
+    
+    // Formula for accuracy = TP / TP + TN + FP
+    double accuracy = 0.0f;
+    if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
+        accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+    
+    float weightMultiplier = obtainWeightMultiplier(level, assessment);
+    /*
+    // A score multiplier that changes based on difficulty
+    double weightMultiplier = 0.0;
+    double nBackDifficulty = level.nback - assessment.nBackSkill;
+    std::cout << "\n\n===========================================\n" << level.nback << " - " << assessment.nBackSkill << " = " << nBackDifficulty << endl;
+    switch (level.difficultyX) {
+        case DIFFICULTY_EASY:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.70;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 0.90;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.20;    // hard memory
+            break;
+        case DIFFICULTY_NORMAL:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.75;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.00;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.25;    // hard memory
+            break;
+        case DIFFICULTY_HARD:
+            if ( nBackDifficulty < 0 )          weightMultiplier = 0.80;    // easy memory
+            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.10;    // normal memory
+            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.30;    // hard memory
+            break;
+        default:
+            break;
+    }
+     */
+    
+    std::cout << "weight multi: " << weightMultiplier << endl;
+    
+    // Assign an accuracy range that determines success from 0% to 100%
+    // For shorter levels, it's possible to complete the level at lower accuracy.
+    // These are lower bound estimates for those accuracies (also excluding Time Warp)...
+    float accuracyRange = 1.0;
+    if (level.collectionCriteria.size() <= 4)
+        accuracyRange = 0.50;   // short time
+    else if (level.collectionCriteria.size() <= 8)
+        accuracyRange = 0.34;
+    else //if (level.collectionCriteria.size() <= 13)
+        accuracyRange = 0.25;
+    
+    // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
+    double nBackDelta = 0.35 * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    if ( nBackDelta < 0.0 )
+    {
+        if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
+        if (assessment.rating == 5) // If the player completed the level, don't decrease despite accuracy
+            nBackDelta = 0.0;
+        nBackDelta /= weightMultiplier; // apply multiplier to negative base value
+    }
+    else
+    {
+        if (assessment.rating != 5) // If the player didn't complete the level, don't increase despite accuracy
+            nBackDelta = 0.0;
+        nBackDelta *= weightMultiplier; // apply multiplier to positive base value
+    }
+    
+    scheduler->timePlayed += (sessions.end()->timestampOut - sessions.end()->timestampIn) / 1000;
+    if ( (scheduler->timePlayed / 60) >= 20 )
+        scheduler->sessionFinished = true;
+    
+    double playerSkill;
+    // Find out what phase they're in
+    switch ( level.phase ) {
+        case 'E':
+            scheduler->nBackLevelE += nBackDelta;
+            if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
+            playerSkill = scheduler->nBackLevelE;
+            break;
+        case 'A':
+            scheduler->nBackLevelA += nBackDelta;
+            if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+            playerSkill = scheduler->nBackLevelA;
+            break;
+        case 'B':
+            scheduler->nBackLevelB += nBackDelta;
+            if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+            playerSkill = scheduler->nBackLevelB;
+            break;
+        case 'C':
+            scheduler->nBackLevelC += nBackDelta;
+            if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
+            playerSkill = scheduler->nBackLevelC;
+            break;
+        case 'D':
+            scheduler->nBackLevelD += nBackDelta;
+            if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
+            playerSkill = scheduler->nBackLevelD;
+            break;
+        default:
+            break;
+    }
+    
+    levelToGrade->second.accuracy = accuracy;
+    levelToGrade->second.nbackDelta = nBackDelta;
+    levelToGrade->second.nBackSkill = playerSkill;
+    scheduler->removeBin(level.phaseX, level.difficultyX);
+    scheduler->scheduleHistory.push_back(*levelRequest);
 }
 
 Player::~Player()

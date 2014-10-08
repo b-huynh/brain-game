@@ -90,7 +90,7 @@ Util::ConfigGlobal::ConfigGlobal()
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 20.0;
+    wrongAnswerTimePenalty = 10.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
@@ -99,6 +99,7 @@ Util::ConfigGlobal::ConfigGlobal()
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
     maxCamSpeed = 40.0;
+    baselineSpeed = 15.0;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -1359,15 +1360,19 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     
     manual->position(-length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 0);
     manual->position(length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 0);
     manual->position(length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 1);
     manual->position(-length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 1);
     manual->quad(3, 2, 1, 0);
     manual->end();
@@ -1402,6 +1407,7 @@ void Util::createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, fl
     Vector3 p2 = Vector3(length / 2, 0, -depth / 2);
     Vector3 p3 = Vector3(length / 2, 0, depth / 2);
     Vector3 p4 = Vector3(-length / 2, 0, depth / 2);
+    
     Vector3 normal = Vector3(0, 1, 0);
     
     p1 = loc + rot * p1;
@@ -1689,6 +1695,173 @@ void PodInfo::performHoldout(char phase, bool sound)
                         podColor = POD_COLOR_HOLDOUT;
                     else
                         podShape = POD_SHAPE_HOLDOUT;
+                }
+            case 'E':   // recess levels
+                break;
+            case 'F':   // gear shift levels
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdcolor, bool holdshape)
+{
+    //float rand_holdOut = Ogre::Math::UnitRandom();
+    float rand_signal = Ogre::Math::UnitRandom();
+    
+    if( true ) {//|| rand_holdOut < 0.1f ) {
+        switch(phase) {
+            case 'A':   // levels that normally have color and sound active
+                //if sound is not available, holdout is not availabe
+                if(sound) {
+                    if(holdcolor&&!holdsound){
+                        
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if(!holdcolor&&holdsound){
+                        
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    else if( rand_signal < 0.5f) {
+                        
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else {
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                }
+                break;
+            case 'B':   // levels that normally have shape and sound active
+                if(sound) {
+                    if(holdshape&&!holdsound){
+                        
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else if(!holdshape&&holdsound){
+                        
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    else if( rand_signal < 0.5f) {
+                        
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else {
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                }
+                break;
+            case 'C':   // levels that normally have sound only active
+                break;
+            case 'D':   // levels that normally have all three signals active
+                if(sound){
+                    if (holdshape&&holdcolor&&holdsound) // color shape sound enabled
+                    {
+                        if( rand_signal < 0.167f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.333f ) {
+                            podSound = POD_SOUND_HOLDOUT;
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: sound and shape (color only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.500f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: color and sound (shape only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.667f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color (shape and sound only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.824f ) {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape (color and sound only)" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                        }
+                    }
+                    else if(!holdcolor&&holdshape&&holdsound) { //shape sound enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound" << std::endl;
+                        }
+                    }
+                    else if(!holdshape&&holdcolor&&holdsound) { //color and sound enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound" << std::endl;
+                        }
+                    }
+                    else if(holdshape&&holdcolor&&!holdsound) {     //shape color enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                    }
+                    else if (holdcolor){
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if (holdshape){
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else if (holdsound){
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    
+                }
+                else{   //if sound is disabled
+                    if(holdshape&&holdcolor&&!holdsound) {     //shape color enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                    }
+                    else if (holdcolor){
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if (holdshape){
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    
                 }
             case 'E':   // recess levels
                 break;

@@ -10,6 +10,7 @@
 #define __Vinezors2_0__PlayerProgress__
 
 #include <fstream>
+#include "LevelSet.h"
 
 // Tracks player performance on specific levels
 struct PlayerProgress
@@ -17,6 +18,9 @@ struct PlayerProgress
     // Best rating for the player on this level
     int rating; // 0 = N, 1 = *, 2 = **, 3 = ***
     int score;  // score rating
+    
+    // REMEMBER time speeds up as speed increases... need a new way to measure time
+    // ctime??
     float time; // time left on tunnel
     
     int numCorrect;
@@ -28,6 +32,11 @@ struct PlayerProgress
     int exitSpeed;
     
     int initSpeedSetting;
+    
+    float accuracy;
+    float nbackDelta;
+    double nBackSkill;
+    StageRequest* level;
     
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);

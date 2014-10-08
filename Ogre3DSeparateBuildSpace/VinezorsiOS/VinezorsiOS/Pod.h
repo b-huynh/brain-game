@@ -68,6 +68,7 @@ public:
     void loadBasicShape();
     void loadFlower();
     void loadFuelCell();
+    void loadCrystal();
     void loadHazard();
     void loadPowerup();
     

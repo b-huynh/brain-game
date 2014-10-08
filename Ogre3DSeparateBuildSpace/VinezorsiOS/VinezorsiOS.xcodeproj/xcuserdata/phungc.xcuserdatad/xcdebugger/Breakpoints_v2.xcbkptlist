@@ -165,8 +165,12 @@
 =======
             startingLineNumber = "1305"
             endingLineNumber = "1305"
+<<<<<<< HEAD
 >>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             landmarkName = "EngineStage::setup()"
+=======
+            landmarkName = "EngineStage::updateSpin(float elapsed)"
+>>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
             landmarkType = "5">
             <Locations>
                <Location
@@ -288,10 +292,15 @@
             timestampString = "429819760.077517"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "769"
             endingLineNumber = "769"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
+=======
+            startingLineNumber = "768"
+            endingLineNumber = "768">
+>>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -310,8 +319,12 @@
 =======
             startingLineNumber = "796"
             endingLineNumber = "796"
+<<<<<<< HEAD
 >>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             landmarkName = "HudStage::initOverlay()"
+=======
+            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
+>>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -331,8 +344,12 @@
 =======
             startingLineNumber = "795"
             endingLineNumber = "795"
+<<<<<<< HEAD
 >>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             landmarkName = "HudStage::initOverlay()"
+=======
+            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
+>>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -77,14 +77,6 @@
     doubleTapRecognizer.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:doubleTapRecognizer];
     
-    UISwipeGestureRecognizer *upSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget: self action:@selector(handleSwipeUp:)];
-    [upSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
-    [self.view addGestureRecognizer:upSwipeRecognizer];
-    
-    UISwipeGestureRecognizer *downSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget: self action:@selector(handleSwipeDown:)];
-    [downSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
-    [self.view addGestureRecognizer:downSwipeRecognizer];
-    
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     panRecognizer.minimumNumberOfTouches = 1;
     panRecognizer.maximumNumberOfTouches = 1;
@@ -305,17 +297,27 @@
 {
     //mApplication.activatePerformRightMove();
 }
-*/
+
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender
 {
-    mApplication.activatePerformSwipeDown();
+    CGFloat dx = end.x - start.x;
+    mApplication.activateTouchRelease(dx, end.y - start.y);
+    if (dx < -1.0)
+        mApplication.activatePerformLeftMove();
+    else if (dx > 1.0)
+        mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeUp:(UISwipeGestureRecognizer*)sender
 {
-    mApplication.activatePerformSwipeUp();
+    CGFloat dx = end.x - start.x;
+    mApplication.activateTouchRelease(dx, end.y - start.y);
+    if (dx < -1.0)
+        mApplication.activatePerformLeftMove();
+    else if (dx > 1.0)
+        mApplication.activatePerformRightMove();
 }
-
+*/
 
 - (IBAction)handleDoubleTap:(UITapGestureRecognizer*)sender
 {

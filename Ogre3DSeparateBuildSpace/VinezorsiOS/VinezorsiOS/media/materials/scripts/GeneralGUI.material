@@ -10,6 +10,8 @@ material General/ScreenBackground1
         texture_unit
         {
             texture tutorial_frame.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -26,7 +28,10 @@ material General/ScreenBackground2
         depth_write off
         texture_unit
         {
-            texture tutorial_screen.png
+            texture screenbackground2.png
+            //texture tutorial_screen.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -110,6 +115,8 @@ material General/PauseBase
         texture_unit
         {
             texture nav_base.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -195,6 +202,8 @@ material General/LevelSelectButtonRound
         texture_unit
         {
             texture buttonroundlevelselect.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -212,6 +221,8 @@ material General/NextButtonRound
         texture_unit
         {
             texture buttonroundnext.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -229,6 +240,8 @@ material General/NextButtonRoundGRAY
         texture_unit
         {
             texture buttonroundnextGRAY.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -246,6 +259,8 @@ material General/RestartButtonRound
         texture_unit
         {
             texture buttonroundrestart.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -263,6 +278,8 @@ material General/ResumeButtonRound
         texture_unit
         {
             texture buttonroundresume.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -280,68 +297,8 @@ material General/ResumeButtonRoundGRAY
         texture_unit
         {
             texture buttonroundresumeGRAY.png
-        }
-      } 
-    }
-}
-
-material General/BarColors
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_green_gray.png
-        }
-      } 
-    }
-}
-
-material General/BarColors2
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_blue_gray.png
-        }
-      } 
-    }
-}
-
-material General/BarColors3
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture bar_purple_size.png
-        }
-      } 
-    }
-}
-
-material General/Indicator
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture indicatorwhite.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -359,6 +316,8 @@ material General/PauseButton
         texture_unit
         {
             texture pauseButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -376,6 +335,8 @@ material General/PauseButtonYellow
         texture_unit
         {
             texture pause_buttonyellow.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -393,6 +354,8 @@ material General/PauseButtonGray
         texture_unit
         {
             texture pause_buttongray.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -410,6 +373,8 @@ material General/ButtonGoDown
         texture_unit
         {
             texture nextButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -427,6 +392,8 @@ material General/ButtonGoDownGray
         texture_unit
         {
             texture nextButtonBlue.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -444,6 +411,8 @@ material General/ButtonGoUp
         texture_unit
         {
             texture arrowL.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -461,6 +430,8 @@ material General/ButtonGoUpGray
         texture_unit
         {
             texture arrowL.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -478,6 +449,8 @@ material General/ButtonGo
         texture_unit
         {
             texture buttongo.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -495,6 +468,8 @@ material General/ButtonGoGray
         texture_unit
         {
             texture buttongoGRAY.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -579,7 +554,28 @@ material General/PlayButton
             depth_write off
 			texture_unit
 			{
-				texture buttonplay.png
+				texture buttonroundplay.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/PlayButtonGray
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture buttonroundplayGRAY.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -597,6 +593,8 @@ material General/CreditsButton
 			texture_unit
 			{
 				texture buttoncredits.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -614,6 +612,8 @@ material General/ControlSettingsButton
         texture_unit
         {
             texture buttoncontrolsettings.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -631,6 +631,8 @@ material General/BackButton
 			texture_unit
 			{
 				texture buttonroundback.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -648,6 +650,8 @@ material General/DefaultsButton
         texture_unit
         {
             texture buttonrounddefaults.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -665,6 +669,8 @@ material General/ExitButton
 			texture_unit
 			{
 				texture buttonexit.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -682,6 +688,8 @@ material General/ExitButton2
 			texture_unit
 			{
 				texture exitButtonBlue.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -733,6 +741,8 @@ material General/GUIMainHudLeft
 			texture_unit
 			{
 				texture hud-eblue_left.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -750,6 +760,8 @@ material General/GUIMainHudBar
 			texture_unit
 			{
 				texture hud-eblue_top.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -767,6 +779,8 @@ material General/GUIMainHudRight
 			texture_unit
 			{
 				texture hud-eblue_right.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -784,6 +798,8 @@ material General/GUIMainHudDip
 			texture_unit
 			{
 				texture hud-eblue_dip.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -800,7 +816,9 @@ material General/GUIMainHudShifter
             depth_write off
 			texture_unit
 			{
-				texture hud-eblue_zapper.png
+				texture hud-eblue_shifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
 			}
 		}
 	}
@@ -1123,7 +1141,7 @@ material General/GUICollectionGreyed
             depth_write off
 			texture_unit
 			{
-				texture score-no.png
+				texture score-no-x.png
 			}
 		}
 	}
@@ -1311,6 +1329,8 @@ material General/GUIToggleButton0
 			texture_unit
 			{
 				texture speed0slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1328,6 +1348,8 @@ material General/GUIToggleButton1
 			texture_unit
 			{
 				texture speed1slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1345,6 +1367,8 @@ material General/GUIToggleButton2
 			texture_unit
 			{
 				texture speed2slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1362,6 +1386,8 @@ material General/GUIToggleButton3
 			texture_unit
 			{
 				texture speed3slot.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
 		}
 	}
@@ -1618,6 +1644,8 @@ material General/BasicSliderRangeHorizontal
         texture_unit
         {
             texture sliderrange.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1635,6 +1663,8 @@ material General/BasicSliderBall
         texture_unit
         {
             texture sliderbutton.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1652,6 +1682,8 @@ material General/SpeedSliderRangeVertical
         texture_unit
         {
             texture speed_slide.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1670,6 +1702,8 @@ material General/SpeedSliderBall
         {
             texture speed_dial.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1688,6 +1722,8 @@ material General/SpeedSliderBallOff
         {
             texture speed_dial_off.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1706,6 +1742,8 @@ material General/SpeedSliderRangeHorizontal
         {
             texture speed_slide_extended.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }
@@ -1724,6 +1762,8 @@ material General/SpeedSliderBallHorizontal
         {
             texture speed_dial.png
             rotate 90
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
     }

@@ -1,3 +1,4 @@
+// Old obelisk material file when there was many submeshes
 material Obelisk/DarkGray
 {
 	technique

@@ -20,6 +20,7 @@
 #include "PlayerProgress.h"
 #include "LevelSet.h"
 #include "TutorialManager.h"
+#include "LevelScheduler.h"
 
 class Player
 {
@@ -187,6 +188,8 @@ public:
     float musicVolume;
     float soundVolume;
     float holdout;
+    float holdoutLB;
+    float holdoutUB;
     bool syncDataToServer;
     
     float maxVel;
@@ -259,6 +262,8 @@ public:
     PlayerProgress getLevelProgress(int row, int col) const;
     bool isLevelAvailable(int level) const;
     bool isLevelAvailable(int row, int col) const;
+    bool isNextLevelAvailable() const;
+    int getNextLevel() const;
     int getMenuRowIndex() const;
     int getTotalLevelRating(int row) const;
     float getTotalLevelScore(int row) const;
@@ -389,6 +394,26 @@ public:
     void initSettings();
     
     bool endFlag;
+    
+    // =====================
+    // Scheduler Stuffs
+    // =========================================================
+    LevelScheduler* scheduler;
+    std::pair<StageRequest, PlayerProgress>* levelRequest;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice1;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice2;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    
+    void feedLevelRequestFromSchedule();
+    
+    // iterate through the levelProgress vector, link each level in the LevelSet
+    void linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList);
+    
+    // Returns a multiplier when incrementing or decrementing memory level during assessment
+    float obtainWeightMultiplier(StageRequest level, PlayerProgress assessment);
+    
+    // "Grade" the level to see if player should repeat, go back, or advance
+    void assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade);
     
     ~Player();
 };
