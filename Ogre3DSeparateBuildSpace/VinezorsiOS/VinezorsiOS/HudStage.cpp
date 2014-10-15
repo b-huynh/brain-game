@@ -713,7 +713,6 @@ void HudStage::initOverlay()
     //buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
     pauseBackground->setMaterialName("General/PauseButton");
-    setSpeedDialState(false);
     pauseBaseBackground->setMaterialName("General/PauseBase");
     goBaseBackground->setMaterialName("General/PauseBase");
     

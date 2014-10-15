@@ -267,6 +267,11 @@ void TutorialManager::update(float elapsed)
     }
 }
 
+bool TutorialManager::hasVisitedSlide(TutorialSlidesType type) const
+{
+    return visitedSlide[type];
+}
+
 void TutorialManager::hide()
 {
     popupOverlay->hide();

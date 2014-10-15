@@ -2972,7 +2972,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     if(nBackDelta > 0 &&scheduler->currentHoldout < 80)
     {
-        scheduler->currentHoldout+=5;
+        scheduler->currentHoldout+=10;
         if (scheduler->currentHoldout > 80)
             scheduler->currentHoldout = 80;
     }

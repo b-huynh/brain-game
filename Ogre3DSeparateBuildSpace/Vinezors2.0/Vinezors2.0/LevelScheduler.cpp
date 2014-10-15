@@ -19,14 +19,74 @@ using namespace std;
  Creates a new scheduler
  */
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE, double currentHoldout )
-: scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), timePlayed(0), sessionFinished(false), sessionFinishedAcknowledged(false)
+: tutorialLevels(), scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), timePlayed(0), sessionFinished(false), sessionFinishedAcknowledged(false)
 {
+    initTutorialLevels();
     this->nBackLevelA = nBackLevelA;
     this->nBackLevelB = nBackLevelB;
     this->nBackLevelC = nBackLevelC;
     this->nBackLevelD = nBackLevelD;
     this->nBackLevelE = nBackLevelE;
     this->currentHoldout = currentHoldout;
+    this->speedA = 10.0f;
+    this->speedB = 10.0f;
+    this->speedC = 10.0f;
+    this->speedD = 10.0f;
+    this->speedE = 10.0f;
+}
+
+void LevelScheduler::initTutorialLevels()
+{
+    StageRequest level;
+    std::pair<StageRequest, PlayerProgress> ret;
+    
+    // A recess for all navigation
+    level = StageRequest();
+    level.stageNo = 0;
+    level.nback = 0;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.nameTunnelTile = "General/WallBindingG";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music4";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'E';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    ret = std::pair<StageRequest, PlayerProgress>();
+    ret.first = level;
+    tutorialLevels.push_back(ret);
+    
+    // All-signal 1-Back
+    level = StageRequest();
+    level.stageNo = 0;
+    level.nback = 1;
+    level.stageTime = 90.0;
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    for (int i = 0; i < 8; ++i)
+        level.collectionCriteria.push_back(CollectionCriteria(1));
+    level.nameTunnelTile = "General/WallBindingD";
+    level.nameSkybox = "General/BlankStarrySkyPlane";
+    level.nameMusic = "Music3";
+    level.tunnelSectionsPerNavLevel = 10;
+    level.phase = 'D';
+    level.initCamSpeed = 10;
+    level.minCamSpeed = 10;
+    level.maxCamSpeed = 40;
+    ret = std::pair<StageRequest, PlayerProgress>();
+    ret.first = level;
+    tutorialLevels.push_back(ret);
 }
 
 //________________________________________________________________________________________
@@ -464,7 +524,17 @@ int LevelScheduler::rand_num(int lower, int upper)
 std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
 {
     std::cout << "Saving Scheduler\n";
-    out << sch.nBackLevelA << " " << sch.nBackLevelB << " " << sch.nBackLevelC << " " << sch.nBackLevelD << " " << sch.nBackLevelE << " " << sch.currentHoldout;
+    out << sch.nBackLevelA << " "
+        << sch.nBackLevelB << " "
+        << sch.nBackLevelC << " "
+        << sch.nBackLevelD << " "
+        << sch.nBackLevelE << " "
+        << sch.currentHoldout << " "
+        << sch.speedA << " "
+        << sch.speedB << " "
+        << sch.speedC << " "
+        << sch.speedD << " "
+        << sch.speedE;
     return out;
 }
 
@@ -473,7 +543,17 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
 std::istream& operator>>(std::istream& in, LevelScheduler& sch)
 {
     std::cout << "Loading Scheduler\n";
-    in >> sch.nBackLevelA >> sch.nBackLevelB >> sch.nBackLevelC >> sch.nBackLevelD >> sch.nBackLevelE >> sch.currentHoldout;
+    in  >> sch.nBackLevelA
+        >> sch.nBackLevelB
+        >> sch.nBackLevelC
+        >> sch.nBackLevelD
+        >> sch.nBackLevelE
+        >> sch.currentHoldout
+        >> sch.speedA
+        >> sch.speedB
+        >> sch.speedC
+        >> sch.speedD
+        >> sch.speedE;
     return in;
 }
 

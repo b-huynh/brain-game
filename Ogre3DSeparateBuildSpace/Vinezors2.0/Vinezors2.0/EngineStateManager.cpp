@@ -48,55 +48,73 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineStage(this, player));
+            top = new EngineStage(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_SCHEDULER_MENU:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineSchedulerMenu(this, player));
+            top = new EngineSchedulerMenu(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_LEVEL_SELECTION:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineLevelSelection(this, player));
+            top = new EngineLevelSelection(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_MAIN_MENU:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineMainMenu(this, player));
+            top = new EngineMainMenu(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_CREDITS:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineCredits(this, player));
+            top = new EngineCredits(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_MAIN_SETTINGS:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineMainSettings(this, player));
+            top = new EngineMainSettings(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         case ENGINE_CONTROL_SETTINGS:
         {
             Engine* top = getActiveEngine();
             if (top) top->exit();
-            gameEngineStack.push_back(new EngineControlSettings(this, player));
+            top = new EngineControlSettings(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
             break;
         }
         default:
             std::cout << "WARNING: Unknown engine type push request!\n";
             break;
     }
+    std::cout << "CHOO CHOO: ";
+    for (int i = 0; i < gameEngineStack.size(); ++i)
+        std::cout << gameEngineStack[i]->getEngineType();
+    std::cout << std::endl;
 }
 
 void EngineStateManager::requestPopEngine()

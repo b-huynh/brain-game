@@ -91,6 +91,7 @@ public:
     void updateOverlay();
     void updateOverride(float elapsed);
     void update(float elapsed);
+    bool hasVisitedSlide(TutorialSlidesType type) const;
     
     // Show or hide popup tutorial slides. If tutorial slides are active,
     // in-game controls and update will be inactive

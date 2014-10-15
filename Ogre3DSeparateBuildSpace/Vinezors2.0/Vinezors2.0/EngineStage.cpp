@@ -22,7 +22,6 @@ EngineStage::EngineStage(EngineStateManager* engineStateMgr, Player* player)
     this->tunnel = NULL;
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineStage::~EngineStage()
@@ -60,6 +59,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
+            hud->setSpeedDialState(false);
             hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);

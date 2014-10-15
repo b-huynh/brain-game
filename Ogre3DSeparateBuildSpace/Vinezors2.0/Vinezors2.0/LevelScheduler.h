@@ -47,6 +47,8 @@ struct LevelScheduler
     
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
+    
+    std::vector< std::pair<StageRequest, PlayerProgress> > tutorialLevels;
     std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistory;
     std::list<Bin>* binA;
     std::list<Bin>* binB;
@@ -64,8 +66,16 @@ struct LevelScheduler
     double nBackLevelE;
     double currentHoldout;
     
+    double speedA;
+    double speedB;
+    double speedC;
+    double speedD;
+    double speedE;
+    
     
     // Member functions
+    void initTutorialLevels();
+    
     StageRequest getRandomLevel( LevelSet* levels );
     void initializeSchedule( LevelSet* levels );
     
