@@ -206,6 +206,11 @@ void LevelScheduler::initTutorialLevels()
 
 void LevelScheduler::populateBins()
 {
+    // Modifiers for each difficulty nBack
+    const double N_BACK_EASY = 0.7;
+    const double N_BACK_NORMAL = 0.0;
+    const double N_BACK_HARD = -0.7;
+    
     const int NUM_DIFFICULTIES = 3;
     
     if(!binA) binA = new std::list<Bin>();
@@ -213,86 +218,75 @@ void LevelScheduler::populateBins()
     if(!binC) binC = new std::list<Bin>();
     if(!binD) binD = new std::list<Bin>();
     if(!binE) binE = new std::list<Bin>();
-
-    for(int i = 0; i < NUM_DIFFICULTIES; ++i)
-    {
-        switch ( (StageDifficulty)i ) {
-            case DIFFICULTY_EASY:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, DURATION_NORMAL, false));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_SHORT, false));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, DURATION_SHORT, false));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, DURATION_SHORT, false));
-                break;
-            case DIFFICULTY_NORMAL:                                                                     // DURRATION      DIFFICULTY     HOLDOUT
-                                                                                                        // RECESS:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true));      // normal           normal          Y
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
-                
-                                                                                                        // SHAPE SOUND:
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true));      // normal           normal          Y
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false));       // long             normal          N
-                
-                                                                                                        // SHAPE SOUND:
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_SHORT, false));       // short            normal          N
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_NORMAL, false));      // normal           normal          Y
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_LONG, false));        // long             normal          N
-                
-                                                                                                        // SHAPE SOUND:
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, false));         // normal           normal          N
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, true));          // normal           normal          Y
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_LONG, false));           // long             normal          N
-                
-                                                                                                        // SHAPE SOUND:
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_NORMAL, false));         // normal           normal          N
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_NORMAL, true));          // normal           normal          Y
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_LONG, false));           // long             normal          N
-                break;
-            case DIFFICULTY_HARD:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, DURATION_NORMAL, false));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, DURATION_LONG, false));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, DURATION_LONG, false));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, DURATION_LONG, false));
-                break;
-            default:
-                break;
-        }
-    }
-    /*
-    binA->push_back(Bin(PHASE_COLOR_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
-    binB->push_back(Bin(PHASE_SHAPE_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
-    binC->push_back(Bin(PHASE_SOUND_ONLY, (StageDifficulty)(rand() % NUM_DIFFICULTIES), false));
-    binD->push_back(Bin(PHASE_HOLDOUT, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
-     */
     
+    /////////////////////
+    // Easy Difficulty //
+    /////////////////////
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, DURATION_NORMAL, false, N_BACK_EASY));
+    
+    ///////////////////////
+    // Normal Difficulty //
+    ///////////////////////
+    // COLOR SOUND:
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));      // normal           normal          Y
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
+    
+    // SHAPE SOUND:
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));      // normal           normal          Y
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));       // long             normal          N
+    
+    // SHAPE SOUND:
+    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));      // normal           normal          N
+    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_LONG, false, N_BACK_NORMAL));          // long             easy            N
+    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));        // long             normal          N
+    
+    // ALL SIGNAL:
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));         // normal           normal          N
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));          // normal           normal          Y
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));           // long             normal          N
+    
+    // RECESS:
+    binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));         // normal           normal          N
+    
+    /////////////////////
+    // Hard Difficulty //
+    /////////////////////
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, false, N_BACK_HARD));
 }
 //________________________________________________________________________________________
 
 
-void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX)
+void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX, StageDuration durationX, bool hasHoldout)
 {
     switch (phaseX) {
         case PHASE_COLLECT:
-            binE->remove(Bin(phaseX, difficultyX));
+            binE->remove(Bin(phaseX, difficultyX, durationX, hasHoldout));
             break;
         
         case PHASE_COLOR_SOUND:
-            binA->remove(Bin(phaseX, difficultyX));
+            binA->remove(Bin(phaseX, difficultyX, durationX, hasHoldout));
             break;
             
         case PHASE_SHAPE_SOUND:
-            binB->remove(Bin(phaseX, difficultyX));
+            binB->remove(Bin(phaseX, difficultyX, durationX, hasHoldout));
             break;
             
         case PHASE_SOUND_ONLY:
-            binC->remove(Bin(phaseX, difficultyX));
+            binC->remove(Bin(phaseX, difficultyX, durationX, hasHoldout));
             break;
             
         case PHASE_HOLDOUT:
-            binD->remove(Bin(phaseX, difficultyX));
+            binD->remove(Bin(phaseX, difficultyX, durationX, hasHoldout));
             break;
             
         default:
@@ -393,11 +387,6 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 
 std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices()
 {
-    // Modifiers for each difficulty nBack
-    const double N_BACK_EASY = 0.7;
-    const double N_BACK_NORMAL = 0.0;
-    const double N_BACK_HARD = -0.7;
-    
     /* For debugging purposes */
     cout <<  "/--------------------------------\\" << endl
          <<  "|       Current nBack Levels     |" << endl
@@ -417,6 +406,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     StageDifficulty difficulty;
     StageDuration duration;
     bool holdout;
+    double shift;
     double playerSkill;
     int nBackRounded;
     
@@ -427,6 +417,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         difficulty = choices[i].difficultyX;
         duration = choices[i].durationX;
         holdout = choices[i].holdout;
+        shift = choices[i].nbackShift;
         
 //        cout << "\n\n================================\n\nPhase: " << phase << endl;
 //        cout << "Difficulty: " << difficulty << endl;
@@ -434,87 +425,27 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         switch ( phase ) {
             case PHASE_COLLECT:
                 playerSkill = nBackLevelE;
-                switch (difficulty) {
-                    case DIFFICULTY_EASY:
-                        nBackRounded = (int)round(nBackLevelE + N_BACK_EASY);
-                        break;
-                    case DIFFICULTY_NORMAL:
-                        nBackRounded = (int)round(nBackLevelE + N_BACK_NORMAL);
-                        break;
-                    case DIFFICULTY_HARD:
-                        nBackRounded = (int)round(nBackLevelE + N_BACK_HARD);
-                        break;
-                    default:
-                        break;
-                }
                 break;
             case PHASE_COLOR_SOUND:
                 playerSkill = nBackLevelA;
-                switch (difficulty) {
-                    case DIFFICULTY_EASY:
-                        nBackRounded = (int)round(nBackLevelA + N_BACK_EASY);
-                        break;
-                    case DIFFICULTY_NORMAL:
-                        nBackRounded = (int)round(nBackLevelA + N_BACK_NORMAL);
-                        break;
-                    case DIFFICULTY_HARD:
-                        nBackRounded = (int)round(nBackLevelA + N_BACK_HARD);
-                        break;
-                    default:
-                        break;
-                }
                 break;
             case PHASE_SHAPE_SOUND:
                 playerSkill = nBackLevelB;
-                switch (difficulty) {
-                    case DIFFICULTY_EASY:
-                        nBackRounded = (int)round(nBackLevelB + N_BACK_EASY);
-                        break;
-                    case DIFFICULTY_NORMAL:
-                        nBackRounded = (int)round(nBackLevelB + N_BACK_NORMAL);
-                        break;
-                    case DIFFICULTY_HARD:
-                        nBackRounded = (int)round(nBackLevelB + N_BACK_HARD);
-                        break;
-                    default:
-                        break;
-                }
                 break;
             case PHASE_SOUND_ONLY:
                 playerSkill = nBackLevelC;
-                switch (difficulty) {
-                    case DIFFICULTY_EASY:
-                        nBackRounded = (int)round(nBackLevelC + N_BACK_EASY);
-                        break;
-                    case DIFFICULTY_NORMAL:
-                        nBackRounded = (int)round(nBackLevelC + N_BACK_NORMAL);
-                        break;
-                    case DIFFICULTY_HARD:
-                        nBackRounded = (int)round(nBackLevelC + N_BACK_HARD);
-                        break;
-                    default:
-                        break;
-                }
                 break;
             case PHASE_HOLDOUT:
                 playerSkill = nBackLevelD;
-                switch (difficulty) {
-                    case DIFFICULTY_EASY:
-                        nBackRounded = (int)round(nBackLevelD + N_BACK_EASY);
-                        break;
-                    case DIFFICULTY_NORMAL:
-                        nBackRounded = (int)round(nBackLevelD + N_BACK_NORMAL);
-                        break;
-                    case DIFFICULTY_HARD:
-                        nBackRounded = (int)round(nBackLevelD + N_BACK_HARD);
-                        break;
-                    default:
-                        break;
-                }
                 break;
             default:
+                playerSkill = 1.0;
                 break;
         }
+        //std::cout << "PHASE: " << phase << std::endl;
+        //std::cout << "SKILL: " << playerSkill << std::endl;
+        //std::cout << "SHIFT: " << shift << std::endl;
+        nBackRounded = (int)round(playerSkill + shift);
         
         if(nBackRounded < 1) nBackRounded = 1;
         if (holdout)

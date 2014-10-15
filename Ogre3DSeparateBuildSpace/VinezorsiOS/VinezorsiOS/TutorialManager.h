@@ -73,6 +73,7 @@ public:
         TUTORIAL_SLIDES_TEXTBOX_3_2B,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT1,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT2,
+        TUTORIAL_END_OF_SESSION
     };
     
     bool isEnabled() const;
@@ -91,6 +92,7 @@ public:
     void updateOverlay();
     void updateOverride(float elapsed);
     void update(float elapsed);
+    bool hasVisitedSlide(TutorialSlidesType type) const;
     
     // Show or hide popup tutorial slides. If tutorial slides are active,
     // in-game controls and update will be inactive

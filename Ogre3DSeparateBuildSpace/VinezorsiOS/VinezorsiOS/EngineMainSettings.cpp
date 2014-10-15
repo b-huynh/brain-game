@@ -17,7 +17,6 @@ EngineMainSettings::EngineMainSettings(EngineStateManager* engineStateMgr, Playe
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineMainSettings::~EngineMainSettings()

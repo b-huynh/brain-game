@@ -3074,7 +3074,15 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     levelToGrade->second.nbackDelta = nBackDelta;
     levelToGrade->second.nBackSkill = playerSkill;
     
-    scheduler->removeBin(level.phaseX, level.difficultyX);
+    // Duration is not stored in level to remove the correct bin
+    StageDuration durationX;
+    if (level.collectionCriteria.size() <= 4)
+        durationX = DURATION_SHORT;
+    else if (level.collectionCriteria.size() <= 8)
+        durationX = DURATION_NORMAL;
+    else
+        durationX = DURATION_LONG;
+    scheduler->removeBin(level.phaseX, level.difficultyX, durationX, level.hasHoldout());
     scheduler->scheduleHistory.push_back(*levelRequest);
 }
 

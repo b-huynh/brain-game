@@ -445,10 +445,40 @@ void HudStage::alloc()
     PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
     speedSlider->adjust();
     //std::cout << "Performance: " << levelPerformance.initSpeedSetting << std::endl;
-    if (levelPerformance.initSpeedSetting >= 0)
-        speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+    
+    if(player->levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        switch (player->levelRequest->first.phase)
+        {
+            case 'A':
+                speedSlider->setBallPosition(player->scheduler->speedA);
+                break;
+            case 'B':
+                speedSlider->setBallPosition(player->scheduler->speedB);
+                break;
+            case 'C':
+                speedSlider->setBallPosition(player->scheduler->speedC);
+                break;
+            case 'D':
+                speedSlider->setBallPosition(player->scheduler->speedD);
+                break;
+            case 'E':
+                speedSlider->setBallPosition(player->scheduler->speedE);
+                break;
+            default:
+                speedSlider->setBallPosition(globals.initCamSpeed);
+                break;
+        }
+    }
     else
-        speedSlider->setBallPosition(globals.initCamSpeed);
+    {
+        // If level played by 2-D grid select
+        if (levelPerformance.initSpeedSetting >= 0)
+            speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+        else
+            speedSlider->setBallPosition(globals.initCamSpeed);
+    }
     player->setBaseSpeed(speedSlider->getIndex());
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
     setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads

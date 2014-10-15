@@ -990,7 +990,8 @@ void Player::testPodGiveFeedback(Pod* test)
 
         if (tunnel->satisfyCriteria(tunnel->getNBackToggle()) || tunnel->getMode() == STAGE_MODE_RECESS)
         {
-            baseSpeed += globals.speedMap[baseSpeed];
+            updateSpeed(initSpeed, true);
+            //baseSpeed += globals.speedMap[baseSpeed];
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         }
         
@@ -1027,7 +1028,9 @@ void Player::testPodGiveFeedback(Pod* test)
         
         numCorrectCombo = 0;
         ++numWrongCombo;
-        baseSpeed -= globals.speedMap[baseSpeed];
+        
+        updateSpeed(initSpeed, false);
+        //baseSpeed -= globals.speedMap[baseSpeed];
         baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
         
         numCorrectBonus = 0;
@@ -1060,7 +1063,9 @@ void Player::testPodGiveFeedback(Pod* test)
         
             numCorrectCombo = 0;
             ++numWrongCombo;
-            baseSpeed -= globals.speedMap[baseSpeed];
+            
+            updateSpeed(initSpeed, false);
+            //baseSpeed -= globals.speedMap[baseSpeed];
             baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
     
             numCorrectBonus = 0;
@@ -1641,17 +1646,44 @@ void Player::startMenu()
 // Save speed settings from speed dial
 void Player::saveSpeedSettings()
 {
-    // Save speed settings for every other stage as well.
-    // Players prefer it carries over to every other level instead of just the level played itself.
-    for (int i = 0; i < levelProgress.size(); ++i)
-        for (int j = 0; j < levelProgress[i].size(); ++j)
+    if (levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        switch (levelRequest->first.phase)
         {
-            PlayerProgress* levelResult = &(levelProgress[i][j]);
-            levelResult->initSpeedSetting = globals.initCamSpeed;
+            case 'A':
+                scheduler->speedA = globals.initCamSpeed;
+                break;
+            case 'B':
+                scheduler->speedB = globals.initCamSpeed;
+                break;
+            case 'C':
+                scheduler->speedC = globals.initCamSpeed;
+                break;
+            case 'D':
+                scheduler->speedD = globals.initCamSpeed;
+                break;
+            case 'E':
+                scheduler->speedE = globals.initCamSpeed;
+                break;
+            default:
+                break;
         }
-    // Save speed settings for just the stage
-    //PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
-    //levelResult->initSpeedSetting = globals.initCamSpeed;
+    }
+    else
+    {
+        // Save speed settings for every other stage as well.
+        // Players prefer it carries over to every other level instead of just the level played itself.
+        for (int i = 0; i < levelProgress.size(); ++i)
+            for (int j = 0; j < levelProgress[i].size(); ++j)
+            {
+                PlayerProgress* levelResult = &(levelProgress[i][j]);
+                levelResult->initSpeedSetting = globals.initCamSpeed;
+            }
+        // Save speed settings for just the stage
+        //PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+        //levelResult->initSpeedSetting = globals.initCamSpeed;
+    }
 }
 
 void Player::move(Vector3 delta)
@@ -1897,6 +1929,61 @@ void Player::checkCollisions()
     }
 }
 
+// Updates final speed based on the mean. (Bigger steps around the mean and smaller steps away from the mean).
+// The function also takes in a step parameter where true is an increasing step and false is a decreasing step.
+void Player::updateSpeed(int mean, bool step)
+{
+    float epsilon = 0.1;
+    float ds = 0.0;
+    if (step)
+    {
+        float dist = baseSpeed - mean;
+        if (dist <= -20 + epsilon)
+            ds = 0.5;
+        else if (dist <= -15 + epsilon)
+            ds = 0.5;
+        else if (dist <= -10 + epsilon)
+            ds = 1.0;
+        else if (dist <= -2 + epsilon)
+            ds = 2.0;
+        else if (dist < 2 + epsilon)
+            ds = 3.0;
+        else if (dist < 10 + epsilon)
+            ds = 2.0;
+        else if (dist < 15 + epsilon)
+            ds = 1.0;
+        else if (dist < 20 + epsilon)
+            ds = 0.5;
+        else
+            ds = 0.0;
+    }
+    else
+    {
+        float dist = baseSpeed - mean;
+        if (dist <= -20 + epsilon)
+            ds = 0.0;
+        else if (dist <= -15 + epsilon)
+            ds = -0.5;
+        else if (dist <= -10 + epsilon)
+            ds = -1.0;
+        else if (dist <= -2 + epsilon)
+            ds = -2.0;
+        else if (dist < 2 + epsilon)
+            ds = -3.0;
+        else if (dist < 10 + epsilon)
+            ds = -2.0;
+        else if (dist < 15 + epsilon)
+            ds = -1.0;
+        else if (dist < 20 + epsilon)
+            ds = -0.5;
+        else
+            ds = -0.5;
+    }
+    baseSpeed += ds;
+}
+
+// Assigns the actual final speed of the ship depending on the state of the game and the player.
+// Final speed uses the in-game base speed of the player.
 void Player::decideFinalSpeed(float elapsed)
 {
     if (tunnel->isDone())
@@ -2835,12 +2922,12 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
     float valHoldout = 1.0;
     
     float nBackDifficulty = level.nback - assessment.nBackSkill;
-    if ( nBackDifficulty < 0 )
+    if ( nBackDifficulty < -0.5 )
         valMemory = 0.5;    // easy memory
     else if ( nBackDifficulty < 0.5 )
         valMemory = 1.0;    // normal memory
     else //if ( nBackDifficulty >= 0.5 )
-        valMemory = 1.5;    // hard memory
+        valMemory = 3.0;    // hard memory
 
     // Not only is it shorter times and stuff, the accuracy requirement
     // for passing is lower for easy time. So it is a very strong multiplier
@@ -2849,7 +2936,7 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
     else if (level.collectionCriteria.size() <= 8)
         valLength = 1.0;    // normal time
     else //if (level.collectionCriteria.size() <= 13)
-        valLength = 1.5;    // hard time
+        valLength = 2.0;    // hard time
     
     if (level.difficultyX == DIFFICULTY_EASY)
         valNavigation = 0.8;   // easy nav
@@ -2905,7 +2992,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     }
      */
     
-    std::cout << "weight multi: " << weightMultiplier << endl;
+    // std::cout << "weight multi: " << weightMultiplier << endl;
     
     // Assign an accuracy range that determines success from 0% to 100%
     // For shorter levels, it's possible to complete the level at lower accuracy.
@@ -2934,9 +3021,15 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
     }
     
-    scheduler->timePlayed += (sessions.end()->timestampOut - sessions.end()->timestampIn) / 1000;
+    scheduler->timePlayed += (sessions.back().timestampOut - sessions.back().timestampIn) / 1000;
     if ( (scheduler->timePlayed / 60) >= 20 )
         scheduler->sessionFinished = true;
+    
+    cout << "\n\n-----------------------------------------\n";
+    cout << "Time In: " << sessions.back().timestampOut << endl;
+    cout << "Time Out: " << sessions.back().timestampIn << endl;
+    cout << "Time Played: " << scheduler->timePlayed << endl;
+    cout << "-----------------------------------------\n\n";
     
     double playerSkill;
     // Find out what phase they're in
@@ -2981,7 +3074,15 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     levelToGrade->second.nbackDelta = nBackDelta;
     levelToGrade->second.nBackSkill = playerSkill;
     
-    scheduler->removeBin(level.phaseX, level.difficultyX);
+    // Duration is not stored in level to remove the correct bin
+    StageDuration durationX;
+    if (level.collectionCriteria.size() <= 4)
+        durationX = DURATION_SHORT;
+    else if (level.collectionCriteria.size() <= 8)
+        durationX = DURATION_NORMAL;
+    else
+        durationX = DURATION_LONG;
+    scheduler->removeBin(level.phaseX, level.difficultyX, durationX, level.hasHoldout());
     scheduler->scheduleHistory.push_back(*levelRequest);
 }
 

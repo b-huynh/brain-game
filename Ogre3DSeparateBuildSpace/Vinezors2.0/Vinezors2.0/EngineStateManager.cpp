@@ -111,10 +111,6 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
             std::cout << "WARNING: Unknown engine type push request!\n";
             break;
     }
-    std::cout << "CHOO CHOO: ";
-    for (int i = 0; i < gameEngineStack.size(); ++i)
-        std::cout << gameEngineStack[i]->getEngineType();
-    std::cout << std::endl;
 }
 
 void EngineStateManager::requestPopEngine()

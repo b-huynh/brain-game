@@ -24,14 +24,17 @@
 
 struct Bin
 {
-    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, StageDuration durationX = DURATION_NORMAL, bool holdout = false)
-    : phaseX(phaseX), difficultyX(difficultyX), holdout(holdout)
+    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, StageDuration durationX = DURATION_NORMAL, bool holdout = false, double nbackShift = 0.0)
+    : phaseX(phaseX), difficultyX(difficultyX), durationX(durationX), holdout(holdout), nbackShift(nbackShift)
     {}
     
     LevelPhase phaseX;
     StageDifficulty difficultyX;
     StageDuration durationX;
     bool holdout;
+    
+    // Not checked in comparison
+    double nbackShift;
     
     bool operator==(const Bin rhs) const
     {
@@ -81,7 +84,7 @@ struct LevelScheduler
     void initializeSchedule( LevelSet* levels );
     
     void populateBins();
-    void removeBin(LevelPhase phaseX, StageDifficulty difficultyX);
+    void removeBin(LevelPhase phaseX, StageDifficulty difficultyX, StageDuration durationX, bool hasHoldout);
     std::list<Bin>* pickRandomBin();
     void pickRandomMarble( std::vector<Bin>& choices );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();

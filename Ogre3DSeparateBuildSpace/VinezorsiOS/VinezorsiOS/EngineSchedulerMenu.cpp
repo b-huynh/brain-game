@@ -18,7 +18,6 @@ EngineSchedulerMenu::EngineSchedulerMenu(EngineStateManager* engineStateMgr, Pla
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineSchedulerMenu::~EngineSchedulerMenu()
@@ -28,7 +27,6 @@ EngineSchedulerMenu::~EngineSchedulerMenu()
 void EngineSchedulerMenu::enter()
 {
     alloc();
-    player->startMenu();
     
     // Set skybox
     Util::setSkyboxAndFog("");
@@ -36,6 +34,18 @@ void EngineSchedulerMenu::enter()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetOrientation();
+    
+    TutorialManager* tutorialMgr = player->getTutorialMgr();
+    if (!tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
+        player->levelRequest = &player->scheduler->tutorialLevels[0];
+        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+    }
+    else if (!tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
+        player->levelRequest = &player->scheduler->tutorialLevels[1];
+        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+    }
+    else
+        player->startMenu();
 }
 
 void EngineSchedulerMenu::exit()
