@@ -2992,7 +2992,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     }
      */
     
-    std::cout << "weight multi: " << weightMultiplier << endl;
+    // std::cout << "weight multi: " << weightMultiplier << endl;
     
     // Assign an accuracy range that determines success from 0% to 100%
     // For shorter levels, it's possible to complete the level at lower accuracy.
@@ -3021,9 +3021,15 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
     }
     
-    scheduler->timePlayed += (sessions.end()->timestampOut - sessions.end()->timestampIn) / 1000;
+    scheduler->timePlayed += (sessions.back().timestampOut - sessions.back().timestampIn) / 1000;
     if ( (scheduler->timePlayed / 60) >= 20 )
         scheduler->sessionFinished = true;
+    
+    cout << "\n\n-----------------------------------------\n";
+    cout << "Time In: " << sessions.back().timestampOut << endl;
+    cout << "Time Out: " << sessions.back().timestampIn << endl;
+    cout << "Time Played: " << scheduler->timePlayed << endl;
+    cout << "-----------------------------------------\n\n";
     
     double playerSkill;
     // Find out what phase they're in

@@ -198,9 +198,23 @@ void EngineStage::update(float elapsed)
             // have a done screen after a certain time limit is reached
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
-                player->assessLevelPerformance(player->levelRequest);
                 player->saveProgress(globals.savePath);
+                player->assessLevelPerformance(player->levelRequest);
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+                if (player->scheduler->sessionFinished) {
+                    std::cout << "finished!\n";
+                }
+                else
+                {
+                    std::cout << "not finished!\n";
+                }
+                if(player->scheduler->sessionFinished)
+                {
+                    std::cout << "\n\n\n==========================================="
+                                << "Session Finished!\n"
+                                << "===========================================\n";
+                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                }
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();

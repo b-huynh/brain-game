@@ -73,6 +73,7 @@ public:
         TUTORIAL_SLIDES_TEXTBOX_3_2B,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT1,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT2,
+        TUTORIAL_END_OF_SESSION
     };
     
     bool isEnabled() const;

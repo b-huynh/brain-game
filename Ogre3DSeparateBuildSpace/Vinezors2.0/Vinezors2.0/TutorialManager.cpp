@@ -135,6 +135,8 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
         case TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxSoundOnly", ""));
             break;
+        case TUTORIAL_END_OF_SESSION:
+            ret.push_back(TutorialSlide("\n\nEnd of Session", "General/TutorialBackdrop", ""));
         default:
             break;
     }
@@ -145,13 +147,13 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
 // Load set of slides in a queue with a timer that when expired, will load the slides up
 void TutorialManager::prepareSlides(TutorialSlidesType type, float startTimer)
 {
-    if (isEnabled() && !visitedSlide[type])
+    if ((isEnabled() && !visitedSlide[type]) || (type == TUTORIAL_END_OF_SESSION))
     {
         prepareSlides(getSlides(type), startTimer);
         visitedSlide[type] = true;
     }
-    
 }
+
 void TutorialManager::prepareSlides(const std::vector<TutorialSlide> & slides, float startTimer)
 {
     this->startTimer = startTimer;
