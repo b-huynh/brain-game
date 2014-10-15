@@ -158,34 +158,55 @@ void LevelScheduler::populateBins()
     {
         switch ( (StageDifficulty)i ) {
             case DIFFICULTY_EASY:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, false));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, false));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, false));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, false));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, false));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, DURATION_NORMAL, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_SHORT, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_EASY, DURATION_SHORT, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_EASY, DURATION_SHORT, false));
                 break;
-            case DIFFICULTY_NORMAL:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, false));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, false));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, false));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, false));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, false));
+            case DIFFICULTY_NORMAL:                                                                     // DURRATION      DIFFICULTY     HOLDOUT
+                                                                                                        // RECESS:
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true));      // normal           normal          Y
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
+                
+                                                                                                        // SHAPE SOUND:
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false));     // normal           normal          N
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true));      // normal           normal          Y
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false));       // long             normal          N
+                
+                                                                                                        // SHAPE SOUND:
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_SHORT, false));       // short            normal          N
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_NORMAL, false));      // normal           normal          Y
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_LONG, false));        // long             normal          N
+                
+                                                                                                        // SHAPE SOUND:
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, false));         // normal           normal          N
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, true));          // normal           normal          Y
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_LONG, false));           // long             normal          N
+                
+                                                                                                        // SHAPE SOUND:
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_NORMAL, false));         // normal           normal          N
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_NORMAL, true));          // normal           normal          Y
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_NORMAL, DURATION_LONG, false));           // long             normal          N
                 break;
             case DIFFICULTY_HARD:
-                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, false));
-                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, false));
-                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, false));
-                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, false));
-                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, false));
+                binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, DURATION_NORMAL, false));
+                binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, DURATION_LONG, false));
+                binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false));
+                binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, DURATION_LONG, false));
+                binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, DURATION_LONG, false));
                 break;
             default:
                 break;
         }
     }
+    /*
     binA->push_back(Bin(PHASE_COLOR_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
     binB->push_back(Bin(PHASE_SHAPE_SOUND, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
     binC->push_back(Bin(PHASE_SOUND_ONLY, (StageDifficulty)(rand() % NUM_DIFFICULTIES), false));
     binD->push_back(Bin(PHASE_HOLDOUT, (StageDifficulty)(rand() % NUM_DIFFICULTIES), true));
+     */
     
 }
 //________________________________________________________________________________________
@@ -334,6 +355,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     std::pair<StageRequest, PlayerProgress> node;
     LevelPhase phase;
     StageDifficulty difficulty;
+    StageDuration duration;
     bool holdout;
     double playerSkill;
     int nBackRounded;
@@ -343,6 +365,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         pickRandomMarble( choices );
         phase = choices[i].phaseX;
         difficulty = choices[i].difficultyX;
+        duration = choices[i].durationX;
         holdout = choices[i].holdout;
         
 //        cout << "\n\n================================\n\nPhase: " << phase << endl;
@@ -435,9 +458,9 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         if(nBackRounded < 1) nBackRounded = 1;
         if (holdout)
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, currentHoldout);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout);
         else
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, 0.0);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0);
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);

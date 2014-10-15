@@ -24,17 +24,18 @@
 
 struct Bin
 {
-    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, bool holdout = false)
+    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, StageDuration durationX = DURATION_NORMAL, bool holdout = false)
     : phaseX(phaseX), difficultyX(difficultyX), holdout(holdout)
     {}
     
     LevelPhase phaseX;
     StageDifficulty difficultyX;
+    StageDuration durationX;
     bool holdout;
     
     bool operator==(const Bin rhs) const
     {
-        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout))
+        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout) && (durationX == rhs.durationX))
             return true;
         return false;
     }
