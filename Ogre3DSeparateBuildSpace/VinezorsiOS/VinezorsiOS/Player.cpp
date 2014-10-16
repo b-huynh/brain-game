@@ -2400,6 +2400,31 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
+        
+        // For level scheduler set new speed to be the average of the ending speed and init speed setting
+        if (levelRequest)
+        {
+            switch (levelRequest->first.phase)
+            {
+                case 'A':
+                    scheduler->speedA = (scheduler->speedA + baseSpeed) / 2;
+                    break;
+                case 'B':
+                    scheduler->speedB = (scheduler->speedB + baseSpeed) / 2;
+                    break;
+                case 'C':
+                    scheduler->speedC = (scheduler->speedC + baseSpeed) / 2;
+                    break;
+                case 'D':
+                    scheduler->speedD = (scheduler->speedD + baseSpeed) / 2;
+                    break;
+                case 'E':
+                    scheduler->speedE = (scheduler->speedE + baseSpeed) / 2;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     // Update other level results/settings
     levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
@@ -2922,7 +2947,9 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
     float valHoldout = 1.0;
     
     float nBackDifficulty = level.nback - assessment.nBackSkill;
-    if ( nBackDifficulty < -0.5 )
+    if ( nBackDifficulty < -1.5 && level.phaseX != PHASE_COLLECT )
+        valMemory = 0.0;    // too easy memory
+    else if ( nBackDifficulty < -0.5 )
         valMemory = 0.5;    // easy memory
     else if ( nBackDifficulty < 0.5 )
         valMemory = 1.0;    // normal memory
@@ -3010,15 +3037,24 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if ( nBackDelta < 0.0 )
     {
         if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
-        if (assessment.rating == 5) // If the player completed the level, don't decrease despite accuracy
+        if (assessment.rating >= 5 && // If the player completed the level, don't decrease despite accuracy
+            level.hasHoldout()) // If the level is holdout, don't penalize their memory score
             nBackDelta = 0.0;
-        nBackDelta /= weightMultiplier; // apply multiplier to negative base value
+        
+        if (weightMultiplier != 0.0) // Don't divide by 0
+            nBackDelta /= weightMultiplier; // apply multiplier to negative base value
+        else
+            nBackDelta = 0.0;
+        if ( nBackDelta <= -1.00) nBackDelta = -1.00;
     }
     else
     {
         if (assessment.rating != 5) // If the player didn't complete the level, don't increase despite accuracy
             nBackDelta = 0.0;
         nBackDelta *= weightMultiplier; // apply multiplier to positive base value
+        if (accuracy >= 1.00 - Util::EPSILON) // If player has perfect performance, grant a bonus to memory score
+            nBackDelta *= 1.5;
+        if ( nBackDelta > 1.00) nBackDelta = 1.00;
     }
     
     scheduler->timePlayed += (sessions.back().timestampOut - sessions.back().timestampIn) / 1000;
@@ -3063,7 +3099,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             break;
     }
     
-    if(nBackDelta > 0 &&scheduler->currentHoldout < 80)
+    if(nBackDelta > 0 && scheduler->currentHoldout < 80)
     {
         scheduler->currentHoldout+=10;
         if (scheduler->currentHoldout > 80)
@@ -3073,6 +3109,9 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nbackDelta = nBackDelta;
     levelToGrade->second.nBackSkill = playerSkill;
+    
+    std::cout << "N-Back Delta: " << nBackDelta << std::endl;
+    
     
     // Duration is not stored in level to remove the correct bin
     StageDuration durationX;

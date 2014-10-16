@@ -391,7 +391,9 @@ void HudSchedulerMenu::setSelection()
             break;
     }
     holdout = level.hasHoldout() ? "yes" : "no";
-    if (level.collectionCriteria.size() <= 4)
+    if (level.phase == 'E')
+        length = "medium";
+    else if (level.collectionCriteria.size() <= 4)
         length = "short";
     else if (level.collectionCriteria.size() <= 8)
         length = "medium";

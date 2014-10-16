@@ -36,11 +36,11 @@ void EngineSchedulerMenu::enter()
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetOrientation();
     
     TutorialManager* tutorialMgr = player->getTutorialMgr();
-    if (!tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
+    if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
         player->levelRequest = &player->scheduler->tutorialLevels[0];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
-    else if (!tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
+    else if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
         player->levelRequest = &player->scheduler->tutorialLevels[1];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }

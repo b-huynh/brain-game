@@ -21,7 +21,6 @@ using namespace std;
 LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE, double currentHoldout )
 : tutorialLevels(), scheduleHistory(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), timePlayed(0), sessionFinished(false), sessionFinishedAcknowledged(false)
 {
-    initTutorialLevels();
     this->nBackLevelA = nBackLevelA;
     this->nBackLevelB = nBackLevelB;
     this->nBackLevelC = nBackLevelC;
@@ -33,8 +32,11 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->speedC = 10.0f;
     this->speedD = 10.0f;
     this->speedE = 10.0f;
+    initTutorialLevels(); // Also called after loading the scheduler
 }
 
+// Initializes tutorials which will be played when the player has just started the scheduler
+// and hasn't seen instruction on how to navigate and how to play
 void LevelScheduler::initTutorialLevels()
 {
     StageRequest level;
@@ -61,8 +63,11 @@ void LevelScheduler::initTutorialLevels()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.phaseX = PHASE_COLLECT;
+    level.difficultyX = DIFFICULTY_EASY;
     ret = std::pair<StageRequest, PlayerProgress>();
     ret.first = level;
+    ret.second.nBackSkill = nBackLevelE;
     tutorialLevels.push_back(ret);
     
     // All-signal 1-Back
@@ -84,8 +89,11 @@ void LevelScheduler::initTutorialLevels()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.phaseX = PHASE_HOLDOUT;
+    level.difficultyX = DIFFICULTY_EASY;
     ret = std::pair<StageRequest, PlayerProgress>();
     ret.first = level;
+    ret.second.nBackSkill = nBackLevelA;
     tutorialLevels.push_back(ret);
 }
 
@@ -234,7 +242,7 @@ void LevelScheduler::populateBins()
     // COLOR SOUND:
     binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
     binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));      // normal           normal          Y
-    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));       // long             normal          N
     
     // SHAPE SOUND:
     binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
@@ -508,6 +516,7 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
         >> sch.speedC
         >> sch.speedD
         >> sch.speedE;
+    sch.initTutorialLevels();
     return in;
 }
 
