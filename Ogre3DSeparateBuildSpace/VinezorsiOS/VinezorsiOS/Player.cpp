@@ -1938,21 +1938,21 @@ void Player::updateSpeed(int mean, bool step)
     if (step)
     {
         float dist = baseSpeed - mean;
-        if (dist <= -20 + epsilon)
+        if (dist <= -15 + epsilon)
             ds = 0.5;
-        else if (dist <= -15 + epsilon)
+        else if (dist <= -7.5 + epsilon)
             ds = 0.5;
-        else if (dist <= -10 + epsilon)
+        else if (dist <= -5 + epsilon)
             ds = 1.0;
-        else if (dist <= -2 + epsilon)
+        else if (dist <= -1 + epsilon)
             ds = 2.0;
-        else if (dist < 2 + epsilon)
+        else if (dist < 1 + epsilon)
             ds = 3.0;
-        else if (dist < 10 + epsilon)
+        else if (dist < 5 + epsilon)
             ds = 2.0;
-        else if (dist < 15 + epsilon)
+        else if (dist < 7.5 + epsilon)
             ds = 1.0;
-        else if (dist < 20 + epsilon)
+        else if (dist < 15 + epsilon)
             ds = 0.5;
         else
             ds = 0.0;
@@ -1960,21 +1960,21 @@ void Player::updateSpeed(int mean, bool step)
     else
     {
         float dist = baseSpeed - mean;
-        if (dist <= -20 + epsilon)
+        if (dist <= -15 + epsilon)
             ds = 0.0;
-        else if (dist <= -15 + epsilon)
+        else if (dist <= -7.5 + epsilon)
             ds = -0.5;
-        else if (dist <= -10 + epsilon)
+        else if (dist <= -5 + epsilon)
             ds = -1.0;
-        else if (dist <= -2 + epsilon)
+        else if (dist <= -1 + epsilon)
             ds = -2.0;
-        else if (dist < 2 + epsilon)
+        else if (dist < 1 + epsilon)
             ds = -3.0;
-        else if (dist < 10 + epsilon)
+        else if (dist < 5 + epsilon)
             ds = -2.0;
-        else if (dist < 15 + epsilon)
+        else if (dist < 7.5 + epsilon)
             ds = -1.0;
-        else if (dist < 20 + epsilon)
+        else if (dist < 15 + epsilon)
             ds = -0.5;
         else
             ds = -0.5;
@@ -3037,7 +3037,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if ( nBackDelta < 0.0 )
     {
         if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
-        if (assessment.rating >= 5 && // If the player completed the level, don't decrease despite accuracy
+        if (assessment.rating >= 5 || // If the player completed the level, don't decrease despite accuracy
             level.hasHoldout()) // If the level is holdout, don't penalize their memory score
             nBackDelta = 0.0;
         

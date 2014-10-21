@@ -3037,7 +3037,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if ( nBackDelta < 0.0 )
     {
         if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
-        if (assessment.rating >= 5 && // If the player completed the level, don't decrease despite accuracy
+        if (assessment.rating >= 5 || // If the player completed the level, don't decrease despite accuracy
             level.hasHoldout()) // If the level is holdout, don't penalize their memory score
             nBackDelta = 0.0;
         
