@@ -2,6 +2,8 @@
 #include "macUtils.h"
 #include "Util.h"
 
+#include "macPath.h"
+
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
@@ -287,7 +289,10 @@ void OgreFramework::updateOgre(float timeSinceLastFrame)
 
 Ogre::String OgreFramework::getMacBundlePath() const
 {
-    return macBundlePath();
+    std::cout << "MAC BUNDLE PATH: " << macBundlePath() << std::endl;
+    std::cout << "APP DOCUME PATH: " << applicationDocumentsPath() << std::endl;
+    //return macBundlePath();
+    return applicationDocumentsPath();
 }
 
 void OgreFramework::buttonHit(OgreBites::Button* button)

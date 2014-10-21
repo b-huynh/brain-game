@@ -1072,13 +1072,15 @@ std::string Util::getOSXDir()
 
 std::string Util::getIOSDir()
 {
-    const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
-    std::string result = "";
-    if (dir)
-        result = std::string(dir) + "/../Documents";
-    else
-        return "";
-    
+    //const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
+    //std::string result = "";
+    //if (dir)
+    //    result = std::string(dir) + "/../Documents";
+    //else
+    //    return "";
+    //
+    //mkdir(OgreFramework::getSingletonPtr()->getMacBundlePath().c_str(), 0777);
+    std::string result = OgreFramework::getSingletonPtr()->getMacBundlePath();
     mkdir(result.c_str(), 0777);
     return result;
 }

@@ -154,11 +154,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-<<<<<<< HEAD
-            timestampString = "429819760.077517"
-=======
             timestampString = "430356666.979982"
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "649"
@@ -174,25 +170,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "429745693.048601"
+            timestampString = "428363502.902949"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-<<<<<<< HEAD
-            startingLineNumber = "1329"
-            endingLineNumber = "1329"
-=======
             startingLineNumber = "1305"
             endingLineNumber = "1305"
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             landmarkName = "EngineStage::setup()"
-=======
-            landmarkName = "EngineStage::updateSpin(float elapsed)"
->>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
-=======
-            landmarkName = "EngineStage::setup()"
->>>>>>> 2b5d78b72bf2287c965b6ff4eead75403a1efb6f
             landmarkType = "5">
             <Locations>
                <Location
@@ -311,42 +294,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "429819760.077517"
+            timestampString = "427846040.471678"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-<<<<<<< HEAD
-            startingLineNumber = "769"
-            endingLineNumber = "769"
-            landmarkName = "HudStage::initOverlay()"
-            landmarkType = "5">
-=======
             startingLineNumber = "768"
-            endingLineNumber = "768">
->>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "429819760.077517"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-<<<<<<< HEAD
-            startingLineNumber = "797"
-            endingLineNumber = "797"
-=======
-            startingLineNumber = "796"
-            endingLineNumber = "796"
-<<<<<<< HEAD
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
+            endingLineNumber = "768"
             landmarkName = "HudStage::initOverlay()"
-=======
-            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
->>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -357,21 +310,26 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "429819760.077517"
+            timestampString = "427846040.471678"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-<<<<<<< HEAD
             startingLineNumber = "796"
-            endingLineNumber = "796"
-=======
+            endingLineNumber = "796">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/HudStage.cpp"
+            timestampString = "427846040.471678"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
             startingLineNumber = "795"
             endingLineNumber = "795"
-<<<<<<< HEAD
->>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
-            landmarkName = "HudStage::initOverlay()"
-=======
-            landmarkName = "HudStage::setPauseNavDest(float navOffset)"
->>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
+            landmarkName = "HudStage::unlink()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

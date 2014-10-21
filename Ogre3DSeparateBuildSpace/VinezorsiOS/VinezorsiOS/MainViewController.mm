@@ -228,7 +228,8 @@
 {
     OgreFramework::getSingletonPtr()->m_pRenderWnd->setActive(false);
     mApplication.saveState();
-    Ogre::Root::getSingleton().saveConfig();
+    // Throws an exception in iOS 8.0, we don't need the config file anyway
+    //Ogre::Root::getSingleton().saveConfig();
 }
 
 - (void)activate
