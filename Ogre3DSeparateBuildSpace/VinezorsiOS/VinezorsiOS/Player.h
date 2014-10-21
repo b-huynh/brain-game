@@ -342,6 +342,7 @@ public:
 	void addVine(Vine* vine);
     void removeVines();
 	void checkCollisions();
+    void updateSpeed(int mean, bool step);
     void decideFinalSpeed(float elapsed);
     
     void addAction(ActionCode actType);

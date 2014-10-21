@@ -18,7 +18,6 @@ EngineLevelSelection::EngineLevelSelection(EngineStateManager* engineStateMgr, P
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineLevelSelection::~EngineLevelSelection()

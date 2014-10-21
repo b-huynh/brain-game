@@ -370,10 +370,14 @@ void HudStage::alloc()
                                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRestartButtonBackground"));
     levelSelectButtonBackground = static_cast<PanelOverlayElement*>(
                                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageLevelSelectButtonBackground"));
+    leftZapperButtonBackground = static_cast<PanelOverlayElement*>(
+                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageLeftZapperButtonBackground"));
+    rightZapperButtonBackground = static_cast<PanelOverlayElement*>(
+                                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRightZapperButtonBackground"));
     
     circleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCircleBackground"));
     
-    buttons = std::vector<HudButton>(6);
+    buttons = std::vector<HudButton>(8);
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayHUD");
@@ -398,6 +402,8 @@ void HudStage::alloc()
     overlay1->add2D(HudLeftPanel);
     overlay1->add2D(HudRightPanel);
     overlay1->add2D(HudTopPanel);
+    overlay1->add2D(leftZapperButtonBackground);
+    overlay1->add2D(rightZapperButtonBackground);
     overlay1->add2D(HudLeftZapper);
     overlay1->add2D(HudRightZapper);
     
@@ -449,10 +455,40 @@ void HudStage::alloc()
     PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
     speedSlider->adjust();
     //std::cout << "Performance: " << levelPerformance.initSpeedSetting << std::endl;
-    if (levelPerformance.initSpeedSetting >= 0)
-        speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+    
+    if(player->levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        switch (player->levelRequest->first.phase)
+        {
+            case 'A':
+                speedSlider->setBallPosition(player->scheduler->speedA);
+                break;
+            case 'B':
+                speedSlider->setBallPosition(player->scheduler->speedB);
+                break;
+            case 'C':
+                speedSlider->setBallPosition(player->scheduler->speedC);
+                break;
+            case 'D':
+                speedSlider->setBallPosition(player->scheduler->speedD);
+                break;
+            case 'E':
+                speedSlider->setBallPosition(player->scheduler->speedE);
+                break;
+            default:
+                speedSlider->setBallPosition(globals.initCamSpeed);
+                break;
+        }
+    }
     else
-        speedSlider->setBallPosition(globals.initCamSpeed);
+    {
+        // If level played by 2-D grid select
+        if (levelPerformance.initSpeedSetting >= 0)
+            speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+        else
+            speedSlider->setBallPosition(globals.initCamSpeed);
+    }
     player->setBaseSpeed(speedSlider->getIndex());
     std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
     setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads
@@ -498,6 +534,8 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(restartButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(leftZapperButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rightZapperButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
@@ -556,9 +594,15 @@ void HudStage::initOverlay()
     HudRightPanel->setDimensions(0.2261, 0.8919);
     HudRightPanel->setMaterialName("General/GUIMainHudRight");
     
+    float leftZapperX = 0.0216;
+    float leftZapperY = 0.2786;
+    float rightZapperX = 0.8984;
+    float rightZapperY = 0.2786;
+    float dimZapperX = 0.08;
+    float dimZapperY = 0.5026;
     HudLeftZapper->setMetricsMode(GMM_RELATIVE);
-    HudLeftZapper->setPosition(0.0216, 0.2786);
-    HudLeftZapper->setDimensions(0.08, 0.5026);
+    HudLeftZapper->setPosition(leftZapperX, leftZapperY);
+    HudLeftZapper->setDimensions(dimZapperX, dimZapperY);
     HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
     
     //HudLeftZapper->setMetricsMode(GMM_RELATIVE);
@@ -567,8 +611,8 @@ void HudStage::initOverlay()
     //HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
     
     HudRightZapper->setMetricsMode(GMM_RELATIVE);
-    HudRightZapper->setPosition(0.8984, 0.2786);
-    HudRightZapper->setDimensions(0.08, 0.5026);
+    HudRightZapper->setPosition(rightZapperX, rightZapperY);
+    HudRightZapper->setDimensions(dimZapperX, dimZapperY);
     HudRightZapper->setMaterialName("General/GUIMainHudShifter");
     
     label1->setMetricsMode(GMM_RELATIVE);
@@ -723,8 +767,13 @@ void HudStage::initOverlay()
     //buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.50), Vector2(qwidth, qheight), restartButtonBackground, NULL);
     //buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
+    // padding for the button
+    float bufferZapperX = 0.04;
+    float bufferZapperY = 0.04;
+    buttons[BUTTON_LEFTZAPPER].setButton("leftzap", overlays[0], GMM_RELATIVE, Vector2(leftZapperX - bufferZapperX / 2, leftZapperY - bufferZapperY / 2), Vector2(dimZapperX + bufferZapperX, dimZapperY + bufferZapperY), leftZapperButtonBackground, NULL);
+    buttons[BUTTON_RIGHTZAPPER].setButton("rightzap", overlays[0], GMM_RELATIVE, Vector2(rightZapperX - bufferZapperX / 2, rightZapperY - bufferZapperY / 2), Vector2(dimZapperX + bufferZapperX, dimZapperY + bufferZapperY), rightZapperButtonBackground, NULL);
+    
     pauseBackground->setMaterialName("General/PauseButton");
-    setSpeedDialState(false);
     pauseBaseBackground->setMaterialName("General/PauseBase");
     goBaseBackground->setMaterialName("General/PauseBase");
     

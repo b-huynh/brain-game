@@ -18,7 +18,6 @@ EngineMainMenu::EngineMainMenu(EngineStateManager* engineStateMgr, Player* playe
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineMainMenu::~EngineMainMenu()
@@ -54,12 +53,11 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "play")
     {
+        player->levelRequest = NULL;
         engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
-        //engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
     }
     else if (queryGUI == "credits")
     {
-        // player->feedLevelRequestFromSchedule();
         engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
         //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }

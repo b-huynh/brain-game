@@ -36,7 +36,8 @@ protected:
     
     enum ButtonSet {
         BUTTON_PAUSE, BUTTON_GO,
-        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
+        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT,
+        BUTTON_LEFTZAPPER, BUTTON_RIGHTZAPPER
     };
     
     // Overlay items for GAME_STATE_PLAY
@@ -107,6 +108,9 @@ protected:
     PanelOverlayElement* nextButtonBackground;
     PanelOverlayElement* restartButtonBackground;
     PanelOverlayElement* levelSelectButtonBackground;
+    
+    PanelOverlayElement* leftZapperButtonBackground;
+    PanelOverlayElement* rightZapperButtonBackground;
     
     PanelOverlayElement* circleBackground;
     

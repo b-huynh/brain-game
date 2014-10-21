@@ -172,21 +172,6 @@ void Pod::loadCrystal()
     {
         case POD_SHAPE_CONE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_1.mesh");
-<<<<<<< HEAD
-            std::cout << headContentEntity->getNumSubEntities() << std::endl;
-            break;
-        case POD_SHAPE_SPHERE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_2.mesh");
-            std::cout << headContentEntity->getNumSubEntities() << std::endl;
-            break;
-        case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_3.mesh");
-            std::cout << headContentEntity->getNumSubEntities() << std::endl;
-            break;
-        case POD_SHAPE_TRIANGLE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarComplex.mesh");
-            std::cout << headContentEntity->getNumSubEntities() << std::endl;
-=======
             break;
         case POD_SHAPE_SPHERE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_2.mesh");
@@ -196,7 +181,6 @@ void Pod::loadCrystal()
             break;
         case POD_SHAPE_TRIANGLE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarComplex.mesh");
->>>>>>> fbf39d2c776862029b90b87381c120486ede9cdb
             break;
         case POD_SHAPE_HOLDOUT:
             generateIndicator();

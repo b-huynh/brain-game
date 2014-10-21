@@ -11,6 +11,24 @@
             continueAfterRunningActions = "No"
             symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
             moduleName = "">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject doesNotRecognizeSelector:]"
+                  moduleName = "libobjc.A.dylib"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
+                  moduleName = "CoreFoundation"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -166,11 +184,15 @@
             startingLineNumber = "1305"
             endingLineNumber = "1305"
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 48622ffdcf3e938d7bec52448779d47278ab81d8
             landmarkName = "EngineStage::setup()"
 =======
             landmarkName = "EngineStage::updateSpin(float elapsed)"
 >>>>>>> c920bbad3bec3319c811071eac03cf6abda8d4f2
+=======
+            landmarkName = "EngineStage::setup()"
+>>>>>>> 2b5d78b72bf2287c965b6ff4eead75403a1efb6f
             landmarkType = "5">
             <Locations>
                <Location

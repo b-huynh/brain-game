@@ -810,12 +810,7 @@ void Tunnel::checkIfDone()
             getMode() == STAGE_MODE_TEACHING)
         {
             if (areCriteriaFilled())
-            {
-                if (getStarPhase() >= 4)
-                    setDone(PASS);
-                else
-                    setDone(FAIL);
-            }
+                setDone(PASS);
             //else if (player->getHP() >= globals.HPPositiveLimit)
             //    setDone(PASS);
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
