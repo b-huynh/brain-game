@@ -496,7 +496,7 @@ void EngineStage::activatePerformDoubleTap(float x, float y)
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
-            player->performBoost();
+            //player->performBoost();
             break;
         case STAGE_STATE_PAUSE:
             break;
@@ -535,6 +535,32 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(true);
                     player->reactGUI();
                     stageState = STAGE_STATE_PROMPT;
+                }
+            }
+            else if (queryGUI == "leftzap" || queryGUI == "rightzap")
+            {
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
+            else
+            {
+                std::cout << x << "," << y << std::endl;
+                if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                    // Tap we are checking if it is inside circle
+                    Vector2 relTap = globals.convertToPercentScreen(Vector2(x, y));
+                    // Circle Center
+                    float relRadius = 0.15;
+                    Vector2 relCenter = Vector2(0.50, 0.75);
+                    // Distance between tap and circle center
+                    Vector2 relDist = relTap - relCenter;
+                    if (relDist.squaredLength() <= relRadius * relRadius)
+                    {
+                        // Perform Zap
+                        player->setPowerUp("TractorBeam", true);
+                        player->performPowerUp("TractorBeam");
+                    }
                 }
             }
             break;
@@ -1010,6 +1036,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_X:
         {
+            player->setPowerUp("TractorBeam", true);
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TractorBeam");
             break;
         }

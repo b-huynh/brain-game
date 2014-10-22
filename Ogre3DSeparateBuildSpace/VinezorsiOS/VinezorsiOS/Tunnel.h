@@ -189,9 +189,9 @@ public:
     PodSignal getNBackTest(int index, int nvalue) const;
     PodSignal getNBackTest(int nvalue) const;
     // Uses getNBackTest and determines n-back to test by the player's toggleBack
-    bool getPodIsGood(int index) const;
-    bool getPodIsGood() const;
-    int getNBackToggle() const;
+    bool getPodIsGood(int index, int toggle) const;
+    bool getPodIsGood(int toggle) const;
+    int getNBackToggle(int toggle) const;
     
     StageMode getMode() const;
     float getStageTime() const;
@@ -235,16 +235,18 @@ public:
     void setNavigationLevels(int startingNavLevel, int navLimit, int tunnelSectionsPerNavLevel);
     void setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel);
     void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
-    bool satisfyCriteria(int nback);
+    bool satisfyCriteria(int nback, int amount);
+    bool killCriteria(int amount);
     int loseRandomCriteria();
-    bool isCriteriaSatisfied() const;
+    bool areCriteriaFilled() const;
     bool isMultiCollectionTask() const;
-    bool setAllCriteriaTo(bool value);
+    bool setAllCriteriaTo(int value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
     int getFirstCriteria() const; // just get the n-back of the first item, efficient then scanning list
     int getNumRequiredCriteria() const;
     int getNumSatisfiedCriteria() const;
+    int getStarPhase() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;

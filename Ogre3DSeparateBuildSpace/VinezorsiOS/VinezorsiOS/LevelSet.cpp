@@ -96,7 +96,7 @@ void LevelSet::initializeLevelSet()
     stageList = std::vector<std::vector<StageRequest> >(NUM_LEVELS, std::vector<StageRequest>(NUM_TASKS));
     StageRequest level;
     
-    const int TOTAL_COLLECTIONS = 12;
+    const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
     /////////////////////

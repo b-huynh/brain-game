@@ -625,26 +625,26 @@ PodSignal Tunnel::getNBackTest(int nvalue) const
     return getNBackTest(podIndex, nvalue);
 }
 
-bool Tunnel::getPodIsGood(int index) const
+bool Tunnel::getPodIsGood(int index, int toggle) const
 {
-    bool goodPod = getNBackTest(index, getNBackToggle()) != POD_SIGNAL_UNKNOWN;
+    bool goodPod = getNBackTest(index, getNBackToggle(toggle)) != POD_SIGNAL_UNKNOWN;
     if (getMode() == STAGE_MODE_RECESS || getMode() == STAGE_MODE_TEACHING) goodPod = true;
     return goodPod;
 }
 
 // Returns true for the next pod if it is good depending on the Toggle of N-Back
-bool Tunnel::getPodIsGood() const
+bool Tunnel::getPodIsGood(int toggle) const
 {
-    return getPodIsGood(podIndex);
+    return getPodIsGood(podIndex, toggle);
 }
 
 // Returns the n-back based on the player's current toggle value.
 // if there is only one n-back in a stage, this toggle value should be fixed
-int Tunnel::getNBackToggle() const
+int Tunnel::getNBackToggle(int toggle) const
 {
-    if (player->getToggleBack() == 3)
+    if (toggle == 3)
         return 0;
-    return Util::clamp(getNBack() - player->getToggleBack(), 0, getNBack());
+    return Util::clamp(getNBack() - toggle, 0, getNBack());
 }
 
 StageMode Tunnel::getMode() const
@@ -809,7 +809,7 @@ void Tunnel::checkIfDone()
             getMode() == STAGE_MODE_COLLECTION ||
             getMode() == STAGE_MODE_TEACHING)
         {
-            if (isCriteriaSatisfied())
+            if (areCriteriaFilled())
                 setDone(PASS);
             //else if (player->getHP() >= globals.HPPositiveLimit)
             //    setDone(PASS);
@@ -990,17 +990,54 @@ void Tunnel::setCollectionCriteria(const std::vector<CollectionCriteria> & value
 }
 
 // Collects the first occurence of the n-back value in the collection criteria list
-bool Tunnel::satisfyCriteria(int n)
+//
+// if -1 is passed in for the first parameter, any criteria is satisfiable
+bool Tunnel::satisfyCriteria(int n, int amount)
 {
-    for (int i = 0; i < collectionCriteria.size(); ++i)
+    bool somethingWasSatisfied = false;
+    for (int i = 0; i < collectionCriteria.size() && amount > 0; ++i)
     {
-        if (n == collectionCriteria[i].nback && !collectionCriteria[i].collected)
+        if (collectionCriteria[i].collected == 4 && amount >= 3)
         {
-            collectionCriteria[i].collected = true;
-            return true;
+            amount = 5;
+            for (; i < collectionCriteria.size() && amount > 0; ++i)
+            {
+                collectionCriteria[i].collected = 0;
+                --amount;
+            }
+            break;
+        }
+        else if ((n == -1 || n == collectionCriteria[i].nback) && collectionCriteria[i].collected < 3)
+        {
+            int extract = amount;
+            
+            int available = 3 - collectionCriteria[i].collected;
+            if (available < extract)
+                extract = available;
+            amount -= extract;
+            collectionCriteria[i].collected += extract;
+            somethingWasSatisfied = true;
         }
     }
-    return false;
+    return somethingWasSatisfied;
+}
+
+// Makes a criteria unavailable to fill in, this is the value 4 (to sort of represent overfilling)
+//
+// if -1 is passed in for the parameter, any criteria can be killed (except one that is not completed)
+bool Tunnel::killCriteria(int amount)
+{
+    bool somethingWasKilled = false;
+    for (int i = collectionCriteria.size() - 1; i >= 0 && amount > 0; --i)
+    {
+        if (collectionCriteria[i].collected != 4)
+        {
+            collectionCriteria[i].collected = 4; // 4 represents killed
+            amount -= 1;
+            somethingWasKilled = true;
+        }
+    }
+    return somethingWasKilled;
 }
 
 // Randomly set a collected item to uncollected and returns that index
@@ -1010,25 +1047,25 @@ int Tunnel::loseRandomCriteria()
     std::vector<int> collectedRefs;
     for (int i = 0; i < collectionCriteria.size(); ++i)
     {
-        if (collectionCriteria[i].collected)
+        if (collectionCriteria[i].collected > 0)
             collectedRefs.push_back(i);
     }
     if (collectedRefs.size() > 0)
     {
         int ind = rand() % collectedRefs.size();
-        collectionCriteria[collectedRefs[ind]].collected = false;
+        collectionCriteria[collectedRefs[ind]].collected = 0;
         return ind;
     }
     else
         return -1;
 }
 
-// Checks whether all collection criterias are satisfied
-bool Tunnel::isCriteriaSatisfied() const
+// Checks whether all collection criterias are completed or X'ed
+bool Tunnel::areCriteriaFilled() const
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
     {
-        if (!collectionCriteria[i].collected)
+        if (collectionCriteria[i].collected < 3)
             return false;
     }
     return true;
@@ -1042,7 +1079,7 @@ bool Tunnel::isMultiCollectionTask() const
 
 // Sets all criteria to not collected or collected.
 // Good for cheat debugging
-bool Tunnel::setAllCriteriaTo(bool value)
+bool Tunnel::setAllCriteriaTo(int value)
 {
     for (int i = 0; i < collectionCriteria.size(); ++i)
         collectionCriteria[i].collected = value;
@@ -1089,9 +1126,41 @@ int Tunnel::getNumSatisfiedCriteria() const
 {
     int ret = 0;
     for (int i = 0; i < collectionCriteria.size(); ++i)
-        if (collectionCriteria[i].collected)
+        if (collectionCriteria[i].collected >= 3 &&
+            collectionCriteria[i].collected != 4)
             ret++;
     return ret;
+}
+
+// Determines how many stars/merit the player has earned so far
+int Tunnel::getStarPhase() const
+{
+    int numSatisfied = getNumSatisfiedCriteria();
+    int starPhase = 0;
+#ifdef SPECIAL_PLAY
+    if (numSatisfied < 5)
+        starPhase = 0;
+    else if (numSatisfied < 10)
+        starPhase = 1;
+    else if (numSatisfied < 15)
+        starPhase = 2;
+    else if (numSatisfied < 20)
+        starPhase = 3;
+    else
+        starPhase = 4;
+#else
+    if (numSatisfied < 3)
+        starPhase = 0;
+    else if (numSatisfied < 6)
+        starPhase = 1;
+    else if (numSatisfied < 9)
+        starPhase = 2;
+    else if (numSatisfied < 12)
+        starPhase = 3;
+    else
+        starPhase = 4;
+#endif
+    return starPhase;
 }
 
 void Tunnel::removeSegment()
@@ -1797,13 +1866,20 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
         for (int j = 0; j < pods.size(); ++j)
         {
             pods[j]->uncloakPod();
+            if (!pods[i]->getPodTrigger())
+            {
+                pods[i]->generateIndicator();
+                pods[i]->setVisibleIndicator(false);
+            }
+            /*
 #ifdef DEBUG_MODE
             if (!pods[j]->getPodTrigger())
             {
                 pods[j]->generateIndicator();
-                pods[j]->setVisibleIndicator(getPodIsGood() && player->getGodMode());
+                pods[j]->setVisibleIndicator(getPodIsGood(player->getToggleBack()) && player->getGodMode());
             }
 #endif
+             */
         }
         ++it;
     }
@@ -1860,13 +1936,20 @@ void Tunnel::update(float elapsed)
                 player->playPodSound(pods[i]->getPodSound());
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 
+                if (!pods[i]->getPodTrigger())
+                {
+                    pods[i]->generateIndicator();
+                    pods[i]->setVisibleIndicator(false);
+                }
+                /*
 #ifdef DEBUG_MODE
                 if (!pods[i]->getPodTrigger())
                 {
                     pods[i]->generateIndicator();
-                    pods[i]->setVisibleIndicator(getPodIsGood() && player->getGodMode());
+                    pods[i]->setVisibleIndicator(getPodIsGood(player->getToggleBack()) && player->getGodMode());
                 }
 #endif
+                 */
                 // First time you saw your first correct item? TELL THEM
                 if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex) && getMode() != STAGE_MODE_RECESS && nback == 1)
                 {
@@ -2033,11 +2116,18 @@ bool Tunnel::getFlyOut()
 
 void Tunnel::respondToToggleCheat()
 {
+    Pod* pod = getNearestPod(globals.podAppearance + 1);
+    if (pod)
+    {
+        pod->setVisibleIndicator(player->getToggleBack() == 0);
+    }
+    /*
 #ifdef DEBUG_MODE
     Pod* pod = getNearestPod(globals.podAppearance + 1);
     if (pod)
-        pod->setVisibleIndicator(getPodIsGood() && player->getGodMode());
+        pod->setVisibleIndicator(getPodIsGood(player->getToggleBack()) && player->getGodMode());
 #endif
+     */
 }
 
 void Tunnel::setHoldout(bool val, int freq)

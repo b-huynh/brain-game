@@ -73,7 +73,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podBinSize2 = 5;
     podBinSize3 = 3;
     podNBackChance = 33.0;
-    span = 2;
+    span = 1;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
     seatLength = podHeadRadius * 2;
@@ -83,7 +83,7 @@ Util::ConfigGlobal::ConfigGlobal()
     historyMode = -1;
     startingHP = 3;
     HPNegativeLimit = 0;
-    HPPositiveLimit = 5;
+    HPPositiveLimit = 3;
     HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
     HPNegativeDistractor = 0;
@@ -1072,13 +1072,15 @@ std::string Util::getOSXDir()
 
 std::string Util::getIOSDir()
 {
-    const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
-    std::string result = "";
-    if (dir)
-        result = std::string(dir) + "/../Documents";
-    else
-        return "";
-    
+    //const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
+    //std::string result = "";
+    //if (dir)
+    //    result = std::string(dir) + "/../Documents";
+    //else
+    //    return "";
+    //
+    //mkdir(OgreFramework::getSingletonPtr()->getMacBundlePath().c_str(), 0777);
+    std::string result = OgreFramework::getSingletonPtr()->getMacBundlePath();
     mkdir(result.c_str(), 0777);
     return result;
 }
