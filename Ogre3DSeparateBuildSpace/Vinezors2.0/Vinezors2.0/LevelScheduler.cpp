@@ -433,11 +433,13 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
         }
         
+        int currentUNL = 6;
+        
         if(nBackRounded < 1) nBackRounded = 1;
         if (holdout)
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, currentHoldout);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, currentHoldout, currentUNL);
         else
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, 0.0);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, 0.0, currentUNL);
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
