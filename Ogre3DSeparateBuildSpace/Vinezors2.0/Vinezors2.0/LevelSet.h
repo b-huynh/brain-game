@@ -224,7 +224,6 @@ struct StageRequest
                         break;
                 }
                 // These are always set for color sound levels
-                ret->powerups.push_back(POWERUP_TIME_WARP);
                 ret->nameTunnelTile = "General/WallBindingA";
                 ret->nameMusic = "Music2";
                 ret->phase = 'A';
@@ -250,7 +249,6 @@ struct StageRequest
                         break;
                 }
                 // These are allways set for shape sound levels
-                ret->powerups.push_back(POWERUP_TIME_WARP);
                 ret->nameTunnelTile = "General/WallBindingB";
                 ret->nameMusic = "Music1";
                 ret->phase = 'B';
@@ -276,7 +274,6 @@ struct StageRequest
                         break;
                 }
                 // These are always set for sound only levels
-                ret->powerups.push_back(POWERUP_TIME_WARP);
                 ret->nameTunnelTile = "General/WallBindingC";
                 ret->nameMusic = "Music5";
                 ret->phase = 'C';
@@ -301,7 +298,6 @@ struct StageRequest
                         break;
                 }
                 // These are always set for holdout level
-                ret->powerups.push_back(POWERUP_TIME_WARP);
                 ret->nameTunnelTile = "General/WallBindingD";
                 ret->nameMusic = "Music3";
                 ret->phase = 'D';

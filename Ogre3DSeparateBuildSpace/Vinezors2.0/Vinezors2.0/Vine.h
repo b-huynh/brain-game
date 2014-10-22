@@ -22,6 +22,7 @@ struct Vine
     Entity* tipEntity;
 	SceneNode *base;
     ParticleSystem* shockwaveEffect;
+    SceneNode *boostNode;
     ParticleSystem* boostEffect;
     Vector3 forward;
     float radius;

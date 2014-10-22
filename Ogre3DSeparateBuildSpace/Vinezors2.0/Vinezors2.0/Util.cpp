@@ -93,6 +93,8 @@ Util::ConfigGlobal::ConfigGlobal()
     wrongAnswerTimePenalty = 10.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
+    fuelMax = 30.0;
+    fuelReturn = 5.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;

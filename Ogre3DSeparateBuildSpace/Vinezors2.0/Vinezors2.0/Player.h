@@ -207,7 +207,7 @@ public:
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
-	
+    
     LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
@@ -351,6 +351,7 @@ public:
     void updateTimeWarp(float elapsed);
     void performTimeWarp();
     void updateBoost(float elapsed);
+    void setBoostTimer(float value);
     void performBoost();
     void updateShields(float elapsed);
     bool triggerShields();

@@ -30,6 +30,9 @@ public:
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
     void setPauseNavSettings(bool nextAvail, bool resumeAvail);
+    
+    float leftZapT;
+    float rightZapT;
 protected:
     Player* player;
     Tunnel* tunnel;

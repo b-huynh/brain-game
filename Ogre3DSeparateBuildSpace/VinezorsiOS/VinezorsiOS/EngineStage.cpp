@@ -59,7 +59,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
-            hud->setSpeedDialState(false);
+            hud->setSpeedDialState(true);
             hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
@@ -537,8 +537,16 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     stageState = STAGE_STATE_PROMPT;
                 }
             }
-            else if (queryGUI == "leftzap" || queryGUI == "rightzap")
+            else if (queryGUI == "leftzap")
             {
+                hud->leftZapT = 0.1;
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
+            else if (queryGUI == "rightzap")
+            {
+                hud->rightZapT = 0.1;
                 // Perform Zap
                 player->setPowerUp("TractorBeam", true);
                 player->performPowerUp("TractorBeam");

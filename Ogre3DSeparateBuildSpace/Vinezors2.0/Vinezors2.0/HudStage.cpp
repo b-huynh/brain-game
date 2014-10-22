@@ -14,7 +14,7 @@
 extern Util::ConfigGlobal globals;
 
 HudStage::HudStage(Player* player, Tunnel* tunnel)
-: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f), goOffset(0.7f), goOffsetDest(0.7f)
+: Hud(), goButtonActive(false), bestScoreAnimationFlag(false), bestScoreAnimationTimer(0.0f), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f), goOffset(0.7f), goOffsetDest(0.7f), leftZapT(0.0f), rightZapT(0.0f)
 {
     link(player, tunnel);
     init();
@@ -54,6 +54,29 @@ void HudStage::update(float elapsed)
     speedSlider->adjust();
     
     setCollectionBar(false, elapsed);
+    
+    if (tunnel->getMode() != STAGE_MODE_RECESS)
+    {
+        if (leftZapT > 0.0f)
+        {
+            HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
+            leftZapT -= elapsed;
+        }
+        else
+            HudLeftZapper->setMaterialName("General/GUIMainHudZapper");
+        if (rightZapT > 0.0f)
+        {
+            HudRightZapper->setMaterialName("General/GUIMainHudShifter");
+            rightZapT -= elapsed;
+        }
+        else
+            HudRightZapper->setMaterialName("General/GUIMainHudZapper");
+    }
+    else
+    {
+        HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
+        HudRightZapper->setMaterialName("General/GUIMainHudShifter");
+    }
     
     // Set up pause navigation texture with appropriate active buttons
     if (nextAvail && resumeAvail)
@@ -603,17 +626,10 @@ void HudStage::initOverlay()
     HudLeftZapper->setMetricsMode(GMM_RELATIVE);
     HudLeftZapper->setPosition(leftZapperX, leftZapperY);
     HudLeftZapper->setDimensions(dimZapperX, dimZapperY);
-    HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
-    
-    //HudLeftZapper->setMetricsMode(GMM_RELATIVE);
-    //HudLeftZapper->setPosition(0.0156, 0.1562);
-    //HudLeftZapper->setDimensions(0.0762, 0.6926);
-    //HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
     
     HudRightZapper->setMetricsMode(GMM_RELATIVE);
     HudRightZapper->setPosition(rightZapperX, rightZapperY);
     HudRightZapper->setDimensions(dimZapperX, dimZapperY);
-    HudRightZapper->setMaterialName("General/GUIMainHudShifter");
     
     label1->setMetricsMode(GMM_RELATIVE);
     label1->setAlignment(TextAreaOverlayElement::Center);

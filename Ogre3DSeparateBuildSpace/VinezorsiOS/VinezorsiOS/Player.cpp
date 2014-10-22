@@ -842,17 +842,45 @@ void Player::performTimeWarp()
 void Player::updateBoost(float elapsed)
 {
     float timeRange = 0.5;
-    if (boostTimer > 0.0)
+    if (vines[0]->boostEffect)
     {
-        boostTimer -= elapsed;
-        if (boostTimer <= 0.0)
-            boostTimer = 0.0;
-        else if (boostTimer <= timeRange)
+        float percentFuel = 2 * tunnel->getFuelTimer() / globals.fuelMax;
+        if (percentFuel >= 1.0f)
+            percentFuel = 1.0f;
+        float origHue = 0.55f;
+        float origSat = 1.00f;
+        float origLit = 1.00f;
+        Ogre::ColourValue boostCol = Ogre::ColourValue(0.0, 0.7, 1.0);
+        if (percentFuel <= 0.0)
+            boostCol = Ogre::ColourValue(0.0, 0.0, 0.0);
+        else
+            boostCol.setHSB(origHue * percentFuel, origSat, origLit);
+        
+        vines[0]->boostEffect->getEmitter(0)->setColour(boostCol);
+        Ogre::MaterialPtr mat = OgreFramework::getSingletonPtr()->m_pMaterialMgr->getByName("new_ship_mesh/ThrusterColor");
+        mat->setDiffuse(boostCol);
+        
+        if (boostTimer > 0.0)
         {
-            soundBoost->stop();
-            vines[0]->removeBoost();
+            boostTimer -= elapsed;
+
+            if (boostTimer < 0.0)
+            {
+                boostTimer = 0.0;
+                soundBoost->stop();
+                vines[0]->removeBoost();
+            }
+            else if (boostTimer <= timeRange)
+            {
+                vines[0]->boostEffect->getEmitter(0)->setEmissionRate(100 * (boostTimer / timeRange));
+            }
         }
     }
+}
+
+void Player::setBoostTimer(float value)
+{
+    boostTimer = value;
 }
 
 void Player::performBoost()
@@ -1073,6 +1101,9 @@ void Player::testPodGiveFeedback(Pod* test)
                 hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
             }
             
+            // Add to fuel gauge for correct zaps
+            tunnel->addToFuel(globals.fuelReturn);
+            
             // Determine Score
             score += getScoring();
         }
@@ -1179,6 +1210,9 @@ void Player::testPodGiveFeedback(Pod* test)
                 soundFeedbackGood->stop();
                 soundFeedbackGood->play();
             }
+            
+            // Add to fuel gauge for correct zaps
+            tunnel->addToFuel(globals.fuelReturn);
             
             // Determine Score
             score += 50.0f;
@@ -1716,6 +1750,7 @@ void Player::newTunnel(const std::string & nameMusic)
     tunnel->setOffsetIterators(camPos, vineOffset);
     vines[0]->setVisible(true);
     vines[0]->reloadIfNecessary(globals.setVineShip);
+    vines[0]->setBoost();
     TunnelSlice* closest = tunnel->getCurrentOffset();
     if (closest)
     {
@@ -2054,19 +2089,19 @@ void Player::updateSpeed(int mean, bool step)
     {
         float dist = baseSpeed - mean;
         if (dist <= -15 + epsilon)
-            ds = 0.5;
-        else if (dist <= -7.5 + epsilon)
-            ds = 0.5;
-        else if (dist <= -5 + epsilon)
-            ds = 1.0;
-        else if (dist <= -1 + epsilon)
-            ds = 2.0;
-        else if (dist < 1 + epsilon)
             ds = 3.0;
-        else if (dist < 5 + epsilon)
+        else if (dist <= -7.5 + epsilon)
+            ds = 3.0;
+        else if (dist <= -5 + epsilon)
             ds = 2.0;
-        else if (dist < 7.5 + epsilon)
+        else if (dist <= -1 + epsilon)
             ds = 1.0;
+        else if (dist < 1 + epsilon)
+            ds = 1.0;
+        else if (dist < 5 + epsilon)
+            ds = 0.5;
+        else if (dist < 7.5 + epsilon)
+            ds = 0.5;
         else if (dist < 15 + epsilon)
             ds = 0.5;
         else
@@ -2080,19 +2115,19 @@ void Player::updateSpeed(int mean, bool step)
         else if (dist <= -7.5 + epsilon)
             ds = -0.5;
         else if (dist <= -5 + epsilon)
-            ds = -1.0;
+            ds = -0.5;
         else if (dist <= -1 + epsilon)
-            ds = -2.0;
+            ds = -0.5;
         else if (dist < 1 + epsilon)
-            ds = -3.0;
+            ds = -1.0   ;
         else if (dist < 5 + epsilon)
-            ds = -2.0;
-        else if (dist < 7.5 + epsilon)
             ds = -1.0;
+        else if (dist < 7.5 + epsilon)
+            ds = -2.0;
         else if (dist < 15 + epsilon)
-            ds = -0.5;
+            ds = -3.0;
         else
-            ds = -0.5;
+            ds = -3.0;
     }
     baseSpeed += ds;
 }
@@ -2797,7 +2832,6 @@ bool Player::saveProgress(std::string file)
 {
     std::ofstream out;
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
-    
     bool ret = true;
     
     out << "V1.2" << std::endl;

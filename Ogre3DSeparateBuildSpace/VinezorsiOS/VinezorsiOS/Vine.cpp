@@ -168,6 +168,10 @@ void Vine::loadRunnerShip()
     tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColor");
     
     
+    base = entireVine->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
+    base->translate(0, 0.0, radius * 2.0);
+    base->yaw(Degree(180.0));
+    
     /*
     gateNode = entireVine->createChildSceneNode("gateNode" + Util::toStringInt(vineID));
     gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(vineID), "ExitGate/ExitGate.mesh");
@@ -305,7 +309,7 @@ void Vine::setBoost()
     if (!boostEffect)
     {
         boostEffect = parentNode->getCreator()->createParticleSystem("StarBoost", "General/StarBoost");
-        tip->attachObject(boostEffect);
+        base->attachObject(boostEffect);
     }
 }
 
@@ -379,24 +383,25 @@ void Vine::removeBoost()
 {
     if (boostEffect)
     {
-        tip->detachObject(boostEffect);
-        tip->getCreator()->destroyParticleSystem(boostEffect);
+        base->detachObject(boostEffect);
+        base->getCreator()->destroyParticleSystem(boostEffect);
         boostEffect = NULL;
     }
 }
 
 void Vine::removeFromScene()
 {
+    removeBoost();
     if (base)
     {
-        base->getCreator()->destroyMovableObject(base->getAttachedObject(0)); // Assuming only one entity
+        if (base->numAttachedObjects() > 0)
+            base->getCreator()->destroyMovableObject(base->getAttachedObject(0)); // Assuming only one entity
         base->removeAndDestroyAllChildren();
         base->getCreator()->destroySceneNode(base);
         base = NULL;
     }
     if (tip)
     {
-        removeBoost();
         tip->getCreator()->destroyMovableObject(tip->getAttachedObject(0)); // Assuming only one entity
         tip->removeAndDestroyAllChildren();
         tip->getCreator()->destroySceneNode(tip);
