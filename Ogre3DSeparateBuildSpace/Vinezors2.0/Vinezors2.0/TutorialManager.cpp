@@ -136,7 +136,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("", "General/TutorialTextboxSoundOnly", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("\n\nEnd of Session", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("", "General/SessionFinished", ""));
         default:
             break;
     }
@@ -237,7 +237,18 @@ void TutorialManager::updateOverlay()
     //    popupGoLeftBackground->setMaterialName("General/ButtonGoUp");
     //else
     //    popupGoLeftBackground->setMaterialName("General/ButtonGoUpGray");
-    popupGoRightBackground->setMaterialName("General/ButtonGoDown");
+    
+    // if background == sessionFinished.png then don't show button
+    if(slides[slideNo].background != "General/SessionFinished")
+    {
+        popupGoRightBackground->setMaterialName("General/ButtonGoDown");
+        popupExitBackground->setMaterialName("General/ExitButton2");
+    }
+    else
+    {
+        popupGoRightBackground->setMaterialName("General/ExitButton2");
+        popupExitBackground->setMaterialName("");
+    }
 }
 
 void TutorialManager::update(float elapsed)
@@ -350,7 +361,7 @@ void TutorialManager::adjust()
     //buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.175, 0.425), Vector2(bw, bh), popupGoLeftBackground, NULL);
     buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.375, 0.425), Vector2(bw, bh), popupGoRightBackground, NULL);
     buttons[BUTTON_EXIT].setButton("exit", popupOverlay, GMM_RELATIVE, Vector2(0.275, 0.425), Vector2(bw, bh), popupExitBackground, NULL);
-    popupExitBackground->setMaterialName("General/ExitButton2");
+    //popupExitBackground->setMaterialName("General/ExitButton2");
     
     popupText->setMetricsMode(GMM_RELATIVE);
     popupText->setAlignment(TextAreaOverlayElement::Left);

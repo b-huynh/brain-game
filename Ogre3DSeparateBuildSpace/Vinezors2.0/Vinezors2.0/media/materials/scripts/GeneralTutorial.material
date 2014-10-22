@@ -13,7 +13,7 @@ material General/TutorialBackdrop
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -30,7 +30,7 @@ material General/TutorialTextbox1-1
         {
             texture Textbox1-1.png
         }
-      } 
+      }
     }
 }
 
@@ -47,7 +47,7 @@ material General/TutorialTextbox1-2
         {
             texture Textbox1-2.png
         }
-      } 
+      }
     }
 }
 
@@ -64,7 +64,7 @@ material General/TutorialTextbox1-3
         {
             texture Textbox1-3.png
         }
-      } 
+      }
     }
 }
 
@@ -81,7 +81,7 @@ material General/TutorialTextbox2-1
         {
             texture Textbox2-1.png
         }
-      } 
+      }
     }
 }
 
@@ -98,7 +98,7 @@ material General/TutorialTextbox2-2a
         {
             texture Textbox2-2a.png
         }
-      } 
+      }
     }
 }
 
@@ -115,7 +115,7 @@ material General/TutorialTextbox2-2b
         {
             texture Textbox2-2b.png
         }
-      } 
+      }
     }
 }
 
@@ -133,7 +133,7 @@ material General/TutorialTextbox2-3
         {
             texture Textbox2-3.png
         }
-      } 
+      }
     }
 }
 
@@ -150,7 +150,7 @@ material General/TutorialTextbox2-4
         {
             texture Textbox2-4.png
         }
-      } 
+      }
     }
 }
 
@@ -167,7 +167,7 @@ material General/TutorialTextbox2-5
         {
             texture Textbox2-5.png
         }
-      } 
+      }
     }
 }
 
@@ -184,7 +184,7 @@ material General/TutorialTextbox3-1
         {
             texture Textbox3-1.png
         }
-      } 
+      }
     }
 }
 
@@ -201,7 +201,7 @@ material General/TutorialTextbox3-2a
         {
             texture Textbox3-2a.png
         }
-      } 
+      }
     }
 }
 
@@ -218,7 +218,7 @@ material General/TutorialTextbox3-2b
         {
             texture Textbox3-2b.png
         }
-      } 
+      }
     }
 }
 
@@ -235,7 +235,7 @@ material General/TutorialTextboxHoldout1
         {
             texture TextboxHoldout1.png
         }
-      } 
+      }
     }
 }
 
@@ -252,7 +252,7 @@ material General/TutorialTextboxHoldout2
         {
             texture TextboxHoldout2.png
         }
-      } 
+      }
     }
 }
 
@@ -269,7 +269,7 @@ material General/TutorialTextboxSeeingMatch
         {
             texture TextboxSeeingMatch.png
         }
-      } 
+      }
     }
 }
 
@@ -286,7 +286,7 @@ material General/TutorialTextboxMissingMatch
         {
             texture TextboxMissingMatch.png
         }
-      } 
+      }
     }
 }
 
@@ -303,7 +303,7 @@ material General/TutorialTextboxIncorrectMatch
         {
             texture TextboxIncorrectMatch.png
         }
-      } 
+      }
     }
 }
 
@@ -320,7 +320,7 @@ material General/TutorialTextboxObstacle
         {
             texture TextboxObstacle.png
         }
-      } 
+      }
     }
 }
 
@@ -338,6 +338,24 @@ material General/TutorialTextboxSoundOnly
         {
             texture TextboxSoundOnly.png
         }
-      } 
+      }
+    }
+}
+
+material General/SessionFinished
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture SessionFinished.png
+            resolution 264
+        }
+      }
     }
 }
