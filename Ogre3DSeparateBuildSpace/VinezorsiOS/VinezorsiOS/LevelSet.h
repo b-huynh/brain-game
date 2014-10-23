@@ -22,6 +22,11 @@
 
 enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_HOLDOUT };
+//bookmark
+//enum EasyLevels { 0,1 };
+//enum MediumLevels { 2,3,4,5 };
+//enum HardLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+//enum ExpertLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 
 struct CollectionCriteria
 {
@@ -56,6 +61,8 @@ struct StageRequest
     bool holdoutShape;
     
     float UserNavLevel;
+    int Elevel, Mlevel, Hlevel, Xlevel =0;
+    
     
     float initCamSpeed;
     float minCamSpeed;
@@ -72,6 +79,13 @@ struct StageRequest
     bool hasHoldout() const
     {
         return (holdoutSound || holdoutColor || holdoutShape) && holdoutPerc > 0.0f;
+    }
+    
+    void setDiffPerc(int easy, int medium, int hard, int expert){
+        Elevel=easy;
+        Mlevel=medium;
+        Hlevel=hard;
+        Xlevel=expert;
     }
     
     // clear everything and set defaults

@@ -43,7 +43,7 @@ struct Bin
 struct LevelScheduler
 {
     // Constructor
-    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0, double currentHoldout = 20.0 );
+    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0, double currentHoldout = 40.0 );
     
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
@@ -63,7 +63,9 @@ struct LevelScheduler
     double nBackLevelD;
     double nBackLevelE;
     double currentHoldout;
-    
+    double holdoutOffsetA;
+    double holdoutOffsetB;
+    double holdoutOffsetD;
     
     // Member functions
     StageRequest getRandomLevel( LevelSet* levels );
