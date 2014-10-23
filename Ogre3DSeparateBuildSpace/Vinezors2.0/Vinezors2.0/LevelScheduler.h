@@ -81,7 +81,7 @@ struct LevelScheduler
     double speedD;
     double speedE;
     
->>>>>>> afb3b281bae42fbaa54625ddd78ad517b5d4dcab
+
     
     // Member functions
     void initTutorialLevels();
