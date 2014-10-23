@@ -204,6 +204,8 @@ namespace Util
         float wrongAnswerTimePenalty;
         float distractorSpeedPenalty;
         float distractorTimePenalty;
+        float fuelMax;
+        float fuelReturn;
         float initCamSpeed;
         float startupCamSpeed;
         float globalModifierCamSpeed;

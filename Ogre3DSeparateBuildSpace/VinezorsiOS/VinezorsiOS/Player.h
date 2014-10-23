@@ -207,7 +207,7 @@ public:
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
-	
+    
     LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
@@ -342,6 +342,7 @@ public:
 	void addVine(Vine* vine);
     void removeVines();
 	void checkCollisions();
+    void updateSpeed(int mean, bool step);
     void decideFinalSpeed(float elapsed);
     
     void addAction(ActionCode actType);
@@ -350,12 +351,13 @@ public:
     void updateTimeWarp(float elapsed);
     void performTimeWarp();
     void updateBoost(float elapsed);
+    void setBoostTimer(float value);
     void performBoost();
     void updateShields(float elapsed);
     bool triggerShields();
     void performShields();
     void updateGlowExtraction(float elapsed);
-    void setGlowGrabParameters();
+    void setGlowGrabParameters(Pod* pod);
     void beginBadFuelPickUp();
     void updateBadFuelPickUp(float elapsed);
     void testPodGiveFeedback(Pod* test);

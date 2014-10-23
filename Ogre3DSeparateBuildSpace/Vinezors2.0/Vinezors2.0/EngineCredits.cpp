@@ -18,7 +18,6 @@ EngineCredits::EngineCredits(EngineStateManager* engineStateMgr, Player* player)
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineCredits::~EngineCredits()

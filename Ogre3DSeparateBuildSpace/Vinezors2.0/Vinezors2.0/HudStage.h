@@ -30,13 +30,17 @@ public:
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
     void setPauseNavSettings(bool nextAvail, bool resumeAvail);
+    
+    float leftZapT;
+    float rightZapT;
 protected:
     Player* player;
     Tunnel* tunnel;
     
     enum ButtonSet {
         BUTTON_PAUSE, BUTTON_GO,
-        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
+        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT,
+        BUTTON_LEFTZAPPER, BUTTON_RIGHTZAPPER
     };
     
     // Overlay items for GAME_STATE_PLAY
@@ -55,7 +59,7 @@ protected:
     PanelOverlayElement* HudTopPanel;
     PanelOverlayElement* HudLeftPanel;
     PanelOverlayElement* HudRightPanel;
-    PanelOverlayElement* HudLeftDip;
+    PanelOverlayElement* HudLeftZapper;
     PanelOverlayElement* HudRightZapper;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
@@ -78,6 +82,7 @@ protected:
     TextAreaOverlayElement* endTallyScoreValue;
     PanelOverlayElement* endTallyBackground;
     
+    PanelOverlayElement* speedDisplayBackground;
     PanelOverlayElement* nbackDisplayBackground;
     TextAreaOverlayElement* nbackDisplayLabel;
     PanelOverlayElement* toggleEntireBackground;
@@ -97,6 +102,7 @@ protected:
     
     float pauseNavOffset;
     float pauseNavOffsetDest;
+    
     float goOffset;
     float goOffsetDest;
     PanelOverlayElement* pauseBaseBackground;
@@ -105,6 +111,11 @@ protected:
     PanelOverlayElement* nextButtonBackground;
     PanelOverlayElement* restartButtonBackground;
     PanelOverlayElement* levelSelectButtonBackground;
+    
+    PanelOverlayElement* leftZapperButtonBackground;
+    PanelOverlayElement* rightZapperButtonBackground;
+    
+    PanelOverlayElement* circleBackground;
     
     HudSlider* speedSlider;
     

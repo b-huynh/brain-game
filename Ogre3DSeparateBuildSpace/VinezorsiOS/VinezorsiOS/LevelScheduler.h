@@ -24,17 +24,21 @@
 
 struct Bin
 {
-    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, bool holdout = false)
-    : phaseX(phaseX), difficultyX(difficultyX), holdout(holdout)
+    Bin(LevelPhase phaseX = PHASE_COLLECT, StageDifficulty difficultyX = DIFFICULTY_EASY, StageDuration durationX = DURATION_NORMAL, bool holdout = false, double nbackShift = 0.0)
+    : phaseX(phaseX), difficultyX(difficultyX), durationX(durationX), holdout(holdout), nbackShift(nbackShift)
     {}
     
     LevelPhase phaseX;
     StageDifficulty difficultyX;
+    StageDuration durationX;
     bool holdout;
+    
+    // Not checked in comparison
+    double nbackShift;
     
     bool operator==(const Bin rhs) const
     {
-        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout))
+        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout) && (durationX == rhs.durationX))
             return true;
         return false;
     }
@@ -47,6 +51,8 @@ struct LevelScheduler
     
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
+    
+    std::vector< std::pair<StageRequest, PlayerProgress> > tutorialLevels;
     std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistory;
     std::list<Bin>* binA;
     std::list<Bin>* binB;
@@ -63,16 +69,28 @@ struct LevelScheduler
     double nBackLevelD;
     double nBackLevelE;
     double currentHoldout;
+
     double holdoutOffsetA;
     double holdoutOffsetB;
     double holdoutOffsetD;
+
+    
+    double speedA;
+    double speedB;
+    double speedC;
+    double speedD;
+    double speedE;
+    
+>>>>>>> afb3b281bae42fbaa54625ddd78ad517b5d4dcab
     
     // Member functions
+    void initTutorialLevels();
+    
     StageRequest getRandomLevel( LevelSet* levels );
     void initializeSchedule( LevelSet* levels );
     
     void populateBins();
-    void removeBin(LevelPhase phaseX, StageDifficulty difficultyX);
+    void removeBin(LevelPhase phaseX, StageDifficulty difficultyX, StageDuration durationX, bool hasHoldout);
     std::list<Bin>* pickRandomBin();
     void pickRandomMarble( std::vector<Bin>& choices );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();

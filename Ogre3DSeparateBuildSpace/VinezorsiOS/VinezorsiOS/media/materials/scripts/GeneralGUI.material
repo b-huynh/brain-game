@@ -824,6 +824,25 @@ material General/GUIMainHudShifter
 	}
 }
 
+material General/GUIMainHudZapper
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_zapper.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
 material General/GUICollection0Blank
 {
 	technique
@@ -886,7 +905,7 @@ material General/GUICollection0Filled3
             depth_write off
 			texture_unit
 			{
-				texture score0d.png
+                texture score0d.png
 			}
 		}
 	}
@@ -1141,7 +1160,7 @@ material General/GUICollectionGreyed
             depth_write off
 			texture_unit
 			{
-				texture score-no.png
+				texture score-no-x.png
 			}
 		}
 	}
@@ -1701,6 +1720,7 @@ material General/SpeedSliderBall
         texture_unit
         {
             texture speed_dial.png
+            rotate 90
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
@@ -1720,6 +1740,7 @@ material General/SpeedSliderBallOff
         texture_unit
         {
             texture speed_dial_off.png
+            rotate 90
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
@@ -1766,3 +1787,63 @@ material General/SpeedSliderBallHorizontal
       } 
     }
 }
+
+material General/BlueSphereIcon
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture brightbluesphere.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/YellowSphereIcon
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture brightyellowsphere.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+
+material General/Circle
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture circle.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+

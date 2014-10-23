@@ -22,7 +22,6 @@ EngineStage::EngineStage(EngineStateManager* engineStateMgr, Player* player)
     this->tunnel = NULL;
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineStage::~EngineStage()
@@ -60,6 +59,7 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setOverlay(3, false);
             hud->setGoButtonState(false);
+            hud->setSpeedDialState(true);
             hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
@@ -198,9 +198,23 @@ void EngineStage::update(float elapsed)
             // have a done screen after a certain time limit is reached
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
-                player->assessLevelPerformance(player->levelRequest);
                 player->saveProgress(globals.savePath);
+                player->assessLevelPerformance(player->levelRequest);
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+                if (player->scheduler->sessionFinished) {
+                    std::cout << "finished!\n";
+                }
+                else
+                {
+                    std::cout << "not finished!\n";
+                }
+                if(player->scheduler->sessionFinished)
+                {
+                    std::cout << "\n\n\n==========================================="
+                                << "Session Finished!\n"
+                                << "===========================================\n";
+                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                }
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
@@ -482,7 +496,7 @@ void EngineStage::activatePerformDoubleTap(float x, float y)
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
-            player->performBoost();
+            //player->performBoost();
             break;
         case STAGE_STATE_PAUSE:
             break;
@@ -521,6 +535,40 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(true);
                     player->reactGUI();
                     stageState = STAGE_STATE_PROMPT;
+                }
+            }
+            else if (queryGUI == "leftzap")
+            {
+                hud->leftZapT = 0.1;
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
+            else if (queryGUI == "rightzap")
+            {
+                hud->rightZapT = 0.1;
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
+            else
+            {
+                std::cout << x << "," << y << std::endl;
+                if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                    // Tap we are checking if it is inside circle
+                    Vector2 relTap = globals.convertToPercentScreen(Vector2(x, y));
+                    // Circle Center
+                    float relRadius = 0.15;
+                    Vector2 relCenter = Vector2(0.50, 0.75);
+                    // Distance between tap and circle center
+                    Vector2 relDist = relTap - relCenter;
+                    if (relDist.squaredLength() <= relRadius * relRadius)
+                    {
+                        // Perform Zap
+                        player->setPowerUp("TractorBeam", true);
+                        player->performPowerUp("TractorBeam");
+                    }
                 }
             }
             break;
@@ -996,6 +1044,7 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_X:
         {
+            player->setPowerUp("TractorBeam", true);
             if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TractorBeam");
             break;
         }

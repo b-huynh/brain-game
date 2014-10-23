@@ -15,6 +15,7 @@ extern Util::ConfigGlobal globals;
 static int podID = 0;
 static int glowID = 0;
 static int indicatorID = 0;
+static int headEffectID = 0;
 
 Pod::Pod()
 : parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
@@ -22,7 +23,7 @@ Pod::Pod()
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
 {
     loadPod();
 }
@@ -130,7 +131,7 @@ void Pod::loadFuelCell()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
             break;
         case POD_SHAPE_HOLDOUT:
-            generateIndicator();
+            generateHoldoutEffect();
             break;
         default:
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
@@ -528,7 +529,7 @@ void Pod::uncloakPod()
             materialName = "General/PodPurple";
             break;
     }
-    if (podTaken)
+    if (podTaken || isIndicatorVisible())
         materialName += "Transparent";
     setSkin();
 }
@@ -603,15 +604,12 @@ void Pod::generateGlow(PodColor color, PodShape shape)
     }
 }
 
-void Pod::generateIndicator()
+void Pod::generateHoldoutEffect()
 {
-    if (!indicatorNode)
-    {
-        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
-        
-        if( podShape == POD_SHAPE_HOLDOUT ) {
-            std::string indicatorName = "General/HoldOutPod";
-            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
+        if (!headContentEffect)
+        {
+            std::string headEffectName = "General/HoldOutPod";
+            headContentEffect = head->getCreator()->createParticleSystem("HeadEffect" + Util::toStringInt(headEffectID), headEffectName);
             Ogre::ColourValue emitterColor;
             switch (podColor)
             {
@@ -637,20 +635,22 @@ void Pod::generateIndicator()
                     emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
                     break;
             }
-            
-            ParticleEmitter* indicatorEmitter1 = indicatorEffect->getEmitter(0);
-            ParticleEmitter* indicatorEmitter2 = indicatorEffect->getEmitter(1);
-            indicatorEmitter1->setColour(emitterColor);
-            indicatorEmitter2->setColour(emitterColor);
+            head->attachObject(headContentEffect);
+            ++headEffectID;
         }
-        else {
-            std::string indicatorName = "General/GoodPodIndicator";
-            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
-        }
+}
+
+void Pod::generateIndicator()
+{
+    if (!indicatorNode)
+    {
+        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
+        
+        std::string indicatorName = "General/GoodPodIndicator";
+        indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         
         indicatorNode->attachObject(indicatorEffect);
         ++indicatorID;
-        
     }
 }
 
@@ -686,8 +686,16 @@ void Pod::setPodTrigger(bool value)
 
 void Pod::setVisibleIndicator(bool value)
 {
-    if (indicatorNode && podShape != POD_SHAPE_HOLDOUT)
+    if (indicatorNode)
+    {
         indicatorNode->setVisible(value);
+        uncloakPod();
+    }
+}
+
+bool Pod::isIndicatorVisible() const
+{
+    return indicatorNode && indicatorNode->getAttachedObject(0)->isVisible();
 }
 
 void Pod::removeGlow()
@@ -733,6 +741,11 @@ void Pod::removeFromScene()
     if (head && podShape != POD_SHAPE_HOLDOUT)
     {
         head->getCreator()->destroyEntity(headContentEntity);
+        if (headContentEffect)
+        {
+            head->getCreator()->destroyParticleSystem(headContentEffect);
+            headContentEffect = NULL;
+        }
         head = NULL;
         headContentEntity = NULL;
     }

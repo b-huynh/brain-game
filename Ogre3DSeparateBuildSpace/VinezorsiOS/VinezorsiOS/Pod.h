@@ -23,6 +23,8 @@ private:
     std::string materialName;
     
     Entity* headContentEntity;
+    ParticleSystem* headContentEffect;  // Particle System associated the pod (Specifically for holdout shape signals)
+    
     SceneNode* glowNode;                // Extraction glow for selection. Particularly for tractor beam
     ParticleSystem* glowEffect;
     SceneNode* indicatorNode;           // Indicator used to tell player it is a good target
@@ -103,6 +105,7 @@ public:
     void revealPod();
     void uncloakPod();
     void generateGlow(PodColor color, PodShape shape);
+    void generateHoldoutEffect();
     void generateIndicator();
     void setDest(Vector3 value);
 	void setMoveSpeed(float value);
@@ -111,6 +114,7 @@ public:
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     void setVisibleIndicator(bool value);
+    bool isIndicatorVisible() const;
     
     void removeGlow();
     void removeIndicator();
