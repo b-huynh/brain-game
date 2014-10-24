@@ -237,6 +237,7 @@
 				5D04AD421900D01400E0A98B /* EngineStateManager.h */,
 				5D04AD3319006C2600E0A98B /* BaseClasses */,
 				5DD5E04918FDA65F0063491A /* Stage */,
+				5D29449419FA06E2002950C7 /* LevelScheduler */,
 				5D04AD2D190052E300E0A98B /* LevelSelection */,
 				5D04AD471901142800E0A98B /* MainMenu */,
 				5D04AD4E1901218D00E0A98B /* Credits */,
@@ -315,6 +316,17 @@
 			name = Credits;
 			sourceTree = "<group>";
 		};
+		5D29449419FA06E2002950C7 /* LevelScheduler */ = {
+			isa = PBXGroup;
+			children = (
+				5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */,
+				5DA8044C19E4C6BD001E0928 /* EngineSchedulerMenu.h */,
+				5DA8044D19E4C6BD001E0928 /* HudSchedulerMenu.cpp */,
+				5DA8044E19E4C6BD001E0928 /* HudSchedulerMenu.h */,
+			);
+			name = LevelScheduler;
+			sourceTree = "<group>";
+		};
 		5D4B5087195CE62300912FC9 /* ControlSettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -383,12 +395,6 @@
 		5DE122E517F0DC8400E49916 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */,
-				5DA8044C19E4C6BD001E0928 /* EngineSchedulerMenu.h */,
-				5DA8044D19E4C6BD001E0928 /* HudSchedulerMenu.cpp */,
-				5DA8044E19E4C6BD001E0928 /* HudSchedulerMenu.h */,
-				5DA8044F19E4C6BD001E0928 /* LevelScheduler.cpp */,
-				5DA8045019E4C6BD001E0928 /* LevelScheduler.h */,
 				5D04AD3219006C0900E0A98B /* Player */,
 				5D04AD3119006BF800E0A98B /* GameEngineStates */,
 				5DA3B27318BB10E4001BFBB9 /* Networking.mm */,
@@ -403,6 +409,8 @@
 				5D1EFEB3190B2B1100E865D6 /* LevelSet.h */,
 				5D299E3D18A061D60014CFA9 /* LevelManager.cpp */,
 				5D299E3E18A061D60014CFA9 /* LevelManager.h */,
+				5DA8044F19E4C6BD001E0928 /* LevelScheduler.cpp */,
+				5DA8045019E4C6BD001E0928 /* LevelScheduler.h */,
 			);
 			name = source;
 			sourceTree = "<group>";

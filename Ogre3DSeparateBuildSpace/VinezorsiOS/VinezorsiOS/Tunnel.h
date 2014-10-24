@@ -63,6 +63,7 @@ public:
     int spawnLimit;
     int numTargets;
     float fuelTimer;
+    float fuelBuffer;
     
     // These indices used to track current player's spot
     int sectionIndex;
@@ -199,6 +200,7 @@ public:
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
+    float getFuelBuffer() const;
     float getFuelTimer() const;
     float getPercentComplete() const;
     int getNBack() const;
@@ -225,7 +227,8 @@ public:
     void setNumTargets(int value);
     void upgradeControl();
     void addToTimePenalty(float value);
-    void addToFuel(float value);
+    void addToFuelBuffer(float value);
+    void addToFuelTimer(float value);
     void setVisible(bool value);
     void setCleaning(bool value);
     bool needsCleaning() const;

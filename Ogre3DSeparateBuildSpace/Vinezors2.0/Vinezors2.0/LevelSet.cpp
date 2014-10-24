@@ -8,6 +8,186 @@
 
 #include "LevelSet.h"
 
+#include "Util.h"
+
+extern Util::ConfigGlobal globals;
+
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int UNL)
+{
+    // These are set for all levels regardless of phase/diffuculty
+    // Not entirely sure on collection requirements as of now
+    const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
+    const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
+    StageRequest* ret = this;
+    ret->init(); // Reset everything to clear lists if they're still populated
+    double duration;
+    switch ( DURATION_X )
+    {
+        case DURATION_SHORT:
+        {
+            duration = EASY_TIME;
+            if (PHASE_X != PHASE_COLLECT)
+            {
+                for (int i = 0; i < EASY_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+            }
+            break;
+        }
+        case DURATION_NORMAL:
+        {
+            duration = NORMAL_TIME;
+            if (PHASE_X != PHASE_COLLECT)
+            {
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+            }
+            break;
+        }
+        case DURATION_LONG:
+            duration = HARD_TIME;
+            if (PHASE_X != PHASE_COLLECT)
+            {
+                for (int i = 0; i < HARD_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+            }
+            break;
+        default:
+            duration = NORMAL_TIME;
+            if (PHASE_X != PHASE_COLLECT)
+            {
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+            }
+            break;
+    }
+    ret->nback = nback;
+    ret->nameSkybox = "General/BlankStarrySkyPlane";
+    ret->tunnelSectionsPerNavLevel = 10;
+    ret->initCamSpeed = 10;
+    ret->minCamSpeed = 10;
+    ret->maxCamSpeed = 40;
+    ret->phaseX = PHASE_X;
+    ret->difficultyX = DIFFICULTY_X;
+    ret->holdoutPerc = holdout / 100.0;
+    ret->UserNavLevel = UNL;
+    ret->stageTime = duration;
+    
+    if (holdoutPerc > 0.0)
+    {
+        ret->holdoutStart = 0.20;
+        ret->holdoutEnd = 0.80;
+        ret->holdoutSound = 1;
+        ret->holdoutColor = 1;
+        ret->holdoutShape = 1;
+    }
+    else
+    {
+        ret->holdoutStart = 0.0;
+        ret->holdoutEnd = 0.0;
+        ret->holdoutSound = 0;
+        ret->holdoutColor = 0;
+        ret->holdoutShape = 0;
+    }
+    
+    // Adjust navigation level based on difficulty
+    switch (DIFFICULTY_X)
+    {
+        case DIFFICULTY_EASY:
+            UNL = (UNL - 4) / 2;
+            break;
+        case DIFFICULTY_NORMAL:
+            break;
+        case DIFFICULTY_HARD:
+            UNL = (UNL * 1.5) + 2;
+            break;
+    }
+    
+    if(UNL<2)
+    {
+        UNL=2;
+    }
+    else if(UNL>globals.navMap.size()-2)
+    {
+        UNL=globals.navMap.size()-2;
+    }
+    
+    
+    int randSpot1= rand()%4;
+    int randSpot2=rand()%4;
+    int randSpot3= rand()%4;
+    while(randSpot2==randSpot1)randSpot2=rand()%4;
+    while(randSpot3==randSpot1&&randSpot3==randSpot2)randSpot3=rand()%4;
+    
+    int randSpot4= 6-randSpot1-randSpot2-randSpot3;
+    std::cout<<"spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+    
+    int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
+    int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
+    int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
+    int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+    
+    ret->navLevels.push_back(globals.navMap[navIndex1]);
+    ret->navLevels.push_back(globals.navMap[navIndex2]);
+    ret->navLevels.push_back(globals.navMap[navIndex3]);
+    ret->navLevels.push_back(globals.navMap[navIndex4]);
+    
+    // Chooses what phase and difficulty to generate for ret
+    switch( PHASE_X )
+    {
+        case PHASE_COLLECT:
+            ret->nback = 0;
+            // These are always set for all recess levels
+            ret->nameTunnelTile = "General/WallBindingG";
+            ret->nameMusic = "Music4";
+            ret->phase = 'E';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_COLOR_SOUND:
+            // These are always set for color sound levels
+            ret->nameTunnelTile = "General/WallBindingA";
+            ret->nameMusic = "Music2";
+            ret->phase = 'A';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_SHAPE_SOUND:
+            // These are allways set for shape sound levels
+            ret->nameTunnelTile = "General/WallBindingB";
+            ret->nameMusic = "Music1";
+            ret->phase = 'B';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_SOUND_ONLY:
+            // These are always set for sound only levels
+            ret->nameTunnelTile = "General/WallBindingC";
+            ret->nameMusic = "Music5";
+            ret->phase = 'C';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_HOLDOUT:
+            // These are always set for holdout level
+            ret->nameTunnelTile = "General/WallBindingD";
+            ret->nameMusic = "Music3";
+            ret->phase = 'D';
+            break;
+            //_____________________________________________________________
+            
+        default:
+            break;
+    }
+    // Just in no init nav levels
+    if (ret->navLevels.size() <= 0)
+    {
+        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+    }
+}
+
 bool LevelSet::hasLevel(int levelSelect) const
 {
     return hasLevel(levelSelect / NUM_TASKS, levelSelect % NUM_TASKS);
@@ -170,8 +350,9 @@ void LevelSet::initializeLevelSet()
     level.phase = 'A';
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;
+    level.maxCamSpeed = 40;    
     stageList[0][1] = level;
+    
     
     /////////////////////
     /// Level 2   1-C ///
@@ -1419,232 +1600,3 @@ void LevelSet::initializeLevelSet()
 #endif
 }
 
-std::vector<NavigationLevel> StageRequest::generateRandomEasyNavigation()
-{
-    std::vector<NavigationLevel> ret;
-    const int NUM_NAVIGATION_SETS = 10;
-    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
-    switch (rvalue)
-    {
-        case 0:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 1:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 2:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 3:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 4:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            break;
-        case 5:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 6:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 7:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 8:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 9:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        default:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-    }
-    return ret;
-}
-std::vector<NavigationLevel> StageRequest::generateRandomNormalNavigation()
-{
-    std::vector<NavigationLevel> ret;
-    const int NUM_NAVIGATION_SETS = 10;
-    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
-    switch (rvalue)
-    {
-        case 0:
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            break;
-        case 1:
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            break;
-        case 2:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            break;
-        case 3:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            break;
-        case 4:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 5:
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            break;
-        case 6:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 7:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 8:
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            break;
-        case 9:
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            break;
-        default:
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 4, 0));
-            break;
-    }
-    return ret;
-}
-
-std::vector<NavigationLevel> StageRequest::generateRandomHardNavigation()
-{
-    std::vector<NavigationLevel> ret;
-    const int NUM_NAVIGATION_SETS = 10;
-    int rvalue = std::rand() % NUM_NAVIGATION_SETS;
-    switch (rvalue)
-    {
-        case 0:
-            ret.push_back(NavigationLevel(0, 1, 0));
-            ret.push_back(NavigationLevel(0, 2, 2));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            break;
-        case 1:
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 1, 0));
-            break;
-        case 2:
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 3, 2));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 4, 1));
-            break;
-        case 3:
-            ret.push_back(NavigationLevel(0, 4, 0));
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 2));
-            break;
-        case 4:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 3, 2));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            break;
-        case 5:
-            ret.push_back(NavigationLevel(0, 2, 0));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            ret.push_back(NavigationLevel(0, 2, 2));
-            ret.push_back(NavigationLevel(0, 1, 1));
-            break;
-        case 6:
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 2));
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 2, 2));
-            break;
-        case 7:
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 3, 0));
-            break;
-        case 8:
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 2, 1));
-            ret.push_back(NavigationLevel(0, 2, 2));
-            ret.push_back(NavigationLevel(0, 2, 0));
-            break;
-        case 9:
-            ret.push_back(NavigationLevel(0, 3, 1));
-            ret.push_back(NavigationLevel(0, 4, 1));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 4, 1));
-            break;
-        default:
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            ret.push_back(NavigationLevel(0, 4, 2));
-            break;
-    }
-    return ret;
-}

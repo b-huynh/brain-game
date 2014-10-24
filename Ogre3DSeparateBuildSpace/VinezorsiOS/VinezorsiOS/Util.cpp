@@ -25,7 +25,7 @@ Util::ConfigGlobal::ConfigGlobal()
     stageTotalTargets1 = 100;
     stageTotalTargets2 = 150;
     stageTotalTargets3 = 200;
-    stageTotalCollections = 30;
+    stageTotalCollections = 25;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;
@@ -180,12 +180,15 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[3] = NavigationLevel(3, 1, 1);
     navMap[4] = NavigationLevel(4, 4, 0);
     navMap[5] = NavigationLevel(5, 3, 0);
+    
     navMap[6] = NavigationLevel(6, 4, 1);
     navMap[7] = NavigationLevel(7, 2, 2);
     navMap[8] = NavigationLevel(8, 1, 2);
     navMap[9] = NavigationLevel(9, 4, 2);
     navMap[10] = NavigationLevel(10, 3, 1);
     navMap[11] = NavigationLevel(11, 3, 2);
+    
+    
     navMap[12] = NavigationLevel(12, 4, 3);
     navMap[13] = NavigationLevel(13, 2, 3);
     navMap[14] = NavigationLevel(14, 2, 4);

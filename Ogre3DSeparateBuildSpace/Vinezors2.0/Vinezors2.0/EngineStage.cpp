@@ -201,16 +201,19 @@ void EngineStage::update(float elapsed)
                 player->saveProgress(globals.savePath);
                 player->assessLevelPerformance(player->levelRequest);
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
-                
-                if( player->scheduler->sessionFinished && !player->scheduler->sessionFinishedAcknowledged )
+                if (player->scheduler->sessionFinished) {
+                    std::cout << "finished!\n";
+                }
+                else
                 {
-                    /*
-                    std::cout << "\n\n\n===========================================\n"
+                    std::cout << "not finished!\n";
+                }
+                if(player->scheduler->sessionFinished)
+                {
+                    std::cout << "\n\n\n==========================================="
                                 << "Session Finished!\n"
                                 << "===========================================\n";
-                    */
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                    player->scheduler->sessionFinishedAcknowledged = true;
                 }
                 
                 // Grab new choices for player to choose from
@@ -534,14 +537,14 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     stageState = STAGE_STATE_PROMPT;
                 }
             }
-            else if (queryGUI == "leftzap")
+            else if (queryGUI == "leftzap" && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 hud->leftZapT = 0.1;
                 // Perform Zap
                 player->setPowerUp("TractorBeam", true);
                 player->performPowerUp("TractorBeam");
             }
-            else if (queryGUI == "rightzap")
+            else if (queryGUI == "rightzap" && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 hud->rightZapT = 0.1;
                 // Perform Zap
@@ -1255,9 +1258,6 @@ void EngineStage::setup()
         case 'E':
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
-            
-            // With 15 baseline at 90 seconds, ~30 pods will be introduced
-            globals.stageTotalCollections = 25;
             break;
         case 'F':
             nmode = STAGE_MODE_TEACHING;
@@ -1267,6 +1267,22 @@ void EngineStage::setup()
     globals.initCamSpeed = level.initCamSpeed;
     globals.minCamSpeed = level.minCamSpeed;
     globals.maxCamSpeed = level.maxCamSpeed;
+    
+    // This should be a level parameter later
+    if (player->levelRequest)
+    {
+        int rank = level.nback;
+        if (level.phase == 'E')
+            rank = (int)round(player->scheduler->nBackLevelE);
+        
+        if (rank <= 1)
+            globals.fuelReturn = 6.0f;
+        else if (rank == 2)
+            globals.fuelReturn = 5.0f;
+        else //if (rank == 3)
+            globals.fuelReturn = 4.0f;
+        
+    }
     
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),

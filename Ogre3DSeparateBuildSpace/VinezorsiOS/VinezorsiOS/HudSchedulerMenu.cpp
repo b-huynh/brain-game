@@ -381,13 +381,13 @@ void HudSchedulerMenu::setSelection()
     switch (level.difficultyX)
     {
         case DIFFICULTY_EASY:
-            navigation = "easy";
+            navigation = "easier";
             break;
         case DIFFICULTY_NORMAL:
             navigation = "normal";
             break;
         case DIFFICULTY_HARD:
-            navigation = "hard";
+            navigation = "harder";
             break;
     }
     holdout = level.hasHoldout() ? "yes" : "no";

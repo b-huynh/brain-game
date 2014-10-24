@@ -283,7 +283,8 @@ void HudStage::update(float elapsed)
     {
         label1->setCaption(globals.messageBig);
         
-        label5->setCaption(Util::toStringInt(player->getScore()));
+        //label5->setCaption(Util::toStringInt(player->getScore()));
+        label5->setCaption(Util::toStringInt(tunnel->getFuelTimer()));
         label6->setCaption(globals.message);
         
         player->xsTimer -= elapsed;

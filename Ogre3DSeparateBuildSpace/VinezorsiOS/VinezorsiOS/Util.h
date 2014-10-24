@@ -313,6 +313,7 @@ namespace Util
         
         Vector2 convertToPercentScreen(Vector2 p);
         
+        
         void initPaths();
         void initLogs(int session);
         void setConfigValue(std::istream& in, std::string paramName);

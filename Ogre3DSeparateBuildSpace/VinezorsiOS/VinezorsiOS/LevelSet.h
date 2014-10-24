@@ -23,6 +23,11 @@
 enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 enum StageDuration {DURATION_SHORT, DURATION_NORMAL, DURATION_LONG};
 enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_HOLDOUT };
+//bookmark
+//enum EasyLevels { 0,1 };
+//enum MediumLevels { 2,3,4,5 };
+//enum HardLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+//enum ExpertLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 
 struct CollectionCriteria
 {
@@ -56,6 +61,10 @@ struct StageRequest
     bool holdoutColor;
     bool holdoutShape;
     
+    float UserNavLevel;
+    int Elevel, Mlevel, Hlevel, Xlevel =0;
+    
+    
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
@@ -71,6 +80,13 @@ struct StageRequest
     bool hasHoldout() const
     {
         return (holdoutSound || holdoutColor || holdoutShape) && holdoutPerc > 0.0f;
+    }
+    
+    void setDiffPerc(int easy, int medium, int hard, int expert){
+        Elevel=easy;
+        Mlevel=medium;
+        Hlevel=hard;
+        Xlevel=expert;
     }
     
     // clear everything and set defaults
@@ -99,250 +115,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, double holdout)
-    {
-        // These are set for all levels regardless of phase/diffuculty
-        // Not entirely sure on collection requirements as of now
-        const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
-        const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
-        
-        StageRequest* ret = this;
-        ret->init(); // Reset everything to clear lists if they're still populated
-        double duration;
-        switch ( DURATION_X )
-        {
-            case DURATION_SHORT:
-            {
-                duration = EASY_TIME;
-                if (PHASE_X != PHASE_COLLECT)
-                {
-                    for (int i = 0; i < EASY_COLLECTIONS; ++i)
-                        ret->collectionCriteria.push_back(CollectionCriteria(nback));
-                }
-                break;
-            }
-            case DURATION_NORMAL:
-            {
-                duration = NORMAL_TIME;
-                if (PHASE_X != PHASE_COLLECT)
-                {
-                    for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
-                        ret->collectionCriteria.push_back(CollectionCriteria(nback));
-                }
-                break;
-            }
-            case DURATION_LONG:
-                duration = HARD_TIME;
-                if (PHASE_X != PHASE_COLLECT)
-                {
-                    for (int i = 0; i < HARD_COLLECTIONS; ++i)
-                        ret->collectionCriteria.push_back(CollectionCriteria(nback));
-                }
-                break;
-            default:
-                duration = NORMAL_TIME;
-                if (PHASE_X != PHASE_COLLECT)
-                {
-                    for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
-                        ret->collectionCriteria.push_back(CollectionCriteria(nback));
-                }
-                break;
-        }
-        
-        ret->nback = nback;
-        ret->nameSkybox = "General/BlankStarrySkyPlane";
-        ret->tunnelSectionsPerNavLevel = 10;
-        ret->initCamSpeed = 10;
-        ret->minCamSpeed = 10;
-        ret->maxCamSpeed = 40;
-        ret->phaseX = PHASE_X;
-        ret->difficultyX = DIFFICULTY_X;
-        ret->holdoutPerc = holdout / 100.0;
-        ret->stageTime = duration;
-        if (holdoutPerc > 0.0)
-        {
-            ret->holdoutStart = 0.20;
-            ret->holdoutEnd = 0.70;
-            ret->holdoutSound = 1;
-            ret->holdoutColor = 1;
-            ret->holdoutShape = 1;
-        }
-        else
-        {
-            ret->holdoutStart = 0.0;
-            ret->holdoutEnd = 0.0;
-            ret->holdoutSound = 0;
-            ret->holdoutColor = 0;
-            ret->holdoutShape = 0;
-        }
-        
-        // Chooses what phase and difficulty to generate for ret
-        switch( PHASE_X )
-        {
-            case PHASE_COLLECT:
-                ret->nback = 0;
-                switch (DIFFICULTY_X)
-                {
-                    case DIFFICULTY_EASY:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_NORMAL:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_HARD:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    default:
-                        break;
-                }
-                // These are always set for all recess levels
-                ret->nameTunnelTile = "General/WallBindingG";
-                ret->nameMusic = "Music4";
-                ret->phase = 'E';
-                break;
-                //_____________________________________________________________
-                
-            case PHASE_COLOR_SOUND:
-                switch (DIFFICULTY_X)
-                {
-                    case DIFFICULTY_EASY:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_NORMAL:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_HARD:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    default:
-                        break;
-                }
-                // These are always set for color sound levels
-                ret->nameTunnelTile = "General/WallBindingA";
-                ret->nameMusic = "Music2";
-                ret->phase = 'A';
-                break;
-                //_____________________________________________________________
-                
-            case PHASE_SHAPE_SOUND:
-                switch (DIFFICULTY_X)
-                {
-                    case DIFFICULTY_EASY:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_NORMAL:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_HARD:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    default:
-                        break;
-                }
-                // These are allways set for shape sound levels
-                ret->nameTunnelTile = "General/WallBindingB";
-                ret->nameMusic = "Music1";
-                ret->phase = 'B';
-                break;
-                //_____________________________________________________________
-                
-            case PHASE_SOUND_ONLY:
-                switch (DIFFICULTY_X)
-                {
-                    case DIFFICULTY_EASY:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_NORMAL:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_HARD:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    default:
-                        break;
-                }
-                // These are always set for sound only levels
-                ret->nameTunnelTile = "General/WallBindingC";
-                ret->nameMusic = "Music5";
-                ret->phase = 'C';
-                break;
-                //_____________________________________________________________
-                
-            case PHASE_HOLDOUT:
-                switch (DIFFICULTY_X)
-                {
-                    case DIFFICULTY_EASY:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_NORMAL:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                        
-                    case DIFFICULTY_HARD:
-                        ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
-                        break;
-                    default:
-                        break;
-                }
-                // These are always set for holdout level
-                ret->nameTunnelTile = "General/WallBindingD";
-                ret->nameMusic = "Music3";
-                ret->phase = 'D';
-                break;
-                //_____________________________________________________________
-                
-            default:
-                break;
-        }
-        // Just in case a nav levels
-        if (ret->navLevels.size() <= 0)
-        {
-            ret->navLevels.push_back(NavigationLevel(0, 1, 0));
-            ret->navLevels.push_back(NavigationLevel(0, 2, 0));
-            ret->navLevels.push_back(NavigationLevel(0, 3, 0));
-            ret->navLevels.push_back(NavigationLevel(0, 4, 0));
-        }
-    }
-    
-    std::vector<NavigationLevel> generateNavigationLevels(StageDifficulty navigationDifficulty)
-    {
-        std::vector<NavigationLevel> ret;
-        switch (navigationDifficulty)
-        {
-            case DIFFICULTY_EASY:
-                ret = generateRandomEasyNavigation();
-                break;
-            case DIFFICULTY_NORMAL:
-                ret = generateRandomNormalNavigation();
-                break;
-            case DIFFICULTY_HARD:
-                ret = generateRandomHardNavigation();
-                break;
-            default:
-                ret.push_back(NavigationLevel(0, 1, 0));
-                ret.push_back(NavigationLevel(0, 2, 0));
-                ret.push_back(NavigationLevel(0, 3, 0));
-                ret.push_back(NavigationLevel(0, 4, 0));
-                break;
-        }
-        return ret;
-    }
-    std::vector<NavigationLevel> generateRandomEasyNavigation();
-    std::vector<NavigationLevel> generateRandomNormalNavigation();
-    std::vector<NavigationLevel> generateRandomHardNavigation();
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int UNL);
     
     StageRequest()
     {

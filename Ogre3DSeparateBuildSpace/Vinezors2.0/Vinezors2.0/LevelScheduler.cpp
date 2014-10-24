@@ -27,11 +27,14 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->nBackLevelD = nBackLevelD;
     this->nBackLevelE = nBackLevelE;
     this->currentHoldout = currentHoldout;
-    this->speedA = 10.0f;
-    this->speedB = 10.0f;
-    this->speedC = 10.0f;
-    this->speedD = 10.0f;
-    this->speedE = 10.0f;
+    this->speedA = 15.0f;
+    this->speedB = 15.0f;
+    this->speedC = 15.0f;
+    this->speedD = 15.0f;
+    this->speedE = 15.0f;
+    this->holdoutOffsetA = 0.0f;
+    this->holdoutOffsetB = 0.0f;
+    this->holdoutOffsetD = 0.0f;
     initTutorialLevels(); // Also called after loading the scheduler
 }
 
@@ -468,11 +471,15 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         //std::cout << "SHIFT: " << shift << std::endl;
         nBackRounded = (int)round(playerSkill + shift);
         
+        int currentUNL = (int)round(nBackLevelE);
+        
         if(nBackRounded < 1) nBackRounded = 1;
         if (holdout)
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout);
+
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
         else
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, currentUNL);
+
         node.second.nBackSkill = playerSkill;
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
