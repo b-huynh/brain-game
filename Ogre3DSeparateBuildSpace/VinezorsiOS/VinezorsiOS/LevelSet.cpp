@@ -8,6 +8,260 @@
 
 #include "LevelSet.h"
 
+#include "Util.h"
+
+extern Util::ConfigGlobal globals;
+
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, float holdout, int UNL)
+{
+    // These are set for all levels regardless of phase/diffuculty
+    // Not entirely sure on collection requirements as of now
+    const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
+    const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
+    StageRequest* ret = this;
+    ret->init(); // Reset everything to clear lists if they're still populated
+    ret->nback = nback;
+    ret->nameSkybox = "General/BlankStarrySkyPlane";
+    ret->tunnelSectionsPerNavLevel = 10;
+    ret->initCamSpeed = 10;
+    ret->minCamSpeed = 10;
+    ret->maxCamSpeed = 40;
+    ret->phaseX = PHASE_X;
+    ret->difficultyX = DIFFICULTY_X;
+    ret->holdoutPerc = holdout / 100.0;
+    ret->UserNavLevel = UNL;
+    
+    if (holdoutPerc > 0.0)
+    {
+        ret->holdoutStart = 0.20;
+        ret->holdoutEnd = 0.70;
+        ret->holdoutSound = 1;
+        ret->holdoutColor = 1;
+        ret->holdoutShape = 1;
+    }
+    else
+    {
+        ret->holdoutStart = 0.0;
+        ret->holdoutEnd = 0.0;
+        ret->holdoutSound = 0;
+        ret->holdoutColor = 0;
+        ret->holdoutShape = 0;
+    }
+    
+    
+   
+    
+    if(UNL<2)
+    {
+        UNL=2;
+    }
+    else if(UNL>globals.navMap.size()-2)
+    {
+        UNL=globals.navMap.size()-2;
+    }
+    
+    
+    int randSpot= rand()%4;
+    int randSpot2=rand()%4;
+    int randSpot3= rand()%4;
+    while(randSpot2==randSpot)randSpot2=rand()%4;
+    while(randSpot3==randSpot&&randSpot3==randSpot2)randSpot3=rand()%4;
+    
+    int randSpot4= 6-randSpot-randSpot2-randSpot3;
+    std::cout<<"spots: "<<randSpot<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+    
+    ret->navLevels.push_back(globals.navMap[UNL-2+randSpot]);
+    ret->navLevels.push_back(globals.navMap[UNL-2+randSpot2]);
+    ret->navLevels.push_back(globals.navMap[UNL-2+randSpot3]);
+    ret->navLevels.push_back(globals.navMap[UNL-2+randSpot4]);
+    
+    
+    
+    // Chooses what phase and difficulty to generate for ret
+    switch( PHASE_X )
+    {
+        case PHASE_COLLECT:
+            ret->nback = 0;
+            switch (DIFFICULTY_X)
+        {
+            case DIFFICULTY_EASY:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                break;
+                
+            case DIFFICULTY_NORMAL:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                break;
+                
+            case DIFFICULTY_HARD:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                break;
+                
+            default:
+                break;
+        }
+            // These are always set for all recess levels
+            ret->nameTunnelTile = "General/WallBindingG";
+            ret->nameMusic = "Music4";
+            ret->phase = 'E';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_COLOR_SOUND:
+            switch (DIFFICULTY_X)
+        {
+            case DIFFICULTY_EASY:
+                ret->stageTime = EASY_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < EASY_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_NORMAL:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_HARD:
+                ret->stageTime = HARD_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < HARD_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            default:
+                break;
+        }
+            // These are always set for color sound levels
+            ret->powerups.push_back(POWERUP_TIME_WARP);
+            ret->nameTunnelTile = "General/WallBindingA";
+            ret->nameMusic = "Music2";
+            ret->phase = 'A';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_SHAPE_SOUND:
+            switch (DIFFICULTY_X)
+        {
+            case DIFFICULTY_EASY:
+                ret->stageTime = EASY_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < EASY_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_NORMAL:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_HARD:
+                ret->stageTime = HARD_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < HARD_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            default:
+                break;
+        }
+            // These are allways set for shape sound levels
+            ret->powerups.push_back(POWERUP_TIME_WARP);
+            ret->nameTunnelTile = "General/WallBindingB";
+            ret->nameMusic = "Music1";
+            ret->phase = 'B';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_SOUND_ONLY:
+            switch (DIFFICULTY_X)
+        {
+            case DIFFICULTY_EASY:
+                ret->stageTime = EASY_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < EASY_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_NORMAL:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_HARD:
+                ret->stageTime = HARD_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < HARD_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            default:
+                break;
+        }
+            // These are always set for sound only levels
+            ret->powerups.push_back(POWERUP_TIME_WARP);
+            ret->nameTunnelTile = "General/WallBindingC";
+            ret->nameMusic = "Music5";
+            ret->phase = 'C';
+            break;
+            //_____________________________________________________________
+            
+        case PHASE_HOLDOUT:
+            switch (DIFFICULTY_X)
+        {
+            case DIFFICULTY_EASY:
+                ret->stageTime = EASY_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < EASY_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_NORMAL:
+                ret->stageTime = NORMAL_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < NORMAL_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+                
+            case DIFFICULTY_HARD:
+                ret->stageTime = HARD_TIME;
+                //ret->navLevels = generateNavigationLevels(DIFFICULTY_X);
+                for (int i = 0; i < HARD_COLLECTIONS; ++i)
+                    ret->collectionCriteria.push_back(CollectionCriteria(nback));
+                break;
+            default:
+                break;
+        }
+            // These are always set for holdout level
+            ret->powerups.push_back(POWERUP_TIME_WARP);
+            ret->nameTunnelTile = "General/WallBindingD";
+            ret->nameMusic = "Music3";
+            ret->phase = 'D';
+            break;
+            //_____________________________________________________________
+            
+        default:
+            break;
+    }
+    // Just in no init nav levels
+    if (ret->navLevels.size() <= 0)
+    {
+        ret->navLevels.push_back(NavigationLevel(0, 1, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 2, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 3, 0));
+        ret->navLevels.push_back(NavigationLevel(0, 4, 0));
+    }
+}
+
+
 bool LevelSet::hasLevel(int levelSelect) const
 {
     return hasLevel(levelSelect / NUM_TASKS, levelSelect % NUM_TASKS);

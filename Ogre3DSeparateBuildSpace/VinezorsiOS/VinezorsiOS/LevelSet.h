@@ -23,6 +23,11 @@
 enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 enum StageDuration {DURATION_SHORT, DURATION_NORMAL, DURATION_LONG};
 enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_HOLDOUT };
+//bookmark
+//enum EasyLevels { 0,1 };
+//enum MediumLevels { 2,3,4,5 };
+//enum HardLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+//enum ExpertLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 
 struct CollectionCriteria
 {
@@ -56,6 +61,10 @@ struct StageRequest
     bool holdoutColor;
     bool holdoutShape;
     
+    float UserNavLevel;
+    int Elevel, Mlevel, Hlevel, Xlevel =0;
+    
+    
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
@@ -71,6 +80,13 @@ struct StageRequest
     bool hasHoldout() const
     {
         return (holdoutSound || holdoutColor || holdoutShape) && holdoutPerc > 0.0f;
+    }
+    
+    void setDiffPerc(int easy, int medium, int hard, int expert){
+        Elevel=easy;
+        Mlevel=medium;
+        Hlevel=hard;
+        Xlevel=expert;
     }
     
     // clear everything and set defaults
@@ -99,7 +115,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, double holdout)
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, double holdout, int UNL)
     {
         // These are set for all levels regardless of phase/diffuculty
         // Not entirely sure on collection requirements as of now
@@ -316,6 +332,7 @@ struct StageRequest
             ret->navLevels.push_back(NavigationLevel(0, 4, 0));
         }
     }
+>>>>>>> afb3b281bae42fbaa54625ddd78ad517b5d4dcab
     
     std::vector<NavigationLevel> generateNavigationLevels(StageDifficulty navigationDifficulty)
     {

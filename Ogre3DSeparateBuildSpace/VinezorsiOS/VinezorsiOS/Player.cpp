@@ -3224,15 +3224,30 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
             playerSkill = scheduler->nBackLevelE;
             break;
+        
         case 'A':
-            scheduler->nBackLevelA += nBackDelta;
-            if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
-            playerSkill = scheduler->nBackLevelA;
+            //scheduler->nBackLevelA += nBackDelta;
+            //if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+            //playerSkill = scheduler->nBackLevelA;
+            
+            
+            scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
+            if(scheduler->holdoutOffsetA>0)scheduler->nBackLevelA += scheduler->holdoutOffsetA; //check if offset is positive. if so add to nbacklevel
+            playerSkill = scheduler->nBackLevelA;       //set nbacklevel to playerskill
+            if(scheduler->holdoutOffsetA>0)scheduler->holdoutOffsetA = 0;              //reset offset
+            
             break;
         case 'B':
-            scheduler->nBackLevelB += nBackDelta;
-            if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
-            playerSkill = scheduler->nBackLevelB;
+            //scheduler->nBackLevelB += nBackDelta;
+            //if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+            //playerSkill = scheduler->nBackLevelB;
+            
+            scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
+            if(scheduler->holdoutOffsetB>0)scheduler->nBackLevelB += scheduler->holdoutOffsetB; //check if offset is positive. if so add to nbacklevel
+            playerSkill = scheduler->nBackLevelB;       //set nbacklevel to playerskill
+            if(scheduler->holdoutOffsetB>0)scheduler->holdoutOffsetB = 0;              //reset offset
+            
+
             break;
         case 'C':
             scheduler->nBackLevelC += nBackDelta;
@@ -3240,9 +3255,17 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerSkill = scheduler->nBackLevelC;
             break;
         case 'D':
-            scheduler->nBackLevelD += nBackDelta;
-            if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
-            playerSkill = scheduler->nBackLevelD;
+            //scheduler->nBackLevelD += nBackDelta;
+            //if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
+            //playerSkill = scheduler->nBackLevelD;
+            
+            scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
+            if(scheduler->holdoutOffsetD>0)scheduler->nBackLevelD += scheduler->holdoutOffsetD; //check if offset is positive. if so add to nbacklevel
+            playerSkill = scheduler->nBackLevelD;       //set nbacklevel to playerskill
+            if(scheduler->holdoutOffsetD>0)scheduler->holdoutOffsetD = 0;              //reset offset
+            
+
+            
             break;
         default:
             break;
