@@ -537,14 +537,14 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     stageState = STAGE_STATE_PROMPT;
                 }
             }
-            else if (queryGUI == "leftzap")
+            else if (queryGUI == "leftzap" && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 hud->leftZapT = 0.1;
                 // Perform Zap
                 player->setPowerUp("TractorBeam", true);
                 player->performPowerUp("TractorBeam");
             }
-            else if (queryGUI == "rightzap")
+            else if (queryGUI == "rightzap" && tunnel->getMode() != STAGE_MODE_RECESS)
             {
                 hud->rightZapT = 0.1;
                 // Perform Zap
@@ -1267,6 +1267,22 @@ void EngineStage::setup()
     globals.initCamSpeed = level.initCamSpeed;
     globals.minCamSpeed = level.minCamSpeed;
     globals.maxCamSpeed = level.maxCamSpeed;
+    
+    // This should be a level parameter later
+    if (player->levelRequest)
+    {
+        int rank = level.nback;
+        if (level.phase == 'E')
+            rank = (int)round(player->scheduler->nBackLevelE);
+        
+        if (rank <= 1)
+            globals.fuelReturn = 6.0f;
+        else if (rank == 2)
+            globals.fuelReturn = 5.0f;
+        else //if (rank == 3)
+            globals.fuelReturn = 4.0f;
+        
+    }
     
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),

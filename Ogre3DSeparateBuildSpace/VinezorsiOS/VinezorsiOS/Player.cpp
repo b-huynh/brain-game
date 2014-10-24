@@ -844,7 +844,8 @@ void Player::updateBoost(float elapsed)
     float timeRange = 0.5;
     if (vines[0]->boostEffect)
     {
-        float percentFuel = 2 * tunnel->getFuelTimer() / globals.fuelMax;
+        float dropOffPecentage = 0.7;
+        float percentFuel = tunnel->getFuelTimer() / (globals.fuelMax * dropOffPecentage);
         if (percentFuel >= 1.0f)
             percentFuel = 1.0f;
         float origHue = 0.55f;
@@ -1102,29 +1103,33 @@ void Player::testPodGiveFeedback(Pod* test)
             }
             
             // Add to fuel gauge for correct zaps
-            tunnel->addToFuel(globals.fuelReturn);
+            tunnel->addToFuelBuffer(2.667); // 200 / (5 * baselineSpeed), where baselineSpeed = 15
             
             // Determine Score
             score += getScoring();
         }
-        else if (tunnel->getMode() != STAGE_MODE_RECESS)
+        else
         {
-            if (soundFeedbackMiss)
-            {
-                soundFeedbackMiss->stop();
-                soundFeedbackMiss->play();
-            }
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
-            
             numCorrectCombo = 0;
             ++numMissedTotal;
             ++numWrongCombo;
-            if (numWrongCombo % globals.numToSpeedDown == 0)
+    
+            if (tunnel->getMode() != STAGE_MODE_RECESS)
             {
-                baseSpeed -= globals.speedMap[baseSpeed];
-                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                if (soundFeedbackMiss)
+                {
+                    soundFeedbackMiss->stop();
+                    soundFeedbackMiss->play();
+                }
+                tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty / 2.0);
+                
+                numCorrectBonus = 0;
+                if (numWrongCombo % globals.numToSpeedDown == 0)
+                {
+                    baseSpeed -= globals.speedMap[baseSpeed];
+                    baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                }
             }
-            numCorrectBonus = 0;
         }
     }
     else if ((nbackPod && !correctSelection) ||
@@ -1212,7 +1217,7 @@ void Player::testPodGiveFeedback(Pod* test)
             }
             
             // Add to fuel gauge for correct zaps
-            tunnel->addToFuel(globals.fuelReturn);
+            tunnel->addToFuelTimer(globals.fuelReturn);
             
             // Determine Score
             score += 50.0f;
@@ -3098,7 +3103,9 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
     float valHoldout = 1.0;
     
     float nBackDifficulty = level.nback - assessment.nBackSkill;
-    if ( nBackDifficulty < -1.5 && level.phaseX != PHASE_COLLECT )
+    if ( level.phase == 'E' )
+        valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
+    else if ( nBackDifficulty < -1.5 )
         valMemory = 0.0;    // too easy memory
     else if ( nBackDifficulty < -0.5 )
         valMemory = 0.5;    // easy memory
@@ -3122,6 +3129,8 @@ float Player::obtainWeightMultiplier(StageRequest level, PlayerProgress assessme
         valNavigation = 1.0;   // normal nav
     else //(level.difficulty == DIFFICULTY_HARD)
         valNavigation = 1.2;   // hard nav
+    if (level.phase == 'E')
+        valNavigation *= 1.5;   // Apply a stronger nav strength for nav levels
     
     if (level.hasHoldout())
         valHoldout = 1.3;
@@ -3144,36 +3153,13 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
     float weightMultiplier = obtainWeightMultiplier(level, assessment);
-    /*
-    // A score multiplier that changes based on difficulty
-    double weightMultiplier = 0.0;
-    double nBackDifficulty = level.nback - assessment.nBackSkill;
-    std::cout << "\n\n===========================================\n" << level.nback << " - " << assessment.nBackSkill << " = " << nBackDifficulty << endl;
-    switch (level.difficultyX) {
-        case DIFFICULTY_EASY:
-            if ( nBackDifficulty < 0 )          weightMultiplier = 0.70;    // easy memory
-            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 0.90;    // normal memory
-            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.20;    // hard memory
-            break;
-        case DIFFICULTY_NORMAL:
-            if ( nBackDifficulty < 0 )          weightMultiplier = 0.75;    // easy memory
-            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.00;    // normal memory
-            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.25;    // hard memory
-            break;
-        case DIFFICULTY_HARD:
-            if ( nBackDifficulty < 0 )          weightMultiplier = 0.80;    // easy memory
-            else if ( nBackDifficulty < 0.5 )   weightMultiplier = 1.10;    // normal memory
-            else if ( nBackDifficulty >= 0.5 )  weightMultiplier = 1.30;    // hard memory
-            break;
-        default:
-            break;
-    }
-     */
     
     // Assign an accuracy range that determines success from 0% to 100%
     // For shorter levels, it's possible to complete the level at lower accuracy.
     // These are lower bound estimates for those accuracies (also excluding Time Warp)...
     float accuracyRange = 1.0;
+    if (level.phase == 'E') // For collection, there's only missing and grabbing
+        accuracyRange = 0.80;
     if (level.collectionCriteria.size() <= 4)
         accuracyRange = 0.50;   // short time
     else if (level.collectionCriteria.size() <= 8)
@@ -3186,8 +3172,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if ( nBackDelta < 0.0 )
     {
         if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
-        if (assessment.rating >= 5 || // If the player completed the level, don't decrease despite accuracy
-            level.hasHoldout()) // If the level is holdout, don't penalize their memory score
+        if (assessment.rating >= 5) // If the player completed the level, don't decrease despite accuracy
             nBackDelta = 0.0;
         
         if (weightMultiplier != 0.0) // Don't divide by 0
@@ -3226,28 +3211,34 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             break;
         
         case 'A':
-            //scheduler->nBackLevelA += nBackDelta;
-            //if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
-            //playerSkill = scheduler->nBackLevelA;
-            
-            
-            scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
-            if(scheduler->holdoutOffsetA>0)scheduler->nBackLevelA += scheduler->holdoutOffsetA; //check if offset is positive. if so add to nbacklevel
-            playerSkill = scheduler->nBackLevelA;       //set nbacklevel to playerskill
-            if(scheduler->holdoutOffsetA>0)scheduler->holdoutOffsetA = 0;              //reset offset
-            
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetA>0) {
+                    nBackDelta = scheduler->holdoutOffsetA;
+                    scheduler->holdoutOffsetA = 0;              //reset offset
+                }
+                else
+                    nBackDelta = 0;
+            }
+            scheduler->nBackLevelA += nBackDelta;
+            if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+            playerSkill = scheduler->nBackLevelA;
             break;
         case 'B':
-            //scheduler->nBackLevelB += nBackDelta;
-            //if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
-            //playerSkill = scheduler->nBackLevelB;
-            
-            scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
-            if(scheduler->holdoutOffsetB>0)scheduler->nBackLevelB += scheduler->holdoutOffsetB; //check if offset is positive. if so add to nbacklevel
-            playerSkill = scheduler->nBackLevelB;       //set nbacklevel to playerskill
-            if(scheduler->holdoutOffsetB>0)scheduler->holdoutOffsetB = 0;              //reset offset
-            
-
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetB>0) {
+                    nBackDelta = scheduler->holdoutOffsetB;
+                    scheduler->holdoutOffsetB = 0;              //reset offset
+                }
+                else
+                    nBackDelta = 0;
+            }
+            scheduler->nBackLevelB += nBackDelta;
+            if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+            playerSkill = scheduler->nBackLevelB;
             break;
         case 'C':
             scheduler->nBackLevelC += nBackDelta;
@@ -3255,23 +3246,25 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerSkill = scheduler->nBackLevelC;
             break;
         case 'D':
-            //scheduler->nBackLevelD += nBackDelta;
-            //if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
-            //playerSkill = scheduler->nBackLevelD;
-            
-            scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
-            if(scheduler->holdoutOffsetD>0)scheduler->nBackLevelD += scheduler->holdoutOffsetD; //check if offset is positive. if so add to nbacklevel
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetD>0) {
+                    nBackDelta = scheduler->holdoutOffsetD;
+                    scheduler->holdoutOffsetD = 0;              //reset offset
+                }
+                else
+                    nBackDelta = 0;
+            }
+            scheduler->nBackLevelD += nBackDelta;
+            if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
             playerSkill = scheduler->nBackLevelD;       //set nbacklevel to playerskill
-            if(scheduler->holdoutOffsetD>0)scheduler->holdoutOffsetD = 0;              //reset offset
-            
-
-            
             break;
         default:
             break;
     }
     
-    if(nBackDelta > 0 && scheduler->currentHoldout < 80)
+    if(nBackDelta > 0 && level.hasHoldout() && scheduler->currentHoldout < 80)
     {
         scheduler->currentHoldout+=10;
         if (scheduler->currentHoldout > 80)
@@ -3283,7 +3276,6 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     levelToGrade->second.nBackSkill = playerSkill;
     
     std::cout << "N-Back Delta: " << nBackDelta << std::endl;
-    
     
     // Duration is not stored in level to remove the correct bin
     StageDuration durationX;

@@ -115,36 +115,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, double holdout, int UNL);
-    
-
-    
-    std::vector<NavigationLevel> generateNavigationLevels(StageDifficulty navigationDifficulty)
-    {
-        std::vector<NavigationLevel> ret;
-        switch (navigationDifficulty)
-        {
-            case DIFFICULTY_EASY:
-                ret = generateRandomEasyNavigation();
-                break;
-            case DIFFICULTY_NORMAL:
-                ret = generateRandomNormalNavigation();
-                break;
-            case DIFFICULTY_HARD:
-                ret = generateRandomHardNavigation();
-                break;
-            default:
-                ret.push_back(NavigationLevel(0, 1, 0));
-                ret.push_back(NavigationLevel(0, 2, 0));
-                ret.push_back(NavigationLevel(0, 3, 0));
-                ret.push_back(NavigationLevel(0, 4, 0));
-                break;
-        }
-        return ret;
-    }
-    std::vector<NavigationLevel> generateRandomEasyNavigation();
-    std::vector<NavigationLevel> generateRandomNormalNavigation();
-    std::vector<NavigationLevel> generateRandomHardNavigation();
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int UNL);
     
     StageRequest()
     {
