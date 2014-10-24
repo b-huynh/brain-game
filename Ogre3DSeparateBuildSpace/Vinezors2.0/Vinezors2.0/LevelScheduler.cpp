@@ -419,11 +419,20 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         << sch.nBackLevelD << " "
         << sch.nBackLevelE << " "
         << sch.currentHoldout << " "
+        << sch.holdoutOffsetA << " "
+        << sch.holdoutOffsetB << " "
+        << sch.holdoutOffsetD << " "
         << sch.speedA << " "
         << sch.speedB << " "
         << sch.speedC << " "
         << sch.speedD << " "
         << sch.speedE << " ";
+    
+    std::cout << sch.binA->size() << " "
+    << sch.binB->size() << " "
+    << sch.binC->size() << " "
+    << sch.binD->size() << " "
+    << sch.binE->size() << "\n";
     
     // save binA
     if( sch.binA )  // if bin is null don't save
@@ -438,7 +447,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         }
     }
     else
-        out << 0;
+        out << 0 << " ";
     
     // save binB
     if( sch.binB )  // if bin is null don't save
@@ -453,7 +462,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         }
     }
     else
-        out << 0;
+        out << 0 << " ";
     
     // save binC
     if( sch.binC )  // if bin is null don't save
@@ -468,7 +477,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         }
     }
     else
-        out << 0;
+        out << 0 << " ";
     
     // save binD
     if( sch.binD )  // if bin is null don't save
@@ -483,7 +492,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         }
     }
     else
-        out << 0;
+        out << 0 << " ";
     
     // save binE
     if( sch.binE )  // if bin is null don't save
@@ -498,7 +507,7 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         }
     }
     else
-        out << 0;
+        out << 0 << " ";
     
     return out;
 }
@@ -514,6 +523,9 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
         >> sch.nBackLevelD
         >> sch.nBackLevelE
         >> sch.currentHoldout
+        >> sch.holdoutOffsetA
+        >> sch.holdoutOffsetB
+        >> sch.holdoutOffsetD
         >> sch.speedA
         >> sch.speedB
         >> sch.speedC
@@ -530,6 +542,8 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binA
     in >> size;
+    if (size > 0)
+        sch.binA = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
@@ -539,6 +553,8 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binB
     in >> size;
+    if (size > 0)
+        sch.binB = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
@@ -548,6 +564,8 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binC
     in >> size;
+    if (size > 0)
+        sch.binC = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
@@ -557,6 +575,8 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binD
     in >> size;
+    if (size > 0)
+        sch.binD = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
@@ -566,6 +586,8 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binE
     in >> size;
+    if (size > 0)
+        sch.binE = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
