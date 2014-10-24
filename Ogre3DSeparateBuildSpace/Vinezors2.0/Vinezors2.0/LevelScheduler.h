@@ -82,11 +82,11 @@ struct LevelScheduler
     
     StageRequest getRandomLevel( LevelSet* levels );
     void initializeSchedule( LevelSet* levels );
-    
     void populateBins();
     void removeBin(LevelPhase phaseX, StageDifficulty difficultyX, StageDuration durationX, bool hasHoldout);
     std::list<Bin>* pickRandomBin();
     void pickRandomMarble( std::vector<Bin>& choices );
+    void setHoldout( std::list<Bin>* b );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
     int rand_num( int lower, int upper );
     

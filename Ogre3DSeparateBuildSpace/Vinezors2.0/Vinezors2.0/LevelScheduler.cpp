@@ -241,12 +241,12 @@ void LevelScheduler::populateBins()
     ///////////////////////
     // COLOR SOUND:
     binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
-    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));      // normal           normal          Y
+    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));      // normal           normal          Y
     binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));       // long             normal          N
     
     // SHAPE SOUND:
     binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));     // normal           normal          N
-    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));      // normal           normal          Y
+    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));      // normal           normal          Y
     binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));       // long             normal          N
     
     // SHAPE SOUND:
@@ -256,7 +256,7 @@ void LevelScheduler::populateBins()
     
     // ALL SIGNAL:
     binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));         // normal           normal          N
-    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, true, N_BACK_NORMAL));          // normal           normal          Y
+    binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));          // normal           normal          Y
     binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_NORMAL, DURATION_LONG, false, N_BACK_NORMAL));           // long             normal          N
     
     // RECESS:
@@ -359,6 +359,20 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     }
 }
 
+// Update holdout values inside the bins (40% of the marbles/bin is holdout)
+void LevelScheduler::setHoldout( std::list<Bin>* b )
+{
+    int holdoutCounter = 0;
+    while ( holdoutCounter != 2 ) {
+        for (std::list<Bin>::iterator it = b->begin(); it != b->end(); ++it) {
+            if ( (it->durationX != DURATION_SHORT) && rand_num(0, 1) && !it->holdout ) {
+                it->holdout = true;
+                holdoutCounter++;
+            }
+        }
+    }
+}
+
 // can keep a linear list of marbles to randomly pick from instead
 void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 {
@@ -371,7 +385,6 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
     {
         if ( *binIt == choices[i] )
         {
-            
             // =========================================================================
             // Debug output - should be commented out on final release
                 cout << "Need to pick extra bin & marble due to duplicate" << endl;
