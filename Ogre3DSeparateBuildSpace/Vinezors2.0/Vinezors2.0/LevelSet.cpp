@@ -82,8 +82,8 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     }
     else
     {
-        ret->holdoutStart = 0.0;
-        ret->holdoutEnd = 0.0;
+        ret->holdoutStart = 1.0;
+        ret->holdoutEnd = 1.0;
         ret->holdoutSound = 0;
         ret->holdoutColor = 0;
         ret->holdoutShape = 0;

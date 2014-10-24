@@ -4,7 +4,7 @@ particle_system General/StarBoost
     particle_width  4.0
     particle_height 4.0
     cull_each       true
-    quota           250
+    quota           100
     billboard_type  point
     local_space	    true
  
@@ -12,12 +12,12 @@ particle_system General/StarBoost
     emitter Ellipsoid
     {
         angle           5
-        emission_rate   250
-        time_to_live_min 0.10
-        time_to_live_max 0.25
+        emission_rate   100
+        time_to_live_min 0.1
+        time_to_live_max 0.5
         direction       0 0 -1
-        velocity_min    20
-        velocity_max    30
+        velocity_min    30
+        velocity_max	 50
         colour 0.0 0.7 1.0
         width           1
         height          1
@@ -196,34 +196,17 @@ particle_system General/GoodPodIndicator
     {
         angle           180
         emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
+        time_to_live_min 0.5
+        time_to_live_max 1.0
         direction       0 1 0
         velocity       0.0
-        colour 1.0 1.0 1.0
+        colour 		1.0 1.0 1.0
         width		1
         height		1
         depth		1
         inner_width	9
         inner_height	9
         inner_depth	9
-    }
-    
-    emitter HollowEllipsoid
-    {
-        angle           180
-        emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
-        direction       1 0 0
-        velocity       0.0
-        colour 1.0 1.0 1.0
-	width		1
-	height		1
-	depth		1
-	inner_width	9
-	inner_height	9
-	inner_depth	9
     }
  }
 

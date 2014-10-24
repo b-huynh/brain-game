@@ -224,11 +224,16 @@ void LevelScheduler::populateBins()
     
     const int NUM_DIFFICULTIES = 3;
     
-    if(!binA) binA = new std::list<Bin>();
-    if(!binB) binB = new std::list<Bin>();
-    if(!binC) binC = new std::list<Bin>();
-    if(!binD) binD = new std::list<Bin>();
-    if(!binE) binE = new std::list<Bin>();
+    if(binA) delete binA;
+    binA = new std::list<Bin>();
+    if(binB) delete binB;
+    binB = new std::list<Bin>();
+    if(binC) delete binC;
+    binC = new std::list<Bin>();
+    if (binD) delete binD;
+    binD = new std::list<Bin>();
+    if(binE) binE = new std::list<Bin>();
+    binE = new std::list<Bin>();
     
     /////////////////////
     // Easy Difficulty //
@@ -325,6 +330,7 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
         totalMarbles = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
     }
     if (totalMarbles <= 3) {
+        std::cout << "Repopulating " << std::endl;
         populateBins();
         totalMarbles = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
     }

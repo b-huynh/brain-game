@@ -844,7 +844,7 @@ void Player::updateBoost(float elapsed)
     float timeRange = 0.5;
     if (vines[0]->boostEffect)
     {
-        float dropOffPecentage = 0.7;
+        float dropOffPecentage = 0.9;
         float percentFuel = tunnel->getFuelTimer() / (globals.fuelMax * dropOffPecentage);
         if (percentFuel >= 1.0f)
             percentFuel = 1.0f;

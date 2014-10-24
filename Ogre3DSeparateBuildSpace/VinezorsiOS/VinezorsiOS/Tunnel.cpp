@@ -1370,8 +1370,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         float quartertime = transitiontime/4;
         
         float frequencyquarter = 0;
-        
-        frequencyquarter = holdoutPerc*100/4;
+        frequencyquarter = holdoutPerc*100/4 + Util::EPSILON;
         
         std::cout<<"                Frequency quarter: "<<frequencyquarter<<std::endl;
         
@@ -1381,6 +1380,9 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //setHoldout(hasHoldout, timefreq);
         
+        std::cout << "TimeLeft: " << getTimeLeft() << std::endl;
+        std::cout << "LB holdout time: " << holdouttimelb << std::endl;
+        std::cout << "quartertime * 3: " << quartertime * 3 << std::endl;
         if(getTimeLeft()<=holdouttimelb-quartertime*3) {
             setHoldout(true, 100/(frequencyquarter*4));
             std::cout<<"                        HOLDOUT 100% --->"<< Tunnel::holdoutFrequency<<std::endl;

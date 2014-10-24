@@ -1703,6 +1703,7 @@ void PodInfo::performHoldout(char phase, bool sound)
                     else
                         podShape = POD_SHAPE_HOLDOUT;
                 }
+                break;
             case 'E':   // recess levels
                 break;
             case 'F':   // gear shift levels
@@ -1849,7 +1850,7 @@ void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdco
                     
                 }
                 else{   //if sound is disabled
-                    if(holdshape&&holdcolor&&!holdsound) {     //shape color enabled
+                    if(holdshape&&holdcolor) {     //shape color enabled
                         if( rand_signal < 0.5f) {
                             
                             podColor = POD_COLOR_HOLDOUT;
@@ -1870,6 +1871,7 @@ void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdco
                     }
                     
                 }
+                break;
             case 'E':   // recess levels
                 break;
             case 'F':   // gear shift levels

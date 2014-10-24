@@ -635,6 +635,7 @@ void Pod::generateHoldoutEffect()
                     emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
                     break;
             }
+            headContentEffect->getEmitter(0)->setColour(emitterColor);
             head->attachObject(headContentEffect);
             ++headEffectID;
         }
