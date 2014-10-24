@@ -37,6 +37,8 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->holdoutOffsetD = 0.0f;
     initTutorialLevels(); // Also called after loading the scheduler
 }
+//________________________________________________________________________________________
+
 
 // Initializes tutorials which will be played when the player has just started the scheduler
 // and hasn't seen instruction on how to navigate and how to play
@@ -99,121 +101,8 @@ void LevelScheduler::initTutorialLevels()
     ret.second.nBackSkill = nBackLevelA;
     tutorialLevels.push_back(ret);
 }
-
 //________________________________________________________________________________________
 
-/**
- Creates a new scheduler with a predefined schedule.
- Shuffles the schedule to be randomized.
- 
- @param newSchedule - the vector containing the predefined schedule
- */
-//LevelScheduler::LevelScheduler( std::vector< std::pair<StageRequest, PlayerProgress> > newSchedule )
-//: schedule(), scheduleIt(NULL)
-//{
-//    // Shuffle the newSchedule
-//    // std::random_shuffle(newSchedule.begin(), newSchedule.end());
-//
-//    // Store it in the schedule
-//    //std::cout << "new sched size: " << newSchedule.size() << std::endl;
-//    for ( std::vector< std::pair<StageRequest, PlayerProgress> >::iterator it = newSchedule.begin(); it != newSchedule.end(); ++it )
-//    {
-//        schedule.push_back( *it );
-//        // std::cout << "Nav Level Size: " << it->first.navLevels.size() << std::endl;
-//    }
-//
-//    // Set the iterator to point to the first level in the scheduler
-//    scheduleIt = schedule.begin();
-//}
-//________________________________________________________________________________________
-
-/**
- Gets a random level from the defined level set
- Does not return levels that is already in the schedule
- 
- @param levels - a set of all hard-coded levels
- @return StageRequest - the random level that was obtained
- */
-//StageRequest LevelScheduler::getRandomLevel(LevelSet* levels)
-//{
-//    // Get a random level
-//    StageRequest ret = levels->retrieveLevel( rand_num(0, 7), rand_num(0, 4) );
-//
-//    // If the schedule is !empty, check for duplicate
-//    if( !schedule.empty() )
-//    {
-//        for( std::list< std::pair<StageRequest, PlayerProgress> >::iterator it = schedule.begin(); it != schedule.end(); ++it )
-//        {
-//            // If there is a duplicate get another rand level
-//            if( ret == it->first )
-//                ret = levels->retrieveLevel( rand_num(0, 7), rand_num(0, 4) );
-//        }
-//    }
-//    return ret;
-//}
-//________________________________________________________________________________________
-
-/**
- Obtains a set of random levels for the scheduler
- 
- @param levels - a set of all hard-coded levels
- */
-//void LevelScheduler::initializeSchedule(LevelSet* levels)
-//{
-// need to get player progress from previous sched...
-/*
- std::pair<StageRequest, PlayerProgress> node;
- node.first = levels->retrieveLevel(highestE, 0);
- node.second = PlayerProgress();
- schedule.push_back(node);
- 
- node.first = levels->retrieveLevel(highestA, 1);
- node.second = PlayerProgress();
- schedule.push_back(node);
- 
- node.first = levels->retrieveLevel(highestB, 2);
- node.second = PlayerProgress();
- schedule.push_back(node);
- 
- node.first = levels->retrieveLevel(highestC, 3);
- node.second = PlayerProgress();
- schedule.push_back(node);
- 
- node.first = levels->retrieveLevel(highestD, 4);
- node.second = PlayerProgress();
- schedule.push_back(node);
- 
- scheduleIt = schedule.begin();
- */
-/*
- for (int i = 0; i < 5; ++i)
- {
- node.first = levels->retrieveLevel(0, i);
- node.second = PlayerProgress();
- schedule.push_back(node);
- }
- 
- scheduleIt = schedule.begin();
- */
-/*
- // old schedule initializer (random sched)
- schedule.clear();
- schedule.resize(SCHEDULE_SIZE);
- std::pair<StageRequest, PlayerProgress> node;
- 
- // Populate schedule with random levels
- for ( int i = 0; i < SCHEDULE_SIZE; ++i )
- {
- node.first = getRandomLevel(levels);
- node.second = PlayerProgress();
- schedule.push_back(node);
- }
- 
- // Set the iterator to point to the first level in the scheduler
- scheduleIt = schedule.begin();
- */
-//}
-//________________________________________________________________________________________
 
 void LevelScheduler::populateBins()
 {
@@ -273,6 +162,12 @@ void LevelScheduler::populateBins()
     binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     binD->push_back(Bin(PHASE_HOLDOUT, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     binE->push_back(Bin(PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, false, N_BACK_HARD));
+    
+    setHoldout(binA);
+    setHoldout(binB);
+    // setHoldout(binC); // no holdout for sound only
+    setHoldout(binD);
+    // setHoldout(binE); // no holdout for recess (collection level)
 }
 //________________________________________________________________________________________
 
@@ -305,7 +200,6 @@ void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX, S
     }
 }
 //________________________________________________________________________________________
-
 
 
 /**
@@ -361,20 +255,25 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
             break;
     }
 }
+//________________________________________________________________________________________
+
 
 // Update holdout values inside the bins (40% of the marbles/bin is holdout)
 void LevelScheduler::setHoldout( std::list<Bin>* b )
 {
     int holdoutCounter = 0;
     while ( holdoutCounter != 2 ) {
-        for (std::list<Bin>::iterator it = b->begin(); it != b->end(); ++it) {
+        for (std::list<Bin>::iterator it = b->begin(); (it != b->end()) && (holdoutCounter != 2); ++it) {
             if ( (it->durationX != DURATION_SHORT) && rand_num(0, 1) && !it->holdout ) {
                 it->holdout = true;
                 holdoutCounter++;
             }
+            cout << "holdout counter: " << holdoutCounter << endl;
         }
     }
 }
+//________________________________________________________________________________________
+
 
 // can keep a linear list of marbles to randomly pick from instead
 void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
@@ -408,6 +307,8 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
     // =========================================================================
     
 }
+//________________________________________________________________________________________
+
 
 std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices()
 {
@@ -516,11 +417,87 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         << sch.speedB << " "
         << sch.speedC << " "
         << sch.speedD << " "
-        << sch.speedE;
+        << sch.speedE << " ";
+    
+    // save binA
+    if( sch.binA )  // if bin is null don't save
+    {
+        out << sch.binA->size() << " ";
+        for (std::list<Bin>::iterator it = sch.binA->begin(); it != sch.binA->end(); ++it) {
+            out << it->phaseX << " "
+                << it->difficultyX << " "
+                << it->durationX << " "
+                << it->holdout << " "
+                << it->nbackShift << " ";
+        }
+    }
+    else
+        out << 0;
+    
+    // save binB
+    if( sch.binB )  // if bin is null don't save
+    {
+        out << sch.binB->size() << " ";
+        for (std::list<Bin>::iterator it = sch.binB->begin(); it != sch.binB->end(); ++it) {
+            out << it->phaseX << " "
+                << it->difficultyX << " "
+                << it->durationX << " "
+                << it->holdout << " "
+                << it->nbackShift << " ";
+        }
+    }
+    else
+        out << 0;
+    
+    // save binC
+    if( sch.binC )  // if bin is null don't save
+    {
+        out << sch.binC->size() << " ";
+        for (std::list<Bin>::iterator it = sch.binC->begin(); it != sch.binC->end(); ++it) {
+            out << it->phaseX << " "
+                << it->difficultyX << " "
+                << it->durationX << " "
+                << it->holdout << " "
+                << it->nbackShift << " ";
+        }
+    }
+    else
+        out << 0;
+    
+    // save binD
+    if( sch.binD )  // if bin is null don't save
+    {
+        out << sch.binD->size() << " ";
+        for (std::list<Bin>::iterator it = sch.binD->begin(); it != sch.binD->end(); ++it) {
+            out << it->phaseX << " "
+                << it->difficultyX << " "
+                << it->durationX << " "
+                << it->holdout << " "
+                << it->nbackShift << " ";
+        }
+    }
+    else
+        out << 0;
+    
+    // save binE
+    if( sch.binE )  // if bin is null don't save
+    {
+        out << sch.binE->size() << " ";
+        for (std::list<Bin>::iterator it = sch.binE->begin(); it != sch.binE->end(); ++it) {
+            out << it->phaseX << " "
+                << it->difficultyX << " "
+                << it->durationX << " "
+                << it->holdout << " "
+                << it->nbackShift << " ";
+        }
+    }
+    else
+        out << 0;
+    
     return out;
 }
-
 //________________________________________________________________________________________
+
 
 std::istream& operator>>(std::istream& in, LevelScheduler& sch)
 {
@@ -537,7 +514,59 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
         >> sch.speedD
         >> sch.speedE;
     sch.initTutorialLevels();
+    
+    int size;
+    int tmpPhase;
+    int tmpDifficulty;
+    int tmpDuration;
+    bool tmpHoldout;
+    double tmpnbackShift;
+    
+    // read binA
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        sch.binA->push_back(tmpBin);
+    }
+    
+    // read binB
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        sch.binB->push_back(tmpBin);
+    }
+    
+    // read binC
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        sch.binC->push_back(tmpBin);
+    }
+    
+    // read binD
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        sch.binD->push_back(tmpBin);
+    }
+    
+    // read binE
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        sch.binE->push_back(tmpBin);
+    }
+    
     return in;
 }
-
 //________________________________________________________________________________________
