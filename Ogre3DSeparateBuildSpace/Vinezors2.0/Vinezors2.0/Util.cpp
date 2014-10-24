@@ -25,7 +25,7 @@ Util::ConfigGlobal::ConfigGlobal()
     stageTotalTargets1 = 100;
     stageTotalTargets2 = 150;
     stageTotalTargets3 = 200;
-    stageTotalCollections = 30;
+    stageTotalCollections = 25;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
     stageTimeThreshold2 = 50;

@@ -2087,6 +2087,7 @@ void Player::updateSpeed(int mean, bool step)
     float ds = 0.0;
     if (step)
     {
+        // Step function for how speed rises
         float dist = baseSpeed - mean;
         if (dist <= -15 + epsilon)
             ds = 3.0;
@@ -2109,19 +2110,20 @@ void Player::updateSpeed(int mean, bool step)
     }
     else
     {
+        // Step function for how speed drops
         float dist = baseSpeed - mean;
         if (dist <= -15 + epsilon)
             ds = 0.0;
         else if (dist <= -7.5 + epsilon)
             ds = -0.5;
         else if (dist <= -5 + epsilon)
-            ds = -0.5;
+            ds = -1.0;
         else if (dist <= -1 + epsilon)
-            ds = -0.5;
+            ds = -1.0;
         else if (dist < 1 + epsilon)
             ds = -1.0   ;
         else if (dist < 5 + epsilon)
-            ds = -1.0;
+            ds = -2.0;
         else if (dist < 7.5 + epsilon)
             ds = -2.0;
         else if (dist < 15 + epsilon)
@@ -2551,18 +2553,23 @@ void Player::saveAllResults(Evaluation eval)
             {
                 case 'A':
                     scheduler->speedA = (scheduler->speedA + baseSpeed) / 2;
+                    scheduler->speedA = Util::clamp(scheduler->speedA, globals.minCamSpeed, globals.maxCamSpeed);
                     break;
                 case 'B':
                     scheduler->speedB = (scheduler->speedB + baseSpeed) / 2;
+                    scheduler->speedB = Util::clamp(scheduler->speedB, globals.minCamSpeed, globals.maxCamSpeed);
                     break;
                 case 'C':
                     scheduler->speedC = (scheduler->speedC + baseSpeed) / 2;
+                    scheduler->speedC = Util::clamp(scheduler->speedC, globals.minCamSpeed, globals.maxCamSpeed);
                     break;
                 case 'D':
                     scheduler->speedD = (scheduler->speedD + baseSpeed) / 2;
+                    scheduler->speedD = Util::clamp(scheduler->speedD, globals.minCamSpeed, globals.maxCamSpeed);
                     break;
                 case 'E':
-                    scheduler->speedE = (scheduler->speedE + baseSpeed) / 2;
+                    scheduler->speedE = (scheduler->speedE + baseSpeed - globals.stageTotalCollections / 3) / 2;
+                    scheduler->speedE = Util::clamp(scheduler->speedE, globals.minCamSpeed, globals.maxCamSpeed);
                     break;
                 default:
                     break;

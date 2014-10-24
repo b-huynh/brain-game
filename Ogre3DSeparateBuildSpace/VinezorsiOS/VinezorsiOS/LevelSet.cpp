@@ -170,8 +170,9 @@ void LevelSet::initializeLevelSet()
     level.phase = 'A';
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;
+    level.maxCamSpeed = 40;    
     stageList[0][1] = level;
+    
     
     /////////////////////
     /// Level 2   1-C ///

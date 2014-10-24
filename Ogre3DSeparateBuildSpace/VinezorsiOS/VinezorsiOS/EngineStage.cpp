@@ -1258,9 +1258,6 @@ void EngineStage::setup()
         case 'E':
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
-            
-            // With 15 baseline at 90 seconds, ~30 pods will be introduced
-            globals.stageTotalCollections = 25;
             break;
         case 'F':
             nmode = STAGE_MODE_TEACHING;

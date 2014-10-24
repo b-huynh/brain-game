@@ -201,16 +201,19 @@ void EngineStage::update(float elapsed)
                 player->saveProgress(globals.savePath);
                 player->assessLevelPerformance(player->levelRequest);
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
-                
-                if( player->scheduler->sessionFinished && !player->scheduler->sessionFinishedAcknowledged )
+                if (player->scheduler->sessionFinished) {
+                    std::cout << "finished!\n";
+                }
+                else
                 {
-                    /*
-                    std::cout << "\n\n\n===========================================\n"
+                    std::cout << "not finished!\n";
+                }
+                if(player->scheduler->sessionFinished)
+                {
+                    std::cout << "\n\n\n==========================================="
                                 << "Session Finished!\n"
                                 << "===========================================\n";
-                    */
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                    player->scheduler->sessionFinishedAcknowledged = true;
                 }
                 
                 // Grab new choices for player to choose from
@@ -1255,9 +1258,6 @@ void EngineStage::setup()
         case 'E':
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
-            
-            // With 15 baseline at 90 seconds, ~30 pods will be introduced
-            globals.stageTotalCollections = 25;
             break;
         case 'F':
             nmode = STAGE_MODE_TEACHING;
