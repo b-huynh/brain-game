@@ -12,7 +12,6 @@
 @interface SimpleMenuViewController ()
 
 @property (retain, nonatomic) IBOutlet UITextField *TextField_Input;
-@property (retain, nonatomic) IBOutlet UISwitch *Switch_Music;
 
 @end
 
@@ -41,7 +40,6 @@
 
 - (void)dealloc {
     [_TextField_Input release];
-    [_Switch_Music release];
     [super dealloc];
 }
 
@@ -56,7 +54,7 @@
 - (IBAction)buttonBegin_OnPress:(UIButton *)sender {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    [appDelegate go:_TextField_Input.text :[_Switch_Music isOn]];
+    [appDelegate go:_TextField_Input.text : true];
 }
 
 @end

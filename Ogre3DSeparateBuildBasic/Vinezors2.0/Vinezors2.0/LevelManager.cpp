@@ -302,6 +302,50 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
     PlayerLevel skillLevel = player->getSkillLevel();
     skillLevel.runSpeed1 = player->getBaseSpeed();
     skillLevel.set1Notify = 0;
+    
+    double accuracyRange = 0.25;
+    double nBackDelta = 0.0;
+    double weightMultiplier = 2.0;
+    
+    // Formula for accuracy = TP / TP + TN + FP
+    double accuracy = 0.0f;
+    if (player->getNumCorrectTotal() + player->getNumMissedTotal() + player->getNumWrongTotal() > 0)
+        accuracy = player->getNumCorrectTotal() / (float)(player->getNumCorrectTotal() + player->getNumMissedTotal() + player->getNumWrongTotal());
+    
+    // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
+    nBackDelta = 0.35 * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    
+    if ( nBackDelta < 0.0 )
+    {
+        if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
+        //if (eval == PASS) // If the player completed the level, don't decrease despite accuracy
+        //    nBackDelta = 0.0;
+        
+        if (weightMultiplier != 0.0) // Don't divide by 0
+            nBackDelta /= weightMultiplier; // apply multiplier to negative base value
+        else
+            nBackDelta = 0.0;
+        if ( nBackDelta <= -1.00) nBackDelta = -1.00;
+    }
+    else
+    {
+        if (eval != PASS) // If the player didn't complete the level, don't increase despite accuracy
+            nBackDelta = 0.0;
+        nBackDelta *= weightMultiplier; // apply multiplier to positive base value
+        if (accuracy >= 1.00 - Util::EPSILON) // If player has perfect performance, grant a bonus to memory score
+            nBackDelta *= 1.5;
+        if ( nBackDelta > 1.00) nBackDelta = 1.00;
+    }
+    
+    skillLevel.nbackLevel = skillLevel.nbackLevel + nBackDelta;
+    
+    std::cout << "Accuracy: " << accuracy << std::endl;
+    std::cout << "N-Back Delta: " << nBackDelta << std::endl;
+    std::cout << "Skill Level: " << skillLevel.nbackLevel << std::endl;
+    
+    if (skillLevel.nbackLevel < 0.0)
+        skillLevel.nbackLevel = 0.0;
+    
     if (eval == PASS || forced == PASS)
     {
         skillLevel.set1Rep++;
@@ -313,6 +357,7 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
             skillLevel.set1Notify = 1;
             skillLevel.set1++;
         }
+        
     }
     else if (eval == FAIL || forced == FAIL)
     {
@@ -328,7 +373,7 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
                 skillLevel.set1Rep = 0;
         }
     }
-
+    
     player->setSkillLevel(skillLevel);
     player->saveStage(globals.logPath);
     player->saveActions(globals.actionPath);
@@ -358,33 +403,16 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
     int nlevel = 0;
     int ncontrol = 1;
     
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
     PlayerLevel skillLevel = player->getSkillLevel(); // Updated in previous tunnel and referenced for new tunnel
 
-    nlevel = skillLevel.set1;
+    std::cout << "Skill Genning At: " << skillLevel.nbackLevel << std::endl;
+    //nlevel = skillLevel.set1;
+    nlevel = round(skillLevel.nbackLevel);
     ncontrol = 1;
     nmode = GAME_PROFICIENCY;
             
     globals.initCamSpeed = skillLevel.runSpeed1;
     globals.maxCamSpeed = skillLevel.maxSpeed;
-            
-    if (skillLevel.set1Rep <= 0)
-    {
-        if (!configStageType(globals.configPath, globals.configBackup, "Arep1"))
-            globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    }
-    else if (skillLevel.set1Rep <= 1)
-    {
-        if (!configStageType(globals.configPath, globals.configBackup, "Arep2"))
-            globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    }
-    else
-    {
-        if (!configStageType(globals.configPath, globals.configBackup, "Arep3"))
-            globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    }
             
     globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
     globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
@@ -395,16 +423,8 @@ Tunnel* LevelManager::getNextLevel(Tunnel* previousTunnel)
     globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_BASIC, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
     globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_BASIC, POD_COLOR_PINK, POD_SHAPE_SPHERE, POD_SOUND_3));
     globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_BASIC, POD_COLOR_YELLOW, POD_SHAPE_SPHERE, POD_SOUND_4));
-            
-    if (skillLevel.set1Notify)
-        globals.setBigMessage("Congratulations! You earned " + Util::toStringInt(nlevel) + "-Back!");
-    else
-    {
-        if (skillLevel.set1Rep >= 2)
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back. Challenge Round!");
-        else
-            globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-    }
+    
+    globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
     globals.setMessage("Match by Color!", MESSAGE_NORMAL);
 
     Tunnel* ret = new Tunnel(

@@ -194,8 +194,8 @@ void OgreApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
     globals.initPaths();
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
+    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     
 	player = new Player(
                         globals.playerName,
@@ -233,7 +233,7 @@ void OgreApp::setupDemoScene()
     hud = new Hud();
     
     // Determine length of time
-    globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
+    //globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
     
     std::cout << "Session Length: " << globals.sessionTime << std::endl;
     
@@ -395,7 +395,7 @@ void OgreApp::setLevel(Evaluation forced, bool forward)
 
 float OgreApp::getTotalElapsed() const
 {
-    return OgreFramework::getSingletonPtr()->totalElapsed;
+    return player->getTotalElapsed();
 }
 
 void OgreApp::setPause(bool value)
