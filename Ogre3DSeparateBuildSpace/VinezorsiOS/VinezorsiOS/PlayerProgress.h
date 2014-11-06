@@ -34,9 +34,11 @@ struct PlayerProgress
     int initSpeedSetting;
     
     float accuracy;
-    float nbackDelta;
-    double nBackSkill;
-    StageRequest* level;
+    float nBackDelta;   // Delta change for experience
+    float nBackReturn;  // Offset delta for holdouts
+    float nBackSkill;   // Memory Experience
+    float nBackOffset;  // Offset score for holdouts
+    float nBackResult;  // Result from memory experience added with delta
     
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);

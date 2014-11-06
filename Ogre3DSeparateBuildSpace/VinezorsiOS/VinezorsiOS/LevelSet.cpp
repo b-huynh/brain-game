@@ -16,7 +16,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
-    const double EASY_TIME = 60.0, NORMAL_TIME = 90.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -61,6 +61,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             break;
     }
     ret->nback = nback;
+    ret->pods = 0;
     ret->nameSkybox = "General/BlankStarrySkyPlane";
     ret->tunnelSectionsPerNavLevel = 10;
     ret->initCamSpeed = 10;
@@ -93,33 +94,21 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     switch (DIFFICULTY_X)
     {
         case DIFFICULTY_EASY:
-            UNL = (UNL - 4) / 2;
+            UNL = (UNL - 4) / 4;
             break;
         case DIFFICULTY_NORMAL:
+            UNL = (UNL - 2) / 2;
             break;
         case DIFFICULTY_HARD:
-            UNL = (UNL * 1.5) + 2;
+            UNL = (UNL - 1);
             break;
     }
     
-    if(UNL<2)
-    {
-        UNL=2;
-    }
-    else if(UNL>globals.navMap.size()-2)
-    {
-        UNL=globals.navMap.size()-2;
-    }
-    
-    
-    int randSpot1= rand()%4;
-    int randSpot2=rand()%4;
-    int randSpot3= rand()%4;
-    while(randSpot2==randSpot1)randSpot2=rand()%4;
-    while(randSpot3==randSpot1&&randSpot3==randSpot2)randSpot3=rand()%4;
-    
-    int randSpot4= 6-randSpot1-randSpot2-randSpot3;
-    std::cout<<"spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+    int randSpot1 = rand() % 4;
+    int randSpot2 = rand() % 4;
+    int randSpot3 = rand() % 4;
+    int randSpot4 = rand() % 4;
+    std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
     
     int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
     int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
@@ -186,6 +175,111 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
         ret->navLevels.push_back(NavigationLevel(0, 3, 0));
         ret->navLevels.push_back(NavigationLevel(0, 4, 0));
     }
+}
+
+std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr)
+{
+    outfile << sr.nback << " "
+            << sr.stageNo << " "
+            << sr.stageTime << " "
+            << sr.pods << " "
+            << sr.nameTunnelTile << " "
+            << sr.nameSkybox << " "
+            << sr.nameMusic << " "
+            << sr.tunnelSectionsPerNavLevel << " "
+            << sr.phase << " "
+            << sr.phaseX << " "
+            << sr.difficultyX << " "
+            << sr.holdoutPerc << " "
+            << sr.holdoutStart << " "
+            << sr.holdoutEnd << " "
+            << sr.holdoutSound << " "
+            << sr.holdoutColor << " "
+            << sr.holdoutShape << " "
+            << sr.UserNavLevel << " "
+            << sr.initCamSpeed << " "
+            << sr.minCamSpeed << " "
+            << sr.maxCamSpeed << " ";
+    
+    outfile << sr.navLevels.size() << " ";
+    for (int i = 0; i < sr.navLevels.size(); ++i) {
+        outfile << sr.navLevels[i].level << " "
+                << sr.navLevels[i].control << " "
+                << sr.navLevels[i].obstacles << " ";
+    }
+    
+    outfile << sr.collectionCriteria.size() << " ";
+    for (int i = 0; i < sr.collectionCriteria.size(); ++i)
+    {
+        outfile << sr.collectionCriteria[i].nback << " "
+                << sr.collectionCriteria[i].collected << " ";
+    }
+    
+    outfile << sr.powerups.size() << " ";
+    for (int i = 0; i < sr.powerups.size(); ++i)
+        outfile << sr.powerups[i] << " ";
+    
+    return outfile;
+}
+
+std::istream& operator>>(std::istream& infile, StageRequest & sr)
+{
+    sr.init();
+    int phaseXint;
+    int difficultyXint;
+    infile  >> sr.nback
+            >> sr.stageNo
+            >> sr.stageTime
+            >> sr.pods
+            >> sr.nameTunnelTile
+            >> sr.nameSkybox
+            >> sr.nameMusic
+            >> sr.tunnelSectionsPerNavLevel
+            >> sr.phase
+            >> phaseXint
+            >> difficultyXint
+            >> sr.holdoutPerc
+            >> sr.holdoutStart
+            >> sr.holdoutEnd
+            >> sr.holdoutSound
+            >> sr.holdoutColor
+            >> sr.holdoutShape
+            >> sr.UserNavLevel
+            >> sr.initCamSpeed
+            >> sr.minCamSpeed
+            >> sr.maxCamSpeed;
+    sr.phaseX = (LevelPhase)phaseXint;
+    sr.difficultyX = (StageDifficulty)difficultyXint;
+    
+    int size;
+    infile >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        NavigationLevel navLevel;
+        infile  >> navLevel.level
+                >> navLevel.control
+                >> navLevel.obstacles;
+        sr.navLevels.push_back(navLevel);
+    }
+    
+    infile >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        CollectionCriteria criteria(0);
+        infile  >> criteria.nback
+                >> criteria.collected;
+        sr.collectionCriteria.push_back(criteria);
+    }
+    
+    infile >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        int powerInt;
+        infile >> powerInt;
+        sr.powerups.push_back((PowerupType)powerInt);
+    }
+    
+    return infile;
 }
 
 bool LevelSet::hasLevel(int levelSelect) const
@@ -696,8 +790,8 @@ void LevelSet::initializeLevelSet()
     level.nback = 3;
     level.stageTime = 120.0;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 1));
+    level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));

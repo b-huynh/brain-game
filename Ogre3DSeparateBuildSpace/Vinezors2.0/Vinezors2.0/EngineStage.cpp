@@ -198,9 +198,7 @@ void EngineStage::update(float elapsed)
             // have a done screen after a certain time limit is reached
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
-                player->saveProgress(globals.savePath);
                 player->assessLevelPerformance(player->levelRequest);
-                player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 if (player->scheduler->sessionFinished) {
                     std::cout << "finished!\n";
                 }
@@ -214,7 +212,14 @@ void EngineStage::update(float elapsed)
                                 << "Session Finished!\n"
                                 << "===========================================\n";
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                    player->getTutorialMgr()->setAdditionalText(player->getStats());
+                    
+                    // Update session ID before save
+                    player->setSessionID(player->getSessionID() + 1);
                 }
+                player->saveProgress(globals.savePath);
+                player->lastPlayed = player->levelRequest->first.phase;
+                player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
@@ -654,10 +659,13 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 }
                 else
                 {
-                    stageState = STAGE_STATE_DONE;
+                    if (player->levelRequest && player->levelRequest->second.rating >= 0)
+                    {
+                        stageState = STAGE_STATE_DONE;
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
                     player->reactGUI();
                 }
             }
@@ -671,10 +679,13 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else if (queryGUI == "levelselect")
             {
-                stageState = STAGE_STATE_DONE;
-                
-                setPause(false);
-                OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                if (player->levelRequest && player->levelRequest->second.rating < 0)
+                {
+                    stageState = STAGE_STATE_DONE;
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                }
                 player->reactGUI();
             }
             break;
@@ -725,6 +736,7 @@ void EngineStage::activatePerformPinch()
     {
         player->setGodMode(!player->getGodMode());
         std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        
         //tunnel->setDone(PASS);
     }
     else
@@ -1044,8 +1056,12 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
         }
         case OIS::KC_X:
         {
-            player->setPowerUp("TractorBeam", true);
-            if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TractorBeam");
+            if (stageState == STAGE_STATE_RUNNING &&
+                tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
             break;
         }
         case OIS::KC_C:
@@ -1308,7 +1324,6 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    globals.wrongAnswerTimePenalty = level.stageTime / 12.0;
     tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
 
@@ -1325,6 +1340,7 @@ void EngineStage::setup()
     
     // Set lighting
     lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("StageLight");
+    // lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
     lightMain->setSpecularColour(1.0, 1.0, 1.0);
     //lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
@@ -1336,8 +1352,10 @@ void EngineStage::setup()
     OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
-    if (lightNode)
+    if (lightNode) {
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+        //lightMain->setDirection(player->getCamForward());
+    }
     
     // Set tutorial slides for certain thingies
     player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION);
@@ -1347,7 +1365,7 @@ void EngineStage::setup()
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_2BACK);
     if (tunnel->getPhase() == 'C')
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY);
-    if (tunnel->getPhase() == 'D')
+    if (level.hasHoldout())
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_HOLDOUT);
     
     if (!player->getTutorialMgr()->isVisible())

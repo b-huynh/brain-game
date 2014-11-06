@@ -59,7 +59,7 @@ std::string insertNL(std::string message)
 }
 
 TutorialManager::TutorialManager()
-: popupOverlay(NULL), popupWindowBackground(NULL), popupSubWindowBackground(NULL), queue(), slides(), visitedSlide(), enableSlides(true), slideNo(0), yoffset(0.0), startTimer(0.0f)
+: popupOverlay(NULL), popupWindowBackground(NULL), popupSubWindowBackground(NULL), queue(), slides(), visitedSlide(), enableSlides(true), slideNo(0), yoffset(0.0), startTimer(0.0f), additionalText(""), special(false)
 {
     visitedSlide = std::vector<bool>(NUM_TUTORIAL_SLIDES, false);
     alloc();
@@ -135,8 +135,12 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
         case TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxSoundOnly", ""));
             break;
+        case TUTORIAL_SLIDES_TEXTBOX_FUEL:
+            ret.push_back(TutorialSlide("", "General/TutorialTextboxFuelWarning", ""));
+            break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("\n\nEnd of Session", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("\n\nThat's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            break;
         default:
             break;
     }
@@ -147,6 +151,8 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
 // Load set of slides in a queue with a timer that when expired, will load the slides up
 void TutorialManager::prepareSlides(TutorialSlidesType type, float startTimer)
 {
+    if (type == TUTORIAL_END_OF_SESSION)
+        special = true;
     if ((isEnabled() && !visitedSlide[type]) || (type == TUTORIAL_END_OF_SESSION))
     {
         prepareSlides(getSlides(type), startTimer);
@@ -230,14 +236,24 @@ void TutorialManager::updateOverlay()
     std::string text = slides[slideNo].message;
     std::string subwindowbg = slides[slideNo].background;
     std::string screenbg = slides[slideNo].screen;
-    popupText->setCaption(text);
+    popupText1->setCaption(text);
+    popupText2->setCaption(additionalText);
     popupSubWindowBackground->setMaterialName(subwindowbg);
     //popupSlideNoText->setCaption(Util::toStringInt(slideNo + 1) + " / " + Util::toStringInt(slides.size()));
     //if (hasPreviousSlide())
     //    popupGoLeftBackground->setMaterialName("General/ButtonGoUp");
     //else
     //    popupGoLeftBackground->setMaterialName("General/ButtonGoUpGray");
-    popupGoRightBackground->setMaterialName("General/ButtonGoDown");
+    if (special)
+    {
+        popupGoRightBackground->setMaterialName("General/ExitButton2");
+        popupExitBackground->setMaterialName("");
+    }
+    else
+    {
+        popupGoRightBackground->setMaterialName("General/ButtonGoDown");
+        popupExitBackground->setMaterialName("General/ExitButton2");
+    }
 }
 
 void TutorialManager::update(float elapsed)
@@ -312,24 +328,35 @@ bool TutorialManager::processInput(Vector2 target)
     std::string query = queryButtons(target);
     if (query == "goleft")
     {
-        setPreviousSlide();
+        if (!special)
+            setPreviousSlide();
     }
     else if (query == "goright")
     {
-        if (hasNextSlide())
-            setNextSlide();
+        if (special)
+        {
+            special = false;
+            exit(0);
+        }
         else
         {
-            slides.clear();
-            slideNo = 0;
-            hide();
+            if (hasNextSlide())
+                setNextSlide();
+            else
+            {
+                slides.clear();
+                slideNo = 0;
+                hide();
+            }
         }
     }
     else if (query == "exit")
     {
-        slides.clear();
-        slideNo = 0;
-        hide();
+        if (!special) {
+            slides.clear();
+            slideNo = 0;
+            hide();
+        }
     }
     return query != "";
 }
@@ -350,14 +377,20 @@ void TutorialManager::adjust()
     //buttons[BUTTON_GOLEFT].setButton("goleft", popupOverlay, GMM_RELATIVE, Vector2(0.175, 0.425), Vector2(bw, bh), popupGoLeftBackground, NULL);
     buttons[BUTTON_GORIGHT].setButton("goright", popupOverlay, GMM_RELATIVE, Vector2(0.375, 0.425), Vector2(bw, bh), popupGoRightBackground, NULL);
     buttons[BUTTON_EXIT].setButton("exit", popupOverlay, GMM_RELATIVE, Vector2(0.275, 0.425), Vector2(bw, bh), popupExitBackground, NULL);
-    popupExitBackground->setMaterialName("General/ExitButton2");
     
-    popupText->setMetricsMode(GMM_RELATIVE);
-    popupText->setAlignment(TextAreaOverlayElement::Left);
-    popupText->setPosition(0.050, 0.030);
-    popupText->setCharHeight(0.025 * FONT_SZ_MULT);
-    popupText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    popupText->setFontName("MainSmall");
+    popupText1->setMetricsMode(GMM_RELATIVE);
+    popupText1->setAlignment(TextAreaOverlayElement::Left);
+    popupText1->setPosition(0.050, -0.015);
+    popupText1->setCharHeight(0.025 * FONT_SZ_MULT);
+    popupText1->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    popupText1->setFontName("MainBig");
+    
+    popupText2->setMetricsMode(GMM_RELATIVE);
+    popupText2->setAlignment(TextAreaOverlayElement::Left);
+    popupText2->setPosition(0.06, 0.20);
+    popupText2->setCharHeight(0.025 * FONT_SZ_MULT);
+    popupText2->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    popupText2->setFontName("MainSmall");
     
     popupSlideNoText->setMetricsMode(GMM_RELATIVE);
     popupSlideNoText->setAlignment(TextAreaOverlayElement::Left);
@@ -365,6 +398,12 @@ void TutorialManager::adjust()
     popupSlideNoText->setCharHeight(0.025 * FONT_SZ_MULT);
     popupSlideNoText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     popupSlideNoText->setFontName("MainSmall");
+}
+
+void TutorialManager::setAdditionalText(std::string text)
+{
+    additionalText = text;
+    updateOverlay();
 }
 
 void TutorialManager::dealloc()
@@ -379,15 +418,18 @@ void TutorialManager::dealloc()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupGoLeftBackground);
     if (popupGoRightBackground)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupGoRightBackground);
-    if (popupText)
-        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText);
+    if (popupText1)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText1);
+    if (popupText2)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText2);
     if (popupSlideNoText)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupSlideNoText);
     popupSubWindowBackground = NULL;
     popupWindowBackground = NULL;
     popupGoLeftBackground = NULL;
     popupGoRightBackground = NULL;
-    popupText = NULL;
+    popupText1 = NULL;
+    popupText2 = NULL;
     popupSlideNoText = NULL;
 }
 
@@ -402,7 +444,8 @@ void TutorialManager::alloc()
     popupExitBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TutorialPopupExitBackground"));
 
     // Allocate Resources
-    popupText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText"));
+    popupText1 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText1"));
+    popupText2 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText2"));
     popupSlideNoText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialSlideNoText"));
     popupOverlay->add2D(popupSubWindowBackground);
     popupOverlay->add2D(popupWindowBackground);
@@ -410,7 +453,8 @@ void TutorialManager::alloc()
     popupSubWindowBackground->addChild(popupGoLeftBackground);
     popupSubWindowBackground->addChild(popupGoRightBackground);
     popupSubWindowBackground->addChild(popupExitBackground);
-    popupSubWindowBackground->addChild(popupText);
+    popupSubWindowBackground->addChild(popupText1);
+    popupSubWindowBackground->addChild(popupText2);
     popupSubWindowBackground->addChild(popupSlideNoText);
     
     buttons = std::vector<HudButton>(3);

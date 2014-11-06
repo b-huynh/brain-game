@@ -35,7 +35,8 @@ private:
     PanelOverlayElement* popupGoRightBackground;
     PanelOverlayElement* popupExitBackground;
     
-    TextAreaOverlayElement* popupText;
+    TextAreaOverlayElement* popupText1;
+    TextAreaOverlayElement* popupText2;
     TextAreaOverlayElement* popupSlideNoText;
     
     std::vector<TutorialSlide> queue;
@@ -54,11 +55,14 @@ private:
     };
     
     float yoffset;
+    
+    std::string additionalText;
+    bool special;
 public:
     TutorialManager();
     ~TutorialManager();
     
-    const int NUM_TUTORIAL_SLIDES = 14;
+    const int NUM_TUTORIAL_SLIDES = 15;
     enum TutorialSlidesType {
         TUTORIAL_SLIDES_TEXTBOX_NAVIGATION,
         TUTORIAL_SLIDES_TEXTBOX_1BACK,
@@ -73,6 +77,7 @@ public:
         TUTORIAL_SLIDES_TEXTBOX_3_2B,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT1,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT2,
+        TUTORIAL_SLIDES_TEXTBOX_FUEL,
         TUTORIAL_END_OF_SESSION
     };
     
@@ -103,6 +108,8 @@ public:
     std::string queryButtons(Vector2 target) const;
     bool processInput(Vector2 target);
     void adjust();
+    
+    void setAdditionalText(std::string text);
     
     void dealloc();
     void alloc();

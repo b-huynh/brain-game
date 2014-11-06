@@ -34,7 +34,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float
     setNewControl(control);
     
     // Add time based on n-back since players need more time before they can get targets
-    this->stageTime += 4 * nback + 2;
+    this->stageTime += 3 * nback + 2;
     fuelTimer = globals.fuelMax;
 }
 
@@ -831,8 +831,9 @@ void Tunnel::checkIfDone()
                 setDone(FAIL);//setDone(EVEN);
             else if (player->getHP() <= globals.HPNegativeLimit)
                 setDone(FAIL);
-            else if (fuelTimer <= 0.0 && fuelBuffer <= 0.0)
-                setDone(EVEN);
+            // Let this be done after passing a fuel cell to be fair on the edge case
+            //else if (fuelTimer <= 0.0 && fuelBuffer <= 0.0)
+            //    setDone(EVEN);
         }
         else //if (getMode() == STAGE_MODE_RECESS)
         {
@@ -842,8 +843,9 @@ void Tunnel::checkIfDone()
             //    setDone(PASS);
             else if (stageTime > 0 && getTimeLeft() <= 0)
                 setDone(FAIL);//setDone(EVEN);
-            else if (fuelTimer <= 0.0 && fuelBuffer <= 0.0)
-                setDone(EVEN);
+            // Let this be done after passing a fuel cell to be fair on the edge case
+            //else if (fuelTimer <= 0.0 && fuelBuffer <= 0.0)
+            //    setDone(EVEN);
         }
     }
 }
@@ -851,6 +853,11 @@ void Tunnel::checkIfDone()
 bool Tunnel::isDone() const
 {
     return done;
+}
+
+void Tunnel::setEval(Evaluation eval)
+{
+    this->eval = eval;
 }
 
 void Tunnel::setDone(Evaluation eval)
@@ -1013,6 +1020,7 @@ void Tunnel::setCollectionCriteria(const std::vector<CollectionCriteria> & value
     // Determine whether it is a multi-type-collection task
     int minback = getLowestCriteria();
     int maxback = getHighestCriteria();
+    std::cout << "MINMAX " << minback << " " << maxback << std::endl;
     multiCollectionTask = minback != maxback;
 }
 
@@ -1249,97 +1257,85 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         Direction podLoc = getRandPossibleDirection(segmentInfo);
         
         PodSignal final = POD_SIGNAL_UNKNOWN;
-        if (!isMultiCollectionTask())
+        
+        // If it is not a multi-collection task, do this pod gen since it's more accurate
+        int testedNBack = getLowestCriteria();
+        
+        PodSignal repeat1 = POD_SIGNAL_UNKNOWN; // Two repeated signals
+        PodSignal repeat2 = POD_SIGNAL_UNKNOWN; // Three repeated signals
+        PodSignal repeat3 = POD_SIGNAL_UNKNOWN; // Four repeated signals! Unused
+        // Obtain repeated signals
+        if (types.size() > 2 && types[index - 1].podSignal == types[index - 2].podSignal)
+            repeat1 = types[index - 1].podSignal;
+        if (types.size() > 3 && repeat1 != POD_SIGNAL_UNKNOWN && types[index - 2].podSignal == types[index - 3].podSignal)
+            repeat2 = types[index - 2].podSignal;
+        if (types.size() > 4 && repeat2 != POD_SIGNAL_UNKNOWN && types[index - 3].podSignal == types[index - 4].podSignal)
+            repeat3 = types[index - 3].podSignal;
+        
+        PodSignal guarantee = POD_SIGNAL_UNKNOWN;
+        if (types.size() >= testedNBack && testedNBack > 0)
+            guarantee = types[index - testedNBack].podSignal;
+        
+        if (setting == BAD_TARGET)
         {
-            // If it is not a multi-collection task, do this pod gen since it's more accurate
-            int testedNBack = getLowestCriteria();
-        
-            PodSignal repeat1 = POD_SIGNAL_UNKNOWN; // Two repeated signals
-            PodSignal repeat2 = POD_SIGNAL_UNKNOWN; // Three repeated signals
-            PodSignal repeat3 = POD_SIGNAL_UNKNOWN; // Four repeated signals! Unused
-            // Obtain repeated signals
-            if (types.size() > 2 && types[index - 1].podSignal == types[index - 2].podSignal)
-                repeat1 = types[index - 1].podSignal;
-            if (types.size() > 3 && repeat1 != POD_SIGNAL_UNKNOWN && types[index - 2].podSignal == types[index - 3].podSignal)
-                repeat2 = types[index - 2].podSignal;
-            if (types.size() > 4 && repeat2 != POD_SIGNAL_UNKNOWN && types[index - 3].podSignal == types[index - 4].podSignal)
-                repeat3 = types[index - 3].podSignal;
-        
-            PodSignal guarantee = POD_SIGNAL_UNKNOWN;
-            if (types.size() >= testedNBack && testedNBack > 0)
-                guarantee = types[index - testedNBack].podSignal;
-        
-            if (setting == BAD_TARGET)
+            std::vector<PodSignal> candidates;
+            for (int i = 0; i < signalTypes.size(); ++i)
+                if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || (signalTypes.size() < 3 || testedNBack >= 2)) && // Prevent repeated signals for nbacks less than 2 unless theres not enough supported signals
+                    ((PodSignal)i != repeat1 || testedNBack > 3) && // If there's two in a row already, don't allow possibly three for nback 3
+                    (PodSignal)i != repeat2 && // If there's already three in a row... don't even try 4
+                    (PodSignal)i != guarantee) // This is supposed to be bad, it shouldn't be a target
+                    candidates.push_back((PodSignal)i);
+            
+            // Reroll the next pod if it happens to be a repeat.
+            if (candidates.size() > 0)
+            {
+                PodSignal podType = candidates[rand() % candidates.size()];
+                if (types.size() > 0 && types[index - 1].podSignal == podType)
+                    podType = candidates[rand() % candidates.size()];
+                if (podType == repeat1)
+                {
+                    podType = candidates[rand() % candidates.size()];
+                }
+                final = podType;
+            }
+            else final = guarantee;
+        }
+        else if (setting == GOOD_TARGET)
+        {
+            final = guarantee;
+        }
+        else //if (setting != UNKNOWN)
+        {
+            // Determine whether the next pod is a good target
+            int r = rand() % 100 + 1;
+            bool nbackGuarantee = r <= globals.podNBackChance;
+            
+            // If the next pod should be a target (rolled and no more than 3 in a row)
+            if (nbackGuarantee && guarantee != repeat2)
+                final = guarantee;
+            
+            // Randomly assign next pod not a target
+            if (final == POD_SIGNAL_UNKNOWN)
             {
                 std::vector<PodSignal> candidates;
                 for (int i = 0; i < signalTypes.size(); ++i)
-                    if ((types.size() <= 0 || (PodSignal)i != types[index - 1].podSignal || (signalTypes.size() < 3 || testedNBack >= 2)) && // Prevent repeated signals for nbacks less than 2 unless theres not enough supported signals
-                        ((PodSignal)i != repeat1 || testedNBack > 3) && // If there's two in a row already, don't allow possibly three for nback 3
-                        (PodSignal)i != repeat2 && // If there's already three in a row... don't even try 4
-                        (PodSignal)i != guarantee) // This is supposed to be bad, it shouldn't be a target
+                    if ((PodSignal)i != repeat2 && (PodSignal)i != guarantee)
                         candidates.push_back((PodSignal)i);
-            
+                
                 // Reroll the next pod if it happens to be a repeat.
+                PodSignal podType = guarantee;
                 if (candidates.size() > 0)
                 {
-                    PodSignal podType = candidates[rand() % candidates.size()];
+                    podType = candidates[rand() % candidates.size()];
                     if (types.size() > 0 && types[index - 1].podSignal == podType)
                         podType = candidates[rand() % candidates.size()];
                     if (podType == repeat1)
                     {
                         podType = candidates[rand() % candidates.size()];
                     }
-                    else
-                        final = podType;
                 }
-                else final = guarantee;
+                final = podType;
             }
-            else if (setting == GOOD_TARGET)
-            {
-                final = guarantee;
-            }
-            else //if (setting != UNKNOWN)
-            {
-                // Determine whether the next pod is a good target
-                int r = rand() % 100 + 1;
-                bool nbackGuarantee = r <= globals.podNBackChance;
-                
-                // If the next pod should be a target (rolled and no more than 3 in a row)
-                if (nbackGuarantee && guarantee != repeat2)
-                    final = guarantee;
-        
-                // Randomly assign next pod not a target
-                if (final == POD_SIGNAL_UNKNOWN)
-                {
-                    std::vector<PodSignal> candidates;
-                    for (int i = 0; i < signalTypes.size(); ++i)
-                        if ((PodSignal)i != repeat2 && (PodSignal)i != guarantee)
-                            candidates.push_back((PodSignal)i);
-                    
-                    // Reroll the next pod if it happens to be a repeat.
-                    PodSignal podType = candidates[rand() % candidates.size()];
-                    if (types.size() > 0 && types[index - 1].podSignal == podType)
-                        podType = candidates[rand() % candidates.size()];
-                    if (podType == repeat1)
-                    {
-                        podType = candidates[rand() % candidates.size()];
-                    }
-                    final = podType;
-                }
-            }
-        }
-        else
-        {
-            // If it is a multi-collection task do this generation task instead
-            int nvalueA = nback - 2 > 0 ? nback - 2 : nback;
-            int nvalueB = nback - 1 > 0 ? nback - 1 : nback;
-            int nvalueC = nback;
-            final = generateItem(nvalueA, nvalueB, nvalueC, trackNBackA, trackNBackB, trackNBackC);
-            if (final == POD_SIGNAL_UNKNOWN)
-                final = (PodSignal)(rand() % signalTypes.size());
-            if (getNBackTest(nvalueA, final) != POD_SIGNAL_UNKNOWN) trackNBackA++;
-            if (getNBackTest(nvalueB, final) != POD_SIGNAL_UNKNOWN) trackNBackB++;
-            if (getNBackTest(nvalueC, final) != POD_SIGNAL_UNKNOWN) trackNBackC++;
         }
         
         ret = signalTypes[final][rand() % signalTypes[final].size()];
@@ -1931,6 +1927,8 @@ void Tunnel::update(float elapsed)
             fuelTimer -= fuelBuffer;
             fuelBuffer = 0.0f;
             fuelTimer -= elapsedAdjusted;
+            if (fuelTimer < 0.0)
+                fuelTimer = 0.0;
         }
     }
     
@@ -2038,7 +2036,8 @@ void Tunnel::update(float elapsed)
     checkIfDone();
     player->update(elapsed);
     
-    cleanup = !cleanup ? (isDone() && player->getAnimationTimer() <= 0.0) : cleanup;
+    player->endFlag = !player->endFlag ? (isDone() && player->getAnimationTimer() <= 0.0) : player->endFlag;
+    //cleanup = !cleanup ? (isDone() && player->getAnimationTimer() <= 0.0) : cleanup;
     
     nextSliceM = getNext(globals.podAppearance+4);
     if ( !gateSlice && nextSliceM->getType() == CHECKPOINT_PASS ) {
@@ -2053,7 +2052,8 @@ void Tunnel::update(float elapsed)
 
 void Tunnel::gateAnimation(float elapsed)
 {
-    if( gateSlice && gateSlice->getType() == CHECKPOINT_PASS ) {
+    if( gateSlice && eval == PASS) //gateSlice->getType() == CHECKPOINT_PASS )
+    {
         if( !gateOpen ) {
             if( !activateGreen ) {
                 if( gateDelayTimer >= gateDelay ) {
@@ -2101,7 +2101,8 @@ void Tunnel::gateAnimation(float elapsed)
             }
         }
     }
-    if( gateSlice && gateSlice->getType() == CHECKPOINT_FAIL ) {
+    if( gateSlice && (eval == FAIL || eval == EVEN)) //gateSlice->getType() == CHECKPOINT_FAIL )
+    {
         if( !gateOpen ) {
             if( !activateGreen ) {
                 if( gateDelayTimer >= gateDelay ) {

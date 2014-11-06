@@ -114,7 +114,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str
 {
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
@@ -143,8 +143,7 @@
     try
     {
         //mApplication = OgreApp();
-        if (isOn) mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
-        else mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+        mApplication.startDemo(window, mOgreView, width, height, [str UTF8String]);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times

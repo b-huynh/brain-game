@@ -53,7 +53,11 @@ struct LevelScheduler
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
     
     std::vector< std::pair<StageRequest, PlayerProgress> > tutorialLevels;
-    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistory;
+    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistoryA;
+    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistoryB;
+    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistoryC;
+    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistoryD;
+    std::vector< std::pair<StageRequest, PlayerProgress> > scheduleHistoryE;
     std::list<Bin>* binA;
     std::list<Bin>* binB;
     std::list<Bin>* binC;
@@ -68,6 +72,7 @@ struct LevelScheduler
     double nBackLevelC;
     double nBackLevelD;
     double nBackLevelE;
+    double scoreCurr;
     double currentHoldout;
 
     double holdoutOffsetA;
@@ -80,8 +85,11 @@ struct LevelScheduler
     double speedC;
     double speedD;
     double speedE;
-    
-
+    bool firstTimeA;
+    bool firstTimeB;
+    bool firstTimeC;
+    bool firstTimeD;
+    bool firstTimeE;
     
     // Member functions
     void initTutorialLevels();
@@ -95,6 +103,7 @@ struct LevelScheduler
     void setHoldout( std::list<Bin>* b );
     std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
     int rand_num( int lower, int upper );
+    int predictAverageStartingSpeed();
     
     friend std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
     friend std::istream& operator>>(std::istream& in, LevelScheduler& sch);

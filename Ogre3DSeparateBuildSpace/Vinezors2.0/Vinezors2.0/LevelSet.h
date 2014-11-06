@@ -42,10 +42,7 @@ struct StageRequest
     int nback;
     int stageNo;
     float stageTime;
-    std::vector<NavigationLevel> navLevels;
     int pods;
-    std::vector<CollectionCriteria> collectionCriteria;
-    std::vector<PowerupType> powerups;
     std::string nameTunnelTile;
     std::string nameSkybox;
     std::string nameMusic;
@@ -62,12 +59,14 @@ struct StageRequest
     bool holdoutShape;
     
     float UserNavLevel;
-    int Elevel, Mlevel, Hlevel, Xlevel =0;
-    
     
     float initCamSpeed;
     float minCamSpeed;
     float maxCamSpeed;
+    
+    std::vector<NavigationLevel> navLevels;
+    std::vector<CollectionCriteria> collectionCriteria;
+    std::vector<PowerupType> powerups;
     
     // equivalence operator
     bool operator==(const StageRequest sr) const
@@ -80,13 +79,6 @@ struct StageRequest
     bool hasHoldout() const
     {
         return (holdoutSound || holdoutColor || holdoutShape) && holdoutPerc > 0.0f;
-    }
-    
-    void setDiffPerc(int easy, int medium, int hard, int expert){
-        Elevel=easy;
-        Mlevel=medium;
-        Hlevel=hard;
-        Xlevel=expert;
     }
     
     // clear everything and set defaults
@@ -110,6 +102,7 @@ struct StageRequest
         holdoutSound = false;
         holdoutColor = false;
         holdoutShape = false;
+        UserNavLevel = 1.0;
         initCamSpeed = 15.0f;
         minCamSpeed = 10.0f;
         maxCamSpeed = 40.0f;
@@ -122,6 +115,9 @@ struct StageRequest
         init();
     }
 };
+
+std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr);
+std::istream& operator>>(std::istream& infile, StageRequest & sr);
 
 class LevelSet
 {

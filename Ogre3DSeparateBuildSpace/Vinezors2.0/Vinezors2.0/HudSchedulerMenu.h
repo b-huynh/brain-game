@@ -24,14 +24,12 @@ public:
     
     virtual std::string processButtons(Vector2 target); // Note: calls base class queryButtons
     
-    // Since our scheduler menu can only show so many (currently x=5 previous levels),
-    // we have a function that will get the starting index that represents the last x
-    // levels in the our current history.
-    int getStartingSchedulerHistoryIndex() const;
     // Functions to reset the selected item displayed in the hud
     void clearSelection();
     // Set the hud to reflect the current item selected by the player
     void setSelection();
+    
+    void setSelectToIcon(PanelOverlayElement* icon);
     
     static const int NUM_SELECTIONS = 3;
     static const int SCHEDULE_LEN = 5;
@@ -48,6 +46,12 @@ protected:
     PanelOverlayElement* schedulerMenuTitleBackground;
     TextAreaOverlayElement* schedulerMenuTitleText;
     
+    PanelOverlayElement* schedulerMenuScoreCurrBackground;
+    TextAreaOverlayElement* schedulerMenuScoreCurrText;
+    
+    PanelOverlayElement* schedulerMenuAverageMemoryBackground;
+    TextAreaOverlayElement* schedulerMenuAverageMemoryText;
+    
     struct LevelOverlayElement
     {
         PanelOverlayElement* entireBackground;
@@ -63,10 +67,14 @@ protected:
         TextAreaOverlayElement* values;
         PanelOverlayElement* meritIcon;
     };
-    
+
     std::vector<LevelOverlayElement> levelOverlayPanels;
+public:
     std::vector<LevelOverlayElement> historyOverlayPanels;
+    PanelOverlayElement* selectIcon;
+protected:
     DescriptionOverlayElement levelDetails;
+    
     
     PanelOverlayElement* backButtonBackground;
     PanelOverlayElement* playButtonBackground;

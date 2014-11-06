@@ -45,7 +45,42 @@ void EngineSchedulerMenu::enter()
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
     }
     else
+    {
         player->startMenu();
+        
+        if (player->lastPlayed > 0) {
+            
+            switch (player->lastPlayed)
+            {
+                case 'A':
+                    player->levelRequest = &player->scheduler->scheduleHistoryA.back();
+                    hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
+                    //hud->historyOverlayPanels[0].entireBackground->setMaterialName("General/YellowSphereIcon");
+                    break;
+                case 'B':
+                    player->levelRequest = &player->scheduler->scheduleHistoryB.back();
+                    hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
+                    //hud->historyOverlayPanels[1].entireBackground->setMaterialName("General/YellowSphereIcon");
+                    break;
+                case 'C':
+                    player->levelRequest = &player->scheduler->scheduleHistoryC.back();
+                    hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
+                    //hud->historyOverlayPanels[2].entireBackground->setMaterialName("General/YellowSphereIcon");
+                    break;
+                case 'D':
+                    player->levelRequest = &player->scheduler->scheduleHistoryD.back();
+                    hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
+                    //hud->historyOverlayPanels[3].entireBackground->setMaterialName("General/YellowSphereIcon");
+                    break;
+                case 'E':
+                    player->levelRequest = &player->scheduler->scheduleHistoryE.back();
+                    hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
+                    //hud->historyOverlayPanels[4].entireBackground->setMaterialName("General/YellowSphereIcon");
+                    break;
+            }
+            hud->setSelection();
+        }
+    }
 }
 
 void EngineSchedulerMenu::exit()
@@ -165,17 +200,54 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     {
         int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
         
-        // Since we may not be able to fit the entire playthrough on the screen,
-        // display the last 4 or 5 plays
-        int startingScheduleIndex = hud->getStartingSchedulerHistoryIndex();
-        int historyIndexRequest = startingScheduleIndex + iconNo;
-        if (historyIndexRequest < player->scheduler->scheduleHistory.size())
+        switch (iconNo)
         {
-            player->levelRequest = &player->scheduler->scheduleHistory[historyIndexRequest];
-            hud->setSelection();
+            case 0:
+                if (player->scheduler->scheduleHistoryA.size() > 0)
+                {
+                    player->levelRequest = &player->scheduler->scheduleHistoryA.back();
+                    hud->setSelection();
+                }
+                else
+                    player->levelRequest = NULL;
+                break;
+            case 1:
+                if (player->scheduler->scheduleHistoryB.size() > 0)
+                {
+                    player->levelRequest = &player->scheduler->scheduleHistoryB.back();
+                    hud->setSelection();
+                }
+                else
+                    player->levelRequest = NULL;
+                break;
+            case 2:
+                if (player->scheduler->scheduleHistoryC.size() > 0)
+                {
+                    player->levelRequest = &player->scheduler->scheduleHistoryC.back();
+                    hud->setSelection();
+                }
+                else
+                    player->levelRequest = NULL;
+                break;
+            case 3:
+                if (player->scheduler->scheduleHistoryD.size() > 0)
+                {
+                    player->levelRequest = &player->scheduler->scheduleHistoryD.back();
+                    hud->setSelection();
+                }
+                else
+                    player->levelRequest = NULL;
+                break;
+            case 4:
+                if (player->scheduler->scheduleHistoryE.size() > 0)
+                {
+                    player->levelRequest = &player->scheduler->scheduleHistoryE.back();
+                    hud->setSelection();
+                }
+                else
+                    player->levelRequest = NULL;
+                break;
         }
-        else
-            player->levelRequest = NULL;
         return true;
     }
     return false;

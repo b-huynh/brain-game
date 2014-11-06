@@ -113,9 +113,9 @@ void OgreApp::finalizeRTShaderSystem()
 #endif // USE_RTSHADER_SYSTEM
 
 #if !defined(OGRE_IS_IOS)
-void OgreApp::startDemo(const char* name, MusicMode musica)
+void OgreApp::startDemo(const char* name)
 #else
-void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica)
+void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name)
 #endif
 {
     globals.playerName = name;
@@ -192,6 +192,7 @@ void OgreApp::setupDemoScene()
     
     seed = time(0);
     srand(seed);
+    std::cout << "SEED: " << seed << std::endl;
     
     // create font resources
     ResourcePtr resourceText1 = OgreFramework::getSingletonPtr()->m_pFontMgr->create("MainSmall", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -233,8 +234,9 @@ void OgreApp::setupDemoScene()
     player->setSounds(true);
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
+    player->feedLevelRequestFromSchedule();
     
-    globals.initLogs(player->getSkillLevel().sessionID);
+    globals.initLogs(player->getSessionID());
     
     engineStateMgr = new EngineStateManager();
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);

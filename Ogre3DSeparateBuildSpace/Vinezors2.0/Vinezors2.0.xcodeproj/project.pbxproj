@@ -319,10 +319,10 @@
 		5D29449419FA06E2002950C7 /* LevelScheduler */ = {
 			isa = PBXGroup;
 			children = (
-				5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */,
-				5DA8044C19E4C6BD001E0928 /* EngineSchedulerMenu.h */,
 				5DA8044D19E4C6BD001E0928 /* HudSchedulerMenu.cpp */,
 				5DA8044E19E4C6BD001E0928 /* HudSchedulerMenu.h */,
+				5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */,
+				5DA8044C19E4C6BD001E0928 /* EngineSchedulerMenu.h */,
 			);
 			name = LevelScheduler;
 			sourceTree = "<group>";

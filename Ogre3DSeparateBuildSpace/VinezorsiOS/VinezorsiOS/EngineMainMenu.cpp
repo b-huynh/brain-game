@@ -53,17 +53,17 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "play")
     {
-        player->levelRequest = NULL;
-        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
-    }
-    else if (queryGUI == "credits")
-    {
         engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
         //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }
+    else if (queryGUI == "credits")
+    {
+        //player->levelRequest = NULL;
+        //engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+    }
     else if (queryGUI == "settings")
     {
-        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+        //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
         //engineStateMgr->requestPopEngine();
     }
 }

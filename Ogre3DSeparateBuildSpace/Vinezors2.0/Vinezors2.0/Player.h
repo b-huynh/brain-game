@@ -27,10 +27,12 @@ class Player
 private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
     
+    
     LevelSet* levels;
     Tunnel* tunnel;
     
     unsigned seed;
+    int sessionID;
     
     std::string name;
     int hp;
@@ -96,6 +98,7 @@ private:
         int levelID;
         int taskType;
         int nback;
+        int toggle;
         int playerRollBase;
         int playerRollOffset;
         int playerRollSpeed;
@@ -119,6 +122,7 @@ private:
     };
     // Stores information about each tunnel level
     struct Session {
+        int sessionID;
         int eventID;
         int levelID;
         int taskType;
@@ -152,6 +156,8 @@ private:
     bool selectTimerFlag;
     float startMusicTimer;
     bool godMode;
+    
+    Ogre::ColourValue boostColor;
     
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
@@ -251,6 +257,8 @@ public:
     float getProgress() const;
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
+    int getSessionID() const;
+    std::string getStats() const;
     int getToggleBack() const;
     bool getGodMode() const;
     int getNumStagesWon() const;
@@ -268,6 +276,7 @@ public:
     int getTotalLevelRating(int row) const;
     float getTotalLevelScore(int row) const;
     float getTotalLevelScore() const;
+    Ogre::ColourValue getBoostColor() const;
     bool hasTriggeredStartup() const;
     float getScoring() const;
     TutorialManager* getTutorialMgr() const;
@@ -303,6 +312,7 @@ public:
     void setDesireRoll(float value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
+    void setSessionID(int value);
     void setToggleBack(int value);
     void setGodMode(bool value);
     void setLevelRequestRow(int value);
@@ -405,16 +415,17 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice1;
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    char lastPlayed;
     
     void feedLevelRequestFromSchedule();
     
-    // iterate through the levelProgress vector, link each level in the LevelSet
-    void linkLevelsToProgress(std::vector< std::vector<PlayerProgress> > levelProgress, std::vector<std::vector<StageRequest> > stageList);
-    
     // Returns a multiplier when incrementing or decrementing memory level during assessment
-    float obtainWeightMultiplier(StageRequest level, PlayerProgress assessment);
+    float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, float nbackDelta, bool exclude);
+    float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment);
+    float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);
     
     // "Grade" the level to see if player should repeat, go back, or advance
+    float obtainDeltaNBack(std::pair<StageRequest, PlayerProgress>* levelToGrade, float accuracy) const;
     void assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade);
     
     ~Player();

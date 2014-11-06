@@ -16,8 +16,8 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEMO_BUILD
-#define DEBUG_MODE
-//#define NETWORKING
+//#define DEBUG_MODE
+#define NETWORKING
 #define FONT_SZ_MULT 1.75
 
 #include <string>
@@ -26,7 +26,6 @@ enum GameState { GAME_STATE_PLAY, GAME_STATE_PROMPT, GAME_STATE_MENU };
 enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS, STAGE_MODE_COLLECTION };
 enum Evaluation { PASS, FAIL, EVEN };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
-enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum ActionCode { ACTION_NONE, ACTION_SINGLE_TAP, ACTION_DOUBLE_TAP, ACTION_TAP_HOLD, ACTION_SWIPE_LEFT, ACTION_SWIPE_RIGHT, ACTION_PINCH };
 enum PowerupType { POWERUP_NONE, POWERUP_TRACTOR_BEAM, POWERUP_TIME_WARP, POWERUP_SHIELDS };
@@ -86,14 +85,15 @@ struct PodInfo
     bool goodPod; // is the pod good to take?
     bool podTrigger; // trigger on: false = after pod has past, true = on collision
     bool podTaken; // is the pod gone?
+    bool podZapped;
     
     PodInfo()
     : podExists(true), podSignal(POD_SIGNAL_UNKNOWN), meshType(POD_BASIC), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
-    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false)
+    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false), podZapped(false)
     {}
     
-    PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false)
-    : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
+    PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false, bool zapped = false)
+    : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken), podZapped(zapped)
     {}
     
     void performHoldout(char phase, bool sound);

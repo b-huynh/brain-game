@@ -1,3 +1,88 @@
+material General/IconRecess
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture iconRecess.png
+            }
+        }
+    }
+}
+
+material General/IconColorSound
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture iconColorSound.png
+            }
+        }
+    }
+}
+
+material General/IconShapeSound
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture iconShapeSound.png
+            }
+        }
+    }
+}
+
+material General/IconSoundOnly
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture iconSoundOnly.png
+            }
+        }
+    }
+}
+
+material General/IconAllSignal
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture iconAllSig.png
+            }
+        }
+    }
+}
+
 material General/ScreenBackground1
 {
     technique
@@ -187,6 +272,40 @@ material General/PauseNav4
             texture pause_nav4.png
         }
       } 
+    }
+}
+
+material General/PauseNav5
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture pause_nav5.png
+            }
+        }
+    }
+}
+
+material General/PauseNav6
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture pause_nav6.png
+            }
+        }
     }
 }
 
@@ -838,6 +957,24 @@ material General/GUIMainHudZapper
                 texture hud-eblue_zapper.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
+            }
+        }
+    }
+}
+
+
+material General/GUIFuelBar
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture barblue.png
             }
         }
     }
@@ -1785,25 +1922,6 @@ material General/SpeedSliderBallHorizontal
             tex_address_mode border
         }
       } 
-    }
-}
-
-material General/BlueSphereIcon
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture brightbluesphere.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-            }
-        }
     }
 }
 

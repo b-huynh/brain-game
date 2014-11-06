@@ -61,6 +61,7 @@ protected:
     PanelOverlayElement* HudRightPanel;
     PanelOverlayElement* HudLeftZapper;
     PanelOverlayElement* HudRightZapper;
+    PanelOverlayElement* HudFuelBar;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
@@ -134,6 +135,7 @@ protected:
     virtual void initOverlay();
     
     void setCollectionBar(bool instant, float elapsed);
+    void setFuelBar();
 };
 
 #endif /* defined(__Vinezors2_0__HudStage__) */

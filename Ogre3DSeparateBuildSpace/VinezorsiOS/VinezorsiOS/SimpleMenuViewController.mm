@@ -41,22 +41,28 @@
 
 - (void)dealloc {
     [_TextField_Input release];
-    [_Switch_Music release];
     [super dealloc];
 }
 
 - (NSUInteger)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskPortrait;
+    NSUInteger mask = 0;
+    return mask | UIInterfaceOrientationMaskLandscape;
 }
 
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
+- (BOOL)shouldAutoRotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight;
+}
+
+- (BOOL)shouldAutorotate {
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
 }
 
 - (IBAction)buttonBegin_OnPress:(UIButton *)sender {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    [appDelegate go:_TextField_Input.text :[_Switch_Music isOn]];
+    [appDelegate go:_TextField_Input.text];
 }
 
 @end

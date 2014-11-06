@@ -163,8 +163,8 @@ void Vine::loadRunnerShip()
     tipEntity->getSubEntity(4)->setMaterialName("new_ship_mesh/FrontLine");
     
     tipEntity->getSubEntity(0)->setMaterialName("new_ship_mesh/EndWing");
-    //tipEntity->getSubEntity(1)->setMaterialName("new_ship_mesh/FrontWing");
-    //tipEntity->getSubEntity(5)->setMaterialName("new_ship_mesh/FrontWing");
+    tipEntity->getSubEntity(1)->setMaterialName("new_ship_mesh/FrontWing");
+    tipEntity->getSubEntity(5)->setMaterialName("new_ship_mesh/FrontWing");
     tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColor");
     
     
@@ -306,7 +306,7 @@ void Vine::setShockwave()
 
 void Vine::setBoost()
 {
-    if (!boostEffect)
+    if (!boostEffect && base)
     {
         boostEffect = parentNode->getCreator()->createParticleSystem("StarBoost", "General/StarBoost");
         base->attachObject(boostEffect);

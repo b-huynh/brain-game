@@ -57,6 +57,7 @@ private:
     bool podTaken;      // Pod is picked up or selected
     bool podTrigger;    // Feedback on collision or when completely passed, memory signals set this to false, obstacles set this to true
     bool podGood;       // *** Should remove if continuing with multiple N-Backs test
+    bool podZapped;
     
     Vector3 dest;
 public:
@@ -95,12 +96,14 @@ public:
     bool isPodTaken() const;
     bool getPodTrigger() const;
     bool isPodGood() const;
+    bool isPodZapped() const;
     
 	void move(Vector3 delta);
 	
     void setToGrowth(float t);
     void setSkin();
-	void takePod();
+    void takePod();
+    void zapPod();
     void hidePod();
     void revealPod();
     void uncloakPod();

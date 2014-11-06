@@ -166,11 +166,11 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
     
 	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+    m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     //m_pTrayMgr->hideCursor();
-    //m_pTrayMgr->setListener(this);
-    //m_pTrayMgr->setTrayPadding(10.0);
+    m_pTrayMgr->setListener(this);
+    m_pTrayMgr->setTrayPadding(10.0);
     
     Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
     

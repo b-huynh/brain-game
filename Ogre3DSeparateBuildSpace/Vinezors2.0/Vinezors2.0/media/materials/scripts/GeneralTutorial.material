@@ -233,7 +233,7 @@ material General/TutorialTextboxHoldout1
         depth_write off
         texture_unit
         {
-            texture back_slide.png
+            texture TextboxHoldout1.png
         }
       } 
     }
@@ -324,7 +324,6 @@ material General/TutorialTextboxObstacle
     }
 }
 
-
 material General/TutorialTextboxSoundOnly
 {
     technique
@@ -341,3 +340,21 @@ material General/TutorialTextboxSoundOnly
       } 
     }
 }
+
+material General/TutorialTextboxFuelWarning
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture TextboxFuel.png
+            }
+        }
+    }
+}
+

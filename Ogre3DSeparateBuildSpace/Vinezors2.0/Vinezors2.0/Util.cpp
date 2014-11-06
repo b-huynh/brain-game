@@ -19,7 +19,7 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     stageID = 0;
-    sessionTime = 1800.00;
+    sessionTime = 1200.0;
     stageTime = 120.0;
     stageTotalSignals = 300;
     stageTotalTargets1 = 100;
@@ -176,10 +176,10 @@ Util::ConfigGlobal::ConfigGlobal()
      */
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
-    navMap[2] = NavigationLevel(2, 2, 1);
-    navMap[3] = NavigationLevel(3, 1, 1);
-    navMap[4] = NavigationLevel(4, 4, 0);
-    navMap[5] = NavigationLevel(5, 3, 0);
+    navMap[2] = NavigationLevel(2, 3, 0);
+    navMap[3] = NavigationLevel(3, 4, 0);
+    navMap[4] = NavigationLevel(4, 2, 1);
+    navMap[5] = NavigationLevel(5, 1, 1);
     
     navMap[6] = NavigationLevel(6, 4, 1);
     navMap[7] = NavigationLevel(7, 2, 2);
@@ -187,7 +187,6 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[9] = NavigationLevel(9, 4, 2);
     navMap[10] = NavigationLevel(10, 3, 1);
     navMap[11] = NavigationLevel(11, 3, 2);
-    
     
     navMap[12] = NavigationLevel(12, 4, 3);
     navMap[13] = NavigationLevel(13, 2, 3);
@@ -367,8 +366,8 @@ Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
 void Util::ConfigGlobal::initPaths()
 {
 #if defined(OGRE_IS_IOS)
-    savePath = Util::getIOSDir() + "/" + playerName + ".save";
-    configPath = Util::getIOSDir() + "/config.json";
+    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
+    configPath = Util::getIOSDir() + "/" + playerName + "/config.json";
     configBackup = Util::getIOSDir() + "/config.json";
 #else
     savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
@@ -753,16 +752,19 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
-    std::string logPath = Util::getIOSDir() + "/"
+    std::string userPath = Util::getIOSDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #else
-    std::string logPath = Util::getOSXDir() + "/" + playerName + "/"
+    std::string userPath = Util::getOSXDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #endif
+    int x = mkdir(userPath.c_str(), 0777);
     
     int i = 1;
-    std::ifstream testExist (std::string(logPath + ext).c_str());
     
+    std::ifstream testExist (std::string(logPath + ext).c_str());
     while (testExist) {
         testExist.close();
         logPath = logPath + "_" + Util::toStringInt(i);
@@ -1086,7 +1088,6 @@ std::string Util::getIOSDir()
     //
     //mkdir(OgreFramework::getSingletonPtr()->getMacBundlePath().c_str(), 0777);
     std::string result = OgreFramework::getSingletonPtr()->getMacBundlePath();
-    mkdir(result.c_str(), 0777);
     return result;
 }
 

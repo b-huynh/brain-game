@@ -3,7 +3,7 @@
 #import "SimpleMenuViewController.h"
 #import "MainViewController.h"
 
-#define AUTO_START
+//#define AUTO_START
 
 @implementation AppDelegate
 
@@ -66,14 +66,14 @@
 }
  */
 
-- (void)go:(NSString*)str :(BOOL)isOn
+- (void)go:(NSString*)str
 {
     [self.mViewControllerMenu release];
     
     // Run Ogre
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:str:isOn];
+    [self.mViewControllerMain startWithWindow:self.mWindow:str];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 }

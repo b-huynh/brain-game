@@ -221,6 +221,7 @@ public:
     
     virtual void checkIfDone();
     bool isDone() const;
+    void setEval(Evaluation eval);
     void setDone(Evaluation eval);
     void setSpawnCombo(int level);
     void setSpawnLimit(int value);
