@@ -153,68 +153,24 @@ void Vine::loadRunnerShip()
     
     tip = entireVine->createChildSceneNode("vineTipNode" + Util::toStringInt(vineID));
     
-    tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/new_ship_mesh.mesh");
+    tipEntity = tip->getCreator()->createEntity("vineTipEntity" + Util::toStringInt(vineID), "Ships/arwing.mesh");
     tip->attachObject(tipEntity);
     tip->scale(radius / 1.5, radius / 1.5, radius / 1.5);
     tip->yaw(Degree(180.0));
-    tipEntity->getSubEntity(7)->setMaterialName("new_ship_mesh/GlassHull");
-    tipEntity->getSubEntity(3)->setMaterialName("new_ship_mesh/GlassHull");
-    tipEntity->getSubEntity(2)->setMaterialName("new_ship_mesh/EndWing");
-    tipEntity->getSubEntity(4)->setMaterialName("new_ship_mesh/FrontLine");
+    tipEntity->getSubEntity(7)->setMaterialName("Arwing/GlassHull");
+    tipEntity->getSubEntity(3)->setMaterialName("Arwing/GlassHull");
+    tipEntity->getSubEntity(2)->setMaterialName("Arwing/EndWing");
+    tipEntity->getSubEntity(4)->setMaterialName("Arwing/FrontLine");
     
-    tipEntity->getSubEntity(0)->setMaterialName("new_ship_mesh/EndWing");
-    tipEntity->getSubEntity(1)->setMaterialName("new_ship_mesh/FrontWing");
-    tipEntity->getSubEntity(5)->setMaterialName("new_ship_mesh/FrontWing");
-    tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColor");
+    tipEntity->getSubEntity(0)->setMaterialName("Arwing/EndWing");
+    tipEntity->getSubEntity(1)->setMaterialName("Arwing/FrontWing");
+    tipEntity->getSubEntity(5)->setMaterialName("Arwing/FrontWing");
+    tipEntity->getSubEntity(6)->setMaterialName("Arwing/ThrusterColor");
     
     
     base = entireVine->createChildSceneNode("vineBaseNode" + Util::toStringInt(vineID));
     base->translate(0, 0.0, radius * 2.0);
     base->yaw(Degree(180.0));
-    
-    /*
-    gateNode = entireVine->createChildSceneNode("gateNode" + Util::toStringInt(vineID));
-    gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(vineID), "ExitGate/ExitGate.mesh");
-    
-    gateEntity->getSubEntity(0)->setMaterialName("Gate/TransparentNeonAqua");
-    gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
-    gateEntity->getSubEntity(2)->setMaterialName("Gate/LightGray");
-    gateEntity->getSubEntity(3)->setMaterialName("Gate/DarkGray");
-    
-    for( int i = 0; i < 8; ++i )
-    {
-        gateDoorNodes[i] = gateNode->createChildSceneNode("gateDoorNode" + Util::toStringInt(vineID) + Util::toStringInt(i));
-        gateDoorEntities[i] = gateDoorNodes[i]->getCreator()->createEntity("gateDoorEntity" + Util::toStringInt(vineID) + Util::toStringInt(i), "ExitGate/ExitGateDoor.mesh");
-    
-        gateDoorEntities[i]->getSubEntity(0)->setMaterialName("Gate/DarkestGray");
-        gateDoorEntities[i]->getSubEntity(1)->setMaterialName("Gate/DarkGray");
-    
-        gateDoorNodes[i]->attachObject(gateDoorEntities[i]);
-        
-        gateDoorNodes[i]->roll(Degree(45*i));
-    }
-    
-    */
-    /*
-    gateEntity->getSubEntity(0)->setMaterialName("Gate/DarkGray");
-    gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
-    
-    for( int i = 2; i <= 16; i += 2 )
-        gateEntity->getSubEntity(i)->setMaterialName("Gate/DarkestGray");
-    
-    for( int i = 3; i <= 17; i += 2 )
-        gateEntity->getSubEntity(i)->setMaterialName("Gate/DarkGray");
-    
-    gateEntity->getSubEntity(18)->setMaterialName("Gate/TransparentNeonAqua");
-    
-    gateEntity->getSubEntity(19)->setMaterialName("Gate/NeonAqua");
-    gateEntity->getSubEntity(20)->setMaterialName("Gate/LightGray");
-    
-     */
-    /*
-    gateNode->attachObject(gateEntity);
-    gateNode->translate(Vector3(0,0,-10));
-     */
 }
 
 void Vine::loadFlowerShip()
@@ -354,19 +310,7 @@ void Vine::update(float elapsed)
 // Display effect for some powerup. Currently used to show godmode is on
 void Vine::setPowerIndication(int indication)
 {
-    if (meshType == VINE_RUNNER_SHIP)
-    {
-        if (indication > 0)
-        {
-            if (tipEntity->getNumSubEntities() >= 7)
-                tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColorYellow");
-        }
-        else
-        {
-            if (tipEntity->getNumSubEntities() >= 7)
-                tipEntity->getSubEntity(6)->setMaterialName("new_ship_mesh/ThrusterColor");
-        }
-    }
+    //
 }
 
 void Vine::removeShockwave()

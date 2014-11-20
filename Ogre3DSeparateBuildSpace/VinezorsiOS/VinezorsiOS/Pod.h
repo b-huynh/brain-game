@@ -50,6 +50,7 @@ private:
 	SceneNode* head;
 	SceneNode* shell;
     float moveSpeed;
+    Vector3 direction;
     Vector3 rotateSpeed;
     
     Direction loc;

@@ -42,7 +42,7 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
     tunnelMinAngleTurn = 0;
-    tunnelMaxAngleTurn = 3;
+    tunnelMaxAngleTurn = 5;
     tunnelSegmentWidth = 25.0;
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
@@ -1310,36 +1310,91 @@ void Util::createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, f
     
     float mag = sqrt(l * l + w * w + h * h);
     
-    manual->position(-l, -w, -h);
-    manual->normal(-sqrt(mag), -sqrt(mag), -sqrt(mag));
+    
+    manual->position(-l, -w, -h);   // 0
     manual->textureCoord(0.0, 0.0);
-    manual->position(l, -w, -h);
-    manual->normal(sqrt(mag), -sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, -h);    // 1
     manual->textureCoord(0.5, 0.0);
-    manual->position(l, w, -h);
-    manual->normal(sqrt(mag), sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, -h);     // 2
     manual->textureCoord(0.5, 0.5);
-    manual->position(-l, w, -h);
-    manual->normal(-sqrt(mag), sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, w, -h);    // 3
     manual->textureCoord(0.0, 0.5);
-    manual->position(-l, -w, h);
-    manual->normal(-sqrt(mag), -sqrt(mag), sqrt(mag));
-    manual->textureCoord(0.5, 0.5);
-    manual->position(l, -w, h);
-    manual->normal(sqrt(mag), -sqrt(mag), sqrt(mag));
-    manual->textureCoord(1.0, 0.5);
-    manual->position(l, w, h);
-    manual->normal(sqrt(mag), sqrt(mag), sqrt(mag));
-    manual->textureCoord(1.0, 1.0);
-    manual->position(-l, w, h);
-    manual->normal(-sqrt(mag), sqrt(mag), sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    
+    manual->position(-l, w, h);     // 7
     manual->textureCoord(0.5, 1.0);
-    manual->quad(3, 2, 1, 0);
-    manual->quad(7, 6, 2, 3);
+    manual->normal(Vector3(0, 0, 1));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(0, 0, 1));
+    manual->position(l, w, -h);     // 2
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, w, -h);    // 3
+    manual->textureCoord(0.0, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(-l, w, h);     // 7
+    manual->textureCoord(0.5, 1.0);
+    manual->normal(Vector3(0, 1, 0));
+    
+    manual->position(-l, -w, -h);   // 0
+    manual->textureCoord(0.0, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, -h);    // 1
+    manual->textureCoord(0.5, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(0, 0, -1));
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, 0, -1));
+    
+    manual->position(l, -w, -h);    // 1
+    manual->textureCoord(0.5, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, -h);     // 2
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(1, 0, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(1, 0, 0));
+    
+    manual->position(-l, w, -h);    // 3
+    manual->textureCoord(0.0, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, -w, -h);   // 0
+    manual->textureCoord(0.0, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(-1, 0, 0));
+    manual->position(-l, w, h);     // 7
+    manual->textureCoord(0.5, 1.0);
+    manual->normal(Vector3(-1, 0, 0));
+    
+    manual->quad(0, 1, 2, 3);
     manual->quad(4, 5, 6, 7);
-    manual->quad(0, 1, 5, 4);
-    manual->quad(1, 2, 6, 5);
-    manual->quad(3, 0, 4, 7);
+    manual->quad(8, 9, 10, 11);
+    manual->quad(12, 13, 14, 15);
+    manual->quad(16, 17, 18, 19);
+    manual->quad(20, 21, 22, 23);
     
     manual->end();
     
@@ -1557,34 +1612,13 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
 void Util::setSkyboxAndFog(std::string nameSkybox)
 {
     // Set skybox, fog, and background
-    if (nameSkybox == "General/PurpleSpaceSkyPlane")
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 1, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-    }
-    else if (nameSkybox == "General/BlankStarrySkyPlane")
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
-    }
-    else
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(false, plane, nameSkybox, 1, 1, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-    }
+    Plane plane;
+    plane.d = 80;
+    plane.normal = Ogre::Vector3(0, 0, 1);
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+    OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
 }
 
 // Step function to increase speed by 1 or decrease by 1 is not included but could be.

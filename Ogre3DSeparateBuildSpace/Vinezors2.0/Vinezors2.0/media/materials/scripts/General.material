@@ -228,9 +228,9 @@ material General/BarrierMaterial
         pass
         {
             lighting on
-            ambient 0.1 0.1 0.1
-            diffuse 0.5 0.5 0.5
-            specular 0.5 0.5 0.5 20
+            ambient 0.5 0.5 0.5 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.8 0.8 0.8 1
             texture_unit
             {
                 texture BarrierImageMap.png

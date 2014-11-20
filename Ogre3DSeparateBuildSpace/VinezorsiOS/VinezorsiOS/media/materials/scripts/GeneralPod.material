@@ -20,9 +20,13 @@ material General/PodUnknown
         pass
         {
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.7 0.7 0.7 1
+
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture WHITE.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -50,9 +54,13 @@ material General/PodWhite
         pass
         {
             lighting on
- 
-            ambient 1.0 1.0 1.0 1
-            diffuse 1.0 1.0 1.0 1
+
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture WHITE.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -80,10 +88,12 @@ material General/PodRed
         pass
         {
             lighting on
- 
-            ambient 0.3 0.1 0.1 1
-            diffuse 0.8 0.1 0.1 1
-            emissive 0.2 0.0 0.0 1
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture RED.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -111,10 +121,13 @@ material General/PodPurple
         pass
         {
             lighting on
- 
-            ambient 0.6 0.2 0.6 1
-            diffuse 1.0 0.2 1.0 1
-            emissive 0.4 0.0 0.4 1
+
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture PURPLE.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -142,14 +155,13 @@ material General/PodGreen
         pass
         {
             lighting on
- 
-            ambient 0.1 0.3 0.15 1
-            diffuse 0.2 0.6 0.3 1
-            emissive 0.067 0.2 0.1 1
-            
-            //ambient 0.1 0.3 0.1 1
-            //diffuse 0.2 0.8 0.2 1
-            //emissive 0.1 0.2 0.1 1
+
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture GREEN.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -177,10 +189,12 @@ material General/PodBlue
         pass
         {
             lighting on
- 
-            ambient 0.1 0.2 0.3 1
-            diffuse 0.2 0.4 0.8 1
-            emissive 0.1 0.1 0.2 1
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture BLUE.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }
@@ -208,10 +222,13 @@ material General/PodYellow
         pass
         {
             lighting on
- 
-            ambient 0.3 0.3 0.1 1
-            diffuse 0.8 0.8 0.1 1
-            emissive 0.2 0.2 0.0 1
+
+            specular 0.5 0.5 0.5 30
+
+            texture_unit {
+                texture GOLD.jpg
+                scroll_anim 1.0 1.0
+            }
         }
     }
 }

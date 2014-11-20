@@ -29,7 +29,6 @@ void EngineSchedulerMenu::enter()
     alloc();
     
     // Set skybox
-    Util::setSkyboxAndFog("");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())

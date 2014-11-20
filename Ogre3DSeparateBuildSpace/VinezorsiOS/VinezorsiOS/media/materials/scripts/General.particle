@@ -213,10 +213,10 @@ particle_system General/GoodPodIndicator
 particle_system Barrier/PFX
  {
     material        General/WhiteStar
-    particle_width  0.8
-    particle_height 0.8
+    particle_width  1.0
+    particle_height 1.0
     cull_each       true
-    quota           100
+    quota           200
     billboard_type  point
     local_space	    true
  

@@ -33,8 +33,8 @@ void Pod::loadPod()
     switch (mtype)
     {
         case POD_FUEL:
-            loadFuelCell();
-            //loadCrystal();
+            //loadFuelCell();
+            loadCrystal();
             break;
         case POD_FLOWER:
             loadFlower();
@@ -156,12 +156,13 @@ void Pod::loadFuelCell()
     setToGrowth(0.0);
 }
 
+
 void Pod::loadCrystal()
 {
     mtype = POD_CRYSTAL;
     removeFromScene();
     
-	float stemLength = base.distance(tip);
+    float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
@@ -171,16 +172,16 @@ void Pod::loadCrystal()
     switch (podShape)
     {
         case POD_SHAPE_CONE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_1.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Crystals/roundish.mesh");
             break;
         case POD_SHAPE_SPHERE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_2.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Crystals/spikyBall.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/crystal_3.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Crystals/crystal_long.mesh");
             break;
         case POD_SHAPE_TRIANGLE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarComplex.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Crystals/star_coin.mesh");
             break;
         case POD_SHAPE_HOLDOUT:
             generateIndicator();
@@ -189,7 +190,7 @@ void Pod::loadCrystal()
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
                 materialName = "General/PodPurple";
             }
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/4pointStarSimple.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Crystals/gumdrop.mesh");
             //headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/spikyBall.mesh");
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
@@ -202,11 +203,15 @@ void Pod::loadCrystal()
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
-    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    direction = (globals.tunnelReferenceForward).randomDeviant(Radian(rand() % 180));
+    direction.normalise();
+    std::cout << direction.x << " " << direction.y << " " << direction.z << std::endl;
+    setRotateSpeed(direction * 2);
+    //setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
     
     setToGrowth(0.0);
 }
-
 
 void Pod::loadFlower()
 {
@@ -355,6 +360,10 @@ void Pod::setToGrowth(float t)
     else if (mtype == POD_CRYSTAL)
     {
         head->setScale(Vector3(headRadius, t * headRadius, headRadius));
+        
+        setRotateSpeed(direction * 2);
+        rotateSpeed = 2 + 98 * (1 - t);
+        setRotateSpeed(direction * rotateSpeed);
     }
 }
 
@@ -809,21 +818,12 @@ void Pod::update(float elapsed)
         // Animate growth of barrier in the x-axis
         bPFX->getEmitter(0)->setParameter("width",Util::toStringFloat(bPFXwidth));
         
-        // Animate to cyan particle barrier
-        bPFX->getEmitter(0)->setColour(ColourValue(bPFXcolor,1.0f,1.0f));
-        if( bPFXwidth+0.75f < 4.0f ) bPFXwidth += 0.75f;
-        else bPFXwidth = 4.5f;
-        if( bPFXcolor-0.05f > 0.0f ) bPFXcolor -= 0.05f;
-        else bPFXcolor = 0.0f;
-        
-        /*
          // Animate to orange particle barrier
-        bPFX->getEmitter(0)->setColour(ColourValue(1.0f,bPFXcolor,bPFXcolor / 4));
+        bPFX->getEmitter(0)->setColour(ColourValue(0.5f,bPFXcolor / 2,bPFXcolor / 8));
         if( bPFXwidth+0.75f < 4.0f ) bPFXwidth += 0.75f;
         else bPFXwidth = 4.5f;
         if( bPFXcolor-0.05f > 0.5f ) bPFXcolor -= 0.05f;
         else bPFXcolor = 0.5f;
-         */
     }
 }
 

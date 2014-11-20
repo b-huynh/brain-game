@@ -30,7 +30,6 @@ void EngineMainMenu::enter()
     player->startMenu();
     
     // Set skybox
-    Util::setSkyboxAndFog("");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -54,12 +53,11 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     if (queryGUI == "play")
     {
         engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
-        //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
     }
     else if (queryGUI == "credits")
     {
-        //player->levelRequest = NULL;
-        //engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        player->levelRequest = NULL;
+        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
     }
     else if (queryGUI == "settings")
     {

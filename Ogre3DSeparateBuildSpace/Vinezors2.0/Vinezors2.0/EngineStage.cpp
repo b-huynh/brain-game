@@ -100,7 +100,10 @@ void EngineStage::update(float elapsed)
             if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
             if (lightNode)
-                lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+            {
+                //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+                lightMain->setDirection(0.0f, -1.0f, 0.0f);
+            }
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
@@ -679,7 +682,8 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else if (queryGUI == "levelselect")
             {
-                if (player->levelRequest && player->levelRequest->second.rating < 0)
+                if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                    (!player->levelRequest))    // For level from level select
                 {
                     stageState = STAGE_STATE_DONE;
                     
@@ -1340,7 +1344,7 @@ void EngineStage::setup()
     
     // Set lighting
     lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("StageLight");
-    // lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
+    lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
     lightMain->setSpecularColour(1.0, 1.0, 1.0);
     //lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
@@ -1353,8 +1357,8 @@ void EngineStage::setup()
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     if (lightNode) {
-        lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-        //lightMain->setDirection(player->getCamForward());
+        //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+        lightMain->setDirection(0.0f, -1.0f, 0.0f);
     }
     
     // Set tutorial slides for certain thingies

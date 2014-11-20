@@ -6,6 +6,8 @@ material General/WallBindingStart
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_SpacePlatForms.png
@@ -21,6 +23,8 @@ material General/WallBindingA
         pass
 		{
             lighting on
+
+            ambient 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -38,6 +42,8 @@ material General/WallBindingB
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_AlienPipes.png
@@ -53,6 +59,8 @@ material General/WallBindingC
         pass
 		{
             lighting off
+
+            ambient 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -70,6 +78,8 @@ material General/WallBindingD
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/blueice.png
@@ -86,6 +96,8 @@ material General/WallBindingE
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_Wires.png
@@ -101,6 +113,8 @@ material General/WallBindingG
         pass
 		{
             lighting on
+
+            ambient 0.5 0.5 0.5 1.0
 
             texture_unit
 			{

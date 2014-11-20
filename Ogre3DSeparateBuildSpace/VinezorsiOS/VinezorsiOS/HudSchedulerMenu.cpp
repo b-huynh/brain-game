@@ -519,8 +519,8 @@ void HudSchedulerMenu::setSelection()
         if (progress.accuracy >= 1.0 - Util::EPSILON)
             delta = "x1.5 " + delta;
         mastery = Util::toStringFloat(progress.nBackResult);
-        if (level.hasHoldout() && progress.nBackOffset < 0.0)
-            mastery = "(" + Util::toStringFloat(progress.nBackOffset) + ") " + mastery;
+        if (level.hasHoldout() && progress.nBackNoffset < 0.0)
+            mastery = "(" + Util::toStringFloat(progress.nBackNoffset) + ") " + mastery;
     }
     
     // Set the text displaying the level details

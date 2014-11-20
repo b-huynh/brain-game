@@ -39,6 +39,7 @@ struct PlayerProgress
     float nBackSkill;   // Memory Experience
     float nBackOffset;  // Offset score for holdouts
     float nBackResult;  // Result from memory experience added with delta
+    float nBackNoffset;  // Result from memory offset added with delta
     
     // returns true if the new rating overwrites the old rating
     bool setRating(int nrating);

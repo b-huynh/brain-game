@@ -883,8 +883,9 @@ void Player::updateBoost(float elapsed)
             boostColor.setHSB(origHue * percentFuel, origSat, origLit);
         
         vines[0]->boostEffect->getEmitter(0)->setColour(boostColor);
-        Ogre::MaterialPtr mat = OgreFramework::getSingletonPtr()->m_pMaterialMgr->getByName("new_ship_mesh/ThrusterColor");
-        mat->setDiffuse(boostColor);
+        Ogre::MaterialPtr mat = OgreFramework::getSingletonPtr()->m_pMaterialMgr->getByName("Arwing/ThrusterColor");
+        //mat->setDiffuse(boostColor);
+        mat->setSelfIllumination(boostColor);
         
         if (percentFuel < 0.70)
             tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_FUEL);

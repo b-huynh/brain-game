@@ -1,0 +1,92 @@
+material Arwing/EndWing
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.1 0.1 1
+            diffuse 0.5 0.5 0.5 1
+            emissive 0.0 0.0 0.0 1
+            specular 0.5 0.5 0.5 25.6
+        }
+    }
+}
+
+material Arwing/FrontWing
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.7 0.7 0.7 1
+            diffuse 1.0 1.0 1.0 1
+            emissive 0.0 0.0 0.0 1
+            specular 0.5 0.5 0.5 25.6
+        }
+    }
+}
+
+material Arwing/FrontLine
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.1 0.2 1
+            diffuse 0.052 0.0 0.6 1
+            emissive 0.0 0.0 0.0 1
+            specular 0.5 0.5 0.5 25.6
+        }
+    }
+}
+
+material Arwing/GlassHull
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.1 0.15 0.2 1
+            diffuse 0.030 0.304 0.510 1
+            emissive 0.0 0.0 0.0 1
+            specular 0.5 0.5 0.5 25.6
+        }
+    }
+}
+
+material Arwing/ThrusterColor
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            ambient 0 0 0 1
+            diffuse 0 0 0 1
+            emissive 0 0 0 1
+        }
+    }
+}
+
+material Arwing/CrystalBlue
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+ 
+            ambient 0.5 0.5 0.5 1
+            diffuse 0.0 0.157 1.0 1
+            emissive 0.1 0.1 0.3 1
+        }
+    }
+}
