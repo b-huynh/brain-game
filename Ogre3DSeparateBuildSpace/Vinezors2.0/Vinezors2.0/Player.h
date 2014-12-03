@@ -27,7 +27,6 @@ class Player
 private:
     enum MovementMode { MOVEMENT_STATIC, MOVEMENT_ROTATING };
     
-    
     LevelSet* levels;
     Tunnel* tunnel;
     
@@ -415,7 +414,7 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice1;
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
-    char lastPlayed;
+    LevelPhase lastPlayed;
     
     void feedLevelRequestFromSchedule();
     

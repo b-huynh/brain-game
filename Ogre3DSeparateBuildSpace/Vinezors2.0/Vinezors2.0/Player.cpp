@@ -45,7 +45,7 @@ Player::Player()
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
-    lastPlayed = 0;
+    lastPlayed = PHASE_UNKNOWN;
     fadeMusic = false;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -87,7 +87,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
-    lastPlayed = 0;
+    lastPlayed = PHASE_UNKNOWN;
     fadeMusic = true;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -1473,7 +1473,7 @@ void Player::recordInfo()
             memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
             result.eventID = globals.stageID;
             result.levelID = tunnel->getStageNo();
-            result.taskType = tunnel->getPhase() - 'A';
+            result.taskType = tunnel->getPhase();
             result.nback = tunnel->getNBack();
             result.playerRollBase = camRoll;
             result.playerRollOffset = offsetRoll;
@@ -1737,7 +1737,7 @@ void Player::newTunnel(const std::string & nameMusic)
     sess.sessionID = sessionID;
     sess.eventID = globals.stageID;
     sess.levelID = tunnel->getStageNo();
-    sess.taskType = tunnel->getPhase() - 'A';
+    sess.taskType = tunnel->getPhase();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
@@ -1847,25 +1847,25 @@ void Player::saveSpeedSettings()
     if (levelRequest)
     {
         // If assigned a specific level (via scheduler)
-        switch (levelRequest->first.phase)
+        switch (levelRequest->first.phaseX)
         {
-            case 'A':
+            case PHASE_COLOR_SOUND:
                 scheduler->speedA = globals.initCamSpeed;
                 scheduler->firstTimeA = false;
                 break;
-            case 'B':
+            case PHASE_SHAPE_SOUND:
                 scheduler->speedB = globals.initCamSpeed;
                 scheduler->firstTimeB = false;
                 break;
-            case 'C':
+            case PHASE_SOUND_ONLY:
                 scheduler->speedC = globals.initCamSpeed;
                 scheduler->firstTimeC = false;
                 break;
-            case 'D':
+            case PHASE_ALL_SIGNAL:
                 scheduler->speedD = globals.initCamSpeed;
                 scheduler->firstTimeD = false;
                 break;
-            case 'E':
+            case PHASE_COLLECT:
                 scheduler->speedE = globals.initCamSpeed;
                 scheduler->firstTimeE = false;
                 break;
@@ -2602,9 +2602,9 @@ void Player::saveAllResults(Evaluation eval)
         // For level scheduler set new speed to be the average of the ending speed and init speed setting
         if (levelRequest)
         {
-            switch (levelRequest->first.phase)
+            switch (levelRequest->first.phaseX)
             {
-                case 'A':
+                case PHASE_COLOR_SOUND:
                 {
                     float nspeed = (scheduler->speedA + baseSpeed) / 2;
                     if (nrating >= 5 || nspeed < scheduler->speedA)
@@ -2613,7 +2613,7 @@ void Player::saveAllResults(Evaluation eval)
                     scheduler->firstTimeA = false;
                     break;
                 }
-                case 'B':
+                case PHASE_SHAPE_SOUND:
                 {
                     float nspeed = (scheduler->speedB + baseSpeed) / 2;
                     if (nrating >= 5 || nspeed < scheduler->speedB)
@@ -2622,7 +2622,7 @@ void Player::saveAllResults(Evaluation eval)
                     scheduler->firstTimeB = false;
                     break;
                 }
-                case 'C':
+                case PHASE_SOUND_ONLY:
                 {
                     float nspeed = (scheduler->speedC + baseSpeed) / 2;
                     if (nrating >= 5 || nspeed < scheduler->speedC)
@@ -2631,7 +2631,7 @@ void Player::saveAllResults(Evaluation eval)
                     scheduler->firstTimeC = false;
                     break;
                 }
-                case 'D':
+                case PHASE_ALL_SIGNAL:
                 {
                     float nspeed = (scheduler->speedD + baseSpeed) / 2;
                     if (nrating >= 5 || nspeed < scheduler->speedD)
@@ -2640,7 +2640,7 @@ void Player::saveAllResults(Evaluation eval)
                     scheduler->firstTimeD = false;
                     break;
                 }
-                case 'E':
+                case PHASE_COLLECT:
                 {
                     float nspeed = (scheduler->speedE + baseSpeed - globals.stageTotalCollections / 3) / 2;
                     
@@ -3172,7 +3172,7 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     float nBackDifficulty = level.nback - assessment.nBackSkill;
     if (level.hasHoldout())
         nBackDifficulty -= assessment.nBackOffset;
-    if ( level.phase == 'E' )
+    if (level.phaseX == PHASE_COLLECT)
         valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
     else if ( nBackDifficulty < -1.5 )
         valMemory = 0.0;    // too easy memory
@@ -3181,7 +3181,7 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     else if ( nBackDifficulty < 0.5 )
         valMemory = 1.0;    // normal memory
     else //if ( nBackDifficulty >= 0.5 )
-        valMemory = 3.0;    // hard memory
+        valMemory = 2.0;    // hard memory
 
     if (level.difficultyX == DIFFICULTY_EASY)
         valNavigation = 0.8;   // easy nav
@@ -3189,11 +3189,6 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
         valNavigation = 1.0;   // normal nav
     else //(level.difficulty == DIFFICULTY_HARD)
         valNavigation = 1.2;   // hard nav
-    
-    if (level.hasHoldout())
-        valHoldout = 1.3;
-    else
-        valHoldout = 1.0;
     
     return valMemory * valNavigation * valHoldout;
 }
@@ -3206,7 +3201,7 @@ float Player::obtainSamplingWeight(StageRequest level, PlayerProgress assessment
     
     // Not only is it shorter times and stuff, the accuracy requirement
     // for passing is lower for easy time. So it is a very strong multiplier
-    if (level.phase == 'E')
+    if (level.phaseX == PHASE_COLLECT)
         valLength = 1.0;
     else if (level.collectionCriteria.size() <= 4)
         valLength = 0.5;    // easy time
@@ -3222,9 +3217,9 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
 {
     float difficultyWeight = obtainDifficultyWeight(level, assessment);
     float samplingWeight = obtainSamplingWeight(level, assessment);
+    const float PERFECT_MULTIPLIER = 1.3;
     if ( nBackDelta < 0.0 )
     {
-        if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
         if (assessment.rating >= 5 && !exclude ) // If the player completed the level, don't decrease despite accuracy
             nBackDelta = 0.0;
         
@@ -3233,7 +3228,6 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
         else
             nBackDelta = 0.0;
         nBackDelta *= samplingWeight;
-        if ( nBackDelta <= -1.00) nBackDelta = -1.00;
     }
     else
     {
@@ -3242,8 +3236,7 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
         nBackDelta *= difficultyWeight; // apply multiplier to positive base value
         nBackDelta *= samplingWeight;
         if (accuracy >= 1.00 - Util::EPSILON) // If player has perfect performance, grant a bonus to memory score
-            nBackDelta *= 1.5;
-        if ( nBackDelta > 1.00) nBackDelta = 1.00;
+            nBackDelta *= PERFECT_MULTIPLIER;
     }
     return nBackDelta;
 }
@@ -3264,7 +3257,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // For shorter levels, it's possible to complete the level at lower accuracy.
     // These are lower bound estimates for those accuracies (also excluding Time Warp)...
     float accuracyRange = 1.0;
-    if (level.phase == 'E') // For collection, there's only missing and grabbing
+    if (level.phaseX == PHASE_COLLECT) // For collection, there's only missing and grabbing
         accuracyRange = 0.25;
     else if (level.collectionCriteria.size() <= 4)
         accuracyRange = 0.50;   // short time
@@ -3275,8 +3268,14 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
-    double nBackDelta = 0.35 * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    const float SOFT_CAP = 0.35;
+    const float HARD_CAP = 0.50;
+    double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
+    if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
     nBackDelta = modifyNBackDelta(level, assessment, accuracy, nBackDelta, false);
+    if ( nBackDelta <= -HARD_CAP) nBackDelta = -HARD_CAP;
+    if ( nBackDelta <= HARD_CAP) nBackDelta = HARD_CAP;
     
     if ( totalElapsed >= globals.sessionTime )
         scheduler->sessionFinished = true;
@@ -3288,16 +3287,19 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     double playerSkill;
     double playerOffset;
     double holdoutDelta = 0.0;
-    // Find out what phase they're in
-    switch ( level.phase ) {
-        case 'E':
+    // Find out what phase they're in and update their skill level for that phase.
+    //
+    // If the level has holdout, the update is affected into a holdout skill offset
+    // for that phase. Additionally, if the holdout skill offset ends up being positive,
+    // it is zero'd out and the difference is added into skill level.
+    switch (level.phaseX) {
+        case PHASE_COLLECT:
             scheduler->nBackLevelE += nBackDelta;
             if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
             playerSkill = scheduler->nBackLevelE;
             playerOffset = 0.0;
             break;
-        
-        case 'A':
+        case PHASE_COLOR_SOUND:
             if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
@@ -3318,7 +3320,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerSkill = scheduler->nBackLevelA;
             playerOffset = scheduler->holdoutOffsetA;
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
@@ -3339,13 +3341,13 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerSkill = scheduler->nBackLevelB;
             playerOffset = scheduler->holdoutOffsetB;
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             scheduler->nBackLevelC += nBackDelta;
             if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
             playerSkill = scheduler->nBackLevelC;
             playerOffset = 0.0;
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
@@ -3372,6 +3374,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // Update total score
     scheduler->scoreCurr += score;
     
+    // Update holdout experience based on performance
     if(nBackDelta > 0 && level.hasHoldout() && scheduler->currentHoldout < 80)
     {
         scheduler->currentHoldout+=10;
@@ -3379,6 +3382,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             scheduler->currentHoldout = 80;
     }
     
+    // Record for reporting purposes
     levelToGrade->second.accuracy = accuracy;
     levelToGrade->second.nBackDelta = nBackDelta;
     levelToGrade->second.nBackReturn = holdoutDelta;
@@ -3387,34 +3391,32 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     std::cout << "N-Back Delta: " << nBackDelta << std::endl;
     
-    // Duration is not stored in level to remove the correct bin
-    StageDuration durationX;
-    if (level.phase == 'E')
-        durationX = DURATION_NORMAL;
-    else if (level.collectionCriteria.size() <= 4)
-        durationX = DURATION_SHORT;
-    else if (level.collectionCriteria.size() <= 8)
-        durationX = DURATION_NORMAL;
-    else
-        durationX = DURATION_LONG;
-    scheduler->removeBin(level.phaseX, level.difficultyX, durationX, level.hasHoldout());
+    scheduler->removeBin(level.phaseX, level.difficultyX, level.durationX, level.hasHoldout());
+
+    // Continue to increment a play count for each non-recess played so that we can track
+    // every 5 levels to throw in a recess that they can play.
+    if (level.phaseX != PHASE_COLLECT)
+        scheduler->playCount++;
     
-    switch (level.phase)
+    // Record in the scheduler for each task column the latest level played
+    switch (level.phaseX)
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
             scheduler->scheduleHistoryA.push_back(*levelRequest);
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             scheduler->scheduleHistoryB.push_back(*levelRequest);
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             scheduler->scheduleHistoryC.push_back(*levelRequest);
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             scheduler->scheduleHistoryD.push_back(*levelRequest);
             break;
-        case 'E':
+        case PHASE_COLLECT:
             scheduler->scheduleHistoryE.push_back(*levelRequest);
+            break;
+        default:
             break;
     }
 }

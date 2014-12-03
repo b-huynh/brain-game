@@ -118,7 +118,6 @@ struct NavigationLevel
 class Tunnel;
 class Player;
 class Hud;
-class LevelManager;
 
 namespace Util
 {

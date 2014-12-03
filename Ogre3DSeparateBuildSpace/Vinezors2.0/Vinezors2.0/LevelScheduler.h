@@ -79,7 +79,6 @@ struct LevelScheduler
     double holdoutOffsetB;
     double holdoutOffsetD;
 
-    
     double speedA;
     double speedB;
     double speedC;
@@ -90,6 +89,8 @@ struct LevelScheduler
     bool firstTimeC;
     bool firstTimeD;
     bool firstTimeE;
+    
+    int playCount;
     
     // Member functions
     void initTutorialLevels();

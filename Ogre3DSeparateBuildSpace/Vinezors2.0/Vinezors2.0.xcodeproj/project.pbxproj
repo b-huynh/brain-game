@@ -19,7 +19,6 @@
 		5D04AD571901331600E0A98B /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D04AD551901331600E0A98B /* Powerup.cpp */; };
 		5D076DF5187CE3CA00E884B9 /* Plugin_ParticleFX.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DF9414E17F4D4E70082C239 /* Plugin_ParticleFX.dylib */; };
 		5D1EFEB4190B2B1100E865D6 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EFEB2190B2B1100E865D6 /* LevelSet.cpp */; };
-		5D299E3F18A061D60014CFA9 /* LevelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D299E3D18A061D60014CFA9 /* LevelManager.cpp */; };
 		5D2D423518CE497F0035786C /* Score.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2D423318CE497F0035786C /* Score.cpp */; };
 		5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D3041C318431C3800BD26C0 /* Hud.cpp */; };
 		5D4B5090195CE63F00912FC9 /* EngineControlsSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B5089195CE63F00912FC9 /* EngineControlsSettings.cpp */; };
@@ -119,8 +118,6 @@
 		5D1EFEB2190B2B1100E865D6 /* LevelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSet.cpp; sourceTree = "<group>"; };
 		5D1EFEB3190B2B1100E865D6 /* LevelSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSet.h; sourceTree = "<group>"; };
 		5D299E3B18A01EE00014CFA9 /* General.particle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = General.particle; sourceTree = "<group>"; };
-		5D299E3D18A061D60014CFA9 /* LevelManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelManager.cpp; sourceTree = "<group>"; };
-		5D299E3E18A061D60014CFA9 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
 		5D2D423318CE497F0035786C /* Score.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Score.cpp; sourceTree = "<group>"; };
 		5D2D423418CE497F0035786C /* Score.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Score.h; sourceTree = "<group>"; };
 		5D3041C318431C3800BD26C0 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
@@ -407,8 +404,6 @@
 				B6C64C1F17DE8C5B0092CA8E /* Util.h */,
 				5D1EFEB2190B2B1100E865D6 /* LevelSet.cpp */,
 				5D1EFEB3190B2B1100E865D6 /* LevelSet.h */,
-				5D299E3D18A061D60014CFA9 /* LevelManager.cpp */,
-				5D299E3E18A061D60014CFA9 /* LevelManager.h */,
 				5DA8044F19E4C6BD001E0928 /* LevelScheduler.cpp */,
 				5DA8045019E4C6BD001E0928 /* LevelScheduler.h */,
 			);
@@ -601,7 +596,6 @@
 				5DE122DD17F0DC6700E49916 /* Tunnel.cpp in Sources */,
 				5DE122E317F0DC7B00E49916 /* TunnelSlice.cpp in Sources */,
 				5DCDDD8E1910637800CF67F1 /* PlayerProgress.cpp in Sources */,
-				5D299E3F18A061D60014CFA9 /* LevelManager.cpp in Sources */,
 				5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */,
 				5D04AD571901331600E0A98B /* Powerup.cpp in Sources */,
 				5DEB28601899AECB003A90EB /* OgreApp.cpp in Sources */,

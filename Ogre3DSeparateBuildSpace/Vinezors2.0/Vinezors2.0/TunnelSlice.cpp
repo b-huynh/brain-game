@@ -156,7 +156,7 @@ void TunnelSlice::initWalls()
     
     
     float wallLength = getWallLength();
-    float scaleValue = 0.015f;
+    float scaleValue = 0.017f;
     Vector3 leftbarrierOffset = Vector3(-scaleValue,scaleValue,0);
     Vector3 rightbarrierOffset = leftbarrierOffset * Vector3(-1,1,1);
     if( countSides == 3 ) {
@@ -301,7 +301,7 @@ void TunnelSlice::initWalls()
         
         topIntermediate = sliceNode->createChildSceneNode("topTransition" + Util::toStringInt(intermediateMeshID));
         topIntermediate->translate(move);
-        topIntermediate->scale(5,1.25,3);
+        topIntermediate->scale(0.05,0.0125,0.03);
         Entity* topIntermediateEntity = sliceNode->getCreator()->createEntity("topTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         topIntermediateEntity->setMaterialName("Railing/Cyan");
         topIntermediate->attachObject(topIntermediateEntity);
@@ -688,7 +688,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     Vector3 tr = Vector3(Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY);
     
     
-    float scaleValue = 0.015f;
+    float scaleValue = 0.017f;
     Vector3 leftbarrierOffset = Vector3(-scaleValue,scaleValue,0);
     Vector3 rightbarrierOffset = leftbarrierOffset * Vector3(-1,1,1);
     Vector3 leftConnector1Offset = Vector3(-scaleValue,scaleValue,-width/2);
@@ -942,7 +942,7 @@ void TunnelSlice::connect(TunnelSlice* next)
         
         topIntermediate = sliceNode->createChildSceneNode("topTransition" + Util::toStringInt(intermediateMeshID));
         topIntermediate->translate(move);
-        topIntermediate->scale(5,1.25,3);
+        topIntermediate->scale(0.05,0.0125,0.03);
         Entity* topIntermediateEntity = sliceNode->getCreator()->createEntity("topTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         topIntermediateEntity->setMaterialName("Railing/Cyan");
         topIntermediate->attachObject(topIntermediateEntity);

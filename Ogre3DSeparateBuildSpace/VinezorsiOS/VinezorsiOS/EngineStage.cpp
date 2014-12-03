@@ -102,7 +102,7 @@ void EngineStage::update(float elapsed)
             if (lightNode)
             {
                 //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-                lightMain->setDirection(0.0f, -1.0f, 0.0f);
+                lightMain->setDirection(player->getCamUpward() * -1);
             }
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -1358,7 +1358,7 @@ void EngineStage::setup()
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     if (lightNode) {
         //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-        lightMain->setDirection(0.0f, -1.0f, 0.0f);
+        lightMain->setDirection(player->getCamUpward() * -1);
     }
     
     // Set tutorial slides for certain thingies

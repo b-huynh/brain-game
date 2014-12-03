@@ -360,21 +360,21 @@ void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRe
     StageRequest level = levelRequest.first;
     PlayerProgress progress = levelRequest.second;
     
-    switch (level.phase)
+    switch (level.phaseX)
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
             background->setMaterialName("General/IconColorSound");
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             background->setMaterialName("General/IconShapeSound");
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             background->setMaterialName("General/IconSoundOnly");
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             background->setMaterialName("General/IconAllSignal");
             break;
-        case 'E':
+        case PHASE_COLLECT:
             background->setMaterialName("General/IconRecess");
             break;
         default:
@@ -440,22 +440,24 @@ void HudSchedulerMenu::setSelection()
     std::string mastery;
     
     // Assign description value to each variable
-    switch (level.phase)
+    switch (level.phaseX)
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
             type = "Color&Sound";
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             type = "Shape&Sound";
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             type = "Sound Only";
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             type = "All Features";
             break;
-        case 'E':
+        case PHASE_COLLECT:
             type = "Recess";
+            break;
+        default:
             break;
     }
     nback = Util::toStringInt(level.nback);
@@ -475,7 +477,7 @@ void HudSchedulerMenu::setSelection()
     holdout = level.hasHoldout() ? "yes" : "no";
     potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 0.0, 0.35, true));
     
-    if (level.phase == 'E')
+    if (level.phaseX == PHASE_COLLECT)
         length = "medium";
     else if (level.collectionCriteria.size() <= 4)
         length = "short";

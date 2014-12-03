@@ -525,9 +525,9 @@ void HudStage::alloc()
         double startingSpeed = 15.0;
         
         // If assigned a specific level (via scheduler)
-        switch (player->levelRequest->first.phase)
+        switch (player->levelRequest->first.phaseX)
         {
-            case 'A':
+            case PHASE_COLOR_SOUND:
             {
                 if (!player->scheduler->firstTimeA)
                     startingSpeed = player->scheduler->speedA;
@@ -535,7 +535,7 @@ void HudStage::alloc()
                     startingSpeed = player->scheduler->predictAverageStartingSpeed();
                 break;
             }
-            case 'B':
+            case PHASE_SHAPE_SOUND:
             {
                 if (!player->scheduler->firstTimeB)
                     startingSpeed = player->scheduler->speedB;
@@ -543,7 +543,7 @@ void HudStage::alloc()
                     startingSpeed = player->scheduler->predictAverageStartingSpeed();
                 break;
             }
-            case 'C':
+            case PHASE_SOUND_ONLY:
             {
                 if (!player->scheduler->firstTimeC)
                     startingSpeed = player->scheduler->speedC;
@@ -551,7 +551,7 @@ void HudStage::alloc()
                     startingSpeed = player->scheduler->predictAverageStartingSpeed();
                 break;
             }
-            case 'D':
+            case PHASE_ALL_SIGNAL:
             {
                 if (!player->scheduler->firstTimeD)
                     startingSpeed = player->scheduler->speedD;
@@ -559,7 +559,7 @@ void HudStage::alloc()
                     startingSpeed = player->scheduler->predictAverageStartingSpeed();
                 break;
             }
-            case 'E':
+            case PHASE_COLLECT:
             {
                 if (!player->scheduler->firstTimeE)
                     startingSpeed = player->scheduler->speedE;
@@ -880,19 +880,19 @@ void HudStage::initOverlay()
     nbackDisplayBackground->setDimensions(0.075, 0.08);
     switch (tunnel->getPhase())
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
             speedDisplayBackground->setMaterialName("General/GUIToggleButton0");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             speedDisplayBackground->setMaterialName("General/GUIToggleButton1");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton1");
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             speedDisplayBackground->setMaterialName("General/GUIToggleButton2");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton2");
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             speedDisplayBackground->setMaterialName("General/GUIToggleButton3");
             nbackDisplayBackground->setMaterialName("General/GUIToggleButton3");
             break;

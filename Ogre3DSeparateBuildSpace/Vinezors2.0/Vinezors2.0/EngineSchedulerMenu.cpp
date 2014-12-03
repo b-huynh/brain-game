@@ -47,37 +47,35 @@ void EngineSchedulerMenu::enter()
     {
         player->startMenu();
         
-        if (player->lastPlayed > 0) {
-            
-            switch (player->lastPlayed)
-            {
-                case 'A':
-                    player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                    hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
-                    //hud->historyOverlayPanels[0].entireBackground->setMaterialName("General/YellowSphereIcon");
-                    break;
-                case 'B':
-                    player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                    hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
-                    //hud->historyOverlayPanels[1].entireBackground->setMaterialName("General/YellowSphereIcon");
-                    break;
-                case 'C':
-                    player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                    hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
-                    //hud->historyOverlayPanels[2].entireBackground->setMaterialName("General/YellowSphereIcon");
-                    break;
-                case 'D':
-                    player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                    hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
-                    //hud->historyOverlayPanels[3].entireBackground->setMaterialName("General/YellowSphereIcon");
-                    break;
-                case 'E':
-                    player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                    hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
-                    //hud->historyOverlayPanels[4].entireBackground->setMaterialName("General/YellowSphereIcon");
-                    break;
-            }
-            hud->setSelection();
+        switch (player->lastPlayed)
+        {
+            case PHASE_COLOR_SOUND:
+                player->levelRequest = &player->scheduler->scheduleHistoryA.back();
+                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
+                hud->setSelection();
+                break;
+            case PHASE_SHAPE_SOUND:
+                player->levelRequest = &player->scheduler->scheduleHistoryB.back();
+                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
+                hud->setSelection();
+                break;
+            case PHASE_SOUND_ONLY:
+                player->levelRequest = &player->scheduler->scheduleHistoryC.back();
+                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
+                hud->setSelection();
+                break;
+            case PHASE_ALL_SIGNAL:
+                player->levelRequest = &player->scheduler->scheduleHistoryD.back();
+                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
+                hud->setSelection();
+                break;
+            case PHASE_COLLECT:
+                player->levelRequest = &player->scheduler->scheduleHistoryE.back();
+                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
+                hud->setSelection();
+                break;
+            default:
+                break;
         }
     }
 }

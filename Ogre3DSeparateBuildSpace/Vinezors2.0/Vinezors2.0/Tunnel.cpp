@@ -19,15 +19,15 @@ const float infinityDepth = 1024;
 static int tunnelID = 0;
 
 Tunnel::Tunnel()
-    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), fuelTimer(0.0), fuelBuffer(0.0), activePods(), playNo(0), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phase(' '), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), holdoutStart(20.0), holdoutEnd(80.0), holdoutPerc(0.0), holdoutSound(false), holdoutColor(false), holdoutShape(false), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f), flyOut(false)
+    : player(NULL), parentNode(NULL), mainTunnelNode(NULL), start(), end(), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(0.0), segmentDepth(0.0), sections(), types(), targets(), sectionSize(0), podSegmentSize(0), distractorSegmentSize(0), powerupSegmentSize(0), spawnIndex(0), spawnCombo(0), podIndex(0), sectionIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), fuelTimer(0.0), fuelBuffer(0.0), activePods(), playNo(0), stageNo(0), mode(STAGE_MODE_PROFICIENCY), phaseX(PHASE_UNKNOWN), stageTime(0.0), totalElapsed(0.0), timePenalty(0.0), nback(1), control(0), basis(NO_DIRECTION), sidesUsed(), materialNames(), eval(EVEN), signalTypes(), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), holdoutStart(20.0), holdoutEnd(80.0), holdoutPerc(0.0), holdoutSound(false), holdoutColor(false), holdoutShape(false), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f), flyOut(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
         sidesUsed[i] = true;
     fuelTimer = globals.fuelMax;
 }
 
-Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int playNo, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
-: player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), fuelTimer(0.0), fuelBuffer(0.0), activePods(), playNo(playNo), stageNo(stageNo), mode(mode), phase(phase), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), holdoutStart(20.0), holdoutEnd(80.0), holdoutPerc(0.0), holdoutSound(false), holdoutColor(false), holdoutShape(false), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f), flyOut(false)
+Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int playNo, int stageNo, StageMode mode, LevelPhase phaseX, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups)
+: player(NULL), parentNode(parentNode), mainTunnelNode(NULL), start(start), end(start), segments(), tLeftPrevious(0.0), tLeftCurrent(0.0), previous(), current(), tLeftOffsetPrevious(0.0), tLeftOffsetCurrent(0.0), previousOffset(), currentOffset(), segmentCounter(0), segmentWidth(segmentWidth), segmentDepth(segmentDepth), segmentMinAngleTurn(segmentMinAngleTurn), segmentMaxAngleTurn(segmentMaxAngleTurn), endRot(rot), sections(), types(), targets(), sectionSize(sectionSize), podSegmentSize(podSegmentSize), distractorSegmentSize(distractorSegmentSize), powerupSegmentSize(powerupSegmentSize), sectionIndex(0), spawnIndex(0), spawnCombo(0), podIndex(0), renewalSectionCounter(0), renewalPodCounter(0), renewalDistractorCounter(0), renewalPowerupCounter(0), spawnLimit(-1), numTargets(0), fuelTimer(0.0), fuelBuffer(0.0), activePods(), playNo(playNo), stageNo(stageNo), mode(mode), phaseX(phaseX), stageTime(stageTime), totalElapsed(0.0), timePenalty(0.0), nback(nback), basis(sloc), sidesUsed(), materialNames(), eval(EVEN), signalTypes(signalTypes), navPhase(0), catchupPhase(0), tunnelSectionsPerNavigationUpgrade(10), navCheckpoint(0), navLevels(), propagateCounters(), guide(NO_DIRECTION), collectionCriteria(), powerups(powerups), hasHoldout(false), holdoutCounter(100), holdoutPod(0), holdoutIndex(0), holdoutFrequency(4), holdoutStart(20.0), holdoutEnd(80.0), holdoutPerc(0.0), holdoutSound(false), holdoutColor(false), holdoutShape(false), trackNBackA(0), trackNBackB(0), trackNBackC(0), done(false), cleanup(false), gateSlice(NULL), tVal(0.0f), gateOpen(false), activateGreen(false), tSpeedOpen(10.0f), tSpeed(0.0f), tAccel(2.0f), gateDelayTimer(0.0f), gateDelay(0.5f), flyOut(false)
 {
     mainTunnelNode = parentNode->createChildSceneNode("mainTunnelNode" + Util::toStringInt(tunnelID));
 	current = segments.end();
@@ -725,12 +725,9 @@ int Tunnel::getStageNo() const
     return stageNo;
 }
 
-char Tunnel::getPhase() const
+LevelPhase Tunnel::getPhase() const
 {
-    // Always return capital case
-    if (phase >= 'a' && phase <= 'z')
-        return phase - ('a' - 'A');
-    return phase;
+    return phaseX;
 }
 
 void Tunnel::determineMaterial()
@@ -739,26 +736,20 @@ void Tunnel::determineMaterial()
     materialNames.clear();
     switch (getPhase())
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
             materialNames.push_back("General/WallBindingA");
             break;
-        case 'B':
+        case PHASE_SHAPE_SOUND:
             materialNames.push_back("General/WallBindingB");
             break;
-        case 'C':
+        case PHASE_SOUND_ONLY:
             materialNames.push_back("General/WallBindingC");
             break;
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             materialNames.push_back("General/WallBindingD");
             break;
-        case 'E':
+        case PHASE_COLLECT:
             materialNames.push_back("General/WallBindingE");
-            break;
-        case 'F':
-            materialNames.push_back("General/Wall1");
-            break;
-        case 'G':
-            materialNames.push_back("General/WallBindingG");
             break;
         default:
             materialNames.push_back("General/Wall1");
@@ -1423,7 +1414,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             ++holdoutCounter;
         
             if( holdoutIndex == holdoutPod ) {
-                ret.performHoldout(phase, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
+                ret.performHoldout(phaseX, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
                 //ret.performHoldout(phase, player->soundVolume > 0.0);
             }
             

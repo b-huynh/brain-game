@@ -42,7 +42,7 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
     tunnelMinAngleTurn = 0;
-    tunnelMaxAngleTurn = 5;
+    tunnelMaxAngleTurn = 3;
     tunnelSegmentWidth = 25.0;
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
@@ -83,7 +83,7 @@ Util::ConfigGlobal::ConfigGlobal()
     historyMode = -1;
     startingHP = 3;
     HPNegativeLimit = 0;
-    HPPositiveLimit = 3;
+    HPPositiveLimit = 999;
     HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
     HPNegativeDistractor = 0;
