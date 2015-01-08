@@ -57,7 +57,6 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setOverlay(2, false);
-            hud->setOverlay(3, false);
             hud->setGoButtonState(false);
             hud->setSpeedDialState(true);
             hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
@@ -101,14 +100,14 @@ void EngineStage::update(float elapsed)
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
             if (lightNode)
             {
-                //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-                lightMain->setDirection(player->getCamUpward() * -1);
+                lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+                //lightMain->setDirection(Vector3::UNIT_Y * -1);
             }
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
             // See by the end of this frame if we have a tutorial popup, if so pause the game, keep the music running
-            if (player->getTutorialMgr()->isVisible())
+            if (player->getTutorialMgr()->isVisible() && !player->getTutorialMgr()->isSpecial())
             {
                 setPause(true, false);
                 globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
@@ -215,13 +214,13 @@ void EngineStage::update(float elapsed)
                                 << "Session Finished!\n"
                                 << "===========================================\n";
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                    player->getTutorialMgr()->setAdditionalText(player->getStats());
+                    player->getTutorialMgr()->setAdditionalText(player->getSessionStats());
                     
                     // Update session ID before save
                     player->setSessionID(player->getSessionID() + 1);
                 }
                 player->saveProgress(globals.savePath);
-                player->lastPlayed = player->levelRequest->first.phase;
+                player->lastPlayed = player->levelRequest->first.phaseX;
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 
                 // Grab new choices for player to choose from
@@ -531,14 +530,6 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 if (!player->endFlag)
                 {
                     hud->setSpeedDialState(false);
-                    
-                    // Display current level index
-                    LevelSet* levels = player->getLevels();
-                    std::string msg = "Level: ";
-                    msg += Util::toStringInt(player->getLevelRequestRow() + 1);
-                    msg += "-";
-                    msg += (char)('A' + player->getLevelRequestCol());
-                    globals.setMessage(msg, MESSAGE_NORMAL);
                     
                     setPause(true);
                     player->reactGUI();
@@ -921,9 +912,13 @@ void EngineStage::activateAngleTurn(float angle, float vel)
 
 void EngineStage::activateReturnFromPopup()
 {
+    if (player->endFlag)
+    {
+        tunnel->setCleaning(true);
+    }
     // To prevent the game from immediately resume without prepping the user
     // We throw them into a countdown before resuming
-    if (stageState == STAGE_STATE_RUNNING)
+    else if (stageState == STAGE_STATE_RUNNING)
     {
         // Save camera state to avoid odd camera jump when unpausing
         player->pause();
@@ -931,7 +926,7 @@ void EngineStage::activateReturnFromPopup()
         readyTimer = 3.00f;
     }
     else if (stageState == STAGE_STATE_PAUSE)
-    {
+    {   
         // Turn on speed dial after they viewed tutorials
         setTaskPrompt();
         hud->setSpeedDialState(true);
@@ -1157,24 +1152,13 @@ void EngineStage::setup()
     Vector3 forward = globals.tunnelReferenceForward;
     Quaternion rot = Quaternion(1, 0, 0, 0);
     
-    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
-    globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    
     StageMode nmode = STAGE_MODE_PROFICIENCY;
     
     StageRequest level;
     if( player->levelRequest )
-    {
         level = player->levelRequest->first;
-    }
     else
-    {
         level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
-    }
     
     int numColors=NUM_POD_SIGNALS - 1;
     int numShapes=NUM_POD_SIGNALS - 1;
@@ -1183,9 +1167,9 @@ void EngineStage::setup()
     std::cout << "Available Features: " << numColors << " "<< numShapes << " "<< numSounds << std::endl;
     
     int nlevel = level.nback;
-    switch (level.phase)
+    switch (level.phaseX)
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
         {
             nmode = STAGE_MODE_COLLECTION;
             if(level.pods!=0){
@@ -1208,7 +1192,7 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
-        case 'B':
+        case PHASE_SHAPE_SOUND:
         {
             nmode = STAGE_MODE_COLLECTION;
             if(level.pods!=0){
@@ -1231,7 +1215,7 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
         }
-        case 'C':
+        case PHASE_SOUND_ONLY:
         {
             nmode = STAGE_MODE_COLLECTION;
             if(level.pods!=0){
@@ -1253,7 +1237,7 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             nmode = STAGE_MODE_COLLECTION;
             if(level.pods!=0){
                 int numofPods = std::min(numShapes, numSounds);
@@ -1275,13 +1259,11 @@ void EngineStage::setup()
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
-        case 'E':
+        case PHASE_COLLECT:
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
             break;
-        case 'F':
-            nmode = STAGE_MODE_TEACHING;
-            globals.signalTypes.clear();
+        default:
             break;
     }
     globals.initCamSpeed = level.initCamSpeed;
@@ -1292,18 +1274,46 @@ void EngineStage::setup()
     if (player->levelRequest)
     {
         int rank = level.nback;
-        if (level.phase == 'E')
-            rank = (int)round(player->scheduler->nBackLevelE);
+        if (level.phaseX == PHASE_COLLECT)
+            rank = (int)round(player->scheduler->nBackLevelE) >= 2 ? 3 : 2;
         
         if (rank <= 1)
-            globals.fuelReturn = 6.0f;
+            globals.fuelReturn = 90.0f;
         else if (rank == 2)
-            globals.fuelReturn = 5.0f;
+            globals.fuelReturn = 75.0f;
         else //if (rank == 3)
-            globals.fuelReturn = 4.0f;
-        
+            globals.fuelReturn = 60.0f;
+        globals.fuelMax = 450.0;
+    }
+    if (level.durationX == DURATION_SHORT)
+    {
+        globals.startingHP = 5;
+        //globals.wrongAnswerTimePenalty = 10.0;
+        globals.podBinSize = 7;
+    }
+    else if (level.durationX == DURATION_NORMAL)
+    {
+        globals.startingHP = 4;
+        //globals.wrongAnswerTimePenalty = 5.0;
+        globals.podBinSize = 11;
+    }
+    else
+    {
+        globals.startingHP = 3;
+        //globals.wrongAnswerTimePenalty = 3.0;
+        globals.podBinSize = 16;
     }
     
+    
+    std::cout << "Level Params:" << std::endl;
+    std::cout << level.navLevels[0].level;
+    std::cout << level.navLevels[1].level;
+    std::cout << level.navLevels[2].level;
+    std::cout << level.navLevels[3].level;
+    std::cout << level.navLevels[0].obstacles;
+    std::cout << level.navLevels[1].obstacles;
+    std::cout << level.navLevels[2].obstacles;
+    std::cout << level.navLevels[3].obstacles;
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
                         origin + forward * (globals.tunnelSegmentWidth / 2),
@@ -1315,7 +1325,7 @@ void EngineStage::setup()
                         globals.stageID,    // The n-th tunnel the player is playing
                         player->getLevels()->getLevelNo(player->getLevelRequestRow(), player->getLevelRequestCol()), // The level number in the level set
                         nmode,
-                        level.phase, // replace or remove...
+                        level.phaseX,
                         nlevel,
                         level.stageTime,
                         SOUTH,
@@ -1330,6 +1340,7 @@ void EngineStage::setup()
     
     tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
+    tunnel->setFuelLevel(globals.fuelMax, globals.fuelReturn, globals.startingHP);
 
     tunnel->setCollectionCriteria(level.collectionCriteria);
     tunnel->constructTunnel(level.nameTunnelTile, globals.tunnelSections);
@@ -1344,7 +1355,7 @@ void EngineStage::setup()
     
     // Set lighting
     lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("StageLight");
-    lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
+    //lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
     lightMain->setSpecularColour(1.0, 1.0, 1.0);
     //lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
@@ -1357,8 +1368,8 @@ void EngineStage::setup()
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
     if (lightNode) {
-        //lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-        lightMain->setDirection(player->getCamUpward() * -1);
+        lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+        //lightMain->setDirection(Vector3::UNIT_Y * -1);
     }
     
     // Set tutorial slides for certain thingies
@@ -1367,7 +1378,7 @@ void EngineStage::setup()
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK);
     if (tunnel->getHighestCriteria() == 2)
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_2BACK);
-    if (tunnel->getPhase() == 'C')
+    if (tunnel->getPhase() == PHASE_SOUND_ONLY)
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY);
     if (level.hasHoldout())
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_HOLDOUT);
@@ -1550,28 +1561,43 @@ void EngineStage::updateSpin(float elapsed)
 
 void EngineStage::setTaskPrompt()
 {
+    if (player->levelRequest)
+    {
+        StageRequest level = player->levelRequest->first;
+        PlayerProgress progress = player->levelRequest->second;
+        float potential = player->modifyNBackDelta(level, progress, 1.0, true);
+        if (level.phaseX == PHASE_COLLECT)
+            globals.setMessage("Enjoy cadet. This is a breeze", MESSAGE_NORMAL);
+        if (potential >= 0.40)
+            globals.setMessage("This is challenging cadet. Good Luck", MESSAGE_NORMAL);
+        else if (potential >= 0.30)
+            globals.setMessage("You got this cadet. Good Luck", MESSAGE_NORMAL);
+        else
+            globals.setMessage("No sweat cadet. You got this", MESSAGE_NORMAL);
+    }
+    else
+        globals.setMessage("Are you ready?", MESSAGE_NORMAL);
     switch (tunnel->getPhase())
     {
-        case 'A':
-            globals.setMessage("Obtain matches by color", MESSAGE_NORMAL);
+        case PHASE_COLOR_SOUND:
+            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
             break;
-        case 'B':
-            globals.setMessage("Obtain matches by shape", MESSAGE_NORMAL);
+        case PHASE_SHAPE_SOUND:
+            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
             break;
-        case 'C':
-            globals.setMessage("Obtain matches by only sound", MESSAGE_NORMAL);
+        case PHASE_SOUND_ONLY:
+            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
             break;
-        case 'D':
-            globals.setMessage("Obtain matching signals", MESSAGE_NORMAL);
+        case PHASE_ALL_SIGNAL:
+            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
             break;
-        case 'E':
-            globals.setMessage("Reach the end and grab Fuel Cells", MESSAGE_NORMAL);
+        case PHASE_COLLECT:
+            globals.appendMessage("\nReach the end collecting Fuel", MESSAGE_NORMAL);
             break;
-        case 'F':
-            globals.setMessage("Grab Fuel Cells", MESSAGE_NORMAL);
+        default:
             break;
     }
-    globals.appendMessage("\n\nSet and Verify your Speed", MESSAGE_NORMAL);
+    globals.appendMessage("\nSet and Verify your Speed", MESSAGE_NORMAL);
 }
 
 void EngineStage::dealloc()

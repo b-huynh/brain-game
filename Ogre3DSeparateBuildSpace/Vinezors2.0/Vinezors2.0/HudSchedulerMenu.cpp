@@ -30,7 +30,6 @@ void HudSchedulerMenu::init()
     alloc();
     initOverlay();
     showOverlays();
-    clearSelection();
 }
 
 void HudSchedulerMenu::adjust()
@@ -41,6 +40,13 @@ void HudSchedulerMenu::adjust()
 
 void HudSchedulerMenu::update(float elapsed)
 {
+    clearSelection();
+    float averageMemoryScore = (player->scheduler->nBackLevelA + player->scheduler->nBackLevelB + player->scheduler->nBackLevelC + player->scheduler->nBackLevelD) / 4;
+    float gameScore = player->scheduler->scoreCurr;
+    if (player->levelRequest)
+        setSelection();
+    schedulerMenuAverageMemoryText->setCaption("AMM: " + Util::toStringFloat(averageMemoryScore));
+    schedulerMenuScoreCurrText->setCaption("Score: " + Util::toStringInt(gameScore));
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
@@ -48,51 +54,35 @@ std::string HudSchedulerMenu::processButtons(Vector2 target)
     std::string ret = Hud::queryButtons(target);
     if (ret == "selection0")
     {
-        clearSelection();
         setSelectToIcon(levelOverlayPanels[0].entireBackground);
-        //levelOverlayPanels[0].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "selection1")
     {
-        clearSelection();
         setSelectToIcon(levelOverlayPanels[1].entireBackground);
-        //levelOverlayPanels[1].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "selection2")
     {
-        clearSelection();
         setSelectToIcon(levelOverlayPanels[2].entireBackground);
-        //levelOverlayPanels[2].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "history0")
     {
-        clearSelection();
         setSelectToIcon(historyOverlayPanels[0].entireBackground);
-        //historyOverlayPanels[0].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "history1")
     {
-        clearSelection();
         setSelectToIcon(historyOverlayPanels[1].entireBackground);
-        //historyOverlayPanels[1].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "history2")
     {
-        clearSelection();
         setSelectToIcon(historyOverlayPanels[2].entireBackground);
-        //historyOverlayPanels[2].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "history3")
     {
-        clearSelection();
         setSelectToIcon(historyOverlayPanels[3].entireBackground);
-        //historyOverlayPanels[3].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     else if (ret == "history4")
     {
-        clearSelection();
         setSelectToIcon(historyOverlayPanels[4].entireBackground);
-        //historyOverlayPanels[4].entireBackground->setMaterialName("General/YellowSphereIcon");
     }
     return ret;
 }
@@ -229,9 +219,7 @@ void HudSchedulerMenu::initOverlay()
     schedulerMenuScoreCurrText->setPosition(0.575, 0.250);
     schedulerMenuScoreCurrText->setCharHeight(0.020 * FONT_SZ_MULT);
     schedulerMenuScoreCurrText->setFontName("MainSmall");
-    schedulerMenuScoreCurrText->setCaption("Score: " + Util::toStringInt(player->scheduler->scoreCurr));
     
-    float averageMemoryScore = (player->scheduler->nBackLevelA + player->scheduler->nBackLevelB + player->scheduler->nBackLevelC + player->scheduler->nBackLevelD) / 4;
     schedulerMenuAverageMemoryBackground->setMetricsMode(GMM_RELATIVE);
     schedulerMenuAverageMemoryBackground->setPosition(0.00, 0.00);
     schedulerMenuAverageMemoryBackground->setDimensions(0.00, 0.00);
@@ -240,7 +228,6 @@ void HudSchedulerMenu::initOverlay()
     schedulerMenuAverageMemoryText->setPosition(0.575, 0.200);
     schedulerMenuAverageMemoryText->setCharHeight(0.025 * FONT_SZ_MULT);
     schedulerMenuAverageMemoryText->setFontName("MainSmall");
-    schedulerMenuAverageMemoryText->setCaption("AMM: " + Util::toStringFloat(averageMemoryScore));
     
     schedulerMenuBackdrop->setMetricsMode(GMM_RELATIVE);
     schedulerMenuBackdrop->setPosition(0.00, 0.025);
@@ -318,7 +305,7 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.names->setPosition(0.025, 0.025);
     levelDetails.names->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.names->setFontName("MainSmall");
-    levelDetails.names->setCaption("Type:\nN-Back:\nLength:\nNavigation:\nHoldout:\nPotential:\n\nCompleted:\nAccuracy:\nCollected:\nMistakes:\nAvoided:\nMissed:\nEarned:\nMastery:");
+    levelDetails.names->setCaption("Type:\nN-Back:\nLength:\nNavigation:\nHoldout:\nPotential:\n\nCompleted:\nMistakes:\nMissed:\nPickups:\nZapped:\nAccuracy:\nEarned:\nMastery:");
     
     levelDetails.values->setMetricsMode(GMM_RELATIVE);
     levelDetails.values->setAlignment(TextAreaOverlayElement::Right);
@@ -342,6 +329,8 @@ void HudSchedulerMenu::initOverlay()
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.15, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.90), Vector2(0.30, 0.08), playButtonBackground, NULL);
     
+    // Needed for some reason to allow materials to be set in update
+    clearSelection();
 }
 
 void HudSchedulerMenu::link(Player* player)
@@ -431,11 +420,11 @@ void HudSchedulerMenu::setSelection()
     std::string potential;      // Amount of experience person can earn (without perfect bonus)
     
     std::string completed;
-    std::string accuracy;
-    std::string collected;      // Targets player collected
     std::string mistakes;       // Non-targets player collected
-    std::string avoided;        // Non-targets player avoided
     std::string missed;         // Targets player avoided
+    std::string pickups;        // Non-targets player picked up
+    std::string collected;      // Targets player collected
+    std::string accuracy;
     std::string delta;
     std::string mastery;
     
@@ -475,7 +464,7 @@ void HudSchedulerMenu::setSelection()
             break;
     }
     holdout = level.hasHoldout() ? "yes" : "no";
-    potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 0.0, 0.35, true));
+    potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 1.0, true));
     
     if (level.phaseX == PHASE_COLLECT)
         length = "medium";
@@ -493,7 +482,7 @@ void HudSchedulerMenu::setSelection()
         accuracy = "-";
         collected = "-";
         mistakes = "-";
-        avoided = "-";
+        pickups = "-";
         missed = "-";
         delta ="-";
         mastery = Util::toStringFloat(progress.nBackSkill);
@@ -504,12 +493,39 @@ void HudSchedulerMenu::setSelection()
     {
         completed = progress.rating >= 5 ? "yes" : "no";
         accuracy = Util::toStringInt(progress.accuracy * 100.0);
-        collected = Util::toStringInt(progress.numCorrect);
-        mistakes = Util::toStringInt(progress.numWrong);
-        avoided = Util::toStringInt(progress.numSafe);
-        missed = Util::toStringInt(progress.numMissed);
+        if (level.phaseX == PHASE_COLLECT)
+        {
+            int criteria = 0;
+            switch (level.durationX)
+            {
+                case DURATION_SHORT:
+                    criteria = 4;
+                    break;
+                case DURATION_NORMAL:
+                    criteria = 8;
+                    break;
+                case DURATION_LONG:
+                    criteria = 13;
+                    break;
+                default:
+                    criteria = 0;
+                    break;
+            }
+            mistakes = "-";
+            missed = "-";
+            pickups = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(criteria);
+            collected = "-";
+        }
+        else
+        {
+            mistakes = Util::toStringInt(progress.numWrong);
+            missed = Util::toStringInt(progress.numMissed);
+            pickups = Util::toStringInt(progress.numPickups) + " / " + Util::toStringInt(progress.numSafe + progress.numWrong);
+            collected = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(progress.numCorrect + progress.numWrong + progress.numMissed);
+        }
         if (progress.nBackDelta >= 0.0f)
             delta = "+";
+        
         delta += Util::toStringFloat(progress.nBackDelta);
         if (level.hasHoldout() && progress.nBackReturn != 0.0)
         {
@@ -534,11 +550,11 @@ void HudSchedulerMenu::setSelection()
                                     potential + "\n" +
                                     "\n" +
                                     completed + "\n" +
-                                    accuracy + "\n" +
-                                    collected + "\n" +
                                     mistakes + "\n" +
-                                    avoided + "\n" +
                                     missed + "\n" +
+                                    pickups + "\n" +
+                                    collected + "\n" +
+                                    accuracy + "\n" +
                                     delta + "\n" +
                                     mastery);
     

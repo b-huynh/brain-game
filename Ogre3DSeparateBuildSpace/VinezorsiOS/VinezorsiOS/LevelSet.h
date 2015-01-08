@@ -22,12 +22,7 @@
 
 enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
 enum StageDuration {DURATION_SHORT, DURATION_NORMAL, DURATION_LONG};
-enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_HOLDOUT };
-//bookmark
-//enum EasyLevels { 0,1 };
-//enum MediumLevels { 2,3,4,5 };
-//enum HardLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
-//enum ExpertLevels { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_ALL_SIGNAL, PHASE_UNKNOWN };
 
 struct CollectionCriteria
 {
@@ -47,9 +42,9 @@ struct StageRequest
     std::string nameSkybox;
     std::string nameMusic;
     int tunnelSectionsPerNavLevel;
-    char phase;
     LevelPhase phaseX;
     StageDifficulty difficultyX;
+    StageDuration durationX;
     
     float holdoutPerc;
     float holdoutStart;
@@ -95,7 +90,6 @@ struct StageRequest
         nameSkybox = "";
         nameMusic = "";
         tunnelSectionsPerNavLevel = 10;
-        phase = 'D';
         holdoutPerc = 0.0f;
         holdoutStart = 0.0f;
         holdoutEnd = 0.0f;

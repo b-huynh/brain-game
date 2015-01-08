@@ -17,6 +17,25 @@ material General/TutorialBackdrop
     }
 }
 
+material General/TutorialBackdropLined
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture back_drop_lined.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
 material General/TutorialTextbox1-1
 {
     technique

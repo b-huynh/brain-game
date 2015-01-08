@@ -16,7 +16,12 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
-    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
+    //
+    // 60 seconds, 100 seconds, 140 seconds
+    // Below meant for 5, 4, 3 chances on misses respectively
+    //const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
+    // Below meant for 3, 3, 3 chances on misses respectively
+    const double EASY_TIME = 840.0, NORMAL_TIME = 1320.0, HARD_TIME = 1920.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -69,6 +74,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     ret->maxCamSpeed = 40;
     ret->phaseX = PHASE_X;
     ret->difficultyX = DIFFICULTY_X;
+    ret->durationX = DURATION_X;
     ret->holdoutPerc = holdout / 100.0;
     ret->UserNavLevel = UNL;
     ret->stageTime = duration;
@@ -128,7 +134,6 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             // These are always set for all recess levels
             ret->nameTunnelTile = "General/WallBindingG";
             ret->nameMusic = "Music4";
-            ret->phase = 'E';
             break;
             //_____________________________________________________________
             
@@ -136,7 +141,6 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             // These are always set for color sound levels
             ret->nameTunnelTile = "General/WallBindingA";
             ret->nameMusic = "Music2";
-            ret->phase = 'A';
             break;
             //_____________________________________________________________
             
@@ -144,7 +148,6 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             // These are allways set for shape sound levels
             ret->nameTunnelTile = "General/WallBindingB";
             ret->nameMusic = "Music1";
-            ret->phase = 'B';
             break;
             //_____________________________________________________________
             
@@ -152,15 +155,13 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             // These are always set for sound only levels
             ret->nameTunnelTile = "General/WallBindingC";
             ret->nameMusic = "Music5";
-            ret->phase = 'C';
             break;
             //_____________________________________________________________
             
-        case PHASE_HOLDOUT:
+        case PHASE_ALL_SIGNAL:
             // These are always set for holdout level
             ret->nameTunnelTile = "General/WallBindingD";
             ret->nameMusic = "Music3";
-            ret->phase = 'D';
             break;
             //_____________________________________________________________
             
@@ -187,9 +188,9 @@ std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr)
             << sr.nameSkybox << " "
             << sr.nameMusic << " "
             << sr.tunnelSectionsPerNavLevel << " "
-            << sr.phase << " "
             << sr.phaseX << " "
             << sr.difficultyX << " "
+            << sr.durationX << " "
             << sr.holdoutPerc << " "
             << sr.holdoutStart << " "
             << sr.holdoutEnd << " "
@@ -227,6 +228,7 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     sr.init();
     int phaseXint;
     int difficultyXint;
+    int durationXint;
     infile  >> sr.nback
             >> sr.stageNo
             >> sr.stageTime
@@ -235,9 +237,9 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
             >> sr.nameSkybox
             >> sr.nameMusic
             >> sr.tunnelSectionsPerNavLevel
-            >> sr.phase
             >> phaseXint
             >> difficultyXint
+            >> durationXint
             >> sr.holdoutPerc
             >> sr.holdoutStart
             >> sr.holdoutEnd
@@ -250,6 +252,7 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
             >> sr.maxCamSpeed;
     sr.phaseX = (LevelPhase)phaseXint;
     sr.difficultyX = (StageDifficulty)difficultyXint;
+    sr.durationX = (StageDuration)durationXint;
     
     int size;
     infile >> size;
@@ -370,6 +373,11 @@ void LevelSet::initializeLevelSet()
     stageList = std::vector<std::vector<StageRequest> >(NUM_LEVELS, std::vector<StageRequest>(NUM_TASKS));
     StageRequest level;
     
+    // These are set for all levels regardless of phase/diffuculty
+    // Not entirely sure on collection requirements as of now
+    //
+    // 60 seconds, 100 seconds, 140 seconds
+    const double EASY_TIME = 840.0, NORMAL_TIME = 1320.0, HARD_TIME = 1920.0;
     const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
@@ -380,7 +388,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -396,7 +404,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -408,7 +416,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -417,7 +425,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -429,7 +437,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -441,7 +449,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;    
@@ -454,7 +462,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -466,7 +474,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -478,7 +486,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -490,7 +498,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -502,7 +510,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -514,7 +522,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -526,7 +534,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 1;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -540,7 +548,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -552,7 +560,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -561,7 +569,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -573,7 +581,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 2;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -585,7 +593,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -597,7 +605,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 2;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -609,7 +617,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -621,7 +629,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 2;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -633,7 +641,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -645,7 +653,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 2;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -657,7 +665,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -669,7 +677,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 2;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -683,7 +691,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -695,7 +703,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -704,7 +712,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -716,7 +724,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 3;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -728,7 +736,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -740,7 +748,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 3;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -752,7 +760,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -764,7 +772,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 3;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -776,7 +784,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -788,7 +796,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 3;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -800,7 +808,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -812,7 +820,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 3;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
@@ -826,7 +834,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -838,7 +846,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -847,7 +855,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -859,7 +867,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 4;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -871,7 +879,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -883,7 +891,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 4;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -895,7 +903,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -907,7 +915,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 4;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -919,7 +927,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -931,7 +939,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 4;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -943,7 +951,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -955,7 +963,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 4;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -969,7 +977,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -981,7 +989,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
@@ -990,7 +998,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1002,7 +1010,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 5;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
@@ -1014,7 +1022,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1026,7 +1034,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 5;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
@@ -1038,7 +1046,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1050,7 +1058,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 5;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -1062,7 +1070,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1074,7 +1082,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 5;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1086,7 +1094,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1098,7 +1106,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 5;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1112,7 +1120,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1124,7 +1132,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
@@ -1133,7 +1141,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1145,7 +1153,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 6;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
@@ -1157,7 +1165,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1169,7 +1177,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 6;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1181,7 +1189,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1193,7 +1201,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 6;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
@@ -1205,7 +1213,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1217,7 +1225,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 6;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1229,7 +1237,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1241,7 +1249,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 6;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1255,7 +1263,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1267,7 +1275,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
@@ -1276,7 +1284,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1288,7 +1296,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 7;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
@@ -1300,7 +1308,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1312,7 +1320,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 7;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -1324,7 +1332,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1336,7 +1344,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 7;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1348,7 +1356,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1360,7 +1368,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 7;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
@@ -1372,7 +1380,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1384,7 +1392,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 7;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
@@ -1398,7 +1406,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1410,7 +1418,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 0;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
@@ -1419,7 +1427,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1431,7 +1439,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 8;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1443,7 +1451,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1455,7 +1463,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 8;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1467,7 +1475,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1479,7 +1487,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 8;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -1491,7 +1499,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1503,7 +1511,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 8;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1515,7 +1523,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1527,7 +1535,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.stageNo++;
     level.nback = 8;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1541,7 +1549,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1558,13 +1566,13 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 0;
     level.stageNo++;
-    level.stageTime = 90.0;
+    level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(10, 0, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'E';
+    level.phaseX = PHASE_COLLECT;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1576,7 +1584,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 9;
     level.stageNo++;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1588,7 +1596,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'A';
+    level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1600,7 +1608,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 9;
     level.stageNo++;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
@@ -1612,7 +1620,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'B';
+    level.phaseX = PHASE_SHAPE_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1624,7 +1632,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 9;
     level.stageNo++;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
@@ -1636,7 +1644,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'C';
+    level.phaseX = PHASE_SOUND_ONLY;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1648,7 +1656,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 9;
     level.stageNo++;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1660,7 +1668,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1672,7 +1680,7 @@ void LevelSet::initializeLevelSet()
     level = StageRequest();
     level.nback = 9;
     level.stageNo++;
-    level.stageTime = 120.0;
+    level.stageTime = HARD_TIME;
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
@@ -1686,7 +1694,7 @@ void LevelSet::initializeLevelSet()
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
-    level.phase = 'D';
+    level.phaseX = PHASE_ALL_SIGNAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;

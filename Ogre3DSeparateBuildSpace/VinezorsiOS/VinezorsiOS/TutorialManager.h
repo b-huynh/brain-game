@@ -37,6 +37,8 @@ private:
     
     TextAreaOverlayElement* popupText1;
     TextAreaOverlayElement* popupText2;
+    TextAreaOverlayElement* popupText3;
+    TextAreaOverlayElement* popupText4;
     TextAreaOverlayElement* popupSlideNoText;
     
     std::vector<TutorialSlide> queue;
@@ -57,12 +59,24 @@ private:
     float yoffset;
     
     std::string additionalText;
-    bool special;
+    std::string additionalValue;
+    bool specialStage;
+    bool specialSession;
+    int specialMode;
+    float specialTimer;
+    // cached values
+    int accuracy;
+    Evaluation eval;
+    float textAnimationTimer;
+    bool dinged;
+    Ogre::SceneNode* fireworkNode;
+    std::vector<Ogre::ParticleSystem*> fireworkEffects;
+    float fireworkTimer;
 public:
     TutorialManager();
     ~TutorialManager();
     
-    const int NUM_TUTORIAL_SLIDES = 15;
+    const int NUM_TUTORIAL_SLIDES = 16;
     enum TutorialSlidesType {
         TUTORIAL_SLIDES_TEXTBOX_NAVIGATION,
         TUTORIAL_SLIDES_TEXTBOX_1BACK,
@@ -78,6 +92,7 @@ public:
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT1,
         TUTORIAL_SLIDES_TEXTBOX_HOLDOUT2,
         TUTORIAL_SLIDES_TEXTBOX_FUEL,
+        TUTORIAL_END_OF_STAGE,
         TUTORIAL_END_OF_SESSION
     };
     
@@ -96,8 +111,9 @@ public:
     void setNextSlide();
     void updateOverlay();
     void updateOverride(float elapsed);
-    void update(float elapsed);
+    void update(float elapsed, Player* player);
     bool hasVisitedSlide(TutorialSlidesType type) const;
+    bool isSpecial() const;
     
     // Show or hide popup tutorial slides. If tutorial slides are active,
     // in-game controls and update will be inactive
@@ -110,6 +126,7 @@ public:
     void adjust();
     
     void setAdditionalText(std::string text);
+    void setAdditionalValue(std::string text);
     
     void dealloc();
     void alloc();

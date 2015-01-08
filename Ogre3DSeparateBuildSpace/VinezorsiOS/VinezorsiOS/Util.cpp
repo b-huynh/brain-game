@@ -21,15 +21,10 @@ Util::ConfigGlobal::ConfigGlobal()
     stageID = 0;
     sessionTime = 1200.0;
     stageTime = 120.0;
-    stageTotalSignals = 300;
-    stageTotalTargets1 = 100;
-    stageTotalTargets2 = 150;
-    stageTotalTargets3 = 200;
+    stageTotalSignals = 120;
+    stageTotalTargets = 40;
     stageTotalCollections = 25;
-    stageTotalTargetsVariance = 2;
-    stageTimeThreshold1 = 25;
-    stageTimeThreshold2 = 50;
-    stageTimeThreshold3 = 75;
+    stageTotalTargetsVariance = 0;
     set1Repetitions = 3;
     set2Repetitions = 3;
     set3Repetitions = 3;
@@ -42,7 +37,7 @@ Util::ConfigGlobal::ConfigGlobal()
     tunnelReferenceUpward = Vector3(0, 1, 0);
     tunnelReferenceRight = Vector3(1, 0, 0);
     tunnelMinAngleTurn = 0;
-    tunnelMaxAngleTurn = 5;
+    tunnelMaxAngleTurn = 3;
     tunnelSegmentWidth = 25.0;
     tunnelSegmentDepth = 25.0;
     tunnelSegmentBuffer = 25.0;
@@ -69,9 +64,7 @@ Util::ConfigGlobal::ConfigGlobal()
     podCollisionMax = 0.65; // 0.40
     distractorCollisionMin = 0.40; // 0.25
     distractorCollisionMax = 0.50; // 0.35
-    podBinSize1 = 10;
-    podBinSize2 = 5;
-    podBinSize3 = 3;
+    podBinSize = 10;
     podNBackChance = 33.0;
     span = 1;
     stageTotalDistractorsMin = 1;
@@ -83,25 +76,25 @@ Util::ConfigGlobal::ConfigGlobal()
     historyMode = -1;
     startingHP = 3;
     HPNegativeLimit = 0;
-    HPPositiveLimit = 3;
+    HPPositiveLimit = 999;
     HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
     HPNegativeDistractor = 0;
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 10.0;
+    wrongAnswerTimePenalty = 0.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
-    fuelMax = 30.0;
-    fuelReturn = 5.0;
+    fuelMax = 450.0;
+    fuelReturn = 60.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
     maxCamSpeed = 40.0;
-    baselineSpeed = 15.0;
+    baselineSpeed = 15.0 * globalModifierCamSpeed;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -403,22 +396,12 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageTime;
     else if (paramName == "stageTotalSignals")
         in >> stageTotalSignals;
-    else if (paramName == "stageTotalTargets1")
-        in >> stageTotalTargets1;
-    else if (paramName == "stageTotalTargets2")
-        in >> stageTotalTargets2;
-    else if (paramName == "stageTotalTargets3")
-        in >> stageTotalTargets3;
+    else if (paramName == "stageTotalTargets")
+        in >> stageTotalTargets;
     else if (paramName == "stageTotalCollections")
         in >> stageTotalCollections;
     else if (paramName == "stageTotalTargetsVariance")
         in >> stageTotalTargetsVariance;
-    else if (paramName == "stageTimeThreshold1")
-        in >> stageTimeThreshold1;
-    else if (paramName == "stageTimeThreshold2")
-        in >> stageTimeThreshold2;
-    else if (paramName == "stageTimeThreshold3")
-        in >> stageTimeThreshold3;
     else if (paramName == "set1Repetitions")
         in >> set1Repetitions;
     else if (paramName == "set2Repetitions")
@@ -461,12 +444,8 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
         in >> podAppearance;
-    else if (paramName == "podBinSize1")
-        in >> podBinSize1;
-    else if (paramName == "podBinSize2")
-        in >> podBinSize2;
-    else if (paramName == "podBinSize3")
-        in >> podBinSize3;
+    else if (paramName == "podBinSize")
+        in >> podBinSize;
     else if (paramName == "span")
         in >> span;
     else if (paramName == "podCollisionMin")
@@ -1646,9 +1625,7 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.stageTime = approxTotalTime - bestTime;
     
     globals.stageTotalSignals = 180; // Enough for constant speed of 30
-    globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-    globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-    globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+    globals.stageTotalTargets = globals.stageTotalSignals / 3;    
     globals.stageTotalTargetsVariance = 0;
     
     globals.startingHP = 3;

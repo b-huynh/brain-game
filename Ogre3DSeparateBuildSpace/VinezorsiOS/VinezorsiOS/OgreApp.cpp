@@ -172,7 +172,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-    player->getTutorialMgr()->update(elapsed);
+    player->getTutorialMgr()->update(elapsed, player);
     if (player->getTutorialMgr()->isVisible())
         return;
     engineStateMgr->update(elapsed);

@@ -33,8 +33,8 @@ void Pod::loadPod()
     switch (mtype)
     {
         case POD_FUEL:
-            //loadFuelCell();
-            loadCrystal();
+            loadFuelCell();
+            //loadCrystal();
             break;
         case POD_FLOWER:
             loadFlower();

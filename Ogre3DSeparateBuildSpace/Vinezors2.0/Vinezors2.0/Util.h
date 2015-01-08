@@ -132,14 +132,9 @@ namespace Util
         float sessionTime;
         float stageTime;
         int stageTotalSignals;
-        int stageTotalTargets1;
-        int stageTotalTargets2;
-        int stageTotalTargets3;
+        int stageTotalTargets;
         int stageTotalCollections;
         int stageTotalTargetsVariance;
-        int stageTimeThreshold1;
-        int stageTimeThreshold2;
-        int stageTimeThreshold3;
         int set1Repetitions;
         int set2Repetitions;
         int set3Repetitions;
@@ -179,9 +174,7 @@ namespace Util
         float podCollisionMax;
         float distractorCollisionMin;
         float distractorCollisionMax;
-        int podBinSize1; // This is for tunnels that pre-generate the pod sequence
-        int podBinSize2;
-        int podBinSize3;
+        int podBinSize; // This is for tunnels that pre-generate the pod sequence
         float podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int span; // The range left and right for a target to spawn from the previous target
         int stageTotalDistractorsMin;

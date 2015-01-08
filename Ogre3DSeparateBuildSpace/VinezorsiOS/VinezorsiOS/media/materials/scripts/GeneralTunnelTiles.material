@@ -7,6 +7,8 @@ material General/WallBindingStart
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -25,6 +27,8 @@ material General/WallBindingA
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -43,6 +47,8 @@ material General/WallBindingB
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -61,6 +67,8 @@ material General/WallBindingC
             lighting off
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -79,6 +87,8 @@ material General/WallBindingD
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -97,6 +107,8 @@ material General/WallBindingE
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -115,6 +127,8 @@ material General/WallBindingG
             lighting on
 
             ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -131,10 +145,11 @@ material General/Wall0
         pass
         {
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.9 0.9 0.9 1
-            emissive 0.1 0.1 0.1 1
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
         }
     }
 }
@@ -146,6 +161,10 @@ material General/Wall1
         pass
         {
             lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -163,7 +182,7 @@ material General/WallCheckpointEven
         {
             lighting on
  
-            ambient 0.5 0.5 0.0 1
+            ambient 0.8 0.8 0.0 1
             diffuse 1.0 1.0 0.0 1
             emissive 0.5 0.5 0.0 1
         }
@@ -178,7 +197,7 @@ material General/WallCheckpointPass
         {
             lighting on
  
-            ambient 0.0 0.5 0.0 1
+            ambient 0.0 0.8 0.0 1
             diffuse 0.0 1.0 0.0 1
             emissive 0.0 0.5 0.0 1
         }
@@ -193,7 +212,7 @@ material General/WallCheckpointFail
         {
             lighting on
  
-            ambient 0.5 0.0 0.0 1
+            ambient 0.8 0.0 0.0 1
             diffuse 1.0 0.0 0.0 1
             emissive 0.5 0.0 0.0 1
         }

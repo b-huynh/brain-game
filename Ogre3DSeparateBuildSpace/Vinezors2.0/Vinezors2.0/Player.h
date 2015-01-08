@@ -39,6 +39,7 @@ private:
     int numSafeTotal;
     int numMissedTotal;
     int numWrongTotal;
+    int numPickupsTotal;
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
@@ -134,6 +135,7 @@ private:
         int FP;
         int TN;
         int FN;
+        int pickups;
         int obsHit;
         int obsAvoided;
         int score;
@@ -167,6 +169,7 @@ private:
     OgreOggSound::OgreOggISound* soundStartup;
     OgreOggSound::OgreOggISound* soundBoost;
     OgreOggSound::OgreOggISound* soundButtonPress;
+    OgreOggSound::OgreOggISound* soundFirework;
     std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
@@ -187,7 +190,6 @@ private:
     
 public:
     bool fadeMusic;
-    float xsTimer; // timer for the three X's display
     
     // Settings Parameters
     float musicVolume;
@@ -213,6 +215,7 @@ public:
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
     
+    Tunnel* getTunnel() const;
     LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
@@ -221,6 +224,7 @@ public:
     int getNumSafeTotal() const;
     int getNumMissedTotal() const;
     int getNumWrongTotal() const;
+    int getNumPickupsTotal() const;
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
@@ -257,7 +261,8 @@ public:
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
     int getSessionID() const;
-    std::string getStats() const;
+    std::string getStageStats() const;
+    std::string getSessionStats() const;
     int getToggleBack() const;
     bool getGodMode() const;
     int getNumStagesWon() const;
@@ -329,6 +334,7 @@ public:
     Quaternion getCombinedRotAndRoll() const;
     void playPodSound(int index) const;
     void reactGUI() const;
+    void playFireworkSound() const;
     float getStartMusicTimer() const;
     void playMusic() const;
     void stopMusic();
@@ -395,9 +401,7 @@ public:
     bool saveSession(std::string file);
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
-    bool loadProgress1_0(std::string savePath);
-    bool loadProgress1_1(std::string savePath);
-    bool loadProgress1_2(std::string savePath);
+    bool loadProgress1_5(std::string savePath);
     bool loadProgress(std::string savePath);
     
     std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
@@ -419,7 +423,7 @@ public:
     void feedLevelRequestFromSchedule();
     
     // Returns a multiplier when incrementing or decrementing memory level during assessment
-    float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, float nbackDelta, bool exclude);
+    float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude);
     float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment);
     float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);
     

@@ -58,7 +58,7 @@ void LevelScheduler::initTutorialLevels()
     level = StageRequest();
     level.stageNo = 0;
     level.nback = 0;
-    level.stageTime = 100.0;
+    level.stageTime = 1320.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
@@ -86,7 +86,7 @@ void LevelScheduler::initTutorialLevels()
     level = StageRequest();
     level.stageNo = 0;
     level.nback = 1;
-    level.stageTime = 100.0;
+    level.stageTime = 1320.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));

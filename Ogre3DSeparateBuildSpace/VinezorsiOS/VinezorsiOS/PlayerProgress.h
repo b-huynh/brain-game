@@ -27,6 +27,7 @@ struct PlayerProgress
     int numWrong;
     int numSafe;
     int numMissed;
+    int numPickups;
     
     int startSpeed;
     int exitSpeed;

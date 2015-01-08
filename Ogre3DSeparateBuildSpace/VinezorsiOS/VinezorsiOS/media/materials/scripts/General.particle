@@ -234,3 +234,35 @@ particle_system Barrier/PFX
         depth		1
     }
  }
+
+particle_system StageEnding/Fireworks
+{
+	material        General/Star
+	particle_width  0.05
+	particle_height 0.05
+	cull_each       false
+	quota           100
+	billboard_type  point
+    local_space     false
+
+	// Fireworks launcher
+	emitter Point
+	{
+		angle           360
+		emission_rate   10000
+		time_to_live    2.6
+		direction       0 1 0
+		velocity_min    0.05
+		velocity_max    0.15
+		colour          1 1 1
+        duration        2.5
+	}
+
+	// Fader
+	affector ColourFader
+	{
+		red -0.25
+        green -0.25
+        blue -0.25
+	}
+}

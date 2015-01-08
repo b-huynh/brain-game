@@ -52,31 +52,27 @@ void EngineSchedulerMenu::enter()
             case PHASE_COLOR_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryA.back();
                 hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
-                hud->setSelection();
                 break;
             case PHASE_SHAPE_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryB.back();
                 hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
-                hud->setSelection();
                 break;
             case PHASE_SOUND_ONLY:
                 player->levelRequest = &player->scheduler->scheduleHistoryC.back();
                 hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
-                hud->setSelection();
                 break;
             case PHASE_ALL_SIGNAL:
                 player->levelRequest = &player->scheduler->scheduleHistoryD.back();
                 hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
-                hud->setSelection();
                 break;
             case PHASE_COLLECT:
                 player->levelRequest = &player->scheduler->scheduleHistoryE.back();
                 hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
-                hud->setSelection();
                 break;
             default:
                 break;
         }
+        player->lastPlayed = PHASE_UNKNOWN;
     }
 }
 
@@ -178,19 +174,16 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     if (queryGUI == "selection0")
     {
         player->levelRequest = &player->scheduleChoice1;
-        hud->setSelection();
         return true;
     }
     else if (queryGUI == "selection1")
     {
         player->levelRequest = &player->scheduleChoice2;
-        hud->setSelection();
         return true;
     }
     else if (queryGUI == "selection2")
     {
         player->levelRequest = &player->scheduleChoice3;
-        hud->setSelection();
         return true;
     }
     else if (queryGUI.substr(0, 7) == "history")
@@ -203,7 +196,6 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
                 if (player->scheduler->scheduleHistoryA.size() > 0)
                 {
                     player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                    hud->setSelection();
                 }
                 else
                     player->levelRequest = NULL;
@@ -212,7 +204,6 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
                 if (player->scheduler->scheduleHistoryB.size() > 0)
                 {
                     player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                    hud->setSelection();
                 }
                 else
                     player->levelRequest = NULL;
@@ -221,7 +212,6 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
                 if (player->scheduler->scheduleHistoryC.size() > 0)
                 {
                     player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                    hud->setSelection();
                 }
                 else
                     player->levelRequest = NULL;
@@ -230,7 +220,6 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
                 if (player->scheduler->scheduleHistoryD.size() > 0)
                 {
                     player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                    hud->setSelection();
                 }
                 else
                     player->levelRequest = NULL;
@@ -239,7 +228,6 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
                 if (player->scheduler->scheduleHistoryE.size() > 0)
                 {
                     player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                    hud->setSelection();
                 }
                 else
                     player->levelRequest = NULL;

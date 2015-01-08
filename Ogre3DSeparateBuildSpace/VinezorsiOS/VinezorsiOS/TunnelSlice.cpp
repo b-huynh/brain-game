@@ -119,7 +119,7 @@ void TunnelSlice::initWalls()
     
         gateNode->attachObject(gateEntity);
         gateNode->translate(Vector3(0,0,-10));
-        gateNode->scale(2.45f,2.45f,2.45f);
+        gateNode->scale(1.45f,1.45f,1.45f);
     }
     else if( type == CHECKPOINT_FAIL ) {
         gateNode = sliceNode->createChildSceneNode("gateNode" + Util::toStringInt(wallID));
@@ -149,7 +149,7 @@ void TunnelSlice::initWalls()
         
         gateNode->attachObject(gateEntity);
         gateNode->translate(Vector3(0,0,-10));
-        gateNode->scale(2.45f,2.45f,2.45f);
+        gateNode->scale(1.45f,1.45f,1.45f);
     }
     
     

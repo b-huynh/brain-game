@@ -61,8 +61,7 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "settings")
     {
-        //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
-        //engineStateMgr->requestPopEngine();
+        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
     }
 }
 

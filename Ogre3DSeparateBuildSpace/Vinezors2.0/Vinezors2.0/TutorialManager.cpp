@@ -7,6 +7,7 @@
 //
 
 #include "TutorialManager.h"
+#include "Player.h"
 
 extern Util::ConfigGlobal globals;
 
@@ -59,7 +60,7 @@ std::string insertNL(std::string message)
 }
 
 TutorialManager::TutorialManager()
-: popupOverlay(NULL), popupWindowBackground(NULL), popupSubWindowBackground(NULL), queue(), slides(), visitedSlide(), enableSlides(true), slideNo(0), yoffset(0.0), startTimer(0.0f), additionalText(""), special(false)
+: popupOverlay(NULL), popupWindowBackground(NULL), popupSubWindowBackground(NULL), queue(), slides(), visitedSlide(), enableSlides(true), slideNo(0), yoffset(0.0), startTimer(0.0f), additionalText(""), specialStage(false), specialSession(false)
 {
     visitedSlide = std::vector<bool>(NUM_TUTORIAL_SLIDES, false);
     alloc();
@@ -138,8 +139,11 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
         case TUTORIAL_SLIDES_TEXTBOX_FUEL:
             ret.push_back(TutorialSlide("", "General/TutorialTextboxFuelWarning", ""));
             break;
+        case TUTORIAL_END_OF_STAGE:
+            ret.push_back(TutorialSlide("   \nResults", "General/TutorialBackdropLined", ""));
+            break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("\n\nThat's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("\n\n\nThat's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
             break;
         default:
             break;
@@ -152,8 +156,19 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
 void TutorialManager::prepareSlides(TutorialSlidesType type, float startTimer)
 {
     if (type == TUTORIAL_END_OF_SESSION)
-        special = true;
-    if ((isEnabled() && !visitedSlide[type]) || (type == TUTORIAL_END_OF_SESSION))
+        specialSession = true;
+    else if (type == TUTORIAL_END_OF_STAGE)
+    {
+        specialStage = true;
+        specialMode = 0;
+        specialTimer = 0.0f;
+        textAnimationTimer = 0.0f;
+        dinged = false;
+        fireworkNode = NULL;
+        fireworkEffects.clear();
+        fireworkTimer = 0.0f;
+    }
+    if ((isEnabled() && !visitedSlide[type]) || isSpecial())
     {
         prepareSlides(getSlides(type), startTimer);
         visitedSlide[type] = true;
@@ -179,7 +194,20 @@ void TutorialManager::prepareSlides(const std::vector<TutorialSlide> & slides, f
 // Appends the set of slides if it has not been seen yet
 void TutorialManager::setSlides(TutorialSlidesType type)
 {
-    if (isEnabled() && !visitedSlide[type])
+    if (type == TUTORIAL_END_OF_SESSION)
+        specialSession = true;
+    else if (type == TUTORIAL_END_OF_STAGE)
+    {
+        specialStage = true;
+        specialMode = 0;
+        specialTimer = 0.0f;
+        textAnimationTimer = 0.0f;
+        dinged = false;
+        fireworkNode = NULL;
+        fireworkEffects.clear();
+        fireworkTimer = 0.0f;
+    }
+    if ((isEnabled() && !visitedSlide[type]) || isSpecial())
     {
         setSlides(getSlides(type));
         visitedSlide[type] = true;
@@ -238,13 +266,9 @@ void TutorialManager::updateOverlay()
     std::string screenbg = slides[slideNo].screen;
     popupText1->setCaption(text);
     popupText2->setCaption(additionalText);
+    popupText3->setCaption(additionalValue);
     popupSubWindowBackground->setMaterialName(subwindowbg);
-    //popupSlideNoText->setCaption(Util::toStringInt(slideNo + 1) + " / " + Util::toStringInt(slides.size()));
-    //if (hasPreviousSlide())
-    //    popupGoLeftBackground->setMaterialName("General/ButtonGoUp");
-    //else
-    //    popupGoLeftBackground->setMaterialName("General/ButtonGoUpGray");
-    if (special)
+    if (isSpecial())
     {
         popupGoRightBackground->setMaterialName("General/ExitButton2");
         popupExitBackground->setMaterialName("");
@@ -256,8 +280,221 @@ void TutorialManager::updateOverlay()
     }
 }
 
-void TutorialManager::update(float elapsed)
+void TutorialManager::update(float elapsed, Player* player)
 {
+    popupText4->setCaption("");
+    if (specialStage)
+    {
+        eval = player->getTunnel()->getEval();
+        StageMode mode = player->getTunnel()->getMode();
+        
+        int numWrong = player->getNumWrongTotal();
+        int numMissed = player->getNumMissedTotal();
+        int numPickups = player->getNumPickupsTotal();
+        int numCorrect = player->getNumCorrectTotal();
+        int tleft = 0;
+        if (eval == PASS)
+            tleft = (player->getTunnel()->getStageTime() - player->getTunnel()->getTotalDistance()) / 10;
+        
+        if (specialMode == 0)
+        {
+            specialTimer += 10 * elapsed;
+            if (specialTimer > numWrong)
+            {
+                specialMode++;
+                specialTimer = 0;
+            }
+            else
+                numWrong = specialTimer;
+            numMissed = 0;
+            numPickups = 0;
+            numCorrect = 0;
+        }
+        else if (specialMode == 1)
+        {
+            specialTimer += 10 * elapsed;
+            if (specialTimer > numMissed)
+            {
+                specialMode++;
+                specialTimer = 0;
+            }
+            else
+                numMissed = specialTimer;
+            numPickups = 0;
+            numCorrect = 0;
+        }
+        else if (specialMode == 2)
+        {
+            specialTimer += 20 * elapsed;
+            if (specialTimer > numPickups)
+            {
+                specialMode++;
+                specialTimer = 0;
+            }
+            else
+                numPickups = specialTimer;
+            numCorrect = 0;
+        }
+        else if (specialMode == 3)
+        {
+            if (mode == STAGE_MODE_RECESS)
+                specialTimer += 20 * elapsed;
+            else
+                specialTimer += 5 * elapsed;
+            if (specialTimer > numCorrect)
+            {
+                specialMode++;
+                if (eval != PASS)
+                    specialMode++;
+                specialTimer = 0;
+            }
+            else
+                numCorrect = specialTimer;
+        }
+        else if (specialMode == 4)
+        {
+            specialTimer += 20 * elapsed;
+            player->getTunnel()->addToTimePenalty(200 * elapsed);
+            if (player->getTunnel()->getTimeLeft() < 0)
+            {
+                specialMode++;
+                specialTimer = 0;
+            }
+            else
+                tleft = specialTimer;
+        }
+        
+        int numCriteria = player->getTunnel()->getNumRequiredCriteria();
+        int possiblePickups = player->getNumSafeTotal() + player->getNumWrongTotal();
+        
+        accuracy = 0;
+        if (mode == STAGE_MODE_RECESS)
+        {
+            if (player->getNumCorrectTotal() + numWrong + numMissed > 0)
+                accuracy = static_cast<float>(numCorrect) / (player->getNumCorrectTotal() + numWrong + numMissed) * 100;
+        }
+        else
+        {
+            if (numCriteria + numWrong + numMissed > 0)
+                accuracy = static_cast<float>(numCorrect) / (numCriteria + numWrong + numMissed) * 100;
+        }
+        
+        const int SCORE_PER_TICK = 100;
+        const int NONZAP_PICKUP = 50;
+        int score = numCorrect * player->getScoring() + numPickups * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
+        
+        Ogre::TextAreaOverlayElement* label2 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel2");
+        label2->setCaption(Util::toStringInt(player->getTunnel()->getTimeLeft() / 10));
+        
+        Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
+        label7->setCaption("");
+        
+        if (specialMode == 5)
+        {
+            bool dingSound = true;
+            bool genFireworks = false;
+            bool pulsateTextSize = false;
+            if (accuracy < 60)
+                popupText4->setCaption("\nNice Try...");
+            else if (accuracy < 75 || eval != PASS)
+                popupText4->setCaption("\nAlmost There...");
+            else if (accuracy < 85)
+            {
+                popupText4->setCaption("\nExcellent Work");
+                dingSound = true;
+            }
+            else if (accuracy < 100)
+            {
+                popupText4->setCaption("\nAMAZING");
+                genFireworks = true;
+                pulsateTextSize = true;
+            }
+            else
+            {
+                popupText4->setCaption("\nPERFECT");
+                genFireworks = true;
+                pulsateTextSize = true;
+            }
+            
+            if (dingSound && !dinged)
+            {
+                OgreOggISound* sound = NULL;
+                if (accuracy < 75)
+                    sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
+                else
+                    sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundDing");
+                sound->setVolume(player->soundVolume);
+                sound->play();
+                dinged = true;
+            }
+            
+            if (genFireworks)
+            {
+                if (!fireworkNode)
+                    fireworkNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("FireworkNode");
+                else
+                {
+                    fireworkTimer += elapsed;
+                    if (fireworkTimer >= 1.0f && fireworkEffects.size() < 3)
+                    {
+                        Ogre::ParticleSystem* fireworkEffect = fireworkNode->getCreator()->createParticleSystem("FireworkEffect" + Util::toStringInt(fireworkEffects.size()), "StageEnding/Fireworks");
+                        Vector3 dir = player->getCamForward();
+                        if (fireworkEffects.size() == 0)
+                        {
+                            dir = dir - player->getCamRight() * 0.30;
+                            dir = dir + player->getCamUpward() * 0.10;
+                        }
+                        else if (fireworkEffects.size() == 1)
+                        {
+                            dir = dir + player->getCamUpward() * 0.25;
+                        }
+                        else
+                        {
+                            dir = dir + player->getCamRight() * 0.30;
+                            dir = dir + player->getCamUpward() * 0.10;
+                        }
+                        fireworkNode->setPosition(player->getCamPos() + dir);
+                        fireworkNode->attachObject(fireworkEffect);
+                        fireworkEffects.push_back(fireworkEffect);
+                        fireworkTimer = 0.0f;
+                        player->playFireworkSound();
+                    }
+                }
+            }
+            
+            if (pulsateTextSize)
+            {
+                textAnimationTimer += elapsed;
+                float sz = 0.025f;
+                float dsz = 0.002f * Ogre::Math::Sin(3 * Ogre::Math::PI * textAnimationTimer) + 0.002f;
+                popupText4->setCharHeight((sz + dsz) * FONT_SZ_MULT);
+                popupText4->setPosition(0.30, 0.05 - dsz);
+            }
+        }
+
+        std::string completed = eval == PASS ? "yes" : "no";
+        
+        setAdditionalText("Mistakes\nMissed\nPickups\nZapped\nAccuracy\nCompleted\nScore");
+        if (player->getTunnel()->getMode() == STAGE_MODE_RECESS)
+        {
+            setAdditionalValue("-\n-\n" +
+                               Util::toStringInt(numCorrect) + " / " + Util::toStringInt(player->getNumCorrectTotal() + player->getNumMissedTotal()) + "\n" +
+                               "-\n" +
+                               Util::toStringInt(accuracy) + "%\n" +
+                               completed + "\n" +
+                               Util::toStringInt(score));
+        }
+        else
+        {
+            setAdditionalValue(Util::toStringInt(numWrong) + "\n" +
+                               Util::toStringInt(numMissed) + "\n" +
+                               Util::toStringInt(numPickups) + " / " + Util::toStringInt(possiblePickups) + "\n" +
+                               Util::toStringInt(numCorrect) + " / " + Util::toStringInt(numCriteria) + "\n" +
+                               Util::toStringInt(accuracy) + "%\n" +
+                               completed + "\n" +
+                               Util::toStringInt(score));
+        }
+    }
     // If a start timer has been set, update it
     // and check to see if it is ready to show.
     if (startTimer > 0.0f)
@@ -288,6 +525,11 @@ void TutorialManager::update(float elapsed)
 bool TutorialManager::hasVisitedSlide(TutorialSlidesType type) const
 {
     return visitedSlide[type];
+}
+
+bool TutorialManager::isSpecial() const
+{
+    return specialSession || specialStage;
 }
 
 void TutorialManager::hide()
@@ -328,15 +570,66 @@ bool TutorialManager::processInput(Vector2 target)
     std::string query = queryButtons(target);
     if (query == "goleft")
     {
-        if (!special)
+        if (!isSpecial())
             setPreviousSlide();
     }
     else if (query == "goright")
     {
-        if (special)
+        if (isSpecial())
         {
-            special = false;
-            exit(0);
+            if (specialStage)
+            {
+                Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                if (accuracy < 60)
+                {
+                    label7->setCaption("Nice try cadet...\nYou're not ready for this challenge");
+                }
+                else if (accuracy < 75 || eval != PASS)
+                {
+                    int r = std::rand() % 2;
+                    if (r == 0)
+                        label7->setCaption("Almost cadet\nYou can overcome this challenge soon enough");
+                    else
+                        label7->setCaption("Not bad cadet\nKeep trying and you'll get there");
+                }
+                else if (accuracy < 85)
+                {
+                    int r = std::rand() % 2;
+                    if (r == 0)
+                        label7->setCaption("Good job cadet\nYou did well and can even do better");
+                    else
+                        label7->setCaption("Good work\nImprove yourself by trying again");
+                }
+                else if (accuracy < 100)
+                {
+                    int r = std::rand() % 2;
+                    if (r == 0)
+                        label7->setCaption("I'm proud of you pilot\nYou have exceptional abilities");
+                    else
+                        label7->setCaption("Amazing cadet\nYou have mastered this challenge");
+                }
+                else
+                    label7->setCaption("WOW A PERFECT\nYou deserve a bonus cadet");
+                
+                if (fireworkNode)
+                {
+                    for (int i = 0; i < fireworkEffects.size(); ++i)
+                        fireworkNode->getCreator()->destroyParticleSystem(fireworkEffects[i]);
+                    fireworkNode->removeAndDestroyAllChildren();
+                    fireworkNode->getCreator()->destroySceneNode(fireworkNode);
+                    fireworkNode = NULL;
+                }
+            }
+            specialSession = false;
+            specialStage = false;
+            setAdditionalValue("");
+            setAdditionalText("");
+            slides.clear();
+            slideNo = 0;
+            hide();
+            //exit(0);
         }
         else
         {
@@ -352,7 +645,7 @@ bool TutorialManager::processInput(Vector2 target)
     }
     else if (query == "exit")
     {
-        if (!special) {
+        if (!isSpecial()) {
             slides.clear();
             slideNo = 0;
             hide();
@@ -364,12 +657,12 @@ bool TutorialManager::processInput(Vector2 target)
 void TutorialManager::adjust()
 {
     popupWindowBackground->setMetricsMode(GMM_RELATIVE);
-    popupWindowBackground->setPosition(0.250, yoffset + 0.20);
+    popupWindowBackground->setPosition(0.250, yoffset + 0.25);
     popupWindowBackground->setDimensions(0.50, 0.50);
     //popupWindowBackground->setMaterialName("General/ScreenBackground1");
     
     popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
-    popupSubWindowBackground->setPosition(0.250, yoffset + 0.20);
+    popupSubWindowBackground->setPosition(0.250, yoffset + 0.25);
     popupSubWindowBackground->setDimensions(0.50, 0.50);
     
     float bw = 0.075;
@@ -380,29 +673,42 @@ void TutorialManager::adjust()
     
     popupText1->setMetricsMode(GMM_RELATIVE);
     popupText1->setAlignment(TextAreaOverlayElement::Left);
-    popupText1->setPosition(0.050, -0.015);
+    popupText1->setPosition(0.050, 0.05);
     popupText1->setCharHeight(0.025 * FONT_SZ_MULT);
     popupText1->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    popupText1->setFontName("MainBig");
+    popupText1->setFontName("MainSmall");
     
     popupText2->setMetricsMode(GMM_RELATIVE);
     popupText2->setAlignment(TextAreaOverlayElement::Left);
-    popupText2->setPosition(0.06, 0.20);
+    popupText2->setPosition(0.06, 0.16);
     popupText2->setCharHeight(0.025 * FONT_SZ_MULT);
-    popupText2->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    popupText2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     popupText2->setFontName("MainSmall");
     
-    popupSlideNoText->setMetricsMode(GMM_RELATIVE);
-    popupSlideNoText->setAlignment(TextAreaOverlayElement::Left);
-    popupSlideNoText->setPosition(0.050, 0.405);
-    popupSlideNoText->setCharHeight(0.025 * FONT_SZ_MULT);
-    popupSlideNoText->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    popupSlideNoText->setFontName("MainSmall");
+    popupText3->setMetricsMode(GMM_RELATIVE);
+    popupText3->setAlignment(TextAreaOverlayElement::Right);
+    popupText3->setPosition(0.35, 0.16);
+    popupText3->setCharHeight(0.025 * FONT_SZ_MULT);
+    popupText3->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    popupText3->setFontName("MainSmall");
+    
+    popupText4->setMetricsMode(GMM_RELATIVE);
+    popupText4->setAlignment(TextAreaOverlayElement::Center);
+    popupText4->setPosition(0.30, 0.05);
+    popupText4->setCharHeight(0.025 * FONT_SZ_MULT);
+    popupText4->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
+    popupText4->setFontName("MainSmall");
 }
 
 void TutorialManager::setAdditionalText(std::string text)
 {
     additionalText = text;
+    updateOverlay();
+}
+
+void TutorialManager::setAdditionalValue(std::string text)
+{
+    additionalValue = text;
     updateOverlay();
 }
 
@@ -422,15 +728,18 @@ void TutorialManager::dealloc()
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText1);
     if (popupText2)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText2);
-    if (popupSlideNoText)
-        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupSlideNoText);
+    if (popupText3)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText3);
+    if (popupText4)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(popupText4);
     popupSubWindowBackground = NULL;
     popupWindowBackground = NULL;
     popupGoLeftBackground = NULL;
     popupGoRightBackground = NULL;
     popupText1 = NULL;
     popupText2 = NULL;
-    popupSlideNoText = NULL;
+    popupText3 = NULL;
+    popupText4 = NULL;
 }
 
 void TutorialManager::alloc()
@@ -446,16 +755,17 @@ void TutorialManager::alloc()
     // Allocate Resources
     popupText1 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText1"));
     popupText2 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText2"));
-    popupSlideNoText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialSlideNoText"));
+    popupText3 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText3"));
+    popupText4 = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "TutorialPopupText4"));
     popupOverlay->add2D(popupSubWindowBackground);
     popupOverlay->add2D(popupWindowBackground);
-    //popupWindowBackground->addChild(popupSubWindowBackground);
     popupSubWindowBackground->addChild(popupGoLeftBackground);
     popupSubWindowBackground->addChild(popupGoRightBackground);
     popupSubWindowBackground->addChild(popupExitBackground);
     popupSubWindowBackground->addChild(popupText1);
     popupSubWindowBackground->addChild(popupText2);
-    popupSubWindowBackground->addChild(popupSlideNoText);
+    popupSubWindowBackground->addChild(popupText3);
+    popupSubWindowBackground->addChild(popupText4);
     
     buttons = std::vector<HudButton>(3);
     

@@ -47,13 +47,7 @@ public:
     std::vector<SectionInfo> sections;
     std::vector<PodInfo> types;
     
-    struct TargetInfo
-    {
-        bool level1;
-        bool level2;
-        bool level3;
-    };
-    std::vector<TargetInfo> targets;
+    std::vector<bool> targets;
     int sectionSize;
     int podSegmentSize;
     int distractorSegmentSize;
@@ -62,8 +56,12 @@ public:
     int spawnCombo;
     int spawnLimit;
     int numTargets;
-    float fuelTimer;
-    float fuelBuffer;
+    float fuelMax;      // Total sustainable fuel
+    float fuelReturn;   // Total fuel added when picking up
+    float fuelSize;     // Size of a fuel canister (Related to HP)
+    float fuelTimer;    // Current fuel value
+    float fuelBuffer;   // Buffer value before timer is affected
+    float tsModifier;
     
     // These indices used to track current player's spot
     int sectionIndex;
@@ -80,6 +78,7 @@ public:
     StageMode mode;
     LevelPhase phaseX;
     float stageTime;
+    float totalDistance;
     float totalElapsed;
     float timePenalty;
     int nback;
@@ -131,6 +130,7 @@ public:
     float tSpeed;
     float tAccel;
     
+    int gateKeyCounter;
     float gateDelayTimer;
     float gateDelay;
     
@@ -186,7 +186,6 @@ public:
     // Given n-back to test, return the match if any, otherwise return POD_UNKNOWN for no
     bool testForRepeatSignal(PodSignal ps, int numtimes);
     bool testForRepeatMatch(int nvalue, PodSignal ps, int numtime);
-    PodSignal generateItem(int nbackA, int nbackB, int nbackC, int trackA, int trackB, int trackC);
     PodSignal getNBackTest(int nvalue, PodSignal test) const;
     PodSignal getNBackTest(int index, int nvalue) const;
     PodSignal getNBackTest(int nvalue) const;
@@ -197,9 +196,12 @@ public:
     
     StageMode getMode() const;
     float getStageTime() const;
+    float getTotalDistance() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
+    float getFuelMax() const;
+    float getFuelReturn() const;
     float getFuelBuffer() const;
     float getFuelTimer() const;
     float getPercentComplete() const;
@@ -218,6 +220,9 @@ public:
     int getCurrentNavLevel() const;     // The nav level the player is still on
     bool extractPowerup(PowerupType type);
     std::vector<CollectionCriteria> getCollectionCriteria() const;
+    
+    float getTSModifier() const;
+    void updateTSModifier();
     
     virtual void checkIfDone();
     bool isDone() const;
@@ -241,6 +246,7 @@ public:
     void setNavigationLevels(int tunnelSectionsPerNavLevel);
     void setNavigationLevels(int startingNavLevel, int navLimit, int tunnelSectionsPerNavLevel);
     void setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel);
+    void setFuelLevel(float max, float pickup, int numbars);
     void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
     bool satisfyCriteria(int nback, int amount);
     bool killCriteria(int amount);
@@ -274,7 +280,7 @@ public:
     
     void unlink();
     void link(Player* player);
-    void presetTargets(int level);
+    void presetTargets();
     void constructTunnel(const std::string & nameTunnelTile, int size);
     
     void update(float elapsed);
