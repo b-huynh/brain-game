@@ -91,6 +91,7 @@ public:
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
     std::string getMaterialName() const;
+    std::string getMaterialName(bool isConnection) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);

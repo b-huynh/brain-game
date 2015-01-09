@@ -423,8 +423,8 @@ void TutorialManager::update(float elapsed, Player* player)
                     sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBadFeedback");
                 else
                     sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundDing");
-                sound->setVolume(player->soundVolume);
-                sound->play();
+                //sound->setVolume(player->soundVolume);
+                //sound->play();
                 dinged = true;
             }
             

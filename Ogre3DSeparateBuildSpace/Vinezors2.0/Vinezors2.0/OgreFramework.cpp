@@ -198,9 +198,10 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
     m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
+    /*
     m_pSoundMgr->createSound("SoundFirework", "distantboom.wav", false, false, true);
     m_pSoundMgr->createSound("SoundDing", "positiveding.wav", false, false, true);
-    
+    */
     m_pSoundMgr->createSound("GateOpen", "gateopen.wav", false, false, true);
     m_pSoundMgr->createSound("GateClose", "gateclose.wav", false, false, true);
     
