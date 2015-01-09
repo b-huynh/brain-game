@@ -221,7 +221,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "433"
             endingLineNumber = "433"
-            landmarkName = "Player::getLevelProgress(int row, int col)"
+            landmarkName = "Player::isLevelAvailable(int level)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1797,12 +1797,13 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
         for (int j = 0; j < pods.size(); ++j)
         {
             pods[j]->uncloakPod();
-            /*
+            
             if (!pods[i]->getPodTrigger())
             {
                 pods[i]->generateIndicator();
                 pods[i]->setVisibleIndicator(false);
             }
+            /*
 #ifdef DEBUG_MODE
             if (!pods[j]->getPodTrigger())
             {
@@ -1876,12 +1877,12 @@ void Tunnel::update(float elapsed)
                 pods[i]->uncloakPod();
                 player->playPodSound(pods[i]->getPodSound());
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
-                /*
                 if (!pods[i]->getPodTrigger())
                 {
                     pods[i]->generateIndicator();
                     pods[i]->setVisibleIndicator(false);
                 }
+                /*
 #ifdef DEBUG_MODE
                 if (!pods[i]->getPodTrigger())
                 {
