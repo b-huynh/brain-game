@@ -89,7 +89,7 @@ void TunnelSlice::initWalls()
     }
     //entireWallEntity->setMaterialName(getMaterialName());
     for (int i = 0; i < entireWallEntity->getNumSubEntities(); ++i)
-        entireWallEntity->getSubEntity(i)->setMaterialName(getMaterialName());
+        entireWallEntity->getSubEntity(i)->setMaterialName(getMaterialName(false));
     entireWall->attachObject(entireWallEntity);
     entireWall->scale(width, width, depth);
     
@@ -420,6 +420,21 @@ std::string TunnelSlice::getMaterialName() const
         materialName = "General/WallCheckpointEven";
     else if (materialNames.size() > 0)
         materialName = materialNames[rand() % materialNames.size()];
+    return materialName;
+}
+
+std::string TunnelSlice::getMaterialName(bool isConnection) const
+{
+    std::string materialName;
+    if (type == CHECKPOINT_EVEN)
+        materialName = "General/WallCheckpointEven";
+    else if (materialNames.size() > 0)
+        materialName = materialNames[rand() % materialNames.size()];
+    
+    
+    if(isConnection)
+        materialName = materialName + "2";  // if the tile is a connection tile
+    
     return materialName;
 }
 
@@ -1054,7 +1069,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     Entity* intermediateSegmentEntity = entireIntermediate->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
     //intermediateSegmentEntity->setMaterialName(getMaterialName());
     for (int i = 0; i < intermediateSegmentEntity->getNumSubEntities(); ++i)
-        intermediateSegmentEntity->getSubEntity(i)->setMaterialName(getMaterialName());
+        intermediateSegmentEntity->getSubEntity(i)->setMaterialName(getMaterialName(true));
     entireIntermediate->attachObject(intermediateSegmentEntity);
     
     meshes.push_back(mesh);
