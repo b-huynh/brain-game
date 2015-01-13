@@ -723,7 +723,7 @@ void Pod::removeGlow()
     if (glowNode)
     {
         glowNode->getCreator()->destroyParticleSystem(glowEffect);
-        //glowNode->removeAndDestroyAllChildren();
+        glowNode->removeAndDestroyAllChildren();
         glowNode->getCreator()->destroySceneNode(glowNode);
         glowNode = NULL;
         glowEffect = NULL;
@@ -735,7 +735,7 @@ void Pod::removeIndicator()
     if (indicatorNode)
     {
         indicatorNode->getCreator()->destroyParticleSystem(indicatorEffect);
-        //indicatorNode->removeAndDestroyAllChildren();
+        indicatorNode->removeAndDestroyAllChildren();
         indicatorNode->getCreator()->destroySceneNode(indicatorNode);
         indicatorNode = NULL;
         indicatorEffect = NULL;
