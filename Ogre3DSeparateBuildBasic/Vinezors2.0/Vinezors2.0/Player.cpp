@@ -36,7 +36,9 @@ int PlayerLevel::getNavLimit() const
 
 PlayerLevel::PlayerLevel()
     : sessionID(0), set1Rep(0), set2Rep(0), set3Rep(0), set1(2), set2(2), set3(2), set1Notify(0), set2Notify(0), set3Notify(0), navigation(0), minSpeed(15), averageSpeed(20), maxSpeed(25), runSpeed1(15), runSpeed2(15), runSpeed3(15), navigationScores(), speedScores()
-{}
+{
+    nbackLevel = 1.0;
+}
 
 void PlayerLevel::calculateNavigation()
 {
@@ -1701,6 +1703,7 @@ bool Player::saveProgress(std::string file, bool updateSessionID)
     out << skillLevel.set1Notify << std::endl;
     out << skillLevel.set2Notify << std::endl;
     out << skillLevel.set3Notify << std::endl;
+    out << skillLevel.nbackLevel << std::endl;
     out << skillLevel.navigation << std::endl;
     out << skillLevel.minSpeed << std::endl;
     out << skillLevel.averageSpeed << std::endl;
@@ -1731,6 +1734,7 @@ bool Player::loadProgress(std::string savePath)
         saveFile >> skillLevel.set1Notify;
         saveFile >> skillLevel.set2Notify;
         saveFile >> skillLevel.set3Notify;
+        saveFile >> skillLevel.nbackLevel;
         saveFile >> skillLevel.navigation;
         saveFile >> skillLevel.minSpeed;
         saveFile >> skillLevel.averageSpeed;

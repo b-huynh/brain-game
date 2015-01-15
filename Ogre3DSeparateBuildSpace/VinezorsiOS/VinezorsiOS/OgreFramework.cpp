@@ -2,6 +2,8 @@
 #include "macUtils.h"
 #include "Util.h"
 
+#include "macPath.h"
+
 namespace Ogre
 {
     template<> OgreFramework* Ogre::Singleton<OgreFramework>::msSingleton = 0;
@@ -168,6 +170,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
     m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundFirework", "distantboom.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundDing", "positiveding.wav", false, false, true);
     
     m_pSoundMgr->createSound("GateOpen", "gateopen.wav", false, false, true);
     m_pSoundMgr->createSound("GateClose", "gateclose.wav", false, false, true);
@@ -287,7 +291,10 @@ void OgreFramework::updateOgre(float timeSinceLastFrame)
 
 Ogre::String OgreFramework::getMacBundlePath() const
 {
-    return macBundlePath();
+    std::cout << "MAC BUNDLE PATH: " << macBundlePath() << std::endl;
+    std::cout << "APP DOCUME PATH: " << applicationDocumentsPath() << std::endl;
+    //return macBundlePath();
+    return applicationDocumentsPath();
 }
 
 void OgreFramework::buttonHit(OgreBites::Button* button)

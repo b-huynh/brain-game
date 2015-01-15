@@ -11,6 +11,24 @@
             continueAfterRunningActions = "No"
             symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
             moduleName = "">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject doesNotRecognizeSelector:]"
+                  moduleName = "libobjc.A.dylib"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NSObject(NSObject) doesNotRecognizeSelector:]"
+                  moduleName = "CoreFoundation"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -36,12 +54,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "428269823.345784"
+            timestampString = "436727585.605094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "333"
-            endingLineNumber = "333"
-            landmarkName = "OgreApp::activatePerformRightMove()"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
+            landmarkName = "OgreApp::activatePerformSwipeUp()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -62,11 +80,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "428269823.345784"
+            timestampString = "436727585.605094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "637"
-            endingLineNumber = "637">
+            startingLineNumber = "639"
+            endingLineNumber = "639">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -120,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "422305654.01407"
+            timestampString = "436727585.605094"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
             landmarkName = "OgreApp::setupDemoScene()"
             landmarkType = "5">
          </BreakpointContent>
@@ -136,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "430356666.979982"
+            timestampString = "436135151.074115"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "649"
-            endingLineNumber = "649"
+            startingLineNumber = "681"
+            endingLineNumber = "681"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -152,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "428363502.902949"
+            timestampString = "436479090.727713"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1305"
-            endingLineNumber = "1305"
+            startingLineNumber = "1326"
+            endingLineNumber = "1326"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
             <Locations>
@@ -198,12 +216,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/Player.cpp"
-            timestampString = "427236426.67564"
+            timestampString = "436478910.615113"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "417"
-            endingLineNumber = "417"
-            landmarkName = "Player::isLevelAvailable(int level)"
+            startingLineNumber = "433"
+            endingLineNumber = "433"
+            landmarkName = "Player::getLevelProgress(int row, int col)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -276,11 +294,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "427846040.471678"
+            timestampString = "436135151.074115"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "768"
-            endingLineNumber = "768"
+            startingLineNumber = "800"
+            endingLineNumber = "800"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -292,11 +310,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "427846040.471678"
+            timestampString = "436135151.074115"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "796"
-            endingLineNumber = "796"
+            startingLineNumber = "828"
+            endingLineNumber = "828"
             landmarkName = "HudStage::initOverlay()"
             landmarkType = "5">
          </BreakpointContent>
@@ -308,12 +326,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/HudStage.cpp"
-            timestampString = "427846040.471678"
+            timestampString = "436135151.074115"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "795"
-            endingLineNumber = "795"
+            startingLineNumber = "827"
+            endingLineNumber = "827"
             landmarkName = "HudStage::initOverlay()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/EngineStage.cpp"
+            timestampString = "436479090.727713"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "544"
+            endingLineNumber = "544"
+            landmarkName = "EngineStage::activatePerformSingleTap(float x, float y)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/Tunnel.cpp"
+            timestampString = "436700335.842189"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1352"
+            endingLineNumber = "1352"
+            landmarkName = "Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VinezorsiOS/Tunnel.cpp"
+            timestampString = "436700335.842189"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1354"
+            endingLineNumber = "1354"
+            landmarkName = "Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

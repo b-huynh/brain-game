@@ -1,8 +1,8 @@
 particle_system General/StarBoost
  {
     material        General/Star    
-    particle_width  3.0
-    particle_height 3.0
+    particle_width  4.0
+    particle_height 4.0
     cull_each       true
     quota           100
     billboard_type  point
@@ -17,7 +17,7 @@ particle_system General/StarBoost
         time_to_live_max 0.5
         direction       0 0 -1
         velocity_min    30
-	velocity_max	 50
+        velocity_max	 50
         colour 0.0 0.7 1.0
         width           1
         height          1
@@ -25,11 +25,33 @@ particle_system General/StarBoost
     }
  }
 
-particle_system General/StarExplode
+particle_system General/Beam
  {
     material        General/Star
-    particle_width  2.0
-    particle_height 2.0
+    particle_width  5
+    particle_height 5
+    cull_each       true
+    quota           250
+    billboard_type  point
+    local_space	    true
+ 
+    // Area emitter
+    emitter Ring
+    {
+        emission_rate   10000
+        time_to_live    0.2
+        colour 0.0 0.3 0.5
+        width           0.5
+        height          0.5
+        depth           50.0
+    }
+ }
+
+particle_system General/GlowPodEllipsoid
+ {
+    material        General/Star
+    particle_width  5
+    particle_height 5
     cull_each       true
     quota           100
     billboard_type  point
@@ -38,111 +60,10 @@ particle_system General/StarExplode
     // Area emitter
     emitter Ellipsoid
     {
-        angle           180
-        emission_rate   500
-        time_to_live    1
-        direction       0 0 -1
-        velocity_min    20
-        velocity_max	20
-        colour_range_start 1.0 1.0 1.0
-        colour_range_end 1.0 0.7 0.7
-        width           5
-        height          5
-        depth           2
-    }
- }
-
-particle_system General/Beam
- {
-    material        General/Star
-    particle_width  1
-    particle_height 1
-    cull_each       true
-    quota           3000
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Ring
-    {
-        emission_rate   5000
-        time_to_live    1
-        colour 0.0 0.3 0.5
-        width           2
-        height          2
-        depth           50
-    }
- }
-
-particle_system General/GlowPodCylinder
- {
-    material        General/Star
-    particle_width  4
-    particle_height 4
-    cull_each       true
-    quota           50
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Cylinder
-    {
         angle           30
-        emission_rate   200
-        time_to_live_min 0.5
-        time_to_live_max 0.5
-        direction       0 1 0
-        velocity       0.001
-        colour 0.0 0.0 0.0
-        width           1
-        height          1
-        depth           3
-    }
- }
-
-particle_system General/GlowPodBox
- {
-    material        General/Star
-    particle_width  4
-    particle_height 4
-    cull_each       true
-    quota           50
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Box
-    {
-        angle           30
-        emission_rate   200
-        time_to_live_min 0.5
-        time_to_live_max 0.5
-        direction       0 1 0
-        velocity       0.001
-        colour 0.0 0.0 0.0
-        width           2
-        height          2
-        depth           2
-    }
- }
-
-particle_system General/GlowPodEllipsoid
- {
-    material        General/Star
-    particle_width  3
-    particle_height 3
-    cull_each       true
-    quota           80
-    billboard_type  point
-    local_space	    true
- 
-    // Area emitter
-    emitter Ellipsoid
-    {
-        angle           30
-        emission_rate   200
-        time_to_live_min 0.5
-        time_to_live_max 0.5
+        emission_rate   1000
+        time_to_live_min 0.1
+        time_to_live_max 0.1
         direction       0 1 0
         velocity       0.001
         colour 0.0 0.0 0.0
@@ -155,10 +76,10 @@ particle_system General/GlowPodEllipsoid
 particle_system General/GoodPodIndicator
  {
     material        General/Star
-    particle_width  2
-    particle_height 2
+    particle_width  5
+    particle_height 5
     cull_each       true
-    quota           500
+    quota           100
     billboard_type  point
     local_space	    true
  
@@ -166,18 +87,18 @@ particle_system General/GoodPodIndicator
     emitter HollowEllipsoid
     {
         angle           180
-        emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
+        emission_rate   250
+        time_to_live_min 0.5
+        time_to_live_max 1.0
         direction       0 1 0
-        velocity       0.0
-        colour 1.0 1.0 1.0
-	width		1
-	height		1
-	depth		1
-	inner_width	9
-	inner_height	9
-	inner_depth	9
+        velocity       1.5
+        colour 0.0 0.3 0.5
+        width		0.5
+        height		0.5
+        depth		0.5
+        inner_width     1
+        inner_height	1
+        inner_depth     1
     }
  }
  
@@ -187,7 +108,7 @@ particle_system General/GoodPodIndicator
     particle_width  1
     particle_height 1
     cull_each       true
-    quota           500
+    quota           300
     billboard_type  point
     local_space	    true
  
@@ -195,45 +116,28 @@ particle_system General/GoodPodIndicator
     emitter HollowEllipsoid
     {
         angle           180
-        emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
+        emission_rate   300
+        time_to_live_min 0.5
+        time_to_live_max 1.0
         direction       0 1 0
         velocity       0.0
-        colour 1.0 1.0 1.0
-	width		1
-	height		1
-	depth		1
-	inner_width	9
-	inner_height	9
-	inner_depth	9
-    }
-    
-    emitter HollowEllipsoid
-    {
-        angle           180
-        emission_rate   500
-        time_to_live_min 1
-        time_to_live_max 2
-        direction       1 0 0
-        velocity       0.0
-        colour 1.0 1.0 1.0
-	width		1
-	height		1
-	depth		1
-	inner_width	9
-	inner_height	9
-	inner_depth	9
+        colour 		1.0 1.0 1.0
+        width		1
+        height		1
+        depth		1
+        inner_width     6
+        inner_height	6
+        inner_depth     6
     }
  }
 
 particle_system Barrier/PFX
  {
     material        General/WhiteStar
-    particle_width  0.8
-    particle_height 0.8
+    particle_width  1.0
+    particle_height 1.0
     cull_each       true
-    quota           100
+    quota           200
     billboard_type  point
     local_space	    true
  
@@ -241,13 +145,45 @@ particle_system Barrier/PFX
     emitter Box
     {
         angle           180
-        emission_rate   500
+        emission_rate   1000
         time_to_live_min 0.1
         time_to_live_max 0.2
         velocity       0.3
         colour 1.0 1.0 1.0
         width		4
-        height		2
+        height		3
         depth		1
     }
  }
+
+particle_system StageEnding/Fireworks
+{
+	material        General/Star
+	particle_width  0.05
+	particle_height 0.05
+	cull_each       false
+	quota           100
+	billboard_type  point
+    local_space     false
+
+	// Fireworks launcher
+	emitter Point
+	{
+		angle           360
+		emission_rate   10000
+		time_to_live    2.6
+		direction       0 1 0
+		velocity_min    0.05
+		velocity_max    0.15
+		colour          1 1 1
+        duration        2.5
+	}
+
+	// Fader
+	affector ColourFader
+	{
+		red -0.25
+        green -0.25
+        blue -0.25
+	}
+}

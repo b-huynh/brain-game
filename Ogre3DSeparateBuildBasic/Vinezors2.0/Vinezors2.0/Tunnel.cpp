@@ -33,6 +33,8 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float
     //history = new History(OgreFramework::getSingletonPtr()->m_pSceneMgrSide, nback);
 	current = segments.end();
     
+    globals.stageTime = 140 + 3 * nback + 2;
+    
     setNewControl(control);
 }
 

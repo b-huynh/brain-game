@@ -15,6 +15,7 @@
 		5D39FA2F182741C0009C8A4C /* SimpleMenu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */; };
 		5D39FA3118274B3F009C8A4C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */; };
 		5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */; };
+		5D6C422B1A040C6D005D2D6B /* macPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D6C422A1A040C6D005D2D6B /* macPath.mm */; };
 		5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF1087118C41BF800FD25E4 /* Player.cpp */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
 		5DF598A918852ADD00F85646 /* OgreView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF598A818852ADD00F85646 /* OgreView.mm */; };
@@ -55,6 +56,8 @@
 		5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleMenuViewController.h; sourceTree = "<group>"; };
 		5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleMenuViewController.mm; sourceTree = "<group>"; };
+		5D6C42291A040C6D005D2D6B /* macPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macPath.h; sourceTree = "<group>"; };
+		5D6C422A1A040C6D005D2D6B /* macPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = macPath.mm; sourceTree = "<group>"; };
 		5DF1087118C41BF800FD25E4 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		5DF597A718848E0100F85646 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		5DF598A718852ADD00F85646 /* OgreView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreView.h; sourceTree = "<group>"; };
@@ -117,6 +120,8 @@
 		5D260D6D18A9CCC6006C91AC /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				5D6C42291A040C6D005D2D6B /* macPath.h */,
+				5D6C422A1A040C6D005D2D6B /* macPath.mm */,
 				5DF9409117F4AF360082C239 /* OgreStaticPluginLoader.h */,
 				5DF9408E17F4AF360082C239 /* OgreFramework.cpp */,
 				5DF9409017F4AF360082C239 /* OgreFramework.h */,
@@ -267,7 +272,7 @@
 				LastUpgradeCheck = 0500;
 				TargetAttributes = {
 					5DF9407217F4AF360082C239 = {
-						DevelopmentTeam = 9GN2WT7Q58;
+						DevelopmentTeam = 242KYAS2N4;
 					};
 				};
 			};
@@ -327,6 +332,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D6C422B1A040C6D005D2D6B /* macPath.mm in Sources */,
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,

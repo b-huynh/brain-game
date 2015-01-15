@@ -19,17 +19,12 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleRepeat = "G";
     scheduleRepeatRandomPool = "ABC";
     stageID = 0;
-    sessionTime = 1800.00;
+    sessionTime = 1200.0;
     stageTime = 120.0;
-    stageTotalSignals = 300;
-    stageTotalTargets1 = 100;
-    stageTotalTargets2 = 150;
-    stageTotalTargets3 = 200;
-    stageTotalCollections = 30;
-    stageTotalTargetsVariance = 2;
-    stageTimeThreshold1 = 25;
-    stageTimeThreshold2 = 50;
-    stageTimeThreshold3 = 75;
+    stageTotalSignals = 120;
+    stageTotalTargets = 40;
+    stageTotalCollections = 25;
+    stageTotalTargetsVariance = 0;
     set1Repetitions = 3;
     set2Repetitions = 3;
     set3Repetitions = 3;
@@ -69,11 +64,9 @@ Util::ConfigGlobal::ConfigGlobal()
     podCollisionMax = 0.65; // 0.40
     distractorCollisionMin = 0.40; // 0.25
     distractorCollisionMax = 0.50; // 0.35
-    podBinSize1 = 10;
-    podBinSize2 = 5;
-    podBinSize3 = 3;
+    podBinSize = 10;
     podNBackChance = 33.0;
-    span = 2;
+    span = 1;
     stageTotalDistractorsMin = 1;
     stageTotalDistractorsMax = 1;
     seatLength = podHeadRadius * 2;
@@ -83,22 +76,25 @@ Util::ConfigGlobal::ConfigGlobal()
     historyMode = -1;
     startingHP = 3;
     HPNegativeLimit = 0;
-    HPPositiveLimit = 5;
+    HPPositiveLimit = 999;
     HPNegativeCorrectAnswer = 0;
     HPNegativeWrongAnswer = -1;
     HPNegativeDistractor = 0;
     HPPositiveCorrectAnswer = 0;
     HPPositiveWrongAnswer = -1;
     HPPositiveDistractor = 0;
-    wrongAnswerTimePenalty = 20.0;
+    wrongAnswerTimePenalty = 0.0;
     distractorSpeedPenalty = 1.0;
     distractorTimePenalty = 0.0;
+    fuelMax = 450.0;
+    fuelReturn = 60.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
     maxCamSpeed = 40.0;
+    baselineSpeed = 15.0 * globalModifierCamSpeed;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
@@ -173,16 +169,18 @@ Util::ConfigGlobal::ConfigGlobal()
      */
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
-    navMap[2] = NavigationLevel(2, 2, 1);
-    navMap[3] = NavigationLevel(3, 1, 1);
-    navMap[4] = NavigationLevel(4, 4, 0);
-    navMap[5] = NavigationLevel(5, 3, 0);
+    navMap[2] = NavigationLevel(2, 3, 0);
+    navMap[3] = NavigationLevel(3, 4, 0);
+    navMap[4] = NavigationLevel(4, 2, 1);
+    navMap[5] = NavigationLevel(5, 1, 1);
+    
     navMap[6] = NavigationLevel(6, 4, 1);
     navMap[7] = NavigationLevel(7, 2, 2);
     navMap[8] = NavigationLevel(8, 1, 2);
     navMap[9] = NavigationLevel(9, 4, 2);
     navMap[10] = NavigationLevel(10, 3, 1);
     navMap[11] = NavigationLevel(11, 3, 2);
+    
     navMap[12] = NavigationLevel(12, 4, 3);
     navMap[13] = NavigationLevel(13, 2, 3);
     navMap[14] = NavigationLevel(14, 2, 4);
@@ -361,8 +359,8 @@ Vector2 Util::ConfigGlobal::convertToPercentScreen(Vector2 p)
 void Util::ConfigGlobal::initPaths()
 {
 #if defined(OGRE_IS_IOS)
-    savePath = Util::getIOSDir() + "/" + playerName + ".save";
-    configPath = Util::getIOSDir() + "/config.json";
+    savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
+    configPath = Util::getIOSDir() + "/" + playerName + "/config.json";
     configBackup = Util::getIOSDir() + "/config.json";
 #else
     savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
@@ -398,22 +396,12 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> stageTime;
     else if (paramName == "stageTotalSignals")
         in >> stageTotalSignals;
-    else if (paramName == "stageTotalTargets1")
-        in >> stageTotalTargets1;
-    else if (paramName == "stageTotalTargets2")
-        in >> stageTotalTargets2;
-    else if (paramName == "stageTotalTargets3")
-        in >> stageTotalTargets3;
+    else if (paramName == "stageTotalTargets")
+        in >> stageTotalTargets;
     else if (paramName == "stageTotalCollections")
         in >> stageTotalCollections;
     else if (paramName == "stageTotalTargetsVariance")
         in >> stageTotalTargetsVariance;
-    else if (paramName == "stageTimeThreshold1")
-        in >> stageTimeThreshold1;
-    else if (paramName == "stageTimeThreshold2")
-        in >> stageTimeThreshold2;
-    else if (paramName == "stageTimeThreshold3")
-        in >> stageTimeThreshold3;
     else if (paramName == "set1Repetitions")
         in >> set1Repetitions;
     else if (paramName == "set2Repetitions")
@@ -456,12 +444,8 @@ void Util::ConfigGlobal::setConfigValue(std::istream& in, std::string paramName)
         in >> podRotateSpeed;
     else if (paramName == "podAppearance")
         in >> podAppearance;
-    else if (paramName == "podBinSize1")
-        in >> podBinSize1;
-    else if (paramName == "podBinSize2")
-        in >> podBinSize2;
-    else if (paramName == "podBinSize3")
-        in >> podBinSize3;
+    else if (paramName == "podBinSize")
+        in >> podBinSize;
     else if (paramName == "span")
         in >> span;
     else if (paramName == "podCollisionMin")
@@ -747,16 +731,19 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
-    std::string logPath = Util::getIOSDir() + "/"
+    std::string userPath = Util::getIOSDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #else
-    std::string logPath = Util::getOSXDir() + "/" + playerName + "/"
+    std::string userPath = Util::getOSXDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #endif
+    int x = mkdir(userPath.c_str(), 0777);
     
     int i = 1;
-    std::ifstream testExist (std::string(logPath + ext).c_str());
     
+    std::ifstream testExist (std::string(logPath + ext).c_str());
     while (testExist) {
         testExist.close();
         logPath = logPath + "_" + Util::toStringInt(i);
@@ -1071,14 +1058,15 @@ std::string Util::getOSXDir()
 
 std::string Util::getIOSDir()
 {
-    const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
-    std::string result = "";
-    if (dir)
-        result = std::string(dir) + "/../Documents";
-    else
-        return "";
-    
-    mkdir(result.c_str(), 0777);
+    //const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
+    //std::string result = "";
+    //if (dir)
+    //    result = std::string(dir) + "/../Documents";
+    //else
+    //    return "";
+    //
+    //mkdir(OgreFramework::getSingletonPtr()->getMacBundlePath().c_str(), 0777);
+    std::string result = OgreFramework::getSingletonPtr()->getMacBundlePath();
     return result;
 }
 
@@ -1301,36 +1289,91 @@ void Util::createBox(Ogre::SceneManager* sceneMgr, const std::string& strName, f
     
     float mag = sqrt(l * l + w * w + h * h);
     
-    manual->position(-l, -w, -h);
-    manual->normal(-sqrt(mag), -sqrt(mag), -sqrt(mag));
+    
+    manual->position(-l, -w, -h);   // 0
     manual->textureCoord(0.0, 0.0);
-    manual->position(l, -w, -h);
-    manual->normal(sqrt(mag), -sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, -h);    // 1
     manual->textureCoord(0.5, 0.0);
-    manual->position(l, w, -h);
-    manual->normal(sqrt(mag), sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, -h);     // 2
     manual->textureCoord(0.5, 0.5);
-    manual->position(-l, w, -h);
-    manual->normal(-sqrt(mag), sqrt(mag), -sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, w, -h);    // 3
     manual->textureCoord(0.0, 0.5);
-    manual->position(-l, -w, h);
-    manual->normal(-sqrt(mag), -sqrt(mag), sqrt(mag));
-    manual->textureCoord(0.5, 0.5);
-    manual->position(l, -w, h);
-    manual->normal(sqrt(mag), -sqrt(mag), sqrt(mag));
-    manual->textureCoord(1.0, 0.5);
-    manual->position(l, w, h);
-    manual->normal(sqrt(mag), sqrt(mag), sqrt(mag));
-    manual->textureCoord(1.0, 1.0);
-    manual->position(-l, w, h);
-    manual->normal(-sqrt(mag), sqrt(mag), sqrt(mag));
+    manual->normal(Vector3(0, -1, 0));
+    
+    manual->position(-l, w, h);     // 7
     manual->textureCoord(0.5, 1.0);
-    manual->quad(3, 2, 1, 0);
-    manual->quad(7, 6, 2, 3);
+    manual->normal(Vector3(0, 0, 1));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(0, 0, 1));
+    manual->position(l, w, -h);     // 2
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, w, -h);    // 3
+    manual->textureCoord(0.0, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(0, 1, 0));
+    manual->position(-l, w, h);     // 7
+    manual->textureCoord(0.5, 1.0);
+    manual->normal(Vector3(0, 1, 0));
+    
+    manual->position(-l, -w, -h);   // 0
+    manual->textureCoord(0.0, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, -h);    // 1
+    manual->textureCoord(0.5, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(0, 0, -1));
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, 0, -1));
+    
+    manual->position(l, -w, -h);    // 1
+    manual->textureCoord(0.5, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, -h);     // 2
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(l, w, h);      // 6
+    manual->textureCoord(1.0, 1.0);
+    manual->normal(Vector3(1, 0, 0));
+    manual->position(l, -w, h);     // 5
+    manual->textureCoord(1.0, 0.5);
+    manual->normal(Vector3(1, 0, 0));
+    
+    manual->position(-l, w, -h);    // 3
+    manual->textureCoord(0.0, 0.5);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, -w, -h);   // 0
+    manual->textureCoord(0.0, 0.0);
+    manual->normal(Vector3(0, -1, 0));
+    manual->position(-l, -w, h);    // 4
+    manual->textureCoord(0.5, 0.5);
+    manual->normal(Vector3(-1, 0, 0));
+    manual->position(-l, w, h);     // 7
+    manual->textureCoord(0.5, 1.0);
+    manual->normal(Vector3(-1, 0, 0));
+    
+    manual->quad(0, 1, 2, 3);
     manual->quad(4, 5, 6, 7);
-    manual->quad(0, 1, 5, 4);
-    manual->quad(1, 2, 6, 5);
-    manual->quad(3, 0, 4, 7);
+    manual->quad(8, 9, 10, 11);
+    manual->quad(12, 13, 14, 15);
+    manual->quad(16, 17, 18, 19);
+    manual->quad(20, 21, 22, 23);
     
     manual->end();
     
@@ -1359,15 +1402,19 @@ void Util::createPlane(Ogre::SceneManager* sceneMgr, const std::string& strName,
     
     manual->position(-length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 0);
     manual->position(length / 2, 0, -depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 0);
     manual->position(length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(1, 1);
     manual->position(-length / 2, 0, depth / 2);
     manual->normal(0, 1, 0);
+    //manual->normal(sqrt(2.0f) / 2.0f, sqrt(2.0f) / 2.0f, 0);
     manual->textureCoord(0, 1);
     manual->quad(3, 2, 1, 0);
     manual->end();
@@ -1402,6 +1449,7 @@ void Util::createSubPlane(Ogre::SceneManager* sceneMgr, ManualObject* manual, fl
     Vector3 p2 = Vector3(length / 2, 0, -depth / 2);
     Vector3 p3 = Vector3(length / 2, 0, depth / 2);
     Vector3 p4 = Vector3(-length / 2, 0, depth / 2);
+    
     Vector3 normal = Vector3(0, 1, 0);
     
     p1 = loc + rot * p1;
@@ -1543,34 +1591,13 @@ void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)
 void Util::setSkyboxAndFog(std::string nameSkybox)
 {
     // Set skybox, fog, and background
-    if (nameSkybox == "General/PurpleSpaceSkyPlane")
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 1, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-    }
-    else if (nameSkybox == "General/BlankStarrySkyPlane")
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
-    }
-    else
-    {
-        Plane plane;
-        plane.d = 80;
-        plane.normal = Ogre::Vector3(0, 0, 1);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(false, plane, nameSkybox, 1, 1, true);
-        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue(0.2, 0.0, 0.2), 0.0, 300.0, 600.0);
-        OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
-    }
+    Plane plane;
+    plane.d = 80;
+    plane.normal = Ogre::Vector3(0, 0, 1);
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
+    OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();
 }
 
 // Step function to increase speed by 1 or decrease by 1 is not included but could be.
@@ -1598,9 +1625,7 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
     globals.stageTime = approxTotalTime - bestTime;
     
     globals.stageTotalSignals = 180; // Enough for constant speed of 30
-    globals.stageTotalTargets1 = globals.stageTotalSignals / 3;
-    globals.stageTotalTargets2 = globals.stageTotalSignals / 2;
-    globals.stageTotalTargets3 = 3 * globals.stageTotalSignals / 4;
+    globals.stageTotalTargets = globals.stageTotalSignals / 3;    
     globals.stageTotalTargetsVariance = 0;
     
     globals.startingHP = 3;
@@ -1617,14 +1642,14 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
-void PodInfo::performHoldout(char phase, bool sound)
+void PodInfo::performHoldout(LevelPhase phase, bool sound)
 {
     //float rand_holdOut = Ogre::Math::UnitRandom();
     float rand_signal = Ogre::Math::UnitRandom();
     
     if( true ) {//|| rand_holdOut < 0.1f ) {
         switch(phase) {
-            case 'A':   // levels that normally have color and sound active
+            case PHASE_COLOR_SOUND:   // levels that normally have color and sound active
                 if( rand_signal < 0.5f ) {
                     if (sound)
                         podColor = POD_COLOR_HOLDOUT;
@@ -1637,7 +1662,7 @@ void PodInfo::performHoldout(char phase, bool sound)
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
-            case 'B':   // levels that normally have shape and sound active
+            case PHASE_SHAPE_SOUND:   // levels that normally have shape and sound active
                 if( rand_signal < 0.5f ) {
                     if (sound)
                         podShape = POD_SHAPE_HOLDOUT;
@@ -1650,9 +1675,9 @@ void PodInfo::performHoldout(char phase, bool sound)
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
-            case 'C':   // levels that normally have sound only active
+            case PHASE_SOUND_ONLY:   // levels that normally have sound only active
                 break;
-            case 'D':   // levels that normally have all three signals active
+            case PHASE_ALL_SIGNAL:   // levels that normally have all three signals active
                 if (sound)
                 {
                     if( rand_signal < 0.167f ) {
@@ -1690,9 +1715,174 @@ void PodInfo::performHoldout(char phase, bool sound)
                     else
                         podShape = POD_SHAPE_HOLDOUT;
                 }
-            case 'E':   // recess levels
                 break;
-            case 'F':   // gear shift levels
+            case PHASE_COLLECT:   // recess levels
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void PodInfo::performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape)
+{
+    //float rand_holdOut = Ogre::Math::UnitRandom();
+    float rand_signal = Ogre::Math::UnitRandom();
+    
+    if( true ) {//|| rand_holdOut < 0.1f ) {
+        switch(phase) {
+            case PHASE_COLOR_SOUND:   // levels that normally have color and sound active
+                //if sound is not available, holdout is not availabe
+                if(sound) {
+                    if(holdcolor&&!holdsound){
+                        
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if(!holdcolor&&holdsound){
+                        
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    else if( rand_signal < 0.5f) {
+                        
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else {
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                }
+                break;
+            case PHASE_SHAPE_SOUND:   // levels that normally have shape and sound active
+                if(sound) {
+                    if(holdshape&&!holdsound){
+                        
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else if(!holdshape&&holdsound){
+                        
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    else if( rand_signal < 0.5f) {
+                        
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else {
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                }
+                break;
+            case PHASE_SOUND_ONLY:   // levels that normally have sound only active
+                break;
+            case PHASE_ALL_SIGNAL:   // levels that normally have all three signals active
+                if(sound){
+                    if (holdshape&&holdcolor&&holdsound) // color shape sound enabled
+                    {
+                        if( rand_signal < 0.167f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: color and shape (sound only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.333f ) {
+                            podSound = POD_SOUND_HOLDOUT;
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: sound and shape (color only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.500f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: color and sound (shape only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.667f ) {
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color (shape and sound only)" << std::endl;
+                        }
+                        else if( rand_signal < 0.824f ) {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape (color and sound only)" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound (color and shape only)" << std::endl;
+                        }
+                    }
+                    else if(!holdcolor&&holdshape&&holdsound) { //shape sound enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound" << std::endl;
+                        }
+                    }
+                    else if(!holdshape&&holdcolor&&holdsound) { //color and sound enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podSound = POD_SOUND_HOLDOUT;
+                            std::cout << "Hold out: sound" << std::endl;
+                        }
+                    }
+                    else if(holdshape&&holdcolor&&!holdsound) {     //shape color enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                    }
+                    else if (holdcolor){
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if (holdshape){
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    else if (holdsound){
+                        podSound = POD_SOUND_HOLDOUT;
+                        std::cout << "Hold out: sound" << std::endl;
+                    }
+                    
+                }
+                else{   //if sound is disabled
+                    if(holdshape&&holdcolor) {     //shape color enabled
+                        if( rand_signal < 0.5f) {
+                            
+                            podColor = POD_COLOR_HOLDOUT;
+                            std::cout << "Hold out: color" << std::endl;
+                        }
+                        else {
+                            podShape = POD_SHAPE_HOLDOUT;
+                            std::cout << "Hold out: shape" << std::endl;
+                        }
+                    }
+                    else if (holdcolor){
+                        podColor = POD_COLOR_HOLDOUT;
+                        std::cout << "Hold out: color" << std::endl;
+                    }
+                    else if (holdshape){
+                        podShape = POD_SHAPE_HOLDOUT;
+                        std::cout << "Hold out: shape" << std::endl;
+                    }
+                    
+                }
+                break;
+            case PHASE_COLLECT:   // recess levels
                 break;
             default:
                 break;

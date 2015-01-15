@@ -1,0 +1,12 @@
+material lambert1
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+		}
+
+	}
+
+}

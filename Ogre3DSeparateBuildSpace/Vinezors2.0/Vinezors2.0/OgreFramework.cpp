@@ -169,8 +169,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     //m_pTrayMgr->hideCursor();
-    //m_pTrayMgr->setListener(this);
-    //m_pTrayMgr->setTrayPadding(10.0);
+    m_pTrayMgr->setListener(this);
+    m_pTrayMgr->setTrayPadding(10.0);
     
     Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
     
@@ -198,6 +198,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
     m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundFirework", "distantboom.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundDing", "positiveding.wav", false, false, true);
     
     m_pSoundMgr->createSound("GateOpen", "gateopen.wav", false, false, true);
     m_pSoundMgr->createSound("GateClose", "gateclose.wav", false, false, true);

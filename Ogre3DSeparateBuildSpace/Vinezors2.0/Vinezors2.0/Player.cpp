@@ -32,30 +32,40 @@ bool flyLeft;
 bool soundStart;
 
 Player::Player()
-: seed(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(0), sessionID(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
+    
+    scheduler = new LevelScheduler();
+    levelRequest = NULL;    
+    
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
+    lastPlayed = PHASE_UNKNOWN;
     fadeMusic = false;
-    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.40f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(seed), sessionID(0), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), soundPods(NUM_POD_SIGNALS), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     levels = new LevelSet();
     levels->initializeLevelSet();
+    
+    scheduler = new LevelScheduler();
+    levelRequest = NULL;
+    
     tunnel = NULL;
     for (int i = 0; i < soundPods.size(); ++i)
         soundPods[i] = NULL;
@@ -63,14 +73,21 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     initPowerUps();
     tutorialMgr = new TutorialManager();
     
+    lastPlayed = PHASE_UNKNOWN;
     fadeMusic = true;
-    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
-    holdout = 0.25f;
+    holdout = 0.40f;
+    holdoutLB = 1.0f;
+    holdoutUB = 1.0f;
     syncDataToServer = false;
     inverted = true;
     initSettings();
+}
+
+Tunnel* Player::getTunnel() const
+{
+    return tunnel;
 }
 
 LevelSet* Player::getLevels() const
@@ -111,6 +128,11 @@ int Player::getNumMissedTotal() const
 int Player::getNumWrongTotal() const
 {
     return numWrongTotal;
+}
+
+int Player::getNumPickupsTotal() const
+{
+    return numPickupsTotal;
 }
 
 int Player::getNumCorrectBonus() const
@@ -327,6 +349,28 @@ PlayerLevel Player::getSkillLevel() const
     return skillLevel;
 }
 
+int Player::getSessionID() const
+{
+    return sessionID;
+}
+
+std::string Player::getStageStats() const
+{
+    
+}
+
+std::string Player::getSessionStats() const
+{
+    std::string ret = "";
+    ret += " Stages Completed: " + Util::toStringInt(numStagesWon) + "\n";
+    ret += " Color/Sound: " + Util::toStringFloat(scheduler->nBackLevelA) + "\n";
+    ret += " Shape/Sound: " + Util::toStringFloat(scheduler->nBackLevelB) + "\n";
+    ret += " Sound Only: " + Util::toStringFloat(scheduler->nBackLevelC) + "\n";
+    ret += " All Signal: " + Util::toStringFloat(scheduler->nBackLevelD) + "\n";
+    ret += " Navigation: " + Util::toStringFloat(scheduler->nBackLevelE) + "\n";
+    return ret;
+}
+
 int Player::getToggleBack() const
 {
     return toggleBack;
@@ -378,34 +422,55 @@ PlayerProgress Player::getLevelProgress(int row, int col) const
 
 // Is the level available to the player based on player stats?
 bool Player::isLevelAvailable(int level) const
-{
-    /*
-     // Linear progression
-    if (!levels->hasLevel(level))
-        return false;
-    if (level <= 0) return true;
-    if (!hasLevelProgress(level - 1))
-        return false;
-    PlayerProgress progress = getLevelProgress(level - 1);
-    return progress.rating > 0;
-     */
-    
-    // Satisfy previous row star total and
+{    // Satisfy previous row star total and
     // previous column level must be 3 stars
     if (!levels->hasLevel(level))
         return false;
-    // Player must have played the first level to play any other one
-    if (level != 0 && getLevelProgress(0).rating < 0)
-        return false;
+    
     int levelRow = levels->getLevelRow(level);
     int levelCol = levels->getLevelCol(level);
+    
+    switch (levelCol)
+    {
+        case 0:
+        {
+            if (levelRow < scheduler->nBackLevelA) return true;
+            break;
+        }
+        case 1:
+        {
+            if (levelRow < scheduler->nBackLevelB) return true;
+            break;
+        }
+        case 2:
+        {
+            if (levelRow < scheduler->nBackLevelC) return true;
+            break;
+        }
+        case 3:
+        {
+            if (levelRow < scheduler->nBackLevelD) return true;
+            break;
+        }
+        case 4:
+        {
+            if (levelRow < scheduler->nBackLevelE) return true;
+            break;
+        }
+        default:
+            break;
+    }
     
     int totalRatingCur = getTotalLevelRating(levelRow);
     int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
     
-    // This column is sound only, deactivate it if sound volume in settings is off
-    if (levelCol == 3 && soundVolume <= 0.0)
+    // Player must have played the first level to play any other one
+    if (level != 0 && getLevelProgress(0).rating < 0)
         return false;
+    
+    // This column is sound only, deactivate it if sound volume in settings is off
+    //if (levelCol == 3 && soundVolume <= 0.0)
+    //    return false;
     if (!levels->hasLevel(levelRow - 1, levelCol))
         return (levelCol != 5 || totalRatingCur >= rowRequirementCur - 3);
     if (!hasLevelProgress(levelRow - 1, levelCol))
@@ -428,6 +493,21 @@ bool Player::isLevelAvailable(int row, int col) const
 {
     int level = levels->getLevelNo(row, col);
     return isLevelAvailable(level);
+}
+
+// Given level request row and col, is the next level available to play in the 2D level select grid?
+bool Player::isNextLevelAvailable() const
+{
+    return isLevelAvailable(getNextLevel());
+}
+
+// Given level request row and col, return the next level in the sequence for the 2D level select grid
+int Player::getNextLevel() const
+{
+    int row = getLevelRequestRow();
+    int col = getLevelRequestCol();
+    int level = levels->getLevelNo(row, col);
+    return ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
 }
 
 int Player::getMenuRowIndex() const
@@ -466,6 +546,12 @@ float Player::getTotalLevelScore() const
     return total;
 }
 
+Ogre::ColourValue Player::getBoostColor() const
+{
+    return boostColor;
+}
+
+
 // Returns true if the player hasn't started the tunnel yet
 //
 // This flag is set to false the moment player update runs once.
@@ -484,7 +570,7 @@ float Player::getScoring() const
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         return 50.0;
     
-    int nvalue = tunnel->getNBackToggle();
+    int nvalue = tunnel->getNBackToggle(getToggleBack());
     switch (nvalue)
     {
         case 0:
@@ -534,6 +620,7 @@ void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
     this->maxSpeed = maxSpeed;
     baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
     finalSpeed = getTotalSpeed();
+    tunnel->updateTSModifier();
     
     // Update for logs
     if (sessions.size() > 0)
@@ -587,30 +674,61 @@ void Player::updateTractorBeam(float elapsed)
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (selectedTarget && t && t->active)
+    if (t && t->active && t->expireTimer > 0.0)
     {
-        SceneNode* glowNode = selectedTarget->getGlowNode();
+        Vector3 camForward = getCamForward(false);
+        Vector3 camDown = -getCamUpward(false);
         
-        if (selectedTarget->isPodTaken() && glowNode)
+        t->effectModifier = finalSpeed / 20.0f;
+        
+        Vector3 vinePos = vines[0]->entireVine->_getDerivedPosition() + camForward * 5.0 + camDown * 0.25;
+        Vector3 podPos = t->targetPod->getHead()->_getDerivedPosition();
+        
+        if (t->expireTimer <= t->expireCheckpoint)
         {
-            Vector3 vinePos = vines[0]->entireVine->_getDerivedPosition();
-            Vector3 podPos = selectedTarget->getHead()->_getDerivedPosition();
-            
-            Vector3 rotator = (podPos - vinePos).normalisedCopy();
-            
-            Quaternion q = getCamForward(false).getRotationTo(rotator);
-            
-            float distance = (podPos - vinePos).length();
-            t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance-7.0f));
-            t->tractorBeamNode->setPosition(0,0,-distance/2.0-7.0f);
-            
-            t->tractorBeamRotatorNode->setPosition(vines[0]->entireVine->_getDerivedPosition());
-            t->tractorBeamRotatorNode->setOrientation(getCamRot() * q);
-            
-            t->tractorBeamNode->roll(Radian(Degree(15.0f)));
+            t->tractorBeamEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
+            t->tractorBeamPulseEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
         }
+        // Move the pulse node
+        Vector3 glowPos = t->tractorBeamPulseNode->_getDerivedPosition();
+        Vector3 glowLerp = vinePos + (podPos - vinePos) * (t->pulseLen - t->pulseTimer) / t->pulseLen;
+        t->tractorBeamPulseNode->setPosition(glowLerp);
+        
+        // Rotate the beam effect
+        Vector3 rotator = (podPos - vinePos).normalisedCopy();
+        
+        Quaternion q = camForward.getRotationTo(rotator);
+        
+        float distance = (podPos - vinePos).length();
+        t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance - distance / 10 * t->effectModifier));
+        t->tractorBeamEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.1 / t->effectModifier));
+        t->tractorBeamPulseEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.1 / t->effectModifier));
+        t->tractorBeamNode->setPosition(0,0,-distance / 2.0);
+        //t->tractorBeamEffect->getEmitter(0)->setParameter("depth", Util::toStringFloat(distance - distance / 18.0 * t->effectModifier));
+        //t->tractorBeamEffect->getEmitter(0)->setParameter("time_to_live", Util::toStringFloat(0.2 / t->effectModifier));
+        //t->tractorBeamNode->setPosition(0,0,-distance / 2.0 - distance / 18.0  * t->effectModifier);
+        
+        t->tractorBeamRotatorNode->setPosition(vinePos);
+        t->tractorBeamRotatorNode->setOrientation(getCamRot() * q);
+        
+        t->tractorBeamNode->roll(Radian(Degree(15.0f)));
+
+        // Update timer
+        t->expireTimer -= (elapsed * t->effectModifier);
+        t->pulseTimer -= (elapsed * t->effectModifier);
+        if (t->pulseTimer <= 0.0) t->pulseTimer = t->pulseLen;
+        // If pod is recorded and past, turn off tractor beam
+        // Or better yet, if the ship's forward vector is not in the same direction as (podPos - vinePos)
+        if (camForward.dotProduct(podPos - vinePos) < 0.0)
+            t->expireTimer = 0.0;
     }
-    else if( t && t->active && t->tractorBeamEffect ) {
+    if (t && t->active && t->tractorBeamEffect && t->expireTimer <= 0.0f) {
+        t->tractorBeamPulseNode->detachObject(t->tractorBeamPulseEffect);
+        t->tractorBeamPulseNode->getCreator()->destroyParticleSystem(t->tractorBeamPulseEffect);
+        t->tractorBeamPulseEffect = NULL;
+        OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->removeAndDestroyChild("PulseNode");
+        t->tractorBeamPulseNode = NULL;
+        
         t->tractorBeamNode->detachObject(t->tractorBeamEffect);
         t->tractorBeamNode->getCreator()->destroyParticleSystem(t->tractorBeamEffect);
         t->tractorBeamEffect = NULL;
@@ -619,6 +737,7 @@ void Player::updateTractorBeam(float elapsed)
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->removeAndDestroyChild("BeamRotatorNode");
         t->tractorBeamRotatorNode = NULL;
         t->active = false;
+        t->targetPod = NULL;
     }
 }
 
@@ -626,26 +745,58 @@ void Player::performTractorBeam()
 {
     TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
     
-    if (!selectedTarget && t && !t->active)
+    if (!t->targetPod && !selectedTarget && t && !t->active)
     {
-        selectedTarget = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
-        if (selectedTarget && !selectedTarget->getGlowNode() && !selectedTarget->isPodTaken())
+        t->targetPod = tunnel->getNearestPod(globals.tunnelSegmentsPerPod);
+        if (getToggleBack() > 0 &&
+            t->targetPod && !t->targetPod->isPodTested() && !t->targetPod->isIndicatorVisible() &&
+            !t->targetPod->getGlowNode() && !t->targetPod->isPodTaken())
         {
-            selectedTarget->takePod();
-            setGlowGrabParameters();
-            //if (selectTimer <= 0.0)
-            //    selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
+            setToggleBack(0);
+            tunnel->respondToToggleCheat();
+
+            t->targetPod->takePod();
+            t->targetPod->zapPod();
+            selectedTarget = t->targetPod;
+            setGlowGrabParameters(t->targetPod);
+            if (selectTimer <= 0.0)
+            {
+                selectTimerFlag = true;
+                selectTimer = 0.1;//1.0 / (finalSpeed / globals.initCamSpeed);
+            }
             
+            // Generate a pulse glow effect
+            Ogre::ColourValue particleValue = Ogre::ColourValue(0.0, 0.5, 0.3);
+            std::string particleName = "General/GlowPodEllipsoid";
+            
+            // Make independent to avoid rotation orientions when translating.
+            t->tractorBeamPulseNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("PulseNode");
+            t->tractorBeamPulseEffect = t->tractorBeamPulseNode->getCreator()->createParticleSystem("TractorBeamPulseEffect", particleName);
+            ParticleEmitter* tractorBeamGlowEmitter = t->tractorBeamPulseEffect->getEmitter(0); // Assuming only one emitter
+            tractorBeamGlowEmitter->setColour(particleValue);
+            
+            t->tractorBeamPulseNode->attachObject(t->tractorBeamPulseEffect);
+            
+            // Change the tractor beam effect based on speed (faster ships should have beams that expire quicker)
+            t->effectModifier = finalSpeed / 20.0f;
+            // Assign a glow speed for the pulse towards
+            t->pulseLen = 0.25;
+            t->pulseTimer = t->pulseLen;
+            
+            // Assign powerup info
             t->active = true;
             t->available = false;
+            t->expireTimer = 1.0f;
+            t->expireCheckpoint = 0.5;
+            
+            // Generate a beam
             t->tractorBeamRotatorNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("BeamRotatorNode");
             t->tractorBeamNode = t->tractorBeamRotatorNode->createChildSceneNode("BeamNode");
             t->tractorBeamEffect = t->tractorBeamNode->getCreator()->createParticleSystem("Beam", "General/Beam");
             t->tractorBeamEffect->getEmitter(0)->setParameter("depth", "0");
             t->tractorBeamNode->attachObject(t->tractorBeamEffect);
-            
         } else
-            selectedTarget = NULL;
+            t->targetPod = NULL;
     }
 }
 
@@ -716,6 +867,8 @@ void Player::performTimeWarp()
     TimeWarp* t = dynamic_cast<TimeWarp*>(powerups["TimeWarp"]);
     
     if ( t && !t->active ) {
+        t->timeBonus = globals.wrongAnswerTimePenalty * 2;
+        
         Camera* cam = OgreFramework::getSingletonPtr()->m_pCameraMain;
         
         t->origFov = Degree(cam->getFOVy());
@@ -736,17 +889,50 @@ void Player::performTimeWarp()
 void Player::updateBoost(float elapsed)
 {
     float timeRange = 0.5;
-    if (boostTimer > 0.0)
+    if (vines[0]->boostEffect)
     {
-        boostTimer -= elapsed;
-        if (boostTimer <= 0.0)
-            boostTimer = 0.0;
-        else if (boostTimer <= timeRange)
+        float dropOffPecentage = 0.9;
+        float percentFuel = tunnel->getFuelTimer() / (globals.fuelMax * dropOffPecentage);
+        if (percentFuel >= 1.0f)
+            percentFuel = 1.0f;
+        float origHue = 0.55f;
+        float origSat = 1.00f;
+        float origLit = 1.00f;
+        boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
+        if (percentFuel <= 0.0 && tunnel->isDone())
+            boostColor = Ogre::ColourValue(0.0, 0.0, 0.0);
+        else
+            boostColor.setHSB(origHue * percentFuel, origSat, origLit);
+        
+        vines[0]->boostEffect->getEmitter(0)->setColour(boostColor);
+        Ogre::MaterialPtr mat = OgreFramework::getSingletonPtr()->m_pMaterialMgr->getByName("Arwing/ThrusterColor");
+        //mat->setDiffuse(boostColor);
+        mat->setSelfIllumination(boostColor);
+        
+        if (percentFuel < 0.70)
+            tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_FUEL);
+        
+        if (boostTimer > 0.0)
         {
-            soundBoost->stop();
-            vines[0]->removeBoost();
+            boostTimer -= elapsed;
+
+            if (boostTimer < 0.0)
+            {
+                boostTimer = 0.0;
+                soundBoost->stop();
+                vines[0]->removeBoost();
+            }
+            else if (boostTimer <= timeRange)
+            {
+                vines[0]->boostEffect->getEmitter(0)->setEmissionRate(100 * (boostTimer / timeRange));
+            }
         }
     }
+}
+
+void Player::setBoostTimer(float value)
+{
+    boostTimer = value;
 }
 
 void Player::performBoost()
@@ -880,19 +1066,18 @@ void Player::updateGlowExtraction(float elapsed)
     }
 }
 
-void Player::setGlowGrabParameters()
+void Player::setGlowGrabParameters(Pod* pod)
 {
     // Extract a glow that is in the form of a sphere always, not shape of pod.
-    selectedTarget->removeGlow();
-    selectedTarget->generateGlow(selectedTarget->getPodInfo().podColor, POD_SHAPE_SPHERE);
+    //pod->removeGlow();
+    //pod->generateGlow(pod->getPodInfo().podColor, POD_SHAPE_SPHERE);
     
     // Assign a glow speed towards the player
-    if (selectedTarget->getGlowNode())
+    if (pod->getGlowNode())
     {
-        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - selectedTarget->getGlowNode()->_getDerivedPosition()).length();
+        glowSpeed = 2 * (vines[0]->getEntireVine()->_getDerivedPosition() - pod->getGlowNode()->_getDerivedPosition()).length();
         if (finalSpeed > minSpeed)
             glowSpeed *= (finalSpeed / minSpeed);
-        
     }
 }
 
@@ -923,110 +1108,177 @@ void Player::testPodGiveFeedback(Pod* test)
         return;
     test->setPodTested(true);
     
-    bool goodPod = tunnel->getPodIsGood();
-
-    // Determine whether the player got it right or not
-    if (goodPod && test->isPodTaken()) {
-        if (tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getMode() == STAGE_MODE_RECESS)
+    bool nbackPod = tunnel->getPodIsGood(0);
+    bool correctSelection = (nbackPod && getToggleBack() == 0) ||
+                            (!nbackPod && getToggleBack() != 0) ||
+                            tunnel->getMode() == STAGE_MODE_RECESS;
+    bool podTaken = test->isPodTaken();
+    bool forceCheckEnd = false;
+    
+    if (nbackPod && correctSelection)
+    {
+        if (podTaken)
         {
+            ++numCorrectTotal;
+            ++numCorrectCombo;
+            numWrongCombo = 0;
+            
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
+                if (soundFeedbackGood)
+                {
+                    soundFeedbackGood->stop();
+                    soundFeedbackGood->play();
+                }
+            }
+            else
+            {
+                if (soundFeedbackGreat)
+                {
+                    soundFeedbackGreat->stop();
+                    soundFeedbackGreat->play();
+                }
+            }
+            
+            if (tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3) || tunnel->getMode() == STAGE_MODE_RECESS)
+            {
+                updateSpeed(initSpeed, true);
+                if (tunnel->areCriteriaFilled()) // Done for last minute pick-ups for zap. (i.e. Time ran out, but you zapped the next pod)
+                    tunnel->setEval(PASS);
+            }
+            
+            if (getToggleBack() == 0)
+            {
+                if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
+                else hp += globals.HPNegativeCorrectAnswer;
+                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+            }
+            
+            // Add to fuel gauge for correct zaps
+            tunnel->addToFuelBuffer(40); //
+        }
+        else
+        {
+            if (!tunnel->isDone())
+            {
+                numCorrectCombo = 0;
+                ++numMissedTotal;
+                ++numWrongCombo;
+    
+                if (tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                    if (soundFeedbackMiss)
+                    {
+                        soundFeedbackMiss->stop();
+                        soundFeedbackMiss->play();
+                    }
+                    tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                
+                    numCorrectBonus = 0;
+                    if (numWrongCombo % globals.numToSpeedDown == 0)
+                    {
+                        baseSpeed -= globals.speedMap[baseSpeed];
+                        baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                    }
+                }
+            }
+        }
+    }
+    else if ((nbackPod && !correctSelection) ||
+             (!nbackPod && !correctSelection))
+    {
+        if (!tunnel->isDone())
+        {
+            if (podTaken)
+            {
+                if (!nbackPod && !correctSelection)
+                {
+                    if (soundFeedbackBad)
+                    {
+                        soundFeedbackBad->stop();
+                        soundFeedbackBad->play();
+                    }
+                    numCorrectCombo = 0;
+                    numCorrectBonus = 0;
+                    ++numWrongTotal;
+                    
+                    //beginBadFuelPickUp();
+                    
+                    if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+                    else hp += globals.HPNegativeWrongAnswer;
+                    hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                    tunnel->addToFuelTimer(0.0); // Done to limit fuel to new maximum
+                    
+                    //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                    //tunnel->loseRandomCriteria();
+                    
+                    updateSpeed(initSpeed, false);
+                    
+                    forceCheckEnd = true;
+                }
+                else
+                {
+                    if (soundFeedbackMiss)
+                    {
+                        soundFeedbackMiss->stop();
+                        soundFeedbackMiss->play();
+                    }
+                    tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                    
+                    numCorrectCombo = 0;
+                    numCorrectBonus = 0;
+                    ++numMissedTotal;
+                    ++numWrongCombo;
+                    if (numWrongCombo % globals.numToSpeedDown == 0)
+                    {
+                        updateSpeed(initSpeed, false);
+                    }
+                }
+            }
+            else if (!podTaken && nbackPod)
+            {
+                if (soundFeedbackMiss)
+                {
+                    soundFeedbackMiss->stop();
+                    soundFeedbackMiss->play();
+                }
+                tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                
+                numCorrectCombo = 0;
+                numCorrectBonus = 0;
+                ++numMissedTotal;
+                ++numWrongCombo;
+                
+                updateSpeed(initSpeed, false);
+            }
+        }
+    }
+    else if (!nbackPod && correctSelection)
+    {
+        numSafeTotal++;
+        numCorrectBonus++;
+        if (podTaken)
+        {
+            numPickupsTotal++;
             if (soundFeedbackGood)
             {
                 soundFeedbackGood->stop();
                 soundFeedbackGood->play();
             }
-        }
-        else
-        {
-            if (soundFeedbackGreat)
-            {
-                soundFeedbackGreat->stop();
-                soundFeedbackGreat->play();
-            }
-        }
-        ++numCorrectTotal;
-
-        if (tunnel->satisfyCriteria(tunnel->getNBackToggle()) || tunnel->getMode() == STAGE_MODE_RECESS)
-        {
-            baseSpeed += globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-        }
-        
-        if (getToggleBack() == 0)
-        {
-            if (hp >= 0) hp += globals.HPPositiveCorrectAnswer;
-            else hp += globals.HPNegativeCorrectAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        }
-        ++numCorrectCombo;
-        numWrongCombo = 0;
-        
-        // Determine Score
-        score += getScoring();
-    }
-    else if (!goodPod && test->isPodTaken())
-    {
-        if (soundFeedbackBad)
-        {
-            soundFeedbackBad->stop();
-            soundFeedbackBad->play();
-        }
-        ++numWrongTotal;
-        
-        //beginBadFuelPickUp();
-        
-        xsTimer = 1.0f;
-        if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-        else hp += globals.HPNegativeWrongAnswer;
-        hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-        
-        //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
-        //tunnel->loseRandomCriteria();
-        
-        numCorrectCombo = 0;
-        ++numWrongCombo;
-        baseSpeed -= globals.speedMap[baseSpeed];
-        baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-        
-        numCorrectBonus = 0;
-        
-        tutorialMgr->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_INCORRECT_MATCH, 1.0f);
-    }
-    else if (!goodPod && !test->isPodTaken())
-    {
-        numSafeTotal++;
-        numCorrectBonus++;
-    }
-    else if (goodPod && !test->isPodTaken()) // Missed good
-    {
-        ++numMissedTotal;
-        
-        if (tunnel->getMode() != STAGE_MODE_RECESS && tunnel->getMode() != STAGE_MODE_TEACHING)
-        {
-            if (soundFeedbackMiss)
-            {
-                soundFeedbackMiss->stop();
-                soundFeedbackMiss->play();
-            }
-        
-            /*
-            if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-            else hp += globals.HPNegativeWrongAnswer;
-            hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-            */
-            tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
-        
-            numCorrectCombo = 0;
-            ++numWrongCombo;
-            baseSpeed -= globals.speedMap[baseSpeed];
-            baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-    
-            numCorrectBonus = 0;
             
-            tutorialMgr->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_MISSING_MATCH, 1.0f);
-        }   
+            // Add to fuel gauge for correct zaps
+            tunnel->addToFuelTimer(tunnel->getFuelReturn());
+        }
     }
+    
+    // Check after passing a pod so that they might obtain fuel and be safe
+    if (tunnel->getFuelTimer() <= 0.0f && (tunnel->getFuelBuffer() <= 0.0 || forceCheckEnd))
+        tunnel->setDone(EVEN);
+    
     // Check for combo mode
     //if (tunnel->getMode() == STAGE_MODE_PROFICIENCY) determineSpawnCombo();
+    // Reset toggle-back to 0-back
+    if (tunnel->getMode() != STAGE_MODE_RECESS) setToggleBack(3);
 }
 
 void Player::determineSpawnCombo()
@@ -1201,8 +1453,8 @@ void Player::recordInfo()
                     {
                         selectTimerFlag = true;
                         selectedTarget = test;;
-                        if (selectTimer <= 0.0) // Make sure it's not being grabbed already
-                            setGlowGrabParameters();
+                        //if (selectTimer <= 0.0) // Make sure it's not being grabbed already
+                        //    setGlowGrabParameters(selectedTarget);
                         if (selectTimer <= 0.0 || selectTimer > 0.1)
                             selectTimer = 0.1;
                     }
@@ -1237,7 +1489,7 @@ void Player::recordInfo()
             memcpy(result.segmentEncoding, segmentEncoding, NUM_DIRECTIONS);
             result.eventID = globals.stageID;
             result.levelID = tunnel->getStageNo();
-            result.taskType = tunnel->getPhase() - 'A';
+            result.taskType = tunnel->getPhase();
             result.nback = tunnel->getNBack();
             result.playerRollBase = camRoll;
             result.playerRollOffset = offsetRoll;
@@ -1388,6 +1640,11 @@ void Player::setSkillLevel(PlayerLevel value)
     skillLevel = value;
 }
 
+void Player::setSessionID(int value)
+{
+    sessionID = value;
+}
+
 void Player::setToggleBack(int value)
 {
     toggleBack = value;
@@ -1462,7 +1719,8 @@ void Player::initToggleBack()
     //    toggle = tunnel->getNBack() - minNBack;
     //setToggleBack(toggle);
     
-    setToggleBack(0);
+    //setToggleBack(toggle);
+    setToggleBack(3);
 }
 
 void Player::newTunnel(const std::string & nameMusic)
@@ -1481,6 +1739,7 @@ void Player::newTunnel(const std::string & nameMusic)
     numSafeTotal = 0;
     numMissedTotal = 0;
     numWrongTotal = 0;
+    numPickupsTotal = 0;
     numCorrectBonus = 0;
     numCorrectCombo = 0;
     numWrongCombo = 0;
@@ -1492,9 +1751,10 @@ void Player::newTunnel(const std::string & nameMusic)
     selectedTarget = NULL;
     
     Session sess;
+    sess.sessionID = sessionID;
     sess.eventID = globals.stageID;
     sess.levelID = tunnel->getStageNo();
-    sess.taskType = tunnel->getPhase() - 'A';
+    sess.taskType = tunnel->getPhase();
     sess.timestampIn = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sess.timestampOut = -1;
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
@@ -1525,6 +1785,8 @@ void Player::newTunnel(const std::string & nameMusic)
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
     }
     
+    boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
+    
     // End animation parameters
     flyOutCounter = 0.0f;
     flyOutDuration = 0.25f;
@@ -1553,6 +1815,8 @@ void Player::newTunnel(const std::string & nameMusic)
     tunnel->setOffsetIterators(camPos, vineOffset);
     vines[0]->setVisible(true);
     vines[0]->reloadIfNecessary(globals.setVineShip);
+    vines[0]->setBoost();
+    boostTimer = 0.0f;
     TunnelSlice* closest = tunnel->getCurrentOffset();
     if (closest)
     {
@@ -1598,17 +1862,49 @@ void Player::startMenu()
 // Save speed settings from speed dial
 void Player::saveSpeedSettings()
 {
-    // Save speed settings for every other stage as well.
-    // Players prefer it carries over to every other level instead of just the level played itself.
-    for (int i = 0; i < levelProgress.size(); ++i)
-        for (int j = 0; j < levelProgress[i].size(); ++j)
+    if (levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        switch (levelRequest->first.phaseX)
         {
-            PlayerProgress* levelResult = &(levelProgress[i][j]);
-            levelResult->initSpeedSetting = globals.initCamSpeed;
+            case PHASE_COLOR_SOUND:
+                scheduler->speedA = globals.initCamSpeed;
+                scheduler->firstTimeA = false;
+                break;
+            case PHASE_SHAPE_SOUND:
+                scheduler->speedB = globals.initCamSpeed;
+                scheduler->firstTimeB = false;
+                break;
+            case PHASE_SOUND_ONLY:
+                scheduler->speedC = globals.initCamSpeed;
+                scheduler->firstTimeC = false;
+                break;
+            case PHASE_ALL_SIGNAL:
+                scheduler->speedD = globals.initCamSpeed;
+                scheduler->firstTimeD = false;
+                break;
+            case PHASE_COLLECT:
+                scheduler->speedE = globals.initCamSpeed;
+                scheduler->firstTimeE = false;
+                break;
+            default:
+                break;
         }
-    // Save speed settings for just the stage
-    //PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
-    //levelResult->initSpeedSetting = globals.initCamSpeed;
+    }
+    else
+    {
+        // Save speed settings for every other stage as well.
+        // Players prefer it carries over to every other level instead of just the level played itself.
+        for (int i = 0; i < levelProgress.size(); ++i)
+            for (int j = 0; j < levelProgress[i].size(); ++j)
+            {
+                PlayerProgress* levelResult = &(levelProgress[i][j]);
+                levelResult->initSpeedSetting = globals.initCamSpeed;
+            }
+        // Save speed settings for just the stage
+        //PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+        //levelResult->initSpeedSetting = globals.initCamSpeed;
+    }
 }
 
 void Player::move(Vector3 delta)
@@ -1664,6 +1960,15 @@ void Player::reactGUI() const
     }
 }
 
+void Player::playFireworkSound() const
+{
+    if (soundFirework)
+    {
+        soundFirework->stop();
+        soundFirework->play();
+    }
+}
+
 float Player::getStartMusicTimer() const
 {
     return startMusicTimer;
@@ -1701,6 +2006,7 @@ void Player::setVolume()
     if (soundBoost) soundBoost->setVolume(soundVolume);
     if (soundStartup) soundStartup->setVolume(soundVolume);
     if (soundButtonPress) soundButtonPress->setVolume(soundVolume);
+    if (soundFirework) soundFirework->setVolume(soundVolume);
 }
 
 void Player::unpause()
@@ -1739,6 +2045,8 @@ void Player::pause()
         soundBoost->pause();
     if (soundButtonPress)
         soundButtonPress->pause();
+    if (soundFirework)
+        soundFirework->pause();
 }
 
 void Player::setSounds(bool mode)
@@ -1759,6 +2067,7 @@ void Player::setSounds(bool mode)
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
         soundButtonPress = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundButtonPress");
+        soundFirework = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundFirework");
     }
     else // false means no pod sounds
     {
@@ -1772,6 +2081,7 @@ void Player::setSounds(bool mode)
         soundStartup = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundStartup");
         soundBoost = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundBoost");
         soundButtonPress = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundButtonPress");
+        soundFirework = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("SoundFirework");
     }
     setVolume();
 }
@@ -1813,8 +2123,7 @@ void Player::checkCollisions()
                         
                             if (!triggerShields())
                             {
-                                baseSpeed -= globals.speedMap[baseSpeed];;
-                                baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+                                updateSpeed(initSpeed, false);
                                 speedTimer = 5.0;
                                 tunnel->addToTimePenalty(globals.distractorTimePenalty);
                                 if (hp >= 0)
@@ -1822,6 +2131,7 @@ void Player::checkCollisions()
                                 else
                                     hp += globals.HPNegativeDistractor;
                                 hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                                tunnel->addToFuelTimer(0.0); // Done to limit fuel to new maximum
                             
                                 beginBadFuelPickUp();
                             }
@@ -1854,6 +2164,65 @@ void Player::checkCollisions()
     }
 }
 
+// Updates final speed based on the mean. (Bigger steps around the mean and smaller steps away from the mean).
+// The function also takes in a step parameter where true is an increasing step and false is a decreasing step.
+void Player::updateSpeed(int mean, bool step)
+{
+    float epsilon = 0.1;
+    float ds = 0.0;
+    if (step)
+    {
+        // Step function for how speed rises
+        float dist = baseSpeed - mean;
+        if (dist <= -15 + epsilon)
+            ds = 3.0;
+        else if (dist <= -7.5 + epsilon)
+            ds = 3.0;
+        else if (dist <= -5 + epsilon)
+            ds = 2.0;
+        else if (dist <= -1 + epsilon)
+            ds = 1.0;
+        else if (dist < 1 + epsilon)
+            ds = 1.0;
+        else if (dist < 5 + epsilon)
+            ds = 0.5;
+        else if (dist < 7.5 + epsilon)
+            ds = 0.5;
+        else if (dist < 15 + epsilon)
+            ds = 0.5;
+        else
+            ds = 0.0;
+    }
+    else
+    {
+        // Step function for how speed drops
+        float dist = baseSpeed - mean;
+        if (dist <= -15 + epsilon)
+            ds = 0.0;
+        else if (dist <= -7.5 + epsilon)
+            ds = -0.5;
+        else if (dist <= -5 + epsilon)
+            ds = -1.0;
+        else if (dist <= -1 + epsilon)
+            ds = -1.0;
+        else if (dist < 1 + epsilon)
+            ds = -1.0   ;
+        else if (dist < 5 + epsilon)
+            ds = -2.0;
+        else if (dist < 7.5 + epsilon)
+            ds = -2.0;
+        else if (dist < 15 + epsilon)
+            ds = -3.0;
+        else
+            ds = -3.0;
+    }
+    baseSpeed += ds;
+    baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
+    tunnel->updateTSModifier();
+}
+
+// Assigns the actual final speed of the ship depending on the state of the game and the player.
+// Final speed uses the in-game base speed of the player.
 void Player::decideFinalSpeed(float elapsed)
 {
     if (tunnel->isDone())
@@ -1963,7 +2332,8 @@ void Player::update(float elapsed)
 
     //*******//
     // If score is being calculated, do not continue
-    if( endFlag ) return;
+    if( endFlag )
+        return;
     // Winning animation
     if( tunnel->getEval() == PASS && tunnel->getFlyOut() )
     {
@@ -1976,7 +2346,15 @@ void Player::update(float elapsed)
                 flyLeft = true;
                 
                 endFlag = true;
-                //tunnel->setCleaning(true);
+                tutorialMgr->prepareSlides(TutorialManager::TUTORIAL_END_OF_STAGE, 0.0f);
+                
+                const int SCORE_PER_TICK = 100;
+                const int NONZAP_PICKUP = 50;
+                int tleft = 0;
+                if (tunnel->getEval() == PASS)
+                    tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+                int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
+                setScore(score);
                 
                 boostTimer = 0.0;
                 soundBoost->stop();
@@ -2057,6 +2435,16 @@ void Player::update(float elapsed)
             flyOutSpeed = 0.0f;
             soundStart = false;
             endFlag = true;
+            
+            const int SCORE_PER_TICK = 100;
+            const int NONZAP_PICKUP = 50;
+            int tleft = 0;
+            if (tunnel->getEval() == PASS)
+                tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+            int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
+            setScore(score);
+            
+            tutorialMgr->prepareSlides(TutorialManager::TUTORIAL_END_OF_STAGE, 0.0f);
         }
         else {
             flyOutCounter += elapsed;
@@ -2080,6 +2468,21 @@ void Player::update(float elapsed)
             vines[0]->move(getCamUpward() * -flyOutSpeed);
         }
     }
+    else if (animationTimer <= 0.0)
+    {
+        endFlag = true;
+        tutorialMgr->prepareSlides(TutorialManager::TUTORIAL_END_OF_STAGE, 0.0f);
+        
+        const int SCORE_PER_TICK = 100;
+        const int NONZAP_PICKUP = 50;
+        int tleft = 0;
+        if (tunnel->getEval() == PASS)
+            tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+        int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
+        setScore(score);
+        
+        animationTimer = 5.0; // Prevent two slides at once
+    }
     else // Game is still going
     {
         // Interpolate the camera to get smooth transitions
@@ -2096,14 +2499,11 @@ void Player::update(float elapsed)
         // Orient the ship in front of the camera at all times
         offsetShip(elapsed);
         
-        if (!tunnel->isDone())
-        {
-            // Check for collisions for player and the tunnel
-            checkCollisions();
+        // Check for collisions for player and the tunnel
+        checkCollisions();
             
-            // Record the segment info player has passed
-            recordInfo();
-        }
+        // Record the segment info player has passed
+        recordInfo();
     }
 }
 
@@ -2218,8 +2618,7 @@ void Player::saveAllResults(Evaluation eval)
     }
     else
     {
-        // Recess is based off of distance (number of signals left to pass)
-        // Every other is a collection task which we will use the default 3, 5, 8
+        // Recess is based off of a high number of collection (% collected)
         if (tunnel->getMode() == STAGE_MODE_RECESS)
         {
             float percentComplete = tunnel->getPercentComplete();
@@ -2229,23 +2628,29 @@ void Player::saveAllResults(Evaluation eval)
                 nrating = 3;
             else if (percentComplete >= 0.50)
                 nrating = 2;
-            else
+            else if (percentComplete >= 0.20)
                 nrating = 1;
+            else
+                nrating = 0;
         }
         else
         {
-            int collected = tunnel->getNumSatisfiedCriteria();
-            if (collected >= 9)
-                nrating = 4;
-            else if (collected >= 6)
-                nrating = 3;
-            else if (collected >= 3)
-                nrating = 2;
-            else
-                nrating = 1;
+            nrating = tunnel->getStarPhase();
         }
     }
-    PlayerProgress* levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    
+    PlayerProgress* levelResult;
+    if(levelRequest)
+    {
+        // If assigned a specific level (via scheduler)
+        levelResult = &levelRequest->second;
+    }
+    else
+    {
+        // If level played by 2-D grid select
+        levelResult = &(levelProgress[levelRequestRow][levelRequestCol]);
+    }
+    
     // If level has never been done before or we have a new high score, then save stats
     if (levelResult->rating < 0 || score > levelResult->score)
     {
@@ -2258,6 +2663,62 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
+        
+        // For level scheduler set new speed to be the average of the ending speed and init speed setting
+        if (levelRequest)
+        {
+            switch (levelRequest->first.phaseX)
+            {
+                case PHASE_COLOR_SOUND:
+                {
+                    float nspeed = (scheduler->speedA + baseSpeed) / 2;
+                    if (nrating >= 5 || nspeed < scheduler->speedA)
+                        scheduler->speedA = nspeed;
+                    scheduler->speedA = Util::clamp(scheduler->speedA, globals.minCamSpeed, globals.maxCamSpeed);
+                    scheduler->firstTimeA = false;
+                    break;
+                }
+                case PHASE_SHAPE_SOUND:
+                {
+                    float nspeed = (scheduler->speedB + baseSpeed) / 2;
+                    if (nrating >= 5 || nspeed < scheduler->speedB)
+                        scheduler->speedB = nspeed;
+                    scheduler->speedB = Util::clamp(scheduler->speedB, globals.minCamSpeed, globals.maxCamSpeed);
+                    scheduler->firstTimeB = false;
+                    break;
+                }
+                case PHASE_SOUND_ONLY:
+                {
+                    float nspeed = (scheduler->speedC + baseSpeed) / 2;
+                    if (nrating >= 5 || nspeed < scheduler->speedC)
+                        scheduler->speedC = nspeed;
+                    scheduler->speedC = Util::clamp(scheduler->speedC, globals.minCamSpeed, globals.maxCamSpeed);
+                    scheduler->firstTimeC = false;
+                    break;
+                }
+                case PHASE_ALL_SIGNAL:
+                {
+                    float nspeed = (scheduler->speedD + baseSpeed) / 2;
+                    if (nrating >= 5 || nspeed < scheduler->speedD)
+                        scheduler->speedD = nspeed;
+                    scheduler->speedD = Util::clamp(scheduler->speedD, globals.minCamSpeed, globals.maxCamSpeed);
+                    scheduler->firstTimeD = false;
+                    break;
+                }
+                case PHASE_COLLECT:
+                {
+                    float nspeed = (scheduler->speedE + baseSpeed - globals.stageTotalCollections / 3) / 2;
+                    
+                    if (nrating >= 5 || nspeed < scheduler->speedE)
+                        scheduler->speedE = nspeed;
+                    scheduler->speedE = Util::clamp(scheduler->speedE, globals.minCamSpeed, globals.maxCamSpeed);
+                    scheduler->firstTimeE = false;
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
     // Update other level results/settings
     levelResult->initSpeedSetting = initSpeed; // Done in newTunnel(...) as well, but save here anyway
@@ -2319,6 +2780,7 @@ bool Player::saveStage(std::string file)
             out << "% Pod Sound { -1, inf }" << endl;
             out << "% Pod Match { -1=N/A, 0=No, 1=Yes }" << endl;
             out << "% Pod Taken { -1=N/A, 0=No, 1=Yes }" << endl;
+            out << "% Pod Zapped { -1=N/A, 0=No, 1=Yes }" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "% Num Obstacles { 0, inf }" << endl;
             out << "% Min Speed { 0, inf }" << endl;
@@ -2329,7 +2791,7 @@ bool Player::saveStage(std::string file)
             out << "% Segment Angle { 0, inf }" << endl;
             out << "% Segment Panels { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
+            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken PodZapped Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
         }
         
         for (std::list<Result>::iterator it = results.begin(); it != results.end(); ++it) {
@@ -2356,12 +2818,13 @@ bool Player::saveStage(std::string file)
                 << it->podInfo.podShape << " "
                 << it->podInfo.podSound << " "
                 << it->podInfo.goodPod << " "
-                << it->podInfo.podTaken << " ";
+                << it->podInfo.podTaken << " "
+                << it->podInfo.podZapped << " ";
             }
             else
-                out << "-1 -1 -1 -1 -1 -1 ";
-            out << nobs << " ";
+                out << "-1 -1 -1 -1 -1 -1 -1 ";
             out << it->timestamp << " ";
+            out << nobs << " ";
             out << it->minSpeed << " "
             << it->maxSpeed << " "
             << it->baseSpeed << " "
@@ -2462,15 +2925,44 @@ bool Player::saveSession(std::string file)
     sessions.back().FP = numWrongTotal;
     sessions.back().TN = numMissedTotal;
     sessions.back().FN = numSafeTotal;
+    sessions.back().pickups = numPickupsTotal;
     sessions.back().obsHit = numCollisionsTotal;
     sessions.back().obsAvoided = numAvoidancesTotal;
     sessions.back().score = score;
-    
+    sessions.back().totalMarbles = scheduler->totalMarbles;
+    sessions.back().nbackLevelA = scheduler->nBackLevelA;
+    sessions.back().nbackLevelB = scheduler->nBackLevelB;
+    sessions.back().nbackLevelC = scheduler->nBackLevelC;
+    sessions.back().nbackLevelD = scheduler->nBackLevelD;
+    sessions.back().nbackLevelE = scheduler->nBackLevelE;
+    sessions.back().scoreCurr = scheduler->scoreCurr;
+    sessions.back().currentHoldout = scheduler->currentHoldout;
+    sessions.back().holdoutOffsetA = scheduler->holdoutOffsetA;
+    sessions.back().holdoutOffsetB = scheduler->holdoutOffsetB;
+    sessions.back().holdoutOffsetD = scheduler->holdoutOffsetD;
+    sessions.back().speedA = scheduler->speedA;
+    sessions.back().speedB = scheduler->speedB;
+    sessions.back().speedC = scheduler->speedC;
+    sessions.back().speedD = scheduler->speedD;
+    sessions.back().speedE = scheduler->speedE;
+    sessions.back().musicVolume = musicVolume;
+    sessions.back().soundVolume = soundVolume;
+    sessions.back().syncDataToServer = syncDataToServer;
+    sessions.back().maxVel = maxVel;
+    sessions.back().minVelFree = minVelFree;
+    sessions.back().minVelStopper = minVelStopper;
+    sessions.back().dampingDecayFree = dampingDecayFree;
+    sessions.back().dampingDecayStop = dampingDecayStop;
+    sessions.back().dampingDropFree = dampingDropFree;
+    sessions.back().dampingDropStop = dampingDropStop;
+    sessions.back().inverted = inverted;
+
     if (out.good()) {
         if (newFile) {
             out << "% Session Log: " << endl;
             out << "% debug seed: " << seed << endl;
             out << "%" << endl;
+            out << "% Session Number { 0, inf }" << endl;
             out << "% Event Number { 0, inf }" << endl;
             out << "% Level Number { 0, inf }" << endl;
             out << "% Task Type { 0=Color/Sound, 1=Shape/Sound, 2=Sound, 3=Holdout, 4=Recess }" << endl;
@@ -2479,18 +2971,47 @@ bool Player::saveSession(std::string file)
             out << "% N-Back { 0, inf }" << endl;
             out << "% RunSpeedIn { 0, inf }" << endl;
             out << "% RunSpeedOut { 0, inf }" << endl;
-            out << "% TP - Total Picked and Match { 0, inf }" << endl;
-            out << "% FP - Total Picked and Non-Match { 0, inf }" << endl;
+            out << "% TP - Total Zapped and Match { 0, inf }" << endl;
+            out << "% FP - Total Zapped and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
             out << "% FN - Total Missed and Non-Match { 0, inf }" << endl;
+            out << "% Pickups - Total Grabbed and Non-Match { 0, inf }" << endl;
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "% Score - Player points earned in level" << endl;
+            out << "% totalMarbles - Levels left in the random pool for the scheduler" << endl;
+            out << "% NBackLevelA - Color/Sound scheduler skill level" << endl;
+            out << "% NBackLevelB - Shape/Sound scheduler skill level" << endl;
+            out << "% NBackLevelC - Sound Only  scheduler skill level" << endl;
+            out << "% NBackLevelD - All Signals scheduler skill level" << endl;
+            out << "% NBackLevelE - Recess      scheduler skill level" << endl;
+            out << "% scoreCurr - Total scheduler score" << endl;
+            out << "% currentHoldout - Holdout experience in scheduler" << endl;
+            out << "% holdoutOffsetA - Offset to Color/Sound skill level in scheduler" << endl;
+            out << "% holdoutOffsetB - Offset to Shape/Sound skill level in scheduler" << endl;
+            out << "% holdoutOffsetD - Offset to All Signals skill level in scheduler" << endl;
+            out << "% speedA - Scheduler recommended speed for Color/Sound" << endl;
+            out << "% speedB - Scheduler recommended speed for Shape/Sound" << endl;
+            out << "% speedC - Scheduler recommended speed for Sound Only" << endl;
+            out << "% speedD - Scheduler recommended speed for All Signals" << endl;
+            out << "% speedE - Scheduler recommended speed for Recess" << endl;
+            out << "% musicVolume - Settings music volume" << endl;
+            out << "% soundVolume - Settings sound volume" << endl;
+            out << "% syncDataToServer - Settings that lets user to sync log data to server" << endl;
+            out << "% maxVel - Controller Settings for maximum angular spin" << endl;
+            out << "% minVelFree - deprecated" << endl;
+            out << "% minVelStopper - Controller Settings for minimum velocity to force stop in free motion" << endl;
+            out << "% dampingDecayFree - Controller Settings for a multiplier to slow down in free motion" << endl;
+            out << "% dampingDecayStop - Controller Settings for a multiplier to slow down by held down input" << endl;
+            out << "% dampingDropFree - Controller Settings for a linear slow down in free motion" << endl;
+            out << "% dampingDropStop - Controller Settings for a linear slow down by held down input" << endl;
+            out << "% inverted - Controller Settings to invert direction" << endl;
             out << "%" << endl;
-            out << "% EventNumber LevelNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed TP FP TN FN ObsHit ObsAvoid Score" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType Duration TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score totalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE scoreCurr currentHoldout holdoutOffsetA holdoutOffsetB holdoutOffsetD speedA speedB speedC speedD speedE musicVolume soundVolume syncDataToServer maxVel minVelFree minVelStopper dampingDecayFree dampingDecayStop dampingDropFree dampingDropStop inverted" << endl;
         }
         
-        out << sessions.back().eventID << " "
+        out << sessions.back().sessionID << " "
+        << sessions.back().eventID << " "
         << sessions.back().levelID << " "
         << sessions.back().taskType << " "
         << sessions.back().timestampIn << " "
@@ -2502,9 +3023,27 @@ bool Player::saveSession(std::string file)
         << sessions.back().FP << " "
         << sessions.back().TN << " "
         << sessions.back().FN << " "
+        << sessions.back().pickups << " "
         << sessions.back().obsHit << " "
         << sessions.back().obsAvoided << " "
-        << sessions.back().score << endl;
+        << sessions.back().score << " "
+        << sessions.back().totalMarbles << " "
+        << sessions.back().nbackLevelA << " "
+        << sessions.back().nbackLevelB << " "
+        << sessions.back().nbackLevelC << " "
+        << sessions.back().nbackLevelD << " "
+        << sessions.back().nbackLevelE << " "
+        << sessions.back().musicVolume << " "
+        << sessions.back().soundVolume << " "
+        << sessions.back().syncDataToServer << " "
+        << sessions.back().maxVel << " "
+        << sessions.back().minVelFree << " "
+        << sessions.back().minVelStopper << " "
+        << sessions.back().dampingDecayFree << " "
+        << sessions.back().dampingDecayStop << " "
+        << sessions.back().dampingDropFree << " "
+        << sessions.back().dampingDropStop << " "
+        << sessions.back().inverted << "\n";
         
         out.close();
     }
@@ -2523,7 +3062,7 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = true;
     
-    out << "V1.2" << std::endl;
+    out << "V1.5" << std::endl;
     
     out << levelProgress.size() << std::endl;
     for (int i = 0; i < levelProgress.size(); ++i)
@@ -2532,12 +3071,17 @@ bool Player::saveProgress(std::string file)
             out << "level" << " " << i << " " << j << " " << levelProgress[i][j] << std::endl;
     }
     
-    out << "tutorial" << " " << (*tutorialMgr) << std::endl;
+    out << "sessionID" << " " << sessionID << std::endl;
+    out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
+    out << "scheduler1.0" << " " << (*scheduler) << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
     out << "maxVel" << " " << maxVel << std::endl;
     out << "minVelStopper" << " " << minVelStopper << std::endl;
+    out << "holdout" << " " << holdout << std::endl;
+    out << "holdoutLB" << " " << holdoutLB << std::endl;
+    out << "holdoutUB" << " " << holdoutUB << std::endl;
     out << "dampingDecayFree" << " " << dampingDecayFree << std::endl;
     out << "dampingDecayStop" << " " << dampingDecayStop << std::endl;
     out << "dampingDropFree" << " " << dampingDropFree << std::endl;
@@ -2552,86 +3096,10 @@ bool Player::saveProgress(std::string file)
 }
 
 // Load based on player results in level progression
-// Version 1.0
-bool Player::loadProgress1_0(std::string savePath)
+// Version 1.5
+bool Player::loadProgress1_5(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
-    
-    if (saveFile.good()) {
-        int size;
-        saveFile >> size;
-        
-        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
-        for (int i = 0; i < levelProgress.size(); ++i)
-        {
-            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
-            for (int j = 0; j < levelProgress[i].size(); ++j)
-            {
-                std::cout << "Level: " << i << "," << j << std::endl;
-                saveFile >> levelProgress[i][j];
-                std::cout << levelProgress[i][j] << std::endl;
-            }
-        }
-        
-        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    
-    //tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_WELCOME);
-    
-    saveFile.close();
-    return ret;
-}
-
-// Load based on player results in level progression
-// Version 1.1
-bool Player::loadProgress1_1(std::string savePath)
-{
-    std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
-    
-    if (saveFile.good()) {
-        std::string input;
-        saveFile >> input; // Receive version string
-        
-        int size;
-        saveFile >> size;
-        
-        levelProgress = std::vector< std::vector<PlayerProgress> >(size);
-        for (int i = 0; i < levelProgress.size(); ++i)
-        {
-            levelProgress[i] = std::vector<PlayerProgress>(NUM_TASKS);
-            for (int j = 0; j < levelProgress[i].size(); ++j)
-            {
-                std::cout << "Level: " << i << "," << j << std::endl;
-                saveFile >> levelProgress[i][j];
-                std::cout << levelProgress[i][j] << std::endl;
-            }
-        }
-        
-        globals.setMessage("Loaded Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = true;
-    } else {
-        globals.setMessage("New Save " + globals.playerName + "\nSwipe to Continue", MESSAGE_NORMAL);
-        ret = false;
-    }
-    
-    //tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_WELCOME);
-    
-    saveFile.close();
-    return ret;
-}
-
-// Load based on player results in level progression
-// Version 1.2
-bool Player::loadProgress1_2(std::string savePath)
-{
-    std::ifstream saveFile (savePath.c_str());
-    bool ret = false;
     
     if (saveFile.good()) {
         std::string input;
@@ -2643,6 +3111,7 @@ bool Player::loadProgress1_2(std::string savePath)
             setSaveValue(saveFile, input, ignoreList);
         }
     }
+    return saveFile.eof();
 }
 
 // Loads player progress. First it decides which version,
@@ -2656,20 +3125,22 @@ bool Player::loadProgress(std::string savePath)
         saveFile >> input;
         
         saveFile.close();
-        if (input == "V1.2")
-            return loadProgress1_2(savePath);
-        else if (input == "V1.1")
-            return loadProgress1_1(savePath);
+        if (input == "V1.5")
+            return loadProgress1_5(savePath);
         else
-            return loadProgress1_0(savePath);
+            return false;
     }
     return false;
 }
 
 std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList)
 {
-    if (paramName == "tutorial")
+    if (paramName == "sessionID")
+        in >> sessionID;
+    if (paramName == "tutorial1.0")
         in >> (*tutorialMgr);
+    else if (paramName == "scheduler1.0")
+        in >> (*scheduler);
     else if (paramName == "levelSize")
     {
         int size;
@@ -2696,6 +3167,12 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> maxVel;
     else if (paramName == "minVelStopper")
         in >> minVelStopper;
+    else if (paramName == "holdout")
+        in >> holdout;
+    else if (paramName == "holdoutLB")
+        in >> holdoutLB;
+    else if (paramName == "holdoutUB")
+        in >> holdoutUB;
     else if (paramName == "dampingDecayFree")
         in >> dampingDecayFree;
     else if (paramName == "dampingDecayStop")
@@ -2727,6 +3204,272 @@ void Player::initSettings()
     dampingDecayStop = 0.500f; // Stop Motion damping multiplier
     dampingDropFree = 25.0f;    // Free Motion damping linear drop
     dampingDropStop = 50.0f;    // Stop Motion damping linear drop
+}
+
+void Player::feedLevelRequestFromSchedule()
+{
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices();
+    scheduleChoice1 = choices[0];
+    scheduleChoice2 = choices[1];
+    scheduleChoice3 = choices[2];
+//    // assign the level to be played in the same position as the iterator or the schedule
+//    levelRequest = &scheduler->schedule[0][0].first;
+//    
+//    // Increment to the next stagerequest
+//    scheduler->scheduleIt++;
+//    
+//    // if the schedule reaches the end, wrap it back to beginning
+//    if( scheduler->scheduleIt == scheduler->schedule.end() )
+//        scheduler->scheduleIt = scheduler->schedule.begin();
+}
+
+// Returns a multiplier when incrementing or decrementing memory level during assessment
+float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessment)
+{
+    float valMemory = 1.0;
+    float valNavigation = 1.0;
+    float valHoldout = 1.0;
+    
+    float nBackDifficulty = level.nback - assessment.nBackSkill;
+    if (level.hasHoldout())
+        nBackDifficulty -= assessment.nBackOffset;
+    if (level.phaseX == PHASE_COLLECT)
+        valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
+    else if ( nBackDifficulty < -1.5 )
+        valMemory = 0.0;    // too easy memory
+    else if ( nBackDifficulty < -0.5 )
+        valMemory = 0.5;    // easy memory
+    else if ( nBackDifficulty < 0.5 )
+        valMemory = 1.0;    // normal memory
+    else //if ( nBackDifficulty >= 0.5 )
+        valMemory = 2.0;    // hard memory
+
+    if (level.difficultyX == DIFFICULTY_EASY)
+        valNavigation = 0.8;   // easy nav
+    else if (level.difficultyX == DIFFICULTY_NORMAL)
+        valNavigation = 1.0;   // normal nav
+    else //(level.difficulty == DIFFICULTY_HARD)
+        valNavigation = 1.2;   // hard nav
+    
+    return valMemory * valNavigation * valHoldout;
+}
+
+
+// Returns a multiplier when incrementing or decrementing memory level during assessment
+float Player::obtainSamplingWeight(StageRequest level, PlayerProgress assessment)
+{
+    float valLength = 1.0;
+    
+    // Not only is it shorter times and stuff, the accuracy requirement
+    // for passing is lower for easy time. So it is a very strong multiplier
+    if (level.phaseX == PHASE_COLLECT)
+        valLength = 1.0;
+    else if (level.collectionCriteria.size() <= 4)
+        valLength = 0.5;    // easy time
+    else if (level.collectionCriteria.size() <= 8)
+        valLength = 1.0;    // normal time
+    else //if (level.collectionCriteria.size() <= 13)
+        valLength = 2.0;    // hard time
+    
+    return valLength;
+}
+
+float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
+{
+    // Assign an accuracy range that determines success from 0% to 100%
+    float accuracyRange = 0.25;
+    
+    // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
+    const float SOFT_CAP = 0.35;
+    const float HARD_CAP = 0.50;
+    double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
+    if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
+    
+    float difficultyWeight = obtainDifficultyWeight(level, assessment);
+    float samplingWeight = obtainSamplingWeight(level, assessment);
+    const float PERFECT_MULTIPLIER = 1.3;
+    if ( nBackDelta < 0.0 )
+    {
+        if (assessment.rating >= 5 && !exclude ) // If the player completed the level, don't decrease despite accuracy
+            nBackDelta = 0.0;
+        
+        if (difficultyWeight != 0.0) // Don't divide by 0
+            nBackDelta /= difficultyWeight; // apply multiplier to negative base value
+        else
+            nBackDelta = 0.0;
+        nBackDelta *= samplingWeight;
+    }
+    else
+    {
+        if (assessment.rating < 5 && !exclude ) // If the player didn't complete the level, don't increase despite accuracy
+            nBackDelta = 0.0;
+        nBackDelta *= difficultyWeight; // apply multiplier to positive base value
+        nBackDelta *= samplingWeight;
+        if (accuracy >= 1.00 - Util::EPSILON && !exclude    ) // If player has perfect performance, grant a bonus to memory score
+            nBackDelta *= PERFECT_MULTIPLIER;
+    }
+    if ( nBackDelta <= -HARD_CAP) nBackDelta = -HARD_CAP;
+    if ( nBackDelta >= HARD_CAP) nBackDelta = HARD_CAP;
+    return nBackDelta;
+}
+
+// Grades level and updates nBackLevel of scheduler using the accuracy formula
+void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade)
+{
+    // first and second parts of the explicit pair
+    StageRequest level = levelToGrade->first;
+    PlayerProgress assessment = levelToGrade->second;
+    
+    // Formula for accuracy = TP / TP + TN + FP
+    double accuracy = 0.0f;
+    if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
+        accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+    
+    float nBackDelta = modifyNBackDelta(level, assessment, accuracy, false);
+    
+    if ( totalElapsed >= globals.sessionTime )
+        scheduler->sessionFinished = true;
+    
+    cout << "\n\n-----------------------------------------\n";
+    cout << "Game Time Played: " << totalElapsed << endl;
+    cout << "-----------------------------------------\n\n";
+    
+    double playerSkill;
+    double playerOffset;
+    double holdoutDelta = 0.0;
+    // Find out what phase they're in and update their skill level for that phase.
+    //
+    // If the level has holdout, the update is affected into a holdout skill offset
+    // for that phase. Additionally, if the holdout skill offset ends up being positive,
+    // it is zero'd out and the difference is added into skill level.
+    switch (level.phaseX) {
+        case PHASE_COLLECT:
+            scheduler->nBackLevelE += nBackDelta;
+            if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
+            playerSkill = scheduler->nBackLevelE;
+            playerOffset = 0.0;
+            break;
+        case PHASE_COLOR_SOUND:
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetA>0) {
+                    holdoutDelta = nBackDelta - scheduler->holdoutOffsetA;
+                    nBackDelta = scheduler->holdoutOffsetA;
+                    
+                    scheduler->nBackLevelA += scheduler->holdoutOffsetA;
+                    scheduler->holdoutOffsetA = 0;              //reset offset
+                }
+                else {
+                    holdoutDelta = nBackDelta;
+                    nBackDelta = 0.0;
+                }
+            }
+            else scheduler->nBackLevelA += nBackDelta;
+            if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+            playerSkill = scheduler->nBackLevelA;
+            playerOffset = scheduler->holdoutOffsetA;
+            break;
+        case PHASE_SHAPE_SOUND:
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetB>0) {
+                    holdoutDelta = nBackDelta - scheduler->holdoutOffsetB;
+                    nBackDelta = scheduler->holdoutOffsetB;
+                    
+                    scheduler->nBackLevelB += scheduler->holdoutOffsetB;
+                    scheduler->holdoutOffsetB = 0;              //reset offset
+                }
+                else {
+                    holdoutDelta = nBackDelta;
+                    nBackDelta = 0.0;
+                }
+            }
+            else scheduler->nBackLevelB += nBackDelta;
+            if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+            playerSkill = scheduler->nBackLevelB;
+            playerOffset = scheduler->holdoutOffsetB;
+            break;
+        case PHASE_SOUND_ONLY:
+            scheduler->nBackLevelC += nBackDelta;
+            if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
+            playerSkill = scheduler->nBackLevelC;
+            playerOffset = 0.0;
+            break;
+        case PHASE_ALL_SIGNAL:
+            if (level.hasHoldout())
+            {
+                scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
+                if(scheduler->holdoutOffsetD>0) {
+                    holdoutDelta = nBackDelta - scheduler->holdoutOffsetD;
+                    nBackDelta = scheduler->holdoutOffsetD;
+                    
+                    scheduler->nBackLevelD += scheduler->holdoutOffsetD;
+                    scheduler->holdoutOffsetD = 0;              //reset offset
+                }
+                else {
+                    holdoutDelta = nBackDelta;
+                    nBackDelta = 0.0;
+                }
+            }
+            else scheduler->nBackLevelD += nBackDelta;
+            if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
+            playerSkill = scheduler->nBackLevelD;       //set nbacklevel to playerskill
+            playerOffset = scheduler->holdoutOffsetD;
+            break;
+        default:
+            break;
+    }
+    // Update total score
+    scheduler->scoreCurr += score;
+    
+    // Update holdout experience based on performance
+    if(nBackDelta > 0 && level.hasHoldout() && scheduler->currentHoldout < 80)
+    {
+        scheduler->currentHoldout+=10;
+        if (scheduler->currentHoldout > 80)
+            scheduler->currentHoldout = 80;
+    }
+    
+    // Record for reporting purposes
+    levelToGrade->second.accuracy = accuracy;
+    levelToGrade->second.nBackDelta = nBackDelta;
+    levelToGrade->second.nBackReturn = holdoutDelta;
+    levelToGrade->second.nBackNoffset = playerOffset;
+    levelToGrade->second.nBackResult = playerSkill;
+    
+    std::cout << "N-Back Delta: " << nBackDelta << std::endl;
+    
+    scheduler->removeBin(level.phaseX, level.difficultyX, level.durationX, level.hasHoldout());
+
+    // Continue to increment a play count for each non-recess played so that we can track
+    // every 5 levels to throw in a recess that they can play.
+    if (level.phaseX != PHASE_COLLECT)
+        scheduler->playCount++;
+    
+    // Record in the scheduler for each task column the latest level played
+    switch (level.phaseX)
+    {
+        case PHASE_COLOR_SOUND:
+            scheduler->scheduleHistoryA.push_back(*levelRequest);
+            break;
+        case PHASE_SHAPE_SOUND:
+            scheduler->scheduleHistoryB.push_back(*levelRequest);
+            break;
+        case PHASE_SOUND_ONLY:
+            scheduler->scheduleHistoryC.push_back(*levelRequest);
+            break;
+        case PHASE_ALL_SIGNAL:
+            scheduler->scheduleHistoryD.push_back(*levelRequest);
+            break;
+        case PHASE_COLLECT:
+            scheduler->scheduleHistoryE.push_back(*levelRequest);
+            break;
+        default:
+            break;
+    }
 }
 
 Player::~Player()

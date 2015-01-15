@@ -93,9 +93,9 @@ public:
     
     bool setName(const char* name);
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-	void startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica);
+	void startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name);
 #else
-	void startDemo(const char* name, MusicMode musica);
+	void startDemo(const char* name);
 #endif
     void update(float elapsed);
     void endGame();

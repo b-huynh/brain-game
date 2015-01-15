@@ -21,6 +21,7 @@ public:
     
     void update(float elapsed);
     
+    Engine* peek(int depth = 0); // depth of 0 is the top of stack
     Engine* getActiveEngine() const;
     
     void requestPushEngine(EngineState engineType, Player* player);

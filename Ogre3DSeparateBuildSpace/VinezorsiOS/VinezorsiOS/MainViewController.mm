@@ -77,14 +77,6 @@
     doubleTapRecognizer.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:doubleTapRecognizer];
     
-    UISwipeGestureRecognizer *upSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget: self action:@selector(handleSwipeUp:)];
-    [upSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
-    [self.view addGestureRecognizer:upSwipeRecognizer];
-    
-    UISwipeGestureRecognizer *downSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget: self action:@selector(handleSwipeDown:)];
-    [downSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
-    [self.view addGestureRecognizer:downSwipeRecognizer];
-    
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     panRecognizer.minimumNumberOfTouches = 1;
     panRecognizer.maximumNumberOfTouches = 1;
@@ -122,7 +114,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str
 {
     unsigned int width  = self.view.frame.size.width;
     unsigned int height = self.view.frame.size.height;
@@ -151,8 +143,7 @@
     try
     {
         //mApplication = OgreApp();
-        if (isOn) mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
-        else mApplication.startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+        mApplication.startDemo(window, mOgreView, width, height, [str UTF8String]);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times
@@ -236,7 +227,8 @@
 {
     OgreFramework::getSingletonPtr()->m_pRenderWnd->setActive(false);
     mApplication.saveState();
-    Ogre::Root::getSingleton().saveConfig();
+    // Throws an exception in iOS 8.0, we don't need the config file anyway
+    //Ogre::Root::getSingleton().saveConfig();
 }
 
 - (void)activate
@@ -305,17 +297,27 @@
 {
     //mApplication.activatePerformRightMove();
 }
-*/
+
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender
 {
-    mApplication.activatePerformSwipeDown();
+    CGFloat dx = end.x - start.x;
+    mApplication.activateTouchRelease(dx, end.y - start.y);
+    if (dx < -1.0)
+        mApplication.activatePerformLeftMove();
+    else if (dx > 1.0)
+        mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeUp:(UISwipeGestureRecognizer*)sender
 {
-    mApplication.activatePerformSwipeUp();
+    CGFloat dx = end.x - start.x;
+    mApplication.activateTouchRelease(dx, end.y - start.y);
+    if (dx < -1.0)
+        mApplication.activatePerformLeftMove();
+    else if (dx > 1.0)
+        mApplication.activatePerformRightMove();
 }
-
+*/
 
 - (IBAction)handleDoubleTap:(UITapGestureRecognizer*)sender
 {

@@ -10,8 +10,29 @@ material General/TutorialBackdrop
         texture_unit
         {
             texture back_drop.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
         }
       } 
+    }
+}
+
+material General/TutorialBackdropLined
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture back_drop_lined.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
     }
 }
 
@@ -322,7 +343,6 @@ material General/TutorialTextboxObstacle
     }
 }
 
-
 material General/TutorialTextboxSoundOnly
 {
     technique
@@ -339,3 +359,21 @@ material General/TutorialTextboxSoundOnly
       } 
     }
 }
+
+material General/TutorialTextboxFuelWarning
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture TextboxFuel.png
+            }
+        }
+    }
+}
+

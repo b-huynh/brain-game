@@ -15,6 +15,7 @@ extern Util::ConfigGlobal globals;
 static int podID = 0;
 static int glowID = 0;
 static int indicatorID = 0;
+static int headEffectID = 0;
 
 Pod::Pod()
 : parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
@@ -22,7 +23,7 @@ Pod::Pod()
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
 {
     loadPod();
 }
@@ -32,7 +33,8 @@ void Pod::loadPod()
     switch (mtype)
     {
         case POD_FUEL:
-            loadFuelCell();
+            //loadFuelCell();
+            loadCrystal();
             break;
         case POD_FLOWER:
             loadFlower();
@@ -79,8 +81,6 @@ void Pod::loadBasicShape()
         case POD_SHAPE_SPHERE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
             head->scale(headRadius, headRadius, headRadius);
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "column.mesh");
-//            head->scale(0.1, 0.1, 0.1);
             break;
         case POD_SHAPE_DIAMOND:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "diamondMesh");
@@ -125,13 +125,13 @@ void Pod::loadFuelCell()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelSphere.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCube.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelCube.mesh");;
             break;
         case POD_SHAPE_TRIANGLE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelTri.mesh");
             break;
         case POD_SHAPE_HOLDOUT:
-            generateIndicator();
+            generateHoldoutEffect();
             break;
         default:
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
@@ -152,6 +152,64 @@ void Pod::loadFuelCell()
     head->setPosition(base);
     head->translate(v / 2);
     setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    
+    setToGrowth(0.0);
+}
+
+
+void Pod::loadCrystal()
+{
+    mtype = POD_CRYSTAL;
+    removeFromScene();
+    
+    float stemLength = base.distance(tip);
+    entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
+    Vector3 v = tip - base;
+    
+    head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    
+    materialName = "General/PodUnknown";
+    switch (podShape)
+    {
+        case POD_SHAPE_CONE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/cylinder.mesh");
+            break;
+        case POD_SHAPE_SPHERE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/cuboid.mesh");
+            break;
+        case POD_SHAPE_DIAMOND:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/tri.mesh");
+            break;
+        case POD_SHAPE_TRIANGLE:
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/star.mesh");
+            break;
+        case POD_SHAPE_HOLDOUT:
+            generateHoldoutEffect();
+            break;
+        default:
+            if( podSignal == POD_SIGNAL_UNKNOWN ) {
+                materialName = "General/PodPurple";
+            }
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/3Dstar.mesh");
+            //headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/spikyBall.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+            break;
+    }
+    if (podShape != POD_SHAPE_UNKNOWN && podShape != POD_SHAPE_HOLDOUT)
+    {
+        headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+        headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal");
+    }
+    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
+    head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    head->setPosition(base);
+    head->translate(v / 2);
+    
+    //direction = (globals.tunnelReferenceForward).randomDeviant(Radian(rand() % 180));
+    //direction.normalise();
+    //std::cout << direction.x << " " << direction.y << " " << direction.z << std::endl;
+    //setRotateSpeed(direction * 2);
+    //setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
     
     setToGrowth(0.0);
 }
@@ -183,52 +241,36 @@ void Pod::loadHazard()
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
+    // Though the variable names are not symmetric,
+    // Use the stem to be the other obelisk on the other side
     head = entirePod->createChildSceneNode("headNode" + Util::toStringInt(podID));
+    stem = entirePod->createChildSceneNode("stemNode" + Util::toStringInt(podID));
+    
     headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
-    headContentEntity->getSubEntity(0)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(1)->setMaterialName("Obelisk/LightGray");
-    headContentEntity->getSubEntity(2)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(3)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(4)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(5)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(6)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(7)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(8)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(9)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(10)->setMaterialName("Obelisk/LightGray");
-    headContentEntity->getSubEntity(11)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(12)->setMaterialName("Obelisk/Cyan");
-    headContentEntity->getSubEntity(13)->setMaterialName("Obelisk/Cyan");
-    headContentEntity->getSubEntity(14)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(15)->setMaterialName("Obelisk/LightGray");
-    headContentEntity->getSubEntity(16)->setMaterialName("Obelisk/LightGray");
-    headContentEntity->getSubEntity(17)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(18)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(19)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(20)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(21)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(22)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(23)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(24)->setMaterialName("Obelisk/TransparentCyan");
-    headContentEntity->getSubEntity(25)->setMaterialName("Obelisk/DarkGray");
-    headContentEntity->getSubEntity(26)->setMaterialName("Obelisk/Cyan");
-    headContentEntity->getSubEntity(27)->setMaterialName("Obelisk/Cyan");
+    Entity* stemContentEntity = stem->getCreator()->createEntity("stemEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
+    headContentEntity->setMaterialName("General/BarrierMaterial");
+    stemContentEntity->setMaterialName("General/BarrierMaterial");
+
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
+    head->translate(Vector3(-3.5, 0.0, 0.0), Ogre::Node::TS_LOCAL);
+    head->yaw(Degree(180.0));
+    head->roll(Degree(5.0));
     
+    stem->attachObject(stemContentEntity);
+    stem->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
+    stem->setPosition(base);
+    stem->translate(Vector3(3.5, 0.0, 0.0), Ogre::Node::TS_LOCAL);
+    stem->roll(Degree(5.0));
+
     hazardID = podID;
     
-    //head->translate(v / 2);
-    //head->yaw(Degree(180.0)); // Correction for model which faces opposite direction
-    
     setToGrowth(0.0);
-    
 }
 
 void Pod::loadPowerup()
 {
-    
     removeFromScene();
     
 	float stemLength = base.distance(tip);
@@ -299,18 +341,29 @@ void Pod::setToGrowth(float t)
     }
     else if (mtype == POD_HAZARD)
     {
-        head->setScale(Vector3(1.25, 1.15 * t, 1.25));
+        head->setScale(Vector3(0.9, 0.9 * t, 0.9));
+        stem->setScale(Vector3(0.9, 0.9 * t, 0.9));
         if( t >= 1.0f && !bPFXNode) {
-            bPFXNode = head->createChildSceneNode("BarrierPFXNode" + Util::toStringInt(hazardID));
+            bPFXNode = entirePod->createChildSceneNode("BarrierPFXNode" + Util::toStringInt(hazardID));
+            bPFXNode->setPosition(base);
+            bPFXNode->setOrientation(globals.tunnelReferenceUpward.getRotationTo(tip - base));
+            bPFXNode->translate(Vector3(0,2.5,0), Ogre::Node::TS_LOCAL);
             bPFX = bPFXNode->getCreator()->createParticleSystem("BarrierPFX" + Util::toStringInt(hazardID), "Barrier/PFX");
             bPFXNode->attachObject(bPFX);
-            bPFXNode->translate(Vector3(0,2.85f,0));
         }
     }
     else if (mtype == POD_POWERUP)
     {
         head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
 //        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
+    }
+    else if (mtype == POD_CRYSTAL)
+    {
+        head->setScale(Vector3(headRadius, t * headRadius, headRadius));
+        
+        //setRotateSpeed(direction * 2);
+        //rotateSpeed = 2 + 98 * (1 - t);
+        //setRotateSpeed(direction * rotateSpeed);
     }
 }
 
@@ -366,7 +419,7 @@ Direction Pod::getLoc() const
 
 PodInfo Pod::getPodInfo() const
 {
-    return PodInfo(podSignal, mtype, podColor, podShape, podSound, loc, podGood, podTrigger, podTaken);
+    return PodInfo(podSignal, mtype, podColor, podShape, podSound, loc, podGood, podTrigger, podTaken, podZapped);
 }
 
 float Pod::getStemRadius() const
@@ -409,6 +462,11 @@ bool Pod::isPodGood() const
     return podGood;
 }
 
+bool Pod::isPodZapped() const
+{
+    return podZapped;
+}
+
 void Pod::move(Vector3 delta)
 {
     entirePod->translate(delta);
@@ -428,6 +486,11 @@ void Pod::setSkin()
     }
     else if (mtype == POD_POWERUP)
         headContentEntity->setMaterialName(materialName);
+    else if (mtype == POD_CRYSTAL && podShape != POD_SHAPE_HOLDOUT)
+    {
+        headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+        //headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+    }
 }
 
 void Pod::takePod()
@@ -441,6 +504,11 @@ void Pod::takePod()
             hidePod();
         setSkin();
     }
+}
+
+void Pod::zapPod()
+{
+    podZapped = true;
 }
 
 void Pod::hidePod()
@@ -481,7 +549,7 @@ void Pod::uncloakPod()
             materialName = "General/PodPurple";
             break;
     }
-    if (podTaken)
+    if (podTaken || isIndicatorVisible())
         materialName += "Transparent";
     setSkin();
 }
@@ -556,15 +624,12 @@ void Pod::generateGlow(PodColor color, PodShape shape)
     }
 }
 
-void Pod::generateIndicator()
+void Pod::generateHoldoutEffect()
 {
-    if (!indicatorNode)
-    {
-        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
-        
-        if( podShape == POD_SHAPE_HOLDOUT ) {
-            std::string indicatorName = "General/HoldOutPod";
-            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
+        if (!headContentEffect)
+        {
+            std::string headEffectName = "General/HoldOutPod";
+            headContentEffect = head->getCreator()->createParticleSystem("HeadEffect" + Util::toStringInt(headEffectID), headEffectName);
             Ogre::ColourValue emitterColor;
             switch (podColor)
             {
@@ -590,20 +655,23 @@ void Pod::generateIndicator()
                     emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
                     break;
             }
-            
-            ParticleEmitter* indicatorEmitter1 = indicatorEffect->getEmitter(0);
-            ParticleEmitter* indicatorEmitter2 = indicatorEffect->getEmitter(1);
-            indicatorEmitter1->setColour(emitterColor);
-            indicatorEmitter2->setColour(emitterColor);
+            headContentEffect->getEmitter(0)->setColour(emitterColor);
+            head->attachObject(headContentEffect);
+            ++headEffectID;
         }
-        else {
-            std::string indicatorName = "General/GoodPodIndicator";
-            indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
-        }
+}
+
+void Pod::generateIndicator()
+{
+    if (!indicatorNode)
+    {
+        indicatorNode = head->createChildSceneNode("IndicatorNode" + Util::toStringInt(indicatorID));
+        
+        std::string indicatorName = "General/GoodPodIndicator";
+        indicatorEffect = indicatorNode->getCreator()->createParticleSystem("IndicatorEffect" + Util::toStringInt(indicatorID), indicatorName);
         
         indicatorNode->attachObject(indicatorEffect);
         ++indicatorID;
-        
     }
 }
 
@@ -639,8 +707,16 @@ void Pod::setPodTrigger(bool value)
 
 void Pod::setVisibleIndicator(bool value)
 {
-    if (indicatorNode && podShape != POD_SHAPE_HOLDOUT)
+    if (indicatorNode)
+    {
         indicatorNode->setVisible(value);
+        uncloakPod();
+    }
+}
+
+bool Pod::isIndicatorVisible() const
+{
+    return indicatorNode && indicatorNode->getAttachedObject(0)->isVisible();
 }
 
 void Pod::removeGlow()
@@ -686,6 +762,11 @@ void Pod::removeFromScene()
     if (head && podShape != POD_SHAPE_HOLDOUT)
     {
         head->getCreator()->destroyEntity(headContentEntity);
+        if (headContentEffect)
+        {
+            head->getCreator()->destroyParticleSystem(headContentEffect);
+            headContentEffect = NULL;
+        }
         head = NULL;
         headContentEntity = NULL;
     }
@@ -735,12 +816,15 @@ void Pod::update(float elapsed)
     }
     
     if( bPFXNode ) {
+        // Animate growth of barrier in the x-axis
         bPFX->getEmitter(0)->setParameter("width",Util::toStringFloat(bPFXwidth));
-        bPFX->getEmitter(0)->setColour(ColourValue(bPFXcolor,1.0f,1.0f));
+        
+         // Animate to orange particle barrier
+        bPFX->getEmitter(0)->setColour(ColourValue(0.5f,bPFXcolor / 2,bPFXcolor / 8));
         if( bPFXwidth+0.75f < 4.0f ) bPFXwidth += 0.75f;
-        else bPFXwidth = 4.0f;
-        if( bPFXcolor-0.05f > 0.0f ) bPFXcolor -= 0.05f;
-        else bPFXcolor = 0.0f;
+        else bPFXwidth = 4.5f;
+        if( bPFXcolor-0.05f > 0.5f ) bPFXcolor -= 0.05f;
+        else bPFXcolor = 0.5f;
     }
 }
 

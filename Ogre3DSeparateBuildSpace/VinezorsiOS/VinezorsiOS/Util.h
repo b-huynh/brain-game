@@ -16,7 +16,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEMO_BUILD
-//#define DEBUG_MODE
+#define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
 
@@ -26,10 +26,12 @@ enum GameState { GAME_STATE_PLAY, GAME_STATE_PROMPT, GAME_STATE_MENU };
 enum StageMode { STAGE_MODE_PROFICIENCY, STAGE_MODE_TEACHING, STAGE_MODE_RECESS, STAGE_MODE_COLLECTION };
 enum Evaluation { PASS, FAIL, EVEN };
 enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, MESSAGE_FINAL };
-enum MusicMode { MUSIC_ENABLED, MUSIC_DISABLED };
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum ActionCode { ACTION_NONE, ACTION_SINGLE_TAP, ACTION_DOUBLE_TAP, ACTION_TAP_HOLD, ACTION_SWIPE_LEFT, ACTION_SWIPE_RIGHT, ACTION_PINCH };
 enum PowerupType { POWERUP_NONE, POWERUP_TRACTOR_BEAM, POWERUP_TIME_WARP, POWERUP_SHIELDS };
+enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+enum StageDuration {DURATION_SHORT, DURATION_NORMAL, DURATION_LONG};
+enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_ALL_SIGNAL, PHASE_UNKNOWN };
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
@@ -68,7 +70,7 @@ struct SectionInfo
 };
 
 // Pod Info
-enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP };
+enum PodMeshType { POD_BASIC, POD_FUEL, POD_FLOWER, POD_HAZARD, POD_POWERUP, POD_CRYSTAL };
 enum PodColor { POD_COLOR_BLUE, POD_COLOR_GREEN, POD_COLOR_PINK, POD_COLOR_YELLOW, POD_COLOR_PURPLE, POD_COLOR_HOLDOUT, POD_COLOR_UNKNOWN };
 enum PodSound { POD_SOUND_1, POD_SOUND_2, POD_SOUND_3, POD_SOUND_4, POD_SOUND_HOLDOUT, POD_SOUND_UNKNOWN };
 enum PodShape { POD_SHAPE_DIAMOND, POD_SHAPE_SPHERE, POD_SHAPE_CONE, POD_SHAPE_TRIANGLE, POD_SHAPE_HOLDOUT, POD_SHAPE_UNKNOWN }; // POD_CYLINDER, POD_BOX
@@ -86,17 +88,19 @@ struct PodInfo
     bool goodPod; // is the pod good to take?
     bool podTrigger; // trigger on: false = after pod has past, true = on collision
     bool podTaken; // is the pod gone?
+    bool podZapped;
     
     PodInfo()
     : podExists(true), podSignal(POD_SIGNAL_UNKNOWN), meshType(POD_BASIC), podColor(POD_COLOR_UNKNOWN), podShape(POD_SHAPE_UNKNOWN), podSound(POD_SOUND_UNKNOWN),
-    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false)
+    podLoc(NO_DIRECTION), goodPod(false), podTrigger(false), podTaken(false), podZapped(false)
     {}
     
-    PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false)
-    : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken)
+    PodInfo(PodSignal psig, PodMeshType mtype, PodColor pcol, PodShape pshp, PodSound psod, Direction pl = NO_DIRECTION, bool good = false, bool trigger = false, bool taken = false, bool zapped = false)
+    : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken), podZapped(zapped)
     {}
     
-    void performHoldout(char phase, bool sound);
+    void performHoldout(LevelPhase phase, bool sound);
+    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
 };
 
 // Vine Info
@@ -110,13 +114,13 @@ struct NavigationLevel
     
     NavigationLevel() : level(0), control(0), obstacles(0) {}
     NavigationLevel(int l, int c, int o) : level(l), control(c), obstacles(o) {}
+    void SetObstacles(int num) {obstacles = num;}
 };
 
 // Forward Declarations of main components of the game
 class Tunnel;
 class Player;
 class Hud;
-class LevelManager;
 
 namespace Util
 {
@@ -131,14 +135,9 @@ namespace Util
         float sessionTime;
         float stageTime;
         int stageTotalSignals;
-        int stageTotalTargets1;
-        int stageTotalTargets2;
-        int stageTotalTargets3;
+        int stageTotalTargets;
         int stageTotalCollections;
         int stageTotalTargetsVariance;
-        int stageTimeThreshold1;
-        int stageTimeThreshold2;
-        int stageTimeThreshold3;
         int set1Repetitions;
         int set2Repetitions;
         int set3Repetitions;
@@ -178,9 +177,7 @@ namespace Util
         float podCollisionMax;
         float distractorCollisionMin;
         float distractorCollisionMax;
-        int podBinSize1; // This is for tunnels that pre-generate the pod sequence
-        int podBinSize2;
-        int podBinSize3;
+        int podBinSize; // This is for tunnels that pre-generate the pod sequence
         float podNBackChance; // This is for tunnels that don't pre-generate the pod sequence
         int span; // The range left and right for a target to spawn from the previous target
         int stageTotalDistractorsMin;
@@ -202,12 +199,15 @@ namespace Util
         float wrongAnswerTimePenalty;
         float distractorSpeedPenalty;
         float distractorTimePenalty;
+        float fuelMax;
+        float fuelReturn;
         float initCamSpeed;
         float startupCamSpeed;
         float globalModifierCamSpeed;
         float boostModifierCamSpeed;
         float minCamSpeed;
         float maxCamSpeed;
+        float baselineSpeed;
         float nlevelSpeedModifier;
         int numToSpeedUp;
         int numToSpeedDown;
@@ -307,6 +307,7 @@ namespace Util
         void set();
         
         Vector2 convertToPercentScreen(Vector2 p);
+        
         
         void initPaths();
         void initLogs(int session);

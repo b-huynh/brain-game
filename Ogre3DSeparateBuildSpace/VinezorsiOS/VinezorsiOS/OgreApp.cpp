@@ -113,9 +113,9 @@ void OgreApp::finalizeRTShaderSystem()
 #endif // USE_RTSHADER_SYSTEM
 
 #if !defined(OGRE_IS_IOS)
-void OgreApp::startDemo(const char* name, MusicMode musica)
+void OgreApp::startDemo(const char* name)
 #else
-void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica)
+void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name)
 #endif
 {
     globals.playerName = name;
@@ -172,7 +172,7 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
 void OgreApp::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-    player->getTutorialMgr()->update(elapsed);
+    player->getTutorialMgr()->update(elapsed, player);
     if (player->getTutorialMgr()->isVisible())
         return;
     engineStateMgr->update(elapsed);
@@ -192,6 +192,7 @@ void OgreApp::setupDemoScene()
     
     seed = time(0);
     srand(seed);
+    std::cout << "SEED: " << seed << std::endl;
     
     // create font resources
     ResourcePtr resourceText1 = OgreFramework::getSingletonPtr()->m_pFontMgr->create("MainSmall", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -209,11 +210,6 @@ void OgreApp::setupDemoScene()
     resourceText2->setParameter("resolution", "256");
     resourceText2->load();
     
-    Util::createSphere(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "sphereMesh", 1.0, 8, 8);
-    Util::createCylinder(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "cylinderMesh", 1.0, 1.0, 8);
-    Util::createDiamond(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "diamondMesh", 1.0, 1.0);
-    Util::createBox(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "boxMesh", 1.0, 1.0, 1.0);
-    Util::createPlane(OgreFramework::getSingletonPtr()->m_pSceneMgrMain, "planeMesh", 1.0, 1.0);
     Util::createDefaultSegments(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     
     globals.initPaths();
@@ -233,8 +229,9 @@ void OgreApp::setupDemoScene()
     player->setSounds(true);
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
+    player->feedLevelRequestFromSchedule();
     
-    globals.initLogs(player->getSkillLevel().sessionID);
+    globals.initLogs(player->getSessionID());
     
     engineStateMgr = new EngineStateManager();
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);

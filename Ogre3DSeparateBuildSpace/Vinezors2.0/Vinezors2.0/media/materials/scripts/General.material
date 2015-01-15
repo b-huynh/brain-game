@@ -221,6 +221,24 @@ material General/Star
 	}
 }
 
+material General/BarrierMaterial
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            ambient 0.5 0.5 0.5 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.8 0.8 0.8 1
+            texture_unit
+            {
+                texture BarrierImageMap.jpg
+            }
+        }
+    }
+}
+
 material General/TimeBonusMaterial
 {
     technique
@@ -233,23 +251,6 @@ material General/TimeBonusMaterial
             texture_unit
             {
                 texture plus20Seconds.png
-            }
-        }
-    }
-}
-
-material General/ScreenOfArrows
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture TutorialArrows.png
             }
         }
     }

@@ -6,9 +6,15 @@ material General/WallBindingStart
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_SpacePlatForms.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
@@ -22,13 +28,42 @@ material General/WallBindingA
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_R_Windows.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
 }
+
+material General/WallBindingA2
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
+            texture_unit
+            {
+                texture LevelBinding/TunnelTile_R_Windows2.png
+                filtering anisotropic
+                max_anisotropy 16
+            }
+        }
+    }
+}
+
 
 material General/WallBindingB
 {
@@ -38,12 +73,40 @@ material General/WallBindingB
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_AlienPipes.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
+}
+
+material General/WallBindingB2
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
+            texture_unit
+            {
+                texture LevelBinding/TunnelTile_AlienPipes2.png
+                filtering anisotropic
+                max_anisotropy 16
+            }
+        }
+    }
 }
 
 material General/WallBindingC
@@ -54,12 +117,40 @@ material General/WallBindingC
 		{
             lighting off
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
-				texture LevelBinding/TunnelTile_ice6.png
+				texture LevelBinding/TunnelTile_ice.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
+}
+
+material General/WallBindingC2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
+            texture_unit
+            {
+                texture LevelBinding/TunnelTile_ice2.png
+                filtering anisotropic
+                max_anisotropy 16
+            }
+        }
+    }
 }
 
 material General/WallBindingD
@@ -70,12 +161,40 @@ material General/WallBindingD
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/blueice.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
+}
+
+material General/WallBindingD2
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
+            texture_unit
+            {
+                texture LevelBinding/blueice2.png
+                filtering anisotropic
+                max_anisotropy 16
+            }
+        }
+    }
 }
 
 material General/WallBindingE
@@ -86,9 +205,15 @@ material General/WallBindingE
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_Wires.png
+                filtering anisotropic
+                max_anisotropy 16
             }
 		}
 	}
@@ -102,12 +227,40 @@ material General/WallBindingG
 		{
             lighting on
 
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
             texture_unit
 			{
 				texture LevelBinding/TunnelTile_PurplePipes.png
+                filtering anisotropic
+                max_anisotropy 16
 			}
 		}
 	}
+}
+
+material General/WallBindingG2
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
+            texture_unit
+            {
+                texture LevelBinding/TunnelTile_PurplePipes2.png
+                filtering anisotropic
+                max_anisotropy 16
+            }
+        }
+    }
 }
 
 material General/Wall0
@@ -117,10 +270,11 @@ material General/Wall0
         pass
         {
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.9 0.9 0.9 1
-            emissive 0.1 0.1 0.1 1
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
+
         }
     }
 }
@@ -132,6 +286,10 @@ material General/Wall1
         pass
         {
             lighting on
+
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 0.5 0.5 0.5 1.0
+            emissive 0.5 0.5 0.5 1.0
 
             texture_unit
 			{
@@ -149,7 +307,7 @@ material General/WallCheckpointEven
         {
             lighting on
  
-            ambient 0.5 0.5 0.0 1
+            ambient 0.8 0.8 0.0 1
             diffuse 1.0 1.0 0.0 1
             emissive 0.5 0.5 0.0 1
         }
@@ -164,7 +322,7 @@ material General/WallCheckpointPass
         {
             lighting on
  
-            ambient 0.0 0.5 0.0 1
+            ambient 0.0 0.8 0.0 1
             diffuse 0.0 1.0 0.0 1
             emissive 0.0 0.5 0.0 1
         }
@@ -179,7 +337,7 @@ material General/WallCheckpointFail
         {
             lighting on
  
-            ambient 0.5 0.0 0.0 1
+            ambient 0.8 0.0 0.0 1
             diffuse 1.0 0.0 0.0 1
             emissive 0.5 0.0 0.0 1
         }

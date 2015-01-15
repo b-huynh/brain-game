@@ -18,7 +18,6 @@ EngineMainMenu::EngineMainMenu(EngineStateManager* engineStateMgr, Player* playe
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineMainMenu::~EngineMainMenu()
@@ -31,7 +30,6 @@ void EngineMainMenu::enter()
     player->startMenu();
     
     // Set skybox
-    Util::setSkyboxAndFog("");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -54,16 +52,16 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "play")
     {
-        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
     }
     else if (queryGUI == "credits")
     {
-        //engineStateMgr->requestPushEngine(ENGINE_CREDITS, player);
+        player->levelRequest = NULL;
+        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
     }
     else if (queryGUI == "settings")
     {
         engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
-        //engineStateMgr->requestPopEngine();
     }
 }
 

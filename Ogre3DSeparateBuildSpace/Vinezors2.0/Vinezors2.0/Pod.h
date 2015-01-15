@@ -23,6 +23,8 @@ private:
     std::string materialName;
     
     Entity* headContentEntity;
+    ParticleSystem* headContentEffect;  // Particle System associated the pod (Specifically for holdout shape signals)
+    
     SceneNode* glowNode;                // Extraction glow for selection. Particularly for tractor beam
     ParticleSystem* glowEffect;
     SceneNode* indicatorNode;           // Indicator used to tell player it is a good target
@@ -48,6 +50,7 @@ private:
 	SceneNode* head;
 	SceneNode* shell;
     float moveSpeed;
+    Vector3 direction;
     Vector3 rotateSpeed;
     
     Direction loc;
@@ -55,6 +58,7 @@ private:
     bool podTaken;      // Pod is picked up or selected
     bool podTrigger;    // Feedback on collision or when completely passed, memory signals set this to false, obstacles set this to true
     bool podGood;       // *** Should remove if continuing with multiple N-Backs test
+    bool podZapped;
     
     Vector3 dest;
 public:
@@ -66,6 +70,7 @@ public:
     void loadBasicShape();
     void loadFlower();
     void loadFuelCell();
+    void loadCrystal();
     void loadHazard();
     void loadPowerup();
     
@@ -92,16 +97,19 @@ public:
     bool isPodTaken() const;
     bool getPodTrigger() const;
     bool isPodGood() const;
+    bool isPodZapped() const;
     
 	void move(Vector3 delta);
 	
     void setToGrowth(float t);
     void setSkin();
-	void takePod();
+    void takePod();
+    void zapPod();
     void hidePod();
     void revealPod();
     void uncloakPod();
     void generateGlow(PodColor color, PodShape shape);
+    void generateHoldoutEffect();
     void generateIndicator();
     void setDest(Vector3 value);
 	void setMoveSpeed(float value);
@@ -110,6 +118,7 @@ public:
     void setPodGood(bool value);
     void setPodTrigger(bool value);
     void setVisibleIndicator(bool value);
+    bool isIndicatorVisible() const;
     
     void removeGlow();
     void removeIndicator();

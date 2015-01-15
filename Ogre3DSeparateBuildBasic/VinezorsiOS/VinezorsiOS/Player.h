@@ -34,6 +34,9 @@ struct PlayerLevel {
     int set2Notify; // Shape/Sound
     int set3Notify; // Sound only
     
+    // From Recall
+    float nbackLevel;
+    
     int navigation;
     
     int minSpeed;

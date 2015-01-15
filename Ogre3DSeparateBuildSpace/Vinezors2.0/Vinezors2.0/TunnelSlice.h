@@ -34,29 +34,32 @@ private:
 	TunnelType type;
     std::vector<std::string> materialNames;
     
-    // This segment's mesh
+    // Node that is parent of all others
     SceneNode* sliceNode;
     
+    // This segment's mesh
     SceneNode* entireWall;
-	SceneNode* topLeftWall;
-	SceneNode* topWall;
-	SceneNode* topRightWall;
-	SceneNode* rightWall;
-	SceneNode* bottomRightWall;
-	SceneNode* bottomWall;
-	SceneNode* bottomLeftWall;
-	SceneNode* leftWall;
     
     // Mesh connecting to another segment if any
     SceneNode* entireIntermediate;
-	SceneNode* topLeftIntermediate;
-	SceneNode* topIntermediate;
-	SceneNode* topRightIntermediate;
-	SceneNode* rightIntermediate;
-	SceneNode* bottomRightIntermediate;
-	SceneNode* bottomIntermediate;
-	SceneNode* bottomLeftIntermediate;
-	SceneNode* leftIntermediate;
+    
+    // Railing
+    SceneNode* mainLeftSideRailing;
+    SceneNode* mainRightSideRailing;
+    
+    SceneNode* connectorLeftSideRailing;
+    SceneNode* connectorLeftSidePoint1;
+    SceneNode* connectorLeftSidePoint2;
+    SceneNode* connectorRightSideRailing;
+    SceneNode* connectorRightSidePoint1;
+    SceneNode* connectorRightSidePoint2;
+    
+    // Transition
+    SceneNode* mainLeftTransition;
+    SceneNode* mainRightTransition;
+    SceneNode* connectorLeftTransition;
+    SceneNode* connectorRightTransition;
+    
     std::vector<MeshPtr> meshes;
     
     std::vector<Pod*> pods;
@@ -91,6 +94,7 @@ public:
     bool isInfoStored() const;
     bool hasAvailableSide(Direction side) const;
     std::string getMaterialName() const;
+    std::string getMaterialName(bool isConnection) const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);
