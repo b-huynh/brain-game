@@ -233,7 +233,7 @@ material General/BarrierMaterial
             emissive 0.8 0.8 0.8 1
             texture_unit
             {
-                texture BarrierImageMap.png
+                texture BarrierImageMap.jpg
             }
         }
     }

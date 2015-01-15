@@ -29,6 +29,9 @@ enum MessageType { MESSAGE_NONE, MESSAGE_NORMAL, MESSAGE_NOTIFY, MESSAGE_ERROR, 
 enum SidebarLocation { SIDEBAR_NONE, SIDEBAR_RIGHT, SIDEBAR_BOTTOM_LTR, SIDEBAR_BOTTOM_RTL };
 enum ActionCode { ACTION_NONE, ACTION_SINGLE_TAP, ACTION_DOUBLE_TAP, ACTION_TAP_HOLD, ACTION_SWIPE_LEFT, ACTION_SWIPE_RIGHT, ACTION_PINCH };
 enum PowerupType { POWERUP_NONE, POWERUP_TRACTOR_BEAM, POWERUP_TIME_WARP, POWERUP_SHIELDS };
+enum StageDifficulty { DIFFICULTY_EASY, DIFFICULTY_NORMAL, DIFFICULTY_HARD };
+enum StageDuration {DURATION_SHORT, DURATION_NORMAL, DURATION_LONG};
+enum LevelPhase { PHASE_COLLECT, PHASE_COLOR_SOUND, PHASE_SHAPE_SOUND, PHASE_SOUND_ONLY, PHASE_ALL_SIGNAL, PHASE_UNKNOWN };
 
 enum Direction { NORTHWEST, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NO_DIRECTION };
 #define NUM_DIRECTIONS 8
@@ -96,8 +99,8 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken), podZapped(zapped)
     {}
     
-    void performHoldout(char phase, bool sound);
-    void performHoldout(char phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
+    void performHoldout(LevelPhase phase, bool sound);
+    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
 };
 
 // Vine Info

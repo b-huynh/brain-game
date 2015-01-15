@@ -101,7 +101,7 @@ void EngineStage::update(float elapsed)
             if (lightNode)
             {
                 lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
-                //lightMain->setDirection(Vector3::UNIT_Y * -1);
+                lightMain->setDirection(Vector3::UNIT_Y * -1);
             }
             
             OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));

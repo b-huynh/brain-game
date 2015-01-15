@@ -1816,6 +1816,7 @@ void Player::newTunnel(const std::string & nameMusic)
     vines[0]->setVisible(true);
     vines[0]->reloadIfNecessary(globals.setVineShip);
     vines[0]->setBoost();
+    boostTimer = 0.0f;
     TunnelSlice* closest = tunnel->getCurrentOffset();
     if (closest)
     {
@@ -2928,7 +2929,34 @@ bool Player::saveSession(std::string file)
     sessions.back().obsHit = numCollisionsTotal;
     sessions.back().obsAvoided = numAvoidancesTotal;
     sessions.back().score = score;
-    
+    sessions.back().totalMarbles = scheduler->totalMarbles;
+    sessions.back().nbackLevelA = scheduler->nBackLevelA;
+    sessions.back().nbackLevelB = scheduler->nBackLevelB;
+    sessions.back().nbackLevelC = scheduler->nBackLevelC;
+    sessions.back().nbackLevelD = scheduler->nBackLevelD;
+    sessions.back().nbackLevelE = scheduler->nBackLevelE;
+    sessions.back().scoreCurr = scheduler->scoreCurr;
+    sessions.back().currentHoldout = scheduler->currentHoldout;
+    sessions.back().holdoutOffsetA = scheduler->holdoutOffsetA;
+    sessions.back().holdoutOffsetB = scheduler->holdoutOffsetB;
+    sessions.back().holdoutOffsetD = scheduler->holdoutOffsetD;
+    sessions.back().speedA = scheduler->speedA;
+    sessions.back().speedB = scheduler->speedB;
+    sessions.back().speedC = scheduler->speedC;
+    sessions.back().speedD = scheduler->speedD;
+    sessions.back().speedE = scheduler->speedE;
+    sessions.back().musicVolume = musicVolume;
+    sessions.back().soundVolume = soundVolume;
+    sessions.back().syncDataToServer = syncDataToServer;
+    sessions.back().maxVel = maxVel;
+    sessions.back().minVelFree = minVelFree;
+    sessions.back().minVelStopper = minVelStopper;
+    sessions.back().dampingDecayFree = dampingDecayFree;
+    sessions.back().dampingDecayStop = dampingDecayStop;
+    sessions.back().dampingDropFree = dampingDropFree;
+    sessions.back().dampingDropStop = dampingDropStop;
+    sessions.back().inverted = inverted;
+
     if (out.good()) {
         if (newFile) {
             out << "% Session Log: " << endl;
@@ -2951,8 +2979,35 @@ bool Player::saveSession(std::string file)
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "% Score - Player points earned in level" << endl;
+            out << "% totalMarbles - Levels left in the random pool for the scheduler" << endl;
+            out << "% NBackLevelA - Color/Sound scheduler skill level" << endl;
+            out << "% NBackLevelB - Shape/Sound scheduler skill level" << endl;
+            out << "% NBackLevelC - Sound Only  scheduler skill level" << endl;
+            out << "% NBackLevelD - All Signals scheduler skill level" << endl;
+            out << "% NBackLevelE - Recess      scheduler skill level" << endl;
+            out << "% scoreCurr - Total scheduler score" << endl;
+            out << "% currentHoldout - Holdout experience in scheduler" << endl;
+            out << "% holdoutOffsetA - Offset to Color/Sound skill level in scheduler" << endl;
+            out << "% holdoutOffsetB - Offset to Shape/Sound skill level in scheduler" << endl;
+            out << "% holdoutOffsetD - Offset to All Signals skill level in scheduler" << endl;
+            out << "% speedA - Scheduler recommended speed for Color/Sound" << endl;
+            out << "% speedB - Scheduler recommended speed for Shape/Sound" << endl;
+            out << "% speedC - Scheduler recommended speed for Sound Only" << endl;
+            out << "% speedD - Scheduler recommended speed for All Signals" << endl;
+            out << "% speedE - Scheduler recommended speed for Recess" << endl;
+            out << "% musicVolume - Settings music volume" << endl;
+            out << "% soundVolume - Settings sound volume" << endl;
+            out << "% syncDataToServer - Settings that lets user to sync log data to server" << endl;
+            out << "% maxVel - Controller Settings for maximum angular spin" << endl;
+            out << "% minVelFree - deprecated" << endl;
+            out << "% minVelStopper - Controller Settings for minimum velocity to force stop in free motion" << endl;
+            out << "% dampingDecayFree - Controller Settings for a multiplier to slow down in free motion" << endl;
+            out << "% dampingDecayStop - Controller Settings for a multiplier to slow down by held down input" << endl;
+            out << "% dampingDropFree - Controller Settings for a linear slow down in free motion" << endl;
+            out << "% dampingDropStop - Controller Settings for a linear slow down by held down input" << endl;
+            out << "% inverted - Controller Settings to invert direction" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed TP FP TN FN Pickups ObsHit ObsAvoid Score" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType Duration TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score totalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE scoreCurr currentHoldout holdoutOffsetA holdoutOffsetB holdoutOffsetD speedA speedB speedC speedD speedE musicVolume soundVolume syncDataToServer maxVel minVelFree minVelStopper dampingDecayFree dampingDecayStop dampingDropFree dampingDropStop inverted" << endl;
         }
         
         out << sessions.back().sessionID << " "
@@ -2971,7 +3026,24 @@ bool Player::saveSession(std::string file)
         << sessions.back().pickups << " "
         << sessions.back().obsHit << " "
         << sessions.back().obsAvoided << " "
-        << sessions.back().score << endl;
+        << sessions.back().score << " "
+        << sessions.back().totalMarbles << " "
+        << sessions.back().nbackLevelA << " "
+        << sessions.back().nbackLevelB << " "
+        << sessions.back().nbackLevelC << " "
+        << sessions.back().nbackLevelD << " "
+        << sessions.back().nbackLevelE << " "
+        << sessions.back().musicVolume << " "
+        << sessions.back().soundVolume << " "
+        << sessions.back().syncDataToServer << " "
+        << sessions.back().maxVel << " "
+        << sessions.back().minVelFree << " "
+        << sessions.back().minVelStopper << " "
+        << sessions.back().dampingDecayFree << " "
+        << sessions.back().dampingDecayStop << " "
+        << sessions.back().dampingDropFree << " "
+        << sessions.back().dampingDropStop << " "
+        << sessions.back().inverted << "\n";
         
         out.close();
     }

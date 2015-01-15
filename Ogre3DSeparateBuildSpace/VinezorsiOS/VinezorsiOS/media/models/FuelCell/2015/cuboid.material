@@ -1,0 +1,12 @@
+material fuel_cell_cuboidlight
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+		}
+
+	}
+
+}

@@ -1642,14 +1642,14 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
-void PodInfo::performHoldout(char phase, bool sound)
+void PodInfo::performHoldout(LevelPhase phase, bool sound)
 {
     //float rand_holdOut = Ogre::Math::UnitRandom();
     float rand_signal = Ogre::Math::UnitRandom();
     
     if( true ) {//|| rand_holdOut < 0.1f ) {
         switch(phase) {
-            case 'A':   // levels that normally have color and sound active
+            case PHASE_COLOR_SOUND:   // levels that normally have color and sound active
                 if( rand_signal < 0.5f ) {
                     if (sound)
                         podColor = POD_COLOR_HOLDOUT;
@@ -1662,7 +1662,7 @@ void PodInfo::performHoldout(char phase, bool sound)
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
-            case 'B':   // levels that normally have shape and sound active
+            case PHASE_SHAPE_SOUND:   // levels that normally have shape and sound active
                 if( rand_signal < 0.5f ) {
                     if (sound)
                         podShape = POD_SHAPE_HOLDOUT;
@@ -1675,9 +1675,9 @@ void PodInfo::performHoldout(char phase, bool sound)
                     std::cout << "Hold out: sound" << std::endl;
                 }
                 break;
-            case 'C':   // levels that normally have sound only active
+            case PHASE_SOUND_ONLY:   // levels that normally have sound only active
                 break;
-            case 'D':   // levels that normally have all three signals active
+            case PHASE_ALL_SIGNAL:   // levels that normally have all three signals active
                 if (sound)
                 {
                     if( rand_signal < 0.167f ) {
@@ -1716,9 +1716,7 @@ void PodInfo::performHoldout(char phase, bool sound)
                         podShape = POD_SHAPE_HOLDOUT;
                 }
                 break;
-            case 'E':   // recess levels
-                break;
-            case 'F':   // gear shift levels
+            case PHASE_COLLECT:   // recess levels
                 break;
             default:
                 break;
@@ -1726,14 +1724,14 @@ void PodInfo::performHoldout(char phase, bool sound)
     }
 }
 
-void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdcolor, bool holdshape)
+void PodInfo::performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape)
 {
     //float rand_holdOut = Ogre::Math::UnitRandom();
     float rand_signal = Ogre::Math::UnitRandom();
     
     if( true ) {//|| rand_holdOut < 0.1f ) {
         switch(phase) {
-            case 'A':   // levels that normally have color and sound active
+            case PHASE_COLOR_SOUND:   // levels that normally have color and sound active
                 //if sound is not available, holdout is not availabe
                 if(sound) {
                     if(holdcolor&&!holdsound){
@@ -1757,7 +1755,7 @@ void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdco
                     }
                 }
                 break;
-            case 'B':   // levels that normally have shape and sound active
+            case PHASE_SHAPE_SOUND:   // levels that normally have shape and sound active
                 if(sound) {
                     if(holdshape&&!holdsound){
                         
@@ -1780,9 +1778,9 @@ void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdco
                     }
                 }
                 break;
-            case 'C':   // levels that normally have sound only active
+            case PHASE_SOUND_ONLY:   // levels that normally have sound only active
                 break;
-            case 'D':   // levels that normally have all three signals active
+            case PHASE_ALL_SIGNAL:   // levels that normally have all three signals active
                 if(sound){
                     if (holdshape&&holdcolor&&holdsound) // color shape sound enabled
                     {
@@ -1884,9 +1882,7 @@ void PodInfo::performHoldout(char phase, bool sound, bool holdsound, bool holdco
                     
                 }
                 break;
-            case 'E':   // recess levels
-                break;
-            case 'F':   // gear shift levels
+            case PHASE_COLLECT:   // recess levels
                 break;
             default:
                 break;

@@ -113,6 +113,7 @@ public:
     int trackNBackA;
     int trackNBackB;
     int trackNBackC;
+    float holdoutRemainder;
     
     bool multiCollectionTask;
     
