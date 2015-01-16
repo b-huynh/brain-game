@@ -418,9 +418,9 @@ void LevelSet::initializeLevelSet()
     level.nback = 0;
     level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -525,9 +525,9 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 1;
-    level.holdoutStart = 0.0;
-    level.holdoutEnd = 0.0;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.2;
+    level.holdoutEnd = 0.8;
     level.holdoutSound = 1;
     level.holdoutColor = 1;
     level.holdoutShape = 1;

@@ -1589,12 +1589,14 @@ void Tunnel::renewSegment(SectionInfo sectionInfo)
     for (int i = 0; i < oldNumPods && activePods.size() > 0; ++i)
         activePods.pop_front();
     
+    int sidesUsedBack = Util::getNumSides(segments.back()->getSectionInfo().sidesUsed);
+    int sidesUsedFront = Util::getNumSides(sectionInfo.sidesUsed);
     nsegment->makeDecreasingTransition = false;
-    if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 5 && Util::getNumSides(sectionInfo.sidesUsed) == 3 )
+    if( sidesUsedBack == 5 && sidesUsedFront == 3 )
         nsegment->makeDecreasingTransition = true;
-    else if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 7 && Util::getNumSides(sectionInfo.sidesUsed) == 5 )
+    else if( sidesUsedBack == 7 && sidesUsedFront == 5 )
         nsegment->makeDecreasingTransition = true;
-    else if( Util::getNumSides(segments.back()->getSectionInfo().sidesUsed) == 8 && Util::getNumSides(sectionInfo.sidesUsed) == 7 )
+    else if( sidesUsedBack == 8 && sidesUsedFront == 7 )
         nsegment->makeDecreasingTransition = true;
     
     nsegment->rejuvenate(segmentCounter, sectionInfo, end, segmentWidth, segmentDepth, getMaterialName());
@@ -1874,17 +1876,11 @@ void Tunnel::update(float elapsed)
     const float GROWTH_SPEED = player->getFinalSpeed() / 10.0;
     TunnelSlice* nextSliceM = getNext(globals.podAppearance);
     if (nextSliceM) {
-        if (!isDone())
-            nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
-        else
-            nextSliceM->updateGrowth(-2 * GROWTH_SPEED * elapsed);
+        nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
     }
     nextSliceM = getNext(globals.podAppearance + 1);
     if (nextSliceM) {
-        if (!isDone())
-            nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
-        else
-            nextSliceM->updateGrowth(-2 * GROWTH_SPEED * elapsed);
+        nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
     }
     
     // Check to see if we need to recycle tunnel segments

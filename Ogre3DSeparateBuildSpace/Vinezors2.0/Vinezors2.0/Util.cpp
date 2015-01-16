@@ -1563,6 +1563,9 @@ void Util::createSegment(Ogre::SceneManager* sceneMgr, const std::string& strNam
     }
 
     sceneMgr->destroyManualObject(manual);
+    
+    //MeshSerializer ser;
+    //ser.exportMesh(mesh.getPointer(), strName + ".mesh");
 }
 
 void Util::createDefaultSegments(Ogre::SceneManager* sceneMgr)

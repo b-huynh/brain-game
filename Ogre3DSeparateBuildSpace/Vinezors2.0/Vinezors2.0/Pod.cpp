@@ -178,10 +178,10 @@ void Pod::loadCrystal()
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/cuboid.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/tri.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/star.mesh");
             break;
         case POD_SHAPE_TRIANGLE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/star.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/tri.mesh");
             break;
         case POD_SHAPE_HOLDOUT:
             generateHoldoutEffect();
@@ -209,7 +209,7 @@ void Pod::loadCrystal()
     //direction.normalise();
     //std::cout << direction.x << " " << direction.y << " " << direction.z << std::endl;
     //setRotateSpeed(direction * 2);
-    //setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
+    setRotateSpeed(Vector3(globals.podRotateSpeed, 0, 0));
     
     setToGrowth(0.0);
 }

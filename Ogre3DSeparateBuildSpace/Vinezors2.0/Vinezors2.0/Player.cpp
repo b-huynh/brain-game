@@ -3007,7 +3007,7 @@ bool Player::saveSession(std::string file)
             out << "% dampingDropStop - Controller Settings for a linear slow down by held down input" << endl;
             out << "% inverted - Controller Settings to invert direction" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType Duration TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score totalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE scoreCurr currentHoldout holdoutOffsetA holdoutOffsetB holdoutOffsetD speedA speedB speedC speedD speedE musicVolume soundVolume syncDataToServer maxVel minVelFree minVelStopper dampingDecayFree dampingDecayStop dampingDropFree dampingDropStop inverted" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score totalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE scoreCurr currentHoldout holdoutOffsetA holdoutOffsetB holdoutOffsetD speedA speedB speedC speedD speedE musicVolume soundVolume syncDataToServer maxVel minVelFree minVelStopper dampingDecayFree dampingDecayStop dampingDropFree dampingDropStop inverted" << endl;
         }
         
         out << sessions.back().sessionID << " "
@@ -3033,6 +3033,8 @@ bool Player::saveSession(std::string file)
         << sessions.back().nbackLevelC << " "
         << sessions.back().nbackLevelD << " "
         << sessions.back().nbackLevelE << " "
+        << sessions.back().scoreCurr << " "
+        << sessions.back().currentHoldout << " "
         << sessions.back().musicVolume << " "
         << sessions.back().soundVolume << " "
         << sessions.back().syncDataToServer << " "
