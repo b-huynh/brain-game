@@ -181,39 +181,39 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
 std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr)
 {
     outfile << sr.nback << " "
-            << sr.stageNo << " "
-            << sr.stageTime << " "
-            << sr.pods << " "
-            << sr.nameTunnelTile << " "
-            << sr.nameSkybox << " "
-            << sr.nameMusic << " "
-            << sr.tunnelSectionsPerNavLevel << " "
-            << sr.phaseX << " "
-            << sr.difficultyX << " "
-            << sr.durationX << " "
-            << sr.holdoutPerc << " "
-            << sr.holdoutStart << " "
-            << sr.holdoutEnd << " "
-            << sr.holdoutSound << " "
-            << sr.holdoutColor << " "
-            << sr.holdoutShape << " "
-            << sr.UserNavLevel << " "
-            << sr.initCamSpeed << " "
-            << sr.minCamSpeed << " "
-            << sr.maxCamSpeed << " ";
+    << sr.stageNo << " "
+    << sr.stageTime << " "
+    << sr.pods << " "
+    << sr.nameTunnelTile << " "
+    << sr.nameSkybox << " "
+    << sr.nameMusic << " "
+    << sr.tunnelSectionsPerNavLevel << " "
+    << sr.phaseX << " "
+    << sr.difficultyX << " "
+    << sr.durationX << " "
+    << sr.holdoutPerc << " "
+    << sr.holdoutStart << " "
+    << sr.holdoutEnd << " "
+    << sr.holdoutSound << " "
+    << sr.holdoutColor << " "
+    << sr.holdoutShape << " "
+    << sr.UserNavLevel << " "
+    << sr.initCamSpeed << " "
+    << sr.minCamSpeed << " "
+    << sr.maxCamSpeed << " ";
     
     outfile << sr.navLevels.size() << " ";
     for (int i = 0; i < sr.navLevels.size(); ++i) {
         outfile << sr.navLevels[i].level << " "
-                << sr.navLevels[i].control << " "
-                << sr.navLevels[i].obstacles << " ";
+        << sr.navLevels[i].control << " "
+        << sr.navLevels[i].obstacles << " ";
     }
     
     outfile << sr.collectionCriteria.size() << " ";
     for (int i = 0; i < sr.collectionCriteria.size(); ++i)
     {
         outfile << sr.collectionCriteria[i].nback << " "
-                << sr.collectionCriteria[i].collected << " ";
+        << sr.collectionCriteria[i].collected << " ";
     }
     
     outfile << sr.powerups.size() << " ";
@@ -230,26 +230,26 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     int difficultyXint;
     int durationXint;
     infile  >> sr.nback
-            >> sr.stageNo
-            >> sr.stageTime
-            >> sr.pods
-            >> sr.nameTunnelTile
-            >> sr.nameSkybox
-            >> sr.nameMusic
-            >> sr.tunnelSectionsPerNavLevel
-            >> phaseXint
-            >> difficultyXint
-            >> durationXint
-            >> sr.holdoutPerc
-            >> sr.holdoutStart
-            >> sr.holdoutEnd
-            >> sr.holdoutSound
-            >> sr.holdoutColor
-            >> sr.holdoutShape
-            >> sr.UserNavLevel
-            >> sr.initCamSpeed
-            >> sr.minCamSpeed
-            >> sr.maxCamSpeed;
+    >> sr.stageNo
+    >> sr.stageTime
+    >> sr.pods
+    >> sr.nameTunnelTile
+    >> sr.nameSkybox
+    >> sr.nameMusic
+    >> sr.tunnelSectionsPerNavLevel
+    >> phaseXint
+    >> difficultyXint
+    >> durationXint
+    >> sr.holdoutPerc
+    >> sr.holdoutStart
+    >> sr.holdoutEnd
+    >> sr.holdoutSound
+    >> sr.holdoutColor
+    >> sr.holdoutShape
+    >> sr.UserNavLevel
+    >> sr.initCamSpeed
+    >> sr.minCamSpeed
+    >> sr.maxCamSpeed;
     sr.phaseX = (LevelPhase)phaseXint;
     sr.difficultyX = (StageDifficulty)difficultyXint;
     sr.durationX = (StageDuration)durationXint;
@@ -260,8 +260,8 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     {
         NavigationLevel navLevel;
         infile  >> navLevel.level
-                >> navLevel.control
-                >> navLevel.obstacles;
+        >> navLevel.control
+        >> navLevel.obstacles;
         sr.navLevels.push_back(navLevel);
     }
     
@@ -270,7 +270,7 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     {
         CollectionCriteria criteria(0);
         infile  >> criteria.nback
-                >> criteria.collected;
+        >> criteria.collected;
         sr.collectionCriteria.push_back(criteria);
     }
     
@@ -362,7 +362,7 @@ void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hld
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].control = sds[i];
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].obstacles = obs[i];
     for (int i =0; i<level.navLevels.size(); i++) {
-            std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
+        std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
     }
     level.holdoutPerc=hldperc;
     stageList[lvl][phs] = level;    //ALWAYS KEEP LAST
@@ -454,7 +454,7 @@ void LevelSet::initializeLevelSet()
     level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;    
+    level.maxCamSpeed = 40;
     stageList[0][1] = level;
     
     /////////////////////
@@ -1904,4 +1904,3 @@ void LevelSet::initializeLevelSet()
     stageList[8][5] = level;
 #endif
 }
-
