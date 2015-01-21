@@ -24,14 +24,14 @@ private:
     
     int tunnelSliceID;
     
-	Vector3 center;
+    Vector3 center;
     Quaternion rot;
     Direction dir; // Direction from previous tunnel slice
     int dirAngle;
-	float width;
-	float depth;
-	
-	TunnelType type;
+    float width;
+    float depth;
+    
+    TunnelType type;
     std::vector<std::string> materialNames;
     
     // Node that is parent of all others
@@ -60,6 +60,8 @@ private:
     SceneNode* connectorLeftTransition;
     SceneNode* connectorRightTransition;
     
+    std::vector<SceneNode*> transitions;
+    
     std::vector<MeshPtr> meshes;
     
     std::vector<Pod*> pods;
@@ -70,24 +72,24 @@ private:
     bool podHistory; // Used to avoid saving data multiple times for history panel
     bool infoStored; // Used to avoid saving data multiple times for log files
 public:
-	TunnelSlice();
-	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
-	TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
-	
+    TunnelSlice();
+    TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
+    TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
+    
     void initWalls();
     
     int getTunnelSliceID() const;
     float getWallLength() const;
     TunnelType getType() const;
     Quaternion getQuaternion() const;
-	Vector3 getStart() const;
-	Vector3 getEnd() const;
-	Vector3 getCenter() const;
-	Vector3 getCenter(float t) const;
-	float getT(Vector3 pos) const;
+    Vector3 getStart() const;
+    Vector3 getEnd() const;
+    Vector3 getCenter() const;
+    Vector3 getCenter(float t) const;
+    float getT(Vector3 pos) const;
     Vector3 getForward() const;
-	Vector3 getUpward() const;
-	Vector3 getRight() const;
+    Vector3 getUpward() const;
+    Vector3 getRight() const;
     std::vector<Pod *> getPods() const;
     SectionInfo getSectionInfo() const;
     bool isPodHistory() const;
@@ -105,9 +107,10 @@ public:
     
     void setPodHistory(bool value);
     void setInfoStored(bool value);
-	void move(Vector3 delta);
-	void addPod(const PodInfo & value);
+    void move(Vector3 delta);
+    void addPod(const PodInfo & value);
     void setIntermediateWall(SceneNode* entire, Direction dir, ManualObject * manual, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 & bl, Vector3 & tr);
+    void addTransitionSet(std::string name, Vector3 p1, Vector3 p2, bool include1, bool include2, float railingRoll, float scaleValue, float scaleAmount);
     void connect(TunnelSlice* next);
     void disconnect();
     void clearPods();
@@ -116,7 +119,7 @@ public:
     void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);
     void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials);
     
-	void removeFromScene();
+    void removeFromScene();
     
     SceneNode* gateNode;
     Entity* gateEntity;

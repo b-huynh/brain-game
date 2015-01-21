@@ -426,6 +426,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -450,6 +451,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;    
@@ -474,6 +476,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -498,6 +501,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -522,6 +526,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -554,6 +559,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -575,6 +581,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -599,6 +606,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -629,6 +637,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -659,6 +668,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -683,6 +693,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -715,6 +726,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -736,6 +748,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -760,6 +773,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -790,6 +804,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -820,6 +835,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -844,6 +860,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -876,6 +893,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -897,6 +915,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -921,6 +940,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -951,6 +971,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -981,6 +1002,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1005,6 +1027,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1037,6 +1060,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1058,6 +1082,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1082,6 +1107,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1112,6 +1138,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1142,6 +1169,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1166,6 +1194,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1198,6 +1227,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1219,6 +1249,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1243,6 +1274,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1273,6 +1305,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1303,6 +1336,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1327,6 +1361,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1359,6 +1394,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1380,6 +1416,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1404,6 +1441,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1434,6 +1472,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1464,6 +1503,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1488,6 +1528,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1520,6 +1561,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1541,6 +1583,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1565,6 +1608,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1595,6 +1639,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1625,6 +1670,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1649,6 +1695,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1681,6 +1728,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1704,6 +1752,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music4";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLLECT;
+    level.durationX = DURATION_NORMAL;
     level.initCamSpeed = 15;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1728,6 +1777,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music2";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_COLOR_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1758,6 +1808,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music1";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SHAPE_SOUND;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1788,6 +1839,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music5";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_SOUND_ONLY;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1812,6 +1864,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
@@ -1844,6 +1897,7 @@ void LevelSet::initializeLevelSet()
     level.nameMusic = "Music3";
     level.tunnelSectionsPerNavLevel = 10;
     level.phaseX = PHASE_ALL_SIGNAL;
+    level.durationX = DURATION_LONG;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;

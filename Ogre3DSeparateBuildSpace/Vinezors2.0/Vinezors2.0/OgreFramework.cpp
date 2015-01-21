@@ -87,7 +87,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     globals.set();
     
 	m_pSceneMgrMain = m_pRoot->createSceneManager(ST_GENERIC, "SceneManagerMain");
-	m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     
 	m_pCameraMain = m_pSceneMgrMain->createCamera("CameraMain");
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -190,10 +190,10 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundMissFeedback", "misstriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod1", "pod4.wav", false, false, true);           // Rose
-    m_pSoundMgr->createSound("SoundPod2", "pod3.wav", false, false, true);            // Iris
-    m_pSoundMgr->createSound("SoundPod3", "bubbleSound.wav", false, false, true);    // Bubble Flower
-    m_pSoundMgr->createSound("SoundPod4", "pod2.wav", false, false, true);            // Daisy
+    m_pSoundMgr->createSound("SoundPod1", "pod1b.wav", false, false, true);           // Rose
+    m_pSoundMgr->createSound("SoundPod2", "pod2b.wav", false, false, true);            // Iris
+    m_pSoundMgr->createSound("SoundPod3", "pod3b.wav", false, false, true);    // Bubble Flower
+    m_pSoundMgr->createSound("SoundPod4", "pod4b.wav", false, false, true);            // Daisy
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);

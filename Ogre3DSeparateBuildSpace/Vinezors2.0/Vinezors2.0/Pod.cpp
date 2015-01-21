@@ -191,16 +191,29 @@ void Pod::loadCrystal()
                 materialName = "General/PodPurple";
             }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/3Dstar.mesh");
-            //headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/spikyBall.mesh");
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
     }
     if (podShape != POD_SHAPE_UNKNOWN && podShape != POD_SHAPE_HOLDOUT)
     {
         headContentEntity->getSubEntity(0)->setMaterialName(materialName);
-        headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal");
+        if (podShape != POD_SHAPE_TRIANGLE)
+        {
+            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+            headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal");
+            if (podShape == POD_SHAPE_SPHERE)
+                headContentEntity->getSubEntity(2)->setMaterialName("General/PodMetal");
+        }
+        else
+        {
+            headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal");
+            headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+        }
     }
-    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
+    if( podShape != POD_SHAPE_HOLDOUT )
+    {
+        head->attachObject(headContentEntity);
+    }
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
@@ -488,8 +501,10 @@ void Pod::setSkin()
         headContentEntity->setMaterialName(materialName);
     else if (mtype == POD_CRYSTAL && podShape != POD_SHAPE_HOLDOUT)
     {
-        headContentEntity->getSubEntity(0)->setMaterialName(materialName);
-        //headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+        if (podShape != POD_SHAPE_TRIANGLE)
+            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
+        else
+            headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     }
 }
 
@@ -543,7 +558,7 @@ void Pod::uncloakPod()
             materialName = "General/PodPurple";
             break;
         case POD_COLOR_HOLDOUT:
-            materialName = "General/PodWhite";
+            materialName = "General/PodUnknown";
             break;
         default:
             materialName = "General/PodPurple";

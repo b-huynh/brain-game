@@ -264,8 +264,10 @@ void Vine::setBoost()
 {
     if (!boostEffect && base)
     {
+        boostNode = tip->createChildSceneNode("BoostNode");
         boostEffect = parentNode->getCreator()->createParticleSystem("StarBoost", "General/StarBoost");
-        base->attachObject(boostEffect);
+        boostNode->attachObject(boostEffect);
+        boostNode->translate(Vector3(0.0, 0.0, -2 * radius));
     }
 }
 
@@ -327,8 +329,11 @@ void Vine::removeBoost()
 {
     if (boostEffect)
     {
-        base->detachObject(boostEffect);
-        base->getCreator()->destroyParticleSystem(boostEffect);
+        boostNode->detachObject(boostEffect);
+        boostNode->getCreator()->destroyParticleSystem(boostEffect);
+        boostNode->removeAndDestroyAllChildren();
+        boostNode->getCreator()->destroySceneNode(boostNode);
+        boostNode = NULL;
         boostEffect = NULL;
     }
 }

@@ -1187,36 +1187,36 @@ void Player::testPodGiveFeedback(Pod* test)
     else if ((nbackPod && !correctSelection) ||
              (!nbackPod && !correctSelection))
     {
-        if (!tunnel->isDone())
+        if (podTaken)
         {
-            if (podTaken)
+            if (!nbackPod && !correctSelection)
             {
-                if (!nbackPod && !correctSelection)
+                if (soundFeedbackBad)
                 {
-                    if (soundFeedbackBad)
-                    {
-                        soundFeedbackBad->stop();
-                        soundFeedbackBad->play();
-                    }
-                    numCorrectCombo = 0;
-                    numCorrectBonus = 0;
-                    ++numWrongTotal;
-                    
-                    //beginBadFuelPickUp();
-                    
-                    if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
-                    else hp += globals.HPNegativeWrongAnswer;
-                    hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
-                    tunnel->addToFuelTimer(0.0); // Done to limit fuel to new maximum
-                    
-                    //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
-                    //tunnel->loseRandomCriteria();
-                    
-                    updateSpeed(initSpeed, false);
-                    
-                    forceCheckEnd = true;
+                    soundFeedbackBad->stop();
+                    soundFeedbackBad->play();
                 }
-                else
+                numCorrectCombo = 0;
+                numCorrectBonus = 0;
+                ++numWrongTotal;
+                
+                //beginBadFuelPickUp();
+                
+                if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
+                else hp += globals.HPNegativeWrongAnswer;
+                hp = Util::clamp(hp, globals.HPNegativeLimit, globals.HPPositiveLimit);
+                tunnel->addToFuelTimer(0.0); // Done to limit fuel to new maximum
+                
+                //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
+                //tunnel->loseRandomCriteria();
+                
+                updateSpeed(initSpeed, false);
+                
+                forceCheckEnd = true;
+            }
+            else
+            {
+                if (!tunnel->isDone())
                 {
                     if (soundFeedbackMiss)
                     {
@@ -1235,7 +1235,10 @@ void Player::testPodGiveFeedback(Pod* test)
                     }
                 }
             }
-            else if (!podTaken && nbackPod)
+        }
+        else if (!podTaken && nbackPod)
+        {
+            if (!tunnel->isDone())
             {
                 if (soundFeedbackMiss)
                 {
@@ -1494,6 +1497,8 @@ void Player::recordInfo()
             result.playerRollBase = camRoll;
             result.playerRollOffset = offsetRoll;
             result.playerRollSpeed = rollSpeed;
+            result.playerFuelTimer = tunnel->getFuelTimer();
+            result.playerFuelBuffer = tunnel->getFuelBuffer();
             result.playerLoc = vines[0]->transition < 0.50 ? vines[0]->loc : vines[0]->dest;
             result.podInfo = targetinfo;
             result.sectionInfo = sliceInfo;
@@ -2773,6 +2778,8 @@ bool Player::saveStage(std::string file)
             out << "% Player Roll Base { 0, 359 }" << endl;
             out << "% Player Roll Offset { 0, 359 }" << endl;
             out << "% Player Roll Speed { -inf, inf }" << endl;
+            out << "% Player Fuel Timer { -inf, inf }" << endl;
+            out << "% Player Fuel Buffer { -inf, inf }" << endl;
             out << "% Player Loc { 0=Northwest ... 7=West }" << endl;
             out << "% Pod Loc { -1=N/A, 0=Northwest ... 7=West }" << endl;
             out << "% Pod Color { -1, inf }" << endl;
@@ -2791,7 +2798,7 @@ bool Player::saveStage(std::string file)
             out << "% Segment Angle { 0, inf }" << endl;
             out << "% Segment Panels { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken PodZapped Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
+            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerFuelTimer PlayerFuelBuffer PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken PodZapped Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
         }
         
         for (std::list<Result>::iterator it = results.begin(); it != results.end(); ++it) {
@@ -2810,6 +2817,8 @@ bool Player::saveStage(std::string file)
             << it->playerRollBase << " "
             << it->playerRollOffset << " "
             << it->playerRollSpeed << " "
+            << it->playerFuelTimer << " "
+            << it->playerFuelBuffer << " "
             << it->playerLoc << " ";
             if (it->podInfo.podExists)
             {

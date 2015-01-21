@@ -102,6 +102,8 @@ private:
         int playerRollBase;
         int playerRollOffset;
         int playerRollSpeed;
+        float playerFuelTimer;
+        float playerFuelBuffer;
         Direction playerLoc;
         PodInfo podInfo;
         SectionInfo sectionInfo;

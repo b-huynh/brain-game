@@ -63,7 +63,7 @@ void EngineStage::update(float elapsed)
                                      !tunnel->needsCleaning());
             hud->setPauseNavDest(0.7);
             
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
         }
         case STAGE_STATE_RUNNING:
@@ -104,7 +104,7 @@ void EngineStage::update(float elapsed)
                 lightMain->setDirection(Vector3::UNIT_Y * -1);
             }
             
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
             // See by the end of this frame if we have a tutorial popup, if so pause the game, keep the music running
             if (player->getTutorialMgr()->isVisible() && !player->getTutorialMgr()->isSpecial())
@@ -129,7 +129,7 @@ void EngineStage::update(float elapsed)
                 player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
             
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             if (!player->hasTriggeredStartup())
             {
@@ -152,7 +152,7 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_PROMPT:
         {
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             globals.setBigMessage("");
             hud->update(elapsed);
@@ -166,7 +166,7 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_READY:
         {
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
             globals.clearMessage();
             readyTimer -= elapsed;
@@ -1186,8 +1186,8 @@ void EngineStage::setup()
                 break;
             }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
@@ -1254,8 +1254,8 @@ void EngineStage::setup()
                 break;
             }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_DIAMOND, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;

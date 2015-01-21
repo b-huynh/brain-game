@@ -221,7 +221,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "433"
             endingLineNumber = "433"
-            landmarkName = "Player::getLevelProgress(int row, int col)"
+            landmarkName = "Player::isLevelAvailable(int level)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -299,7 +299,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "800"
             endingLineNumber = "800"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -315,7 +315,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "828"
             endingLineNumber = "828"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -331,7 +331,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "827"
             endingLineNumber = "827"
-            landmarkName = "HudStage::initOverlay()"
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
