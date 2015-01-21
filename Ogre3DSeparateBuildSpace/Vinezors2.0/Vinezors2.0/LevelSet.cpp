@@ -181,39 +181,39 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
 std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr)
 {
     outfile << sr.nback << " "
-            << sr.stageNo << " "
-            << sr.stageTime << " "
-            << sr.pods << " "
-            << sr.nameTunnelTile << " "
-            << sr.nameSkybox << " "
-            << sr.nameMusic << " "
-            << sr.tunnelSectionsPerNavLevel << " "
-            << sr.phaseX << " "
-            << sr.difficultyX << " "
-            << sr.durationX << " "
-            << sr.holdoutPerc << " "
-            << sr.holdoutStart << " "
-            << sr.holdoutEnd << " "
-            << sr.holdoutSound << " "
-            << sr.holdoutColor << " "
-            << sr.holdoutShape << " "
-            << sr.UserNavLevel << " "
-            << sr.initCamSpeed << " "
-            << sr.minCamSpeed << " "
-            << sr.maxCamSpeed << " ";
+    << sr.stageNo << " "
+    << sr.stageTime << " "
+    << sr.pods << " "
+    << sr.nameTunnelTile << " "
+    << sr.nameSkybox << " "
+    << sr.nameMusic << " "
+    << sr.tunnelSectionsPerNavLevel << " "
+    << sr.phaseX << " "
+    << sr.difficultyX << " "
+    << sr.durationX << " "
+    << sr.holdoutPerc << " "
+    << sr.holdoutStart << " "
+    << sr.holdoutEnd << " "
+    << sr.holdoutSound << " "
+    << sr.holdoutColor << " "
+    << sr.holdoutShape << " "
+    << sr.UserNavLevel << " "
+    << sr.initCamSpeed << " "
+    << sr.minCamSpeed << " "
+    << sr.maxCamSpeed << " ";
     
     outfile << sr.navLevels.size() << " ";
     for (int i = 0; i < sr.navLevels.size(); ++i) {
         outfile << sr.navLevels[i].level << " "
-                << sr.navLevels[i].control << " "
-                << sr.navLevels[i].obstacles << " ";
+        << sr.navLevels[i].control << " "
+        << sr.navLevels[i].obstacles << " ";
     }
     
     outfile << sr.collectionCriteria.size() << " ";
     for (int i = 0; i < sr.collectionCriteria.size(); ++i)
     {
         outfile << sr.collectionCriteria[i].nback << " "
-                << sr.collectionCriteria[i].collected << " ";
+        << sr.collectionCriteria[i].collected << " ";
     }
     
     outfile << sr.powerups.size() << " ";
@@ -230,26 +230,26 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     int difficultyXint;
     int durationXint;
     infile  >> sr.nback
-            >> sr.stageNo
-            >> sr.stageTime
-            >> sr.pods
-            >> sr.nameTunnelTile
-            >> sr.nameSkybox
-            >> sr.nameMusic
-            >> sr.tunnelSectionsPerNavLevel
-            >> phaseXint
-            >> difficultyXint
-            >> durationXint
-            >> sr.holdoutPerc
-            >> sr.holdoutStart
-            >> sr.holdoutEnd
-            >> sr.holdoutSound
-            >> sr.holdoutColor
-            >> sr.holdoutShape
-            >> sr.UserNavLevel
-            >> sr.initCamSpeed
-            >> sr.minCamSpeed
-            >> sr.maxCamSpeed;
+    >> sr.stageNo
+    >> sr.stageTime
+    >> sr.pods
+    >> sr.nameTunnelTile
+    >> sr.nameSkybox
+    >> sr.nameMusic
+    >> sr.tunnelSectionsPerNavLevel
+    >> phaseXint
+    >> difficultyXint
+    >> durationXint
+    >> sr.holdoutPerc
+    >> sr.holdoutStart
+    >> sr.holdoutEnd
+    >> sr.holdoutSound
+    >> sr.holdoutColor
+    >> sr.holdoutShape
+    >> sr.UserNavLevel
+    >> sr.initCamSpeed
+    >> sr.minCamSpeed
+    >> sr.maxCamSpeed;
     sr.phaseX = (LevelPhase)phaseXint;
     sr.difficultyX = (StageDifficulty)difficultyXint;
     sr.durationX = (StageDuration)durationXint;
@@ -260,8 +260,8 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     {
         NavigationLevel navLevel;
         infile  >> navLevel.level
-                >> navLevel.control
-                >> navLevel.obstacles;
+        >> navLevel.control
+        >> navLevel.obstacles;
         sr.navLevels.push_back(navLevel);
     }
     
@@ -270,7 +270,7 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     {
         CollectionCriteria criteria(0);
         infile  >> criteria.nback
-                >> criteria.collected;
+        >> criteria.collected;
         sr.collectionCriteria.push_back(criteria);
     }
     
@@ -362,7 +362,7 @@ void LevelSet::ManLevelSet( int lvl, int phs,  int pds, float hldperc, float hld
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].control = sds[i];
     for(int i=0; i<level.navLevels.size(); i++)level.navLevels[i].obstacles = obs[i];
     for (int i =0; i<level.navLevels.size(); i++) {
-            std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
+        std::cout<<"Sides: "<<level.navLevels[i].control<<"               Obstacles: "<<level.navLevels[i].obstacles;
     }
     level.holdoutPerc=hldperc;
     stageList[lvl][phs] = level;    //ALWAYS KEEP LAST
@@ -399,7 +399,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -418,9 +418,9 @@ void LevelSet::initializeLevelSet()
     level.nback = 0;
     level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
+    level.navLevels.push_back(NavigationLevel(0, 3, 0));
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music4";
@@ -444,7 +444,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -452,9 +452,8 @@ void LevelSet::initializeLevelSet()
     level.phaseX = PHASE_COLOR_SOUND;
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;    
+    level.maxCamSpeed = 40;
     stageList[0][1] = level;
-    
     
     /////////////////////
     /// Level 2   1-C ///
@@ -469,7 +468,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -493,7 +492,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)                 //collection criteria
         level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -517,7 +516,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(1));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -526,6 +525,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.2;
+    level.holdoutEnd = 0.8;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[0][4] = level;
     
     /////////////////////
@@ -543,7 +548,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(1));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -588,7 +593,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -597,6 +602,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[1][1] = level;
     
     /////////////////////
@@ -612,7 +623,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -621,6 +632,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[1][2] = level;
     
     /////////////////////
@@ -636,7 +653,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -660,7 +677,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(2));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -669,6 +686,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[1][4] = level;
     
     /////////////////////
@@ -686,7 +709,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(2));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -731,7 +754,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -740,6 +763,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[2][1] = level;
     
     /////////////////////
@@ -755,7 +784,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -764,6 +793,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[2][2] = level;
     
     /////////////////////
@@ -779,7 +814,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -803,7 +838,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(3));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -812,6 +847,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[2][4] = level;
     
     /////////////////////
@@ -829,7 +870,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(3));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(4));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -874,7 +915,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(4));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -883,6 +924,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[3][1] = level;
     
     /////////////////////
@@ -898,7 +945,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(4));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -907,6 +954,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[3][2] = level;
     
     /////////////////////
@@ -922,7 +975,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(4));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -946,7 +999,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(4));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -955,6 +1008,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[3][4] = level;
     
     /////////////////////
@@ -972,7 +1031,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(4));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(5));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1017,7 +1076,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(5));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -1026,6 +1085,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[4][1] = level;
     
     /////////////////////
@@ -1041,7 +1106,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(5));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -1050,6 +1115,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[4][2] = level;
     
     /////////////////////
@@ -1065,7 +1136,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(5));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -1089,7 +1160,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(5));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1098,6 +1169,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[4][4] = level;
     
     /////////////////////
@@ -1115,7 +1192,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(5));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(6));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1160,7 +1237,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(6));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -1169,6 +1246,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[5][1] = level;
     
     /////////////////////
@@ -1184,7 +1267,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(6));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -1193,6 +1276,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[5][2] = level;
     
     /////////////////////
@@ -1208,7 +1297,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(6));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -1232,7 +1321,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(6));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1241,6 +1330,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[5][4] = level;
     
     /////////////////////
@@ -1258,7 +1353,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(6));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(7));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1303,7 +1398,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(7));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -1312,6 +1407,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[6][1] = level;
     
     /////////////////////
@@ -1327,7 +1428,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(7));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -1336,6 +1437,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[6][2] = level;
     
     /////////////////////
@@ -1351,7 +1458,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(7));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -1375,7 +1482,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(7));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1384,6 +1491,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[6][4] = level;
     
     /////////////////////
@@ -1401,7 +1514,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(7));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1446,7 +1559,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -1455,6 +1568,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[7][1] = level;
     
     /////////////////////
@@ -1470,7 +1589,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -1479,6 +1598,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[7][2] = level;
     
     /////////////////////
@@ -1494,7 +1619,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -1518,7 +1643,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(8));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1527,6 +1652,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[7][4] = level;
     
     /////////////////////
@@ -1544,7 +1675,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(8));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(9));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1591,7 +1722,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 1));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(9));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music2";
@@ -1600,6 +1731,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[8][1] = level;
     
     /////////////////////
@@ -1615,7 +1752,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 4, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(9));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingB";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music1";
@@ -1624,6 +1761,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[8][2] = level;
     
     /////////////////////
@@ -1639,7 +1782,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(9));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingC";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music5";
@@ -1663,7 +1806,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 3, 2));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(9));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1672,6 +1815,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.25;
+    level.holdoutStart = 0.20;
+    level.holdoutEnd = 0.80;
+    level.holdoutSound = 1;
+    level.holdoutColor = 1;
+    level.holdoutShape = 1;
     stageList[8][4] = level;
     
     /////////////////////
@@ -1689,7 +1838,7 @@ void LevelSet::initializeLevelSet()
         level.collectionCriteria.push_back(CollectionCriteria(9));
     for (int i = 0; i < TOTAL_COLLECTIONS / 2; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(10));
-    level.powerups.push_back(POWERUP_TIME_WARP);
+    //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingD";
     level.nameSkybox = "General/BlankStarrySkyPlane";
     level.nameMusic = "Music3";
@@ -1701,4 +1850,3 @@ void LevelSet::initializeLevelSet()
     stageList[8][5] = level;
 #endif
 }
-
