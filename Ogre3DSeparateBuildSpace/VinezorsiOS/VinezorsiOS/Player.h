@@ -220,6 +220,7 @@ private:
     
 public:
     bool fadeMusic;
+    float xsTimer; // timer for the three X's display
     
     // Settings Parameters
     float musicVolume;

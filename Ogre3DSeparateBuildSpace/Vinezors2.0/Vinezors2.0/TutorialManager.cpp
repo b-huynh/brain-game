@@ -292,10 +292,11 @@ void TutorialManager::update(float elapsed, Player* player)
         int numMissed = player->getNumMissedTotal();
         int numPickups = player->getNumPickupsTotal();
         int numCorrect = player->getNumCorrectTotal();
-        int tleft = 0;
-        if (eval == PASS)
-            tleft = (player->getTunnel()->getStageTime() - player->getTunnel()->getTotalDistance()) / 10;
+        int tleft = player->getTunnel()->getStageTime() - player->getTunnel()->getTotalElapsed() - player->getTunnel()->getTimePenalty();
         
+        int tdisp = 0;
+        if (specialMode > 4 && eval == PASS)
+            tdisp = tleft;
         if (specialMode == 0)
         {
             specialTimer += 10 * elapsed;
@@ -354,14 +355,13 @@ void TutorialManager::update(float elapsed, Player* player)
         else if (specialMode == 4)
         {
             specialTimer += 20 * elapsed;
-            player->getTunnel()->addToTimePenalty(200 * elapsed);
-            if (player->getTunnel()->getTimeLeft() < 0)
+            if (specialTimer > tleft)
             {
                 specialMode++;
                 specialTimer = 0;
             }
             else
-                tleft = specialTimer;
+                tdisp = specialTimer;
         }
         
         int numCriteria = player->getTunnel()->getNumRequiredCriteria();
@@ -381,10 +381,10 @@ void TutorialManager::update(float elapsed, Player* player)
         
         const int SCORE_PER_TICK = 100;
         const int NONZAP_PICKUP = 50;
-        int score = numCorrect * player->getScoring() + numPickups * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
+        int score = numCorrect * player->getScoring() + numPickups * NONZAP_PICKUP + SCORE_PER_TICK * tdisp;
         
         Ogre::TextAreaOverlayElement* label2 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel2");
-        label2->setCaption(Util::toStringInt(player->getTunnel()->getTimeLeft() / 10));
+        label2->setCaption(Util::toStringInt(tleft - tdisp));
         
         Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
         label7->setCaption("");

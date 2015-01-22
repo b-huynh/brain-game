@@ -61,8 +61,9 @@ protected:
     PanelOverlayElement* HudRightPanel;
     PanelOverlayElement* HudLeftZapper;
     PanelOverlayElement* HudRightZapper;
-    std::vector<PanelOverlayElement*> HudFuelContainers;
-    std::vector<PanelOverlayElement*> HudFuelBars;
+    //std::vector<PanelOverlayElement*> HudFuelContainers;
+    //std::vector<PanelOverlayElement*> HudFuelBars;
+    PanelOverlayElement* HudFuelBar;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;

@@ -47,6 +47,7 @@ Player::Player()
     
     lastPlayed = PHASE_UNKNOWN;
     fadeMusic = false;
+    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.40f;
@@ -75,6 +76,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     
     lastPlayed = PHASE_UNKNOWN;
     fadeMusic = true;
+    xsTimer = 0.0f;
     musicVolume = 0.50f;
     soundVolume = 0.50f;
     holdout = 0.40f;
@@ -570,7 +572,7 @@ float Player::getScoring() const
     if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING)
         return 50.0;
     
-    int nvalue = tunnel->getNBackToggle(getToggleBack());
+    int nvalue = tunnel->getNBack();
     switch (nvalue)
     {
         case 0:
@@ -620,7 +622,7 @@ void Player::setSpeedParameters(int initSpeed, int minSpeed, int maxSpeed)
     this->maxSpeed = maxSpeed;
     baseSpeed = Util::clamp(initSpeed, minSpeed, maxSpeed);
     finalSpeed = getTotalSpeed();
-    tunnel->updateTSModifier();
+    //tunnel->updateTSModifier();
     
     // Update for logs
     if (sessions.size() > 0)
@@ -1155,7 +1157,7 @@ void Player::testPodGiveFeedback(Pod* test)
             }
             
             // Add to fuel gauge for correct zaps
-            tunnel->addToFuelBuffer(40); //
+            tunnel->addToFuelBuffer(2.667); //
         }
         else
         {
@@ -1201,6 +1203,7 @@ void Player::testPodGiveFeedback(Pod* test)
                 ++numWrongTotal;
                 
                 //beginBadFuelPickUp();
+                xsTimer = 1.0f;
                 
                 if (hp >= 0) hp += globals.HPPositiveWrongAnswer;
                 else hp += globals.HPNegativeWrongAnswer;
@@ -2223,7 +2226,7 @@ void Player::updateSpeed(int mean, bool step)
     }
     baseSpeed += ds;
     baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
-    tunnel->updateTSModifier();
+    //tunnel->updateTSModifier();
 }
 
 // Assigns the actual final speed of the ship depending on the state of the game and the player.
@@ -2357,7 +2360,7 @@ void Player::update(float elapsed)
                 const int NONZAP_PICKUP = 50;
                 int tleft = 0;
                 if (tunnel->getEval() == PASS)
-                    tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+                    tleft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
                 int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
                 setScore(score);
                 
@@ -2445,7 +2448,7 @@ void Player::update(float elapsed)
             const int NONZAP_PICKUP = 50;
             int tleft = 0;
             if (tunnel->getEval() == PASS)
-                tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+                tleft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
             int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
             setScore(score);
             
@@ -2482,7 +2485,7 @@ void Player::update(float elapsed)
         const int NONZAP_PICKUP = 50;
         int tleft = 0;
         if (tunnel->getEval() == PASS)
-            tleft = (tunnel->getStageTime() - tunnel->getTotalDistance()) / 10;
+            tleft = (tunnel->getStageTime() - tunnel->getTimeLeft());
         int score = getNumCorrectTotal() * getScoring() + getNumPickupsTotal() * NONZAP_PICKUP + SCORE_PER_TICK * tleft;
         setScore(score);
         

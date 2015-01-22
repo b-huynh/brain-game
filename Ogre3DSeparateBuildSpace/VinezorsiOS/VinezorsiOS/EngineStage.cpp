@@ -1276,7 +1276,7 @@ void EngineStage::setup()
         int rank = level.nback;
         if (level.phaseX == PHASE_COLLECT)
             rank = (int)round(player->scheduler->nBackLevelE) >= 2 ? 3 : 2;
-        
+        /*
         if (rank <= 1)
             globals.fuelReturn = 90.0f;
         else if (rank == 2)
@@ -1284,24 +1284,32 @@ void EngineStage::setup()
         else //if (rank == 3)
             globals.fuelReturn = 60.0f;
         globals.fuelMax = 450.0;
+        */
+        if (rank <= 1)
+            globals.fuelReturn = 6.0f;
+        else if (rank == 2)
+            globals.fuelReturn = 5.0f;
+        else //if (rank == 3)
+            globals.fuelReturn = 4.0f;
+        globals.fuelMax = 30.0;
     }
     if (level.durationX == DURATION_SHORT)
     {
         globals.startingHP = 5;
-        //globals.wrongAnswerTimePenalty = 10.0;
-        globals.podBinSize = 7;
+        globals.wrongAnswerTimePenalty = 3.0;
+        //globals.podBinSize = 7;
     }
     else if (level.durationX == DURATION_NORMAL)
     {
         globals.startingHP = 4;
-        //globals.wrongAnswerTimePenalty = 5.0;
-        globals.podBinSize = 11;
+        globals.wrongAnswerTimePenalty = 5.0;
+        //globals.podBinSize = 11;
     }
     else
     {
         globals.startingHP = 3;
-        //globals.wrongAnswerTimePenalty = 3.0;
-        globals.podBinSize = 16;
+        globals.wrongAnswerTimePenalty = 10.0;
+        //globals.podBinSize = 16;
     }
     
     

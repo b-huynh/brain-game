@@ -162,7 +162,7 @@ void HudStage::update(float elapsed)
     }
     
     // Update powerup GUI
-    float timeLeft = fmax(tunnel->getTimeLeft() / 10, 0.0f);
+    float timeLeft = fmax(tunnel->getTimeLeft(), 0.0f);
     Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
     label2->setColour(fontColor);
     label2->setCaption(Util::toStringInt(timeLeft));
@@ -202,9 +202,25 @@ void HudStage::update(float elapsed)
     {
         label1->setCaption(globals.messageBig);
         
+        player->xsTimer -= elapsed;
+        std::string xs = "";
+        for (int i = 0; i < globals.startingHP - player->getHP(); ++i)
+        {
+            xs += "x";
+        }
+        if (tunnel->getMode() != STAGE_MODE_RECESS && player->xsTimer > 0.0f)
+        {
+            label6->setCaption(xs);
+            label6->setColour(ColourValue::ColourValue(1.0, 0.0, 0.0, player->xsTimer));
+        }
+        else
+            label6->setCaption("");
+        
         label7->setCaption(globals.message);
         label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
         label7->setCharHeight(0.025 * FONT_SZ_MULT);
+        
+
     }
     else if (!tunnel->needsCleaning() && tunnel->getEval() != PASS)
     {
@@ -212,7 +228,7 @@ void HudStage::update(float elapsed)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nOur Fuel is Compromised");
+            label7->setCaption("Blast\nToo many bad zaps");
         }
         else if (tunnel->getEval() == EVEN)
         {
@@ -270,6 +286,7 @@ void HudStage::alloc()
     HudRightPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightPanel"));
     HudLeftZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftZapper"));
     HudRightZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightZapper"));
+    /*
     for (int i = 0; i < globals.startingHP; ++i)
     {
         PanelOverlayElement* fuelContainer = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudFuelContainer" + Util::toStringInt(i)));
@@ -277,6 +294,8 @@ void HudStage::alloc()
         HudFuelContainers.push_back(fuelContainer);
         HudFuelBars.push_back(fuelBar);
     }
+    */
+    HudFuelBar = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudFuelBar"));
     
     // Allocate text area elements
     label1 = static_cast<TextAreaOverlayElement*>(
@@ -345,10 +364,13 @@ void HudStage::alloc()
     HudRightPanel->addChild(rightZapperButtonBackground);
     HudLeftPanel->addChild(HudLeftZapper);
     HudRightPanel->addChild(HudRightZapper);
+    HudTopPanel->addChild(HudFuelBar);
+    /*
     for (int i = 0; i < HudFuelContainers.size(); ++i)
         HudTopPanel->addChild(HudFuelContainers[i]);
     for (int i = 0; i < HudFuelBars.size(); ++i)
         HudTopPanel->addChild(HudFuelBars[i]);
+     */
     
     overlay1->add2D(pauseBackground);
     //for (int i = 0; i < collectionBar.size(); ++i)
@@ -481,12 +503,15 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightPanel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftZapper);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightZapper);
+    /*
     for (int i = 0; i < HudFuelContainers.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelContainers[i]);
     for (int i = 0; i < HudFuelBars.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelBars[i]);
     HudFuelContainers.clear();
     HudFuelBars.clear();
+    */
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelBar);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
     collectionBar.clear();
@@ -561,7 +586,11 @@ void HudStage::initOverlay()
     HudRightPanel->setPosition(0.7739, 0.0586);
     HudRightPanel->setDimensions(0.2261, 0.8919);
     HudRightPanel->setMaterialName("General/GUIMainHudRight");
-
+    
+    HudFuelBar->setMetricsMode(GMM_RELATIVE);
+    HudFuelBar->setPosition(0.735, 0.025);
+    HudFuelBar->setMaterialName("General/GUIFuelBar");
+    
     float leftZapperX = 0.0216;
     float leftZapperY = 0.2200;
     float rightZapperX = 0.1245;
@@ -628,11 +657,10 @@ void HudStage::initOverlay()
     label5prompt->setFontName("MainSmall");
     label5prompt->setCaption("Fuel");
     
-    label6->setMetricsMode(GMM_PIXELS);
+    label6->setMetricsMode(GMM_RELATIVE);
     label6->setAlignment(TextAreaOverlayElement::Center);
-    label6->setPosition(globals.label6_posX, globals.label6_posY);
-    label6->setCharHeight(globals.screenHeight / 50 * FONT_SZ_MULT);
-    label6->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
+    label6->setPosition(0.5, 0.3);
+    label6->setCharHeight(0.064 * FONT_SZ_MULT);
     label6->setFontName("MainSmall");
     
     label7->setMetricsMode(GMM_RELATIVE);
@@ -901,6 +929,11 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
 
 void HudStage::setFuelBar(float elapsed)
 {
+    float totalWidth = 0.1725;
+    float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
+    HudFuelBar->setDimensions(percentFuel * totalWidth, 0.045);
+    
+    /*
     if (tunnel->getFuelTimer() > prevFuelTimer)
         fuelBarAnimationTimer = 1.0f;
     prevFuelTimer = tunnel->getFuelTimer();
@@ -945,4 +978,5 @@ void HudStage::setFuelBar(float elapsed)
         }
     }
     //HudFuelBar->setDimensions(percentFuel * totalWidth, 0.045);
+     */
 }

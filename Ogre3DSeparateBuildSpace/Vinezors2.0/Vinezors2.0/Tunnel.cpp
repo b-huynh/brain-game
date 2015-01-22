@@ -33,7 +33,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float
     setNewControl(control);
     
     // Add time based on n-back since players need more time before they can get targets
-    this->stageTime += 40 * nback + 40;
+    this->stageTime += 3 * nback + 2;
     fuelTimer = globals.fuelMax;
 }
 
@@ -629,7 +629,7 @@ float Tunnel::getTimePenalty() const
 
 float Tunnel::getTimeLeft() const
 {
-    return stageTime - getTotalDistance() - getTimePenalty();
+    return stageTime - getTotalElapsed() - getTimePenalty();
 }
 
 float Tunnel::getFuelMax() const
@@ -795,8 +795,8 @@ void Tunnel::checkIfDone()
                 setDone(FAIL);//setDone(EVEN);
             else if (stageTime > 0 && getTimeLeft() <= 0)
                     setDone(FAIL);
-            //else if (player->getHP() <= globals.HPNegativeLimit)
-            //    setDone(FAIL);
+            else if (player->getHP() <= globals.HPNegativeLimit)
+                setDone(FAIL);
             // Let this be done after passing a fuel cell to be fair on the edge case
             //else if (fuelTimer <= 0.0 && fuelBuffer <= 0.0)
             //    setDone(EVEN);
@@ -888,7 +888,8 @@ void Tunnel::addToFuelTimer(float value)
     if (!isDone())
     {
         fuelTimer += value;
-        float currentMax = fuelMax - fuelSize * (globals.startingHP - player->getHP());
+        //float currentMax = fuelMax - fuelSize * (globals.startingHP - player->getHP());
+        float currentMax = fuelMax;
         if (fuelTimer > currentMax)
             fuelTimer = currentMax;
     }
@@ -1857,9 +1858,10 @@ void Tunnel::update(float elapsed)
     {
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
+        tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
         float elapsedAdjusted = elapsed * tsModifier;
-        totalDistance += elapsedAdjusted;
-        totalElapsed += elapsed;
+        //totalDistance += elapsedAdjusted;
+        totalElapsed += elapsedAdjusted;
         if (fuelBuffer > 0.0f)
             fuelBuffer -= elapsedAdjusted;
         else
