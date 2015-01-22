@@ -3287,15 +3287,37 @@ float Player::obtainSamplingWeight(StageRequest level, PlayerProgress assessment
 
 float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
 {
-    // Assign an accuracy range that determines success from 0% to 100%
-    float accuracyRange = 0.25;
-    
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
     const float SOFT_CAP = 0.35;
-    const float HARD_CAP = 0.50;
-    double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
-    if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
-    if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
+    const float HARD_CAP = 1.0;
+    
+    // Anything inbetween these two bounds are considered in the "Dead Zone" where no change happens to nBackDelta
+    const float UPPER_BOUND = 0.70; // the threshold to get a positive nBackDelta
+    const float LOWER_BOUND = 0.60; // the threshold to get a negative nBackDelta
+    
+    double nBackDelta = 0.0;
+    if (accuracy > UPPER_BOUND) {
+        nBackDelta = (accuracy - UPPER_BOUND) / 0.3;
+    }
+    else if (accuracy < LOWER_BOUND) {
+        nBackDelta = -(LOWER_BOUND - accuracy) / 0.3;
+    }
+    else {
+        nBackDelta = 0.0;
+    }
+    nBackDelta *= SOFT_CAP;
+    
+    // In case the nBackDelta is lower than the softcap.
+    if (nBackDelta < -SOFT_CAP) {
+        nBackDelta = -SOFT_CAP;
+    }
+    
+    /*// Taken out. No longer using accuracy range to calculate nBackDelta
+        double accuracyRange = 0.25;
+        double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
+        if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
+        if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
+    */
     
     float difficultyWeight = obtainDifficultyWeight(level, assessment);
     float samplingWeight = obtainSamplingWeight(level, assessment);
@@ -3342,9 +3364,11 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     if ( totalElapsed >= globals.sessionTime )
         scheduler->sessionFinished = true;
     
+    /*/ Print time spent in scheduler for debugging
     cout << "\n\n-----------------------------------------\n";
     cout << "Game Time Played: " << totalElapsed << endl;
     cout << "-----------------------------------------\n\n";
+    */
     
     double playerSkill;
     double playerOffset;
