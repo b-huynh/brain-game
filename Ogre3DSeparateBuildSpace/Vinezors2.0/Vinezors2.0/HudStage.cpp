@@ -665,7 +665,7 @@ void HudStage::initOverlay()
     
     label7->setMetricsMode(GMM_RELATIVE);
     label7->setAlignment(TextAreaOverlayElement::Center);
-    label7->setPosition(0.50, 0.20);
+    label7->setPosition(0.50, 0.15);
     label7->setFontName("MainSmall");
     
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);

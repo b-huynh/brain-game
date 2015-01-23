@@ -794,7 +794,7 @@ void Tunnel::checkIfDone()
             else if (spawnLimit > 0 && getSignalsLeft() <= 0)
                 setDone(FAIL);//setDone(EVEN);
             else if (stageTime > 0 && getTimeLeft() <= 0)
-                    setDone(FAIL);
+                setDone(FAIL);
             else if (player->getHP() <= globals.HPNegativeLimit)
                 setDone(FAIL);
             // Let this be done after passing a fuel cell to be fair on the edge case
@@ -824,6 +824,7 @@ void Tunnel::setEval(Evaluation eval)
 
 void Tunnel::setDone(Evaluation eval)
 {
+    this->eval = eval;
     for (int i = 0; i < globals.initiationSections; ++i) {
         SectionInfo info = SectionInfo(BLANK, NO_DIRECTION, 0, endRot, sidesUsed);
         if (eval == PASS)

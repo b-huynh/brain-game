@@ -299,7 +299,7 @@ void TutorialManager::update(float elapsed, Player* player)
             tdisp = tleft;
         if (specialMode == 0)
         {
-            specialTimer += 30 * elapsed;
+            specialTimer += 20 * elapsed;
             if (specialTimer > numWrong)
             {
                 specialMode++;
@@ -313,7 +313,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 1)
         {
-            specialTimer += 30 * elapsed;
+            specialTimer += 20 * elapsed;
             if (specialTimer > numMissed)
             {
                 specialMode++;
@@ -326,7 +326,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 2)
         {
-            specialTimer += 60 * elapsed;
+            specialTimer += 40 * elapsed;
             if (specialTimer > numPickups)
             {
                 specialMode++;
@@ -339,9 +339,9 @@ void TutorialManager::update(float elapsed, Player* player)
         else if (specialMode == 3)
         {
             if (mode == STAGE_MODE_RECESS)
-                specialTimer += 60 * elapsed;
+                specialTimer += 40 * elapsed;
             else
-                specialTimer += 15 * elapsed;
+                specialTimer += 10 * elapsed;
             if (specialTimer > numCorrect)
             {
                 specialMode++;
@@ -354,7 +354,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 4)
         {
-            specialTimer += 60 * elapsed;
+            specialTimer += 40 * elapsed;
             if (specialTimer > tleft)
             {
                 specialMode++;
@@ -434,7 +434,7 @@ void TutorialManager::update(float elapsed, Player* player)
                     fireworkNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("FireworkNode");
                 else
                 {
-                    fireworkTimer += 3 * elapsed;
+                    fireworkTimer += elapsed;
                     if (fireworkTimer >= 1.0f && fireworkEffects.size() < 3)
                     {
                         Ogre::ParticleSystem* fireworkEffect = fireworkNode->getCreator()->createParticleSystem("FireworkEffect" + Util::toStringInt(fireworkEffects.size()), "StageEnding/Fireworks");

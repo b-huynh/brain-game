@@ -14,7 +14,7 @@ material General/WallBindingStart
 			{
 				texture LevelBinding/TunnelTile_SpacePlatForms.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -36,7 +36,7 @@ material General/WallBindingA
 			{
 				texture LevelBinding/TunnelTile_R_Windows.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -58,7 +58,7 @@ material General/WallBindingA2
             {
                 texture LevelBinding/TunnelTile_R_Windows2.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
         }
     }
@@ -81,7 +81,7 @@ material General/WallBindingB
 			{
 				texture LevelBinding/TunnelTile_AlienPipes.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -103,7 +103,7 @@ material General/WallBindingB2
             {
                 texture LevelBinding/TunnelTile_AlienPipes2.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
         }
     }
@@ -125,7 +125,7 @@ material General/WallBindingC
 			{
 				texture LevelBinding/TunnelTile_ice.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -147,7 +147,7 @@ material General/WallBindingC2
             {
                 texture LevelBinding/TunnelTile_ice2.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
         }
     }
@@ -169,7 +169,7 @@ material General/WallBindingD
 			{
 				texture LevelBinding/blueice.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -191,7 +191,7 @@ material General/WallBindingD2
             {
                 texture LevelBinding/blueice2.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
         }
     }
@@ -213,7 +213,7 @@ material General/WallBindingE
 			{
 				texture LevelBinding/TunnelTile_Wires.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
 		}
 	}
@@ -235,7 +235,7 @@ material General/WallBindingG
 			{
 				texture LevelBinding/TunnelTile_PurplePipes.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
 			}
 		}
 	}
@@ -257,7 +257,7 @@ material General/WallBindingG2
             {
                 texture LevelBinding/TunnelTile_PurplePipes2.png
                 filtering anisotropic
-                max_anisotropy 16
+                max_anisotropy 8
             }
         }
     }
