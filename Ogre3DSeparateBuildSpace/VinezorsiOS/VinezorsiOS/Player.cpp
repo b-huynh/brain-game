@@ -1142,9 +1142,9 @@ void Player::testPodGiveFeedback(Pod* test)
                 }
             }
             
-            if (tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3) || tunnel->getMode() == STAGE_MODE_RECESS)
+            updateSpeed(initSpeed, true);
+            if (tunnel->satisfyCriteria(tunnel->getNBackToggle(getToggleBack()), 3) && tunnel->getMode() != STAGE_MODE_RECESS)
             {
-                updateSpeed(initSpeed, true);
                 if (tunnel->areCriteriaFilled()) // Done for last minute pick-ups for zap. (i.e. Time ran out, but you zapped the next pod)
                     tunnel->setEval(PASS);
             }
@@ -1157,7 +1157,10 @@ void Player::testPodGiveFeedback(Pod* test)
             }
             
             // Add to fuel gauge for correct zaps
-            tunnel->addToFuelBuffer(2.667); //
+            if (tunnel->getMode() == STAGE_MODE_RECESS)
+                tunnel->addToFuelTimer(tunnel->getFuelReturn());
+            else
+                tunnel->addToFuelBuffer(2.667); //
         }
         else
         {
@@ -1183,6 +1186,8 @@ void Player::testPodGiveFeedback(Pod* test)
                         baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
                     }
                 }
+                
+                forceCheckEnd = true;
             }
         }
     }
@@ -1236,6 +1241,8 @@ void Player::testPodGiveFeedback(Pod* test)
                     {
                         updateSpeed(initSpeed, false);
                     }
+                    
+                    forceCheckEnd = true;
                 }
             }
         }
@@ -1256,6 +1263,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 ++numWrongCombo;
                 
                 updateSpeed(initSpeed, false);
+                
+                forceCheckEnd = true;
             }
         }
     }
@@ -1272,13 +1281,13 @@ void Player::testPodGiveFeedback(Pod* test)
                 soundFeedbackGood->play();
             }
             
-            // Add to fuel gauge for correct zaps
+            // Add to fuel gauge for correct pickups
             tunnel->addToFuelTimer(tunnel->getFuelReturn());
         }
     }
     
     // Check after passing a pod so that they might obtain fuel and be safe
-    if (tunnel->getFuelTimer() <= 0.0f && (tunnel->getFuelBuffer() <= 0.0 || forceCheckEnd))
+    if (!tunnel->isDone() && tunnel->getFuelTimer() <= 0.0f && (tunnel->getFuelBuffer() <= 0.0 || forceCheckEnd))
         tunnel->setDone(EVEN);
     
     // Check for combo mode
@@ -2183,21 +2192,21 @@ void Player::updateSpeed(int mean, bool step)
         // Step function for how speed rises
         float dist = baseSpeed - mean;
         if (dist <= -15 + epsilon)
-            ds = 3.0;
+            ds = 1.5;
         else if (dist <= -7.5 + epsilon)
-            ds = 3.0;
+            ds = 1.5;
         else if (dist <= -5 + epsilon)
-            ds = 2.0;
+            ds = 1.0;
         else if (dist <= -1 + epsilon)
-            ds = 1.0;
+            ds = 0.5;
         else if (dist < 1 + epsilon)
-            ds = 1.0;
+            ds = 0.5;
         else if (dist < 5 + epsilon)
-            ds = 0.5;
+            ds = 0.25;
         else if (dist < 7.5 + epsilon)
-            ds = 0.5;
+            ds = 0.25;
         else if (dist < 15 + epsilon)
-            ds = 0.5;
+            ds = 0.25;
         else
             ds = 0.0;
     }
@@ -2208,21 +2217,21 @@ void Player::updateSpeed(int mean, bool step)
         if (dist <= -15 + epsilon)
             ds = 0.0;
         else if (dist <= -7.5 + epsilon)
-            ds = -0.5;
+            ds = -0.25;
         else if (dist <= -5 + epsilon)
-            ds = -1.0;
+            ds = -0.5;
         else if (dist <= -1 + epsilon)
-            ds = -1.0;
+            ds = -0.5;
         else if (dist < 1 + epsilon)
-            ds = -1.0   ;
+            ds = -0.5   ;
         else if (dist < 5 + epsilon)
-            ds = -2.0;
+            ds = -1.0;
         else if (dist < 7.5 + epsilon)
-            ds = -2.0;
+            ds = -1.0;
         else if (dist < 15 + epsilon)
-            ds = -3.0;
+            ds = -1.5;
         else
-            ds = -3.0;
+            ds = -1.5;
     }
     baseSpeed += ds;
     baseSpeed = Util::clamp(baseSpeed, minSpeed, maxSpeed);
@@ -3238,11 +3247,9 @@ void Player::feedLevelRequestFromSchedule()
 }
 
 // Returns a multiplier when incrementing or decrementing memory level during assessment
-float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessment)
+float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessment, float nBackDelta)
 {
     float valMemory = 1.0;
-    float valNavigation = 1.0;
-    float valHoldout = 1.0;
     
     float nBackDifficulty = level.nback - assessment.nBackSkill;
     if (level.hasHoldout())
@@ -3250,22 +3257,32 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     if (level.phaseX == PHASE_COLLECT)
         valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
     else if ( nBackDifficulty < -1.5 )
-        valMemory = 0.0;    // too easy memory
+    {
+        if (nBackDelta >= 0.0)
+            valMemory = 0.0;    // too easy memory mainly for tutorial spam
+        else
+            valMemory = 2.0;
+    }
     else if ( nBackDifficulty < -0.5 )
-        valMemory = 0.5;    // easy memory
+    {
+        if (nBackDelta >= 0.0)
+            valMemory = 0.0;    // easy memory
+        else
+            valMemory = 2.0;
+    }
     else if ( nBackDifficulty < 0.5 )
+    {
         valMemory = 1.0;    // normal memory
+    }
     else //if ( nBackDifficulty >= 0.5 )
-        valMemory = 2.0;    // hard memory
+    {
+        if (nBackDelta >= 0.0)
+            valMemory = 2.0;    // hard memory
+        else
+            valMemory = 0.0;
+    }
 
-    if (level.difficultyX == DIFFICULTY_EASY)
-        valNavigation = 0.8;   // easy nav
-    else if (level.difficultyX == DIFFICULTY_NORMAL)
-        valNavigation = 1.0;   // normal nav
-    else //(level.difficulty == DIFFICULTY_HARD)
-        valNavigation = 1.2;   // hard nav
-    
-    return valMemory * valNavigation * valHoldout;
+    return valMemory;
 }
 
 
@@ -3279,28 +3296,50 @@ float Player::obtainSamplingWeight(StageRequest level, PlayerProgress assessment
     if (level.phaseX == PHASE_COLLECT)
         valLength = 1.0;
     else if (level.collectionCriteria.size() <= 4)
-        valLength = 0.5;    // easy time
+        valLength = 0.6;    // easy time
     else if (level.collectionCriteria.size() <= 8)
-        valLength = 1.0;    // normal time
+        valLength = 0.8;    // normal time
     else //if (level.collectionCriteria.size() <= 13)
-        valLength = 2.0;    // hard time
+        valLength = 1.0;    // hard time
     
     return valLength;
 }
 
 float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
 {
-    // Assign an accuracy range that determines success from 0% to 100%
-    float accuracyRange = 0.25;
-    
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
     const float SOFT_CAP = 0.35;
-    const float HARD_CAP = 0.50;
-    double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
-    if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
-    if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
+    const float HARD_CAP = 1.0;
     
-    float difficultyWeight = obtainDifficultyWeight(level, assessment);
+    // Anything inbetween these two bounds are considered in the "Dead Zone" where no change happens to nBackDelta
+    const float UPPER_BOUND = 0.70; // the threshold to get a positive nBackDelta
+    const float LOWER_BOUND = 0.60; // the threshold to get a negative nBackDelta
+    
+    double nBackDelta = 0.0;
+    if (accuracy > UPPER_BOUND) {
+        nBackDelta = (accuracy - UPPER_BOUND) / 0.3;
+    }
+    else if (accuracy < LOWER_BOUND) {
+        nBackDelta = -(LOWER_BOUND - accuracy) / 0.3;
+    }
+    else {
+        nBackDelta = 0.0;
+    }
+    nBackDelta *= SOFT_CAP;
+    
+    // In case the nBackDelta is lower than the softcap.
+    if (nBackDelta < -SOFT_CAP) {
+        nBackDelta = -SOFT_CAP;
+    }
+    
+    /*// Taken out. No longer using accuracy range to calculate nBackDelta
+     double accuracyRange = 0.25;
+     double nBackDelta = SOFT_CAP * (accuracy - (1 - accuracyRange)) / accuracyRange;
+     if ( nBackDelta < -SOFT_CAP ) nBackDelta = -SOFT_CAP;
+     if ( nBackDelta > SOFT_CAP ) nBackDelta = SOFT_CAP;
+     */
+    
+    float difficultyWeight = obtainDifficultyWeight(level, assessment, nBackDelta);
     float samplingWeight = obtainSamplingWeight(level, assessment);
     const float PERFECT_MULTIPLIER = 1.3;
     if ( nBackDelta < 0.0 )
@@ -3308,10 +3347,7 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
         if (assessment.rating >= 5 && !exclude ) // If the player completed the level, don't decrease despite accuracy
             nBackDelta = 0.0;
         
-        if (difficultyWeight != 0.0) // Don't divide by 0
-            nBackDelta /= difficultyWeight; // apply multiplier to negative base value
-        else
-            nBackDelta = 0.0;
+        nBackDelta *= difficultyWeight;
         nBackDelta *= samplingWeight;
     }
     else

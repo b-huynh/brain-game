@@ -167,7 +167,7 @@ void TunnelSlice::initWalls()
         mainLeftSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
         
         Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWallEntity->setMaterialName(getRailingMaterial());
         mainLeftSideRailing->attachObject(leftWallEntity);
         
         
@@ -179,7 +179,7 @@ void TunnelSlice::initWalls()
         mainRightSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
         
         Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWallEntity->setMaterialName(getRailingMaterial());
         mainRightSideRailing->attachObject(rightWallEntity);
     }
     else if( countSides == 5 ) {
@@ -192,7 +192,7 @@ void TunnelSlice::initWalls()
         //mainLeftSideRailing->roll(Degree(-45));
         
         Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWallEntity->setMaterialName(getRailingMaterial());
         mainLeftSideRailing->attachObject(leftWallEntity);
         
         
@@ -205,7 +205,7 @@ void TunnelSlice::initWalls()
         //mainRightSideRailing->roll(Degree(45));
         
         Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWallEntity->setMaterialName(getRailingMaterial());
         mainRightSideRailing->attachObject(rightWallEntity);
     }
     else if( countSides == 7 ) {
@@ -218,7 +218,7 @@ void TunnelSlice::initWalls()
         //mainLeftSideRailing->roll(Degree(-90));
         
         Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        leftWallEntity->setMaterialName("Railing/Cyan");
+        leftWallEntity->setMaterialName(getRailingMaterial());
         mainLeftSideRailing->attachObject(leftWallEntity);
         
         
@@ -231,7 +231,7 @@ void TunnelSlice::initWalls()
         //mainRightSideRailing->roll(Degree(90));
         
         Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
-        rightWallEntity->setMaterialName("Railing/Cyan");
+        rightWallEntity->setMaterialName(getRailingMaterial());
         mainRightSideRailing->attachObject(rightWallEntity);
     }
     
@@ -247,8 +247,8 @@ void TunnelSlice::initWalls()
         mainLeftTransition->translate(move);
         mainLeftTransition->scale(scaleAmount);
         Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("mainLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         mainLeftTransition->attachObject(leftTransitionEntity);
         
         
@@ -258,8 +258,8 @@ void TunnelSlice::initWalls()
         mainRightTransition->translate(move);
         mainRightTransition->scale(scaleAmount);
         Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("mainRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         mainRightTransition->attachObject(rightTransitionEntity);
         
         mainLeftTransition->yaw(Degree(180));
@@ -275,8 +275,8 @@ void TunnelSlice::initWalls()
         mainLeftTransition->scale(scaleAmount);
         mainLeftTransition->roll(Degree(-45));
         Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("mainLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         mainLeftTransition->attachObject(leftTransitionEntity);
         
         
@@ -288,8 +288,8 @@ void TunnelSlice::initWalls()
         mainRightTransition->scale(scaleAmount);
         mainRightTransition->roll(Degree(45));
         Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("mainRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         mainRightTransition->attachObject(rightTransitionEntity);
         
         mainLeftTransition->yaw(Degree(180));
@@ -425,6 +425,17 @@ std::string TunnelSlice::getMaterialName(bool isConnection) const
         materialName = materialName + "2";  // if the tile is a connection tile
     
     return materialName;
+}
+
+std::string TunnelSlice::getRailingMaterial() const
+{
+    return "Railing/Gray";
+}
+
+std::string TunnelSlice::getConnectorMaterial() const
+{
+    return "Railing/Gray";
+    //return "Railing/Gold";
 }
 
 // Finds collisions through bounding boxes
@@ -667,7 +678,7 @@ void TunnelSlice::addTransitionSet(std::string name, Vector3 p1, Vector3 p2, boo
     transitionRail->roll(Degree(railingRoll));
     
     Entity* railingEntity = sliceNode->getCreator()->createEntity(name + "TransitionRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
-    railingEntity->setMaterialName("Railing/Cyan");
+    railingEntity->setMaterialName(getRailingMaterial());
     transitionRail->attachObject(railingEntity);
     
     transitions.push_back(transitionRail);
@@ -679,7 +690,7 @@ void TunnelSlice::addTransitionSet(std::string name, Vector3 p1, Vector3 p2, boo
         point1->scale(scaleValue * scalePoint, scaleValue * scalePoint, scaleValue * scalePoint);
         point1->setOrientation(rot);
         Entity* point1Entity = sliceNode->getCreator()->createEntity(name + "TransitionPoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
-        point1Entity->setMaterialName("Railing/Cyan");
+        point1Entity->setMaterialName(getRailingMaterial());
         point1->attachObject(point1Entity);
         
         transitions.push_back(point1);
@@ -692,7 +703,7 @@ void TunnelSlice::addTransitionSet(std::string name, Vector3 p1, Vector3 p2, boo
         point2->scale(scaleValue * scalePoint, scaleValue * scalePoint, scaleValue * scalePoint);
         point2->setOrientation(rot);
         Entity* point2Entity = sliceNode->getCreator()->createEntity(name + "TransitionPoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
-        point2Entity->setMaterialName("Railing/Cyan");
+        point2Entity->setMaterialName(getRailingMaterial());
         point2->attachObject(point2Entity);
         
         transitions.push_back(point2);
@@ -903,9 +914,9 @@ void TunnelSlice::connect(TunnelSlice* next)
         Entity* leftIntermediateEntity = sliceNode->getCreator()->createEntity("connectorLeftSideRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         Entity* leftConnector1Entity = sliceNode->getCreator()->createEntity("connectorLeftSidePoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         Entity* leftConnector2Entity = sliceNode->getCreator()->createEntity("connectorLeftSidePoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
-        leftIntermediateEntity->setMaterialName("Railing/Cyan");
-        leftConnector1Entity->setMaterialName("Railing/Cyan");
-        leftConnector2Entity->setMaterialName("Railing/Cyan");
+        leftIntermediateEntity->setMaterialName(getRailingMaterial());
+        leftConnector1Entity->setMaterialName(getConnectorMaterial());
+        leftConnector2Entity->setMaterialName(getConnectorMaterial());
         
         connectorLeftSideRailing->attachObject(leftIntermediateEntity);
         connectorLeftSidePoint1->attachObject(leftConnector1Entity);
@@ -929,9 +940,9 @@ void TunnelSlice::connect(TunnelSlice* next)
         Entity* rightIntermediateEntity = sliceNode->getCreator()->createEntity("connectorRightSideRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         Entity* rightConnector1Entity = sliceNode->getCreator()->createEntity("connectorRightSidePoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
         Entity* rightConnector2Entity = sliceNode->getCreator()->createEntity("connectorRightSidePoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
-        rightIntermediateEntity->setMaterialName("Railing/Cyan");
-        rightConnector1Entity->setMaterialName("Railing/Cyan");
-        rightConnector2Entity->setMaterialName("Railing/Cyan");
+        rightIntermediateEntity->setMaterialName(getRailingMaterial());
+        rightConnector1Entity->setMaterialName(getConnectorMaterial());
+        rightConnector2Entity->setMaterialName(getConnectorMaterial());
         
         connectorRightSideRailing->attachObject(rightIntermediateEntity);
         connectorRightSidePoint1->attachObject(rightConnector1Entity);
@@ -951,8 +962,8 @@ void TunnelSlice::connect(TunnelSlice* next)
         connectorLeftTransition->translate(move);
         connectorLeftTransition->scale(scaleAmount);
         Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("connectorLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         connectorLeftTransition->attachObject(leftTransitionEntity);
         
         
@@ -962,8 +973,8 @@ void TunnelSlice::connect(TunnelSlice* next)
         connectorRightTransition->translate(move);
         connectorRightTransition->scale(scaleAmount);
         Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("connectorRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         connectorRightTransition->attachObject(rightTransitionEntity);
     }
     else if( sidesUsedBack == 5 && sidesUsedFront == 7 ) {
@@ -976,8 +987,8 @@ void TunnelSlice::connect(TunnelSlice* next)
         connectorLeftTransition->scale(scaleAmount);
         connectorLeftTransition->roll(Degree(-45));
         Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("connectorLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        leftTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        leftTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         connectorLeftTransition->attachObject(leftTransitionEntity);
         
         
@@ -989,8 +1000,8 @@ void TunnelSlice::connect(TunnelSlice* next)
         connectorRightTransition->scale(scaleAmount);
         connectorRightTransition->roll(Degree(45));
         Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("connectorRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
-        rightTransitionEntity->getSubEntity(1)->setMaterialName("Railing/Cyan");
-        rightTransitionEntity->getSubEntity(0)->setMaterialName("Railing/Cyan");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
         connectorRightTransition->attachObject(rightTransitionEntity);
     }
     

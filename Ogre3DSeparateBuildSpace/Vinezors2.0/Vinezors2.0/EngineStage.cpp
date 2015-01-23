@@ -1271,28 +1271,27 @@ void EngineStage::setup()
     globals.maxCamSpeed = level.maxCamSpeed;
     
     // This should be a level parameter later
-    if (player->levelRequest)
-    {
-        int rank = level.nback;
-        if (level.phaseX == PHASE_COLLECT)
-            rank = (int)round(player->scheduler->nBackLevelE) >= 2 ? 3 : 2;
-        /*
-        if (rank <= 1)
-            globals.fuelReturn = 90.0f;
-        else if (rank == 2)
-            globals.fuelReturn = 75.0f;
-        else //if (rank == 3)
-            globals.fuelReturn = 60.0f;
-        globals.fuelMax = 450.0;
-        */
-        if (rank <= 1)
-            globals.fuelReturn = 6.0f;
-        else if (rank == 2)
-            globals.fuelReturn = 5.0f;
-        else //if (rank == 3)
-            globals.fuelReturn = 4.0f;
-        globals.fuelMax = 30.0;
-    }
+    
+    int rank = level.nback;
+    /*
+    if (rank <= 1)
+        globals.fuelReturn = 90.0f;
+    else if (rank == 2)
+        globals.fuelReturn = 75.0f;
+    else //if (rank == 3)
+        globals.fuelReturn = 60.0f;
+    globals.fuelMax = 450.0;
+     */
+    if (level.phaseX == PHASE_COLLECT)
+        globals.fuelReturn = 2.667f;
+    else if (rank <= 1)
+        globals.fuelReturn = 6.0f;
+    else if (rank == 2)
+        globals.fuelReturn = 5.0f;
+    else //if (rank == 3)
+        globals.fuelReturn = 4.0f;
+    globals.fuelMax = 30.0;
+    
     if (level.durationX == DURATION_SHORT)
     {
         globals.startingHP = 5;

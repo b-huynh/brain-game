@@ -17,56 +17,29 @@ material Railing/DarkGray
 
 }
 
-material Railing/Cyan
+material Railing/Gray
 {
-	technique
-	{
-		pass
-		{
-			lighting on
-
-			//ambient 0.3 0.3 0.3 1.0
-			//diffuse 1.0 1.0 1.0 1.0
-			//specular 1.0 1.0 1.0 1.0 12.0
-
+    technique
+    {
+        pass
+        {
+            lighting on
             ambient 0.8 0.8 0.8 1.0
             diffuse 0.5 0.5 0.5 1.0
-		}
-
-	}
-
+        }
+    }
 }
 
-material Railing/DarkGrayOld
+material Railing/Gold
 {
-	technique
-	{
-		pass
-		{
-			lighting on
+    technique
+    {
+        pass
+        {
+            lighting on
 
-			ambient 0.1 0.1 0.1 1.0
-			diffuse 0.2 0.2 0.2 1.0
-			specular 0.1 0.1 0.1 1.0 1.0
-		}
-
-	}
-
-}
-
-material Railing/CyanOld
-{
-	technique
-	{
-		pass
-		{
-			lighting on
-
-			ambient 0.0 0.5 0.5 1.0
-			diffuse 0.0 1.0 1.0 1.0
-			specular 0.0 1.0 1.0 1.0 25.0
-		}
-
-	}
-
+            ambient 0.75 0.70 0.34 1.0
+            diffuse 1.00 0.95 0.46 1.0
+        }
+    }
 }

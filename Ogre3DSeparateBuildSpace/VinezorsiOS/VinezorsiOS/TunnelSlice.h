@@ -97,6 +97,8 @@ public:
     bool hasAvailableSide(Direction side) const;
     std::string getMaterialName() const;
     std::string getMaterialName(bool isConnection) const;
+    std::string getRailingMaterial() const;
+    std::string getConnectorMaterial() const;
     
     std::vector<Pod*> findCollisions(SceneNode *ent) const;
     std::vector<Pod*> findCollisions(Vine *vine);

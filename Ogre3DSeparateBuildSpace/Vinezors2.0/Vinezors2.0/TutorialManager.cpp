@@ -143,7 +143,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("   \nResults", "General/TutorialBackdropLined", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("\n\n\nThat's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
             break;
         default:
             break;
@@ -299,7 +299,7 @@ void TutorialManager::update(float elapsed, Player* player)
             tdisp = tleft;
         if (specialMode == 0)
         {
-            specialTimer += 10 * elapsed;
+            specialTimer += 30 * elapsed;
             if (specialTimer > numWrong)
             {
                 specialMode++;
@@ -313,7 +313,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 1)
         {
-            specialTimer += 10 * elapsed;
+            specialTimer += 30 * elapsed;
             if (specialTimer > numMissed)
             {
                 specialMode++;
@@ -326,7 +326,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 2)
         {
-            specialTimer += 20 * elapsed;
+            specialTimer += 60 * elapsed;
             if (specialTimer > numPickups)
             {
                 specialMode++;
@@ -339,9 +339,9 @@ void TutorialManager::update(float elapsed, Player* player)
         else if (specialMode == 3)
         {
             if (mode == STAGE_MODE_RECESS)
-                specialTimer += 20 * elapsed;
+                specialTimer += 60 * elapsed;
             else
-                specialTimer += 5 * elapsed;
+                specialTimer += 15 * elapsed;
             if (specialTimer > numCorrect)
             {
                 specialMode++;
@@ -354,7 +354,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 4)
         {
-            specialTimer += 20 * elapsed;
+            specialTimer += 60 * elapsed;
             if (specialTimer > tleft)
             {
                 specialMode++;
@@ -396,7 +396,7 @@ void TutorialManager::update(float elapsed, Player* player)
             bool pulsateTextSize = false;
             if (accuracy < 60)
                 popupText4->setCaption("\nNice Try...");
-            else if (accuracy < 75 || eval != PASS)
+            else if (accuracy < 70 || eval != PASS)
                 popupText4->setCaption("\nAlmost There...");
             else if (accuracy < 85)
             {
@@ -434,7 +434,7 @@ void TutorialManager::update(float elapsed, Player* player)
                     fireworkNode = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode()->createChildSceneNode("FireworkNode");
                 else
                 {
-                    fireworkTimer += elapsed;
+                    fireworkTimer += 3 * elapsed;
                     if (fireworkTimer >= 1.0f && fireworkEffects.size() < 3)
                     {
                         Ogre::ParticleSystem* fireworkEffect = fireworkNode->getCreator()->createParticleSystem("FireworkEffect" + Util::toStringInt(fireworkEffects.size()), "StageEnding/Fireworks");
@@ -586,7 +586,7 @@ bool TutorialManager::processInput(Vector2 target)
                 {
                     label7->setCaption("Nice try cadet...\nYou're not ready for this challenge");
                 }
-                else if (accuracy < 75 || eval != PASS)
+                else if (accuracy < 70 || eval != PASS)
                 {
                     int r = std::rand() % 2;
                     if (r == 0)

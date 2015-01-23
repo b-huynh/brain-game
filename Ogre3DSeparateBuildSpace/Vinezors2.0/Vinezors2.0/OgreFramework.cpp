@@ -189,11 +189,17 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundMissFeedback", "misstriangle.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundBadFeedback", "wrong2.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundMissFeedback", "wrong.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod1", "pod1b.wav", false, false, true);           // Rose
-    m_pSoundMgr->createSound("SoundPod2", "pod2b.wav", false, false, true);            // Iris
-    m_pSoundMgr->createSound("SoundPod3", "pod3b.wav", false, false, true);    // Bubble Flower
-    m_pSoundMgr->createSound("SoundPod4", "pod4b.wav", false, false, true);            // Daisy
+    m_pSoundMgr->createSound("SoundPod1", "pod3a.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod2", "pod4a.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod3", "bubbleSound.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod4", "pod2a.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod1", "pod1b.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod2", "pod2b.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod3", "pod3b.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod4", "pod4b.wav", false, false, true);
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);

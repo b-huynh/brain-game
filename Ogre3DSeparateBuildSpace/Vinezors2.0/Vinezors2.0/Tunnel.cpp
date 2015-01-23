@@ -824,7 +824,6 @@ void Tunnel::setEval(Evaluation eval)
 
 void Tunnel::setDone(Evaluation eval)
 {
-    this->eval = eval;
     for (int i = 0; i < globals.initiationSections; ++i) {
         SectionInfo info = SectionInfo(BLANK, NO_DIRECTION, 0, endRot, sidesUsed);
         if (eval == PASS)

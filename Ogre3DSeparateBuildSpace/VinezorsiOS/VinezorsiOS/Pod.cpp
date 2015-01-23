@@ -202,7 +202,11 @@ void Pod::loadCrystal()
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal");
             if (podShape == POD_SHAPE_SPHERE)
-                headContentEntity->getSubEntity(2)->setMaterialName("General/PodMetal");
+            {
+                headContentEntity->getSubEntity(2)->setMaterialName(materialName);
+                headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal");
+                headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal");
+            }
         }
         else
         {
@@ -372,7 +376,15 @@ void Pod::setToGrowth(float t)
     }
     else if (mtype == POD_CRYSTAL)
     {
-        head->setScale(Vector3(headRadius, t * headRadius, headRadius));
+        float scaleMult = 1.0f;
+        if (podShape == POD_SHAPE_TRIANGLE)
+            scaleMult = 1.8f;
+        else if (podShape == POD_SHAPE_SPHERE)
+            scaleMult = 1.3f;
+        else if (podShape == POD_SHAPE_DIAMOND)
+            scaleMult = 1.2;
+        
+        head->setScale(Vector3(headRadius, t * headRadius, headRadius) * scaleMult);
         
         //setRotateSpeed(direction * 2);
         //rotateSpeed = 2 + 98 * (1 - t);
@@ -501,10 +513,12 @@ void Pod::setSkin()
         headContentEntity->setMaterialName(materialName);
     else if (mtype == POD_CRYSTAL && podShape != POD_SHAPE_HOLDOUT)
     {
-        if (podShape != POD_SHAPE_TRIANGLE)
-            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
-        else
+        if (podShape == POD_SHAPE_SPHERE)
+            headContentEntity->getSubEntity(2)->setMaterialName(materialName);
+        else if (podShape == POD_SHAPE_TRIANGLE)
             headContentEntity->getSubEntity(1)->setMaterialName(materialName);
+        else
+            headContentEntity->getSubEntity(0)->setMaterialName(materialName);
     }
 }
 

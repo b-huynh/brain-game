@@ -455,7 +455,7 @@ public:
     
     // Returns a multiplier when incrementing or decrementing memory level during assessment
     float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude);
-    float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment);
+    float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment, float nBackDelta);
     float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);
     
     // "Grade" the level to see if player should repeat, go back, or advance

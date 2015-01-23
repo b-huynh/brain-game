@@ -493,7 +493,7 @@ void HudSchedulerMenu::setSelection()
     {
         completed = progress.rating >= 5 ? "yes" : "no";
         accuracy = Util::toStringInt(progress.accuracy * 100.0);
-        if (level.phaseX == PHASE_COLLECT)
+        if (level.phaseX != PHASE_COLLECT)
         {
             int criteria = 0;
             switch (level.durationX)

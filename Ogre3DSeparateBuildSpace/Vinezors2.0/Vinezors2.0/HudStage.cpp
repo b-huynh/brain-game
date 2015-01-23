@@ -228,7 +228,7 @@ void HudStage::update(float elapsed)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nToo many bad zaps");
+            label7->setCaption("Blast\nToo many unstable zaps");
         }
         else if (tunnel->getEval() == EVEN)
         {
