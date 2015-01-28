@@ -108,6 +108,7 @@ private:
         PodInfo podInfo;
         SectionInfo sectionInfo;
         int timestamp;
+        bool levelEnded;
         float minSpeed;
         float maxSpeed;
         float baseSpeed;

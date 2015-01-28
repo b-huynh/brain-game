@@ -198,7 +198,7 @@ void OgreApp::setupDemoScene()
     ResourcePtr resourceText1 = OgreFramework::getSingletonPtr()->m_pFontMgr->create("MainSmall", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     resourceText1->setParameter("type", "truetype");
     //resourceText1->setParameter("source", "C64_User_Mono_v1.0-STYLE.ttf");
-    resourceText1->setParameter("source", "NEUROPOL.ttf");
+    resourceText1->setParameter("source", "NEUROPOLX.ttf");
     resourceText1->setParameter("size", "16");
     resourceText1->setParameter("resolution", "96");
     resourceText1->load();

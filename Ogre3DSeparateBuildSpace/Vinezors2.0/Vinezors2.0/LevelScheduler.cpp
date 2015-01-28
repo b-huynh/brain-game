@@ -54,9 +54,11 @@ void LevelScheduler::initTutorialLevels()
     StageRequest level;
     std::pair<StageRequest, PlayerProgress> ret;
     
+    // Tutorial levels have a stageNo of -1 to indicate they do not count towards level score
+    
     // A recess for all navigation
     level = StageRequest();
-    level.stageNo = 0;
+    level.stageNo = -1;
     level.nback = 0;
     level.stageTime = 100.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -84,7 +86,7 @@ void LevelScheduler::initTutorialLevels()
     
     // All-signal 1-Back
     level = StageRequest();
-    level.stageNo = 0;
+    level.stageNo = -1;
     level.nback = 1;
     level.stageTime = 100.0;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
@@ -105,7 +107,7 @@ void LevelScheduler::initTutorialLevels()
     level.durationX = DURATION_NORMAL;
     ret = std::pair<StageRequest, PlayerProgress>();
     ret.first = level;
-    ret.second.nBackSkill = nBackLevelA;
+    ret.second.nBackSkill = nBackLevelD;
     tutorialLevels.push_back(ret);
 }
 //________________________________________________________________________________________

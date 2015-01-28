@@ -38,8 +38,8 @@ particle_system General/Beam
     // Area emitter
     emitter Ring
     {
-        emission_rate   10000
-        time_to_live    0.2
+        emission_rate   1250
+        time_to_live    0.5
         colour 0.0 0.3 0.5
         width           0.5
         height          0.5

@@ -92,6 +92,9 @@ public:
 	float getStemLength() const;
 	float getHeadRadius() const;
     SceneNode* getGlowNode() const;
+    ParticleSystem* getGlowEffect() const;
+    SceneNode* getIndicatorNode() const;
+    ParticleSystem* getIndicatorEffect() const;
     
     bool isPodTested() const;
     bool isPodTaken() const;

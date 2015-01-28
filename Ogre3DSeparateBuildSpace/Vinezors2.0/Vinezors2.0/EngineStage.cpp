@@ -1574,37 +1574,18 @@ void EngineStage::setTaskPrompt()
         PlayerProgress progress = player->levelRequest->second;
         float potential = player->modifyNBackDelta(level, progress, 1.0, true);
         if (level.phaseX == PHASE_COLLECT)
-            globals.setMessage("Enjoy cadet. This is a breeze", MESSAGE_NORMAL);
+            globals.setMessage("Enjoy the cruise cadet.", MESSAGE_NORMAL);
         if (potential >= 0.40)
-            globals.setMessage("This is challenging cadet. Good Luck", MESSAGE_NORMAL);
+            globals.setMessage("Stay focused pilot, it's going to get rough.", MESSAGE_NORMAL);
         else if (potential >= 0.30)
-            globals.setMessage("You got this cadet. Good Luck", MESSAGE_NORMAL);
+            globals.setMessage("Good luck cadet.", MESSAGE_NORMAL);
         else
-            globals.setMessage("No sweat cadet. You got this", MESSAGE_NORMAL);
+            globals.setMessage("No worries cadet. You'll do fine.", MESSAGE_NORMAL);
     }
     else
-        globals.setMessage("Are you ready?", MESSAGE_NORMAL);
-    switch (tunnel->getPhase())
-    {
-        case PHASE_COLOR_SOUND:
-            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
-            break;
-        case PHASE_SHAPE_SOUND:
-            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
-            break;
-        case PHASE_SOUND_ONLY:
-            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
-            break;
-        case PHASE_ALL_SIGNAL:
-            globals.appendMessage("\nObtain enough special Fuel", MESSAGE_NORMAL);
-            break;
-        case PHASE_COLLECT:
-            globals.appendMessage("\nReach the end collecting Fuel", MESSAGE_NORMAL);
-            break;
-        default:
-            break;
-    }
-    globals.appendMessage("\nSet and Verify your Speed", MESSAGE_NORMAL);
+        globals.setMessage("Ready to launch?", MESSAGE_NORMAL);
+    globals.appendMessage("\nGather fuel to power the ship", MESSAGE_NORMAL);
+    globals.appendMessage("\nSet and verify your speed.", MESSAGE_NORMAL);
 }
 
 void EngineStage::dealloc()

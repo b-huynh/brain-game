@@ -167,7 +167,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod1", "pod3a.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod2", "pod4a.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod3", "bubbleSound.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundPod3", "pod1a.wav", false, false, true);
     m_pSoundMgr->createSound("SoundPod4", "pod2a.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod1", "pod1b.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod2", "pod2b.wav", false, false, true);

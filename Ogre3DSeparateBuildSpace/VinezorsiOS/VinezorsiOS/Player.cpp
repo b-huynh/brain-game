@@ -432,39 +432,47 @@ bool Player::isLevelAvailable(int level) const
     int levelRow = levels->getLevelRow(level);
     int levelCol = levels->getLevelCol(level);
     
-    switch (levelCol)
-    {
-        case 0:
-        {
-            if (levelRow < scheduler->nBackLevelA) return true;
-            break;
-        }
-        case 1:
-        {
-            if (levelRow < scheduler->nBackLevelB) return true;
-            break;
-        }
-        case 2:
-        {
-            if (levelRow < scheduler->nBackLevelC) return true;
-            break;
-        }
-        case 3:
-        {
-            if (levelRow < scheduler->nBackLevelD) return true;
-            break;
-        }
-        case 4:
-        {
-            if (levelRow < scheduler->nBackLevelE) return true;
-            break;
-        }
-        default:
-            break;
-    }
-    
     int totalRatingCur = getTotalLevelRating(levelRow);
     int rowRequirementCur = levels->getTotalRowRequirement(levelRow);
+    
+    // Only check scheduler if at least a scheduler level has been played
+    if (scheduler->scheduleHistoryA.size() > 0 ||
+        scheduler->scheduleHistoryB.size() > 0 ||
+        scheduler->scheduleHistoryC.size() > 0 ||
+        scheduler->scheduleHistoryD.size() > 0 ||
+        scheduler->scheduleHistoryE.size() > 0)
+    {
+        switch (levelCol)
+        {
+            case 0:
+            {
+                if (levelRow < scheduler->nBackLevelA) return true;
+                break;
+            }
+            case 1:
+            {
+                if (levelRow < scheduler->nBackLevelB) return true;
+                break;
+            }
+            case 2:
+            {
+                if (levelRow < scheduler->nBackLevelC) return true;
+                break;
+            }
+            case 3:
+            {
+                if (levelRow < scheduler->nBackLevelD) return true;
+                break;
+            }
+            case 4:
+            {
+                if (levelRow < scheduler->nBackLevelE) return true;
+                break;
+            }
+            default:
+                break;
+        }
+    }
     
     // Player must have played the first level to play any other one
     if (level != 0 && getLevelProgress(0).rating < 0)
@@ -1218,6 +1226,20 @@ void Player::testPodGiveFeedback(Pod* test)
                 //tunnel->addToTimePenalty(globals.wrongAnswerTimePenalty);
                 //tunnel->loseRandomCriteria();
                 
+                /*
+                // Turn the zap beam orange for wrong fuel
+                TractorBeam* t = dynamic_cast<TractorBeam*>(powerups["TractorBeam"]);
+                Ogre::ColourValue failColor = Ogre::ColourValue(1.0, 0.5, 0.3);
+                if (t && t->tractorBeamEffect)
+                    t->tractorBeamEffect->getEmitter(0)->setColour(failColor);
+                if (t && t->tractorBeamPulseEffect)
+                    t->tractorBeamPulseEffect->getEmitter(0)->setColour(failColor);
+                if (test->getIndicatorEffect())
+                    test->getIndicatorEffect()->getEmitter(0)->setColour(failColor);
+                if (test->getGlowEffect())
+                    test->getGlowEffect()->getEmitter(0)->setColour(failColor);
+                 */
+                
                 updateSpeed(initSpeed, false);
                 
                 forceCheckEnd = true;
@@ -1515,6 +1537,7 @@ void Player::recordInfo()
             result.podInfo = targetinfo;
             result.sectionInfo = sliceInfo;
             result.timestamp = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
+            result.levelEnded = tunnel->isDone();
             result.minSpeed = minSpeed;
             result.maxSpeed = maxSpeed;
             result.baseSpeed = baseSpeed;
@@ -2518,10 +2541,9 @@ void Player::update(float elapsed)
         
         // Check for collisions for player and the tunnel
         checkCollisions();
-            
-        // Record the segment info player has passed
-        recordInfo();
     }
+    // Record the segment info player has passed
+    recordInfo();
 }
 
 void Player::initPowerUps()
@@ -2802,6 +2824,7 @@ bool Player::saveStage(std::string file)
             out << "% Pod Zapped { -1=N/A, 0=No, 1=Yes }" << endl;
             out << "% Timestamp (ms)" << endl;
             out << "% Num Obstacles { 0, inf }" << endl;
+            out << "% Level Ended { 0, 1 }" << endl;
             out << "% Min Speed { 0, inf }" << endl;
             out << "% Max Speed { 0, inf }" << endl;
             out << "% Base Speed { 0, inf }" << endl;
@@ -2810,7 +2833,7 @@ bool Player::saveStage(std::string file)
             out << "% Segment Angle { 0, inf }" << endl;
             out << "% Segment Panels { 0, inf }" << endl;
             out << "%" << endl;
-            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerFuelTimer PlayerFuelBuffer PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken PodZapped Timestamp NumObs MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
+            out << "% SegEncNW SecEncN SegEncNE SegEncE SegEncSE SegEncS SegEncSW SegEncW EventNumber LevelNumber TaskType N-Back PlayerRollBase PlayerRollOffset PlayerRollSpeed PlayerFuelTimer PlayerFuelBuffer PlayerLoc PodLoc PodColor PodShape PodSound PodMatch PodTaken PodZapped Timestamp NumObs LevelEnded MinSpeed MaxSpeed BaseSpeed FinalSpeed SegmentDir SegmentAngle SegmentPanels" << endl;
         }
         
         for (std::list<Result>::iterator it = results.begin(); it != results.end(); ++it) {
@@ -2846,6 +2869,7 @@ bool Player::saveStage(std::string file)
                 out << "-1 -1 -1 -1 -1 -1 -1 ";
             out << it->timestamp << " ";
             out << nobs << " ";
+            out << it->levelEnded << " ";
             out << it->minSpeed << " "
             << it->maxSpeed << " "
             << it->baseSpeed << " "
@@ -3000,35 +3024,35 @@ bool Player::saveSession(std::string file)
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "% Score - Player points earned in level" << endl;
-            out << "% totalMarbles - Levels left in the random pool for the scheduler" << endl;
+            out << "% Total Marbles - Levels left in the random pool for the scheduler" << endl;
             out << "% NBackLevelA - Color/Sound scheduler skill level" << endl;
             out << "% NBackLevelB - Shape/Sound scheduler skill level" << endl;
             out << "% NBackLevelC - Sound Only  scheduler skill level" << endl;
             out << "% NBackLevelD - All Signals scheduler skill level" << endl;
             out << "% NBackLevelE - Recess      scheduler skill level" << endl;
-            out << "% scoreCurr - Total scheduler score" << endl;
-            out << "% currentHoldout - Holdout experience in scheduler" << endl;
-            out << "% holdoutOffsetA - Offset to Color/Sound skill level in scheduler" << endl;
-            out << "% holdoutOffsetB - Offset to Shape/Sound skill level in scheduler" << endl;
-            out << "% holdoutOffsetD - Offset to All Signals skill level in scheduler" << endl;
-            out << "% speedA - Scheduler recommended speed for Color/Sound" << endl;
-            out << "% speedB - Scheduler recommended speed for Shape/Sound" << endl;
-            out << "% speedC - Scheduler recommended speed for Sound Only" << endl;
-            out << "% speedD - Scheduler recommended speed for All Signals" << endl;
-            out << "% speedE - Scheduler recommended speed for Recess" << endl;
-            out << "% musicVolume - Settings music volume" << endl;
-            out << "% soundVolume - Settings sound volume" << endl;
-            out << "% syncDataToServer - Settings that lets user to sync log data to server" << endl;
-            out << "% maxVel - Controller Settings for maximum angular spin" << endl;
-            out << "% minVelFree - deprecated" << endl;
-            out << "% minVelStopper - Controller Settings for minimum velocity to force stop in free motion" << endl;
-            out << "% dampingDecayFree - Controller Settings for a multiplier to slow down in free motion" << endl;
-            out << "% dampingDecayStop - Controller Settings for a multiplier to slow down by held down input" << endl;
-            out << "% dampingDropFree - Controller Settings for a linear slow down in free motion" << endl;
-            out << "% dampingDropStop - Controller Settings for a linear slow down by held down input" << endl;
-            out << "% inverted - Controller Settings to invert direction" << endl;
+            out << "% Scheduler Score - Total scheduler score" << endl;
+            out << "% Current Holdout - Holdout experience in scheduler" << endl;
+            out << "% Holdout OffsetA - Offset to Color/Sound skill level in scheduler" << endl;
+            out << "% Holdout OffsetB - Offset to Shape/Sound skill level in scheduler" << endl;
+            out << "% Holdout OffsetD - Offset to All Signals skill level in scheduler" << endl;
+            out << "% SpeedA - Scheduler recommended speed for Color/Sound" << endl;
+            out << "% SpeedB - Scheduler recommended speed for Shape/Sound" << endl;
+            out << "% SpeedC - Scheduler recommended speed for Sound Only" << endl;
+            out << "% SpeedD - Scheduler recommended speed for All Signals" << endl;
+            out << "% SpeedE - Scheduler recommended speed for Recess" << endl;
+            out << "% Music Volume - Settings music volume" << endl;
+            out << "% Sound Volume - Settings sound volume" << endl;
+            out << "% Sync Data To Server - Settings that lets user to sync log data to server" << endl;
+            out << "% Max Vel - Controller Settings for maximum angular spin" << endl;
+            out << "% Min Vel Free - deprecated" << endl;
+            out << "% Min Vel Stopper - Controller Settings for minimum velocity to force stop in free motion" << endl;
+            out << "% Damping Decay Free - Controller Settings for a multiplier to slow down in free motion" << endl;
+            out << "% Damping Decay Stop - Controller Settings for a multiplier to slow down by held down input" << endl;
+            out << "% Damping Drop Free - Controller Settings for a linear slow down in free motion" << endl;
+            out << "% Damping Drop Stop - Controller Settings for a linear slow down by held down input" << endl;
+            out << "% Inverted - Controller Settings to invert direction" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score totalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE scoreCurr currentHoldout holdoutOffsetA holdoutOffsetB holdoutOffsetD speedA speedB speedC speedD speedE musicVolume soundVolume syncDataToServer maxVel minVelFree minVelStopper dampingDecayFree dampingDecayStop dampingDropFree dampingDropStop inverted" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType TSin TSout N-Back RunSpeedIn RunSpeedOut TP FP TN FN Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted" << endl;
         }
         
         out << sessions.back().sessionID << " "
@@ -3377,6 +3401,15 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
     float nBackDelta = modifyNBackDelta(level, assessment, accuracy, false);
+    // If tutorial level, zero it out if they played already
+    if (level.stageNo < 0)
+    {
+        if (scheduler->scheduleHistoryD.size() > 0 && level.phaseX == PHASE_ALL_SIGNAL)
+            nBackDelta = 0.0;
+        if (scheduler->scheduleHistoryE.size() > 0 && level.phaseX == PHASE_COLLECT)
+            nBackDelta = 0.0;
+    }
+        
     
     if ( totalElapsed >= globals.sessionTime )
         scheduler->sessionFinished = true;

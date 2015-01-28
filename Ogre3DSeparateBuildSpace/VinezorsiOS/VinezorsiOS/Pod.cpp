@@ -378,7 +378,7 @@ void Pod::setToGrowth(float t)
     {
         float scaleMult = 1.0f;
         if (podShape == POD_SHAPE_TRIANGLE)
-            scaleMult = 1.8f;
+            scaleMult = 1.4f;
         else if (podShape == POD_SHAPE_SPHERE)
             scaleMult = 1.3f;
         else if (podShape == POD_SHAPE_DIAMOND)
@@ -465,6 +465,21 @@ float Pod::getHeadRadius() const
 SceneNode* Pod::getGlowNode() const
 {
     return glowNode;
+}
+
+ParticleSystem* Pod::getGlowEffect() const
+{
+    return glowEffect;
+}
+
+SceneNode* Pod::getIndicatorNode() const
+{
+    return indicatorNode;
+}
+
+ParticleSystem* Pod::getIndicatorEffect() const
+{
+    return indicatorEffect;
 }
 
 bool Pod::isPodTested() const

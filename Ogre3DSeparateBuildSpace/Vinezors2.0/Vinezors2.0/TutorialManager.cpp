@@ -299,7 +299,7 @@ void TutorialManager::update(float elapsed, Player* player)
             tdisp = tleft;
         if (specialMode == 0)
         {
-            specialTimer += 20 * elapsed;
+            specialTimer += 30 * elapsed;
             if (specialTimer > numWrong)
             {
                 specialMode++;
@@ -313,7 +313,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 1)
         {
-            specialTimer += 20 * elapsed;
+            specialTimer += 30 * elapsed;
             if (specialTimer > numMissed)
             {
                 specialMode++;
@@ -326,7 +326,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 2)
         {
-            specialTimer += 40 * elapsed;
+            specialTimer += 60 * elapsed;
             if (specialTimer > numPickups)
             {
                 specialMode++;
@@ -339,9 +339,9 @@ void TutorialManager::update(float elapsed, Player* player)
         else if (specialMode == 3)
         {
             if (mode == STAGE_MODE_RECESS)
-                specialTimer += 40 * elapsed;
+                specialTimer += 60 * elapsed;
             else
-                specialTimer += 10 * elapsed;
+                specialTimer += 15 * elapsed;
             if (specialTimer > numCorrect)
             {
                 specialMode++;
@@ -354,7 +354,7 @@ void TutorialManager::update(float elapsed, Player* player)
         }
         else if (specialMode == 4)
         {
-            specialTimer += 40 * elapsed;
+            specialTimer += 60 * elapsed;
             if (specialTimer > tleft)
             {
                 specialMode++;
@@ -389,7 +389,7 @@ void TutorialManager::update(float elapsed, Player* player)
         Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
         label7->setCaption("");
         
-        if (specialMode == 5)
+        if (specialMode >= 4)
         {
             bool dingSound = true;
             bool genFireworks = false;
@@ -494,6 +494,8 @@ void TutorialManager::update(float elapsed, Player* player)
                                completed + "\n" +
                                Util::toStringInt(score));
         }
+        // Set after to get actual accuracy in case player closes window and still sees correct post-feedback
+        accuracy = player->getAccuracy() * 100;
     }
     // If a start timer has been set, update it
     // and check to see if it is ready to show.
@@ -584,34 +586,40 @@ bool TutorialManager::processInput(Vector2 target)
                 label7->setCharHeight(0.025 * FONT_SZ_MULT);
                 if (accuracy < 60)
                 {
-                    label7->setCaption("Nice try cadet...\nYou're not ready for this challenge");
+                    label7->setCaption("It seems like you're not ready\nfor this run cadet.");
                 }
                 else if (accuracy < 70 || eval != PASS)
                 {
                     int r = std::rand() % 2;
                     if (r == 0)
-                        label7->setCaption("Almost cadet\nYou can overcome this challenge soon enough");
+                        label7->setCaption("You almost made it through!");
                     else
-                        label7->setCaption("Not bad cadet\nKeep trying and you'll get there");
+                        label7->setCaption("Keep trying cadet, you almost made it.");
                 }
                 else if (accuracy < 85)
                 {
                     int r = std::rand() % 2;
                     if (r == 0)
-                        label7->setCaption("Good job cadet\nYou did well and can even do better");
+                        label7->setCaption("Good cadet, but you can do better.");
                     else
-                        label7->setCaption("Good work\nImprove yourself by trying again");
+                        label7->setCaption("Try again, this time faster.");
                 }
                 else if (accuracy < 100)
                 {
                     int r = std::rand() % 2;
                     if (r == 0)
-                        label7->setCaption("I'm proud of you pilot\nYou have exceptional abilities");
+                        label7->setCaption("Couldn't have done it better myself.");
                     else
-                        label7->setCaption("Amazing cadet\nYou have mastered this challenge");
+                        label7->setCaption("Well done ace!");
                 }
                 else
-                    label7->setCaption("WOW A PERFECT\nYou deserve a bonus cadet");
+                {
+                    int r = std::rand() % 2;
+                    if (r == 0)
+                        label7->setCaption("Perfect. Simply perfect.");
+                    else
+                        label7->setCaption("Well done ace!");
+                }
                 
                 if (fireworkNode)
                 {
