@@ -19,7 +19,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     //
     // 60 seconds, 100 seconds, 140 seconds
     // Below meant for 5, 4, 3 chances on misses respectively
-    //const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
+    // const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
     // Below meant for 3, 3, 3 chances on misses respectively
     const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;

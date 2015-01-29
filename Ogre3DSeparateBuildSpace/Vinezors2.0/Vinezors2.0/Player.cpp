@@ -3285,14 +3285,14 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
         if (nBackDelta >= 0.0)
             valMemory = 0.0;    // too easy memory mainly for tutorial spam
         else
-            valMemory = 2.0;
+            valMemory = 1.5;
     }
     else if ( nBackDifficulty < -0.5 )
     {
         if (nBackDelta >= 0.0)
             valMemory = 0.0;    // easy memory
         else
-            valMemory = 2.0;
+            valMemory = 1.5;
     }
     else if ( nBackDifficulty < 0.5 )
     {
@@ -3301,7 +3301,7 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     else //if ( nBackDifficulty >= 0.5 )
     {
         if (nBackDelta >= 0.0)
-            valMemory = 2.0;    // hard memory
+            valMemory = 1.5;    // hard memory
         else
             valMemory = 0.0;
     }
@@ -3336,8 +3336,8 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
     const float HARD_CAP = 1.0;
     
     // Anything inbetween these two bounds are considered in the "Dead Zone" where no change happens to nBackDelta
-    const float UPPER_BOUND = 0.70; // the threshold to get a positive nBackDelta
-    const float LOWER_BOUND = 0.60; // the threshold to get a negative nBackDelta
+    const float UPPER_BOUND = 0.75; // the threshold to get a positive nBackDelta
+    const float LOWER_BOUND = 0.65; // the threshold to get a negative nBackDelta
     
     double nBackDelta = 0.0;
     if (accuracy > UPPER_BOUND) {
@@ -3365,7 +3365,7 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
     
     float difficultyWeight = obtainDifficultyWeight(level, assessment, nBackDelta);
     float samplingWeight = obtainSamplingWeight(level, assessment);
-    const float PERFECT_MULTIPLIER = 1.3;
+    const float PERFECT_MULTIPLIER = 1;
     if ( nBackDelta < 0.0 )
     {
         if (assessment.rating >= 5 && !exclude ) // If the player completed the level, don't decrease despite accuracy
