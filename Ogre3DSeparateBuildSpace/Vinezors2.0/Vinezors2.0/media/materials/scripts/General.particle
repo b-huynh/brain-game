@@ -26,7 +26,7 @@ particle_system General/StarBoost
  }
 
 particle_system General/Beam
- {
+{
     material        General/Star
     particle_width  5
     particle_height 5
@@ -34,18 +34,18 @@ particle_system General/Beam
     quota           250
     billboard_type  point
     local_space	    true
- 
+
     // Area emitter
     emitter Ring
     {
-        emission_rate   1250
-        time_to_live    0.5
+        emission_rate   10000
+        time_to_live    0.2
         colour 0.0 0.3 0.5
         width           0.5
         height          0.5
         depth           50.0
     }
- }
+}
 
 particle_system General/GlowPodEllipsoid
  {

@@ -455,6 +455,7 @@ public:
     void feedLevelRequestFromSchedule();
     
     // Returns a multiplier when incrementing or decrementing memory level during assessment
+    float getMemoryChallenge(StageRequest level, PlayerProgress assessment) const;
     float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude);
     float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment, float nBackDelta);
     float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);

@@ -699,6 +699,7 @@ void Player::updateTractorBeam(float elapsed)
             t->tractorBeamEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
             t->tractorBeamPulseEffect->getEmitter(0)->setEmissionRate(Real(0.0f));
         }
+        
         // Move the pulse node
         Vector3 glowPos = t->tractorBeamPulseNode->_getDerivedPosition();
         Vector3 glowLerp = vinePos + (podPos - vinePos) * (t->pulseLen - t->pulseTimer) / t->pulseLen;
@@ -790,7 +791,7 @@ void Player::performTractorBeam()
             // Change the tractor beam effect based on speed (faster ships should have beams that expire quicker)
             t->effectModifier = finalSpeed / 20.0f;
             // Assign a glow speed for the pulse towards
-            t->pulseLen = 0.25;
+            t->pulseLen = 0.30;
             t->pulseTimer = t->pulseLen;
             
             // Assign powerup info
@@ -3275,33 +3276,27 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
 {
     float valMemory = 1.0;
     
-    float nBackDifficulty = level.nback - assessment.nBackSkill;
-    if (level.hasHoldout())
-        nBackDifficulty -= assessment.nBackOffset;
+    float nBackChallenge = getMemoryChallenge(level, assessment);
     if (level.phaseX == PHASE_COLLECT)
         valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
-    else if ( nBackDifficulty < -1.5 )
+    else if ( nBackChallenge < -0.5 )
     {
+        // easy memory
         if (nBackDelta >= 0.0)
-            valMemory = 0.0;    // too easy memory mainly for tutorial spam
+            valMemory = 1.0;    // Winning an easy mem adds to nav score, so don't zero it out
         else
             valMemory = 2.0;
     }
-    else if ( nBackDifficulty < -0.5 )
+    else if ( nBackChallenge < 0.5 )
     {
-        if (nBackDelta >= 0.0)
-            valMemory = 0.0;    // easy memory
-        else
-            valMemory = 2.0;
+        // normal memory
+        valMemory = 1.0;
     }
-    else if ( nBackDifficulty < 0.5 )
+    else //if ( nBackChallenge >= 0.5 )
     {
-        valMemory = 1.0;    // normal memory
-    }
-    else //if ( nBackDifficulty >= 0.5 )
-    {
+        // hard memory
         if (nBackDelta >= 0.0)
-            valMemory = 2.0;    // hard memory
+            valMemory = 1.0;
         else
             valMemory = 0.0;
     }
@@ -3327,6 +3322,14 @@ float Player::obtainSamplingWeight(StageRequest level, PlayerProgress assessment
         valLength = 1.0;    // hard time
     
     return valLength;
+}
+
+float Player::getMemoryChallenge(StageRequest level, PlayerProgress assessment) const
+{
+    float nBackChallenge = level.nback - assessment.nBackSkill;
+    if (level.hasHoldout())
+        nBackChallenge -= assessment.nBackOffset;
+    return nBackChallenge;
 }
 
 float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
@@ -3418,6 +3421,8 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     cout << "Game Time Played: " << totalElapsed << endl;
     cout << "-----------------------------------------\n\n";
     
+    float nBackChallenge = getMemoryChallenge(level, assessment);
+    
     double playerSkill;
     double playerOffset;
     double holdoutDelta = 0.0;
@@ -3434,7 +3439,11 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerOffset = 0.0;
             break;
         case PHASE_COLOR_SOUND:
-            if (level.hasHoldout())
+            if (nBackChallenge < -0.5)
+            {
+                scheduler->nBackLevelE += nBackDelta;
+            }
+            else if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
                 if(scheduler->holdoutOffsetA>0) {
@@ -3449,13 +3458,20 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                     nBackDelta = 0.0;
                 }
             }
-            else scheduler->nBackLevelA += nBackDelta;
+            else
+            {
+                scheduler->nBackLevelA += nBackDelta;
+            }
             if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
             playerSkill = scheduler->nBackLevelA;
             playerOffset = scheduler->holdoutOffsetA;
             break;
         case PHASE_SHAPE_SOUND:
-            if (level.hasHoldout())
+            if (nBackChallenge < -0.5)
+            {
+                scheduler->nBackLevelE += nBackDelta;
+            }
+            else if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
                 if(scheduler->holdoutOffsetB>0) {
@@ -3470,7 +3486,10 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                     nBackDelta = 0.0;
                 }
             }
-            else scheduler->nBackLevelB += nBackDelta;
+            else
+            {
+                scheduler->nBackLevelB += nBackDelta;
+            }
             if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
             playerSkill = scheduler->nBackLevelB;
             playerOffset = scheduler->holdoutOffsetB;
@@ -3482,7 +3501,11 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             playerOffset = 0.0;
             break;
         case PHASE_ALL_SIGNAL:
-            if (level.hasHoldout())
+            if (nBackChallenge < -0.5)
+            {
+                scheduler->nBackLevelE += nBackDelta;
+            }
+            else if (level.hasHoldout())
             {
                 scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
                 if(scheduler->holdoutOffsetD>0) {
@@ -3497,7 +3520,10 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                     nBackDelta = 0.0;
                 }
             }
-            else scheduler->nBackLevelD += nBackDelta;
+            else
+            {
+                scheduler->nBackLevelD += nBackDelta;
+            }
             if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
             playerSkill = scheduler->nBackLevelD;       //set nbacklevel to playerskill
             playerOffset = scheduler->holdoutOffsetD;
