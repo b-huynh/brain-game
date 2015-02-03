@@ -211,7 +211,7 @@
 - (void)inactivate
 {
     OgreFramework::getSingletonPtr()->m_pRenderWnd->setActive(false);
-    Ogre::Root::getSingleton().saveConfig();
+    //Ogre::Root::getSingleton().saveConfig();
 }
 
 - (void)activate

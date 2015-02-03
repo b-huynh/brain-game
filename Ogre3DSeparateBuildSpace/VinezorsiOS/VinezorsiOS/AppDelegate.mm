@@ -3,7 +3,7 @@
 #import "SimpleMenuViewController.h"
 #import "MainViewController.h"
 
-#define AUTO_START
+//#define AUTO_START
 
 @implementation AppDelegate
 

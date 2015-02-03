@@ -39,7 +39,8 @@ private:
     int numSafeTotal;
     int numMissedTotal;
     int numWrongTotal;
-    int numPickupsTotal;
+    int numIgnoredTotal;    // Unsuccessful Pickups
+    int numPickupsTotal;    // Successful Pickups
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
@@ -129,15 +130,19 @@ private:
         int eventID;
         int levelID;
         int taskType;
+        bool hasHoldout;
         int timestampIn;
         int timestampOut;
         int nback;
         int runSpeedIn;
         int runSpeedOut;
+        int eval;
+        float accuracy;
         int TP;
         int FP;
         int TN;
         int FN;
+        int ignored;
         int pickups;
         int obsHit;
         int obsAvoided;
@@ -171,6 +176,7 @@ private:
         bool inverted;
     };
     
+    bool logged;
     std::list<Result> results;
     std::list<Action> actions;
     std::list<Session> sessions;
@@ -428,6 +434,7 @@ public:
     std::string getCurrentStats() const;
     
     void saveAllResults(Evaluation eval);
+    void logData();
     bool saveStage(std::string file);
     bool saveActions(std::string file);
     bool saveSession(std::string file);
@@ -455,6 +462,7 @@ public:
     void feedLevelRequestFromSchedule();
     
     // Returns a multiplier when incrementing or decrementing memory level during assessment
+    float getMemoryChallenge(StageRequest level, PlayerProgress assessment) const;
     float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude);
     float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment, float nBackDelta);
     float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);

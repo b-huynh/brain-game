@@ -195,9 +195,28 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_DONE:
         {
+            // have a done screen after a certain time limit is reached
+            if ( player->getTotalElapsed() >= globals.sessionTime )
+                player->scheduler->sessionFinished = true;
+            
+            std::cout << "\n\n-----------------------------------------\n";
+            std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
+            std::cout << "-----------------------------------------\n\n";
+            
+            if(player->scheduler->sessionFinished)
+            {
+                std::cout << "\n\n\n===========================================\n"
+                << "Session Finished!\n"
+                << "===========================================\n";
+                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                player->getTutorialMgr()->setAdditionalText(player->getSessionStats());
+                
+                // Update session ID before save
+                player->setSessionID(player->getSessionID() + 1);
+            }
+            
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
-            // have a done screen after a certain time limit is reached
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
                 player->assessLevelPerformance(player->levelRequest);
@@ -207,17 +226,6 @@ void EngineStage::update(float elapsed)
                 else
                 {
                     std::cout << "not finished!\n";
-                }
-                if(player->scheduler->sessionFinished)
-                {
-                    std::cout << "\n\n\n==========================================="
-                                << "Session Finished!\n"
-                                << "===========================================\n";
-                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                    player->getTutorialMgr()->setAdditionalText(player->getSessionStats());
-                    
-                    // Update session ID before save
-                    player->setSessionID(player->getSessionID() + 1);
                 }
                 player->saveProgress(globals.savePath);
                 player->lastPlayed = player->levelRequest->first.phaseX;
@@ -667,6 +675,8 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             {
                 stageState = STAGE_STATE_INIT;
                 
+                player->logData();
+                
                 setPause(false);
                 OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
                 player->reactGUI();
@@ -677,6 +687,8 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     (!player->levelRequest))    // For level from level select
                 {
                     stageState = STAGE_STATE_DONE;
+                    
+                    player->logData();
                     
                     setPause(false);
                     OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
@@ -1345,7 +1357,7 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutSound, level.holdoutColor, level.holdoutShape);
+    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
     tunnel->setFuelLevel(globals.fuelMax, globals.fuelReturn, globals.startingHP);
 

@@ -306,6 +306,7 @@ void OgreApp::endLevel(Evaluation forced)
     if (tunnel)
     {
         tunnel->setCleaning(true);
+        /*
         if (levelMgr->levelFinished(tunnel, forced))
         {
             gameState = STATE_PROMPT;
@@ -313,6 +314,8 @@ void OgreApp::endLevel(Evaluation forced)
         }
         else
             gameState = STATE_PLAY;
+         */
+        gameState = STATE_PLAY;
     }
 }
 

@@ -1524,8 +1524,8 @@ bool Player::saveStage(std::string file)
             }
             else
                 out << "-1 -1 -1 -1 -1 -1 ";
-            out << nobs << " ";
             out << it->timestamp << " ";
+            out << nobs << " ";
             out << it->minSpeed << " "
             << it->maxSpeed << " "
             << it->baseSpeed << " "
@@ -1621,12 +1621,17 @@ bool Player::saveSession(std::string file)
     // Extract end results
     sessions.back().timestampOut = (int)(OgreFramework::getSingletonPtr()->totalElapsed * 1000);
     sessions.back().runSpeedOut = baseSpeed;
+    if (numCorrectTotal + numWrongTotal + numMissedTotal > 0)
+        sessions.back().accuracy = static_cast<float>(numCorrectTotal) / (numCorrectTotal + numWrongTotal + numMissedTotal);
+    else
+        sessions.back().accuracy = 0.0;
     sessions.back().TP = numCorrectTotal;
     sessions.back().FP = numWrongTotal;
     sessions.back().TN = numMissedTotal;
     sessions.back().FN = numSafeTotal;
     sessions.back().obsHit = numCollisionsTotal;
     sessions.back().obsAvoided = numAvoidancesTotal;
+    sessions.back().schedulerLevel = skillLevel.nbackLevel;
     
     if (out.good()) {
         if (newFile) {
@@ -1645,14 +1650,16 @@ bool Player::saveSession(std::string file)
             out << "% RunSpeedOut { 0, inf }" << endl;
             out << "% MaxSpeed { 0, inf }" << endl;
             out << "% NavScore { 0, inf }" << endl;
+            out << "% Accuracy - TP / (TP + FP + TN) { 0 - 1 }" << endl;
             out << "% TP - Total Picked and Match { 0, inf }" << endl;
             out << "% FP - Total Picked and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
             out << "% FN - Total Missed and Non-Match { 0, inf }" << endl;
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
+            out << "% SchedulerLevel - Floating point estimate of player n-back level { 1, inf }" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore TP FP TN FN ObsHit ObsAvoid " << endl;
+            out << "% SessionNumber EventNumber TaskType Duration TSin TSout N-Back Rep RunSpeedIn RunSpeedOut MaxSpeed NavScore Accuracy TP FP TN FN ObsHit ObsAvoid " << endl;
         }
         
         out << sessions.back().sessionNo << " "
@@ -1667,12 +1674,14 @@ bool Player::saveSession(std::string file)
         << sessions.back().runSpeedOut << " "
         << sessions.back().maxSpeed << " "
         << sessions.back().navScore << " "
+        << sessions.back().accuracy << " "
         << sessions.back().TP << " "
         << sessions.back().FP << " "
         << sessions.back().TN << " "
         << sessions.back().FN << " "
         << sessions.back().obsHit << " "
-        << sessions.back().obsAvoided << endl;
+        << sessions.back().obsAvoided << " "
+        << sessions.back().schedulerLevel << endl;
         
         out.close();
     }

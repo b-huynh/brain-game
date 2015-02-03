@@ -12,14 +12,14 @@
 
 extern Util::ConfigGlobal globals;
 
-void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int UNL)
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL)
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
     //
     // 60 seconds, 100 seconds, 140 seconds
     // Below meant for 5, 4, 3 chances on misses respectively
-    //const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
+    // const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
     // Below meant for 3, 3, 3 chances on misses respectively
     const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
@@ -83,6 +83,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     {
         ret->holdoutStart = 0.20;
         ret->holdoutEnd = 0.80;
+        ret->holdoutLevel = hlevel;
         ret->holdoutSound = 1;
         ret->holdoutColor = 1;
         ret->holdoutShape = 1;
@@ -91,6 +92,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     {
         ret->holdoutStart = 1.0;
         ret->holdoutEnd = 1.0;
+        ret->holdoutLevel = 0;
         ret->holdoutSound = 0;
         ret->holdoutColor = 0;
         ret->holdoutShape = 0;
@@ -194,6 +196,7 @@ std::ostream& operator<<(std::ostream& outfile, const StageRequest & sr)
     << sr.holdoutPerc << " "
     << sr.holdoutStart << " "
     << sr.holdoutEnd << " "
+    << sr.holdoutLevel << " "
     << sr.holdoutSound << " "
     << sr.holdoutColor << " "
     << sr.holdoutShape << " "
@@ -243,6 +246,7 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr)
     >> sr.holdoutPerc
     >> sr.holdoutStart
     >> sr.holdoutEnd
+    >> sr.holdoutLevel
     >> sr.holdoutSound
     >> sr.holdoutColor
     >> sr.holdoutShape

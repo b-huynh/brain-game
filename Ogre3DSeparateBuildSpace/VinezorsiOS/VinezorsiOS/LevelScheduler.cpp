@@ -444,9 +444,10 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         if(nBackRounded < 1) nBackRounded = 1;
         if (holdout)
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
+            //node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL);
         else
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, currentUNL);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL);
 
         node.second.nBackSkill = playerSkill;
         node.second.nBackOffset = playerOffset;

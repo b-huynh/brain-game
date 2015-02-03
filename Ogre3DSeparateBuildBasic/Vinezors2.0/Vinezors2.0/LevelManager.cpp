@@ -305,7 +305,8 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
     
     double accuracyRange = 0.25;
     double nBackDelta = 0.0;
-    double weightMultiplier = 2.0;
+    double difficultyMultiplier = 1.0;
+    double samplingMultiplier = 2.0;
     
     // Formula for accuracy = TP / TP + TN + FP
     double accuracy = 0.0f;
@@ -313,28 +314,27 @@ void LevelManager::updatePlayerSkill(Tunnel* tunnel, Evaluation forced)
         accuracy = player->getNumCorrectTotal() / (float)(player->getNumCorrectTotal() + player->getNumMissedTotal() + player->getNumWrongTotal());
     
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
-    nBackDelta = 0.35 * (accuracy - (1 - accuracyRange)) / accuracyRange;
+    const float SOFT_CAP = 0.35;
+    const float HARD_CAP = 1.0;
     
-    if ( nBackDelta < 0.0 )
-    {
-        if ( nBackDelta < -0.35 ) nBackDelta = -0.35;
-        //if (eval == PASS) // If the player completed the level, don't decrease despite accuracy
-        //    nBackDelta = 0.0;
-        
-        if (weightMultiplier != 0.0) // Don't divide by 0
-            nBackDelta /= weightMultiplier; // apply multiplier to negative base value
-        else
-            nBackDelta = 0.0;
-        if ( nBackDelta <= -1.00) nBackDelta = -1.00;
+    // Anything inbetween these two bounds are considered in the "Dead Zone" where no change happens to nBackDelta
+    const float UPPER_BOUND = 0.75; // the threshold to get a positive nBackDelta
+    const float LOWER_BOUND = 0.65; // the threshold to get a negative nBackDelta
+    
+    if (accuracy > UPPER_BOUND) {
+        nBackDelta = (accuracy - UPPER_BOUND) / 0.25;
     }
-    else
-    {
-        if (eval != PASS) // If the player didn't complete the level, don't increase despite accuracy
-            nBackDelta = 0.0;
-        nBackDelta *= weightMultiplier; // apply multiplier to positive base value
-        if (accuracy >= 1.00 - Util::EPSILON) // If player has perfect performance, grant a bonus to memory score
-            nBackDelta *= 1.5;
-        if ( nBackDelta > 1.00) nBackDelta = 1.00;
+    else if (accuracy < LOWER_BOUND) {
+        nBackDelta = -(LOWER_BOUND - accuracy) / 0.25;
+    }
+    else {
+        nBackDelta = 0.0;
+    }
+    nBackDelta *= SOFT_CAP;
+    
+    // In case the nBackDelta is lower than the softcap.
+    if (nBackDelta < -SOFT_CAP) {
+        nBackDelta = -SOFT_CAP;
     }
     
     skillLevel.nbackLevel = skillLevel.nbackLevel + nBackDelta;

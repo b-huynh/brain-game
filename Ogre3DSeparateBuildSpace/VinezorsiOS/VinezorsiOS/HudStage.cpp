@@ -353,6 +353,7 @@ void HudStage::alloc()
     
     Overlay* overlay3 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("TimeWarpOverlay");
     timeWarpContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TimeWarpInterface"));
+    
     overlay3->add2D(timeWarpContainer);
     timeWarpContainer->addChild(timeWarpLabel);
     
@@ -365,12 +366,11 @@ void HudStage::alloc()
     HudLeftPanel->addChild(HudLeftZapper);
     HudRightPanel->addChild(HudRightZapper);
     HudTopPanel->addChild(HudFuelBar);
-    /*
-    for (int i = 0; i < HudFuelContainers.size(); ++i)
-        HudTopPanel->addChild(HudFuelContainers[i]);
-    for (int i = 0; i < HudFuelBars.size(); ++i)
-        HudTopPanel->addChild(HudFuelBars[i]);
-     */
+    
+    //for (int i = 0; i < HudFuelContainers.size(); ++i)
+    //    HudTopPanel->addChild(HudFuelContainers[i]);
+    //for (int i = 0; i < HudFuelBars.size(); ++i)
+    //   HudTopPanel->addChild(HudFuelBars[i]);
     
     overlay1->add2D(pauseBackground);
     //for (int i = 0; i < collectionBar.size(); ++i)

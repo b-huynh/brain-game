@@ -100,6 +100,7 @@ public:
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
     bool hasHoldout;
+    int holdoutLevel;
     int holdoutCounter;
     int holdoutPod;
     int holdoutIndex;
@@ -290,7 +291,8 @@ public:
     void setHoldout(bool val);
     void setHoldout(int holdoutFrequency);
     void setHoldout(bool val, int holdoutFrequency);
-    void setHoldoutSettings( float perc, float start, float end, bool sound, bool color, bool shape);
+    void setHoldoutSettings( float perc, float start, float end, int level, bool sound, bool color, bool shape);
+    bool levelHasHoldout() const;
     
     void gateAnimation(float elapsed);
     

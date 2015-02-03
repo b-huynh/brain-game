@@ -465,6 +465,11 @@ void HudSchedulerMenu::setSelection()
     }
     holdout = level.hasHoldout() ? "yes" : "no";
     potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 1.0, true));
+    bool tooEasy = player->getMemoryChallenge(level, progress) < -0.5;
+    if (tooEasy || level.phaseX == PHASE_COLLECT)
+        potential += "R";
+    else 
+        potential += "M";
     
     if (level.phaseX == PHASE_COLLECT)
         length = "medium";
@@ -511,17 +516,17 @@ void HudSchedulerMenu::setSelection()
                     criteria = 0;
                     break;
             }
-            mistakes = "-";
-            missed = "-";
-            pickups = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(criteria);
-            collected = "-";
-        }
-        else
-        {
             mistakes = Util::toStringInt(progress.numWrong);
             missed = Util::toStringInt(progress.numMissed);
             pickups = Util::toStringInt(progress.numPickups) + " / " + Util::toStringInt(progress.numSafe + progress.numWrong);
-            collected = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(progress.numCorrect + progress.numWrong + progress.numMissed);
+            collected = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(criteria);
+        }
+        else
+        {
+            mistakes = "-";
+            missed = "-";
+            pickups = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(progress.numCorrect + progress.numWrong + progress.numMissed);
+            collected = "-";
         }
         if (progress.nBackDelta >= 0.0f)
             delta = "+";
@@ -534,8 +539,13 @@ void HudSchedulerMenu::setSelection()
             else
                 delta = "(" + Util::toStringFloat(progress.nBackReturn) + ") " + delta;
         }
-        if (progress.accuracy >= 1.0 - Util::EPSILON)
-            delta = "x1.5 " + delta;
+        if (tooEasy && level.phaseX != PHASE_COLLECT)
+            delta += "R";
+        if (!tooEasy || progress.nBackDelta < 0.0f || progress.nBackReturn < 0.0f)
+            delta += "M";
+        
+        //if (progress.accuracy >= 1.0 - Util::EPSILON)
+        //    delta = "x1.3 " + delta;
         mastery = Util::toStringFloat(progress.nBackResult);
         if (level.hasHoldout() && progress.nBackNoffset < 0.0)
             mastery = "(" + Util::toStringFloat(progress.nBackNoffset) + ") " + mastery;

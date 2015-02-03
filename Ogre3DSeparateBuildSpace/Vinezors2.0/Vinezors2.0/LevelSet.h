@@ -45,6 +45,7 @@ struct StageRequest
     float holdoutPerc;
     float holdoutStart;
     float holdoutEnd;
+    int holdoutLevel;
     bool holdoutSound;
     bool holdoutColor;
     bool holdoutShape;
@@ -89,6 +90,7 @@ struct StageRequest
         holdoutPerc = 0.0f;
         holdoutStart = 0.0f;
         holdoutEnd = 0.0f;
+        holdoutLevel = 0;
         holdoutSound = false;
         holdoutColor = false;
         holdoutShape = false;
@@ -98,7 +100,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int UNL);
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL);
     
     StageRequest()
     {

@@ -106,11 +106,13 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             break;
         case TUTORIAL_SLIDES_TEXTBOX_1BACK:
             ret.push_back(TutorialSlide("", "General/TutorialTextbox2-1", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-2a", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-2b", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-3", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-4", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-2", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-3a", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-3b", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-4a", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-4b", ""));
             ret.push_back(TutorialSlide("", "General/TutorialTextbox2-5", ""));
+            ret.push_back(TutorialSlide("", "General/TutorialTextbox2-6", ""));
             break;
         case TUTORIAL_SLIDES_TEXTBOX_2BACK:
             ret.push_back(TutorialSlide("", "General/TutorialTextbox3-1", ""));
@@ -293,6 +295,7 @@ void TutorialManager::update(float elapsed, Player* player)
         int numPickups = player->getNumPickupsTotal();
         int numCorrect = player->getNumCorrectTotal();
         int tleft = player->getTunnel()->getStageTime() - player->getTunnel()->getTotalElapsed() - player->getTunnel()->getTimePenalty();
+        if (tleft < 0) tleft = 0;
         
         int tdisp = 0;
         if (specialMode > 4 && eval == PASS)
@@ -394,9 +397,9 @@ void TutorialManager::update(float elapsed, Player* player)
             bool dingSound = true;
             bool genFireworks = false;
             bool pulsateTextSize = false;
-            if (accuracy < 60)
+            if (accuracy < 65)
                 popupText4->setCaption("\nNice Try...");
-            else if (accuracy < 70 || eval != PASS)
+            else if (accuracy < 75 || eval != PASS)
                 popupText4->setCaption("\nAlmost There...");
             else if (accuracy < 85)
             {
@@ -584,11 +587,11 @@ bool TutorialManager::processInput(Vector2 target)
                 Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
                 label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
                 label7->setCharHeight(0.025 * FONT_SZ_MULT);
-                if (accuracy < 60)
+                if (accuracy < 65)
                 {
                     label7->setCaption("It seems like you're not ready\nfor this run cadet.");
                 }
-                else if (accuracy < 70 || eval != PASS)
+                else if (accuracy < 75 || eval != PASS)
                 {
                     int r = std::rand() % 2;
                     if (r == 0)
@@ -630,6 +633,7 @@ bool TutorialManager::processInput(Vector2 target)
                     fireworkNode = NULL;
                 }
             }
+            if (specialSession) exit(0);
             specialSession = false;
             specialStage = false;
             setAdditionalValue("");
@@ -637,7 +641,6 @@ bool TutorialManager::processInput(Vector2 target)
             slides.clear();
             slideNo = 0;
             hide();
-            //exit(0);
         }
         else
         {
