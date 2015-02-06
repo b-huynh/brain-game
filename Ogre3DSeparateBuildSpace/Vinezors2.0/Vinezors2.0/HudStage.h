@@ -29,7 +29,7 @@ public:
     void setGoButtonState(bool active, bool color = true);
     void setPauseNavDest(float navOffset);
     void setSpeedDialState(bool active);
-    void setPauseNavSettings(bool nextAvail, bool resumeAvail);
+    void setPauseNavSettings(bool nextAvail, bool resumeAvail, bool forwardAvail, bool backAvail);
     
     float leftZapT;
     float rightZapT;
@@ -89,6 +89,10 @@ protected:
     float goOffsetDest;
     PanelOverlayElement* pauseBaseBackground;
     PanelOverlayElement* pauseNavigationBackground;
+    PanelOverlayElement* pausePanelPlay;
+    PanelOverlayElement* pausePanelForward;
+    PanelOverlayElement* pausePanelBack;
+    PanelOverlayElement* pausePanelMenu;
     PanelOverlayElement* resumeButtonBackground;
     PanelOverlayElement* nextButtonBackground;
     PanelOverlayElement* restartButtonBackground;
@@ -103,8 +107,6 @@ protected:
     
     bool goButtonActive;
     
-    bool nextAvail;
-    bool resumeAvail;
     float prevFuelTimer;
     float fuelBarAnimationTimer;
     

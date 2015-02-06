@@ -207,7 +207,7 @@ material General/PauseBase
     }
 }
 
-material General/PauseNav1
+material General/PauseNav
 {
     technique
     {
@@ -218,64 +218,13 @@ material General/PauseNav1
         depth_write off
         texture_unit
         {
-            texture pause_nav1.png
+            texture pause_nav.png
         }
       } 
     }
 }
 
-material General/PauseNav2
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture pause_nav2.png
-        }
-      } 
-    }
-}
-
-material General/PauseNav3
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture pause_nav3.png
-        }
-      } 
-    }
-}
-
-material General/PauseNav4
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture pause_nav4.png
-        }
-      } 
-    }
-}
-
-material General/PauseNav5
+material General/PauseGrayPlay
 {
     technique
     {
@@ -286,13 +235,13 @@ material General/PauseNav5
             depth_write off
             texture_unit
             {
-                texture pause_nav5.png
+                texture pause_grayplay.png
             }
         }
     }
 }
 
-material General/PauseNav6
+material General/PauseGrayForward
 {
     technique
     {
@@ -303,7 +252,41 @@ material General/PauseNav6
             depth_write off
             texture_unit
             {
-                texture pause_nav6.png
+                texture pause_grayforward.png
+            }
+        }
+    }
+}
+
+material General/PauseGrayBack
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture pause_grayback.png
+            }
+        }
+    }
+}
+
+material General/PauseGrayMenu
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture pause_graymenu.png
             }
         }
     }

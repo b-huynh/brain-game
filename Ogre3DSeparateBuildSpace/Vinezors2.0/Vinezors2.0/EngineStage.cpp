@@ -59,8 +59,10 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(2, false);
             hud->setGoButtonState(false);
             hud->setSpeedDialState(true);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
-                                     !tunnel->needsCleaning());
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
+                                     true);
             hud->setPauseNavDest(0.7);
             
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -88,8 +90,10 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
-                                     !tunnel->needsCleaning());
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
+                                     true);
             hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
@@ -145,8 +149,10 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(true, true);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
-                                     !tunnel->needsCleaning());
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
+                                     true);
             hud->setPauseNavDest(0.7);
             break;
         }
@@ -159,8 +165,10 @@ void EngineStage::update(float elapsed)
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
-                                     !tunnel->needsCleaning());
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
+                                     true);
             hud->setPauseNavDest(0.0);
             break;
         }
@@ -187,8 +195,10 @@ void EngineStage::update(float elapsed)
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setGoButtonState(false);
-            hud->setPauseNavSettings(engineStateMgr->peek(1)->getEngineType() != ENGINE_LEVEL_SELECTION || player->isNextLevelAvailable(),
-                                     !tunnel->needsCleaning());
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
+                                     true);
             hud->setPauseNavDest(0.7);
             hud->setSpeedDialState(false);
             break;
