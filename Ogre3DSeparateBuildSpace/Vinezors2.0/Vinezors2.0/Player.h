@@ -228,7 +228,7 @@ private:
 public:
     
     //Bernie Added
-    int marbleChoice = 0;
+    int marbleChoice = -1;
     int choice0RestartCounter = 0;  //Tutorial Counter
     int choice1RestartCounter = 0;  
     int choice2RestartCounter = 0;

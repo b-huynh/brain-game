@@ -226,6 +226,15 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
+    
+    //Bernie Added
+    int marbleChoice = -1;
+    int choice0RestartCounter = 0;  //Tutorial Counter
+    int choice1RestartCounter = 0;  
+    int choice2RestartCounter = 0;
+    int choice3RestartCounter = 0;
+    //End Bernie Added
+    
     bool fadeMusic;
     float xsTimer; // timer for the three X's display
     

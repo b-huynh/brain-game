@@ -38,6 +38,8 @@ void EngineSchedulerMenu::enter()
     if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
         player->levelRequest = &player->scheduler->tutorialLevels[0];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        
+        player->marbleChoice = 0;
     }
     else if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
         player->levelRequest = &player->scheduler->tutorialLevels[1];
@@ -46,7 +48,7 @@ void EngineSchedulerMenu::enter()
         
         //Bernie Add
         player->choice0RestartCounter = 0;
-        
+        player->marbleChoice = 0;
     }
     else
     {

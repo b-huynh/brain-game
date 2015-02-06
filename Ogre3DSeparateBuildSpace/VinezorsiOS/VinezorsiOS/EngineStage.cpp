@@ -44,6 +44,12 @@ void EngineStage::exit()
 void EngineStage::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
+    
+    bool replayableTutorial = (player->choice0RestartCounter < 5 && player->marbleChoice == 0);
+    bool replayableMarble = (player->choice1RestartCounter < 5 && player->marbleChoice == 1) ||
+                            (player->choice2RestartCounter < 5 && player->marbleChoice == 2) ||
+                            (player->choice3RestartCounter < 5 && player->marbleChoice == 3);
+    
     switch (stageState)
     {
         case STAGE_STATE_INIT:
@@ -61,8 +67,8 @@ void EngineStage::update(float elapsed)
             hud->setSpeedDialState(true);
             hud->setPauseNavSettings(!tunnel->needsCleaning(),
                                      (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
-                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
-                                     true);
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
             hud->setPauseNavDest(0.7);
             
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -92,8 +98,8 @@ void EngineStage::update(float elapsed)
             hud->setGoButtonState(false);
             hud->setPauseNavSettings(!tunnel->needsCleaning(),
                                      (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
-                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
-                                     true);
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
             hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
@@ -151,8 +157,8 @@ void EngineStage::update(float elapsed)
             hud->setGoButtonState(true, true);
             hud->setPauseNavSettings(!tunnel->needsCleaning(),
                                      (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
-                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
-                                     true);
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
             hud->setPauseNavDest(0.7);
             break;
         }
@@ -167,8 +173,8 @@ void EngineStage::update(float elapsed)
             hud->setGoButtonState(false);
             hud->setPauseNavSettings(!tunnel->needsCleaning(),
                                      (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
-                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
-                                     true);
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
             hud->setPauseNavDest(0.0);
             break;
         }
@@ -197,8 +203,8 @@ void EngineStage::update(float elapsed)
             hud->setGoButtonState(false);
             hud->setPauseNavSettings(!tunnel->needsCleaning(),
                                      (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
-                                     (player->levelRequest && player->levelRequest->second.rating < 0) || (!player->levelRequest),
-                                     true);
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
             hud->setPauseNavDest(0.7);
             hud->setSpeedDialState(false);
             break;
@@ -243,6 +249,13 @@ void EngineStage::update(float elapsed)
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
+                
+                //Bernie Add Reset Counters:
+                
+                player->choice0RestartCounter = 0;
+                player->choice1RestartCounter = 0;
+                player->choice2RestartCounter = 0;
+                player->choice3RestartCounter = 0;
             }
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
@@ -545,6 +558,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             std::string queryGUI = hud->queryButtons(Vector2(x, y));
             if (queryGUI == "pause")
             {
+                
                 if (!player->endFlag)
                 {
                     hud->setSpeedDialState(false);
@@ -683,27 +697,143 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else if (queryGUI == "restart")
             {
-                stageState = STAGE_STATE_INIT;
-                
-                player->logData();
-                
-                setPause(false);
-                OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
                 player->reactGUI();
-            }
-            else if (queryGUI == "levelselect")
-            {
-                if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
-                    (!player->levelRequest))    // For level from level select
+                //Bernie Added
+                
+                if (!player->levelRequest) // If not a scheduler level
                 {
-                    stageState = STAGE_STATE_DONE;
+                    stageState = STAGE_STATE_INIT;
                     
                     player->logData();
                     
                     setPause(false);
                     OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
                 }
+                else if((player->choice0RestartCounter < 5) && (player->marbleChoice == 0))
+                {
+                    
+                    player->choice0RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    
+                    
+                }
+
+                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+                {
+                    
+                    player->choice1RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    
+                    
+                }
+                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+                {
+                    
+                    player->choice2RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    
+                    
+                }
+                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+                {
+                    
+                    player->choice3RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    
+                }
+                
+            }
+            else if (queryGUI == "levelselect")
+            {
+                
                 player->reactGUI();
+                
+                if (!player->levelRequest) // If not a scheduler level
+                {
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false);
+                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                }
+                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
+                    
+                }
+                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
+                   
+                }
+                
+                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
+                   
+                }
+                else if(player->marbleChoice == 0)
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false);
+                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    }
+                }
+
             }
             break;
         }
