@@ -42,6 +42,11 @@ void EngineSchedulerMenu::enter()
     else if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
         player->levelRequest = &player->scheduler->tutorialLevels[1];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        
+        
+        //Bernie Add
+        player->choice0RestartCounter = 0;
+        
     }
     else
     {
@@ -103,8 +108,24 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     {
         // If a level is selected, then we can continue,
         // Also make sure it isn't a level selected from the history panel
+        //Bernie Added
         if (player->levelRequest && player->levelRequest->second.rating < 0)
+        {
             engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+            
+            if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+            {
+                player->choice1RestartCounter++;
+            }
+            else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+            {
+                player->choice2RestartCounter++;
+            }
+            else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+            {
+                player->choice3RestartCounter++;
+            }
+        }
     }
 }
 
@@ -173,16 +194,19 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
 {
     if (queryGUI == "selection0")
     {
+        player->marbleChoice = 1;
         player->levelRequest = &player->scheduleChoice1;
         return true;
     }
     else if (queryGUI == "selection1")
     {
+        player->marbleChoice = 2;
         player->levelRequest = &player->scheduleChoice2;
         return true;
     }
     else if (queryGUI == "selection2")
     {
+        player->marbleChoice = 3;
         player->levelRequest = &player->scheduleChoice3;
         return true;
     }
