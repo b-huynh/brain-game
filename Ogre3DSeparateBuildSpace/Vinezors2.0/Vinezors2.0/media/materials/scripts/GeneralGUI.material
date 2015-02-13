@@ -228,16 +228,16 @@ material General/PauseGrayPlay
 {
     technique
     {
-        pass
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
         {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture pause_grayplay.png
-            }
+            texture pause_grayplay.png
         }
+      } 
     }
 }
 
@@ -245,16 +245,16 @@ material General/PauseGrayForward
 {
     technique
     {
-        pass
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
         {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture pause_grayforward.png
-            }
+            texture pause_grayforward.png
         }
+      } 
     }
 }
 
@@ -262,16 +262,16 @@ material General/PauseGrayBack
 {
     technique
     {
-        pass
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
         {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture pause_grayback.png
-            }
+            texture pause_grayback.png
         }
+      } 
     }
 }
 
@@ -814,21 +814,23 @@ material General/TextArtLevelSelection
 	}
 }
 
-material General/GUITopPanel
+material General/GUIMainHudEntire
 {
-	technique
-	{
-		pass
+    technique
+    {
+        pass
         {
             lighting off
             scene_blend alpha_blend
             depth_write off
-			texture_unit
-			{
-				texture GUI_LifeBar.png
-			}
-		}
-	}
+            texture_unit
+            {
+                texture hud.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
 }
 
 material General/GUIMainHudLeft
@@ -907,7 +909,7 @@ material General/GUIMainHudDip
 	}
 }
 
-material General/GUIMainHudShifter
+material General/GUIMainHudLeftShifter
 {
 	technique
 	{
@@ -918,7 +920,7 @@ material General/GUIMainHudShifter
             depth_write off
 			texture_unit
 			{
-				texture hud-eblue_shifter.png
+				texture hud-eblue_lshifter.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -926,7 +928,7 @@ material General/GUIMainHudShifter
 	}
 }
 
-material General/GUIMainHudZapper
+material General/GUIMainHudLeftShifterPressed
 {
     technique
     {
@@ -937,7 +939,64 @@ material General/GUIMainHudZapper
             depth_write off
             texture_unit
             {
-                texture hud-eblue_zapper.png
+                texture hud-eblue_lshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifter
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifterPressed
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudShifterOff
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_shifter_off.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
             }

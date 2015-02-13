@@ -44,7 +44,6 @@ void EngineStage::exit()
 void EngineStage::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-    
     bool replayableTutorial = (player->choice0RestartCounter < 5 && player->marbleChoice == 0);
     bool replayableMarble = (player->choice1RestartCounter < 5 && player->marbleChoice == 1) ||
                             (player->choice2RestartCounter < 5 && player->marbleChoice == 2) ||
@@ -617,7 +616,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             else if (queryGUI == "pause")
             {
                 hud->setSpeedDialState(false);
-                    
+                
                 // Display current level index
                 LevelSet* levels = player->getLevels();
                 std::string msg = "Level: ";
@@ -677,9 +676,8 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         int col = levels->getLevelCol(nlevel);
                         player->setLevelRequest(row, col);
                         stageState = STAGE_STATE_INIT;
-                    
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        
+                        setPause(false, false);
                     }
                     player->reactGUI();
                 }
@@ -688,9 +686,8 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     if (player->levelRequest && player->levelRequest->second.rating >= 0)
                     {
                         stageState = STAGE_STATE_DONE;
-                    
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        
+                        setPause(false, false);
                     }
                     player->reactGUI();
                 }
@@ -706,8 +703,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    setPause(false, false);
                 }
                 else if((player->choice0RestartCounter < 5) && (player->marbleChoice == 0))
                 {
@@ -717,12 +713,10 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
-                    
+                    setPause(false, false);
                     
                 }
-
+                
                 else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
                 {
                     
@@ -731,10 +725,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
-                    
-                    
+                    setPause(false, false);
                 }
                 else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
                 {
@@ -744,10 +735,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
-                    
-                    
+                    setPause(false, false);
                 }
                 else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
                 {
@@ -757,9 +745,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
-                    
+                    setPause(false, false);
                 }
                 
             }
@@ -770,12 +756,11 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                 
                 if (!player->levelRequest) // If not a scheduler level
                 {
-                    stageState = STAGE_STATE_INIT;
+                    stageState = STAGE_STATE_DONE;
                     
                     player->logData();
                     
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    setPause(false, false);
                 }
                 else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
                 {
@@ -786,8 +771,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         
                         player->logData();
                         
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false, false);
                     }
                     
                 }
@@ -800,10 +784,9 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         
                         player->logData();
                         
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false, false);
                     }
-                   
+                    
                 }
                 
                 else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
@@ -815,10 +798,9 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         
                         player->logData();
                         
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false, false);
                     }
-                   
+                    
                 }
                 else if(player->marbleChoice == 0)
                 {
@@ -829,18 +811,17 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         
                         player->logData();
                         
-                        setPause(false);
-                        OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                        setPause(false, false);
                     }
                 }
-
+                
             }
             break;
         }
         case STAGE_STATE_READY:
         {
             std::string queryGUI = hud->queryButtons(Vector2(x, y));
-        
+            
             if (queryGUI == "pause")
             {
                 hud->setSpeedDialState(false);
@@ -1447,20 +1428,17 @@ void EngineStage::setup()
     if (level.durationX == DURATION_SHORT)
     {
         globals.startingHP = 5;
-        globals.wrongAnswerTimePenalty = 3.0;
-        //globals.podBinSize = 7;
+        globals.podBinSize = 8;
     }
     else if (level.durationX == DURATION_NORMAL)
     {
         globals.startingHP = 4;
-        globals.wrongAnswerTimePenalty = 5.0;
-        //globals.podBinSize = 11;
+        globals.podBinSize = 10;
     }
     else
     {
         globals.startingHP = 3;
-        globals.wrongAnswerTimePenalty = 10.0;
-        //globals.podBinSize = 16;
+        globals.podBinSize = 12;
     }
     
     
@@ -1541,6 +1519,15 @@ void EngineStage::setup()
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY);
     if (level.hasHoldout())
         player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_HOLDOUT);
+    bool hasObstacles = false;
+    for (int i = 0; i < level.navLevels.size(); ++i) {
+        if (level.navLevels[i].obstacles > 0) {
+            hasObstacles = true;
+            break;
+        }
+    }
+    if (hasObstacles)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_OBSTACLE);
     
     if (!player->getTutorialMgr()->isVisible())
     {

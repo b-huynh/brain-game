@@ -36,6 +36,8 @@ private:
     float bPFXwidth;
     float bPFXcolor;
     
+    OgreOggSound::OgreOggISound* signalSound;
+    
     Vector3 base;
     Vector3 tip;
     PodSignal podSignal;
@@ -74,6 +76,8 @@ public:
     void loadHazard();
     void loadPowerup();
     
+    void loadSignalSound();
+    
     PodMeshType getMeshType() const;
     Vector3 getBase() const;
     Vector3 getTip() const;
@@ -95,6 +99,7 @@ public:
     ParticleSystem* getGlowEffect() const;
     SceneNode* getIndicatorNode() const;
     ParticleSystem* getIndicatorEffect() const;
+    OgreOggSound::OgreOggISound* getSignalSound() const;
     
     bool isPodTested() const;
     bool isPodTaken() const;

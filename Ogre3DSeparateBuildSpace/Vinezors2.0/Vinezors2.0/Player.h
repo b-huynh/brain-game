@@ -207,7 +207,6 @@ private:
     OgreOggSound::OgreOggISound* soundBoost;
     OgreOggSound::OgreOggISound* soundButtonPress;
     OgreOggSound::OgreOggISound* soundFirework;
-    std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
     // Study report at the end of the session
@@ -226,11 +225,10 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
-    
     //Bernie Added
-    int marbleChoice = -1;
+    int marbleChoice = 0;
     int choice0RestartCounter = 0;  //Tutorial Counter
-    int choice1RestartCounter = 0;  
+    int choice1RestartCounter = 0;
     int choice2RestartCounter = 0;
     int choice3RestartCounter = 0;
     //End Bernie Added
@@ -379,17 +377,17 @@ public:
     Quaternion getRot() const;
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
-    void playPodSound(int index) const;
+    void playSound(OgreOggSound::OgreOggISound* sound) const;
     void reactGUI() const;
     void playFireworkSound() const;
     float getStartMusicTimer() const;
     void playMusic() const;
     void stopMusic();
-    void setVolume();
+    void updateMusicVolume();
     void unpause();
     void pause();
     
-    void setSounds(bool mode);
+    void setSounds();
     
     void unlink();
     void link(Tunnel* tunnel);

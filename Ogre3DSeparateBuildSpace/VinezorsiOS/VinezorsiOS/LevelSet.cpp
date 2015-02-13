@@ -17,11 +17,11 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
     //
-    // 60 seconds, 100 seconds, 140 seconds
-    // Below meant for 5, 4, 3 chances on misses respectively
-    // const double EASY_TIME = 960.0, NORMAL_TIME = 1200.0, HARD_TIME = 1800.0;
-    // Below meant for 3, 3, 3 chances on misses respectively
-    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
+    
+    // Times
+    // Below meant for 5, 4, 3 lives on wrong zaps respectively
+    // Below meant for 3, 3, 3 lives on misses respectively
+    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -380,8 +380,8 @@ void LevelSet::initializeLevelSet()
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
     //
-    // 60 seconds, 100 seconds, 140 seconds
-    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
+    // Time
+    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
     const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
@@ -422,8 +422,8 @@ void LevelSet::initializeLevelSet()
     level.nback = 0;
     level.stageTime = NORMAL_TIME;
     level.navLevels.push_back(NavigationLevel(0, 1, 0));
+    level.navLevels.push_back(NavigationLevel(0, 2, 0));
     level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
     level.navLevels.push_back(NavigationLevel(0, 4, 0));
     level.nameTunnelTile = "General/WallBindingG";
     level.nameSkybox = "General/BlankStarrySkyPlane";

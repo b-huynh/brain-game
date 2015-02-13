@@ -78,7 +78,6 @@ protected:
     OverlayContainer* timeWarpContainer;
     TextAreaOverlayElement* timeWarpLabel;
     
-    PanelOverlayElement* speedDisplayBackground;
     PanelOverlayElement* nbackDisplayBackground;
     TextAreaOverlayElement* nbackDisplayLabel;
     

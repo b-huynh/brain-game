@@ -55,25 +55,25 @@ void HudStage::update(float elapsed)
     {
         if (leftZapT > 0.0f)
         {
-            HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
+            HudLeftZapper->setMaterialName("General/GUIMainHudLeftShifterPressed");
             leftZapT -= elapsed;
         }
         else
-            HudLeftZapper->setMaterialName("General/GUIMainHudZapper");
+            HudLeftZapper->setMaterialName("General/GUIMainHudLeftShifter");
         if (rightZapT > 0.0f)
         {
-            HudRightZapper->setMaterialName("General/GUIMainHudShifter");
+            HudRightZapper->setMaterialName("General/GUIMainHudRightShifterPressed");
             rightZapT -= elapsed;
         }
         else
-            HudRightZapper->setMaterialName("General/GUIMainHudZapper");
+            HudRightZapper->setMaterialName("General/GUIMainHudRightShifter");
     }
     else
     {
-        HudLeftZapper->setMaterialName("General/GUIMainHudShifter");
-        HudRightZapper->setMaterialName("General/GUIMainHudShifter");
+        HudLeftZapper->setMaterialName("General/GUIMainHudShifterOff");
+        HudRightZapper->setMaterialName("General/GUIMainHudShifterOff");
     }
-        
+    
     // Pause nav animation
     if (overlays[1]->isVisible())
     {
@@ -289,8 +289,6 @@ void HudStage::alloc()
     
     timeWarpLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextTimeWarpLabel"));
     
-    speedDisplayBackground = static_cast<PanelOverlayElement*>(
-                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSpeedDisplayBackground"));
     nbackDisplayBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNBackDisplayBackground"));
     nbackDisplayLabel = static_cast<TextAreaOverlayElement*>(
@@ -300,12 +298,12 @@ void HudStage::alloc()
                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseBaseBackground"));
     pauseNavigationBackground = static_cast<PanelOverlayElement*>(
                                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseNavigationBackground"));
-    
+
     pausePanelPlay = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelPlay"));
     pausePanelForward = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelForward"));
     pausePanelBack = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelBack"));
     pausePanelMenu = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelMenu"));
-
+    
     resumeButtonBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageResumeButtonBackground"));
     nextButtonBackground = static_cast<PanelOverlayElement*>(
@@ -353,7 +351,6 @@ void HudStage::alloc()
     for (int i = collectionBar.size() - 1; i >= 0; --i)
         overlay1->add2D(collectionBar[i]);
     
-    overlay1->add2D(speedDisplayBackground);
     overlay1->add2D(nbackDisplayBackground);
     nbackDisplayBackground->addChild(nbackDisplayLabel);
     overlay1->add2D(panelText);
@@ -368,13 +365,12 @@ void HudStage::alloc()
     panelText->addChild(label7);
     overlay2->add2D(pauseBaseBackground);
     overlay2->add2D(pauseNavigationBackground);
+    overlay2->add2D(goBaseBackground);
+    overlay2->add2D(goBackground);
     pauseNavigationBackground->addChild(pausePanelPlay);
     pauseNavigationBackground->addChild(pausePanelForward);
     pauseNavigationBackground->addChild(pausePanelBack);
     pauseNavigationBackground->addChild(pausePanelMenu);
-    
-    overlay2->add2D(goBaseBackground);
-    overlay2->add2D(goBackground);
     pauseNavigationBackground->addChild(resumeButtonBackground);
     pauseNavigationBackground->addChild(nextButtonBackground);
     pauseNavigationBackground->addChild(restartButtonBackground);
@@ -506,7 +502,6 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label6);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(speedDisplayBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBaseBackground);
@@ -534,7 +529,6 @@ void HudStage::dealloc()
 // Reinitializes overlay resources. Also called when screen is adjusted
 void HudStage::initOverlay()
 {
-    // Aspect Ratio Modifier
     float AR = static_cast<float>(globals.screenHeight) / globals.screenWidth;
     
     // Link and Set Resources
@@ -546,45 +540,36 @@ void HudStage::initOverlay()
     timeWarpContainer->setPosition(0.35, 0.15);
     timeWarpContainer->setDimensions(0.25, 0.25);
     
-    // imgw = 2048 px = 1
-    // imgh = 1536 px = 1
-    // left hud (xoffset,yoffset) = (0 px, 90 px) = (0.0%, 0.0586%)
-    // left hud (xdim, ydim) = (460 px, 1370 px) = (0.2246%, 0.8919%)
-    // right hud (xoffset,yoffset) = (imgw - xdim, yoffset) = (0.7754%, 0.0586%)
-    // right hud dim = left hud dim
-    // top hud (xoffset, yoffset) = (imgw / 2 - top hud xdim / 2, 44) = (70 px, 44 px) = (0.0342, 0.0286)
-    // top hud (xdim, ydim) = (1907 px, 173 px) = (0.9312%, 0.1126%)
-    
-    // left dip (xoffset, yoffset) = (32 px, 240 px) = (0.0156%, 0.1562)
-    // left dip (xdim, ydim) = (156 px, 1064 px) = (0.0762, 0.6926)
-    // right zapper (xoffset, yoffset) = (1840 px, 428 px) = (0.8984%, 0.2786%)
-    // right zapper (xdim, ydim) = (164 px, 772 px) = (0.08%, 0.5026%)
+    //HudEntire->setMetricsMode(GMM_RELATIVE);
+    //HudEntire->setPosition(0.0, 0.0);
+    //HudEntire->setDimensions(1.0, 1.0);
+    //HudEntire->setMaterialName("General/GUIMainHudEntire");
     
     HudLeftPanel->setMetricsMode(GMM_RELATIVE);
-    HudLeftPanel->setPosition(0.0, 0.0586);
-    HudLeftPanel->setDimensions(0.2261, 0.8919);
+    HudLeftPanel->setPosition(0.000, 0.000);
+    HudLeftPanel->setDimensions(0.260, 1.000);
     HudLeftPanel->setMaterialName("General/GUIMainHudLeft");
     
     HudTopPanel->setMetricsMode(GMM_RELATIVE);
-    HudTopPanel->setPosition(0.0342, 0.0286);
-    HudTopPanel->setDimensions(0.9312, 0.1126);
+    HudTopPanel->setPosition(0.000, 0.030);
+    HudTopPanel->setDimensions(1.000, 0.101);
     HudTopPanel->setMaterialName("General/GUIMainHudBar");
     
     HudRightPanel->setMetricsMode(GMM_RELATIVE);
-    HudRightPanel->setPosition(0.7739, 0.0586);
-    HudRightPanel->setDimensions(0.2261, 0.8919);
+    HudRightPanel->setPosition(0.740, 0.000);
+    HudRightPanel->setDimensions(0.260, 1.000);
     HudRightPanel->setMaterialName("General/GUIMainHudRight");
     
     HudFuelBar->setMetricsMode(GMM_RELATIVE);
-    HudFuelBar->setPosition(0.735, 0.025);
+    HudFuelBar->setPosition(0.760, 0.013);
     HudFuelBar->setMaterialName("General/GUIFuelBar");
     
-    float leftZapperX = 0.0216;
-    float leftZapperY = 0.2200;
-    float rightZapperX = 0.1245;
-    float rightZapperY = 0.2200;
-    float dimZapperX = 0.08;
-    float dimZapperY = 0.5026;
+    float leftZapperX = 0.016;
+    float leftZapperY = 0.000;
+    float rightZapperX = 0.178;
+    float rightZapperY = 0.000;
+    float dimZapperX = 0.066;
+    float dimZapperY = 1.000;
     HudLeftZapper->setMetricsMode(GMM_RELATIVE);
     HudLeftZapper->setPosition(leftZapperX, leftZapperY);
     HudLeftZapper->setDimensions(dimZapperX, dimZapperY);
@@ -602,7 +587,7 @@ void HudStage::initOverlay()
     
     label2->setMetricsMode(GMM_RELATIVE);
     label2->setAlignment(TextAreaOverlayElement::Left);
-    label2->setPosition(0.05, 0.040);
+    label2->setPosition(0.060, 0.040);
     label2->setCharHeight(0.025 * FONT_SZ_MULT);
     label2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label2->setFontName("MainSmall");
@@ -624,7 +609,7 @@ void HudStage::initOverlay()
     
     label4->setMetricsMode(GMM_RELATIVE);
     label4->setAlignment(TextAreaOverlayElement::Center);
-    label4->setPosition(0.05, 0.185);
+    label4->setPosition(0.040, 0.215);
     label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     label4->setFontName("MainSmall");
@@ -670,6 +655,7 @@ void HudStage::initOverlay()
     pauseNavigationBackground->setMetricsMode(GMM_RELATIVE);
     pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
     pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
+    
     pauseBaseBackground->setMetricsMode(GMM_RELATIVE);
     pauseBaseBackground->setPosition(0.325, 0.675 + pauseNavOffset);
     pauseBaseBackground->setDimensions(0.35, 0.35);
@@ -696,7 +682,7 @@ void HudStage::initOverlay()
     
     float pauseheight = 0.10;
     float pausewidth = pauseheight * AR;
-    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.9025, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
+    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.912, 0.818), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
     float gheight = 0.35;
     float gwidth = gheight * AR;
@@ -744,14 +730,10 @@ void HudStage::initOverlay()
     //restartButtonBackground->setMaterialName("General/RestartButtonRound");
     //levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
     
-    speedDisplayBackground->setMetricsMode(GMM_RELATIVE);
-    speedDisplayBackground->setPosition(0.023, 0.175);
-    speedDisplayBackground->setDimensions(0.075, 0.08);
-    speedDisplayBackground->setMaterialName("General/GUIToggleButton");
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
-    nbackDisplayBackground->setPosition(0.897, 0.175);
+    nbackDisplayBackground->setPosition(0.910, 0.205);
     nbackDisplayBackground->setDimensions(0.075, 0.08);
-    nbackDisplayBackground->setMaterialName("General/GUIToggleButton");
+    //nbackDisplayBackground->setMaterialName("General/GUIToggleButton");
     
     nbackDisplayLabel->setMetricsMode(GMM_RELATIVE);
     nbackDisplayLabel->setAlignment(TextAreaOverlayElement::Center);
@@ -943,9 +925,9 @@ void HudStage::setCollectionBar(bool instant, float elapsed)
 
 void HudStage::setFuelBar(float elapsed)
 {
-    float totalWidth = 0.1725;
+    float totalWidth = 0.180;
     float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
-    HudFuelBar->setDimensions(percentFuel * totalWidth, 0.045);
+    HudFuelBar->setDimensions(percentFuel * totalWidth, 0.056);
     
     /*
     if (tunnel->getFuelTimer() > prevFuelTimer)

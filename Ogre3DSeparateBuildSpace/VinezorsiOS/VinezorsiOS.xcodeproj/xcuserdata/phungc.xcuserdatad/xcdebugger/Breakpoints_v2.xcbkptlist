@@ -299,7 +299,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "800"
             endingLineNumber = "800"
-            landmarkName = "HudStage::setSpeedDialState(bool active)"
+            landmarkName = "HudStage::setPauseNavSettings(bool resumeAvail, bool forwardAvail, bool menuAvail, bool backAvail)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

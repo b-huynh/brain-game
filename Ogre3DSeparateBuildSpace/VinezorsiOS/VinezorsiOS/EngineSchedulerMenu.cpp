@@ -38,13 +38,11 @@ void EngineSchedulerMenu::enter()
     if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
         player->levelRequest = &player->scheduler->tutorialLevels[0];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
-        
         player->marbleChoice = 0;
     }
     else if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
         player->levelRequest = &player->scheduler->tutorialLevels[1];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
-        
         
         //Bernie Add
         player->choice0RestartCounter = 0;
@@ -110,20 +108,20 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     {
         // If a level is selected, then we can continue,
         // Also make sure it isn't a level selected from the history panel
-        //Bernie Added
+        // Bernie Added
         if (player->levelRequest && player->levelRequest->second.rating < 0)
         {
             engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
             
-            if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+            if ((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
             {
                 player->choice1RestartCounter++;
             }
-            else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+            else if ((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
             {
                 player->choice2RestartCounter++;
             }
-            else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+            else if ((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
             {
                 player->choice3RestartCounter++;
             }
