@@ -317,8 +317,6 @@ void HudStage::alloc()
     rightZapperButtonBackground = static_cast<PanelOverlayElement*>(
                                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRightZapperButtonBackground"));
     
-    circleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCircleBackground"));
-    
     buttons = std::vector<HudButton>(8);
     
     // Create an overlay, and add the panel
@@ -378,8 +376,6 @@ void HudStage::alloc()
     
     overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
-    
-    overlay1->add2D(circleBackground);
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
@@ -518,7 +514,6 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rightZapperButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(circleBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[2]);
@@ -694,13 +689,6 @@ void HudStage::initOverlay()
     goBaseBackground->setMetricsMode(GMM_RELATIVE);
     goBaseBackground->setPosition(0.325, 0.675 + goOffset);
     goBaseBackground->setDimensions(0.35, 0.35);
-    
-    float relCircleHeight = 0.30;
-    float relCircleWidth = 0.30 * AR;
-    circleBackground->setMetricsMode(GMM_RELATIVE);
-    circleBackground->setPosition(0.50 - relCircleWidth / 2, 0.75 - relCircleHeight / 2);
-    circleBackground->setDimensions(relCircleWidth, relCircleHeight);
-    //circleBackground->setMaterialName("General/Circle");
     
     float qheight = 0.085;
     float qwidth = qheight * AR;

@@ -306,7 +306,7 @@ material General/ScreenBackgroundSchedulerMenu
         {
             texture sched_background.png
         }
-      } 
+      }
     }
 }
 

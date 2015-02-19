@@ -133,9 +133,12 @@ void HudSchedulerMenu::alloc()
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
+    Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuSelector");
     overlays.push_back(overlay1);
+    overlays.push_back(overlay2);
     
     overlay1->add2D(schedulerMenuEntireBackground);
+    
     
     overlay1->add2D(schedulerMenuScoreCurrBackground);
     schedulerMenuScoreCurrBackground->addChild(schedulerMenuScoreCurrText);
@@ -164,8 +167,8 @@ void HudSchedulerMenu::alloc()
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(playButtonBackground);
     
-    overlay1->add2D(selectIconHistory);
-    overlay1->add2D(selectIconChoice);
+    overlay2->add2D(selectIconHistory);
+    overlay2->add2D(selectIconChoice);
 }
 
 void HudSchedulerMenu::dealloc()
@@ -197,6 +200,7 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
 }
 
 void HudSchedulerMenu::initOverlay()
@@ -600,17 +604,25 @@ void HudSchedulerMenu::setSelectToIcon(PanelOverlayElement* icon, int mode)
 {
     if (mode == 0)
     {
-        selectIconHistory->setPosition(icon->_getDerivedLeft(), icon->_getDerivedTop());
-        selectIconHistory->setWidth(icon->getWidth());
-        selectIconHistory->setHeight(icon->getHeight());
+        float selectIconWidth = 0.1225;
+        float selectIconHeight = 0.1424;
+        float mainIconWidth = icon->getWidth();
+        float mainIconHeight = icon->getHeight();
+        selectIconHistory->setPosition(icon->_getDerivedLeft() - (selectIconWidth - mainIconWidth) / 2, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
+        selectIconHistory->setWidth(selectIconWidth);
+        selectIconHistory->setHeight(selectIconHeight);
         selectIconHistory->show();
         selectIconChoice->hide();
     }
     else
     {
-        selectIconChoice->setPosition(icon->_getDerivedLeft(), icon->_getDerivedTop());
-        selectIconChoice->setWidth(icon->getWidth());
-        selectIconChoice->setHeight(icon->getHeight());
+        float selectIconWidth = 0.2617;
+        float selectIconHeight = 0.2224;
+        float mainIconWidth = icon->getWidth();
+        float mainIconHeight = icon->getHeight();
+        selectIconChoice->setPosition(icon->_getDerivedLeft() - 0.04f, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
+        selectIconChoice->setWidth(selectIconWidth);
+        selectIconChoice->setHeight(selectIconHeight);
         selectIconChoice->show();
         selectIconHistory->hide();
     }

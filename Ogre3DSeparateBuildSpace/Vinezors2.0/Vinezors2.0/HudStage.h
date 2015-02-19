@@ -100,8 +100,6 @@ protected:
     PanelOverlayElement* leftZapperButtonBackground;
     PanelOverlayElement* rightZapperButtonBackground;
     
-    PanelOverlayElement* circleBackground;
-    
     HudSlider* speedSlider;
     
     bool goButtonActive;
