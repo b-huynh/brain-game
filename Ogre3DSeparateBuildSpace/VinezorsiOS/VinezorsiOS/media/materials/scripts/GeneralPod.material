@@ -127,7 +127,7 @@ material General/PodRedTransparent
     }
 }
 
-material General/PodPurple
+material General/PodOrange
 {
     technique
     {
@@ -135,9 +135,9 @@ material General/PodPurple
         {
             lighting on
 
-            ambient 0.8 0.2 0.8 1.0
-            diffuse 0.8 0.2 0.8 1.0
-            emissive 0.8 0.2 0.8 1.0
+            ambient 0.6 0.2 0.0 1.0
+            diffuse 0.6 0.2 0.0 1.0
+            emissive 0.6 0.2 0.0 1.0
             specular 0.5 0.5 0.5 30
 
 //            texture_unit {
@@ -148,7 +148,7 @@ material General/PodPurple
     }
 }
 
-material General/PodPurpleTransparent
+material General/PodOrangeTransparent
 {
     technique
     {
@@ -156,9 +156,9 @@ material General/PodPurpleTransparent
         {
             lighting on
 
-            ambient 0.8 0.2 0.8 0.3
-            diffuse 0.8 0.2 0.8 0.3
-            emissive 0.8 0.2 0.8 0.3
+            ambient 0.6 0.2 0.0 0.3
+            diffuse 0.6 0.2 0.0 0.3
+            emissive 0.6 0.2 0.0 0.3
             scene_blend alpha_blend
             depth_write off
         }

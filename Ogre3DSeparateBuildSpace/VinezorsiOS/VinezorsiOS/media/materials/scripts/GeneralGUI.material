@@ -9,7 +9,7 @@ material General/IconRecess
             depth_write off
             texture_unit
             {
-                texture iconRecess.png
+                texture history_icon_recess.png
             }
         }
     }
@@ -26,7 +26,7 @@ material General/IconColorSound
             depth_write off
             texture_unit
             {
-                texture iconColorSound.png
+                texture history_icon_colorsound.png
             }
         }
     }
@@ -43,7 +43,7 @@ material General/IconShapeSound
             depth_write off
             texture_unit
             {
-                texture iconShapeSound.png
+                texture history_icon_shapesound.png
             }
         }
     }
@@ -60,7 +60,7 @@ material General/IconSoundOnly
             depth_write off
             texture_unit
             {
-                texture iconSoundOnly.png
+                texture history_icon_soundonly.png
             }
         }
     }
@@ -77,7 +77,147 @@ material General/IconAllSignal
             depth_write off
             texture_unit
             {
-                texture iconAllSig.png
+                texture history_icon_allsignal.png
+            }
+        }
+    }
+}
+
+material General/IconNone
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture history_icon_none.png
+            }
+        }
+    }
+}
+
+material General/IconSelection
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture history_selector.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/BigIconRecess
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_recess.png
+            }
+        }
+    }
+}
+
+material General/BigIconColorSound
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_colorsound.png
+            }
+        }
+    }
+}
+
+material General/BigIconShapeSound
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_shapesound.png
+            }
+        }
+    }
+}
+
+material General/BigIconSoundOnly
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_soundonly.png
+            }
+        }
+    }
+}
+
+material General/BigIconAllSignal
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_allsignal.png
+            }
+        }
+    }
+}
+
+material General/BigIconSelection
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_selector.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
             }
         }
     }
@@ -148,7 +288,23 @@ material General/ScreenBackgroundMainMenu
         depth_write off
         texture_unit
         {
-            texture title1.jpg
+            texture title1.png	
+        }
+      } 
+    }
+}
+
+material General/ScreenBackgroundSchedulerMenu
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture sched_background.png
         }
       } 
     }
@@ -656,7 +812,7 @@ material General/PlayButton
             depth_write off
 			texture_unit
 			{
-				texture buttonroundplay.png
+				texture play_button.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -732,7 +888,7 @@ material General/BackButton
             depth_write off
 			texture_unit
 			{
-				texture buttonroundback.png
+				texture back_button.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -1831,7 +1987,6 @@ material General/YellowSphereIcon
         }
     }
 }
-
 
 material General/Circle
 {

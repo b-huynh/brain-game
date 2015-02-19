@@ -2601,6 +2601,7 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->numWrong = numWrongTotal;
         levelResult->numSafe = numSafeTotal;
         levelResult->numMissed = numMissedTotal;
+        levelResult->numPickups = numPickupsTotal;
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score

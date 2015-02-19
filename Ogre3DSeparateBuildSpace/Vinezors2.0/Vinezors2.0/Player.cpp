@@ -1805,6 +1805,7 @@ void Player::newTunnel(const std::string & nameMusic)
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
     
     boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
@@ -1871,6 +1872,7 @@ void Player::startMenu()
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
     if (soundMusic)
     {
@@ -2601,6 +2603,7 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->numWrong = numWrongTotal;
         levelResult->numSafe = numSafeTotal;
         levelResult->numMissed = numMissedTotal;
+        levelResult->numPickups = numPickupsTotal;
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score

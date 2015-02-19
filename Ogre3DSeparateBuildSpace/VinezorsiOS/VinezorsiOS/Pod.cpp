@@ -136,7 +136,7 @@ void Pod::loadFuelCell()
             break;
         default:
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodPurple";
+                materialName = "General/PodOrange";
             }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelPenta.mesh");
             headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal"); // Assign with no specular
@@ -189,7 +189,7 @@ void Pod::loadCrystal()
             break;
         default:
             if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodPurple";
+                materialName = "General/PodOrange";
             }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/3Dstar.mesh");
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
@@ -616,13 +616,13 @@ void Pod::uncloakPod()
             materialName = "General/PodYellow";
             break;
         case POD_COLOR_PURPLE:
-            materialName = "General/PodPurple";
+            materialName = "General/PodOrange";
             break;
         case POD_COLOR_HOLDOUT:
             materialName = "General/PodUnknown";
             break;
         default:
-            materialName = "General/PodPurple";
+            materialName = "General/PodOrange";
             break;
     }
     if (podTaken || isIndicatorVisible())

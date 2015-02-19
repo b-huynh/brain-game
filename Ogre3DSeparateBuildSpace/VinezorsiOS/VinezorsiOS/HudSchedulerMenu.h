@@ -29,7 +29,7 @@ public:
     // Set the hud to reflect the current item selected by the player
     void setSelection();
     
-    void setSelectToIcon(PanelOverlayElement* icon);
+    void setSelectToIcon(PanelOverlayElement* icon, int mode);
     
     static const int NUM_SELECTIONS = 3;
     static const int SCHEDULE_LEN = 5;
@@ -42,9 +42,7 @@ protected:
         BUTTON_BACK, BUTTON_PLAY
     };
     
-    PanelOverlayElement* schedulerMenuBackdrop;
-    PanelOverlayElement* schedulerMenuTitleBackground;
-    TextAreaOverlayElement* schedulerMenuTitleText;
+    PanelOverlayElement* schedulerMenuEntireBackground;
     
     PanelOverlayElement* schedulerMenuScoreCurrBackground;
     TextAreaOverlayElement* schedulerMenuScoreCurrText;

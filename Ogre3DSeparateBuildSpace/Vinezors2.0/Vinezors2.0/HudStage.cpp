@@ -725,11 +725,6 @@ void HudStage::initOverlay()
     pauseBaseBackground->setMaterialName("General/PauseBase");
     goBaseBackground->setMaterialName("General/PauseBase");
     
-    //resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    //nextButtonBackground->setMaterialName("General/NextButtonRound");
-    //restartButtonBackground->setMaterialName("General/RestartButtonRound");
-    //levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
-    
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
     nbackDisplayBackground->setPosition(0.910, 0.205);
     nbackDisplayBackground->setDimensions(0.075, 0.08);
@@ -929,16 +924,20 @@ void HudStage::setFuelBar(float elapsed)
     float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
     HudFuelBar->setDimensions(percentFuel * totalWidth, 0.056);
     
+    
+    
     /*
-    if (tunnel->getFuelTimer() > prevFuelTimer)
+     // Animates fuel growth and shrinking to simulate fuel filling the container
+     if (tunnel->getFuelTimer() > prevFuelTimer)
         fuelBarAnimationTimer = 1.0f;
-    prevFuelTimer = tunnel->getFuelTimer();
-    
-    if (fuelBarAnimationTimer > 0.0f)
+     prevFuelTimer = tunnel->getFuelTimer();
+     
+     if (fuelBarAnimationTimer > 0.0f)
         fuelBarAnimationTimer -= 4 * elapsed;
-    else
+     else
         fuelBarAnimationTimer = 0.0f;
-    
+     
+     // Deals with fuel split into multiple containers depleting from the furthest to the right first
     float sz = 0.005 * Ogre::Math::Sin(Ogre::Math::PI * fuelBarAnimationTimer);
     float totalWidth = 0.1725;
     float numBars = globals.startingHP;

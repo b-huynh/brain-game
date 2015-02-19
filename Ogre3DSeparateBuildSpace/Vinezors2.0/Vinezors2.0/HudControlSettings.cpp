@@ -342,7 +342,7 @@ void HudControlSettings::initOverlay()
     dampingDropStopSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
     dampingDropStopSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
     
-    backButtonBackground->setMaterialName("General/BackButton");
+    backButtonBackground->setMaterialName("General/BackButton1");
     defaultsButtonBackground->setMaterialName("General/DefaultsButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.15, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_DEFAULTS].setButton("defaults", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.90), Vector2(0.30, 0.08), defaultsButtonBackground, NULL);

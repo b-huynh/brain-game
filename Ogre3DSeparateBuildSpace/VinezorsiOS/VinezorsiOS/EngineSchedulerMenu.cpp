@@ -56,23 +56,23 @@ void EngineSchedulerMenu::enter()
         {
             case PHASE_COLOR_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground, 0);
                 break;
             case PHASE_SHAPE_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground, 0);
                 break;
             case PHASE_SOUND_ONLY:
                 player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground, 0);
                 break;
             case PHASE_ALL_SIGNAL:
                 player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground, 0);
                 break;
             case PHASE_COLLECT:
                 player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground, 0);
                 break;
             default:
                 break;
