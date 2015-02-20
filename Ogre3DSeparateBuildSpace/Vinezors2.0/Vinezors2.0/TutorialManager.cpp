@@ -329,13 +329,13 @@ void TutorialManager::updateOverlay()
     popupSubWindowBackground->setMaterialName(subwindowbg);
     if (isSpecial())
     {
-        popupGoRightBackground->setMaterialName("General/ExitButton2");
+        popupGoRightBackground->setMaterialName("General/ExitButton");
         popupExitBackground->setMaterialName("");
     }
     else
     {
         popupGoRightBackground->setMaterialName("General/ButtonGoDown");
-        popupExitBackground->setMaterialName("General/ExitButton2");
+        popupExitBackground->setMaterialName("General/ExitButton");
     }
 }
 

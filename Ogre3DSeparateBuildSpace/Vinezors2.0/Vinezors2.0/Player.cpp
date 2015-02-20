@@ -2730,7 +2730,7 @@ bool Player::saveStage(std::string file)
             out << "% Player Fuel Buffer { -inf, inf }" << endl;
             out << "% Player Loc { 0=Northwest ... 7=West }" << endl;
             out << "% Pod Loc { -1=N/A, 0=Northwest ... 7=West }" << endl;
-            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5=recess }" << endl;
+            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5/6=special }" << endl;
             out << "% Pod Shape { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Sound { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Match { -1=N/A, 0=No, 1=Yes }" << endl;

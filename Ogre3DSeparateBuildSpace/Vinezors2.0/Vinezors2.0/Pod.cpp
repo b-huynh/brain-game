@@ -135,9 +135,6 @@ void Pod::loadFuelCell()
             generateHoldoutEffect();
             break;
         default:
-            if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodOrange";
-            }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelPenta.mesh");
             headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal"); // Assign with no specular
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
@@ -148,7 +145,8 @@ void Pod::loadFuelCell()
         headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
         headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     }
-    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
+    if( podShape != POD_SHAPE_HOLDOUT )
+        head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
@@ -188,9 +186,6 @@ void Pod::loadCrystal()
             generateHoldoutEffect();
             break;
         default:
-            if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodOrange";
-            }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/3Dstar.mesh");
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
@@ -218,6 +213,9 @@ void Pod::loadCrystal()
     if( podShape != POD_SHAPE_HOLDOUT )
     {
         head->attachObject(headContentEntity);
+        if( podSignal == POD_SIGNAL_UNKNOWN ) {
+            uncloakPod();
+        }
     }
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
@@ -617,13 +615,16 @@ void Pod::uncloakPod()
             materialName = "General/PodYellow";
             break;
         case POD_COLOR_PURPLE:
+            materialName = "General/PodPurple";
+            break;
+        case POD_COLOR_ORANGE:
             materialName = "General/PodOrange";
             break;
         case POD_COLOR_HOLDOUT:
             materialName = "General/PodUnknown";
             break;
         default:
-            materialName = "General/PodOrange";
+            materialName = "General/PodUnknown";
             break;
     }
     if (podTaken || isIndicatorVisible())

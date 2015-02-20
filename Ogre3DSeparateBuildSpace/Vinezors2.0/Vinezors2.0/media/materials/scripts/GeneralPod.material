@@ -26,11 +26,6 @@ material General/PodUnknown
             diffuse 0.2 0.2 0.2 1.0
             emissive 0.2 0.2 0.2 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture WHITE.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -64,11 +59,6 @@ material General/PodWhite
             diffuse 0.8 0.8 0.8 1.0
             emissive 0.8 0.8 0.8 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture WHITE.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -101,11 +91,6 @@ material General/PodRed
             diffuse 0.8 0.1 0.1 1.0
             emissive 0.8 0.1 0.1 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture RED.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -139,11 +124,6 @@ material General/PodOrange
             diffuse 0.6 0.2 0.0 1.0
             emissive 0.6 0.2 0.0 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture PURPLE.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -165,6 +145,39 @@ material General/PodOrangeTransparent
     }
 }
 
+material General/PodPurple
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.8 0.2 0.8 1.0
+            diffuse 0.8 0.2 0.8 1.0
+            emissive 0.8 0.2 0.8 1.0
+            specular 0.5 0.5 0.5 30
+        }
+    }
+}
+
+material General/PodPurpleTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.8 0.2 0.8 0.3
+            diffuse 0.8 0.2 0.8 0.3
+            emissive 0.8 0.2 0.8 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
 material General/PodGreen
 {
     technique
@@ -177,11 +190,6 @@ material General/PodGreen
             diffuse 0.1 0.8 0.2 1.0
             emissive 0.1 0.8 0.2 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture GREEN.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -215,11 +223,6 @@ material General/PodBlue
             diffuse 0.1 0.2 0.8 1.0
             emissive 0.1 0.2 0.8 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture BLUE.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }
@@ -253,11 +256,6 @@ material General/PodYellow
             diffuse 0.8 0.8 0.1 1.0
             emissive 0.8 0.8 0.1 1.0
             specular 0.5 0.5 0.5 30
-
-//            texture_unit {
-//                texture GOLD.jpg
-//                scroll_anim 1.0 1.0
-//            }
         }
     }
 }

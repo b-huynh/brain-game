@@ -217,8 +217,8 @@ void HudSchedulerMenu::initOverlay()
     schedulerMenuScoreCurrBackground->setDimensions(0.00, 0.00);
     schedulerMenuScoreCurrText->setMetricsMode(GMM_RELATIVE);
     schedulerMenuScoreCurrText->setAlignment(TextAreaOverlayElement::Center);
-    schedulerMenuScoreCurrText->setPosition(0.885, 0.134);
-    schedulerMenuScoreCurrText->setCharHeight(0.018 * FONT_SZ_MULT);
+    schedulerMenuScoreCurrText->setPosition(0.888, 0.136);
+    schedulerMenuScoreCurrText->setCharHeight(0.016 * FONT_SZ_MULT);
     schedulerMenuScoreCurrText->setFontName("MainSmall");
     schedulerMenuScoreCurrText->setColour(fontColor);
     
@@ -227,8 +227,8 @@ void HudSchedulerMenu::initOverlay()
     schedulerMenuAverageMemoryBackground->setDimensions(0.00, 0.00);
     schedulerMenuAverageMemoryText->setMetricsMode(GMM_RELATIVE);
     schedulerMenuAverageMemoryText->setAlignment(TextAreaOverlayElement::Center);
-    schedulerMenuAverageMemoryText->setPosition(0.885, 0.063);
-    schedulerMenuAverageMemoryText->setCharHeight(0.018 * FONT_SZ_MULT);
+    schedulerMenuAverageMemoryText->setPosition(0.888, 0.063);
+    schedulerMenuAverageMemoryText->setCharHeight(0.016 * FONT_SZ_MULT);
     schedulerMenuAverageMemoryText->setFontName("MainSmall");
     schedulerMenuAverageMemoryText->setColour(fontColor);
     
@@ -245,7 +245,7 @@ void HudSchedulerMenu::initOverlay()
         levelOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         levelOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
         levelOverlayPanels[i].title->setPosition(-0.025, iconHeight / 2.0f - 0.0125);
-        levelOverlayPanels[i].title->setCharHeight(0.020 * FONT_SZ_MULT);
+        levelOverlayPanels[i].title->setCharHeight(0.018 * FONT_SZ_MULT);
         levelOverlayPanels[i].title->setFontName("MainSmall");
         levelOverlayPanels[i].title->setCaption(Util::toStringInt(i + 1));
         levelOverlayPanels[i].title->setColour(fontColor);
@@ -253,7 +253,7 @@ void HudSchedulerMenu::initOverlay()
         levelOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
         levelOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
         levelOverlayPanels[i].value->setPosition(0.0f, 0.0f);
-        levelOverlayPanels[i].value->setCharHeight(0.020 * FONT_SZ_MULT);
+        levelOverlayPanels[i].value->setCharHeight(0.018 * FONT_SZ_MULT);
         levelOverlayPanels[i].value->setFontName("MainSmall");
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
@@ -270,13 +270,13 @@ void HudSchedulerMenu::initOverlay()
         historyOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
         historyOverlayPanels[i].title->setPosition(0, 0);
-        historyOverlayPanels[i].title->setCharHeight(0.020 * FONT_SZ_MULT);
+        historyOverlayPanels[i].title->setCharHeight(0.016 * FONT_SZ_MULT);
         historyOverlayPanels[i].title->setFontName("MainSmall");
         
         historyOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
         historyOverlayPanels[i].value->setPosition(iconWidth / 2.0f, iconHeight + 0.010);
-        historyOverlayPanels[i].value->setCharHeight(0.018 * FONT_SZ_MULT);
+        historyOverlayPanels[i].value->setCharHeight(0.016 * FONT_SZ_MULT);
         historyOverlayPanels[i].value->setFontName("MainSmall");
         historyOverlayPanels[i].value->setColour(fontColor);
     }
