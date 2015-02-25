@@ -29,7 +29,6 @@ protected:
     };
     
     // Overlay items for GAME_STATE_MENU
-    PanelOverlayElement* creditsTitle;
     PanelOverlayElement* backButtonBackground;
     
     void link(Player* player);

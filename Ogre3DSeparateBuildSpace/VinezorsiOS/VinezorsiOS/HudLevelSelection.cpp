@@ -47,7 +47,6 @@ void HudLevelSelection::alloc()
 {
     // Allocate Resources
     levelSelectEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectEntireBackground"));
-    levelSelectPromptBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "LevelSelectPromptBackground"));
     levelSelectPromptText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "LevelSelectPromptText"));
     
     levelItemBackgrounds = std::vector< std::vector<PanelOverlayElement*> >(LEVEL_ITEM_HEIGHT);
@@ -119,8 +118,6 @@ void HudLevelSelection::alloc()
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("LevelSelectionOverlay");
     overlay1->add2D(levelSelectEntireBackground);
-    levelSelectEntireBackground->addChild(levelSelectPromptBackground);
-    //levelSelectPromptBackground->addChild(levelSelectPromptText);
     for (int i = 0; i < levelItemBackgrounds.size(); ++i)
     {
         for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
@@ -154,7 +151,6 @@ void HudLevelSelection::dealloc()
 {
     // Delete children first, then parents
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectEntireBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectPromptBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectPromptText);
     for (int i = 0; i < levelItemBackgrounds.size(); ++i)
         for (int j = 0; j < levelItemBackgrounds[i].size(); ++j)
@@ -192,11 +188,6 @@ void HudLevelSelection::initOverlay()
     levelSelectEntireBackground->setPosition(0.0, 0.0);
     levelSelectEntireBackground->setDimensions(1.0, 1.0);
     levelSelectEntireBackground->setMaterialName("General/ScreenBackgroundLevelSelect");
-    
-    levelSelectPromptBackground->setMetricsMode(GMM_RELATIVE);
-    levelSelectPromptBackground->setPosition(0.225, 0.025);
-    levelSelectPromptBackground->setDimensions(0.525, 0.200);
-    //levelSelectPromptBackground->setMaterialName("General/TextArtLevelSelection");
     
     levelSelectPromptText->setMetricsMode(GMM_RELATIVE);
     levelSelectPromptText->setAlignment(TextAreaOverlayElement::Center);
@@ -303,7 +294,6 @@ void HudLevelSelection::initOverlay()
     levelTotalScoreBackground->setMetricsMode(GMM_RELATIVE);
     levelTotalScoreBackground->setPosition(0.550, 0.750);
     levelTotalScoreBackground->setDimensions(0.30, 0.10);
-    //levelTotalScoreBackground->setMaterialName("General/ScreenBackground2");
     
     levelTotalScore->setMetricsMode(GMM_RELATIVE);
     levelTotalScore->setAlignment(TextAreaOverlayElement::Right);
@@ -325,7 +315,6 @@ void HudLevelSelection::initOverlay()
     checkDisplayEnableTutorialsBackground->setMetricsMode(GMM_RELATIVE);
     checkDisplayEnableTutorialsBackground->setPosition(0.145, 0.0);
     checkDisplayEnableTutorialsBackground->setDimensions(0.0350 * globals.screenHeight / globals.screenWidth, 0.0350);
-    checkDisplayEnableTutorialsBackground->setMaterialName("General/ScreenBackground2");
     
     // The Up Button
     {
@@ -348,9 +337,6 @@ void HudLevelSelection::initOverlay()
         float ph = 0.0350;
         buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.205, 0.790), Vector2(pw, ph), buttonEnableTutorialsBackground, NULL);
     }
-    //buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
-    //buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
-    //buttonEnableTutorialsBackground->setMaterialName("General/CheckboxGreen");
     
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.175, 0.85), Vector2(0.15, 0.05), backButtonBackground, NULL);
     //backButtonBackground->setMaterialName("General/CheckboxBlank");
@@ -401,19 +387,6 @@ void HudLevelSelection::updateDisplay()
     }
     float entireScore = player->getTotalLevelScore();
     levelTotalScore->setCaption(Util::toStringInt(entireScore));
-    
-    //int menuRow;
-    //menuRow = player->getMenuRowIndex() + 1;
-    //if (player->getLevels()->hasLevelRow(menuRow + 2)) // add 2 for the end row
-    //    buttonGoDownBackground->setMaterialName("General/ButtonGoDown");
-    //else
-    //    buttonGoDownBackground->setMaterialName("General/ButtonGoDownGray");
-    
-    //menuRow = player->getMenuRowIndex() - 1;
-    //if (player->getLevels()->hasLevelRow(menuRow))
-    //    buttonGoUpBackground->setMaterialName("General/ButtonGoUp");
-    //else
-    //    buttonGoUpBackground->setMaterialName("General/ButtonGoUpGray");
     
     if (player->getTutorialMgr()->isEnabled())
         checkDisplayEnableTutorialsBackground->setMaterialName("General/CheckboxGreen");

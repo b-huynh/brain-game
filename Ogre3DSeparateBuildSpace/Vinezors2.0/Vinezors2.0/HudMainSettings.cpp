@@ -63,7 +63,7 @@ void HudMainSettings::update(float elapsed)
     }
     
     if (player->soundVolume <= 0.0)
-        soundVolumeSliderWarning->setCaption("Certain features will be disabled");
+        soundVolumeSliderWarning->setCaption("Certain features require sound");
     else
         soundVolumeSliderWarning->setCaption("");
 }

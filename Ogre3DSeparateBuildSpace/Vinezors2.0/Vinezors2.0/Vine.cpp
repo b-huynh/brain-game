@@ -12,11 +12,11 @@ extern Util::ConfigGlobal globals;
 static int vineID = 0;
 
 Vine::Vine()
-: parentNode(NULL), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), tipEntity(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
+: parentNode(NULL), meshType(VINE_RUNNER_SHIP), entireVine(NULL), tip(NULL), tipEntity(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), radius(0.0), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), previoust(0.0), previousID(0), aftert(0.0), afterID(0)
 {}
 
 Vine::Vine(Ogre::SceneNode* parentNode, Vector3 pos, float radius)
-: parentNode(parentNode), meshType(VINE_FLOWER_SHIP), entireVine(NULL), tip(NULL), tipEntity(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
+: parentNode(parentNode), meshType(VINE_RUNNER_SHIP), entireVine(NULL), tip(NULL), tipEntity(NULL), base(NULL), shockwaveEffect(NULL), boostEffect(NULL), forward(), radius(radius), loc(NO_DIRECTION), dest(NO_DIRECTION), transition(0.0), totalElapsed(0.0), wobbleSpeed(0.0), wobbling(false)
 {
     loadShip();
 }

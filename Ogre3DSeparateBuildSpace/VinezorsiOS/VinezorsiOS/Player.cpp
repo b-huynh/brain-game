@@ -1805,7 +1805,9 @@ void Player::newTunnel(const std::string & nameMusic)
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
+    if (soundMusic) soundMusic->setVolume(musicVolume);
     
     boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
     
@@ -1871,6 +1873,7 @@ void Player::startMenu()
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
     if (soundMusic)
     {
@@ -1966,6 +1969,7 @@ void Player::playSound(OgreOggSound::OgreOggISound* sound) const
     if (sound)
     {
         sound->setVolume(soundVolume);
+        sound->stop();
         sound->play();
     }
 }
@@ -2728,7 +2732,7 @@ bool Player::saveStage(std::string file)
             out << "% Player Fuel Buffer { -inf, inf }" << endl;
             out << "% Player Loc { 0=Northwest ... 7=West }" << endl;
             out << "% Pod Loc { -1=N/A, 0=Northwest ... 7=West }" << endl;
-            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5=recess }" << endl;
+            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5/6=special }" << endl;
             out << "% Pod Shape { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Sound { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Match { -1=N/A, 0=No, 1=Yes }" << endl;

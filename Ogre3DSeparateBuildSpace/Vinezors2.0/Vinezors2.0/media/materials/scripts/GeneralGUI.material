@@ -223,25 +223,6 @@ material General/BigIconSelection
     }
 }
 
-material General/ScreenBackground1
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture tutorial_frame.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
 material General/ScreenBackgroundLevelSelect
 {
     technique

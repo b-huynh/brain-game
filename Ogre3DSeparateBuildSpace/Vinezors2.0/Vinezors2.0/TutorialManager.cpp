@@ -703,7 +703,6 @@ void TutorialManager::adjust()
     popupWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupWindowBackground->setPosition(0.250, yoffset + 0.25);
     popupWindowBackground->setDimensions(0.50, 0.50);
-    //popupWindowBackground->setMaterialName("General/ScreenBackground1");
     
     popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupSubWindowBackground->setPosition(0.250, yoffset + 0.25);

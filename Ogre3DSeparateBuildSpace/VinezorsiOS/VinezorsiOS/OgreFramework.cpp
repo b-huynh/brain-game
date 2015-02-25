@@ -165,10 +165,10 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     //m_pSoundMgr->createSound("SoundBadFeedback", "wrong2.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundMissFeedback", "wrong.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod1", "pod3a.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod2", "pod4a.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod3", "pod1a.wav", false, false, true);
-    m_pSoundMgr->createSound("SoundPod4", "pod2a.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod1", "pod3a.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod2", "pod4a.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod3", "pod1a.wav", false, false, true);
+    //m_pSoundMgr->createSound("SoundPod4", "pod2a.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod1", "pod1b.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod2", "pod2b.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod3", "pod3b.wav", false, false, true);
@@ -176,7 +176,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
-    m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
+    //m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
     m_pSoundMgr->createSound("SoundFirework", "distantboom.wav", false, false, true);
     m_pSoundMgr->createSound("SoundDing", "positiveding.wav", false, false, true);
     

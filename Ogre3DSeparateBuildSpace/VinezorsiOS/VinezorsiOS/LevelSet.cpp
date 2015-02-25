@@ -21,7 +21,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     // Times
     // Below meant for 5, 4, 3 lives on wrong zaps respectively
     // Below meant for 3, 3, 3 lives on misses respectively
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -381,7 +381,7 @@ void LevelSet::initializeLevelSet()
     // Not entirely sure on collection requirements as of now
     //
     // Time
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
@@ -459,6 +459,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.00;
+    level.holdoutStart = 0.0;
+    level.holdoutEnd = 0.0;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[0][1] = level;
     
     /////////////////////
@@ -484,6 +490,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
+    level.holdoutPerc = 0.00;
+    level.holdoutStart = 0.0;
+    level.holdoutEnd = 0.0;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[0][2] = level;
     
     /////////////////////
@@ -534,12 +546,18 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.2;
     level.holdoutEnd = 0.8;
     level.holdoutSound = 1;
     level.holdoutColor = 1;
     level.holdoutShape = 1;
+    level.holdoutPerc = 0.00;
+    level.holdoutStart = 0.0;
+    level.holdoutEnd = 0.0;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[0][4] = level;
     
     /////////////////////
@@ -614,7 +632,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -645,7 +663,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -701,7 +719,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -781,7 +799,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -812,7 +830,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -868,7 +886,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -948,7 +966,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -979,7 +997,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1035,7 +1053,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1115,7 +1133,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1146,7 +1164,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1202,7 +1220,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1282,7 +1300,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1313,7 +1331,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1369,7 +1387,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1449,7 +1467,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1480,7 +1498,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1536,7 +1554,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1616,7 +1634,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1647,7 +1665,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1703,7 +1721,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1785,7 +1803,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1816,7 +1834,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;
@@ -1872,7 +1890,7 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.25;
+    level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
     level.holdoutSound = 1;

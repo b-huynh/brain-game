@@ -1968,6 +1968,7 @@ void Player::playSound(OgreOggSound::OgreOggISound* sound) const
     if (sound)
     {
         sound->setVolume(soundVolume);
+        sound->stop();
         sound->play();
     }
 }

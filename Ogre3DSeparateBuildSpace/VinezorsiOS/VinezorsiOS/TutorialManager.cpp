@@ -102,7 +102,7 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
         comments.push_back("Your work here is done.");
         comments.push_back("The tunnel is cleared.\nLet's move out.");
         comments.push_back("Perfect. Simply perfect.");
-        comments.push_back("Well done ace!");
+        comments.push_back("You're a cadet no longer.\nLet's go pilot!");
     }
     
     if (comments.size() <= 0)
@@ -198,7 +198,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("", "General/TutorialBackdropLined", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("\n\n  Good work today!\n\n Make sure you take\n     a break.\n\n   You earned it!", "General/TutorialBackdrop", ""));
             break;
         default:
             break;
@@ -329,13 +329,13 @@ void TutorialManager::updateOverlay()
     popupSubWindowBackground->setMaterialName(subwindowbg);
     if (isSpecial())
     {
-        popupGoRightBackground->setMaterialName("General/ExitButton2");
+        popupGoRightBackground->setMaterialName("General/ExitButton");
         popupExitBackground->setMaterialName("");
     }
     else
     {
         popupGoRightBackground->setMaterialName("General/ButtonGoDown");
-        popupExitBackground->setMaterialName("General/ExitButton2");
+        popupExitBackground->setMaterialName("General/ExitButton");
     }
 }
 
@@ -703,7 +703,6 @@ void TutorialManager::adjust()
     popupWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupWindowBackground->setPosition(0.250, yoffset + 0.25);
     popupWindowBackground->setDimensions(0.50, 0.50);
-    //popupWindowBackground->setMaterialName("General/ScreenBackground1");
     
     popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupSubWindowBackground->setPosition(0.250, yoffset + 0.25);
@@ -838,5 +837,7 @@ std::istream& operator>>(std::istream& in, TutorialManager& tutorialMgr)
         in >> input;
         tutorialMgr.visitedSlide[i] = input;
     }
+    tutorialMgr.visitedSlide[TutorialManager::TUTORIAL_END_OF_SESSION] = false;
+    
     return in;
 }

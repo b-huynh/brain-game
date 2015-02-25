@@ -69,7 +69,8 @@ protected:
     std::vector<LevelOverlayElement> levelOverlayPanels;
 public:
     std::vector<LevelOverlayElement> historyOverlayPanels;
-    PanelOverlayElement* selectIcon;
+    PanelOverlayElement* selectIconHistory;
+    PanelOverlayElement* selectIconChoice;
 protected:
     DescriptionOverlayElement levelDetails;
     
