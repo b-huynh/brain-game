@@ -2711,7 +2711,7 @@ bool Player::saveStage(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Tunnel Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% SegEncNW { '0'=no panel, '1'=empty panel, '2'=player, '3'=match, '4'=nonmatch, '5'=obstacle, '6'=time warp }" << endl;
             out << "% SegEncN" << endl;
@@ -2827,7 +2827,7 @@ bool Player::saveActions(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Action Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Event Number { 0, inf }" << endl;
             out << "% Level Number { 0, inf }" << endl;
@@ -2927,7 +2927,7 @@ bool Player::saveSession(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Session Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Ways to compute:" << endl;
             out << "% Total Zapped - TP + FP" << endl;

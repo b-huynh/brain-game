@@ -116,15 +116,13 @@
 
 - (void)startWithWindow:(UIWindow*)window :(NSString*)str
 {
-    unsigned int width  = self.view.frame.size.width;
-    unsigned int height = self.view.frame.size.height;
+    unsigned int width  = self.view.frame.size.width / 2;
+    unsigned int height = self.view.frame.size.height / 2;
  
     NSLog(@"Frame: %d %d\n", width, height);
     
     screenWidth = width;
     screenHeight = height;
-    
-    mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     
     // A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
     // class is used as fallback when it isn't available.
@@ -139,6 +137,8 @@
     mDeltaTime = 1.0f / 30.0f;
     mStartTime = 0;
     mTimer = nil;
+    
+    mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     
     try
     {

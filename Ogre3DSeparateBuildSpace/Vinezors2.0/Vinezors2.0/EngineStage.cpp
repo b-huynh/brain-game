@@ -218,13 +218,14 @@ void EngineStage::update(float elapsed)
             std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
             std::cout << "-----------------------------------------\n\n";
             
-            if(player->scheduler->sessionFinished)
+            if(player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
             {
+                // If player has not visited end of session slide yet, set it up
                 std::cout << "\n\n\n===========================================\n"
                 << "Session Finished!\n"
                 << "===========================================\n";
                 player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                player->getTutorialMgr()->setAdditionalText(player->getSessionStats());
+                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
                 
                 // Update session ID before save
                 player->setSessionID(player->getSessionID() + 1);
@@ -1425,20 +1426,34 @@ void EngineStage::setup()
         globals.fuelReturn = 4.0f;
     globals.fuelMax = 30.0;
     
-    if (level.durationX == DURATION_SHORT)
+    if (level.phaseX != PHASE_COLLECT)
     {
-        globals.startingHP = 5;
-        globals.podBinSize = 8;
-    }
-    else if (level.durationX == DURATION_NORMAL)
-    {
-        globals.startingHP = 4;
-        globals.podBinSize = 10;
+        if (level.durationX == DURATION_SHORT)
+        {
+            globals.startingHP = 5;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 30;
+            globals.stageTotalTargets = 10;
+        }
+        else if (level.durationX == DURATION_NORMAL)
+        {
+            globals.startingHP = 4;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 40;
+            globals.stageTotalTargets = 13;
+        }
+        else
+        {
+            globals.startingHP = 3;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 50;
+            globals.stageTotalTargets = 16;
+        }
     }
     else
     {
-        globals.startingHP = 3;
-        globals.podBinSize = 12;
+        globals.stageTotalSignals = 120;
+        globals.stageTotalTargets = 40;
     }
     
     

@@ -21,7 +21,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     // Times
     // Below meant for 5, 4, 3 lives on wrong zaps respectively
     // Below meant for 3, 3, 3 lives on misses respectively
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -381,7 +381,7 @@ void LevelSet::initializeLevelSet()
     // Not entirely sure on collection requirements as of now
     //
     // Time
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
