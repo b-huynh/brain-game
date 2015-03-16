@@ -153,7 +153,127 @@ Util::ConfigGlobal::ConfigGlobal()
     //navMap = std::vector<NavigationLevel>(1);
     //navMap[0] = NavigationLevel(0, 4, 3);
     
+    
+    fixedNavMap = std::vector<std::vector<NavigationLevel> >(23);
+    fixedNavMap[0].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[0].push_back(NavigationLevel(1, 1, 0));
+    fixedNavMap[0].push_back(NavigationLevel(2, 1, 0));
+    fixedNavMap[0].push_back(NavigationLevel(3, 1, 0));
+    
+    fixedNavMap[1].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[1].push_back(NavigationLevel(1, 1, 0));
+    fixedNavMap[1].push_back(NavigationLevel(2, 2, 0));
+    fixedNavMap[1].push_back(NavigationLevel(3, 1, 0));
+    
+    fixedNavMap[2].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[2].push_back(NavigationLevel(1, 2, 0));
+    fixedNavMap[2].push_back(NavigationLevel(2, 1, 0));
+    fixedNavMap[2].push_back(NavigationLevel(3, 2, 0));
+    
+    fixedNavMap[3].push_back(NavigationLevel(0, 2, 0));
+    fixedNavMap[3].push_back(NavigationLevel(1, 2, 0));
+    fixedNavMap[3].push_back(NavigationLevel(2, 2, 0));
+    fixedNavMap[3].push_back(NavigationLevel(3, 2, 0));
+    
+    fixedNavMap[4].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[4].push_back(NavigationLevel(1, 2, 0));
+    fixedNavMap[4].push_back(NavigationLevel(2, 2, 1));
+    fixedNavMap[4].push_back(NavigationLevel(3, 2, 1));
+    
+    fixedNavMap[5].push_back(NavigationLevel(0, 2, 0));
+    fixedNavMap[5].push_back(NavigationLevel(1, 2, 1));
+    fixedNavMap[5].push_back(NavigationLevel(2, 2, 0));
+    fixedNavMap[5].push_back(NavigationLevel(3, 2, 1));
+    
+    fixedNavMap[6].push_back(NavigationLevel(0, 2, 1));
+    fixedNavMap[6].push_back(NavigationLevel(1, 2, 1));
+    fixedNavMap[6].push_back(NavigationLevel(2, 2, 1));
+    fixedNavMap[6].push_back(NavigationLevel(3, 2, 1));
+    
+    fixedNavMap[7].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[7].push_back(NavigationLevel(1, 2, 1));
+    fixedNavMap[7].push_back(NavigationLevel(2, 1, 1));
+    fixedNavMap[7].push_back(NavigationLevel(3, 2, 1));
+    
+    fixedNavMap[8].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[8].push_back(NavigationLevel(1, 1, 1));
+    fixedNavMap[8].push_back(NavigationLevel(2, 1, 1));
+    fixedNavMap[8].push_back(NavigationLevel(3, 1, 0));
+    
+    fixedNavMap[9].push_back(NavigationLevel(0, 2, 0));
+    fixedNavMap[9].push_back(NavigationLevel(1, 1, 1));
+    fixedNavMap[9].push_back(NavigationLevel(2, 2, 1));
+    fixedNavMap[9].push_back(NavigationLevel(3, 1, 1));
+    
+    fixedNavMap[10].push_back(NavigationLevel(0, 1, 1));
+    fixedNavMap[10].push_back(NavigationLevel(1, 1, 1));
+    fixedNavMap[10].push_back(NavigationLevel(2, 1, 1));
+    fixedNavMap[10].push_back(NavigationLevel(3, 1, 1));
+    
+    fixedNavMap[11].push_back(NavigationLevel(0, 1, 0));
+    fixedNavMap[11].push_back(NavigationLevel(1, 2, 1));
+    fixedNavMap[11].push_back(NavigationLevel(2, 2, 2));
+    fixedNavMap[11].push_back(NavigationLevel(3, 1, 1));
+    
+    fixedNavMap[12].push_back(NavigationLevel(0, 2, 0));
+    fixedNavMap[12].push_back(NavigationLevel(1, 2, 2));
+    fixedNavMap[12].push_back(NavigationLevel(2, 2, 0));
+    fixedNavMap[12].push_back(NavigationLevel(3, 2, 2));
+    
+    fixedNavMap[13].push_back(NavigationLevel(0, 1, 1));
+    fixedNavMap[13].push_back(NavigationLevel(1, 2, 2));
+    fixedNavMap[13].push_back(NavigationLevel(2, 1, 1));
+    fixedNavMap[13].push_back(NavigationLevel(3, 2, 2));
+    
+    fixedNavMap[14].push_back(NavigationLevel(0, 2, 2));
+    fixedNavMap[14].push_back(NavigationLevel(1, 2, 2));
+    fixedNavMap[14].push_back(NavigationLevel(2, 2, 2));
+    fixedNavMap[14].push_back(NavigationLevel(3, 2, 2));
+    
+    fixedNavMap[15].push_back(NavigationLevel(0, 1, 1));
+    fixedNavMap[15].push_back(NavigationLevel(1, 2, 2));
+    fixedNavMap[15].push_back(NavigationLevel(2, 1, 2));
+    fixedNavMap[15].push_back(NavigationLevel(3, 2, 2));
+    
+    fixedNavMap[16].push_back(NavigationLevel(0, 1, 1));
+    fixedNavMap[16].push_back(NavigationLevel(1, 1, 2));
+    fixedNavMap[16].push_back(NavigationLevel(2, 1, 1));
+    fixedNavMap[16].push_back(NavigationLevel(3, 1, 2));
+    
+    fixedNavMap[17].push_back(NavigationLevel(0, 2, 2));
+    fixedNavMap[17].push_back(NavigationLevel(1, 1, 2));
+    fixedNavMap[17].push_back(NavigationLevel(2, 1, 2));
+    fixedNavMap[17].push_back(NavigationLevel(3, 2, 2));
+    
+    fixedNavMap[18].push_back(NavigationLevel(0, 1, 2));
+    fixedNavMap[18].push_back(NavigationLevel(1, 1, 2));
+    fixedNavMap[18].push_back(NavigationLevel(2, 1, 2));
+    fixedNavMap[18].push_back(NavigationLevel(3, 1, 2));
+    
+    fixedNavMap[19].push_back(NavigationLevel(0, 2, 2));
+    fixedNavMap[19].push_back(NavigationLevel(1, 2, 2));
+    fixedNavMap[19].push_back(NavigationLevel(2, 2, 3));
+    fixedNavMap[19].push_back(NavigationLevel(3, 2, 3));
+    
+    fixedNavMap[20].push_back(NavigationLevel(0, 2, 2));
+    fixedNavMap[20].push_back(NavigationLevel(1, 2, 3));
+    fixedNavMap[20].push_back(NavigationLevel(2, 1, 2));
+    fixedNavMap[20].push_back(NavigationLevel(3, 2, 3));
+    
+    fixedNavMap[21].push_back(NavigationLevel(0, 2, 3));
+    fixedNavMap[21].push_back(NavigationLevel(1, 2, 3));
+    fixedNavMap[21].push_back(NavigationLevel(2, 2, 3));
+    fixedNavMap[21].push_back(NavigationLevel(3, 2, 3));
+    
+    fixedNavMap[22].push_back(NavigationLevel(0, 2, 3));
+    fixedNavMap[22].push_back(NavigationLevel(1, 2, 3));
+    fixedNavMap[22].push_back(NavigationLevel(2, 2, 4));
+    fixedNavMap[22].push_back(NavigationLevel(3, 2, 3));
+    
+    
     navMap = std::vector<NavigationLevel>(23);
+    
+
     
      // Debug Nav Levels
     /*
@@ -170,6 +290,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[10] = NavigationLevel(10, 3, 3);
     navMap[11] = NavigationLevel(11, 4, 3);
      */
+    
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 3, 0);
@@ -1044,6 +1165,14 @@ std::string Util::toStringFloat(float value)
     ss << std::setprecision(3) << std::fixed;
 	ss << value;
 	return ss.str();
+}
+
+std::string Util::toStringFloat(float value,int precision)
+{
+    std::stringstream ss;
+    ss << std::setprecision(precision) << std::fixed;
+    ss << value;
+    return ss.str();
 }
 
 std::string Util::getOSXDir()

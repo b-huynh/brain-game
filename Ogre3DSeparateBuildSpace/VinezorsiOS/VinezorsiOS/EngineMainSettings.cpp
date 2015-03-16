@@ -49,7 +49,7 @@ void EngineMainSettings::update(float elapsed)
     player->holdout = hud->holdoutSlider->getIndex() / 100.0f;
     player->holdoutLB = hud->holdoutLBSlider->getIndex() / 100.0f;
     player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
-    player->setVolume();
+    player->updateMusicVolume();
 }
 
 void EngineMainSettings::activatePerformSingleTap(float x, float y)

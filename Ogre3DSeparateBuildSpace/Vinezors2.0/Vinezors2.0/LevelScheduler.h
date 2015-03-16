@@ -102,9 +102,9 @@ struct LevelScheduler
     std::list<Bin>* pickRandomBin();
     void pickRandomMarble( std::vector<Bin>& choices );
     void setHoldout( std::list<Bin>* b );
-    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices();
+    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices(bool holdoutEnabled, bool newNavEnabled);
     int rand_num( int lower, int upper );
-    int predictAverageStartingSpeed();
+    int predictAverageStartingSpeed(int initVel);
     
     friend std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
     friend std::istream& operator>>(std::istream& in, LevelScheduler& sch);

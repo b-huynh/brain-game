@@ -16,7 +16,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 //#define DEMO_BUILD
-//#define DEBUG_MODE
+#define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
 
@@ -286,6 +286,9 @@ namespace Util
         
         std::vector<std::vector<PodInfo> > signalTypes;
         std::vector<NavigationLevel> navMap;
+        //std::vector< std::vector<NavigationLevel> > fixedNavMap;
+        std::vector<std::vector<NavigationLevel> > fixedNavMap;
+        
         std::map<int, float> speedMap;
         int navIndex;
         int numSegmentsWithObstacles;
@@ -343,6 +346,7 @@ namespace Util
     float randRangeFloat(float min, float max);
     std::string toStringInt(int value);
     std::string toStringFloat(float value);
+    std::string toStringFloat(float value, int precision);
     std::string getOSXDir();
     std::string getIOSDir();
     

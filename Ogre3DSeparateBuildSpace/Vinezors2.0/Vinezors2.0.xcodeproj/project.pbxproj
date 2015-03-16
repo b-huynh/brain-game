@@ -57,6 +57,8 @@
 		B6C64C4817DE8C5B0092CA8E /* Pod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1B17DE8C5B0092CA8E /* Pod.cpp */; };
 		B6C64C4917DE8C5B0092CA8E /* resources.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B6C64C1D17DE8C5B0092CA8E /* resources.cfg */; };
 		B6C64C4A17DE8C5B0092CA8E /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C64C1E17DE8C5B0092CA8E /* Util.cpp */; };
+		B6CC261F1AA651AB0024FD31 /* HudStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6CC261D1AA651AB0024FD31 /* HudStudySettings.cpp */; };
+		B6CC26221AA651D70024FD31 /* EngineStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6CC26201AA651D70024FD31 /* EngineStudySettings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -198,6 +200,10 @@
 		B6C64C1F17DE8C5B0092CA8E /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		B6C64C2017DE8C5B0092CA8E /* Vinezors2.0-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Vinezors2.0-Info.plist"; sourceTree = "<group>"; };
 		B6C64C2117DE8C5B0092CA8E /* Vinezors2.0-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Vinezors2.0-Prefix.pch"; sourceTree = "<group>"; };
+		B6CC261D1AA651AB0024FD31 /* HudStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStudySettings.cpp; sourceTree = "<group>"; };
+		B6CC261E1AA651AB0024FD31 /* HudStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudStudySettings.h; sourceTree = "<group>"; };
+		B6CC26201AA651D70024FD31 /* EngineStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStudySettings.cpp; sourceTree = "<group>"; };
+		B6CC26211AA651D70024FD31 /* EngineStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStudySettings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +246,7 @@
 				5D04AD4E1901218D00E0A98B /* Credits */,
 				5DC16B71193CCCEE007E8EFD /* MainSettings */,
 				5D4B5087195CE62300912FC9 /* ControlSettings */,
+				B6CC261C1AA651200024FD31 /* StudySettings */,
 			);
 			name = GameEngineStates;
 			sourceTree = "<group>";
@@ -478,6 +485,17 @@
 			path = Vinezors2.0;
 			sourceTree = "<group>";
 		};
+		B6CC261C1AA651200024FD31 /* StudySettings */ = {
+			isa = PBXGroup;
+			children = (
+				B6CC261D1AA651AB0024FD31 /* HudStudySettings.cpp */,
+				B6CC261E1AA651AB0024FD31 /* HudStudySettings.h */,
+				B6CC26201AA651D70024FD31 /* EngineStudySettings.cpp */,
+				B6CC26211AA651D70024FD31 /* EngineStudySettings.h */,
+			);
+			name = StudySettings;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -564,6 +582,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6CC261F1AA651AB0024FD31 /* HudStudySettings.cpp in Sources */,
 				5DD5E04C18FF7EAD0063491A /* EngineStage.cpp in Sources */,
 				5D04AD431900D01400E0A98B /* EngineStateManager.cpp in Sources */,
 				B6C64C2317DE8C5B0092CA8E /* main.mm in Sources */,
@@ -598,6 +617,7 @@
 				5DCDDD8E1910637800CF67F1 /* PlayerProgress.cpp in Sources */,
 				5DE122E417F0DC7B00E49916 /* Vine.cpp in Sources */,
 				5D04AD571901331600E0A98B /* Powerup.cpp in Sources */,
+				B6CC26221AA651D70024FD31 /* EngineStudySettings.cpp in Sources */,
 				5DEB28601899AECB003A90EB /* OgreApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

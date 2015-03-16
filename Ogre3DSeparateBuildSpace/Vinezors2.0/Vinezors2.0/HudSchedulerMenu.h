@@ -37,9 +37,9 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 2 + NUM_SELECTIONS + SCHEDULE_LEN;
+    static const int NUM_UNIQUE_BUTTONS = 3 + NUM_SELECTIONS + SCHEDULE_LEN;
     enum Buttons {
-        BUTTON_BACK, BUTTON_PLAY
+        BUTTON_BACK, BUTTON_PLAY, BUTTON_START_MAN_RECESS
     };
     
     PanelOverlayElement* schedulerMenuBackdrop;
@@ -51,6 +51,15 @@ protected:
     
     PanelOverlayElement* schedulerMenuAverageMemoryBackground;
     TextAreaOverlayElement* schedulerMenuAverageMemoryText;
+    
+    //For Mandatory Recess!
+    //MEssage
+    PanelOverlayElement* schedulerManRecessMessageBackground;
+    PanelOverlayElement* schedulerManRecessDisableBackground;
+    TextAreaOverlayElement* schedulerManRecessMessageText;
+    
+    //Button
+    PanelOverlayElement* schedulerManRecessPlayButtonBackground;
     
     struct LevelOverlayElement
     {

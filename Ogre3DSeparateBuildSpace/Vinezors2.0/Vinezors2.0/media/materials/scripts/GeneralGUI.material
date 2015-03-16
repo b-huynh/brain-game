@@ -207,7 +207,7 @@ material General/PauseBase
     }
 }
 
-material General/PauseNav1
+material General/PauseNav
 {
     technique
     {
@@ -218,13 +218,13 @@ material General/PauseNav1
         depth_write off
         texture_unit
         {
-            texture pause_nav1.png
+            texture pause_nav.png
         }
       } 
     }
 }
 
-material General/PauseNav2
+material General/PauseGrayPlay
 {
     technique
     {
@@ -235,13 +235,13 @@ material General/PauseNav2
         depth_write off
         texture_unit
         {
-            texture pause_nav2.png
+            texture pause_grayplay.png
         }
       } 
     }
 }
 
-material General/PauseNav3
+material General/PauseGrayForward
 {
     technique
     {
@@ -252,13 +252,13 @@ material General/PauseNav3
         depth_write off
         texture_unit
         {
-            texture pause_nav3.png
+            texture pause_grayforward.png
         }
       } 
     }
 }
 
-material General/PauseNav4
+material General/PauseGrayBack
 {
     technique
     {
@@ -269,13 +269,13 @@ material General/PauseNav4
         depth_write off
         texture_unit
         {
-            texture pause_nav4.png
+            texture pause_grayback.png
         }
       } 
     }
 }
 
-material General/PauseNav5
+material General/PauseGrayMenu
 {
     technique
     {
@@ -286,24 +286,7 @@ material General/PauseNav5
             depth_write off
             texture_unit
             {
-                texture pause_nav5.png
-            }
-        }
-    }
-}
-
-material General/PauseNav6
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture pause_nav6.png
+                texture pause_graymenu.png
             }
         }
     }
@@ -499,6 +482,29 @@ material General/ButtonGoDown
     }
 }
 
+
+
+material General/DisableBackGroundBlack
+{
+  technique
+  {
+    pass
+    {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture backgroundDisableBlack.png
+            colour_op_ex source1 src_manual src_current 0 0 0
+            alpha_op_ex source1 src_manual src_current 0.7
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
+        }
+    }
+  }
+}
+
 material General/ButtonGoDownGray
 {
     technique
@@ -628,6 +634,81 @@ material General/CheckboxBlank
     }
 }
 
+material General/BlankInput
+{
+  technique
+  {
+    pass
+    {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+          {
+             texture inputRectangle.png
+             //colour_op_ex source1 src_manual src_current .5 .5 .5
+          }
+    }
+  }
+}
+
+material General/SelectedInput
+{
+  technique
+  {
+    pass
+    {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture inputRectangle.png
+            colour_op_ex source1 src_manual src_current 0 0 1
+        }
+    }
+  }
+}
+
+
+material General/NumpadSaveButton
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture inputRectangle.png
+                colour_op_ex source1 src_manual src_current 0 1 0
+            }
+        }
+    }
+}
+
+material General/BlankInputGray
+{
+  technique
+  {
+    pass
+    {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture inputRectangle.png
+            colour_op_ex source1 src_manual src_current .5 .5 .5
+        }
+    }
+  }
+}
+
+
+
 material General/TextArtMainTitle
 {
 	technique
@@ -738,6 +819,106 @@ material General/ControlSettingsButton
     }
 }
 
+material General/StudySettingsButton
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture displaybackground.png
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
+        }
+      }
+    }
+}
+
+material General/NumpadBackground
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend alpha_blend
+      depth_write off
+      texture_unit
+      {
+          texture displaybackground.png
+          tex_border_colour 0 0 0 0
+          tex_address_mode border
+          
+      }
+    }
+  }
+}
+
+
+material General/PasswordDotDisabled
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend alpha_blend
+      depth_write off
+      texture_unit
+      {
+        texture circleblack.png
+        tex_border_colour 0 0 0 0
+        tex_address_mode border
+
+      }
+    }
+  }
+}
+
+material General/PasswordDotEnabled
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend alpha_blend
+      depth_write off
+      texture_unit
+      {
+        texture circle.png
+        tex_border_colour 0 0 0 0
+        tex_address_mode border
+
+      }
+    }
+  }
+}
+
+material General/NumpadCancel
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend alpha_blend
+      depth_write off
+      texture_unit
+      {
+          texture close.png
+          tex_border_colour 0 0 0 0
+          tex_address_mode border
+
+      }
+    }
+  }
+}
+
 material General/BackButton
 {
 	technique
@@ -831,21 +1012,23 @@ material General/TextArtLevelSelection
 	}
 }
 
-material General/GUITopPanel
+material General/GUIMainHudEntire
 {
-	technique
-	{
-		pass
+    technique
+    {
+        pass
         {
             lighting off
             scene_blend alpha_blend
             depth_write off
-			texture_unit
-			{
-				texture GUI_LifeBar.png
-			}
-		}
-	}
+            texture_unit
+            {
+                texture hud.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
 }
 
 material General/GUIMainHudLeft
@@ -924,7 +1107,7 @@ material General/GUIMainHudDip
 	}
 }
 
-material General/GUIMainHudShifter
+material General/GUIMainHudLeftShifter
 {
 	technique
 	{
@@ -935,7 +1118,7 @@ material General/GUIMainHudShifter
             depth_write off
 			texture_unit
 			{
-				texture hud-eblue_shifter.png
+				texture hud-eblue_lshifter.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -943,7 +1126,7 @@ material General/GUIMainHudShifter
 	}
 }
 
-material General/GUIMainHudZapper
+material General/GUIMainHudLeftShifterPressed
 {
     technique
     {
@@ -954,7 +1137,64 @@ material General/GUIMainHudZapper
             depth_write off
             texture_unit
             {
-                texture hud-eblue_zapper.png
+                texture hud-eblue_lshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifter
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifterPressed
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudShifterOff
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_shifter_off.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
             }

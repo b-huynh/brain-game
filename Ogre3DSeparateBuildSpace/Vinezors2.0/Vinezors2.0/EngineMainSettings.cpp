@@ -42,6 +42,7 @@ void EngineMainSettings::exit()
 
 void EngineMainSettings::update(float elapsed)
 {
+  
     hud->update(elapsed);
     
     player->musicVolume = hud->musicVolumeSlider->getIndex() / 100.0f;
@@ -49,7 +50,15 @@ void EngineMainSettings::update(float elapsed)
     player->holdout = hud->holdoutSlider->getIndex() / 100.0f;
     player->holdoutLB = hud->holdoutLBSlider->getIndex() / 100.0f;
     player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
-    player->setVolume();
+    player->updateMusicVolume();
+    
+ 
+    if(hud->enterStudySettings)
+    {
+        //std::cout<<"Called\n";
+        engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
+        
+    }
 }
 
 void EngineMainSettings::activatePerformSingleTap(float x, float y)
@@ -59,6 +68,7 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "back")
     {
+        
         player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
     }
@@ -68,6 +78,7 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "checktutorials")
     {
+        hud->enableNumpad = false;
         TutorialManager* tutorialMgr = player->getTutorialMgr();
         if (tutorialMgr->isEnabled())
             tutorialMgr->disable();
@@ -77,6 +88,102 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "checksyncdata")
     {
         player->syncDataToServer = !player->syncDataToServer;
+        hud->enableNumpad = false;
+    }
+    else if (queryGUI == "studysettings")
+    {
+       
+        hud->enableNumpad = true;
+        
+        //Add the numpad!
+        //Show numpad, If cancel button is pressed, remove numpad.
+        
+        //engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
+    }
+    else if(queryGUI == "numpadbuttoncancel")
+    {
+        //make numpad go away
+        std::cout<<"cancel pressed";
+        hud->enableNumpad = false;
+        //hud->Passcode_counter = 0;
+
+    }
+    else if(queryGUI == "numpadbutton0")
+    {
+        std::cout<<"Pressed 0\n";
+        hud->user_password[hud->Passcode_counter] = 0;
+        hud->Passcode_counter++;
+    }
+    else if(queryGUI == "numpadbutton1")
+    {
+        std::cout<<"Pressed 1\n";
+        hud->user_password[hud->Passcode_counter] = 1;
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton2")
+    {
+        std::cout<<"Pressed 2\n";
+        hud->user_password[hud->Passcode_counter] = 2;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton3")
+    {
+        std::cout<<"Pressed 3\n";
+        hud->user_password[hud->Passcode_counter] = 3;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton4")
+    {
+        std::cout<<"Pressed 4\n";
+        hud->user_password[hud->Passcode_counter] = 4;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton5")
+    {
+        std::cout<<"Pressed 5\n";
+        hud->user_password[hud->Passcode_counter] = 5;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton6")
+    {
+        std::cout<<"Pressed 6\n";
+        hud->user_password[hud->Passcode_counter] = 6;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton7")
+    {
+        std::cout<<"Pressed 7\n";
+        hud->user_password[hud->Passcode_counter] = 7;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton8")
+    {
+        std::cout<<"Pressed 8\n";
+        hud->user_password[hud->Passcode_counter] = 8;
+
+        hud->Passcode_counter++;
+
+    }
+    else if(queryGUI == "numpadbutton9")
+    {
+        std::cout<<"Pressed 9\n";
+        hud->user_password[hud->Passcode_counter] = 9;
+
+        hud->Passcode_counter++;
+
     }
 }
 

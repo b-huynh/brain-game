@@ -33,7 +33,7 @@ Tunnel::Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float
     setNewControl(control);
     
     // Add time based on n-back since players need more time before they can get targets
-    this->stageTime += 3 * nback + 2;
+    this->stageTime += (2.667) * (nback + 1);
     fuelTimer = globals.fuelMax;
 }
 
@@ -887,11 +887,14 @@ void Tunnel::addToFuelTimer(float value)
 {
     if (!isDone())
     {
+        fuelTimer = fuelMax;
+    
         fuelTimer += value;
         //float currentMax = fuelMax - fuelSize * (globals.startingHP - player->getHP());
         float currentMax = fuelMax;
         if (fuelTimer > currentMax)
             fuelTimer = currentMax;
+        
     }
 }
 
@@ -1912,24 +1915,34 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 
 void Tunnel::update(float elapsed)
 {
+    
     if (!isDone() && !player->isPowerUpActive("TimeWarp"))
     {
+        
+        
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
         tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
         float elapsedAdjusted = elapsed * tsModifier;
         //totalDistance += elapsedAdjusted;
         totalElapsed += elapsedAdjusted;
-        if (fuelBuffer > 0.0f)
-            fuelBuffer -= elapsedAdjusted;
-        else
+        
+       //Only implement if Recess or FuelActive
+        if(  (player->fuelEnabled) || (phaseX == PHASE_COLLECT) ) 
         {
-            fuelTimer -= fuelBuffer;
-            fuelBuffer = 0.0f;
-            fuelTimer -= elapsedAdjusted;
-            if (fuelTimer < 0.0)
-                fuelTimer = 0.0;
+            if (fuelBuffer > 0.0f)
+                fuelBuffer -= elapsedAdjusted;
+            else
+            {
+             
+                fuelTimer -= fuelBuffer;
+                fuelBuffer = 0.0f;
+                fuelTimer -= elapsedAdjusted;
+                if (fuelTimer < 0.0)
+                    fuelTimer = 0.0;
+             }
         }
+        
     }
     
     // Animate Pod Growing outwards or Growing inwards
@@ -1963,7 +1976,7 @@ void Tunnel::update(float elapsed)
             std::vector<Pod*> pods = nextSliceN->getPods();
             for (int i = 0; i < pods.size(); ++i) {
                 pods[i]->uncloakPod();
-                player->playPodSound(pods[i]->getPodSound());
+                player->playSound(pods[i]->getSignalSound());
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
                 {
@@ -1983,11 +1996,6 @@ void Tunnel::update(float elapsed)
                 if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex, 0) && getMode() != STAGE_MODE_RECESS && nback == 1)
                 {
                     player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SEEING_MATCH, 0.5f);
-                }
-                // First time you saw an obstacle? TELL THEM WHAT IT IS
-                if (pods[i]->getPodTrigger() && pods[i]->getMeshType() == POD_HAZARD)
-                {
-                    player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_OBSTACLE, 0.5f);
                 }
             }
         }
@@ -2053,8 +2061,7 @@ void Tunnel::gateAnimation(float elapsed)
                 if( gateDelayTimer >= gateDelay ) {
                     activateGreen = true;
                     OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("GateOpen");
-                    sound->setVolume(player->soundVolume);
-                    sound->play();
+                    player->playSound(sound);
                     player->stopMusic();
                 }
                 else {
@@ -2070,8 +2077,7 @@ void Tunnel::gateAnimation(float elapsed)
                         gateDelayTimer = 0.0f;
                         tSpeed = 0.0f;
                         OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("LevelPass");
-                        sound->setVolume(player->musicVolume);
-                        sound->play();
+                        player->playSound(sound);
                     }
                     else {
                         gateDelayTimer += elapsed;
@@ -2102,8 +2108,7 @@ void Tunnel::gateAnimation(float elapsed)
                 if( gateDelayTimer >= gateDelay ) {
                     activateGreen = true;
                     OgreOggISound* sound = OgreFramework::getSingletonPtr()->m_pSoundMgr->getSound("GateClose");
-                    sound->setVolume(player->soundVolume);
-                    sound->play();
+                    player->playSound(sound);
                     player->stopMusic();
                 }
                 else {

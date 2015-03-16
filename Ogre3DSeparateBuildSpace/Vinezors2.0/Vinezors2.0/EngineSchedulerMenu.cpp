@@ -38,15 +38,15 @@ void EngineSchedulerMenu::enter()
     if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION)) {
         player->levelRequest = &player->scheduler->tutorialLevels[0];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        player->marbleChoice = 0;
     }
     else if (tutorialMgr->isEnabled() && !tutorialMgr->hasVisitedSlide(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK)) {
         player->levelRequest = &player->scheduler->tutorialLevels[1];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         
-        
-        //Bernie Add
+        //Reset Tutorial Level Counter!
         player->choice0RestartCounter = 0;
-        
+        player->marbleChoice = 0;
     }
     else
     {
@@ -79,6 +79,7 @@ void EngineSchedulerMenu::enter()
         }
         player->lastPlayed = PHASE_UNKNOWN;
     }
+    
 }
 
 void EngineSchedulerMenu::exit()
@@ -96,36 +97,83 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     std::string queryGUI = hud->processButtons(Vector2(x, y));
     if (queryGUI != "")
         player->reactGUI();
+
     if (testForLevelButtons(queryGUI))
     {
         
     }
     else if (queryGUI == "back")
     {
-        engineStateMgr->requestPopEngine();
+        if(!player->manRecessEnabled)
+        {
+            engineStateMgr->requestPopEngine();
+        }
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                engineStateMgr->requestPopEngine();
+            }
+        }
+
+        
+    }
+    else if(queryGUI == "manrecessplay")
+    {
+        std::cout<<"Make Man Recess the level request and request the pushback to engine!"<<std::endl;
     }
     else if (queryGUI == "play")
     {
-        // If a level is selected, then we can continue,
-        // Also make sure it isn't a level selected from the history panel
-        //Bernie Added
-        if (player->levelRequest && player->levelRequest->second.rating < 0)
+        if(!player->manRecessEnabled)
         {
-            engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
-            
-            if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+            // If a level is selected, then we can continue,
+            // Also make sure it isn't a level selected from the history panel
+            if (player->levelRequest && player->levelRequest->second.rating < 0)
             {
-                player->choice1RestartCounter++;
-            }
-            else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
-            {
-                player->choice2RestartCounter++;
-            }
-            else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
-            {
-                player->choice3RestartCounter++;
+                engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+                
+                if ((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
+                {
+                    player->choice1RestartCounter++;
+                }
+                else if ((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
+                {
+                    player->choice2RestartCounter++;
+                }
+                else if ((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
+                {
+                    player->choice3RestartCounter++;
+                }
             }
         }
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                // If a level is selected, then we can continue,
+                // Also make sure it isn't a level selected from the history panel
+                if (player->levelRequest && player->levelRequest->second.rating < 0)
+                {
+                    engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+                    
+                    if ((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
+                    {
+                        player->choice1RestartCounter++;
+                    }
+                    else if ((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
+                    {
+                        player->choice2RestartCounter++;
+                    }
+                    else if ((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
+                    {
+                        player->choice3RestartCounter++;
+                    }
+                }
+            }
+            
+        }
+        
+        
     }
 }
 
@@ -194,70 +242,165 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
 {
     if (queryGUI == "selection0")
     {
-        player->marbleChoice = 1;
-        player->levelRequest = &player->scheduleChoice1;
-        return true;
+        
+        if(!player->manRecessEnabled)
+        {
+            player->marbleChoice = 1;
+            player->levelRequest = &player->scheduleChoice1;
+            return true;
+        }
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                player->marbleChoice = 1;
+                player->levelRequest = &player->scheduleChoice1;
+                return true;
+            }
+        }
     }
     else if (queryGUI == "selection1")
     {
-        player->marbleChoice = 2;
-        player->levelRequest = &player->scheduleChoice2;
-        return true;
+        if(!player->manRecessEnabled)
+        {
+            player->marbleChoice = 2;
+            player->levelRequest = &player->scheduleChoice2;
+            return true;
+        }
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                player->marbleChoice = 2;
+                player->levelRequest = &player->scheduleChoice2;
+                return true;
+            }
+        }
+        
     }
     else if (queryGUI == "selection2")
     {
-        player->marbleChoice = 3;
-        player->levelRequest = &player->scheduleChoice3;
-        return true;
+        if(!player->manRecessEnabled)
+        {
+            player->marbleChoice = 3;
+            player->levelRequest = &player->scheduleChoice3;
+            return true;
+        }
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                player->marbleChoice = 3;
+                player->levelRequest = &player->scheduleChoice3;
+                return true;
+            }
+        }
+        
     }
     else if (queryGUI.substr(0, 7) == "history")
     {
-        int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
-        
-        switch (iconNo)
+        if(!player->manRecessEnabled)
         {
-            case 0:
-                if (player->scheduler->scheduleHistoryA.size() > 0)
-                {
-                    player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                }
-                else
-                    player->levelRequest = NULL;
-                break;
-            case 1:
-                if (player->scheduler->scheduleHistoryB.size() > 0)
-                {
-                    player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                }
-                else
-                    player->levelRequest = NULL;
-                break;
-            case 2:
-                if (player->scheduler->scheduleHistoryC.size() > 0)
-                {
-                    player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                }
-                else
-                    player->levelRequest = NULL;
-                break;
-            case 3:
-                if (player->scheduler->scheduleHistoryD.size() > 0)
-                {
-                    player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                }
-                else
-                    player->levelRequest = NULL;
-                break;
-            case 4:
-                if (player->scheduler->scheduleHistoryE.size() > 0)
-                {
-                    player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                }
-                else
-                    player->levelRequest = NULL;
-                break;
+            int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
+            
+            switch (iconNo)
+            {
+                case 0:
+                    if (player->scheduler->scheduleHistoryA.size() > 0)
+                    {
+                        player->levelRequest = &player->scheduler->scheduleHistoryA.back();
+                    }
+                    else
+                        player->levelRequest = NULL;
+                    break;
+                case 1:
+                    if (player->scheduler->scheduleHistoryB.size() > 0)
+                    {
+                        player->levelRequest = &player->scheduler->scheduleHistoryB.back();
+                    }
+                    else
+                        player->levelRequest = NULL;
+                    break;
+                case 2:
+                    if (player->scheduler->scheduleHistoryC.size() > 0)
+                    {
+                        player->levelRequest = &player->scheduler->scheduleHistoryC.back();
+                    }
+                    else
+                        player->levelRequest = NULL;
+                    break;
+                case 3:
+                    if (player->scheduler->scheduleHistoryD.size() > 0)
+                    {
+                        player->levelRequest = &player->scheduler->scheduleHistoryD.back();
+                    }
+                    else
+                        player->levelRequest = NULL;
+                    break;
+                case 4:
+                    if (player->scheduler->scheduleHistoryE.size() > 0)
+                    {
+                        player->levelRequest = &player->scheduler->scheduleHistoryE.back();
+                    }
+                    else
+                        player->levelRequest = NULL;
+                    break;
+            }
+            return true;
         }
-        return true;
+        else
+        {
+            if(player->manRecessCount != player->manRecessLevelLimit)
+            {
+                int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
+                
+                switch (iconNo)
+                {
+                    case 0:
+                        if (player->scheduler->scheduleHistoryA.size() > 0)
+                        {
+                            player->levelRequest = &player->scheduler->scheduleHistoryA.back();
+                        }
+                        else
+                            player->levelRequest = NULL;
+                        break;
+                    case 1:
+                        if (player->scheduler->scheduleHistoryB.size() > 0)
+                        {
+                            player->levelRequest = &player->scheduler->scheduleHistoryB.back();
+                        }
+                        else
+                            player->levelRequest = NULL;
+                        break;
+                    case 2:
+                        if (player->scheduler->scheduleHistoryC.size() > 0)
+                        {
+                            player->levelRequest = &player->scheduler->scheduleHistoryC.back();
+                        }
+                        else
+                            player->levelRequest = NULL;
+                        break;
+                    case 3:
+                        if (player->scheduler->scheduleHistoryD.size() > 0)
+                        {
+                            player->levelRequest = &player->scheduler->scheduleHistoryD.back();
+                        }
+                        else
+                            player->levelRequest = NULL;
+                        break;
+                    case 4:
+                        if (player->scheduler->scheduleHistoryE.size() > 0)
+                        {
+                            player->levelRequest = &player->scheduler->scheduleHistoryE.back();
+                        }
+                        else
+                            player->levelRequest = NULL;
+                        break;
+                }
+                return true;
+            }
+        }
+        
     }
     return false;
 }

@@ -226,7 +226,7 @@ void OgreApp::setupDemoScene()
                         globals.vineTOffset,
                         seed,
                         "vinezors" + Util::toStringInt(seed) + ".csv");
-    player->setSounds(true);
+    player->setSounds();
     if (!player->loadProgress(globals.savePath))
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     player->feedLevelRequestFromSchedule();

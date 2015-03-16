@@ -103,13 +103,6 @@ protected:
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
     void setTaskPrompt();
-    
-    /*Bernie Add*/
-    // Bernie Add: Replay counter!
-    //int restartCounter = 0;
-
-    
-    /*End Bernie Add*/
 };
 
 #endif /* defined(__Vinezors2_0__EngineStage__) */

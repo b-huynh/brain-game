@@ -170,6 +170,7 @@ Util::ConfigGlobal::ConfigGlobal()
     navMap[10] = NavigationLevel(10, 3, 3);
     navMap[11] = NavigationLevel(11, 4, 3);
      */
+    
     navMap[0] = NavigationLevel(0, 1, 0);
     navMap[1] = NavigationLevel(1, 2, 0);
     navMap[2] = NavigationLevel(2, 3, 0);

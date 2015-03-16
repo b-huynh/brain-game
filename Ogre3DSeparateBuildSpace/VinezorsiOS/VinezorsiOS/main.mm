@@ -35,12 +35,12 @@ int main(int argc, char **argv)
     
 	try
     {
-		DemoApp demo;
-		demo.startDemo();
+		OgreApp demo;
+		demo.startDemo("subject100", MUSIC_ENABLED);
     }
 	catch(std::exception& e)
     {
-#if OGRE_PLATFORM == PLATFORM_WIN32
+#if OGRE_PLATFORM == PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         MessageBoxA(NULL, e.what(), "An exception has occurred!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
         fprintf(stderr, "An exception has occurred: %s\n", e.what());

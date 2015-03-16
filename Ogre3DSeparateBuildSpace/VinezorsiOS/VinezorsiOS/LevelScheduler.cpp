@@ -347,8 +347,9 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices()
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled)
 {
+    
     /* For debugging purposes */
     cout <<  "/--------------------------------\\" << endl
          <<  "|       Current nBack Levels     |" << endl
@@ -435,19 +436,40 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         //std::cout << "PHASE: " << phase << std::endl;
         //std::cout << "SKILL: " << playerSkill << std::endl;
         //std::cout << "SHIFT: " << shift << std::endl;
-        if (holdout)
-            nBackRounded = (int)round(playerSkill + playerOffset + shift);
+        
+        //Only if holdout is Enabled!
+        
+        if(holdoutEnabled)
+        {
+            if (holdout)
+                nBackRounded = (int)round(playerSkill + playerOffset + shift);
+            else
+                nBackRounded = (int)round(playerSkill + shift);
+        }
         else
+        {
             nBackRounded = (int)round(playerSkill + shift);
+        }
+        
         
         int currentUNL = (int)round(nBackLevelE);
         
         if(nBackRounded < 1) nBackRounded = 1;
-        if (holdout)
-            //node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL);
+        
+        if(holdoutEnabled)
+        {
+            if (holdout)
+                //node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL);
+            else
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL);
+        }
         else
+        {
             node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL);
+        }
+        
+        
 
         node.second.nBackSkill = playerSkill;
         node.second.nBackOffset = playerOffset;

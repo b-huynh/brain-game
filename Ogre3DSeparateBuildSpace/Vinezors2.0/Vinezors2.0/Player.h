@@ -207,7 +207,6 @@ private:
     OgreOggSound::OgreOggISound* soundBoost;
     OgreOggSound::OgreOggISound* soundButtonPress;
     OgreOggSound::OgreOggISound* soundFirework;
-    std::vector<OgreOggSound::OgreOggISound*> soundPods;
     bool triggerStartup;
     
     // Study report at the end of the session
@@ -226,14 +225,24 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
-    
-    //Bernie Added
+    // Marble Restart Counter of Study Version
     int marbleChoice = 0;
     int choice0RestartCounter = 0;  //Tutorial Counter
-    int choice1RestartCounter = 0;  
+    int choice1RestartCounter = 0;
     int choice2RestartCounter = 0;
     int choice3RestartCounter = 0;
-    //End Bernie Added
+    int numRetries = 3;
+    
+    bool fuelEnabled = false;   //Study Settings
+    bool holdoutEnabled = false; //Study Settings
+    int initialVelocity = 10; //Study Settings
+    bool manRecessEnabled = false; //Study Settings
+    int manRecessLevelLimit = 1; //StudySettings
+    int manRecessCount = 0; //StudySettings
+    bool newNavEnabled = false; //StudySettings
+    float newNavIncrement = .2f;
+    
+
     
     bool fadeMusic;
     float xsTimer; // timer for the three X's display
@@ -247,7 +256,7 @@ public:
     bool syncDataToServer;
     
     float maxVel;
-    float minVelFree; // not recorded and set by player
+    float minVelFree;       // not recorded and set by player
     float minVelStopper;
     float dampingDecayFree;
     float dampingDecayStop;
@@ -379,17 +388,17 @@ public:
     Quaternion getRot() const;
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
-    void playPodSound(int index) const;
+    void playSound(OgreOggSound::OgreOggISound* sound) const;
     void reactGUI() const;
     void playFireworkSound() const;
     float getStartMusicTimer() const;
     void playMusic() const;
     void stopMusic();
-    void setVolume();
+    void updateMusicVolume();
     void unpause();
     void pause();
     
-    void setSounds(bool mode);
+    void setSounds();
     
     void unlink();
     void link(Tunnel* tunnel);

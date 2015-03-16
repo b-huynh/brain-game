@@ -18,12 +18,12 @@ static int indicatorID = 0;
 static int headEffectID = 0;
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL)
 {
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL)
 {
     loadPod();
 }
@@ -35,6 +35,7 @@ void Pod::loadPod()
         case POD_FUEL:
             //loadFuelCell();
             loadCrystal();
+            loadSignalSound();
             break;
         case POD_FLOWER:
             loadFlower();
@@ -325,6 +326,32 @@ void Pod::loadPowerup()
     setToGrowth(0.0);
 }
 
+// Creates an individual pod sound
+void Pod::loadSignalSound()
+{
+    switch (podSound)
+    {
+        case POD_SOUND_1:
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod3b.wav", false, false, true);
+            break;
+        case POD_SOUND_2:
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod4b.wav", false, false, true);
+            break;
+        case POD_SOUND_3:
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod1b.wav", false, false, true);
+            break;
+        case POD_SOUND_4:
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod2b.wav", false, false, true);
+            break;
+        case POD_SOUND_HOLDOUT:
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "holdoutb.wav", false, false, true);
+            break;
+        default:
+            signalSound = NULL;
+            break;
+    }
+}
+
 PodMeshType Pod::getMeshType() const
 {
     return mtype;
@@ -480,6 +507,11 @@ SceneNode* Pod::getIndicatorNode() const
 ParticleSystem* Pod::getIndicatorEffect() const
 {
     return indicatorEffect;
+}
+
+OgreOggSound::OgreOggISound* Pod::getSignalSound() const
+{
+    return signalSound;
 }
 
 bool Pod::isPodTested() const
@@ -794,6 +826,12 @@ void Pod::removeFromScene()
         head->getCreator()->destroySceneNode(bPFXNode);
         bPFXNode = NULL;
         bPFX = NULL;
+    }
+    
+    if (signalSound)
+    {
+        OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(signalSound);
+        signalSound = NULL;
     }
     
     removeGlow();
