@@ -198,19 +198,19 @@ void HudStage::update(float elapsed)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nToo many unstable zaps");
+            label7->setCaption("\nBlast\nToo many unstable zaps");
         }
         else if (tunnel->getEval() == EVEN)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nWe've run out of Fuel");
+            label7->setCaption("\nBlast\nWe've run out of Fuel");
         }
         else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nWe've run out of Time");
+            label7->setCaption("\nBlast\nWe've run out of Time");
         }
     }
 }
@@ -633,7 +633,7 @@ void HudStage::initOverlay()
     
     label7->setMetricsMode(GMM_RELATIVE);
     label7->setAlignment(TextAreaOverlayElement::Center);
-    label7->setPosition(0.50, 0.15);
+    label7->setPosition(0.50, 0.12);
     label7->setFontName("MainSmall");
     
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);

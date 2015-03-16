@@ -239,15 +239,14 @@ void HudSchedulerMenu::initOverlay()
         
         float iconHeight = 0.224;
         float iconWidth = 0.292 * ((float)globals.screenHeight / globals.screenWidth);
-        Vector2 buttonPos = Vector2(0.078, 0.278 + (iconHeight + 0.015) * i);
+        Vector2 buttonPos = Vector2(0.055, 0.278 + (iconHeight + 0.015) * i);
         buttons[NUM_UNIQUE_BUTTONS + i].setButton(buttonName, overlays[0], GMM_RELATIVE, buttonPos, Vector2(iconWidth, iconHeight), levelOverlayPanels[i].entireBackground, NULL);
         
         levelOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         levelOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
-        levelOverlayPanels[i].title->setPosition(-0.025, iconHeight / 2.0f - 0.0125);
-        levelOverlayPanels[i].title->setCharHeight(0.018 * FONT_SZ_MULT);
+        levelOverlayPanels[i].title->setPosition(iconWidth / 2.0f, 0.0f);
+        levelOverlayPanels[i].title->setCharHeight(0.026 * FONT_SZ_MULT);
         levelOverlayPanels[i].title->setFontName("MainSmall");
-        levelOverlayPanels[i].title->setCaption(Util::toStringInt(i + 1));
         levelOverlayPanels[i].title->setColour(fontColor);
         
         levelOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
@@ -338,7 +337,7 @@ void HudSchedulerMenu::unlink()
     this->player = NULL;
 }
 
-void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background)
+void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background, TextAreaOverlayElement* title)
 {
     // Obtain level progress
     StageRequest level = levelRequest.first;
@@ -365,6 +364,10 @@ void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & leve
             background->setMaterialName("General/IconNone");
             break;
     }
+    if (level.phaseX != PHASE_COLLECT)
+        title->setCaption(Util::toStringInt(levelRequest.first.nback) + "-Back");
+    else
+        title->setCaption("Recess");
 }
 
 void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background)
@@ -400,9 +403,9 @@ void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRe
 void HudSchedulerMenu::clearSelection()
 {
     // Reset all icons (so that we reset the selected item displayed)
-    setBigIconBasedOnLevel(player->scheduleChoice1, levelOverlayPanels[0].entireBackground);
-    setBigIconBasedOnLevel(player->scheduleChoice2, levelOverlayPanels[1].entireBackground);
-    setBigIconBasedOnLevel(player->scheduleChoice3, levelOverlayPanels[2].entireBackground);
+    setBigIconBasedOnLevel(player->scheduleChoice1, levelOverlayPanels[0].entireBackground, levelOverlayPanels[0].title);
+    setBigIconBasedOnLevel(player->scheduleChoice2, levelOverlayPanels[1].entireBackground, levelOverlayPanels[1].title);
+    setBigIconBasedOnLevel(player->scheduleChoice3, levelOverlayPanels[2].entireBackground, levelOverlayPanels[2].title);
     setScheduleHistory();
     
     // Clear the level details display since we're resetting the level selected
@@ -620,7 +623,7 @@ void HudSchedulerMenu::setSelectToIcon(PanelOverlayElement* icon, int mode)
         float selectIconHeight = 0.2224;
         float mainIconWidth = icon->getWidth();
         float mainIconHeight = icon->getHeight();
-        selectIconChoice->setPosition(icon->_getDerivedLeft() - 0.04f, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
+        selectIconChoice->setPosition(icon->_getDerivedLeft() - (selectIconWidth - mainIconWidth) / 2, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
         selectIconChoice->setWidth(selectIconWidth);
         selectIconChoice->setHeight(selectIconHeight);
         selectIconChoice->show();

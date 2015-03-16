@@ -654,7 +654,7 @@ bool TutorialManager::processInput(Vector2 target)
                 Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
                 label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
                 label7->setCharHeight(0.025 * FONT_SZ_MULT);
-                label7->setCaption("Try again or continue?");
+                label7->setCaption("\nTry again or continue?");
 
                 if (fireworkNode)
                 {

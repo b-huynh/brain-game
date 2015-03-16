@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudSchedulerMenu.cpp"
-            timestampString = "446081014.618046"
+            timestampString = "448226571.996728"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
             landmarkName = "HudSchedulerMenu::clearSelection()"
             landmarkType = "5">
          </BreakpointContent>

@@ -1726,19 +1726,34 @@ void EngineStage::setTaskPrompt()
     {
         StageRequest level = player->levelRequest->first;
         PlayerProgress progress = player->levelRequest->second;
+        
+        if (level.phaseX != PHASE_COLLECT)
+        {
+            globals.setMessage("Zap matching " + Util::toStringInt(level.nback) + "-Back fuel", MESSAGE_NORMAL);
+            if (level.phaseX == PHASE_COLOR_SOUND)
+                globals.appendMessage("\nusing Color and Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SHAPE_SOUND)
+                globals.appendMessage("\nusing Shape and Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SOUND_ONLY)
+                globals.appendMessage("\nusing Only Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_ALL_SIGNAL)
+                globals.appendMessage("\nUsing Color, Shape, and Sound", MESSAGE_NORMAL);
+            globals.appendMessage("\n", MESSAGE_NORMAL);
+        }
+        
+        
         float potential = player->modifyNBackDelta(level, progress, 1.0, true);
         if (level.phaseX == PHASE_COLLECT)
-            globals.setMessage("Enjoy the cruise cadet.", MESSAGE_NORMAL);
-        if (potential >= 0.40)
-            globals.setMessage("Stay focused pilot, it's going to get rough.", MESSAGE_NORMAL);
-        else if (potential >= 0.30)
-            globals.setMessage("Good luck cadet.", MESSAGE_NORMAL);
+            globals.appendMessage("\nEnjoy the cruise cadet.", MESSAGE_NORMAL);
+        if (potential >= 0.35)
+            globals.appendMessage("\nStay focused, it's going to get rough.", MESSAGE_NORMAL);
+        else if (potential >= 0.25)
+            globals.appendMessage("\nGood luck cadet.", MESSAGE_NORMAL);
         else
-            globals.setMessage("No worries cadet. You'll do fine.", MESSAGE_NORMAL);
+            globals.appendMessage("\nNo worries cadet. You'll do fine.", MESSAGE_NORMAL);
     }
     else
-        globals.setMessage("Ready to launch?", MESSAGE_NORMAL);
-    globals.appendMessage("\nGather fuel to power the ship", MESSAGE_NORMAL);
+        globals.setMessage("\n\nReady to launch?", MESSAGE_NORMAL);
     globals.appendMessage("\nSet and verify your speed.", MESSAGE_NORMAL);
 }
 
