@@ -128,8 +128,9 @@ void HudSchedulerMenu::alloc()
     selectIconChoice->setPosition(0, 0);
     selectIconChoice->setDimensions(0, 0);
     
-    backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackButtonBackground"));
-    playButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
+    backButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackButtonBackground"));
+    playButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
+    rerollButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuRerollButtonBackground"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
@@ -165,6 +166,7 @@ void HudSchedulerMenu::alloc()
     levelDetails.entireBackground->addChild(levelDetails.meritIcon);
     
     overlay1->add2D(backButtonBackground);
+    overlay1->add2D(rerollButtonBackground);
     overlay1->add2D(playButtonBackground);
     
     overlay2->add2D(selectIconHistory);
@@ -196,6 +198,7 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.values);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.meritIcon);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rerollButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
@@ -321,8 +324,10 @@ void HudSchedulerMenu::initOverlay()
     
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton2");
+    rerollButtonBackground->setMaterialName("General/RerollButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
+    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.550), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
     
     // Needed for some reason to allow materials to be set in update
     clearSelection();

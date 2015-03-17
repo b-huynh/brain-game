@@ -75,8 +75,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     
     // Manually load this because plugins became frameworks in OS X (1.8 -> 1.9)...
     // OgreOggSound is still a dynamic library (dylib)
-    OgreOggSound::OgreOggSoundPlugin* mOgreOggSoundPlugin = OGRE_NEW OgreOggSound::OgreOggSoundPlugin();
-    m_pRoot->installPlugin(mOgreOggSoundPlugin);
+    // OgreOggSound::OgreOggSoundPlugin* mOgreOggSoundPlugin = OGRE_NEW OgreOggSound::OgreOggSoundPlugin();
+    // m_pRoot->installPlugin(mOgreOggSoundPlugin);
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif

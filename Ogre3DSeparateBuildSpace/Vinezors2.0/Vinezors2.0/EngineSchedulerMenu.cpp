@@ -127,6 +127,10 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
             }
         }
     }
+    else if (queryGUI == "reroll")
+    {
+        player->feedLevelRequestFromSchedule();
+    }
 }
 
 #if !defined(OGRE_IS_IOS)
