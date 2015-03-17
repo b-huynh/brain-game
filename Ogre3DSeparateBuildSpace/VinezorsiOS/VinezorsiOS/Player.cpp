@@ -2994,7 +2994,7 @@ bool Player::saveSession(std::string file)
             out << "% Inverted - Controller Settings to invert direction" << endl;
             out << "% fuelEnabled - Study Settings to enable fuel usage" << endl;
             out << "% holdoutEnabled - Study Settings to enable holdout" << endl;
-            out << "% initialVelocity - Study Settings to initialize starting speed" << endl;
+            out << "% ofVelocity - Study Settings to initialize starting speed" << endl;
             out << "% manRecessEnabled - Study Settings to enable mandatory recess" << endl;
             out << "% manRecessLevelLimit - Study Settings to set the number of levels before mandatory recess" << endl;
             out << "% newNavEnabled - Study Settings to enable senior navigation" << endl;
