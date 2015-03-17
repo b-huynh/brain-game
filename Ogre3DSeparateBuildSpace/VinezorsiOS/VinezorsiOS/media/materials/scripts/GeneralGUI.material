@@ -10,8 +10,6 @@ material General/IconRecess
             texture_unit
             {
                 texture history_icon_recess.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -29,8 +27,6 @@ material General/IconColorSound
             texture_unit
             {
                 texture history_icon_colorsound.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -48,8 +44,6 @@ material General/IconShapeSound
             texture_unit
             {
                 texture history_icon_shapesound.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -67,8 +61,6 @@ material General/IconSoundOnly
             texture_unit
             {
                 texture history_icon_soundonly.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -86,8 +78,6 @@ material General/IconAllSignal
             texture_unit
             {
                 texture history_icon_allsignal.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -122,8 +112,6 @@ material General/IconSelection
             texture_unit
             {
                 texture history_selector.png
-                filtering anisotropic
-                max_anisotropy 16
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
             }
@@ -143,8 +131,6 @@ material General/BigIconRecess
             texture_unit
             {
                 texture choice_icon_recess.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -162,8 +148,6 @@ material General/BigIconColorSound
             texture_unit
             {
                 texture choice_icon_colorsound.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -181,8 +165,6 @@ material General/BigIconShapeSound
             texture_unit
             {
                 texture choice_icon_shapesound.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -200,8 +182,6 @@ material General/BigIconSoundOnly
             texture_unit
             {
                 texture choice_icon_soundonly.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -219,8 +199,6 @@ material General/BigIconAllSignal
             texture_unit
             {
                 texture choice_icon_allsignal.png
-                filtering anisotropic
-                max_anisotropy 16
             }
         }
     }
@@ -238,8 +216,6 @@ material General/BigIconSelection
             texture_unit
             {
                 texture choice_selector.png
-                filtering anisotropic
-                max_anisotropy 16
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
             }
@@ -290,8 +266,6 @@ material General/ScreenBackgroundSchedulerMenu
         texture_unit
         {
             texture sched_background.png
-            filtering anisotropic
-            max_anisotropy 16
         }
       }
     }

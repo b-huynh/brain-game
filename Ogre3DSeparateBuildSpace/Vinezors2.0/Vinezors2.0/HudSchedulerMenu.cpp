@@ -47,6 +47,11 @@ void HudSchedulerMenu::update(float elapsed)
         setSelection();
     schedulerMenuAverageMemoryText->setCaption(Util::toStringFloat(averageMemoryScore));
     schedulerMenuScoreCurrText->setCaption(Util::toStringInt(gameScore));
+    
+    if (player->rerollCounter > 0)
+        rerollButtonBackground->setMaterialName("General/RerollButton");
+    else
+        rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
@@ -320,10 +325,13 @@ void HudSchedulerMenu::initOverlay()
     selectIconHistory->setMaterialName("General/IconSelection");
     selectIconChoice->setMetricsMode(GMM_RELATIVE);
     selectIconChoice->setMaterialName("General/BigIconSelection");
+    if (player->rerollCounter > 0)
+        rerollButtonBackground->setMaterialName("General/RerollButton");
+    else
+        rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
     
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton2");
-    rerollButtonBackground->setMaterialName("General/RerollButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
     buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.550), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
