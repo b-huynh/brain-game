@@ -347,7 +347,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber)
 {
     
     /* For debugging purposes */
@@ -359,6 +359,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "C: " << nBackLevelC << endl
          << "D: " << nBackLevelD << endl
          << "E: " << nBackLevelE << endl
+         << "IND_DRECESS: " << indRecessNBackLevel << endl
          <<  "__________________________________" << endl;
     // */
     
@@ -406,26 +407,47 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
 //        cout << "\n\n================================\n\nPhase: " << phase << endl;
 //        cout << "Difficulty: " << difficulty << endl;
+        bool readyForHoldout = true;
         
         switch ( phase ) {
             case PHASE_COLLECT:
                 playerSkill = nBackLevelE;
+                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                {
+                    readyForHoldout = false;
+                }
                 playerOffset = 0.0;
                 break;
             case PHASE_COLOR_SOUND:
                 playerSkill = nBackLevelA;
+                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                {
+                    readyForHoldout = false;
+                }
                 playerOffset = holdoutOffsetA;
                 break;
             case PHASE_SHAPE_SOUND:
                 playerSkill = nBackLevelB;
+                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                {
+                    readyForHoldout = false;
+                }
                 playerOffset = holdoutOffsetB;
                 break;
             case PHASE_SOUND_ONLY:
                 playerSkill = nBackLevelC;
+                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                {
+                    readyForHoldout = false;
+                }
                 playerOffset = 0.0;
                 break;
             case PHASE_ALL_SIGNAL:
                 playerSkill = nBackLevelD;
+                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                {
+                    readyForHoldout = false;
+                }
                 playerOffset = holdoutOffsetD;
                 break;
             default:
@@ -439,7 +461,17 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         
         //Only if holdout is Enabled!
         
-        if(holdoutEnabled)
+        int currentUNL = (int)round(nBackLevelE);
+        
+        //If Recess and indRecess Enabled, we use another UNL!
+        if((phase == PHASE_COLLECT) && indRecessEnabled)
+        {
+            playerSkill = indRecessNBackLevel;
+            currentUNL = (int)round(indRecessNBackLevel);
+            std::cout << "IND RECESS: " << indRecessNBackLevel << std::endl;
+
+        }
+                if(holdoutEnabled)
         {
             if (holdout)
                 nBackRounded = (int)round(playerSkill + playerOffset + shift);
@@ -451,22 +483,30 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             nBackRounded = (int)round(playerSkill + shift);
         }
         
-        
-        int currentUNL = (int)round(nBackLevelE);
+
         
         if(nBackRounded < 1) nBackRounded = 1;
         
         if(holdoutEnabled)
         {
             if (holdout)
-                //node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, currentHoldout, currentUNL);
-                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL);
+            {
+                if(readyForHoldout)
+                {
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled);
+                }
+                else{
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+                }
+            }
             else
-                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL);
+            {
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+            }
         }
         else
         {
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
         }
         
         
@@ -476,6 +516,23 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         // binRef.remove(*binIt); // can't remove here... until they pick
         result.push_back(node);
     }
+    
+    //Push Recess Level
+    holdout = false;
+    shift = 0.0;
+    int currentUNL = (int)round(nBackLevelE);
+    //If Recess and indRecess Enabled, we use another UNL!
+    if(indRecessEnabled)
+    {
+        playerSkill = indRecessNBackLevel;
+        currentUNL = (int)round(indRecessNBackLevel);
+        
+    }
+    nBackRounded = (int)round(playerSkill + shift);
+    
+    std::pair<StageRequest, PlayerProgress> Recessnode;
+    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,newNavEnabled);
+    result.push_back(Recessnode);
     
     return result;
 }
@@ -493,8 +550,8 @@ int LevelScheduler::rand_num(int lower, int upper)
     return rand() % (upper - lower + 1) + lower;
 }
 
-// Returns an average of all columns that have already been played, otherwise it returns default 15
-int LevelScheduler::predictAverageStartingSpeed()
+// Returns an average of all columns that have already been played, otherwise it returns default from study settings
+int LevelScheduler::predictAverageStartingSpeed(int initVel)
 {
     int cnt = 0; // number of first times
     double total = 0.0;
@@ -518,7 +575,7 @@ int LevelScheduler::predictAverageStartingSpeed()
         total += speedE;
         cnt++;
     }
-    return cnt > 0 ? total / cnt : 15;
+    return cnt > 0 ? total / cnt : initVel;
 }
 
 //________________________________________________________________________________________

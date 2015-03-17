@@ -327,31 +327,44 @@ void Pod::loadPowerup()
 // Creates an individual pod sound
 void Pod::loadSignalSound()
 {
+    std::string pod1sound = "pod3a.wav";
+    std::string pod2sound = "pod4a.wav";
+    std::string pod3sound = "pod1a.wav";
+    std::string pod4sound = "pod2a.wav";
+    std::string holdoutsound = "holdouta.wav";
+    
+    if(globals.newSounds)
+    {
+        //use new sounds
+        pod1sound = "pod3b.wav";
+        pod2sound = "pod4b.wav";
+        pod3sound = "pod1b.wav";
+        pod4sound = "pod2b.wav";
+        holdoutsound = "holdoutb.wav";
+    }
+   
     switch (podSound)
     {
         case POD_SOUND_1:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod3b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod1sound, false, false, true);
             break;
         case POD_SOUND_2:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod4b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod2sound, false, false, true);
             break;
         case POD_SOUND_3:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod1b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod3sound, false, false, true);
             break;
         case POD_SOUND_4:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod2b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod4sound, false, false, true);
             break;
         case POD_SOUND_HOLDOUT:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "holdoutb.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), holdoutsound, false, false, true);
             break;
         default:
             signalSound = NULL;
             break;
     }
-<<<<<<< HEAD
-=======
     // signal sound volume is set in player
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
 }
 
 PodMeshType Pod::getMeshType() const

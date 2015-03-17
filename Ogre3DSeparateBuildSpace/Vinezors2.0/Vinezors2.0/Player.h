@@ -233,6 +233,7 @@ public:
     int choice3RestartCounter = 0;
     int numRetries = 3;
     
+    //Save
     bool fuelEnabled = false;   //Study Settings
     bool holdoutEnabled = false; //Study Settings
     int initialVelocity = 10; //Study Settings
@@ -249,6 +250,7 @@ public:
     
     bool holdoutdelayEnabled = false;
     float holdoutdelayNumber = 2.5f;
+    //End Save
     
     bool sessionTimeSettings = false;
     int sessionStartTime = 20;
@@ -492,6 +494,7 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
     LevelPhase lastPlayed;
+    int rerollCounter;
     
     void feedLevelRequestFromSchedule();
     

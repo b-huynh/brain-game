@@ -27,6 +27,7 @@ HudSchedulerMenu::~HudSchedulerMenu()
 
 void HudSchedulerMenu::init()
 {
+    
     alloc();
     initOverlay();
     showOverlays();
@@ -40,6 +41,41 @@ void HudSchedulerMenu::adjust()
 
 void HudSchedulerMenu::update(float elapsed)
 {
+    //If its time for recess
+    if(player->manRecessEnabled)
+    {
+        if(player->manRecessCount == player->manRecessLevelLimit)
+        {
+            //Maybe do this when I deallocate!
+            //player->manRecessCount = 0;
+            //Mandatory Recess Time!
+            //std::cout<<"Show GUI for Mandatory Recess Time!"<<std::endl;
+            //Show
+            schedulerManRecessMessageBackground->show();
+            schedulerManRecessDisableBackground->show();
+            schedulerManRecessMessageText->show();
+            schedulerManRecessPlayButtonBackground->show();
+            
+        }
+        else{
+            //Hide
+            schedulerManRecessMessageBackground->hide();
+            schedulerManRecessDisableBackground->hide();
+            schedulerManRecessMessageText->hide();
+            schedulerManRecessPlayButtonBackground->hide();
+        }
+        
+    }
+    else
+    {
+        //hide
+        schedulerManRecessMessageBackground->hide();
+        schedulerManRecessDisableBackground->hide();
+        schedulerManRecessMessageText->hide();
+        schedulerManRecessPlayButtonBackground->hide();
+    }
+    //End Man Recess
+    
     clearSelection();
     float averageMemoryScore = (player->scheduler->nBackLevelA + player->scheduler->nBackLevelB + player->scheduler->nBackLevelC + player->scheduler->nBackLevelD) / 4;
     float gameScore = player->scheduler->scoreCurr;
@@ -47,11 +83,18 @@ void HudSchedulerMenu::update(float elapsed)
         setSelection();
     schedulerMenuAverageMemoryText->setCaption(Util::toStringFloat(averageMemoryScore));
     schedulerMenuScoreCurrText->setCaption(Util::toStringInt(gameScore));
+    
+    if (player->rerollCounter > 0)
+        rerollButtonBackground->setMaterialName("General/RerollButton");
+    else
+        rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
 {
     std::string ret = Hud::queryButtons(target);
+    if(!player->manRecessEnabled)
+    {
     if (ret == "selection0")
     {
         setSelectToIcon(levelOverlayPanels[0].entireBackground, 1);
@@ -80,15 +123,63 @@ std::string HudSchedulerMenu::processButtons(Vector2 target)
     {
         setSelectToIcon(historyOverlayPanels[3].entireBackground, 0);
     }
-    else if (ret == "history4")
+    else
     {
         setSelectToIcon(historyOverlayPanels[4].entireBackground, 0);
     }
+    }
+    else
+    {
+        if(player->manRecessCount != player->manRecessLevelLimit)
+        {
+            if (ret == "selection0")
+            {
+                setSelectToIcon(levelOverlayPanels[0].entireBackground, 1);
+            }
+            else if (ret == "selection1")
+            {
+                setSelectToIcon(levelOverlayPanels[1].entireBackground, 1);
+            }
+            else if (ret == "selection2")
+            {
+                setSelectToIcon(levelOverlayPanels[2].entireBackground, 1);
+            }
+            else if (ret == "history0")
+            {
+                setSelectToIcon(historyOverlayPanels[0].entireBackground, 0);
+            }
+            else if (ret == "history1")
+            {
+                setSelectToIcon(historyOverlayPanels[1].entireBackground, 0);
+            }
+            else if (ret == "history2")
+            {
+                setSelectToIcon(historyOverlayPanels[2].entireBackground, 0);
+            }
+            else if (ret == "history3")
+            {
+                setSelectToIcon(historyOverlayPanels[3].entireBackground, 0);
+            }
+            else
+            {
+                setSelectToIcon(historyOverlayPanels[4].entireBackground, 0);
+            }
+        }
+    }
+    
     return ret;
 }
 
 void HudSchedulerMenu::alloc()
 {
+    //Man Recess Alloc
+    schedulerManRecessMessageBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerManRecessMessageBackground"));
+    schedulerManRecessMessageText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerManRecessMessageText"));
+    schedulerManRecessPlayButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerManRecessPlayButtonBackground"));
+    
+    schedulerManRecessDisableBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerManRecessDisableBackground"));
+    //End Man Recess Alloc
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS + NUM_SELECTIONS + SCHEDULE_LEN);
     
     
@@ -128,8 +219,9 @@ void HudSchedulerMenu::alloc()
     selectIconChoice->setPosition(0, 0);
     selectIconChoice->setDimensions(0, 0);
     
-    backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackButtonBackground"));
-    playButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
+    backButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackButtonBackground"));
+    playButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
+    rerollButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuRerollButtonBackground"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
@@ -165,7 +257,23 @@ void HudSchedulerMenu::alloc()
     levelDetails.entireBackground->addChild(levelDetails.meritIcon);
     
     overlay1->add2D(backButtonBackground);
+    overlay1->add2D(rerollButtonBackground);
     overlay1->add2D(playButtonBackground);
+    
+    if(player->manRecessEnabled)
+    {
+        
+        if(player->manRecessCount == player->manRecessLevelLimit)
+        {
+            //Man Recess overlay add
+            overlay1->add2D(schedulerManRecessDisableBackground);
+            overlay1->add2D(schedulerManRecessMessageBackground);
+            schedulerManRecessMessageBackground->addChild(schedulerManRecessMessageText);
+            overlay1->add2D(schedulerManRecessPlayButtonBackground);
+            
+            //End Man Recess overlay add
+        }
+    }
     
     overlay2->add2D(selectIconHistory);
     overlay2->add2D(selectIconChoice);
@@ -173,6 +281,13 @@ void HudSchedulerMenu::alloc()
 
 void HudSchedulerMenu::dealloc()
 {
+    //Man Recess Dealloc
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerManRecessMessageBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerManRecessMessageText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerManRecessPlayButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerManRecessDisableBackground);
+    //End Man Recess Dealloc
+    
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuScoreCurrBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuScoreCurrText);
@@ -196,6 +311,7 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.values);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.meritIcon);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rerollButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
@@ -205,6 +321,29 @@ void HudSchedulerMenu::dealloc()
 
 void HudSchedulerMenu::initOverlay()
 {
+    //Man Recess Init
+    schedulerManRecessMessageBackground->setMetricsMode(GMM_RELATIVE);
+    schedulerManRecessMessageBackground->setPosition(0.20, 0.20);
+    schedulerManRecessMessageBackground->setDimensions(.5, 0.5);
+    schedulerManRecessMessageBackground->setMaterialName("General/TutorialBackdrop");
+    
+    schedulerManRecessMessageText->setMetricsMode(GMM_RELATIVE);
+    schedulerManRecessMessageText->setAlignment(TextAreaOverlayElement::Center);
+    schedulerManRecessMessageText->setPosition(0.25, 0.15);
+    schedulerManRecessMessageText->setCharHeight(0.02 * FONT_SZ_MULT);
+    schedulerManRecessMessageText->setFontName("MainSmall");
+    schedulerManRecessMessageText->setCaption("Well Done!\nTake a cruise cadet!");
+    
+    schedulerManRecessPlayButtonBackground->setMaterialName("General/ButtonGoDown");
+    
+    schedulerManRecessDisableBackground->setMetricsMode(GMM_RELATIVE);
+    schedulerManRecessDisableBackground->setPosition(0.00, 0.00);
+    schedulerManRecessDisableBackground->setDimensions(1, 1);
+    schedulerManRecessDisableBackground->setMaterialName("General/DisableBackGroundBlack");
+    //schedulerManRecessDisableBackground->setColour(Ogre::ColourValue(0,0,0,.5));
+    
+    //End Man Recess Init
+    
     Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
     
     schedulerMenuEntireBackground->setMetricsMode(GMM_RELATIVE);
@@ -317,11 +456,17 @@ void HudSchedulerMenu::initOverlay()
     selectIconHistory->setMaterialName("General/IconSelection");
     selectIconChoice->setMetricsMode(GMM_RELATIVE);
     selectIconChoice->setMaterialName("General/BigIconSelection");
+    if (player->rerollCounter > 0)
+        rerollButtonBackground->setMaterialName("General/RerollButton");
+    else
+        rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
     
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton2");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
+    buttons[BUTTON_START_MAN_RECESS].setButton("manrecessplay", overlays[0], GMM_RELATIVE, Vector2(0.6, 0.65), Vector2(0.08, 0.09), schedulerManRecessPlayButtonBackground, NULL);
+    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.550), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
     
     // Needed for some reason to allow materials to be set in update
     clearSelection();

@@ -407,7 +407,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeA)
                     startingSpeed = player->scheduler->speedA;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed();
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
                 break;
             }
             case PHASE_SHAPE_SOUND:
@@ -415,7 +415,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeB)
                     startingSpeed = player->scheduler->speedB;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed();
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
                 break;
             }
             case PHASE_SOUND_ONLY:
@@ -423,7 +423,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeC)
                     startingSpeed = player->scheduler->speedC;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed();
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
                 break;
             }
             case PHASE_ALL_SIGNAL:
@@ -431,7 +431,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeD)
                     startingSpeed = player->scheduler->speedD;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed();
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
                 break;
             }
             case PHASE_COLLECT:
@@ -439,7 +439,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeE)
                     startingSpeed = player->scheduler->speedE;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed();
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
                 break;
             }
             default:
@@ -690,16 +690,6 @@ void HudStage::initOverlay()
     goBaseBackground->setPosition(0.325, 0.675 + goOffset);
     goBaseBackground->setDimensions(0.35, 0.35);
     
-<<<<<<< HEAD
-    float relCircleHeight = 0.30;
-    float relCircleWidth = 0.30 * AR;
-    circleBackground->setMetricsMode(GMM_RELATIVE);
-    circleBackground->setPosition(0.50 - relCircleWidth / 2, 0.75 - relCircleHeight / 2);
-    circleBackground->setDimensions(relCircleWidth, relCircleHeight);
-    //circleBackground->setMaterialName("General/Circle");
-    
-=======
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     float qheight = 0.085;
     float qwidth = qheight * AR;
     // Sets positions in local 2D space (relative to entire pause nav)
@@ -723,14 +713,6 @@ void HudStage::initOverlay()
     pauseBaseBackground->setMaterialName("General/PauseBase");
     goBaseBackground->setMaterialName("General/PauseBase");
     
-<<<<<<< HEAD
-    //resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    //nextButtonBackground->setMaterialName("General/NextButtonRound");
-    //restartButtonBackground->setMaterialName("General/RestartButtonRound");
-    //levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
-    
-=======
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
     nbackDisplayBackground->setPosition(0.910, 0.205);
     nbackDisplayBackground->setDimensions(0.075, 0.08);
@@ -929,11 +911,6 @@ void HudStage::setFuelBar(float elapsed)
     float totalWidth = 0.180;
     float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
     HudFuelBar->setDimensions(percentFuel * totalWidth, 0.056);
-<<<<<<< HEAD
-=======
-    
-    
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     
     /*
      // Animates fuel growth and shrinking to simulate fuel filling the container

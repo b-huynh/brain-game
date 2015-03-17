@@ -63,6 +63,8 @@
 		5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB00D418A4F057005452C6 /* MainView.storyboard */; };
 		5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB685D19297AFB00B07365 /* HudElements.cpp */; };
 		5DFB686219297B0800B07365 /* TutorialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB686019297B0800B07365 /* TutorialManager.cpp */; };
+		C95D553E1AB8C77E00589A57 /* EngineStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */; };
+		C95D553F1AB8C77E00589A57 /* HudStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -167,6 +169,10 @@
 		5DFB685E19297AFB00B07365 /* HudElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudElements.h; sourceTree = "<group>"; };
 		5DFB686019297B0800B07365 /* TutorialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TutorialManager.cpp; sourceTree = "<group>"; };
 		5DFB686119297B0800B07365 /* TutorialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialManager.h; sourceTree = "<group>"; };
+		C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStudySettings.cpp; sourceTree = "<group>"; };
+		C95D553B1AB8C77E00589A57 /* EngineStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStudySettings.h; sourceTree = "<group>"; };
+		C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStudySettings.cpp; sourceTree = "<group>"; };
+		C95D553D1AB8C77E00589A57 /* HudStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudStudySettings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,6 +258,7 @@
 		5D46023019080E4000F73DC3 /* EngineModes */ = {
 			isa = PBXGroup;
 			children = (
+				C95D55391AB8C75500589A57 /* EngineStudySettings */,
 				5D46024219080E8E00F73DC3 /* EngineStateManager.cpp */,
 				5D46024319080E8E00F73DC3 /* EngineStateManager.h */,
 				5D46024619080E9400F73DC3 /* BaseClasses */,
@@ -445,6 +452,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		C95D55391AB8C75500589A57 /* EngineStudySettings */ = {
+			isa = PBXGroup;
+			children = (
+				C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */,
+				C95D553B1AB8C77E00589A57 /* EngineStudySettings.h */,
+				C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */,
+				C95D553D1AB8C77E00589A57 /* HudStudySettings.h */,
+			);
+			name = EngineStudySettings;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -557,6 +575,7 @@
 				5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
 				5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */,
+				C95D553E1AB8C77E00589A57 /* EngineStudySettings.cpp in Sources */,
 				5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */,
 				5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */,
 				5DDD51DC195CBE6A00F82DBF /* EngineMainSettings.cpp in Sources */,
@@ -584,6 +603,7 @@
 				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
 				5D46024519080E8E00F73DC3 /* EngineStateManager.cpp in Sources */,
 				5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */,
+				C95D553F1AB8C77E00589A57 /* HudStudySettings.cpp in Sources */,
 				5D46023919080E7900F73DC3 /* EngineMainMenu.cpp in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
 				5DC32AC719D0E91900277C5C /* LevelScheduler.cpp in Sources */,

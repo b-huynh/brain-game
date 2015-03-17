@@ -44,16 +44,18 @@ void EngineStage::exit()
 void EngineStage::update(float elapsed)
 {
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-    bool replayableTutorial = (player->choice0RestartCounter < 5 && player->marbleChoice == 0);
-    bool replayableMarble = (player->choice1RestartCounter < 5 && player->marbleChoice == 1) ||
-                            (player->choice2RestartCounter < 5 && player->marbleChoice == 2) ||
-                            (player->choice3RestartCounter < 5 && player->marbleChoice == 3);
+    bool replayableTutorial = (player->choice0RestartCounter < player->numRetries && player->marbleChoice == 0);
+    bool replayableMarble = (player->choice1RestartCounter < player->numRetries && player->marbleChoice == 1) ||
+                            (player->choice2RestartCounter < player->numRetries && player->marbleChoice == 2) ||
+                            (player->choice3RestartCounter < player->numRetries && player->marbleChoice == 3);
     
     switch (stageState)
     {
         case STAGE_STATE_INIT:
         {
+            //std::cout<<"HERE"<<std::endl;
             setup();
+            //std::cout<<"HERE2"<<std::endl;
             setPause(true);
             stageState = STAGE_STATE_PAUSE;
             
@@ -235,6 +237,7 @@ void EngineStage::update(float elapsed)
             // also need to save nback levels after finishing a level
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
+                
                 player->assessLevelPerformance(player->levelRequest);
                 if (player->scheduler->sessionFinished) {
                     std::cout << "finished!\n";
@@ -250,17 +253,16 @@ void EngineStage::update(float elapsed)
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
                 
-<<<<<<< HEAD
+                
+                
                 //Reset Restart Counters:
-=======
-                //Bernie Add Reset Counters:
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
                 
                 player->choice0RestartCounter = 0;
                 player->choice1RestartCounter = 0;
                 player->choice2RestartCounter = 0;
                 player->choice3RestartCounter = 0;
             }
+            
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
             break;
@@ -700,10 +702,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             else if (queryGUI == "restart")
             {
                 player->reactGUI();
-<<<<<<< HEAD
                
-                
-                
                 if (!player->levelRequest) // If not a scheduler level
                 {
                     stageState = STAGE_STATE_INIT;
@@ -712,7 +711,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     setPause(false, false);
                 }
-                else if((player->choice0RestartCounter < 5) && (player->marbleChoice == 0))
+                else if((player->choice0RestartCounter < player->numRetries) && (player->marbleChoice == 0))
                 {
                     
                     player->choice0RestartCounter++;
@@ -723,8 +722,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(false, false);
                     
                 }
-                
-                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+                else if((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
                 {
                     
                     player->choice1RestartCounter++;
@@ -734,7 +732,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     setPause(false, false);
                 }
-                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+                else if((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
                 {
                     
                     player->choice2RestartCounter++;
@@ -744,7 +742,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     setPause(false, false);
                 }
-                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+                else if((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
                 {
                     
                     player->choice3RestartCounter++;
@@ -755,61 +753,6 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(false, false);
                 }
                 
-=======
-                //Bernie Added
-                
-                if (!player->levelRequest) // If not a scheduler level
-                {
-                    stageState = STAGE_STATE_INIT;
-                    
-                    player->logData();
-                    
-                    setPause(false, false);
-                }
-                else if((player->choice0RestartCounter < 5) && (player->marbleChoice == 0))
-                {
-                    
-                    player->choice0RestartCounter++;
-                    stageState = STAGE_STATE_INIT;
-                    
-                    player->logData();
-                    
-                    setPause(false, false);
-                    
-                }
-                
-                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
-                {
-                    
-                    player->choice1RestartCounter++;
-                    stageState = STAGE_STATE_INIT;
-                    
-                    player->logData();
-                    
-                    setPause(false, false);
-                }
-                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
-                {
-                    
-                    player->choice2RestartCounter++;
-                    stageState = STAGE_STATE_INIT;
-                    
-                    player->logData();
-                    
-                    setPause(false, false);
-                }
-                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
-                {
-                    
-                    player->choice3RestartCounter++;
-                    stageState = STAGE_STATE_INIT;
-                    
-                    player->logData();
-                    
-                    setPause(false, false);
-                }
-                
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
             }
             else if (queryGUI == "levelselect")
             {
@@ -824,7 +767,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                     setPause(false, false);
                 }
-                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+                else if((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
                 {
                     if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
                         (!player->levelRequest))    // For level from level select
@@ -837,7 +780,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     }
                     
                 }
-                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+                else if((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
                 {
                     if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
                         (!player->levelRequest))    // For level from level select
@@ -851,7 +794,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     
                 }
                 
-                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+                else if((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
                 {
                     if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
                         (!player->levelRequest))    // For level from level select
@@ -1489,47 +1432,35 @@ void EngineStage::setup()
     
     if (level.phaseX != PHASE_COLLECT)
     {
-<<<<<<< HEAD
-        globals.startingHP = 5;
-        globals.podBinSize = 8;
-    }
-    else if (level.durationX == DURATION_NORMAL)
-    {
-        globals.startingHP = 4;
-        globals.podBinSize = 10;
-    }
-    else
-    {
-        globals.startingHP = 3;
-        globals.podBinSize = 12;
-=======
         if (level.durationX == DURATION_SHORT)
         {
             globals.startingHP = 5;
+            globals.wrongAnswerTimePenalty = 3.0;
             globals.podBinSize = 10;
-            globals.stageTotalSignals = 30;
-            globals.stageTotalTargets = 10;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
         }
         else if (level.durationX == DURATION_NORMAL)
         {
             globals.startingHP = 4;
+            globals.wrongAnswerTimePenalty = 5.0;
             globals.podBinSize = 10;
-            globals.stageTotalSignals = 40;
-            globals.stageTotalTargets = 13;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
         }
         else
         {
             globals.startingHP = 3;
+            globals.wrongAnswerTimePenalty = 10.0;
             globals.podBinSize = 10;
-            globals.stageTotalSignals = 50;
-            globals.stageTotalTargets = 16;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
         }
     }
     else
     {
         globals.stageTotalSignals = 120;
         globals.stageTotalTargets = 40;
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     }
     
     
@@ -1880,5 +1811,6 @@ void EngineStage::setPause(bool value, bool targetAllSounds)
 void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
+    player->rerollCounter = 2;
     player->saveAllResults(eval);
 }

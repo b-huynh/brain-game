@@ -225,24 +225,42 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
-<<<<<<< HEAD
     // Marble Restart Counter of Study Version
-=======
-    //Bernie Added
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     int marbleChoice = 0;
     int choice0RestartCounter = 0;  //Tutorial Counter
     int choice1RestartCounter = 0;
     int choice2RestartCounter = 0;
     int choice3RestartCounter = 0;
-<<<<<<< HEAD
+    int numRetries = 3;
     
-    bool fuelEnabled = false;   //For Senior Version!
-    bool holdoutEnabled = false; //For Senior Version!
+    //Save
+    bool fuelEnabled = false;   //Study Settings
+    bool holdoutEnabled = false; //Study Settings
+    int initialVelocity = 10; //Study Settings
+    bool manRecessEnabled = false; //Study Settings
+    int manRecessLevelLimit = 1; //StudySettings
+    int manRecessCount = 0; //StudySettings
+    bool newNavEnabled = false; //StudySettings
+    float newNavIncrement = .35f; //Study Settings
+    
+    bool indRecessEnabled = false; //StudySettings
+    float indRecessIncrement = .5f; //Study Settings
+    double indRecessNBackLevel = 1.0;
+    float indRecessNBackDelta = 0.0f;
+    
+    bool holdoutdelayEnabled = false;
+    float holdoutdelayNumber = 2.5f;
+    //End Save
+    
+    bool sessionTimeSettings = false;
+    int sessionStartTime = 20;
+    int sessionEndTime = 30;
+    int numOfSessions = 20;
+    
+    bool sessionNeedsIncrement = true;
+    
+    //End Study Settings
 
-=======
-    //End Bernie Added
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     
     bool fadeMusic;
     float xsTimer; // timer for the three X's display
@@ -475,7 +493,9 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice1;
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    std::pair<StageRequest, PlayerProgress> scheduleManRecessLevel;
     LevelPhase lastPlayed;
+    int rerollCounter;
     
     void feedLevelRequestFromSchedule();
     

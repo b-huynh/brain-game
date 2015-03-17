@@ -195,6 +195,15 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
         
         
     }
+    else if (queryGUI == "reroll")
+    {
+        if (player->rerollCounter > 0)
+        {
+            player->feedLevelRequestFromSchedule();
+            player->rerollCounter--;
+            player->saveProgress(globals.savePath);
+        }
+    }
 }
 
 #if !defined(OGRE_IS_IOS)

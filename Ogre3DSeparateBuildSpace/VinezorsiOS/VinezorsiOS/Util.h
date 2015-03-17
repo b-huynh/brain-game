@@ -128,6 +128,9 @@ namespace Util
 
     struct ConfigGlobal
     {
+        //New Sounds
+        bool newSounds = false; //Study Settings
+        
         std::string scheduleMain;
         std::string scheduleRepeat;
         std::string scheduleRepeatRandomPool;
@@ -286,6 +289,9 @@ namespace Util
         
         std::vector<std::vector<PodInfo> > signalTypes;
         std::vector<NavigationLevel> navMap;
+        //std::vector< std::vector<NavigationLevel> > fixedNavMap;
+        std::vector<std::vector<NavigationLevel> > fixedNavMap;
+        
         std::map<int, float> speedMap;
         int navIndex;
         int numSegmentsWithObstacles;
@@ -343,6 +349,7 @@ namespace Util
     float randRangeFloat(float min, float max);
     std::string toStringInt(int value);
     std::string toStringFloat(float value);
+    std::string toStringFloat(float value, int precision);
     std::string getOSXDir();
     std::string getIOSDir();
     

@@ -626,6 +626,7 @@ void TunnelSlice::addPod(const PodInfo & value)
     move = move * ((move.length() - STEM_LENGTH) / move.length());
     Vector3 head = move;
     
+    //Actual Pod Creation
     Pod* pod = new Pod(sliceNode, base, head, value.meshType, value.podSignal, value.podColor, value.podShape, value.podSound, value.podLoc, STEM_RADIUS, HEAD_RADIUS);
     pod->setPodGood(value.goodPod);
     pod->setPodTrigger(value.podTrigger);

@@ -56,15 +56,9 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "credits")
     {
-<<<<<<< HEAD
-        //player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
-       // player->marbleChoice = -1;
-        //engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
-=======
         player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
         player->marbleChoice = -1;
         engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     }
     else if (queryGUI == "settings")
     {

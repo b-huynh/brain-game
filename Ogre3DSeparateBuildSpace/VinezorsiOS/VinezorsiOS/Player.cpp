@@ -45,6 +45,8 @@ Player::Player()
     tutorialMgr = new TutorialManager();
     
     lastPlayed = PHASE_UNKNOWN;
+    rerollCounter = 2;
+    
     fadeMusic = false;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -73,6 +75,8 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     tutorialMgr = new TutorialManager();
     
     lastPlayed = PHASE_UNKNOWN;
+    rerollCounter = 2;
+    
     fadeMusic = true;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -1971,10 +1975,7 @@ void Player::playSound(OgreOggSound::OgreOggISound* sound) const
     if (sound)
     {
         sound->setVolume(soundVolume);
-<<<<<<< HEAD
-=======
         sound->stop();
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
         sound->play();
     }
 }
@@ -2239,6 +2240,7 @@ void Player::addAction(ActionCode actType)
 
 void Player::update(float elapsed)
 {
+    //std::cout << globals.initCamSpeed << std::endl;
     totalElapsed += elapsed;
     
     // Play music at beginning of stage
@@ -2990,10 +2992,23 @@ bool Player::saveSession(std::string file)
             out << "% Damping Drop Free - Controller Settings for a linear slow down in free motion" << endl;
             out << "% Damping Drop Stop - Controller Settings for a linear slow down by held down input" << endl;
             out << "% Inverted - Controller Settings to invert direction" << endl;
+            out << "% fuelEnabled - Study Settings to enable fuel usage" << endl;
+            out << "% holdoutEnabled - Study Settings to enable holdout" << endl;
+            out << "% initialVelocity - Study Settings to initialize starting speed" << endl;
+            out << "% manRecessEnabled - Study Settings to enable mandatory recess" << endl;
+            out << "% manRecessLevelLimit - Study Settings to set the number of levels before mandatory recess" << endl;
+            out << "% newNavEnabled - Study Settings to enable senior navigation" << endl;
+            out << "% newNavIncrement - Study Settings to set senior navigation progression" << endl;
+            out << "% indRecessEnabled - Study Settings to enable independent recess" << endl;
+            out << "% indRecessIncrement - Study Settings to set independent recess increment" << endl;
+            out << "% holdoutdelayEnabled - Study Settings to enable delayed holdout" << endl;
+            out << "% holdoutdelayNumber - Study Settings to set holdout delay memory level" << endl;
+            out << "% newSounds - Study Settings to use new sounds" << endl;
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds" << endl;
         }
         
+        //Logging Study Settings
         out << sessions.back().sessionID << " "
         << sessions.back().eventID << " "
         << sessions.back().levelID << " "
@@ -3041,7 +3056,19 @@ bool Player::saveSession(std::string file)
         << sessions.back().dampingDecayStop << " "
         << sessions.back().dampingDropFree << " "
         << sessions.back().dampingDropStop << " "
-        << sessions.back().inverted << "\n";
+        << sessions.back().inverted << " "
+        << fuelEnabled << " "
+        << holdoutEnabled << " "
+        << initialVelocity << " "
+        << manRecessEnabled << " "
+        << manRecessLevelLimit << " "
+        << newNavEnabled << " "
+        << newNavIncrement << " "
+        << indRecessEnabled << " "
+        << indRecessIncrement << " "
+        << holdoutdelayEnabled << " "
+        << holdoutdelayNumber << " "
+        << globals.newSounds << "\n";
         
         out.close();
     }
@@ -3069,9 +3096,11 @@ bool Player::saveProgress(std::string file)
             out << "level" << " " << i << " " << j << " " << levelProgress[i][j] << std::endl;
     }
     
+    
     out << "sessionID" << " " << sessionID << std::endl;
     out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
     out << "scheduler1.0" << " " << (*scheduler) << std::endl;
+    out << "rerollCounter" << " " << rerollCounter << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
@@ -3085,6 +3114,25 @@ bool Player::saveProgress(std::string file)
     out << "dampingDropFree" << " " << dampingDropFree << std::endl;
     out << "dampingDropStop" << " " << dampingDropStop << std::endl;
     out << "inverted" << " " << inverted << std::endl;
+    //Study Settings
+    out << "fuelEnabled" << " " << fuelEnabled << std::endl;
+    out << "holdoutEnabled" << " " << holdoutEnabled << std::endl;
+    out << "initialVelocity" << " " << initialVelocity << std::endl;
+    out << "manRecessEnabled" << " " << manRecessEnabled << std::endl;
+    out << "manRecessLevelLimit" << " " << manRecessLevelLimit << std::endl;
+    out << "newNavEnabled" << " " << newNavEnabled << std::endl;
+    out << "newNavIncrement" << " " << newNavIncrement << std::endl;
+    out << "indRecessEnabled" << " " << indRecessEnabled << std::endl;
+    out << "indRecessIncrement" << " " << indRecessIncrement << std::endl;
+    out << "holdoutdelayEnabled" << " " << holdoutdelayEnabled << std::endl;
+    out << "holdoutdelayNumber" << " " << holdoutdelayNumber << std::endl;
+    out << "newSounds" << " " << globals.newSounds << std::endl;
+
+
+
+
+
+    
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -3139,6 +3187,8 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> (*tutorialMgr);
     else if (paramName == "scheduler1.0")
         in >> (*scheduler);
+    else if (paramName == "rerollCounter")
+        in >> rerollCounter;
     else if (paramName == "levelSize")
     {
         int size;
@@ -3181,7 +3231,34 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> dampingDropStop;
     else if (paramName == "inverted")
         in >> inverted;
+    else if(paramName == "fuelEnabled")
+        in >> fuelEnabled;
+    else if(paramName == "holdoutEnabled")
+        in >> holdoutEnabled;
+    else if(paramName == "initialVelocity")
+        in >> initialVelocity;
+    else if(paramName == "manRecessEnabled")
+        in >> manRecessEnabled;
+    else if(paramName == "manRecessLevelLimit")
+        in >> manRecessLevelLimit;
+    else if(paramName == "newNavEnabled")
+        in >> newNavEnabled;
+    else if(paramName == "newNavIncrement")
+        in >> newNavIncrement;
+    else if(paramName == "indRecessEnabled")
+        in >> indRecessEnabled;
+    else if(paramName == "indRecessIncrement")
+        in >> indRecessIncrement;
+    else if(paramName == "holdoutdelayEnabled")
+        in >> holdoutdelayEnabled;
+    else if(paramName == "holdoutdelayNumber")
+        in >> holdoutdelayNumber;
+    else if (paramName == "newSounds")
+        in >> globals.newSounds;
     return in;
+    
+
+    
 }
 
 // Initializes control settings
@@ -3206,10 +3283,11 @@ void Player::initSettings()
 
 void Player::feedLevelRequestFromSchedule()
 {
-    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(holdoutEnabled);
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(holdoutEnabled,newNavEnabled,indRecessEnabled,indRecessNBackLevel,holdoutdelayEnabled,holdoutdelayNumber);
     scheduleChoice1 = choices[0];
     scheduleChoice2 = choices[1];
     scheduleChoice3 = choices[2];
+    scheduleManRecessLevel = choices[3];
 //    // assign the level to be played in the same position as the iterator or the schedule
 //    levelRequest = &scheduler->schedule[0][0].first;
 //    
@@ -3228,8 +3306,16 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     
     float nBackChallenge = getMemoryChallenge(level, assessment);
     if (level.phaseX == PHASE_COLLECT)
+    {
+        valMemory = 0.0;
+        if(indRecessEnabled)
+        {
+            valMemory = 1.0;
+        }
+        
         //valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
-        valMemory = 0.0;    // Recess is now worth jack
+        //valMemory = 0.0;    // Recess is now worth jack
+    }
     else if ( nBackChallenge < -0.5 )
     {
         // easy memory
@@ -3285,8 +3371,40 @@ float Player::getMemoryChallenge(StageRequest level, PlayerProgress assessment) 
 
 float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
 {
+    //If Ind Recess Enabled, Use other increment!
+    
+    
+    
+    
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
-    const float SOFT_CAP = 0.35;
+    float softcaptemp;
+    float nBackChallenge = getMemoryChallenge(level, assessment);
+    bool tooEasy = nBackChallenge < -0.5;
+    if(indRecessEnabled && level.phaseX == PHASE_COLLECT)
+    {
+        
+        softcaptemp = indRecessIncrement;
+    }
+    else if(newNavEnabled)
+    {
+        
+        
+        if(tooEasy)
+        {
+            softcaptemp = newNavIncrement;
+            
+        }
+        else
+        {
+            softcaptemp = 0.35;
+
+        }
+    }
+    else
+    {
+        softcaptemp = 0.35;
+    }
+    const float SOFT_CAP = softcaptemp;
     const float HARD_CAP = 1.0;
     
     // Anything inbetween these two bounds are considered in the "Dead Zone" where no change happens to nBackDelta
@@ -3355,6 +3473,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
     
     float nBackDelta = modifyNBackDelta(level, assessment, accuracy, false);
+    
     // If tutorial level, zero it out if they played one of those types already
     if (level.stageNo < 0)
     {
@@ -3377,8 +3496,18 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // it is zero'd out and the difference is added into skill level.
     switch (level.phaseX) {
         case PHASE_COLLECT:
+            //Added this: Do i need to update playerskill?
+            if(manRecessEnabled)
+            {
+                manRecessCount = 0;
+            }
+            indRecessNBackLevel += nBackDelta;
+            //std::cout<<"RECESS: NBackDelta: "<<nBackDelta<<std::endl;
             scheduler->nBackLevelE += nBackDelta;
-            if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
+            if (scheduler->nBackLevelE < 0.0)
+            {
+                scheduler->nBackLevelE = 0.0;
+            }
             playerSkill = scheduler->nBackLevelE;
             playerOffset = 0.0;
             break;
@@ -3512,7 +3641,11 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // Continue to increment a play count for each non-recess played so that we can track
     // every 5 levels to throw in a recess that they can play.
     if (level.phaseX != PHASE_COLLECT)
+    {
         scheduler->playCount++;
+        manRecessCount++;
+        
+    }
     
     // Record in the scheduler for each task column the latest level played
     switch (level.phaseX)

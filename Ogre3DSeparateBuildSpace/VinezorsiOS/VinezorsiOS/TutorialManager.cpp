@@ -84,11 +84,7 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
     {
         comments.push_back("Good cadet,\nbut you can do better.");
         comments.push_back("Try again,\nthis time faster.");
-<<<<<<< HEAD
-        comments.push_back("You made it cadet.\nYou could do better though.");
-=======
         comments.push_back("You made it cadet. You\ncould do better though.");
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
         comments.push_back("Is that's your best cadet?\nBecause I don't think so.");
         //comments.push_back("You cleared it cadet! A bit\nlackluster on the finish though."); // too long
         comments.push_back("You cleared it cadet! A bit\nlackluster on the finish.");
@@ -106,11 +102,7 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
         comments.push_back("Your work here is done.");
         comments.push_back("The tunnel is cleared.\nLet's move out.");
         comments.push_back("Perfect. Simply perfect.");
-<<<<<<< HEAD
-        comments.push_back("Well done ace!");
-=======
         comments.push_back("You're a cadet no longer.\nLet's go pilot!");
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     }
     
     if (comments.size() <= 0)
@@ -662,11 +654,7 @@ bool TutorialManager::processInput(Vector2 target)
                 Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
                 label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
                 label7->setCharHeight(0.025 * FONT_SZ_MULT);
-<<<<<<< HEAD
-                label7->setCaption("Try again or continue?");
-=======
                 label7->setCaption("\nTry again or continue?");
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
 
                 if (fireworkNode)
                 {

@@ -74,10 +74,8 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pRoot = new Ogre::Root(pluginsPath, Ogre::macBundlePath() + "/ogre.cfg");
     
     // OgreOggSound is still a dynamic library (dylib)
-    // This statically loads it...
-    //OgreOggSound::OgreOggSoundPlugin* mOgreOggSoundPlugin = OGRE_NEW OgreOggSound::OgreOggSoundPlugin();
-    //m_pRoot->installPlugin(mOgreOggSoundPlugin);
-    
+    // OgreOggSound::OgreOggSoundPlugin* mOgreOggSoundPlugin = OGRE_NEW OgreOggSound::OgreOggSoundPlugin();
+    // m_pRoot->installPlugin(mOgreOggSoundPlugin);
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif

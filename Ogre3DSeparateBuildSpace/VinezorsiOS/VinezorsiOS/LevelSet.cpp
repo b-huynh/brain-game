@@ -12,7 +12,7 @@
 
 extern Util::ConfigGlobal globals;
 
-void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL)
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled)
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
@@ -21,11 +21,9 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     // Times
     // Below meant for 5, 4, 3 lives on wrong zaps respectively
     // Below meant for 3, 3, 3 lives on misses respectively
-<<<<<<< HEAD
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
-=======
-    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+    
+    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
+    //const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
     ret->init(); // Reset everything to clear lists if they're still populated
@@ -116,21 +114,39 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             break;
     }
     
-    int randSpot1 = rand() % 4;
-    int randSpot2 = rand() % 4;
-    int randSpot3 = rand() % 4;
-    int randSpot4 = rand() % 4;
-    std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
     
-    int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
-    int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
-    int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
-    int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+    if(newNavEnabled)
+    {
+        int randSpot1 = rand() % 4;
+        int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.fixedNavMap.size() - 1);
+        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][0]);
+        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][1]);
+        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][2]);
+        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][3]);
+
+
+    }
+    else
+    {
+        int randSpot1 = rand() % 4;
+        int randSpot2 = rand() % 4;
+        int randSpot3 = rand() % 4;
+        int randSpot4 = rand() % 4;
+        std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+        
+        int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
+        int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
+        int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
+        int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+        
+        
+        ret->navLevels.push_back(globals.navMap[navIndex1]);
+        ret->navLevels.push_back(globals.navMap[navIndex2]);
+        ret->navLevels.push_back(globals.navMap[navIndex3]);
+        ret->navLevels.push_back(globals.navMap[navIndex4]);
+    }
     
-    ret->navLevels.push_back(globals.navMap[navIndex1]);
-    ret->navLevels.push_back(globals.navMap[navIndex2]);
-    ret->navLevels.push_back(globals.navMap[navIndex3]);
-    ret->navLevels.push_back(globals.navMap[navIndex4]);
+
     
     // Chooses what phase and difficulty to generate for ret
     switch( PHASE_X )
@@ -385,11 +401,8 @@ void LevelSet::initializeLevelSet()
     // Not entirely sure on collection requirements as of now
     //
     // Time
-<<<<<<< HEAD
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
-=======
-    const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
->>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
+    //const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int TOTAL_COLLECTIONS = 13;
     
 #ifdef DEMO_BUILD
