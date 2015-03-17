@@ -625,6 +625,25 @@ material General/RerollButton
     }
 }
 
+material General/RerollButtonDisabled
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture reroll_button_disabled.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
 material General/DefaultsButton
 {
     technique

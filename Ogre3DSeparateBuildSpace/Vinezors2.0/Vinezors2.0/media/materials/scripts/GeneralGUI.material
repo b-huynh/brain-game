@@ -235,7 +235,7 @@ material General/ScreenBackgroundLevelSelect
         {
             texture level_menu.jpg
         }
-      } 
+      }
     }
 }
 
@@ -249,9 +249,9 @@ material General/ScreenBackgroundMainMenu
         depth_write off
         texture_unit
         {
-            texture title1.png	
+            texture title1.png
         }
-      } 
+      }
     }
 }
 
@@ -286,7 +286,7 @@ material General/PauseBase
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -303,7 +303,7 @@ material General/PauseNav
         {
             texture pause_nav.png
         }
-      } 
+      }
     }
 }
 
@@ -320,7 +320,7 @@ material General/PauseGrayPlay
         {
             texture pause_grayplay.png
         }
-      } 
+      }
     }
 }
 
@@ -337,7 +337,7 @@ material General/PauseGrayForward
         {
             texture pause_grayforward.png
         }
-      } 
+      }
     }
 }
 
@@ -354,7 +354,7 @@ material General/PauseGrayBack
         {
             texture pause_grayback.png
         }
-      } 
+      }
     }
 }
 
@@ -390,7 +390,7 @@ material General/PauseButton
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -409,7 +409,7 @@ material General/ButtonGoDown
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -428,7 +428,7 @@ material General/ButtonGo
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -447,7 +447,7 @@ material General/ButtonGoGray
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -464,7 +464,7 @@ material General/CheckboxGreen
         {
             texture checkbox_check.png
         }
-      } 
+      }
     }
 }
 
@@ -481,7 +481,7 @@ material General/CheckboxBlank
         {
             texture checkbox_empty.png
         }
-      } 
+      }
     }
 }
 
@@ -538,7 +538,7 @@ material General/ControlSettingsButton
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -599,6 +599,25 @@ material General/RerollButton
     }
 }
 
+material General/RerollButtonDisabled
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture reroll_button_disabled.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
 material General/DefaultsButton
 {
     technique
@@ -614,7 +633,7 @@ material General/DefaultsButton
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1065,7 +1084,7 @@ material General/LevelBarUnavailable
         {
             texture blocked.png
         }
-      } 
+      }
     }
 }
 
@@ -1082,7 +1101,7 @@ material General/LevelBar0Fill
         {
             texture empty.png
         }
-      } 
+      }
     }
 }
 
@@ -1099,7 +1118,7 @@ material General/LevelBar1Fill
         {
             texture full1.png
         }
-      } 
+      }
     }
 }
 
@@ -1116,7 +1135,7 @@ material General/LevelBar2Fill
         {
             texture full2.png
         }
-      } 
+      }
     }
 }
 
@@ -1133,7 +1152,7 @@ material General/LevelBar3Fill
         {
             texture full3.png
         }
-      } 
+      }
     }
 }
 
@@ -1150,7 +1169,7 @@ material General/LevelBar4Fill
         {
             texture full4.png
         }
-      } 
+      }
     }
 }
 
@@ -1167,7 +1186,7 @@ material General/LevelBar5Fill
         {
             texture full5.png
         }
-      } 
+      }
     }
 }
 
@@ -1187,7 +1206,7 @@ material General/BasicSliderRangeHorizontal
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1206,7 +1225,7 @@ material General/BasicSliderBall
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1225,7 +1244,7 @@ material General/SpeedSliderRangeVertical
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1245,7 +1264,7 @@ material General/SpeedSliderBall
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1265,7 +1284,7 @@ material General/SpeedSliderBallOff
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1285,7 +1304,7 @@ material General/SpeedSliderRangeHorizontal
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
 
@@ -1305,6 +1324,6 @@ material General/SpeedSliderBallHorizontal
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
-      } 
+      }
     }
 }
