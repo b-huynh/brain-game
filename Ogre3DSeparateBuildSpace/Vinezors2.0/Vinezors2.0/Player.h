@@ -240,8 +240,24 @@ public:
     int manRecessLevelLimit = 1; //StudySettings
     int manRecessCount = 0; //StudySettings
     bool newNavEnabled = false; //StudySettings
-    float newNavIncrement = .2f;
+    float newNavIncrement = .35f; //Study Settings
     
+    bool indRecessEnabled = false; //StudySettings
+    float indRecessIncrement = .5f; //Study Settings
+    double indRecessNBackLevel = 1.0;
+    float indRecessNBackDelta = 0.0f;
+    
+    bool holdoutdelayEnabled = false;
+    float holdoutdelayNumber = 2.5f;
+    
+    bool sessionTimeSettings = false;
+    int sessionStartTime = 20;
+    int sessionEndTime = 30;
+    int numOfSessions = 20;
+    
+    bool sessionNeedsIncrement = true;
+    
+    //End Study Settings
 
     
     bool fadeMusic;

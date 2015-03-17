@@ -43,6 +43,45 @@ void HudStudySettings::update(float elapsed)
     initSpeedNumberTextDisplay->setCaption(initSpeedString);
     enableMandatoryRecessNumberTextDisplay->setCaption(manRecessString);
     enableNewNavNumberText->setCaption(newNavigationIncAmountString);
+    enableIndRecessNumberText->setCaption(indRecessString);
+    enableHoldoutDelayNumberTextDisplay->setCaption(holdoutDelayString);
+    
+    
+    //Ind Recess Checkbox
+    if (player->indRecessEnabled)
+    {
+        enableIndRecessButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableIndRecessTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableIndRecessText2Display->show();
+        enableIndRecessNumberButtonBackground->show();
+        enableIndRecessNumberText->show();
+    }
+    else
+    {
+        
+        enableIndRecessButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableIndRecessTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        enableIndRecessText2Display->hide();
+        enableIndRecessNumberButtonBackground->hide();
+        enableIndRecessNumberText->hide();
+        
+    }
+    
+    //NewSounds Checkbox
+    if (globals.newSounds)
+    {
+        
+        enableNewSoundsButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableNewSoundsTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+    }
+    else
+    {
+        
+        
+        enableNewSoundsButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableNewSoundsTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        
+    }
     
     //New Nav Checkbox
     if (player->newNavEnabled)
@@ -85,6 +124,25 @@ void HudStudySettings::update(float elapsed)
    
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxGreen");
         enableHoldoutTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableHoldoutDelayButtonBackground->show();
+        enableHoldoutDelayTextDisplay->show();
+        //HoldoutDelayCheckBox
+        if (player->holdoutdelayEnabled)
+        {
+            enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxGreen");
+            enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+            enableHoldoutDelayNumberButtonBackground->show();
+            enableHoldoutDelayNumberTextDisplay->show();
+        }
+        else
+        {
+            
+            enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxBlank");
+            enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+            enableHoldoutDelayNumberButtonBackground->hide();
+            enableHoldoutDelayNumberTextDisplay->hide();
+            
+        }
 
         
     }
@@ -92,6 +150,12 @@ void HudStudySettings::update(float elapsed)
     {
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxBlank");
         enableHoldoutTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        
+        //Delay:
+        enableHoldoutDelayButtonBackground->hide();
+        enableHoldoutDelayTextDisplay->hide();
+        enableHoldoutDelayNumberButtonBackground->hide();
+        enableHoldoutDelayNumberTextDisplay->hide();
 
 
     }
@@ -139,6 +203,8 @@ void HudStudySettings::update(float elapsed)
             initSpeedBackground->setMaterialName("General/SelectedInput");
             enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
             enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
 
         }
         else if(nStatus == MAN_RECESS)
@@ -146,12 +212,40 @@ void HudStudySettings::update(float elapsed)
             initSpeedBackground->setMaterialName("General/BlankInput");
             enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
             enableMandatoryRecessNumberBackground->setMaterialName("General/SelectedInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+
+
         }
         else if(nStatus == NEW_NAV_INC)
         {
             initSpeedBackground->setMaterialName("General/BlankInput");
             enableNewNavNumberButtonBackground->setMaterialName("General/SelectedInput");
             enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+
+
+        }
+        else if(nStatus == IND_RECESS_INC)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/SelectedInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+
+            
+        }
+        else if(nStatus == HOLDOUT_DELAY)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/SelectedInput");
+            
+            
         }
     }
     else
@@ -160,6 +254,10 @@ void HudStudySettings::update(float elapsed)
         initSpeedBackground->setMaterialName("General/BlankInput");
         enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
         enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+        enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+        enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+
+
 
 
         
@@ -239,6 +337,27 @@ void HudStudySettings::alloc()
     enableNewNavNumberButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableNewNavNumberButtonBackground"));
     enableNewNavNumberText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsNewNavNumberText"));
     
+    //New Sounds CheckBox
+    enableNewSoundsBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableNewSoundsBackground"));
+    enableNewSoundsTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsEnableNewSoundsTextDisplay"));
+    enableNewSoundsButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableNewSoundsButtonBackground"));
+    
+    //IndRecess Checkbox
+    enableIndRecessBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableIndRecessBackground"));
+    enableIndRecessTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsIndRecessText"));
+    enableIndRecessButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableIndRecessButtonBackground"));
+    enableIndRecessText2Display = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsIndRecessText2"));
+    enableIndRecessNumberButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableIndRecessNumberButtonBackground"));
+    enableIndRecessNumberText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsIndRecessNumberText"));
+    
+    //Holdout Delay Stuff
+    enableHoldoutDelayBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableHoldoutDelayBackground"));
+    enableHoldoutDelayTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsHoldoutDelayText"));
+    enableHoldoutDelayButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsHoldoutDelayButtonBackground"));
+    enableHoldoutDelayNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsHoldoutDelayNumberText"));
+    enableHoldoutDelayNumberButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableHoldoutDelayNumberBackground"));
+
+    
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
@@ -289,17 +408,33 @@ void HudStudySettings::alloc()
     enableUnlimitedFuelBackground->addChild(enableUnlimitedFuelTextDisplay);
     overlay1->add2D(enableUnlimitedFuelButtonBackground);
     
+    //IndRecess Checkbox
+    overlay1->add2D(enableIndRecessBackground);
+    enableIndRecessBackground->addChild(enableIndRecessTextDisplay);
+    enableIndRecessBackground->addChild(enableIndRecessText2Display);
+    overlay1->add2D(enableIndRecessNumberButtonBackground);
+    enableIndRecessNumberButtonBackground->addChild(enableIndRecessNumberText);
+    overlay1->add2D(enableIndRecessButtonBackground);
+    
+    //Holdout Delay Stuff
+    overlay1->add2D(enableHoldoutDelayBackground);
+    enableHoldoutDelayBackground->addChild(enableHoldoutDelayTextDisplay);
+    overlay1->add2D(enableHoldoutDelayButtonBackground);
+    enableHoldoutDelayButtonBackground->addChild(enableHoldoutDelayNumberTextDisplay);
+    overlay1->add2D(enableHoldoutDelayNumberButtonBackground);
+    
     //New Nav Checkbox
     overlay1->add2D(enableNewNavBackground);
     enableNewNavBackground->addChild(enableNewNavTextDisplay);
     enableNewNavBackground->addChild(enableNewNavText2Display);
-    //enableNewNavBackground->addChild(enableNewNavNumberButtonBackground);
     overlay1->add2D(enableNewNavNumberButtonBackground);
     enableNewNavNumberButtonBackground->addChild(enableNewNavNumberText);
     overlay1->add2D(enableNewNavButtonBackground);
     
-    
-    
+    //New Sounds Checkbox
+    overlay1->add2D(enableNewSoundsBackground);
+    enableNewSoundsBackground->addChild(enableNewSoundsTextDisplay);
+    overlay1->add2D(enableNewSoundsButtonBackground);
     
     overlay1->add2D(enableMandatoryRecessBackground);
     enableMandatoryRecessBackground->addChild(enableMandatoryRecessTextDisplay);
@@ -391,6 +526,30 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableNewNavNumberText);
 
 
+    //New Sounds
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableNewSoundsBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableNewSoundsTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableNewSoundsButtonBackground);
+    
+    //New Nav
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessText2Display);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessNumberButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableIndRecessNumberText);
+    
+    
+    //Holdout Delay Stuff
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableHoldoutDelayBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableHoldoutDelayTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableHoldoutDelayButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableHoldoutDelayNumberTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableHoldoutDelayNumberButtonBackground);
+
+
+
+
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
@@ -400,15 +559,91 @@ void HudStudySettings::dealloc()
 void HudStudySettings::initOverlay()
 {
 
+    //HoldoutDelay
+    enableHoldoutDelayBackground->setMetricsMode(GMM_RELATIVE);
+    enableHoldoutDelayBackground->setPosition(0.55, 0.16);
+    enableHoldoutDelayBackground->setDimensions(0.60, 0.10);
+    
+    enableHoldoutDelayTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableHoldoutDelayTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableHoldoutDelayTextDisplay->setPosition(0.0, 0.05);
+    enableHoldoutDelayTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableHoldoutDelayTextDisplay->setFontName("MainSmall");
+    enableHoldoutDelayTextDisplay->setCaption("Holdout Delay");
+    enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+    
+    enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxBlank");
+    
+    enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+    
+    enableHoldoutDelayNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableHoldoutDelayNumberTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableHoldoutDelayNumberTextDisplay->setPosition(0.13, 0.05);
+    enableHoldoutDelayNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableHoldoutDelayNumberTextDisplay->setFontName("MainSmall");
+    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+    enableHoldoutDelayNumberTextDisplay->setCaption(Util::toStringFloat(player->holdoutdelayNumber,1));
+
+    //Vector2(0.60, 0.26)
+    
+    
+    //IndRecess
+    enableIndRecessBackground->setMetricsMode(GMM_RELATIVE);
+    enableIndRecessBackground->setPosition(0.20, 0.58);
+    enableIndRecessBackground->setDimensions(0.60, 0.10);
+    
+    enableIndRecessTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableIndRecessTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableIndRecessTextDisplay->setPosition(0.0, 0.05);
+    enableIndRecessTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableIndRecessTextDisplay->setFontName("MainSmall");
+    enableIndRecessTextDisplay->setCaption("Enable Independent Recess");
+    enableIndRecessTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+    
+    enableIndRecessButtonBackground->setMaterialName("General/CheckboxBlank");
+    
+    enableIndRecessText2Display->setMetricsMode(GMM_RELATIVE);
+    enableIndRecessText2Display->setAlignment(TextAreaOverlayElement::Left);
+    enableIndRecessText2Display->setPosition(0.0, 0.1);
+    enableIndRecessText2Display->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableIndRecessText2Display->setFontName("MainSmall");
+    enableIndRecessText2Display->setCaption("Increment Value:");
+    
+    enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+    
+    enableIndRecessNumberText->setMetricsMode(GMM_RELATIVE);
+    enableIndRecessNumberText->setAlignment(TextAreaOverlayElement::Left);
+    enableIndRecessNumberText->setPosition(0.01, 0.0);
+    enableIndRecessNumberText->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableIndRecessNumberText->setFontName("MainSmall");
+    indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+    enableIndRecessNumberText->setCaption(Util::toStringFloat(player->indRecessIncrement,2));
+    
+    //End IndRecess
+    
+    //New Sounds
+    enableNewSoundsBackground->setMetricsMode(GMM_RELATIVE);
+    enableNewSoundsBackground->setPosition(0.20, 0.50);
+    enableNewSoundsBackground->setDimensions(0.60, 0.10);
+    
+    enableNewSoundsTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableNewSoundsTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableNewSoundsTextDisplay->setPosition(0.0, 0.05);
+    enableNewSoundsTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableNewSoundsTextDisplay->setFontName("MainSmall");
+    enableNewSoundsTextDisplay->setCaption("Enable New Sounds");
+    
+    enableNewSoundsButtonBackground->setMaterialName("General/CheckboxBlank");
+    
     //New Nav
     enableNewNavBackground->setMetricsMode(GMM_RELATIVE);
-    enableNewNavBackground->setPosition(0.20, 0.550);
+    enableNewNavBackground->setPosition(0.20, 0.40);
     enableNewNavBackground->setDimensions(0.60, 0.10);
     
     enableNewNavTextDisplay->setMetricsMode(GMM_RELATIVE);
     enableNewNavTextDisplay->setAlignment(TextAreaOverlayElement::Left);
     enableNewNavTextDisplay->setPosition(0.0, 0.05);
-    enableNewNavTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableNewNavTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
     enableNewNavTextDisplay->setFontName("MainSmall");
     enableNewNavTextDisplay->setCaption("Enable Fixed Navigation");
     enableNewNavTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
@@ -418,7 +653,7 @@ void HudStudySettings::initOverlay()
     enableNewNavText2Display->setMetricsMode(GMM_RELATIVE);
     enableNewNavText2Display->setAlignment(TextAreaOverlayElement::Left);
     enableNewNavText2Display->setPosition(0.0, 0.1);
-    enableNewNavText2Display->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableNewNavText2Display->setCharHeight(0.025 * FONT_SZ_MULT);
     enableNewNavText2Display->setFontName("MainSmall");
     enableNewNavText2Display->setCaption("Increment Value:");
     
@@ -572,38 +807,38 @@ void HudStudySettings::initOverlay()
     studySettingsTitleText->setCaption("Study Settings");
     
     enableUnlimitedFuelBackground->setMetricsMode(GMM_RELATIVE);
-    enableUnlimitedFuelBackground->setPosition(0.20, 0.150);
+    enableUnlimitedFuelBackground->setPosition(0.20, 0.08); //.2,.15
     enableUnlimitedFuelBackground->setDimensions(0.60, 0.10);
     
     enableUnlimitedFuelTextDisplay->setMetricsMode(GMM_RELATIVE);
     enableUnlimitedFuelTextDisplay->setAlignment(TextAreaOverlayElement::Left);
     enableUnlimitedFuelTextDisplay->setPosition(0.0, 0.05);
-    enableUnlimitedFuelTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableUnlimitedFuelTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT); //.03
     enableUnlimitedFuelTextDisplay->setFontName("MainSmall");
     enableUnlimitedFuelTextDisplay->setCaption("Enable Unlimited Fuel");
     
     
     enableHoldoutBackground->setMetricsMode(GMM_RELATIVE);
-    enableHoldoutBackground->setPosition(0.20, 0.250);
+    enableHoldoutBackground->setPosition(0.20, 0.16); //.2,.25
     enableHoldoutBackground->setDimensions(0.60, 0.10);
     
     enableHoldoutTextDisplay->setMetricsMode(GMM_RELATIVE);
     enableHoldoutTextDisplay->setAlignment(TextAreaOverlayElement::Left);
     enableHoldoutTextDisplay->setPosition(0.0, 0.05);
-    enableHoldoutTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableHoldoutTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);//.03
     enableHoldoutTextDisplay->setFontName("MainSmall");
     enableHoldoutTextDisplay->setCaption("Enable Holdout");
     
     
     
     enableMandatoryRecessBackground->setMetricsMode(GMM_RELATIVE);
-    enableMandatoryRecessBackground->setPosition(0.20, 0.350);
+    enableMandatoryRecessBackground->setPosition(0.20, 0.24); //.2,.35
     enableMandatoryRecessBackground->setDimensions(0.60, 0.10);
     
     enableMandatoryRecessTextDisplay->setMetricsMode(GMM_RELATIVE);
     enableMandatoryRecessTextDisplay->setAlignment(TextAreaOverlayElement::Left);
     enableMandatoryRecessTextDisplay->setPosition(0.0, 0.05);
-    enableMandatoryRecessTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    enableMandatoryRecessTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);//.03
     enableMandatoryRecessTextDisplay->setFontName("MainSmall");
     enableMandatoryRecessTextDisplay->setCaption("Mandatory Recess");
     enableMandatoryRecessTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
@@ -612,8 +847,8 @@ void HudStudySettings::initOverlay()
     
     initSpeedTextDisplay->setMetricsMode(GMM_RELATIVE);
     initSpeedTextDisplay->setAlignment(TextAreaOverlayElement::Left);
-    initSpeedTextDisplay->setPosition(-0.3, 0.00);
-    initSpeedTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    initSpeedTextDisplay->setPosition(-0.26, 0.00);
+    initSpeedTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
     initSpeedTextDisplay->setFontName("MainSmall");
     initSpeedTextDisplay->setCaption("Initial Velocity");
     
@@ -638,18 +873,17 @@ void HudStudySettings::initOverlay()
     //enableMandatoryRecessNumberTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
     
     
-    backButtonBackground->setMaterialName("General/BackButton");
+    backButtonBackground->setMaterialName("General/BackButton1");
     
     //Position Buttons
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.01, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
-    
     
     // The Enable Tutorial Checkbox
     {
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLE_UNLIMITED_FUEL].setButton("checkfuel", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.20), Vector2(pw, ph), enableUnlimitedFuelButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_UNLIMITED_FUEL].setButton("checkfuel", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.13), Vector2(pw, ph), enableUnlimitedFuelButtonBackground, NULL); //Position: .125,.20
     }
     
     // The Enable Holdout Checkbox
@@ -657,13 +891,27 @@ void HudStudySettings::initOverlay()
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLE_HOLDOUT].setButton("checkholdout", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.30), Vector2(pw, ph), enableHoldoutButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_HOLDOUT].setButton("checkholdout", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.21), Vector2(pw, ph), enableHoldoutButtonBackground, NULL);//Pos: .125,.3
+    }
+    // The Enable Holdout Delay Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLE_HOLDOUT_DELAY].setButton("checkholdoutdelay", overlays[0], GMM_RELATIVE, Vector2(0.48, 0.21), Vector2(pw, ph), enableHoldoutDelayButtonBackground, NULL);//Pos: .125,.3
+    }
+    // The Enable Holdout Delay Number Checkbox
+    {
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        // calculate dimensions for button size and make sure it's square
+         buttons[BUTTON_HOLDOUT_DELAY_NUMBER].setButton("checkholdoutdelaynumber", overlays[0], GMM_RELATIVE, Vector2(0.60, 0.26), Vector2(.1, pw), enableHoldoutDelayNumberButtonBackground, NULL);
     }
     
     // The Enable InitSpeed
     {
         // calculate dimensions for button size and make sure it's square
-        buttons[BUTTON_INPUT_INIT_SPEED].setButton("checkinitspeed", overlays[0], GMM_RELATIVE, Vector2(0.43, 0.50), Vector2(.08, .06), initSpeedBackground, NULL);
+        buttons[BUTTON_INPUT_INIT_SPEED].setButton("checkinitspeed", overlays[0], GMM_RELATIVE, Vector2(0.39, 0.37), Vector2(.08, .06), initSpeedBackground, NULL);
     }
     
     // The Enable Tutorial Checkbox
@@ -671,13 +919,13 @@ void HudStudySettings::initOverlay()
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLE_MANDATORY_RECESS].setButton("checkmandatoryrecess", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.40), Vector2(pw, ph), enableMandatoryRecessButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_MANDATORY_RECESS].setButton("checkmandatoryrecess", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.29), Vector2(pw, ph), enableMandatoryRecessButtonBackground, NULL); //.125, .4
     }
     
     // Mandatory Recess Input
     {
         
-        buttons[BUTTON_MANDATORY_RECESS_NUMBER].setButton("mandatoryrecessnumber", overlays[0], GMM_RELATIVE, Vector2(0.6, 0.40), Vector2(.05, .06), enableMandatoryRecessNumberBackground, NULL);
+        buttons[BUTTON_MANDATORY_RECESS_NUMBER].setButton("mandatoryrecessnumber", overlays[0], GMM_RELATIVE, Vector2(0.53, 0.29), Vector2(.05, .06), enableMandatoryRecessNumberBackground, NULL);
     }
     
     
@@ -708,18 +956,55 @@ void HudStudySettings::initOverlay()
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLE_NEW_NAV].setButton("checknewnav", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.6), Vector2(pw, ph), enableNewNavButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_NEW_NAV].setButton("checknewnav", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.45), Vector2(pw, ph), enableNewNavButtonBackground, NULL);
     }
     // The Enable NewNavNumber Checkbox
     {
         // calculate dimensions for button size and make sure it's square
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
-        buttons[BUTTON_ENABLE_NEW_NAV_NUMBER].setButton("checknewnavnumber", overlays[0], GMM_RELATIVE, Vector2(0.52, 0.65), Vector2(.10, pw), enableNewNavNumberButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_NEW_NAV_NUMBER].setButton("checknewnavnumber", overlays[0], GMM_RELATIVE, Vector2(0.50, 0.50), Vector2(.10, pw), enableNewNavNumberButtonBackground, NULL);
     }
     
+    // The Enable New Sounds Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLE_NEW_SOUNDS].setButton("checknewsounds", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.55), Vector2(pw, ph), enableNewSoundsButtonBackground, NULL);
+    }
     
+    // The Enable IndRecess Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLE_IND_RECESS].setButton("checkindrecess", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.63), Vector2(pw, ph), enableIndRecessButtonBackground, NULL);
+    }
+    // The Enable IndRecessNumber Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLE_IND_RECESS_NUMBER].setButton("checkindrecessnumber", overlays[0], GMM_RELATIVE, Vector2(0.50, 0.68), Vector2(.10, pw), enableIndRecessNumberButtonBackground, NULL);
+    }
     
+    //NewSounds Checkbox
+    if (globals.newSounds)
+    {
+        
+        enableNewSoundsButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableNewSoundsTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+    }
+    else
+    {
+       
+        
+        enableNewSoundsButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableNewSoundsTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        
+    }
+
     
     //This is for no flash(change) in hud
     if (player->newNavEnabled)
@@ -741,6 +1026,28 @@ void HudStudySettings::initOverlay()
         enableNewNavNumberButtonBackground->hide();
         enableNewNavNumberText->hide();
 
+        
+    }
+    
+    if (player->indRecessEnabled)
+    {
+        enableIndRecessButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableIndRecessTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableIndRecessText2Display->show();
+        enableIndRecessNumberButtonBackground->show();
+        enableIndRecessNumberText->show();
+        
+    }
+    else
+    {
+        
+        
+        enableIndRecessButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableIndRecessTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        enableIndRecessText2Display->hide();
+        enableIndRecessNumberButtonBackground->hide();
+        enableIndRecessNumberText->hide();
+        
         
     }
 
@@ -765,6 +1072,25 @@ void HudStudySettings::initOverlay()
         
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxGreen");
         enableHoldoutTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableHoldoutDelayButtonBackground->show();
+        enableHoldoutDelayTextDisplay->show();
+        //HoldoutDelayCheckBox
+        if (player->holdoutdelayEnabled)
+        {
+            enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxGreen");
+            enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+            enableHoldoutDelayNumberButtonBackground->show();
+            enableHoldoutDelayNumberTextDisplay->show();
+        }
+        else
+        {
+            
+            enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxBlank");
+            enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+            enableHoldoutDelayNumberButtonBackground->hide();
+            enableHoldoutDelayNumberTextDisplay->hide();
+            
+        }
         
         
     }
@@ -773,8 +1099,15 @@ void HudStudySettings::initOverlay()
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxBlank");
         enableHoldoutTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
         
+        //Delay:
+        enableHoldoutDelayButtonBackground->hide();
+        enableHoldoutDelayTextDisplay->hide();
+        enableHoldoutDelayNumberButtonBackground->hide();
+        enableHoldoutDelayNumberTextDisplay->hide();
+        
         
     }
+
     
     //Man Recess Checkbox
     if (player->manRecessEnabled)

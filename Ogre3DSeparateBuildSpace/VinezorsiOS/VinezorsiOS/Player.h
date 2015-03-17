@@ -225,16 +225,24 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
+<<<<<<< HEAD
     // Marble Restart Counter of Study Version
+=======
+    //Bernie Added
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     int marbleChoice = 0;
     int choice0RestartCounter = 0;  //Tutorial Counter
     int choice1RestartCounter = 0;
     int choice2RestartCounter = 0;
     int choice3RestartCounter = 0;
+<<<<<<< HEAD
     
     bool fuelEnabled = false;   //For Senior Version!
     bool holdoutEnabled = false; //For Senior Version!
 
+=======
+    //End Bernie Added
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     
     bool fadeMusic;
     float xsTimer; // timer for the three X's display

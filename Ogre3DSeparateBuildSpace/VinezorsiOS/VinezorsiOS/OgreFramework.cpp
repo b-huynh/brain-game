@@ -52,15 +52,14 @@ OgreFramework::OgreFramework()
 #else
     m_ResourcePath = "";
 #endif
-    m_pTrayMgr          = 0;
     m_FrameEvent        = Ogre::FrameEvent();
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 #if defined(OGRE_IS_IOS)
-bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener)
+bool OgreFramework::initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height)
 #else
-bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener, Ogre::RenderTargetListener *pRenderTargetListener)
+bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
 #endif
 {
     new Ogre::LogManager();
@@ -82,6 +81,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pRoot->initialise(false, "");
     
     Ogre::NameValuePairList params;
+    
     params["externalWindowHandle"] = Ogre::StringConverter::toString((unsigned long)uiWindow);
     params["externalViewHandle"] = Ogre::StringConverter::toString((unsigned long)uiView);
     params["contentScalingFactor"] = Ogre::StringConverter::toString((unsigned long)1.0);
@@ -95,12 +95,11 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
 	m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	m_pCameraMain->lookAt(Vector3(0, 0, 0));
 	m_pCameraMain->setNearClipDistance(0.1);
-	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain, 1,
-                                                0.0,
-                                                0.0,
-                                                1.0,
-                                                1.0);
-    m_pViewportMain->getTarget()->addListener(pRenderTargetListener);
+	m_pViewportMain = m_pRenderWnd->addViewport(m_pCameraMain);
+    m_pViewportMain->setCamera(m_pCameraMain);
+    
+    Ogre::OverlaySystem* m_pOverlaySystem = new Ogre::OverlaySystem();
+    m_pSceneMgrMain->addRenderQueueListener(m_pOverlaySystem);
     
 	Ogre::String secName, typeName, archName;
 	Ogre::ConfigFile cf;
@@ -137,34 +136,16 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     }
     
     Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("Bootstrap");
-    
-	m_pTrayMgr = new OgreBites::SdkTrayManager("TrayMgr", m_pRenderWnd, m_pMouse, this);
-    //m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    //m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    m_pTrayMgr->hideCursor();
-    m_pTrayMgr->setListener(this);
-    m_pTrayMgr->setTrayPadding(10.0);
-    Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
-    //  m_quitButton = OgreFramework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_BOTTOMLEFT, "sdkQuitButton", "QUIT", 250);
-    
+
     m_pSoundMgr = OgreOggSound::OgreOggSoundManager::getSingletonPtr();
     m_pSoundMgr->init();
-    /*
-     // Loaded & destroyed online. Note: if you go back to these, make sure to change it to stream
-     m_pSoundMgr->createSound("MusicMenu", "VideoGameSong4.ogg", false, true, true);
-     m_pSoundMgr->createSound("Music1", "Dots5_converted.ogg", false, true, true);
-     m_pSoundMgr->createSound("Music2", "Squares5_converted.ogg", false, true, true);
-     m_pSoundMgr->createSound("Music3", "Fireworks2_converted.ogg", false, true, true);
-     m_pSoundMgr->createSound("Music4", "Flourish2_converted.ogg", false, true, true);
-     m_pSoundMgr->createSound("Music5", "SoundOfWind.ogg", false, true, true);
-     */
+    
     m_pSoundMgr->createSound("SoundGreatFeedback", "ding3up3.wav", false, false, true);
     m_pSoundMgr->createSound("SoundGoodFeedback", "energyup.wav", false, false, true);
     m_pSoundMgr->createSound("SoundBadFeedback", "wrongtriangle.wav", false, false, true);
     m_pSoundMgr->createSound("SoundMissFeedback", "misstriangle.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundBadFeedback", "wrong2.wav", false, false, true);
-    //m_pSoundMgr->createSound("SoundMissFeedback", "wrong.wav", false, false, true);
     m_pSoundMgr->createSound("SoundCollision", "laser.wav", false, false, true);
+<<<<<<< HEAD
     //m_pSoundMgr->createSound("SoundPod1", "pod3a.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod2", "pod4a.wav", false, false, true);
     //m_pSoundMgr->createSound("SoundPod3", "pod1a.wav", false, false, true);
@@ -177,6 +158,11 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
     m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
     m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
     //m_pSoundMgr->createSound("HoldoutPod", "whitenoise.wav", false, false, true);
+=======
+    m_pSoundMgr->createSound("SoundStartup", "shipstartup.wav", false, false, true);
+    m_pSoundMgr->createSound("SoundBoost", "ExhaustSound.wav", false, true, true);
+    m_pSoundMgr->createSound("SoundButtonPress", "menuButton.wav", false, false, true);
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     m_pSoundMgr->createSound("SoundFirework", "distantboom.wav", false, false, true);
     m_pSoundMgr->createSound("SoundDing", "positiveding.wav", false, false, true);
     
@@ -211,14 +197,12 @@ void OgreFramework::requestResize()
 OgreFramework::~OgreFramework()
 {
     if(m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
-    if(m_pTrayMgr)  delete m_pTrayMgr;
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.unload();
 #endif
     if(m_pRoot)     delete m_pRoot;
     
     m_pInputMgr = 0;
-    m_pTrayMgr = 0;
     m_pRoot = 0;
 }
 
@@ -294,7 +278,6 @@ void OgreFramework::updateOgre(float timeSinceLastFrame)
     
     totalElapsed += timeSinceLastFrame;
 	m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-    m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
 }
 
 Ogre::String OgreFramework::getMacBundlePath() const
@@ -303,12 +286,4 @@ Ogre::String OgreFramework::getMacBundlePath() const
     std::cout << "APP DOCUME PATH: " << applicationDocumentsPath() << std::endl;
     //return macBundlePath();
     return applicationDocumentsPath();
-}
-
-void OgreFramework::buttonHit(OgreBites::Button* button)
-{
-    if (button->getName() == "quitButton")
-    {
-        requestOgreShutdown();
-    }
 }

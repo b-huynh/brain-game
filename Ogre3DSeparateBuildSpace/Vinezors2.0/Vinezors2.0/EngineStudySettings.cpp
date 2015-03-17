@@ -74,6 +74,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
         }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
         hud->enableNumpad = false;
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
@@ -85,6 +93,42 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         else
         {
             player->fuelEnabled = true;
+        }
+    }
+    else if (queryGUI == "checknewsounds")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        
+        if(globals.newSounds)
+        {
+            globals.newSounds = false;
+        }
+        else
+        {
+            globals.newSounds = true;
         }
     }
     else if (queryGUI == "checkholdout")
@@ -102,6 +146,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
         }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
         hud->enableNumpad = false;
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
@@ -114,6 +166,73 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         else
         {
             player->holdoutEnabled = true;
+        }
+    }
+    else if (queryGUI == "checkholdoutdelay")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        
+        
+        if(player->holdoutdelayEnabled)
+        {
+            player->holdoutdelayEnabled = false;
+        }
+        else
+        {
+            player->holdoutdelayEnabled = true;
+        }
+    }
+    else if (queryGUI == "checkholdoutdelaynumber")
+    {
+        //Fix OTHER input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        
+        if(player->holdoutdelayEnabled)
+        {
+            //std::cout<<"IND RECESS NUMBER" << std::endl;
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_DELAY;
+            hud->holdoutDelayString = "";
+            
         }
     }
     else if (queryGUI == "checknewnav")
@@ -130,6 +249,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->NEW_NAV_INC)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -156,7 +283,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
         }
-        
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
         if(player->newNavEnabled)
         {
             std::cout<<"New_Nav Number" << std::endl;
@@ -167,6 +301,74 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             
         }
     }
+    else if (queryGUI == "checkindrecess")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        
+        
+        if(player->indRecessEnabled)
+        {
+            player->indRecessEnabled = false;
+        }
+        else
+        {
+            player->indRecessEnabled = true;
+        }
+    }
+    else if(queryGUI == "checkindrecessnumber")
+    {
+        //Fix OTHER input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        
+        if(player->indRecessEnabled)
+        {
+            std::cout<<"IND RECESS NUMBER" << std::endl;
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->IND_RECESS_INC;
+            hud->indRecessString = "";
+            
+        }
+    }
+
     else if (queryGUI == "checkinitspeed")
     {
         //Fix OTHER input fields
@@ -178,7 +380,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
         }
-        
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
         
         //player->initialVelocity = 20;
         hud->enableNumpad = true;
@@ -200,6 +409,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->NEW_NAV_INC)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -225,7 +442,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
         }
-        
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
         //player->initialVelocity = 20;
         if(player->manRecessEnabled)
         {
@@ -269,6 +493,22 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->newNavigationIncAmountString.erase(hud->newNavigationIncAmountString.size()-1,1);
             }
         }
+        //IndRecess Update
+        if( hud->nStatus == hud->IND_RECESS_INC )
+        {
+            if(hud->indRecessString.size() != 0)
+            {
+                hud->indRecessString.erase(hud->indRecessString.size()-1,1);
+            }
+        }
+        //DelayHoldout Update
+        if( hud->nStatus == hud->HOLDOUT_DELAY )
+        {
+            if(hud->holdoutDelayString.size() != 0)
+            {
+                hud->holdoutDelayString.erase(hud->holdoutDelayString.size()-1,1);
+            }
+        }
         
         
     }
@@ -291,9 +531,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "0";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "0";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "0";
             }
         }
         
@@ -318,13 +572,25 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "1";
             }
         }
-        
-        
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "1";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "1";
+            }
+        }
     }
     else if(queryGUI == "numpadbutton2")
     {
@@ -344,9 +610,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "2";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "2";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "2";
             }
         }
         
@@ -370,9 +650,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "3";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "3";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "3";
             }
         }
         
@@ -397,9 +691,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "4";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "4";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "4";
             }
         }
         
@@ -424,9 +732,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "5";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "5";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "5";
             }
         }
         
@@ -451,9 +773,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "6";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "6";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "6";
             }
         }
         
@@ -478,9 +814,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "7";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "7";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "7";
             }
         }
         
@@ -504,9 +854,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "8";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "8";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "8";
             }
         }
         
@@ -530,9 +894,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= "9";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= "9";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= "9";
             }
         }
         
@@ -586,13 +964,54 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 {
                     player->newNavIncrement = 0.00f;
                 }
-                if(player->newNavIncrement > 5.0f) //What do I use!
+                if(player->newNavIncrement > 1.0f) //What do I use!
                 {
-                    player->newNavIncrement = 5.0f;
+                    player->newNavIncrement = 1.0f;
                 }
                 
             }
             hud->newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
+            hud->enableNumpad = false;
+            
+        }
+        
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString != "")
+            {
+                
+                player->indRecessIncrement= std::atof(hud->indRecessString.c_str());
+                if(player->indRecessIncrement < 0.00f) //What do I use!
+                {
+                    player->indRecessIncrement = 0.00f;
+                }
+                if(player->indRecessIncrement > 1.0f) //What do I use!
+                {
+                    player->indRecessIncrement = 1.0f;
+                }
+                
+            }
+            hud->indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+            hud->enableNumpad = false;
+            
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString != "")
+            {
+                
+                player->holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
+                if(player->holdoutdelayNumber < 0.00f) //What do I use!
+                {
+                    player->indRecessIncrement = 0.00f;
+                }
+                if(player->holdoutdelayNumber > 99.9f) //What do I use!
+                {
+                    player->holdoutdelayNumber = 99.9f;
+                }
+                
+            }
+            hud->holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
             hud->enableNumpad = false;
             
         }
@@ -603,9 +1022,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         std::cout<<"Pressed Decimal"<<std::endl;
         if( hud->nStatus == hud->NEW_NAV_INC)
         {
-            if(hud->newNavigationIncAmountString.size() < 4)
+            if(hud->newNavigationIncAmountString.size() < 3)
             {
                 hud->newNavigationIncAmountString+= ".";
+            }
+        }
+        if( hud->nStatus == hud->IND_RECESS_INC)
+        {
+            if(hud->indRecessString.size() < 3)
+            {
+                hud->indRecessString+= ".";
+            }
+        }
+        if( hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            if(hud->holdoutDelayString.size() < 3)
+            {
+                hud->holdoutDelayString+= ".";
             }
         }
     }
@@ -631,6 +1064,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
                 hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;

@@ -51,7 +51,6 @@ void EngineMainSettings::update(float elapsed)
     player->holdoutLB = hud->holdoutLBSlider->getIndex() / 100.0f;
     player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
     player->updateMusicVolume();
-    
  
     if(hud->enterStudySettings)
     {

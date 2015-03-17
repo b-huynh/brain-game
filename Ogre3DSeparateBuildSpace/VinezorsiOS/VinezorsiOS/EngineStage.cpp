@@ -218,13 +218,14 @@ void EngineStage::update(float elapsed)
             std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
             std::cout << "-----------------------------------------\n\n";
             
-            if(player->scheduler->sessionFinished)
+            if(player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
             {
+                // If player has not visited end of session slide yet, set it up
                 std::cout << "\n\n\n===========================================\n"
                 << "Session Finished!\n"
                 << "===========================================\n";
                 player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                player->getTutorialMgr()->setAdditionalText(player->getSessionStats());
+                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
                 
                 // Update session ID before save
                 player->setSessionID(player->getSessionID() + 1);
@@ -249,7 +250,11 @@ void EngineStage::update(float elapsed)
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
                 
+<<<<<<< HEAD
                 //Reset Restart Counters:
+=======
+                //Bernie Add Reset Counters:
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
                 
                 player->choice0RestartCounter = 0;
                 player->choice1RestartCounter = 0;
@@ -695,6 +700,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             else if (queryGUI == "restart")
             {
                 player->reactGUI();
+<<<<<<< HEAD
                
                 
                 
@@ -749,6 +755,61 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                     setPause(false, false);
                 }
                 
+=======
+                //Bernie Added
+                
+                if (!player->levelRequest) // If not a scheduler level
+                {
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice0RestartCounter < 5) && (player->marbleChoice == 0))
+                {
+                    
+                    player->choice0RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                    
+                }
+                
+                else if((player->choice1RestartCounter < 5) && (player->marbleChoice == 1))
+                {
+                    
+                    player->choice1RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice2RestartCounter < 5) && (player->marbleChoice == 2))
+                {
+                    
+                    player->choice2RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice3RestartCounter < 5) && (player->marbleChoice == 3))
+                {
+                    
+                    player->choice3RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
             }
             else if (queryGUI == "levelselect")
             {
@@ -1343,10 +1404,10 @@ void EngineStage::setup()
                 break;
             }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_DIAMOND, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_SPHERE, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_CONE, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
         }
         case PHASE_SOUND_ONLY:
@@ -1365,10 +1426,10 @@ void EngineStage::setup()
                 break;
             }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
         case PHASE_ALL_SIGNAL:
@@ -1426,8 +1487,9 @@ void EngineStage::setup()
         globals.fuelReturn = 4.0f;
     globals.fuelMax = 30.0;
     
-    if (level.durationX == DURATION_SHORT)
+    if (level.phaseX != PHASE_COLLECT)
     {
+<<<<<<< HEAD
         globals.startingHP = 5;
         globals.podBinSize = 8;
     }
@@ -1440,6 +1502,34 @@ void EngineStage::setup()
     {
         globals.startingHP = 3;
         globals.podBinSize = 12;
+=======
+        if (level.durationX == DURATION_SHORT)
+        {
+            globals.startingHP = 5;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 30;
+            globals.stageTotalTargets = 10;
+        }
+        else if (level.durationX == DURATION_NORMAL)
+        {
+            globals.startingHP = 4;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 40;
+            globals.stageTotalTargets = 13;
+        }
+        else
+        {
+            globals.startingHP = 3;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 50;
+            globals.stageTotalTargets = 16;
+        }
+    }
+    else
+    {
+        globals.stageTotalSignals = 120;
+        globals.stageTotalTargets = 40;
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     }
     
     
@@ -1712,19 +1802,34 @@ void EngineStage::setTaskPrompt()
     {
         StageRequest level = player->levelRequest->first;
         PlayerProgress progress = player->levelRequest->second;
+        
+        if (level.phaseX != PHASE_COLLECT)
+        {
+            globals.setMessage("Zap matching " + Util::toStringInt(level.nback) + "-Back fuel", MESSAGE_NORMAL);
+            if (level.phaseX == PHASE_COLOR_SOUND)
+                globals.appendMessage("\nusing Color and Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SHAPE_SOUND)
+                globals.appendMessage("\nusing Shape and Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SOUND_ONLY)
+                globals.appendMessage("\nusing Only Sound", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_ALL_SIGNAL)
+                globals.appendMessage("\nUsing Color, Shape, and Sound", MESSAGE_NORMAL);
+            globals.appendMessage("\n", MESSAGE_NORMAL);
+        }
+        
+        
         float potential = player->modifyNBackDelta(level, progress, 1.0, true);
         if (level.phaseX == PHASE_COLLECT)
-            globals.setMessage("Enjoy the cruise cadet.", MESSAGE_NORMAL);
-        if (potential >= 0.40)
-            globals.setMessage("Stay focused pilot, it's going to get rough.", MESSAGE_NORMAL);
-        else if (potential >= 0.30)
-            globals.setMessage("Good luck cadet.", MESSAGE_NORMAL);
+            globals.appendMessage("\nEnjoy the cruise cadet.", MESSAGE_NORMAL);
+        if (potential >= 0.35)
+            globals.appendMessage("\nStay focused, it's going to get rough.", MESSAGE_NORMAL);
+        else if (potential >= 0.25)
+            globals.appendMessage("\nGood luck cadet.", MESSAGE_NORMAL);
         else
-            globals.setMessage("No worries cadet. You'll do fine.", MESSAGE_NORMAL);
+            globals.appendMessage("\nNo worries cadet. You'll do fine.", MESSAGE_NORMAL);
     }
     else
-        globals.setMessage("Ready to launch?", MESSAGE_NORMAL);
-    globals.appendMessage("\nGather fuel to power the ship", MESSAGE_NORMAL);
+        globals.setMessage("\n\nReady to launch?", MESSAGE_NORMAL);
     globals.appendMessage("\nSet and verify your speed.", MESSAGE_NORMAL);
 }
 

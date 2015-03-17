@@ -44,7 +44,11 @@ void EngineSchedulerMenu::enter()
         player->levelRequest = &player->scheduler->tutorialLevels[1];
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
         
+<<<<<<< HEAD
         //Reset Tutorial Level Counter!
+=======
+        //Bernie Add
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
         player->choice0RestartCounter = 0;
         player->marbleChoice = 0;
     }
@@ -56,23 +60,23 @@ void EngineSchedulerMenu::enter()
         {
             case PHASE_COLOR_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground, 0);
                 break;
             case PHASE_SHAPE_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground, 0);
                 break;
             case PHASE_SOUND_ONLY:
                 player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground, 0);
                 break;
             case PHASE_ALL_SIGNAL:
                 player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground, 0);
                 break;
             case PHASE_COLLECT:
                 player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground, 0);
                 break;
             default:
                 break;
@@ -108,6 +112,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     {
         // If a level is selected, then we can continue,
         // Also make sure it isn't a level selected from the history panel
+        // Bernie Added
         if (player->levelRequest && player->levelRequest->second.rating < 0)
         {
             engineStateMgr->requestPushEngine(ENGINE_STAGE, player);

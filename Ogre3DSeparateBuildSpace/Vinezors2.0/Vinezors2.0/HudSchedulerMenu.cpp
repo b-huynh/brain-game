@@ -81,52 +81,47 @@ void HudSchedulerMenu::update(float elapsed)
     float gameScore = player->scheduler->scoreCurr;
     if (player->levelRequest)
         setSelection();
-    schedulerMenuAverageMemoryText->setCaption("AMM: " + Util::toStringFloat(averageMemoryScore));
-    schedulerMenuScoreCurrText->setCaption("Score: " + Util::toStringInt(gameScore));
-    
-
-    
+    schedulerMenuAverageMemoryText->setCaption(Util::toStringFloat(averageMemoryScore));
+    schedulerMenuScoreCurrText->setCaption(Util::toStringInt(gameScore));
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
 {
     std::string ret = Hud::queryButtons(target);
-    
-    
     if(!player->manRecessEnabled)
     {
-        if (ret == "selection0")
-        {
-            setSelectToIcon(levelOverlayPanels[0].entireBackground);
-        }
-        else if (ret == "selection1")
-        {
-            setSelectToIcon(levelOverlayPanels[1].entireBackground);
-        }
-        else if (ret == "selection2")
-        {
-            setSelectToIcon(levelOverlayPanels[2].entireBackground);
-        }
-        else if (ret == "history0")
-        {
-            setSelectToIcon(historyOverlayPanels[0].entireBackground);
-        }
-        else if (ret == "history1")
-        {
-            setSelectToIcon(historyOverlayPanels[1].entireBackground);
-        }
-        else if (ret == "history2")
-        {
-            setSelectToIcon(historyOverlayPanels[2].entireBackground);
-        }
-        else if (ret == "history3")
-        {
-            setSelectToIcon(historyOverlayPanels[3].entireBackground);
-        }
-        else if (ret == "history4")
-        {
-            setSelectToIcon(historyOverlayPanels[4].entireBackground);
-        }
+    if (ret == "selection0")
+    {
+        setSelectToIcon(levelOverlayPanels[0].entireBackground, 1);
+    }
+    else if (ret == "selection1")
+    {
+        setSelectToIcon(levelOverlayPanels[1].entireBackground, 1);
+    }
+    else if (ret == "selection2")
+    {
+        setSelectToIcon(levelOverlayPanels[2].entireBackground, 1);
+    }
+    else if (ret == "history0")
+    {
+        setSelectToIcon(historyOverlayPanels[0].entireBackground, 0);
+    }
+    else if (ret == "history1")
+    {
+        setSelectToIcon(historyOverlayPanels[1].entireBackground, 0);
+    }
+    else if (ret == "history2")
+    {
+        setSelectToIcon(historyOverlayPanels[2].entireBackground, 0);
+    }
+    else if (ret == "history3")
+    {
+        setSelectToIcon(historyOverlayPanels[3].entireBackground, 0);
+    }
+    else
+    {
+        setSelectToIcon(historyOverlayPanels[4].entireBackground, 0);
+    }
     }
     else
     {
@@ -134,35 +129,35 @@ std::string HudSchedulerMenu::processButtons(Vector2 target)
         {
             if (ret == "selection0")
             {
-                setSelectToIcon(levelOverlayPanels[0].entireBackground);
+                setSelectToIcon(levelOverlayPanels[0].entireBackground, 1);
             }
             else if (ret == "selection1")
             {
-                setSelectToIcon(levelOverlayPanels[1].entireBackground);
+                setSelectToIcon(levelOverlayPanels[1].entireBackground, 1);
             }
             else if (ret == "selection2")
             {
-                setSelectToIcon(levelOverlayPanels[2].entireBackground);
+                setSelectToIcon(levelOverlayPanels[2].entireBackground, 1);
             }
             else if (ret == "history0")
             {
-                setSelectToIcon(historyOverlayPanels[0].entireBackground);
+                setSelectToIcon(historyOverlayPanels[0].entireBackground, 0);
             }
             else if (ret == "history1")
             {
-                setSelectToIcon(historyOverlayPanels[1].entireBackground);
+                setSelectToIcon(historyOverlayPanels[1].entireBackground, 0);
             }
             else if (ret == "history2")
             {
-                setSelectToIcon(historyOverlayPanels[2].entireBackground);
+                setSelectToIcon(historyOverlayPanels[2].entireBackground, 0);
             }
             else if (ret == "history3")
             {
-                setSelectToIcon(historyOverlayPanels[3].entireBackground);
+                setSelectToIcon(historyOverlayPanels[3].entireBackground, 0);
             }
-            else if (ret == "history4")
+            else
             {
-                setSelectToIcon(historyOverlayPanels[4].entireBackground);
+                setSelectToIcon(historyOverlayPanels[4].entireBackground, 0);
             }
         }
     }
@@ -182,9 +177,8 @@ void HudSchedulerMenu::alloc()
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS + NUM_SELECTIONS + SCHEDULE_LEN);
     
-    schedulerMenuBackdrop = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackdrop"));
-    schedulerMenuTitleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuTitleBackground"));
-    schedulerMenuTitleText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuTitleText"));
+    
+    schedulerMenuEntireBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuEntireBackground"));
     
     schedulerMenuScoreCurrBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuScoreCurrBackground"));
     schedulerMenuScoreCurrText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuScoreCurrText"));
@@ -213,19 +207,24 @@ void HudSchedulerMenu::alloc()
     levelDetails.values = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "ScheduleMenuLevelDetailsValues"));
     levelDetails.meritIcon = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "ScheduleMenuLevelDetailsMeritIcon"));
     
-    selectIcon = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSelectIcon"));
-    selectIcon->setPosition(0, 0);
-    selectIcon->setDimensions(0, 0);
+    selectIconHistory = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSelectIconHistory"));
+    selectIconHistory->setPosition(0, 0);
+    selectIconHistory->setDimensions(0, 0);
+    selectIconChoice = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSelectIconChoice"));
+    selectIconChoice->setPosition(0, 0);
+    selectIconChoice->setDimensions(0, 0);
     
     backButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuBackButtonBackground"));
     playButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
+    Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuSelector");
     overlays.push_back(overlay1);
-    overlay1->add2D(schedulerMenuTitleBackground);
-    schedulerMenuTitleBackground->addChild(schedulerMenuTitleText);
-    overlay1->add2D(schedulerMenuBackdrop);
+    overlays.push_back(overlay2);
+    
+    overlay1->add2D(schedulerMenuEntireBackground);
+    
     
     overlay1->add2D(schedulerMenuScoreCurrBackground);
     schedulerMenuScoreCurrBackground->addChild(schedulerMenuScoreCurrText);
@@ -235,13 +234,13 @@ void HudSchedulerMenu::alloc()
     
     for (int i = 0; i < levelOverlayPanels.size(); ++i)
     {
-        schedulerMenuBackdrop->addChild(levelOverlayPanels[i].entireBackground);
+        schedulerMenuEntireBackground->addChild(levelOverlayPanels[i].entireBackground);
         levelOverlayPanels[i].entireBackground->addChild(levelOverlayPanels[i].title);
         levelOverlayPanels[i].entireBackground->addChild(levelOverlayPanels[i].value);
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
     {
-        schedulerMenuBackdrop->addChild(historyOverlayPanels[i].entireBackground);
+        schedulerMenuEntireBackground->addChild(historyOverlayPanels[i].entireBackground);
         historyOverlayPanels[i].entireBackground->addChild(historyOverlayPanels[i].title);
         historyOverlayPanels[i].entireBackground->addChild(historyOverlayPanels[i].value);
     }
@@ -250,9 +249,6 @@ void HudSchedulerMenu::alloc()
     levelDetails.entireBackground->addChild(levelDetails.names);
     levelDetails.entireBackground->addChild(levelDetails.values);
     levelDetails.entireBackground->addChild(levelDetails.meritIcon);
-    
-    overlay1->add2D(selectIcon);
-
     
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(playButtonBackground);
@@ -272,9 +268,8 @@ void HudSchedulerMenu::alloc()
         }
     }
     
-    
-    
-    
+    overlay2->add2D(selectIconHistory);
+    overlay2->add2D(selectIconChoice);
 }
 
 void HudSchedulerMenu::dealloc()
@@ -286,13 +281,11 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerManRecessDisableBackground);
     //End Man Recess Dealloc
     
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuTitleBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuTitleText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuEntireBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuScoreCurrBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuScoreCurrText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuAverageMemoryBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuAverageMemoryText);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(schedulerMenuBackdrop);
     for (int i = 0; i < levelOverlayPanels.size(); ++i)
     {
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelOverlayPanels[i].entireBackground);
@@ -310,10 +303,12 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.names);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.values);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelDetails.meritIcon);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIcon);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
 }
 
 void HudSchedulerMenu::initOverlay()
@@ -329,7 +324,7 @@ void HudSchedulerMenu::initOverlay()
     schedulerManRecessMessageText->setPosition(0.25, 0.15);
     schedulerManRecessMessageText->setCharHeight(0.02 * FONT_SZ_MULT);
     schedulerManRecessMessageText->setFontName("MainSmall");
-    schedulerManRecessMessageText->setCaption("-Input Apollo Text-");
+    schedulerManRecessMessageText->setCaption("Well Done!\nTake a cruise cadet!");
     
     schedulerManRecessPlayButtonBackground->setMaterialName("General/ButtonGoDown");
     
@@ -341,68 +336,54 @@ void HudSchedulerMenu::initOverlay()
     
     //End Man Recess Init
     
-    schedulerMenuTitleBackground->setMetricsMode(GMM_RELATIVE);
-    schedulerMenuTitleBackground->setPosition(0.30, 0.025);
-    schedulerMenuTitleBackground->setDimensions(0.40, 0.20);
+    Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
     
-    schedulerMenuTitleText->setMetricsMode(GMM_RELATIVE);
-    schedulerMenuTitleText->setAlignment(TextAreaOverlayElement::Center);
-    schedulerMenuTitleText->setPosition(0.20, 0.00);
-    schedulerMenuTitleText->setCharHeight(0.046 * FONT_SZ_MULT);
-    schedulerMenuTitleText->setFontName("MainSmall");
-    schedulerMenuTitleText->setCaption("Flight Trainer");
+    schedulerMenuEntireBackground->setMetricsMode(GMM_RELATIVE);
+    schedulerMenuEntireBackground->setPosition(0.00, 0.00);
+    schedulerMenuEntireBackground->setDimensions(1.00, 1.00);
+    schedulerMenuEntireBackground->setMaterialName("General/ScreenBackgroundSchedulerMenu");
     
     schedulerMenuScoreCurrBackground->setMetricsMode(GMM_RELATIVE);
     schedulerMenuScoreCurrBackground->setPosition(0.00, 0.00);
     schedulerMenuScoreCurrBackground->setDimensions(0.00, 0.00);
     schedulerMenuScoreCurrText->setMetricsMode(GMM_RELATIVE);
-    schedulerMenuScoreCurrText->setAlignment(TextAreaOverlayElement::Left);
-    schedulerMenuScoreCurrText->setPosition(0.575, 0.250);
-    schedulerMenuScoreCurrText->setCharHeight(0.020 * FONT_SZ_MULT);
+    schedulerMenuScoreCurrText->setAlignment(TextAreaOverlayElement::Center);
+    schedulerMenuScoreCurrText->setPosition(0.888, 0.136);
+    schedulerMenuScoreCurrText->setCharHeight(0.016 * FONT_SZ_MULT);
     schedulerMenuScoreCurrText->setFontName("MainSmall");
+    schedulerMenuScoreCurrText->setColour(fontColor);
     
     schedulerMenuAverageMemoryBackground->setMetricsMode(GMM_RELATIVE);
     schedulerMenuAverageMemoryBackground->setPosition(0.00, 0.00);
     schedulerMenuAverageMemoryBackground->setDimensions(0.00, 0.00);
     schedulerMenuAverageMemoryText->setMetricsMode(GMM_RELATIVE);
-    schedulerMenuAverageMemoryText->setAlignment(TextAreaOverlayElement::Left);
-    schedulerMenuAverageMemoryText->setPosition(0.575, 0.200);
-    schedulerMenuAverageMemoryText->setCharHeight(0.025 * FONT_SZ_MULT);
+    schedulerMenuAverageMemoryText->setAlignment(TextAreaOverlayElement::Center);
+    schedulerMenuAverageMemoryText->setPosition(0.888, 0.063);
+    schedulerMenuAverageMemoryText->setCharHeight(0.016 * FONT_SZ_MULT);
     schedulerMenuAverageMemoryText->setFontName("MainSmall");
-    
-    schedulerMenuBackdrop->setMetricsMode(GMM_RELATIVE);
-    schedulerMenuBackdrop->setPosition(0.00, 0.025);
-    schedulerMenuBackdrop->setDimensions(1.00, 0.95);
-    schedulerMenuBackdrop->setMaterialName("General/TutorialBackdrop");
+    schedulerMenuAverageMemoryText->setColour(fontColor);
     
     for (int i = 0; i < levelOverlayPanels.size(); ++i)
     {
         std::string buttonName = "selection";
         buttonName += Util::toStringInt(i);
         
-        float iconSize = 0.20f;
-        float iconHeight = iconSize;
-        float iconWidth = iconSize * ((float)globals.screenHeight / globals.screenWidth);
-        Vector2 buttonPos;
-        if (i == 0)
-            buttonPos = Vector2(0.125, 0.40);
-        else if (i == 1)
-            buttonPos = Vector2(0.375, 0.40);
-        else //if (i == 2)
-            buttonPos = Vector2(0.25, 0.65);
+        float iconHeight = 0.224;
+        float iconWidth = 0.292 * ((float)globals.screenHeight / globals.screenWidth);
+        Vector2 buttonPos = Vector2(0.055, 0.278 + (iconHeight + 0.015) * i);
         buttons[NUM_UNIQUE_BUTTONS + i].setButton(buttonName, overlays[0], GMM_RELATIVE, buttonPos, Vector2(iconWidth, iconHeight), levelOverlayPanels[i].entireBackground, NULL);
         
         levelOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         levelOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
-        levelOverlayPanels[i].title->setPosition(iconWidth / 2.0f, -0.025f);
-        levelOverlayPanels[i].title->setCharHeight(0.025 * FONT_SZ_MULT);
+        levelOverlayPanels[i].title->setPosition(iconWidth / 2.0f, 0.0f);
+        levelOverlayPanels[i].title->setCharHeight(0.026 * FONT_SZ_MULT);
         levelOverlayPanels[i].title->setFontName("MainSmall");
-        levelOverlayPanels[i].title->setCaption("Choice " + Util::toStringInt(i + 1));
+        levelOverlayPanels[i].title->setColour(fontColor);
         
         levelOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
         levelOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
         levelOverlayPanels[i].value->setPosition(0.0f, 0.0f);
-        levelOverlayPanels[i].value->setCharHeight(0.020 * FONT_SZ_MULT);
+        levelOverlayPanels[i].value->setCharHeight(0.018 * FONT_SZ_MULT);
         levelOverlayPanels[i].value->setFontName("MainSmall");
     }
     for (int i = 0; i < historyOverlayPanels.size(); ++i)
@@ -410,36 +391,35 @@ void HudSchedulerMenu::initOverlay()
         std::string buttonName = "history";
         buttonName += Util::toStringInt(i);
         
-        float iconSize = 0.125f;
+        float iconSize = 0.134;
         float iconHeight = iconSize;
         float iconWidth = iconSize * ((float)globals.screenHeight / globals.screenWidth);
         
-        buttons[NUM_UNIQUE_BUTTONS + NUM_SELECTIONS + i].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(0.05 + 0.10 * i, 0.15), Vector2(iconWidth, iconHeight), historyOverlayPanels[i].entireBackground, NULL);
+        buttons[NUM_UNIQUE_BUTTONS + NUM_SELECTIONS + i].setButton(buttonName, overlays[0], GMM_RELATIVE, Vector2(0.041 + 0.130 * i, 0.042), Vector2(iconWidth, iconHeight), historyOverlayPanels[i].entireBackground, NULL);
         
         historyOverlayPanels[i].title->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].title->setAlignment(TextAreaOverlayElement::Center);
-        historyOverlayPanels[i].title->setPosition(iconWidth / 2.0f, iconHeight / 2.0f - 0.01f);
-        historyOverlayPanels[i].title->setCharHeight(0.020 * FONT_SZ_MULT);
+        historyOverlayPanels[i].title->setPosition(0, 0);
+        historyOverlayPanels[i].title->setCharHeight(0.016 * FONT_SZ_MULT);
         historyOverlayPanels[i].title->setFontName("MainSmall");
         
         historyOverlayPanels[i].value->setMetricsMode(GMM_RELATIVE);
         historyOverlayPanels[i].value->setAlignment(TextAreaOverlayElement::Center);
-        historyOverlayPanels[i].value->setPosition(iconWidth / 2.0f, -0.02f);
-        historyOverlayPanels[i].value->setCharHeight(0.020 * FONT_SZ_MULT);
+        historyOverlayPanels[i].value->setPosition(iconWidth / 2.0f, iconHeight + 0.010);
+        historyOverlayPanels[i].value->setCharHeight(0.016 * FONT_SZ_MULT);
         historyOverlayPanels[i].value->setFontName("MainSmall");
+        historyOverlayPanels[i].value->setColour(fontColor);
     }
     
     levelDetails.entireBackground->setMetricsMode(GMM_RELATIVE);
-    levelDetails.entireBackground->setPosition(0.555, 0.340);
+    levelDetails.entireBackground->setPosition(0.300, 0.300);
     levelDetails.entireBackground->setDimensions(0.375, 0.575);
-    levelDetails.entireBackground->setMaterialName("General/ScreenBackground2");
     
     levelDetails.title->setMetricsMode(GMM_RELATIVE);
     levelDetails.title->setAlignment(TextAreaOverlayElement::Center);
     levelDetails.title->setPosition(0.10, -0.025);
     levelDetails.title->setCharHeight(0.032 * FONT_SZ_MULT);
     levelDetails.title->setFontName("MainSmall");
-    levelDetails.title->setCaption("Details");
     
     levelDetails.names->setMetricsMode(GMM_RELATIVE);
     levelDetails.names->setAlignment(TextAreaOverlayElement::Left);
@@ -447,12 +427,14 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.names->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.names->setFontName("MainSmall");
     levelDetails.names->setCaption("Type:\nN-Back:\nLength:\nNavigation:\nHoldout:\nPotential:\n\nCompleted:\nMistakes:\nMissed:\nPickups:\nZapped:\nAccuracy:\nEarned:\nMastery:");
+    levelDetails.names->setColour(fontColor);
     
     levelDetails.values->setMetricsMode(GMM_RELATIVE);
     levelDetails.values->setAlignment(TextAreaOverlayElement::Right);
     levelDetails.values->setPosition(levelDetails.entireBackground->getWidth() - 0.025, 0.025);
     levelDetails.values->setCharHeight(0.02 * FONT_SZ_MULT);
     levelDetails.values->setFontName("MainSmall");
+    levelDetails.values->setColour(fontColor);
     
     float meritSize = 0.10f;
     float meritHeight = meritSize;
@@ -462,13 +444,15 @@ void HudSchedulerMenu::initOverlay()
     levelDetails.meritIcon->setDimensions(meritWidth, meritHeight);
     //levelDetails.meritIcon->setMaterialName("General/LevelBarUnavailable");
     
-    selectIcon->setMetricsMode(GMM_RELATIVE);
-    selectIcon->setMaterialName("General/YellowSphereIcon");
+    selectIconHistory->setMetricsMode(GMM_RELATIVE);
+    selectIconHistory->setMaterialName("General/IconSelection");
+    selectIconChoice->setMetricsMode(GMM_RELATIVE);
+    selectIconChoice->setMaterialName("General/BigIconSelection");
     
     // Set up buttons
-    backButtonBackground->setMaterialName("General/BackButton");
-    buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.15, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
-    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.90), Vector2(0.30, 0.08), playButtonBackground, NULL);
+    backButtonBackground->setMaterialName("General/BackButton2");
+    buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
+    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
     buttons[BUTTON_START_MAN_RECESS].setButton("manrecessplay", overlays[0], GMM_RELATIVE, Vector2(0.6, 0.65), Vector2(0.08, 0.09), schedulerManRecessPlayButtonBackground, NULL);
     
     // Needed for some reason to allow materials to be set in update
@@ -483,6 +467,39 @@ void HudSchedulerMenu::link(Player* player)
 void HudSchedulerMenu::unlink()
 {
     this->player = NULL;
+}
+
+void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background, TextAreaOverlayElement* title)
+{
+    // Obtain level progress
+    StageRequest level = levelRequest.first;
+    PlayerProgress progress = levelRequest.second;
+    
+    switch (level.phaseX)
+    {
+        case PHASE_COLOR_SOUND:
+            background->setMaterialName("General/BigIconColorSound");
+            break;
+        case PHASE_SHAPE_SOUND:
+            background->setMaterialName("General/BigIconShapeSound");
+            break;
+        case PHASE_SOUND_ONLY:
+            background->setMaterialName("General/BigIconSoundOnly");
+            break;
+        case PHASE_ALL_SIGNAL:
+            background->setMaterialName("General/BigIconAllSignal");
+            break;
+        case PHASE_COLLECT:
+            background->setMaterialName("General/BigIconRecess");
+            break;
+        default:
+            background->setMaterialName("General/IconNone");
+            break;
+    }
+    if (level.phaseX != PHASE_COLLECT)
+        title->setCaption(Util::toStringInt(levelRequest.first.nback) + "-Back");
+    else
+        title->setCaption("Recess");
 }
 
 void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background)
@@ -509,7 +526,7 @@ void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRe
             background->setMaterialName("General/IconRecess");
             break;
         default:
-            background->setMaterialName("General/LevelBarUnavailable");
+            background->setMaterialName("General/IconNone");
             break;
     }
 }
@@ -518,9 +535,9 @@ void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRe
 void HudSchedulerMenu::clearSelection()
 {
     // Reset all icons (so that we reset the selected item displayed)
-    setIconBasedOnLevel(player->scheduleChoice1, levelOverlayPanels[0].entireBackground);
-    setIconBasedOnLevel(player->scheduleChoice2, levelOverlayPanels[1].entireBackground);
-    setIconBasedOnLevel(player->scheduleChoice3, levelOverlayPanels[2].entireBackground);
+    setBigIconBasedOnLevel(player->scheduleChoice1, levelOverlayPanels[0].entireBackground, levelOverlayPanels[0].title);
+    setBigIconBasedOnLevel(player->scheduleChoice2, levelOverlayPanels[1].entireBackground, levelOverlayPanels[1].title);
+    setBigIconBasedOnLevel(player->scheduleChoice3, levelOverlayPanels[2].entireBackground, levelOverlayPanels[2].title);
     setScheduleHistory();
     
     // Clear the level details display since we're resetting the level selected
@@ -718,11 +735,32 @@ void HudSchedulerMenu::setSelection()
 // Assigns a transparent yellow glow to the icon we are selecting (the parameter)
 // Since all overlay elements are by relative width and height, we can set the size
 // of the glowy circle to the size of the icon element
-void HudSchedulerMenu::setSelectToIcon(PanelOverlayElement* icon)
+void HudSchedulerMenu::setSelectToIcon(PanelOverlayElement* icon, int mode)
 {
-    selectIcon->setPosition(icon->_getDerivedLeft(), icon->_getDerivedTop());
-    selectIcon->setWidth(icon->getWidth());
-    selectIcon->setHeight(icon->getHeight());
+    if (mode == 0)
+    {
+        float selectIconWidth = 0.1225;
+        float selectIconHeight = 0.1424;
+        float mainIconWidth = icon->getWidth();
+        float mainIconHeight = icon->getHeight();
+        selectIconHistory->setPosition(icon->_getDerivedLeft() - (selectIconWidth - mainIconWidth) / 2, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
+        selectIconHistory->setWidth(selectIconWidth);
+        selectIconHistory->setHeight(selectIconHeight);
+        selectIconHistory->show();
+        selectIconChoice->hide();
+    }
+    else
+    {
+        float selectIconWidth = 0.2617;
+        float selectIconHeight = 0.2224;
+        float mainIconWidth = icon->getWidth();
+        float mainIconHeight = icon->getHeight();
+        selectIconChoice->setPosition(icon->_getDerivedLeft() - (selectIconWidth - mainIconWidth) / 2, icon->_getDerivedTop() - (selectIconHeight - mainIconHeight) / 2);
+        selectIconChoice->setWidth(selectIconWidth);
+        selectIconChoice->setHeight(selectIconHeight);
+        selectIconChoice->show();
+        selectIconHistory->hide();
+    }
 }
 
 
@@ -739,7 +777,7 @@ void HudSchedulerMenu::setScheduleHistory()
         historyOverlayPanels[0].value->setCaption(Util::toStringFloat(player->scheduler->nBackLevelA));
     }
     else
-        historyOverlayPanels[0].entireBackground->setMaterialName("General/LevelBarUnavailable");
+        historyOverlayPanels[0].entireBackground->setMaterialName("General/IconNone");
     int sizeB = player->scheduler->scheduleHistoryB.size();
     if (sizeB > 0)
     {
@@ -748,7 +786,7 @@ void HudSchedulerMenu::setScheduleHistory()
         historyOverlayPanels[1].value->setCaption(Util::toStringFloat(player->scheduler->nBackLevelB));
     }
     else
-        historyOverlayPanels[1].entireBackground->setMaterialName("General/LevelBarUnavailable");
+        historyOverlayPanels[1].entireBackground->setMaterialName("General/IconNone");
     int sizeC = player->scheduler->scheduleHistoryC.size();
     if (sizeC > 0)
     {
@@ -757,7 +795,7 @@ void HudSchedulerMenu::setScheduleHistory()
         historyOverlayPanels[2].value->setCaption(Util::toStringFloat(player->scheduler->nBackLevelC));
     }
     else
-        historyOverlayPanels[2].entireBackground->setMaterialName("General/LevelBarUnavailable");
+        historyOverlayPanels[2].entireBackground->setMaterialName("General/IconNone");
     int sizeD = player->scheduler->scheduleHistoryD.size();
     if (sizeD > 0)
     {
@@ -766,7 +804,7 @@ void HudSchedulerMenu::setScheduleHistory()
         historyOverlayPanels[3].value->setCaption(Util::toStringFloat(player->scheduler->nBackLevelD));
     }
     else
-        historyOverlayPanels[3].entireBackground->setMaterialName("General/LevelBarUnavailable");
+        historyOverlayPanels[3].entireBackground->setMaterialName("General/IconNone");
     int sizeE = player->scheduler->scheduleHistoryE.size();
     if (sizeE > 0)
     {
@@ -775,6 +813,6 @@ void HudSchedulerMenu::setScheduleHistory()
         historyOverlayPanels[4].value->setCaption(Util::toStringFloat(player->scheduler->nBackLevelE));
     }
     else
-        historyOverlayPanels[4].entireBackground->setMaterialName("General/LevelBarUnavailable");
+        historyOverlayPanels[4].entireBackground->setMaterialName("General/IconNone");
     
 }

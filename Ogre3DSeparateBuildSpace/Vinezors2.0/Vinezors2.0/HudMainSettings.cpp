@@ -151,7 +151,7 @@ void HudMainSettings::update(float elapsed)
     }
     
     if (player->soundVolume <= 0.0)
-        soundVolumeSliderWarning->setCaption("Certain features will be disabled");
+        soundVolumeSliderWarning->setCaption("Certain features require sound");
     else
         soundVolumeSliderWarning->setCaption("");
 }
@@ -700,7 +700,7 @@ void HudMainSettings::initOverlay()
     holdoutUBSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
     holdoutUBSliderBallBackground->setMaterialName("General/SpeedSliderBallHorizontal");
     
-    backButtonBackground->setMaterialName("General/BackButton");
+    backButtonBackground->setMaterialName("General/BackButton1");
     controlSettingsButtonBackground->setMaterialName("General/ControlSettingsButton");
     studySettingsButtonBackground->setMaterialName("General/StudySettingsButton");
     numpadBackground->setMaterialName("General/NumpadBackground");

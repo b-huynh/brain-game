@@ -135,9 +135,6 @@ void Pod::loadFuelCell()
             generateHoldoutEffect();
             break;
         default:
-            if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodPurple";
-            }
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/fuelPenta.mesh");
             headContentEntity->getSubEntity(1)->setMaterialName("General/PodMetal"); // Assign with no specular
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
@@ -148,7 +145,8 @@ void Pod::loadFuelCell()
         headContentEntity->getSubEntity(0)->setMaterialName("General/PodMetal"); // Assign with no specular
         headContentEntity->getSubEntity(1)->setMaterialName(materialName);
     }
-    if( podShape != POD_SHAPE_HOLDOUT ) head->attachObject(headContentEntity);
+    if( podShape != POD_SHAPE_HOLDOUT )
+        head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
     head->translate(v / 2);
@@ -173,25 +171,22 @@ void Pod::loadCrystal()
     switch (podShape)
     {
         case POD_SHAPE_CONE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/cylinder.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/cylinder.mesh");
             break;
         case POD_SHAPE_SPHERE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/cuboid.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/cuboid.mesh");
             break;
         case POD_SHAPE_DIAMOND:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/star.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/star.mesh");
             break;
         case POD_SHAPE_TRIANGLE:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/tri.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/tri.mesh");
             break;
         case POD_SHAPE_HOLDOUT:
             generateHoldoutEffect();
             break;
         default:
-            if( podSignal == POD_SIGNAL_UNKNOWN ) {
-                materialName = "General/PodPurple";
-            }
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/2015/3Dstar.mesh");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "FuelCell/3Dstar.mesh");
             headContentEntity->getSubEntity(0)->setMaterialName(materialName);
             break;
     }
@@ -218,6 +213,9 @@ void Pod::loadCrystal()
     if( podShape != POD_SHAPE_HOLDOUT )
     {
         head->attachObject(headContentEntity);
+        if( podSignal == POD_SIGNAL_UNKNOWN ) {
+            uncloakPod();
+        }
     }
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
@@ -329,27 +327,44 @@ void Pod::loadPowerup()
 // Creates an individual pod sound
 void Pod::loadSignalSound()
 {
+    std::string pod1sound = "pod3a.wav";
+    std::string pod2sound = "pod4a.wav";
+    std::string pod3sound = "pod1a.wav";
+    std::string pod4sound = "pod2a.wav";
+    std::string holdoutsound = "holdouta.wav";
+    
+    if(globals.newSounds)
+    {
+        //use new sounds
+        pod1sound = "pod3b.wav";
+        pod2sound = "pod4b.wav";
+        pod3sound = "pod1b.wav";
+        pod4sound = "pod2b.wav";
+        holdoutsound = "holdoutb.wav";
+    }
+   
     switch (podSound)
     {
         case POD_SOUND_1:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod3b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod1sound, false, false, true);
             break;
         case POD_SOUND_2:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod4b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod2sound, false, false, true);
             break;
         case POD_SOUND_3:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod1b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod3sound, false, false, true);
             break;
         case POD_SOUND_4:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "pod2b.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod4sound, false, false, true);
             break;
         case POD_SOUND_HOLDOUT:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), "holdoutb.wav", false, false, true);
+            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), holdoutsound, false, false, true);
             break;
         default:
             signalSound = NULL;
             break;
     }
+    // signal sound volume is set in player
 }
 
 PodMeshType Pod::getMeshType() const
@@ -618,11 +633,14 @@ void Pod::uncloakPod()
         case POD_COLOR_PURPLE:
             materialName = "General/PodPurple";
             break;
+        case POD_COLOR_ORANGE:
+            materialName = "General/PodOrange";
+            break;
         case POD_COLOR_HOLDOUT:
             materialName = "General/PodUnknown";
             break;
         default:
-            materialName = "General/PodPurple";
+            materialName = "General/PodUnknown";
             break;
     }
     if (podTaken || isIndicatorVisible())

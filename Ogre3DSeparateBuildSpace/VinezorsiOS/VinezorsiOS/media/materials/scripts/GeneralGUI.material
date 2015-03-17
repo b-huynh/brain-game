@@ -9,7 +9,7 @@ material General/IconRecess
             depth_write off
             texture_unit
             {
-                texture iconRecess.png
+                texture history_icon_recess.png
             }
         }
     }
@@ -26,7 +26,7 @@ material General/IconColorSound
             depth_write off
             texture_unit
             {
-                texture iconColorSound.png
+                texture history_icon_colorsound.png
             }
         }
     }
@@ -43,7 +43,7 @@ material General/IconShapeSound
             depth_write off
             texture_unit
             {
-                texture iconShapeSound.png
+                texture history_icon_shapesound.png
             }
         }
     }
@@ -60,7 +60,7 @@ material General/IconSoundOnly
             depth_write off
             texture_unit
             {
-                texture iconSoundOnly.png
+                texture history_icon_soundonly.png
             }
         }
     }
@@ -77,48 +77,189 @@ material General/IconAllSignal
             depth_write off
             texture_unit
             {
-                texture iconAllSig.png
+                texture history_icon_allsignal.png
             }
         }
     }
 }
 
-material General/ScreenBackground1
+material General/IconNone
 {
     technique
     {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
+        pass
         {
-            texture tutorial_frame.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture history_icon_none.png
+            }
         }
-      } 
     }
 }
 
-material General/ScreenBackground2
+material General/IconSelection
 {
     technique
     {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
+        pass
         {
-            texture screenbackground2.png
-            //texture tutorial_screen.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture history_selector.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
         }
-      } 
+    }
+}
+
+<<<<<<< HEAD
+material General/PauseNav
+=======
+material General/BigIconRecess
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+{
+    technique
+    {
+        pass
+        {
+<<<<<<< HEAD
+            texture pause_nav.png
+=======
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_recess.png
+            }
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+        }
+    }
+}
+
+<<<<<<< HEAD
+material General/PauseGrayPlay
+=======
+material General/BigIconColorSound
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+{
+    technique
+    {
+        pass
+        {
+<<<<<<< HEAD
+            texture pause_grayplay.png
+=======
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_colorsound.png
+            }
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+        }
+    }
+}
+
+<<<<<<< HEAD
+material General/PauseGrayForward
+=======
+material General/BigIconShapeSound
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+{
+    technique
+    {
+        pass
+        {
+<<<<<<< HEAD
+            texture pause_grayforward.png
+=======
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_shapesound.png
+            }
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+        }
+    }
+}
+
+<<<<<<< HEAD
+material General/PauseGrayBack
+=======
+material General/BigIconSoundOnly
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+{
+    technique
+    {
+        pass
+        {
+<<<<<<< HEAD
+            texture pause_grayback.png
+=======
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_icon_soundonly.png
+            }
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+        }
+    }
+}
+
+<<<<<<< HEAD
+material General/PauseGrayMenu
+=======
+material General/BigIconAllSignal
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+<<<<<<< HEAD
+                texture pause_graymenu.png
+=======
+                texture choice_icon_allsignal.png
+            }
+        }
+    }
+}
+
+material General/BigIconSelection
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture choice_selector.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
+            }
+        }
     }
 }
 
@@ -148,43 +289,25 @@ material General/ScreenBackgroundMainMenu
         depth_write off
         texture_unit
         {
-            texture title1.jpg
+            texture title1.png	
         }
       } 
     }
 }
 
-material General/ButtonBackground
+material General/ScreenBackgroundSchedulerMenu
 {
     technique
     {
       pass
       {
         lighting off
-        scene_blend alpha_blend
         depth_write off
         texture_unit
         {
-            texture displaybackground.png
+            texture sched_background.png
         }
-      } 
-    }
-}
-
-material General/EndTallyBackground
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture score_splash.png
-        }
-      } 
+      }
     }
 }
 
@@ -292,120 +415,6 @@ material General/PauseGrayMenu
     }
 }
 
-material General/LevelSelectButtonRound
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundlevelselect.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/NextButtonRound
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundnext.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/NextButtonRoundGRAY
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundnextGRAY.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/RestartButtonRound
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundrestart.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/ResumeButtonRound
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundresume.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/ResumeButtonRoundGRAY
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture buttonroundresumeGRAY.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
 material General/PauseButton
 {
     technique
@@ -425,44 +434,6 @@ material General/PauseButton
     }
 }
 
-material General/PauseButtonYellow
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture pause_buttonyellow.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/PauseButtonGray
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture pause_buttongray.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
 material General/ButtonGoDown
 {
     technique
@@ -475,63 +446,6 @@ material General/ButtonGoDown
         texture_unit
         {
             texture nextButtonBlue.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/ButtonGoDownGray
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture nextButtonBlue.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/ButtonGoUp
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture arrowL.png
-            tex_border_colour 0 0 0 0
-            tex_address_mode border
-        }
-      } 
-    }
-}
-
-material General/ButtonGoUpGray
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture arrowL.png
             tex_border_colour 0 0 0 0
             tex_address_mode border
         }
@@ -611,40 +525,6 @@ material General/CheckboxBlank
     }
 }
 
-material General/TextArtMainTitle
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture maintitle.png
-			}
-		}
-	}
-}
-
-material General/TextArtCreditsTitle
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture creditstitle.png
-			}
-		}
-	}
-}
-
 material General/PlayButton
 {
 	technique
@@ -656,7 +536,7 @@ material General/PlayButton
             depth_write off
 			texture_unit
 			{
-				texture buttonroundplay.png
+				texture play_button.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -675,26 +555,7 @@ material General/PlayButtonGray
             depth_write off
 			texture_unit
 			{
-				texture buttonroundplayGRAY.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-			}
-		}
-	}
-}
-
-material General/CreditsButton
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture buttoncredits.png
+				texture play_button_disabled.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
 			}
@@ -721,7 +582,7 @@ material General/ControlSettingsButton
     }
 }
 
-material General/BackButton
+material General/BackButton1
 {
 	technique
 	{
@@ -738,6 +599,25 @@ material General/BackButton
 			}
 		}
 	}
+}
+
+material General/BackButton2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture back_button.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
 }
 
 material General/DefaultsButton
@@ -770,25 +650,6 @@ material General/ExitButton
             depth_write off
 			texture_unit
 			{
-				texture buttonexit.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-			}
-		}
-	}
-}
-
-material General/ExitButton2
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
 				texture exitButtonBlue.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
@@ -797,6 +658,7 @@ material General/ExitButton2
 	}
 }
 
+<<<<<<< HEAD
 material General/TextArtLevelSelection
 {
 	technique
@@ -833,6 +695,8 @@ material General/GUIMainHudEntire
     }
 }
 
+=======
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
 material General/GUIMainHudLeft
 {
 	technique
@@ -866,6 +730,318 @@ material General/GUIMainHudBar
 				texture hud-eblue_top.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
+<<<<<<< HEAD
+			}
+		}
+	}
+}
+
+material General/GUIMainHudRight
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_right.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudDip
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_dip.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudLeftShifter
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture hud-eblue_lshifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+			}
+		}
+	}
+}
+
+material General/GUIMainHudLeftShifterPressed
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_lshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifter
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudRightShifterPressed
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_rshifter_pressed.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIMainHudShifterOff
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture hud-eblue_shifter_off.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIFuelContainer
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture barcontainer.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIFuelBar
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture barblue.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUIBrokenBar
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture barwhite.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+            }
+        }
+    }
+}
+
+material General/GUICollection0Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score0a.png
+			}
+		}
+	}
+}
+
+material General/GUICollection0Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+                texture score0b.png
+			}
+		}
+	}
+}
+
+material General/GUICollection1Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score1a.png
+			}
+		}
+	}
+}
+
+material General/GUICollection1Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score1b.png
+			}
+		}
+	}
+}
+
+material General/GUICollection2Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score2a.png
+			}
+		}
+	}
+}
+
+material General/GUICollection2Filled
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score2b.png
+			}
+		}
+	}
+}
+
+material General/GUICollection3Blank
+{
+	technique
+	{
+		pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+			texture_unit
+			{
+				texture score3a.png
+=======
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
 			}
 		}
 	}
@@ -1248,314 +1424,6 @@ material General/GUICollectionGreyed
 	}
 }
 
-material General/GUIToggleTextNumber0
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay0.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber1
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay1.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber2
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay2.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber3
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay3.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber4
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay4.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber5
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay5.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber6
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay6.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber7
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay7.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber8
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay8.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleTextNumber9
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture numberdisplay9.png
-            }
-		}
-	}
-}
-
-material General/GUIToggleButton
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture speed0slot.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-            }
-		}
-	}
-}
-
-material General/GUIToggleIndicator
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture pointer.png
-            }
-		}
-	}
-}
-
-material General/GUIPowerupButtonBlank
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture no_up.png
-            }
-		}
-	}
-}
-
-material General/GUIPowerupButton0
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture up0.png
-            }
-		}
-	}
-}
-
-material General/GUIPowerupButton1
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture up1.png
-            }
-		}
-	}
-}
-
-material General/GUIPowerupButton2
-{
-	technique
-	{
-		pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-			texture_unit
-			{
-				texture up2.png
-            }
-		}
-	}
-}
-
-material General/PlanetAvailable
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture BlueStar.png
-        }
-      } 
-    }
-}
-
-material General/PlanetUnavailable
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        scene_blend alpha_blend
-        depth_write off
-        texture_unit
-        {
-            texture GrayPlanet.png
-        }
-      } 
-    }
-}
-
 material General/LevelBarUnavailable
 {
     technique
@@ -1812,44 +1680,3 @@ material General/SpeedSliderBallHorizontal
       } 
     }
 }
-
-material General/YellowSphereIcon
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture brightyellowsphere.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-            }
-        }
-    }
-}
-
-
-material General/Circle
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-            texture_unit
-            {
-                texture circle.png
-                tex_border_colour 0 0 0 0
-                tex_address_mode border
-            }
-        }
-    }
-}
-
-

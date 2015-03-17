@@ -54,11 +54,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "436727585.605094"
+            timestampString = "446419356.736954"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
             landmarkName = "OgreApp::activatePerformSwipeUp()"
             landmarkType = "5">
          </BreakpointContent>
@@ -80,11 +80,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "436727585.605094"
+            timestampString = "446419356.736954"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "639"
-            endingLineNumber = "639">
+            startingLineNumber = "638"
+            endingLineNumber = "638">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/OgreApp.cpp"
-            timestampString = "436727585.605094"
+            timestampString = "446195979.592795"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "OgreApp::setupDemoScene()"
             landmarkType = "5">
          </BreakpointContent>
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "444590024.502877"
+            timestampString = "446161557.976788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1334"
-            endingLineNumber = "1334"
+            startingLineNumber = "1335"
+            endingLineNumber = "1335"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
             <Locations>
@@ -299,7 +299,11 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "800"
             endingLineNumber = "800"
+<<<<<<< HEAD
             landmarkName = "HudStage::setPauseNavSettings(bool resumeAvail, bool forwardAvail, bool menuAvail, bool backAvail)"
+=======
+            landmarkName = "HudStage::setCollectionBar(bool instant, float elapsed)"
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -342,11 +346,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VinezorsiOS/EngineStage.cpp"
-            timestampString = "444590024.502877"
+            timestampString = "446161557.976788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "552"
-            endingLineNumber = "552"
+            startingLineNumber = "553"
+            endingLineNumber = "553"
             landmarkName = "EngineStage::activatePerformSingleTap(float x, float y)"
             landmarkType = "5">
          </BreakpointContent>

@@ -56,23 +56,23 @@ void EngineSchedulerMenu::enter()
         {
             case PHASE_COLOR_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryA.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[0].entireBackground, 0);
                 break;
             case PHASE_SHAPE_SOUND:
                 player->levelRequest = &player->scheduler->scheduleHistoryB.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[1].entireBackground, 0);
                 break;
             case PHASE_SOUND_ONLY:
                 player->levelRequest = &player->scheduler->scheduleHistoryC.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[2].entireBackground, 0);
                 break;
             case PHASE_ALL_SIGNAL:
                 player->levelRequest = &player->scheduler->scheduleHistoryD.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[3].entireBackground, 0);
                 break;
             case PHASE_COLLECT:
                 player->levelRequest = &player->scheduler->scheduleHistoryE.back();
-                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground);
+                hud->setSelectToIcon(hud->historyOverlayPanels[4].entireBackground, 0);
                 break;
             default:
                 break;
@@ -116,11 +116,31 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
             }
         }
 
-        
     }
     else if(queryGUI == "manrecessplay")
     {
-        std::cout<<"Make Man Recess the level request and request the pushback to engine!"<<std::endl;
+        /*std::cout<<"Make Man Recess the level request and request the pushback to engine!"<<std::endl;
+        //Push the level request for a recess level!
+        //player->levelRequest = &player->scheduleChoice1;
+        bool holdout = false;
+        double shift = 0.0;
+        int currentUNL = (int)round(player->scheduler->nBackLevelE);
+        double playerSkill;
+        //If Recess and indRecess Enabled, we use another UNL!
+        if(player->indRecessEnabled)
+        {
+            playerSkill = player->indRecessNBackLevel;
+            currentUNL = (int)round(player->indRecessNBackLevel);
+            
+        }
+        double nBackRounded = (int)round(playerSkill + shift);
+        
+        std::pair<StageRequest, PlayerProgress> node;
+        node.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,player->newNavEnabled);
+        player->levelRequest = &node;
+        engineStateMgr->requestPushEngine(ENGINE_STAGE, player);*/
+    
+        
     }
     else if (queryGUI == "play")
     {

@@ -26,23 +26,37 @@ public:
     //Enable NumPad:
     bool enableNumpad = false;
     
+    
     //InitSpeed
     std::string initSpeedString = "";
     
     //ManRecess
     std::string manRecessString = "";
     
-    //HoldoutDelay
-    std::string holdoutDelayString = "";
-    
     //Senior Navigation
     std::string newNavigationIncAmountString = "";
+    
+    //IndRecess
+    std::string indRecessString = "";
+    
+    //Holdout Delay
+    std::string holdoutDelayString = "";
+    
+    //SessionStartTime
+    std::string sessionStartTimeString = "";
+    
+    //SessionEndTime
+    std::string sessionEndtimeString = "";
+    
+    //NumberofSessions
+    std::string numOfSessionsString = "";
     
     bool showDecimal = false;
     
     enum NumpadStatus {
         
-        NONE, INIT_VELOCITY, MAN_RECESS, HOLDOUT_DELAY, NEW_NAV_INC
+        NONE, INIT_VELOCITY, MAN_RECESS, HOLDOUT_DELAY, NEW_NAV_INC, IND_RECESS_INC, SESSION_START_TIME, SESSION_END_TIME,
+        NUM_OF_SESSIONS
         
     };
     
@@ -51,13 +65,16 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 24;
+    static const int NUM_UNIQUE_BUTTONS = 31;
     enum Buttons {
         BUTTON_BACK,BUTTON_ENABLE_UNLIMITED_FUEL, BUTTON_ENABLE_HOLDOUT, BUTTON_INPUT_INIT_SPEED, BUTTON_ENABLE_MANDATORY_RECESS,
         BUTTON_MANDATORY_RECESS_NUMBER, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3,
         BUTTON_NUMPAD_4, BUTTON_NUMPAD_5, BUTTON_NUMPAD_6, BUTTON_NUMPAD_7, BUTTON_NUMPAD_8,
         BUTTON_NUMPAD_9, BUTTON_NUMPAD_BACK, BUTTON_NUMPAD_SAVE, BUTTON_NUMPAD_DECIMAL, NUMPAD_BG,
-        BUTTON_ENABLE_HOLDOUT_DELAY, BUTTON_HOLDOUT_DELAY_NUMBER, BUTTON_ENABLE_NEW_NAV, BUTTON_ENABLE_NEW_NAV_NUMBER
+        BUTTON_ENABLE_HOLDOUT_DELAY, BUTTON_HOLDOUT_DELAY_NUMBER, BUTTON_ENABLE_NEW_NAV, BUTTON_ENABLE_NEW_NAV_NUMBER, BUTTON_ENABLE_NEW_SOUNDS,
+        BUTTON_ENABLE_IND_RECESS, BUTTON_ENABLE_IND_RECESS_NUMBER, BUTTON_ENABLE_SESSION_SETTINGS, BUTTON_SESSION_START_NUMBER, BUTTON_SESSION_END_NUMBER,
+        BUTTON_NUM_OF_SESSIONS_NUMBER
+        
     };
     
     // Overlay items for GAME_STATE_MENU
@@ -133,12 +150,12 @@ protected:
     TextAreaOverlayElement* numpadButton_Decimal_TextDisplay;
     
     //Holdout Delay Checkbox
-    /*PanelOverlayElement* enableHoldoutDelayBackground;
+    PanelOverlayElement* enableHoldoutDelayBackground;
     TextAreaOverlayElement* enableHoldoutDelayTextDisplay;
     PanelOverlayElement* enableHoldoutDelayButtonBackground;
     
     TextAreaOverlayElement* enableHoldoutDelayNumberTextDisplay;
-    PanelOverlayElement* enableHoldoutDelayNumberButtonBackground;*/
+    PanelOverlayElement* enableHoldoutDelayNumberButtonBackground;
     
     //New Nav Checkbox
     PanelOverlayElement* enableNewNavBackground;
@@ -148,6 +165,18 @@ protected:
     PanelOverlayElement* enableNewNavNumberButtonBackground;
     TextAreaOverlayElement* enableNewNavNumberText;
 
+    //New Sounds Checkbox
+    PanelOverlayElement* enableNewSoundsBackground;
+    TextAreaOverlayElement* enableNewSoundsTextDisplay;
+    PanelOverlayElement* enableNewSoundsButtonBackground;
+    
+    //Independent Recess
+    PanelOverlayElement* enableIndRecessBackground;
+    TextAreaOverlayElement* enableIndRecessTextDisplay;
+    PanelOverlayElement* enableIndRecessButtonBackground;
+    TextAreaOverlayElement* enableIndRecessText2Display;
+    PanelOverlayElement* enableIndRecessNumberButtonBackground;
+    TextAreaOverlayElement* enableIndRecessNumberText;
 
     
     

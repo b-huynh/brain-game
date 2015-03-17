@@ -1805,14 +1805,22 @@ void Tunnel::presetTargets()
     std::vector<int> binIndices(NUM_BINS);
     for (int i = 0; i < binIndices.size(); ++i)
         binIndices[i] = i;
+    int times = 0;
     while (itemsLeft > 0)
     {
-        int rind = rand() % binIndices.size();
+        // For fairness when we select random bins, don't select the last bin the first time.
+        // This is to ensure a target is placed in a bin the player can reach.
+        int rind = 0;
+        if (times > 0)
+            rind = rand() % (binIndices.size());
+        else
+            rind = rand() % (binIndices.size() - 1);
         binItemCounts[binIndices[rind]]++;
         
         binIndices[rind] = binIndices[binIndices.size() - 1];
         binIndices.pop_back();
         --itemsLeft;
+        ++times;
     }
     
     // Now that we have our bins, we assign positions in those bins for good signals

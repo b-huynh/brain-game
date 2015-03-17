@@ -54,7 +54,7 @@
 #    define OGRE_STATIC_GLES 1
 #    ifdef OGRE_USE_GLES2
 #      define OGRE_STATIC_GLES2 1
-#      define USE_RTSHADER_SYSTEM
+#      define INCLUDE_RTSHADER_SYSTEM
 #      undef OGRE_STATIC_GLES
 #    endif
 #    ifdef __OBJC__
@@ -76,7 +76,7 @@ using namespace OgreOggSound;
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #ifdef OGRE_IS_IOS
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>
 #else
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
 #endif
@@ -86,9 +86,9 @@ public:
 	~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height);
 #else
-	bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+	bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
 #endif
 	void updateOgre(float timeSinceLastFrame);
     
@@ -136,7 +136,6 @@ public:
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
-	OgreBites::SdkTrayManager*  m_pTrayMgr;
 protected:
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
@@ -145,6 +144,7 @@ private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator= (const OgreFramework&);
     
+    OgreBites::SdkTrayManager*  m_pTrayMgr;
     Ogre::FrameEvent            m_FrameEvent;
 	int                         m_iNumScreenShots;
     

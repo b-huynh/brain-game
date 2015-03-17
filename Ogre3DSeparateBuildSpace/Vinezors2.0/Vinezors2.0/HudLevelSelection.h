@@ -37,7 +37,6 @@ protected:
     
     // Overlay items for GAME_STATE_MENU
     PanelOverlayElement* levelSelectEntireBackground;
-    PanelOverlayElement* levelSelectPromptBackground;
     TextAreaOverlayElement* levelSelectPromptText;
     
     // Container of all the overlay elements to make this level selection icon

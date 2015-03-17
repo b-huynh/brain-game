@@ -1042,7 +1042,7 @@ std::string Util::toStringInt(int value)
 std::string Util::toStringFloat(float value)
 {
     std::stringstream ss;
-    ss << std::setprecision(3) << std::fixed;
+    ss << std::setprecision(2) << std::fixed;
 	ss << value;
 	return ss.str();
 }

@@ -1807,7 +1807,9 @@ void Player::newTunnel(const std::string & nameMusic)
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
+    if (soundMusic) soundMusic->setVolume(musicVolume);
     
     boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
     
@@ -1873,6 +1875,7 @@ void Player::startMenu()
         if (soundMusic) OgreFramework::getSingletonPtr()->m_pSoundMgr->destroySound(soundMusic);
         soundMusic = NULL;
         soundMusic = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound(nameMusic, Util::getMusicFile(nameMusic), true, true, true);
+        soundMusic->setVolume(musicVolume);
     }
     if (soundMusic)
     {
@@ -1968,6 +1971,7 @@ void Player::playSound(OgreOggSound::OgreOggISound* sound) const
     if (sound)
     {
         sound->setVolume(soundVolume);
+        sound->stop();
         sound->play();
     }
 }
@@ -2604,6 +2608,7 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->numWrong = numWrongTotal;
         levelResult->numSafe = numSafeTotal;
         levelResult->numMissed = numMissedTotal;
+        levelResult->numPickups = numPickupsTotal;
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
@@ -2709,7 +2714,7 @@ bool Player::saveStage(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Tunnel Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% SegEncNW { '0'=no panel, '1'=empty panel, '2'=player, '3'=match, '4'=nonmatch, '5'=obstacle, '6'=time warp }" << endl;
             out << "% SegEncN" << endl;
@@ -2730,7 +2735,7 @@ bool Player::saveStage(std::string file)
             out << "% Player Fuel Buffer { -inf, inf }" << endl;
             out << "% Player Loc { 0=Northwest ... 7=West }" << endl;
             out << "% Pod Loc { -1=N/A, 0=Northwest ... 7=West }" << endl;
-            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5=recess }" << endl;
+            out << "% Pod Color { -1=N/A, 0-3, 4=holdout, 5/6=special }" << endl;
             out << "% Pod Shape { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Sound { -1=N/A, 0-3, 4=holdout }" << endl;
             out << "% Pod Match { -1=N/A, 0=No, 1=Yes }" << endl;
@@ -2825,7 +2830,7 @@ bool Player::saveActions(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Action Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Event Number { 0, inf }" << endl;
             out << "% Level Number { 0, inf }" << endl;
@@ -2925,7 +2930,7 @@ bool Player::saveSession(std::string file)
     if (out.good()) {
         if (newFile) {
             out << "% Session Log: " << endl;
-            out << "% debug seed: " << seed << endl;
+            out << "% Recall Log Version 2.0 debug seed: " << seed << endl;
             out << "%" << endl;
             out << "% Ways to compute:" << endl;
             out << "% Total Zapped - TP + FP" << endl;
@@ -3199,7 +3204,7 @@ void Player::initSettings()
 
 void Player::feedLevelRequestFromSchedule()
 {
-    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(holdoutEnabled,newNavEnabled);
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(holdoutEnabled,newNavEnabled,indRecessEnabled,indRecessNBackLevel,holdoutdelayEnabled,holdoutdelayNumber);
     scheduleChoice1 = choices[0];
     scheduleChoice2 = choices[1];
     scheduleChoice3 = choices[2];
@@ -3221,8 +3226,16 @@ float Player::obtainDifficultyWeight(StageRequest level, PlayerProgress assessme
     
     float nBackChallenge = getMemoryChallenge(level, assessment);
     if (level.phaseX == PHASE_COLLECT)
+    {
+        valMemory = 0.0;
+        if(indRecessEnabled)
+        {
+            valMemory = 1.0;
+        }
+        
         //valMemory = 1.0;    // Don't penalize or benefit on memory if it's recess
-        valMemory = 0.0;    // Recess is now worth jack
+        //valMemory = 0.0;    // Recess is now worth jack
+    }
     else if ( nBackChallenge < -0.5 )
     {
         // easy memory
@@ -3278,11 +3291,34 @@ float Player::getMemoryChallenge(StageRequest level, PlayerProgress assessment) 
 
 float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude)
 {
+    //If Ind Recess Enabled, Use other increment!
+    
+    
+    
+    
     // Base nBackDelta increment/decrement (-0.35 <= nBackDelta <= 0.35)
     float softcaptemp;
-    if(newNavEnabled)
+    float nBackChallenge = getMemoryChallenge(level, assessment);
+    bool tooEasy = nBackChallenge < -0.5;
+    if(indRecessEnabled && level.phaseX == PHASE_COLLECT)
     {
-        softcaptemp = newNavIncrement;
+        
+        softcaptemp = indRecessIncrement;
+    }
+    else if(newNavEnabled)
+    {
+        
+        
+        if(tooEasy)
+        {
+            softcaptemp = newNavIncrement;
+            
+        }
+        else
+        {
+            softcaptemp = 0.35;
+
+        }
     }
     else
     {
@@ -3380,8 +3416,14 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // it is zero'd out and the difference is added into skill level.
     switch (level.phaseX) {
         case PHASE_COLLECT:
+            //Added this: Do i need to update playerskill?
+            indRecessNBackLevel += nBackDelta;
+            //std::cout<<"RECESS: NBackDelta: "<<nBackDelta<<std::endl;
             scheduler->nBackLevelE += nBackDelta;
-            if (scheduler->nBackLevelE < 0.0) scheduler->nBackLevelE = 0.0;
+            if (scheduler->nBackLevelE < 0.0)
+            {
+                scheduler->nBackLevelE = 0.0;
+            }
             playerSkill = scheduler->nBackLevelE;
             playerOffset = 0.0;
             break;
@@ -3518,7 +3560,6 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     {
         scheduler->playCount++;
         manRecessCount++;
-        //std::cout<<"---------MAN RECESS COUNT-----------"<<manRecessCount<< std::endl;
         
     }
     

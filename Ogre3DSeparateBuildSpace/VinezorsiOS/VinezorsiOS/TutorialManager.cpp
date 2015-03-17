@@ -84,7 +84,11 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
     {
         comments.push_back("Good cadet,\nbut you can do better.");
         comments.push_back("Try again,\nthis time faster.");
+<<<<<<< HEAD
         comments.push_back("You made it cadet.\nYou could do better though.");
+=======
+        comments.push_back("You made it cadet. You\ncould do better though.");
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
         comments.push_back("Is that's your best cadet?\nBecause I don't think so.");
         //comments.push_back("You cleared it cadet! A bit\nlackluster on the finish though."); // too long
         comments.push_back("You cleared it cadet! A bit\nlackluster on the finish.");
@@ -102,7 +106,11 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
         comments.push_back("Your work here is done.");
         comments.push_back("The tunnel is cleared.\nLet's move out.");
         comments.push_back("Perfect. Simply perfect.");
+<<<<<<< HEAD
         comments.push_back("Well done ace!");
+=======
+        comments.push_back("You're a cadet no longer.\nLet's go pilot!");
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     }
     
     if (comments.size() <= 0)
@@ -198,7 +206,7 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("", "General/TutorialBackdropLined", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("\n\n  Good work today!\n\n Make sure you take\n     a break.\n\n   You earned it!", "General/TutorialBackdrop", ""));
             break;
         default:
             break;
@@ -329,13 +337,13 @@ void TutorialManager::updateOverlay()
     popupSubWindowBackground->setMaterialName(subwindowbg);
     if (isSpecial())
     {
-        popupGoRightBackground->setMaterialName("General/ExitButton2");
+        popupGoRightBackground->setMaterialName("General/ExitButton");
         popupExitBackground->setMaterialName("");
     }
     else
     {
         popupGoRightBackground->setMaterialName("General/ButtonGoDown");
-        popupExitBackground->setMaterialName("General/ExitButton2");
+        popupExitBackground->setMaterialName("General/ExitButton");
     }
 }
 
@@ -654,7 +662,11 @@ bool TutorialManager::processInput(Vector2 target)
                 Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
                 label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
                 label7->setCharHeight(0.025 * FONT_SZ_MULT);
+<<<<<<< HEAD
                 label7->setCaption("Try again or continue?");
+=======
+                label7->setCaption("\nTry again or continue?");
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
 
                 if (fireworkNode)
                 {
@@ -703,7 +715,6 @@ void TutorialManager::adjust()
     popupWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupWindowBackground->setPosition(0.250, yoffset + 0.25);
     popupWindowBackground->setDimensions(0.50, 0.50);
-    //popupWindowBackground->setMaterialName("General/ScreenBackground1");
     
     popupSubWindowBackground->setMetricsMode(GMM_RELATIVE);
     popupSubWindowBackground->setPosition(0.250, yoffset + 0.25);
@@ -838,5 +849,7 @@ std::istream& operator>>(std::istream& in, TutorialManager& tutorialMgr)
         in >> input;
         tutorialMgr.visitedSlide[i] = input;
     }
+    tutorialMgr.visitedSlide[TutorialManager::TUTORIAL_END_OF_SESSION] = false;
+    
     return in;
 }

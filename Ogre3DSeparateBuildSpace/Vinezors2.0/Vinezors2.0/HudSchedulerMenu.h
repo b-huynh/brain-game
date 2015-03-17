@@ -29,7 +29,7 @@ public:
     // Set the hud to reflect the current item selected by the player
     void setSelection();
     
-    void setSelectToIcon(PanelOverlayElement* icon);
+    void setSelectToIcon(PanelOverlayElement* icon, int mode);
     
     static const int NUM_SELECTIONS = 3;
     static const int SCHEDULE_LEN = 5;
@@ -42,9 +42,7 @@ protected:
         BUTTON_BACK, BUTTON_PLAY, BUTTON_START_MAN_RECESS
     };
     
-    PanelOverlayElement* schedulerMenuBackdrop;
-    PanelOverlayElement* schedulerMenuTitleBackground;
-    TextAreaOverlayElement* schedulerMenuTitleText;
+    PanelOverlayElement* schedulerMenuEntireBackground;
     
     PanelOverlayElement* schedulerMenuScoreCurrBackground;
     TextAreaOverlayElement* schedulerMenuScoreCurrText;
@@ -80,7 +78,8 @@ protected:
     std::vector<LevelOverlayElement> levelOverlayPanels;
 public:
     std::vector<LevelOverlayElement> historyOverlayPanels;
-    PanelOverlayElement* selectIcon;
+    PanelOverlayElement* selectIconHistory;
+    PanelOverlayElement* selectIconChoice;
 protected:
     DescriptionOverlayElement levelDetails;
     

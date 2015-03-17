@@ -50,7 +50,7 @@ public:
     
 protected:
     Player* player;
-    const int PASSWORD[4] = {1,1,1,1};
+    const int PASSWORD[4] = {3,1,4,1};
     
     static const int NUM_UNIQUE_BUTTONS = 16;
     enum Buttons {

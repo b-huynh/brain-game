@@ -198,19 +198,19 @@ void HudStage::update(float elapsed)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nToo many unstable zaps");
+            label7->setCaption("\nBlast\nToo many unstable zaps");
         }
         else if (tunnel->getEval() == EVEN)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nWe've run out of Fuel");
+            label7->setCaption("\nBlast\nWe've run out of Fuel");
         }
         else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
         {
             label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
             label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("Blast\nWe've run out of Time");
+            label7->setCaption("\nBlast\nWe've run out of Time");
         }
     }
 }
@@ -317,8 +317,6 @@ void HudStage::alloc()
     rightZapperButtonBackground = static_cast<PanelOverlayElement*>(
                                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRightZapperButtonBackground"));
     
-    circleBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCircleBackground"));
-    
     buttons = std::vector<HudButton>(8);
     
     // Create an overlay, and add the panel
@@ -378,8 +376,6 @@ void HudStage::alloc()
     
     overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
-    
-    overlay1->add2D(circleBackground);
     
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
@@ -518,7 +514,6 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rightZapperButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(circleBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[2]);
@@ -638,7 +633,7 @@ void HudStage::initOverlay()
     
     label7->setMetricsMode(GMM_RELATIVE);
     label7->setAlignment(TextAreaOverlayElement::Center);
-    label7->setPosition(0.50, 0.15);
+    label7->setPosition(0.50, 0.12);
     label7->setFontName("MainSmall");
     
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);
@@ -695,6 +690,7 @@ void HudStage::initOverlay()
     goBaseBackground->setPosition(0.325, 0.675 + goOffset);
     goBaseBackground->setDimensions(0.35, 0.35);
     
+<<<<<<< HEAD
     float relCircleHeight = 0.30;
     float relCircleWidth = 0.30 * AR;
     circleBackground->setMetricsMode(GMM_RELATIVE);
@@ -702,6 +698,8 @@ void HudStage::initOverlay()
     circleBackground->setDimensions(relCircleWidth, relCircleHeight);
     //circleBackground->setMaterialName("General/Circle");
     
+=======
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     float qheight = 0.085;
     float qwidth = qheight * AR;
     // Sets positions in local 2D space (relative to entire pause nav)
@@ -725,11 +723,14 @@ void HudStage::initOverlay()
     pauseBaseBackground->setMaterialName("General/PauseBase");
     goBaseBackground->setMaterialName("General/PauseBase");
     
+<<<<<<< HEAD
     //resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
     //nextButtonBackground->setMaterialName("General/NextButtonRound");
     //restartButtonBackground->setMaterialName("General/RestartButtonRound");
     //levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
     
+=======
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
     nbackDisplayBackground->setPosition(0.910, 0.205);
     nbackDisplayBackground->setDimensions(0.075, 0.08);
@@ -928,17 +929,24 @@ void HudStage::setFuelBar(float elapsed)
     float totalWidth = 0.180;
     float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
     HudFuelBar->setDimensions(percentFuel * totalWidth, 0.056);
+<<<<<<< HEAD
+=======
+    
+    
+>>>>>>> 2d6a258041a97a8de0cb96b4aceb6c9560c0c3cc
     
     /*
-    if (tunnel->getFuelTimer() > prevFuelTimer)
+     // Animates fuel growth and shrinking to simulate fuel filling the container
+     if (tunnel->getFuelTimer() > prevFuelTimer)
         fuelBarAnimationTimer = 1.0f;
-    prevFuelTimer = tunnel->getFuelTimer();
-    
-    if (fuelBarAnimationTimer > 0.0f)
+     prevFuelTimer = tunnel->getFuelTimer();
+     
+     if (fuelBarAnimationTimer > 0.0f)
         fuelBarAnimationTimer -= 4 * elapsed;
-    else
+     else
         fuelBarAnimationTimer = 0.0f;
-    
+     
+     // Deals with fuel split into multiple containers depleting from the furthest to the right first
     float sz = 0.005 * Ogre::Math::Sin(Ogre::Math::PI * fuelBarAnimationTimer);
     float totalWidth = 0.1725;
     float numBars = globals.startingHP;
