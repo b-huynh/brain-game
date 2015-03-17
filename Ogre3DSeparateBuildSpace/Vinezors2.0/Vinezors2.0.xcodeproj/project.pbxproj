@@ -559,7 +559,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# This shell script simply copies resources into their respective locations\nmkdir -p \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Frameworks\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Plugins\"\nditto \"$OGRE_SDK_ROOT/lib/release/Ogre.framework\" \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Frameworks/Ogre.framework\"\nditto \"$OGRE_SDK_ROOT/lib/RenderSystem_GL.dylib\" \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Plugins/\"\nditto \"$PROJECT_DIR/$PROJECT_NAME/media/\" \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Resources/media/\"\nditto $PROJECT_DIR/$PROJECT_NAME/*.cfg \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Resources/\"\n";
+			shellScript = "# This shell script simply copies resources into their respective locations\nmkdir -p \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Frameworks\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Plugins\"\nditto \"$PROJECT_DIR/$PROJECT_NAME/media/\" \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Resources/media/\"\nditto $PROJECT_DIR/$PROJECT_NAME/*.cfg \"$BUILT_PRODUCTS_DIR/Vinezors2.0.app/Contents/Resources/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

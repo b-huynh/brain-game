@@ -465,6 +465,7 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
     LevelPhase lastPlayed;
+    int rerollCounter;
     
     void feedLevelRequestFromSchedule();
     

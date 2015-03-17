@@ -39,7 +39,7 @@ protected:
     
     static const int NUM_UNIQUE_BUTTONS = 2 + NUM_SELECTIONS + SCHEDULE_LEN;
     enum Buttons {
-        BUTTON_BACK, BUTTON_PLAY
+        BUTTON_BACK, BUTTON_PLAY, BUTTON_REROLL
     };
     
     PanelOverlayElement* schedulerMenuEntireBackground;
@@ -77,6 +77,7 @@ protected:
     
     PanelOverlayElement* backButtonBackground;
     PanelOverlayElement* playButtonBackground;
+    PanelOverlayElement* rerollButtonBackground;
     
     void link(Player* player);
     void unlink();

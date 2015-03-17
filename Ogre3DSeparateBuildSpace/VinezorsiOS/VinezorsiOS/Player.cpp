@@ -44,6 +44,8 @@ Player::Player()
     tutorialMgr = new TutorialManager();
     
     lastPlayed = PHASE_UNKNOWN;
+    rerollCounter = 2;
+    
     fadeMusic = false;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -71,6 +73,8 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     tutorialMgr = new TutorialManager();
     
     lastPlayed = PHASE_UNKNOWN;
+    rerollCounter = 2;
+    
     fadeMusic = true;
     xsTimer = 0.0f;
     musicVolume = 0.50f;
@@ -3067,6 +3071,7 @@ bool Player::saveProgress(std::string file)
     out << "sessionID" << " " << sessionID << std::endl;
     out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
     out << "scheduler1.0" << " " << (*scheduler) << std::endl;
+    out << "rerollCounter" << " " << rerollCounter << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
@@ -3134,6 +3139,8 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> (*tutorialMgr);
     else if (paramName == "scheduler1.0")
         in >> (*scheduler);
+    else if (paramName == "rerollCounter")
+        in >> rerollCounter;
     else if (paramName == "levelSize")
     {
         int size;

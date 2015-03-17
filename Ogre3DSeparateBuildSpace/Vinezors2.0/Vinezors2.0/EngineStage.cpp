@@ -1804,5 +1804,6 @@ void EngineStage::setPause(bool value, bool targetAllSounds)
 void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
+    player->rerollCounter = 2;
     player->saveAllResults(eval);
 }
