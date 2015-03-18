@@ -40,6 +40,10 @@ void HudStudySettings::initStrings()
     indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
     holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
     initSpeedString = Util::toStringInt(player->initialVelocity);
+    sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+    sessionEndtimeString= Util::toStringInt(player->sessionEndTime);
+    numOfSessionsString = Util::toStringInt(player->numOfSessions);
+
     
 }
 
@@ -57,6 +61,9 @@ void HudStudySettings::update(float elapsed)
     enableNewNavNumberText->setCaption(newNavigationIncAmountString);
     enableIndRecessNumberText->setCaption(indRecessString);
     enableHoldoutDelayNumberTextDisplay->setCaption(holdoutDelayString);
+    sessionStartTimeNumberTextDisplay->setCaption(sessionStartTimeString);
+    sessionEndTimeNumberTextDisplay->setCaption(sessionEndtimeString);
+    sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
     if(player->enableSettingsPasscode)
     {
@@ -226,6 +233,10 @@ void HudStudySettings::update(float elapsed)
             enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
             enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
             enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
 
         }
         else if(nStatus == MAN_RECESS)
@@ -235,6 +246,11 @@ void HudStudySettings::update(float elapsed)
             enableMandatoryRecessNumberBackground->setMaterialName("General/SelectedInput");
             enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
             enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+
 
 
         }
@@ -245,6 +261,11 @@ void HudStudySettings::update(float elapsed)
             enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
             enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
             enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+
 
 
         }
@@ -255,6 +276,10 @@ void HudStudySettings::update(float elapsed)
             enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
             enableIndRecessNumberButtonBackground->setMaterialName("General/SelectedInput");
             enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
 
             
         }
@@ -265,6 +290,54 @@ void HudStudySettings::update(float elapsed)
             enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
             enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
             enableHoldoutDelayNumberButtonBackground->setMaterialName("General/SelectedInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+            
+            
+        }
+        else if(nStatus == SESSION_START_TIME)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/SelectedInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+            
+            
+        }
+        else if(nStatus == SESSION_END_TIME)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/SelectedInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+            
+            
+            
+        }
+        else if(nStatus == NUM_OF_SESSIONS)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/SelectedInput");
+            
+            
             
             
         }
@@ -277,6 +350,10 @@ void HudStudySettings::update(float elapsed)
         enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
         enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
         enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+        sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+        sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+        sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
 
     }
 
@@ -381,6 +458,22 @@ void HudStudySettings::alloc()
     enableSettingsPasscodeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsEnableSettingsPasscodeText"));
     enableSettingsPasscodeButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableSettingsPasscodeButtonBackground"));
     
+    //Session StartTime
+    sessionTimeSettingsBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsSesstionTimeSettingsBackground"));
+    sessionStartTimeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionStartTimeText"));
+    sessionStartTimeNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsessionStartTimeNumberBackground"));
+    sessionStartTimeNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionStartTimeNumberTextDisplay"));
+    
+    //Session End Time
+    sessionEndTimeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionStartEndTimeTextDisplay"));
+    sessionEndTimeNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingssessionEndTimeNumberBackground"));
+    sessionEndTimeNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionEndTimeNumberTextDisplay"));
+    
+    //Session Num Time
+    sessionNumTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionNumTextDisplay"));
+    sessionNumNumberBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingssessionNumNumberBackground"));
+    sessionNumNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionNumNumberTextDisplay"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -429,6 +522,28 @@ void HudStudySettings::alloc()
     overlay1->add2D(enableUnlimitedFuelBackground);
     enableUnlimitedFuelBackground->addChild(enableUnlimitedFuelTextDisplay);
     overlay1->add2D(enableUnlimitedFuelButtonBackground);
+    
+    
+    //Session Start Time and End Time and Num Sessions
+    //Session Num Time
+    
+    
+    overlay1->add2D(sessionTimeSettingsBackground);
+    sessionTimeSettingsBackground->addChild(sessionStartTimeTextDisplay);
+    sessionTimeSettingsBackground->addChild(sessionEndTimeTextDisplay);
+    sessionTimeSettingsBackground->addChild(sessionNumTextDisplay);
+
+    
+    overlay1->add2D(sessionStartTimeNumberBackground);
+    overlay1->add2D(sessionEndTimeNumberBackground);
+    overlay1->add2D(sessionNumNumberBackground);
+
+
+    sessionStartTimeNumberBackground->addChild(sessionStartTimeNumberTextDisplay);
+    sessionEndTimeNumberBackground->addChild(sessionEndTimeNumberTextDisplay);
+    sessionNumNumberBackground->addChild(sessionNumNumberTextDisplay);
+
+
     
     //Passcode Checkbox
     overlay1->add2D(enableSettingsPasscodeBackground);
@@ -580,6 +695,23 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeButtonBackground);
+    
+    //Session StartTime
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionTimeSettingsBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionStartTimeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionStartTimeNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionStartTimeNumberTextDisplay);
+
+    //Session End Time
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionEndTimeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionEndTimeNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionEndTimeNumberTextDisplay);
+
+    //Session Num Time
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionNumTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionNumNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionNumNumberTextDisplay);
+
 
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
@@ -590,6 +722,60 @@ void HudStudySettings::dealloc()
 void HudStudySettings::initOverlay()
 {
 
+    //Session Num Sessions
+    sessionNumTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionNumTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    sessionNumTextDisplay->setPosition(0.46, 0.07);
+    sessionNumTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    sessionNumTextDisplay->setFontName("MainSmall");
+    sessionNumTextDisplay->setCaption("#: ");
+    
+    sessionNumNumberBackground->setMaterialName("General/BlankInput");
+    
+    sessionNumNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionNumNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionNumNumberTextDisplay->setPosition(0.04, 0.0);
+    sessionNumNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    sessionNumNumberTextDisplay->setFontName("MainSmall");
+
+    //Session EndTime
+    sessionEndTimeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionEndTimeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    sessionEndTimeTextDisplay->setPosition(0.27, 0.07);
+    sessionEndTimeTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    sessionEndTimeTextDisplay->setFontName("MainSmall");
+    sessionEndTimeTextDisplay->setCaption("Max: ");
+    
+    sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+    
+    sessionEndTimeNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionEndTimeNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionEndTimeNumberTextDisplay->setPosition(0.04, 0.0);
+    sessionEndTimeNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    sessionEndTimeNumberTextDisplay->setFontName("MainSmall");
+
+    
+    //Session StartTime
+    sessionTimeSettingsBackground->setMetricsMode(GMM_RELATIVE);
+    sessionTimeSettingsBackground->setPosition(0.055, 0.72);
+    sessionTimeSettingsBackground->setDimensions(0.60, 0.10);
+    
+    sessionStartTimeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionStartTimeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    sessionStartTimeTextDisplay->setPosition(0.0, 0.07);
+    sessionStartTimeTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    sessionStartTimeTextDisplay->setFontName("MainSmall");
+    sessionStartTimeTextDisplay->setCaption("Time Min: ");
+    
+    sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+    
+    sessionStartTimeNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionStartTimeNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionStartTimeNumberTextDisplay->setPosition(0.04, 0.0);
+    sessionStartTimeNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    sessionStartTimeNumberTextDisplay->setFontName("MainSmall");
+
+    
     
     //Passcode Checkbox
     enableSettingsPasscodeBackground->setMetricsMode(GMM_RELATIVE);
@@ -982,6 +1168,22 @@ void HudStudySettings::initOverlay()
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
         buttons[BUTTON_ENABLE_PASSCODE].setButton("checksettingspasscode", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.73), Vector2(pw, ph), enableSettingsPasscodeButtonBackground, NULL); //Position: .125,.20
+    }
+    
+    // The Session Start Time
+    {
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_SESSION_START_NUMBER].setButton("sessionstarttime", overlays[0], GMM_RELATIVE, Vector2(0.23, 0.78), Vector2(.08, .06), sessionStartTimeNumberBackground, NULL);
+    }
+    // The Session End Time
+    {
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_SESSION_END_NUMBER].setButton("sessionendtime", overlays[0], GMM_RELATIVE, Vector2(0.42, 0.78), Vector2(.08, .06), sessionEndTimeNumberBackground, NULL);
+    }
+    // The Session Num
+    {
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_NUM_OF_SESSIONS_NUMBER].setButton("sessionnum", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.78), Vector2(.08, .06), sessionNumNumberBackground, NULL);
     }
     
     

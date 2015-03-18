@@ -255,8 +255,8 @@ public:
     
     bool enableSettingsPasscode = false;
     
-    bool sessionTimeSettings = false;
-    int sessionStartTime = 20;
+    //bool sessionTimeSettings = false;
+    int sessionStartTime = 8; //In Minutes
     int sessionEndTime = 30;
     int numOfSessions = 20;
     

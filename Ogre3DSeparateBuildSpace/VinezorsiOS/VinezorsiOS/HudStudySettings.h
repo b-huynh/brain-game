@@ -186,7 +186,21 @@ protected:
     PanelOverlayElement* enableSettingsPasscodeButtonBackground;
 
     
+    //Session Start Time
+    PanelOverlayElement* sessionTimeSettingsBackground;
+    TextAreaOverlayElement* sessionStartTimeTextDisplay;
+    PanelOverlayElement* sessionStartTimeNumberBackground;
+    TextAreaOverlayElement* sessionStartTimeNumberTextDisplay;
     
+    //Session End Time
+    TextAreaOverlayElement* sessionEndTimeTextDisplay;
+    PanelOverlayElement* sessionEndTimeNumberBackground;
+    TextAreaOverlayElement* sessionEndTimeNumberTextDisplay;
+    
+    //Session Num Time
+    TextAreaOverlayElement* sessionNumTextDisplay;
+    PanelOverlayElement* sessionNumNumberBackground;
+    TextAreaOverlayElement* sessionNumNumberTextDisplay;
     
     void link(Player* player);
     void unlink();

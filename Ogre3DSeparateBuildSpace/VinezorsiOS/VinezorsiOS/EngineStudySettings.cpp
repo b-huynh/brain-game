@@ -82,6 +82,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         hud->enableNumpad = false;
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
@@ -117,6 +129,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -154,6 +178,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         hud->enableNumpad = false;
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
@@ -189,6 +225,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -227,6 +275,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         hud->enableNumpad = false;
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
@@ -241,6 +301,118 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             player->holdoutdelayEnabled = true;
         }
     }
+    else if (queryGUI == "sessionstarttime")
+    {
+        //Fix OTHER input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
+        hud->enableNumpad = true;
+        hud->showDecimal = false;
+        hud->nStatus = hud->SESSION_START_TIME;
+        hud->sessionStartTimeString = "";
+
+    }
+    else if (queryGUI == "sessionendtime")
+    {
+        //Fix OTHER input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
+        hud->enableNumpad = true;
+        hud->showDecimal = false;
+        hud->nStatus = hud->SESSION_END_TIME;
+        hud->sessionEndtimeString = "";
+        
+    }
+    else if (queryGUI == "sessionnum")
+    {
+        //Fix OTHER input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        hud->enableNumpad = true;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NUM_OF_SESSIONS;
+        hud->numOfSessionsString = "";
+        
+    }
+
     else if (queryGUI == "checkholdoutdelaynumber")
     {
         //Fix OTHER input fields
@@ -260,7 +432,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
         }
-        
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         if(player->holdoutdelayEnabled)
         {
             //std::cout<<"IND RECESS NUMBER" << std::endl;
@@ -293,6 +476,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -327,6 +522,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         if(player->newNavEnabled)
         {
             std::cout<<"New_Nav Number" << std::endl;
@@ -359,6 +566,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -393,7 +612,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
-        
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         if(player->indRecessEnabled)
         {
             std::cout<<"IND RECESS NUMBER" << std::endl;
@@ -424,7 +654,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
-        
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
         //player->initialVelocity = 20;
         hud->enableNumpad = true;
         hud->showDecimal = false;
@@ -453,6 +694,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -485,6 +738,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
             hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
         //player->initialVelocity = 20;
         if(player->manRecessEnabled)
@@ -542,6 +807,30 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString.erase(hud->holdoutDelayString.size()-1,1);
             }
         }
+        //SessionStartTime Update
+        if( hud->nStatus == hud->SESSION_START_TIME )
+        {
+            if(hud->sessionStartTimeString.size() != 0)
+            {
+                hud->sessionStartTimeString.erase(hud->sessionStartTimeString.size()-1,1);
+            }
+        }
+        //SessionEndTime Update
+        if( hud->nStatus == hud->SESSION_END_TIME )
+        {
+            if(hud->sessionEndtimeString.size() != 0)
+            {
+                hud->sessionEndtimeString.erase(hud->sessionEndtimeString.size()-1,1);
+            }
+        }
+        //SessionNum Update
+        if( hud->nStatus == hud->NUM_OF_SESSIONS )
+        {
+            if(hud->numOfSessionsString.size() != 0)
+            {
+                hud->numOfSessionsString.erase(hud->numOfSessionsString.size()-1,1);
+            }
+        }
         
         
     }
@@ -581,6 +870,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             if(hud->holdoutDelayString.size() < 3)
             {
                 hud->holdoutDelayString+= "0";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "0";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "0";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "0";
             }
         }
         
@@ -624,6 +934,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "1";
             }
         }
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "1";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "1";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "1";
+            }
+        }
     }
     else if(queryGUI == "numpadbutton2")
     {
@@ -662,7 +993,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "2";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "2";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "2";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "2";
+            }
+        }
     }
     else if(queryGUI == "numpadbutton3")
     {
@@ -702,7 +1053,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "3";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "3";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "3";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "3";
+            }
+        }
         
     }
     else if(queryGUI == "numpadbutton4")
@@ -743,7 +1114,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "4";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "4";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "4";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "4";
+            }
+        }
         
     }
     else if(queryGUI == "numpadbutton5")
@@ -782,6 +1173,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             if(hud->holdoutDelayString.size() < 3)
             {
                 hud->holdoutDelayString+= "5";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "5";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "5";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "5";
             }
         }
         
@@ -825,7 +1237,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "6";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "6";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "6";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "6";
+            }
+        }
         
     }
     else if(queryGUI == "numpadbutton7")
@@ -866,7 +1298,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "7";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "7";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "7";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "7";
+            }
+        }
     }
     else if(queryGUI == "numpadbutton8")
     {
@@ -904,6 +1356,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             if(hud->holdoutDelayString.size() < 3)
             {
                 hud->holdoutDelayString+= "8";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "8";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "8";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "8";
             }
         }
         
@@ -946,7 +1419,27 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->holdoutDelayString+= "9";
             }
         }
-        
+        if( hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString.size() < 2)
+            {
+                hud->sessionStartTimeString+= "9";
+            }
+        }
+        if( hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString.size() < 2)
+            {
+                hud->sessionEndtimeString+= "9";
+            }
+        }
+        if( hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString.size() < 2)
+            {
+                hud->numOfSessionsString+= "9";
+            }
+        }
         
     }
     else if(queryGUI == "numpadbuttonsave" )
@@ -1048,6 +1541,66 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             hud->enableNumpad = false;
             
         }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            if(hud->sessionStartTimeString != "")
+            {
+                
+                player->sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
+                if(player->sessionStartTime < 0) //What do I use!
+                {
+                    player->sessionStartTime = 0;
+                }
+                if(player->sessionStartTime > 99) //What do I use!
+                {
+                    player->sessionStartTime = 99;
+                }
+                
+            }
+            hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+            hud->enableNumpad = false;
+            
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            if(hud->sessionEndtimeString != "")
+            {
+                
+                player->sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
+                if(player->sessionEndTime < 0) //What do I use!
+                {
+                    player->sessionEndTime = 0;
+                }
+                if(player->sessionEndTime > 99) //What do I use!
+                {
+                    player->sessionEndTime = 99;
+                }
+                
+            }
+            hud->sessionEndtimeString = Util::toStringInt(player->sessionEndTime);
+            hud->enableNumpad = false;
+            
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            if(hud->numOfSessionsString != "")
+            {
+                
+                player->numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
+                if(player->numOfSessions < 0) //What do I use!
+                {
+                    player->numOfSessions = 0;
+                }
+                if(player->numOfSessions > 99) //What do I use!
+                {
+                    player->numOfSessions = 99;
+                }
+                
+            }
+            hud->numOfSessionsString = Util::toStringInt(player->numOfSessions);
+            hud->enableNumpad = false;
+            
+        }
 
     }
     else if(queryGUI == "numpadbuttondecimal")
@@ -1105,6 +1658,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
                 hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
