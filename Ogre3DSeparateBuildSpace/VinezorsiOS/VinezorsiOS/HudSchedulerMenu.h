@@ -88,6 +88,9 @@ protected:
     PanelOverlayElement* playButtonBackground;
     PanelOverlayElement* rerollButtonBackground;
     
+    PanelOverlayElement* sessionBackground;
+    TextAreaOverlayElement* sessionDisplay;
+    
     void link(Player* player);
     void unlink();
     virtual void alloc();

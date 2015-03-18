@@ -220,26 +220,13 @@ void EngineStage::update(float elapsed)
             std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
             std::cout << "-----------------------------------------\n\n";
             
-            if (player->scheduler->sessionFinished)
-            {
-                // Update session ID before save
-                player->setSessionID(player->getSessionID() + 1);
-            }
-            
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
                 
                 player->assessLevelPerformance(player->levelRequest);
-                if (player->scheduler->sessionFinished) {
-                    std::cout << "finished!\n";
-                }
-                else
-                {
-                    std::cout << "not finished!\n";
-                }
-                player->saveProgress(globals.savePath);
+                
                 player->lastPlayed = player->levelRequest->first.phaseX;
                 player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 
@@ -257,8 +244,19 @@ void EngineStage::update(float elapsed)
             }
             
             if((!player->manRecessEnabled || player->manRecessCount < player->manRecessLevelLimit) &&
-               player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
+               player->scheduler->sessionFinished)
             {
+                if (player->scheduler->sessionFinished) {
+                    // Update session ID before save
+                    player->setSessionID(player->getSessionID() + 1);
+                    
+                    std::cout << "finished!\n";
+                }
+                else
+                {
+                    std::cout << "not finished!\n";
+                }
+                
                 // If player has not visited end of session slide yet, set it up
                 std::cout << "\n\n\n===========================================\n"
                 << "Session Finished!\n"
@@ -266,6 +264,7 @@ void EngineStage::update(float elapsed)
                 player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
                 player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
             }
+            player->saveProgress(globals.savePath);
             
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();

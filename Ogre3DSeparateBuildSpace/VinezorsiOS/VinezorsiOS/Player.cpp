@@ -2244,8 +2244,8 @@ void Player::addAction(ActionCode actType)
 
 void Player::update(float elapsed)
 {
-    //std::cout << globals.initCamSpeed << std::endl;
     totalElapsed += elapsed;
+    std::cout << totalElapsed << std::endl;
     
     // Play music at beginning of stage
     if (triggerStartup && soundStartup && !soundStartup->isPlaying())
@@ -3283,6 +3283,21 @@ void Player::initSettings()
     dampingDecayStop = 0.500f; // Stop Motion damping multiplier
     dampingDropFree = 25.0f;    // Free Motion damping linear drop
     dampingDropStop = 50.0f;    // Stop Motion damping linear drop
+}
+
+void Player::startSession()
+{
+    // Initialize scheduler session time
+    globals.sessionTime = globals.sessionTimeMin;
+    globals.sessionTime += ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * (getSessionID());
+    std::cout << "Session Length: " << globals.sessionTime << std::endl;
+    //globals.sessionTime = 30; // For debugging end of session window
+    sessionStarted = true;
+    scheduler->sessionFinished = false;
+    
+    globals.initLogs(getSessionID());
+    
+    totalElapsed = 0.0f;
 }
 
 void Player::feedLevelRequestFromSchedule()

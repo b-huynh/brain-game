@@ -88,6 +88,8 @@ void HudSchedulerMenu::update(float elapsed)
         rerollButtonBackground->setMaterialName("General/RerollButton");
     else
         rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
+    
+    sessionDisplay->setCaption("Session\n" + Util::toStringInt(player->getSessionID()));
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
@@ -223,6 +225,9 @@ void HudSchedulerMenu::alloc()
     playButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
     rerollButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuRerollButtonBackground"));
     
+    sessionBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSessionBackground"));
+    sessionDisplay  = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuSessionDisplay"));
+    
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuSelector");
@@ -259,6 +264,8 @@ void HudSchedulerMenu::alloc()
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(rerollButtonBackground);
     overlay1->add2D(playButtonBackground);
+    overlay1->add2D(sessionBackground);
+    sessionBackground->addChild(sessionDisplay);
     
     if(player->manRecessEnabled)
     {
@@ -315,12 +322,27 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
 }
 
 void HudSchedulerMenu::initOverlay()
 {
+    Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
+    
+    sessionBackground->setMetricsMode(GMM_RELATIVE);
+    sessionBackground->setPosition(0.700, 0.275);
+    sessionBackground->setDimensions(0.0, 0.0);
+    
+    sessionDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionDisplay->setPosition(0.1315, 0.0);
+    sessionDisplay->setCharHeight(0.032 * FONT_SZ_MULT);
+    sessionDisplay->setFontName("MainSmall");
+    sessionDisplay->setColour(fontColor);
+    
     //Man Recess Init
     schedulerManRecessMessageBackground->setMetricsMode(GMM_RELATIVE);
     schedulerManRecessMessageBackground->setPosition(0.20, 0.20);
@@ -344,7 +366,6 @@ void HudSchedulerMenu::initOverlay()
     
     //End Man Recess Init
     
-    Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
     
     schedulerMenuEntireBackground->setMetricsMode(GMM_RELATIVE);
     schedulerMenuEntireBackground->setPosition(0.00, 0.00);
@@ -464,9 +485,9 @@ void HudSchedulerMenu::initOverlay()
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton2");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
-    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
+    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.431), Vector2(0.263, 0.215), playButtonBackground, NULL);
     buttons[BUTTON_START_MAN_RECESS].setButton("manrecessplay", overlays[0], GMM_RELATIVE, Vector2(0.6, 0.65), Vector2(0.08, 0.09), schedulerManRecessPlayButtonBackground, NULL);
-    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.550), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
+    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.700), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
     
     // Needed for some reason to allow materials to be set in update
     clearSelection();

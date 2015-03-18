@@ -230,8 +230,6 @@ void OgreApp::setupDemoScene()
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     player->feedLevelRequestFromSchedule();
     
-    globals.initLogs(player->getSessionID());
-    
     engineStateMgr = new EngineStateManager();
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);
     

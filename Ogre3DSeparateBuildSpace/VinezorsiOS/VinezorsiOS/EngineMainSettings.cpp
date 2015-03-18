@@ -64,11 +64,8 @@ void EngineMainSettings::update(float elapsed)
         // ever went into the scheduler menu.
         if (player->sessionStarted)
         {
-            
-            player->setSessionID(player->getSessionID() + 1);
             player->sessionStarted = false;
         }
-        std::cout << "WHIMPER: " << player->getSessionID() << std::endl;
     }
 }
 
