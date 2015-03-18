@@ -236,6 +236,15 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     }
 }
 
+void EngineSchedulerMenu::activateReturnFromPopup()
+{
+    // Fortunately, the only tutorial popup for the scheduler menu is
+    // the session over window popup. So we can use this function to handle
+    // that.
+    engineStateMgr->requestPopEngine();
+    player->sessionStarted = false;
+}
+
 #if !defined(OGRE_IS_IOS)
 void EngineSchedulerMenu::mouseMoved(const OIS::MouseEvent &evt)
 {

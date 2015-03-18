@@ -485,6 +485,7 @@ public:
     std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
     
     void initSettings();
+    void startSession();
     
     bool endFlag;
     
@@ -499,6 +500,7 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleManRecessLevel;
     LevelPhase lastPlayed;
     int rerollCounter;
+    bool sessionStarted;
     
     void feedLevelRequestFromSchedule();
     

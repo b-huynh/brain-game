@@ -38,7 +38,8 @@ Player::Player()
     tunnel = NULL;
     
     scheduler = new LevelScheduler();
-    levelRequest = NULL;    
+    levelRequest = NULL;
+    sessionStarted = false;
     
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
@@ -68,6 +69,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     
     scheduler = new LevelScheduler();
     levelRequest = NULL;
+    sessionStarted = false;
     
     tunnel = NULL;
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
@@ -1164,7 +1166,9 @@ void Player::testPodGiveFeedback(Pod* test)
             
             // Add to fuel gauge for correct zaps
             if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
                 tunnel->addToFuelTimer(tunnel->getFuelReturn());
+            }
             else
                 tunnel->addToFuelBuffer(2.667); //
         }
@@ -2240,8 +2244,8 @@ void Player::addAction(ActionCode actType)
 
 void Player::update(float elapsed)
 {
-    //std::cout << globals.initCamSpeed << std::endl;
     totalElapsed += elapsed;
+    //std::cout << totalElapsed << std::endl;
     
     // Play music at beginning of stage
     if (triggerStartup && soundStartup && !soundStartup->isPlaying())
@@ -3302,6 +3306,30 @@ void Player::initSettings()
     dampingDecayStop = 0.500f; // Stop Motion damping multiplier
     dampingDropFree = 25.0f;    // Free Motion damping linear drop
     dampingDropStop = 50.0f;    // Stop Motion damping linear drop
+}
+
+void Player::startSession()
+{
+    std::cout << "SessionMinGlobal: " << globals.sessionTimeMin << " SessionMinStudy: " << sessionStartTime <<std::endl;
+    std::cout << "SessionMaxGlobal: " << globals.sessionTimeMax << " SessionMaxStudy: " << sessionEndTime <<std::endl;
+    std::cout << "SessionNumGlobal: " << globals.expectedNumSessions << " SessionNumStudy: " << numOfSessions <<std::endl;
+    // Initialize scheduler session time
+    globals.sessionTimeMin = sessionStartTime*60;
+    globals.sessionTimeMax = sessionEndTime*60;
+    globals.expectedNumSessions = numOfSessions;
+
+
+
+    globals.sessionTime = globals.sessionTimeMin;
+    globals.sessionTime += ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * (getSessionID());
+    std::cout << "Session Length: " << globals.sessionTime << std::endl;
+    //globals.sessionTime = 30; // For debugging end of session window
+    sessionStarted = true;
+    scheduler->sessionFinished = false;
+    
+    globals.initLogs(getSessionID());
+    
+    totalElapsed = 0.0f;
 }
 
 void Player::feedLevelRequestFromSchedule()

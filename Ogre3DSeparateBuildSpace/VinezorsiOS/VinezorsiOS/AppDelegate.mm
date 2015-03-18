@@ -17,7 +17,7 @@
 #ifdef DEMO_BUILD
     [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101"];
 #else
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100"];
+    [self.mViewControllerMain startWithWindow:self.mWindow:@"subjecta110"];
 #endif
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];

@@ -887,7 +887,7 @@ void Tunnel::addToFuelTimer(float value)
 {
     if (!isDone())
     {
-        fuelTimer = fuelMax;
+        //fuelTimer = fuelMax;
     
         fuelTimer += value;
         //float currentMax = fuelMax - fuelSize * (globals.startingHP - player->getHP());

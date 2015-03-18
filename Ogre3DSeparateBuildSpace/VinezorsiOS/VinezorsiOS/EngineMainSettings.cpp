@@ -51,13 +51,8 @@ void EngineMainSettings::update(float elapsed)
     player->holdoutLB = hud->holdoutLBSlider->getIndex() / 100.0f;
     player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
     player->updateMusicVolume();
- 
-    /*if(hud->enterStudySettings)
-    {
-        engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
-        
-    }*/
 }
+
 
 void EngineMainSettings::activatePerformSingleTap(float x, float y)
 {

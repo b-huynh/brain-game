@@ -29,6 +29,25 @@ void EngineStudySettings::enter()
     alloc();
     player->startMenu();
     
+    
+    //TempStudySettings
+    tempfuelEnabled = player->fuelEnabled;
+    tempholdoutEnabled = player->holdoutEnabled;
+    tempinitialVelocity = player->initialVelocity;
+    tempmanRecessEnabled = player->manRecessEnabled;
+    tempmanRecessLevelLimit = player->manRecessLevelLimit;
+    tempnewNavEnabled = player->newNavEnabled;
+    tempnewNavIncrement = player->newNavIncrement;
+    tempindRecessEnabled = player->indRecessEnabled;
+    tempindRecessIncrement = player->indRecessIncrement;
+    tempholdoutdelayEnabled = player->holdoutdelayEnabled;
+    tempholdoutdelayNumber = player->holdoutdelayNumber;
+    tempenableSettingsPasscode= player->enableSettingsPasscode;
+    tempsessionStartTime = player->sessionStartTime;
+    tempsessionEndTime = player->sessionEndTime;
+    tempnumOfSessions = player->numOfSessions;
+    tempnewSounds= globals.newSounds;
+    
     // Set skybox
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
     OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
@@ -58,6 +77,36 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
     {
         player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
+        
+        // Check if anything changes
+        if(tempfuelEnabled == player->fuelEnabled &&
+           tempholdoutEnabled == player->holdoutEnabled &&
+           tempinitialVelocity == player->initialVelocity &&
+           tempmanRecessEnabled == player->manRecessEnabled &&
+           tempmanRecessLevelLimit == player->manRecessLevelLimit &&
+           tempnewNavEnabled == player->newNavEnabled &&
+           tempnewNavIncrement == player->newNavIncrement &&
+           tempindRecessEnabled == player->indRecessEnabled &&
+           tempindRecessIncrement == player->indRecessIncrement &&
+           tempholdoutdelayEnabled == player->holdoutdelayEnabled &&
+           tempholdoutdelayNumber == player->holdoutdelayNumber &&
+           tempenableSettingsPasscode== player->enableSettingsPasscode &&
+           tempsessionStartTime == player->sessionStartTime &&
+           tempsessionEndTime == player->sessionEndTime &&
+           tempnumOfSessions == player->numOfSessions &&
+           tempnewSounds== globals.newSounds)
+        {
+            //Still the same
+        }
+        else
+        {
+            //Something Changed
+            player->sessionStarted = false;
+
+        }
+           
+           
+        
     }
     else if (queryGUI == "checkfuel")
     {
@@ -1547,9 +1596,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
-                if(player->sessionStartTime < 0) //What do I use!
+                if(player->sessionStartTime < 1) //What do I use!
                 {
-                    player->sessionStartTime = 0;
+                    player->sessionStartTime = 1;
                 }
                 if(player->sessionStartTime > 99) //What do I use!
                 {
@@ -1557,6 +1606,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 }
                 
             }
+            
             hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
             hud->enableNumpad = false;
             
@@ -1567,9 +1617,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
-                if(player->sessionEndTime < 0) //What do I use!
+                if(player->sessionEndTime < 1) //What do I use!
                 {
-                    player->sessionEndTime = 0;
+                    player->sessionEndTime = 1;
                 }
                 if(player->sessionEndTime > 99) //What do I use!
                 {
@@ -1587,9 +1637,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
-                if(player->numOfSessions < 0) //What do I use!
+                if(player->numOfSessions < 1) //What do I use!
                 {
-                    player->numOfSessions = 0;
+                    player->numOfSessions = 1;
                 }
                 if(player->numOfSessions > 99) //What do I use!
                 {
