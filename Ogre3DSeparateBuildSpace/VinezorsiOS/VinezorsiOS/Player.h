@@ -236,9 +236,9 @@ public:
     //Save
     bool fuelEnabled = false;   //Study Settings
     bool holdoutEnabled = false; //Study Settings
-    int initialVelocity = 10; //Study Settings
+    int initialVelocity = 15; //Study Settings
     bool manRecessEnabled = false; //Study Settings
-    int manRecessLevelLimit = 1; //StudySettings
+    int manRecessLevelLimit = 5; //StudySettings
     int manRecessCount = 0; //StudySettings
     bool newNavEnabled = false; //StudySettings
     float newNavIncrement = .35f; //Study Settings
@@ -248,9 +248,12 @@ public:
     double indRecessNBackLevel = 1.0;
     float indRecessNBackDelta = 0.0f;
     
+    
     bool holdoutdelayEnabled = false;
     float holdoutdelayNumber = 2.5f;
     //End Save
+    
+    bool enableSettingsPasscode = false;
     
     bool sessionTimeSettings = false;
     int sessionStartTime = 20;

@@ -347,7 +347,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess)
 {
     
     /* For debugging purposes */
@@ -378,11 +378,17 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     // If the player has played enough stages, provide one
     // of the three choices to be a recess overriding
     // the randomly selected marble
+    
+    //Only choose a marble to be recess if manRecess is not enabled
     int recessIndex = -1;
     if (playCount >= 5)
     {
+        
         playCount = 0;
-        recessIndex = rand() % 3;
+        if(!manRecess)
+        {
+            recessIndex = rand() % 3;
+        }
     }
     
     for(int i = 0; i < 3; ++i)

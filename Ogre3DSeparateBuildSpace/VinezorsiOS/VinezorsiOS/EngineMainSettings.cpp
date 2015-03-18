@@ -52,12 +52,11 @@ void EngineMainSettings::update(float elapsed)
     player->holdoutUB = hud->holdoutUBSlider->getIndex() / 100.0f;
     player->updateMusicVolume();
  
-    if(hud->enterStudySettings)
+    /*if(hud->enterStudySettings)
     {
-        //std::cout<<"Called\n";
         engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
         
-    }
+    }*/
 }
 
 void EngineMainSettings::activatePerformSingleTap(float x, float y)
@@ -77,7 +76,7 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "checktutorials")
     {
-        hud->enableNumpad = false;
+        //hud->enableNumpad = false;
         TutorialManager* tutorialMgr = player->getTutorialMgr();
         if (tutorialMgr->isEnabled())
             tutorialMgr->disable();
@@ -87,19 +86,17 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "checksyncdata")
     {
         player->syncDataToServer = !player->syncDataToServer;
-        hud->enableNumpad = false;
+        //hud->enableNumpad = false;
     }
     else if (queryGUI == "studysettings")
     {
-       
-        hud->enableNumpad = true;
+        engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
+  
+        //hud->enableNumpad = true;
         
-        //Add the numpad!
-        //Show numpad, If cancel button is pressed, remove numpad.
-        
-        //engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
+
     }
-    else if(queryGUI == "numpadbuttoncancel")
+    /*else if(queryGUI == "numpadbuttoncancel")
     {
         //make numpad go away
         std::cout<<"cancel pressed";
@@ -206,7 +203,7 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
             hud->Passcode_counter++;
         }
 
-    }
+    }*/
 }
 
 // The following deal with injecting coordinates to simulate a slider

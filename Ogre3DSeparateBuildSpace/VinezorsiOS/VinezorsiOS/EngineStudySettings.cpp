@@ -80,7 +80,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         if(hud->nStatus == hud->HOLDOUT_DELAY)
         {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+           hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
         }
         hud->enableNumpad = false;
         hud->showDecimal = false;
@@ -93,6 +93,42 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         else
         {
             player->fuelEnabled = true;
+        }
+    }
+    else if (queryGUI == "checksettingspasscode")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        
+        if(player->enableSettingsPasscode)
+        {
+            player->enableSettingsPasscode = false;
+        }
+        else
+        {
+            player->enableSettingsPasscode = true;
         }
     }
     else if (queryGUI == "checknewsounds")
@@ -458,10 +494,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             hud->showDecimal = false;
             hud->nStatus = hud->MAN_RECESS;
             hud->manRecessString = "";
-            
         }
-        
-        
     }
     else if(queryGUI == "numpadbuttonback")
     {

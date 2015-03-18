@@ -23,6 +23,8 @@ public:
     virtual void adjust();
     virtual void update(float elapsed);
     
+    void initStrings();
+    
     //Enable NumPad:
     bool enableNumpad = false;
     
@@ -65,7 +67,7 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 31;
+    static const int NUM_UNIQUE_BUTTONS = 32;
     enum Buttons {
         BUTTON_BACK,BUTTON_ENABLE_UNLIMITED_FUEL, BUTTON_ENABLE_HOLDOUT, BUTTON_INPUT_INIT_SPEED, BUTTON_ENABLE_MANDATORY_RECESS,
         BUTTON_MANDATORY_RECESS_NUMBER, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3,
@@ -73,7 +75,7 @@ protected:
         BUTTON_NUMPAD_9, BUTTON_NUMPAD_BACK, BUTTON_NUMPAD_SAVE, BUTTON_NUMPAD_DECIMAL, NUMPAD_BG,
         BUTTON_ENABLE_HOLDOUT_DELAY, BUTTON_HOLDOUT_DELAY_NUMBER, BUTTON_ENABLE_NEW_NAV, BUTTON_ENABLE_NEW_NAV_NUMBER, BUTTON_ENABLE_NEW_SOUNDS,
         BUTTON_ENABLE_IND_RECESS, BUTTON_ENABLE_IND_RECESS_NUMBER, BUTTON_ENABLE_SESSION_SETTINGS, BUTTON_SESSION_START_NUMBER, BUTTON_SESSION_END_NUMBER,
-        BUTTON_NUM_OF_SESSIONS_NUMBER
+        BUTTON_NUM_OF_SESSIONS_NUMBER, BUTTON_ENABLE_PASSCODE
         
     };
     
@@ -177,6 +179,11 @@ protected:
     TextAreaOverlayElement* enableIndRecessText2Display;
     PanelOverlayElement* enableIndRecessNumberButtonBackground;
     TextAreaOverlayElement* enableIndRecessNumberText;
+    
+    //Passcode Checkbox
+    PanelOverlayElement* enableSettingsPasscodeBackground;
+    TextAreaOverlayElement* enableSettingsPasscodeTextDisplay;
+    PanelOverlayElement* enableSettingsPasscodeButtonBackground;
 
     
     

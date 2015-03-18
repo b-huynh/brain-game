@@ -28,6 +28,7 @@ public:
     HudSlider* holdoutLBSlider;
     HudSlider* holdoutUBSlider;
     
+    /*
     //Enable NumPad:
     bool enableNumpad = false;
     
@@ -45,12 +46,12 @@ public:
     float passwordDot0Init_x = .06;
     float passwordDot1Init_x = .11;
     float passwordDot2Init_x = .16;
-    float passwordDot3Init_x = .21;
+    float passwordDot3Init_x = .21;*/
     
     
 protected:
     Player* player;
-    const int PASSWORD[4] = {3,1,4,1};
+    //const int PASSWORD[4] = {3,1,4,1};
     
     static const int NUM_UNIQUE_BUTTONS = 16;
     enum Buttons {
@@ -78,6 +79,7 @@ protected:
     PanelOverlayElement* studySettingsButtonBackground;
     TextAreaOverlayElement* studySettingTextDisplay;
     
+    /*
     //Numpad
     PanelOverlayElement* numpadBackground;
 
@@ -119,7 +121,7 @@ protected:
     PanelOverlayElement* password_Choice0;
     PanelOverlayElement* password_Choice1;
     PanelOverlayElement* password_Choice2;
-    PanelOverlayElement* password_Choice3;
+    PanelOverlayElement* password_Choice3;*/
     
 
     

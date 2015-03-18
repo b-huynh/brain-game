@@ -12,6 +12,7 @@
 #include "Util.h"
 
 #include "Engine.h"
+#include "HudMainMenu.h"
 
 class EngineMainMenu : public Engine
 {
@@ -40,7 +41,7 @@ public:
     virtual void requestResize();
 protected:
 	Player* player;
-    Hud* hud;
+    HudMainMenu* hud;
     
     void alloc();
     void dealloc();

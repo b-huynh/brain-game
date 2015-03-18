@@ -45,7 +45,7 @@ void HudMainSettings::update(float elapsed)
     holdoutLBSliderDisplay->setCaption(Util::toStringInt(player->holdoutLB * 100));
     holdoutUBSliderDisplay->setCaption(Util::toStringInt(player->holdoutUB * 100));
     
-    if(startDotTimer)
+   /* if(startDotTimer)
     {
         numToWait -= elapsed;
         if(numToWait <= 0)
@@ -133,7 +133,7 @@ void HudMainSettings::update(float elapsed)
         
         
     }
-    
+    */
     if (player->getTutorialMgr()->isEnabled())
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxGreen");
     else
@@ -168,7 +168,7 @@ void HudMainSettings::alloc()
     studySettingsButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel",
         "StudySettingsButtonBackground"));
     studySettingTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsTextDisplay"));
-    
+    /*
     //Numpad
     numpadBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadBackground"));
     numpadButton_0 = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadButton0"));
@@ -199,7 +199,7 @@ void HudMainSettings::alloc()
     password_Choice1= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadPasswordChoice1"));
     password_Choice2= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadPasswordChoice2"));
     password_Choice3= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadPasswordChoice3"));
-    password_Title= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsNumpadPasswordText"));
+    password_Title= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsNumpadPasswordText"));*/
 
     
     
@@ -289,7 +289,7 @@ void HudMainSettings::alloc()
     overlay1->add2D(controlSettingsButtonBackground);
     overlay1->add2D(studySettingsButtonBackground);
     studySettingsButtonBackground->addChild(studySettingTextDisplay);
-    
+  /*
     //Numpad
     numpadButton_0->addChild(numpadButton_0_TextDisplay);
     numpadButton_1->addChild(numpadButton_1_TextDisplay);
@@ -320,7 +320,7 @@ void HudMainSettings::alloc()
     numpadBackground->addChild(password_Title);
 
 
-    overlay1->add2D(numpadBackground);
+    overlay1->add2D(numpadBackground);*/
     
     overlays.push_back(overlay1);
     
@@ -361,7 +361,7 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(controlSettingsButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(studySettingsButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(studySettingTextDisplay);
-    
+    /*
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(numpadBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(numpadButton_0);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(numpadButton_0_TextDisplay);
@@ -390,7 +390,7 @@ void HudMainSettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice0);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice1);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice2);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice3);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice3);*/
 
 
     
@@ -565,7 +565,7 @@ void HudMainSettings::initOverlay()
     studySettingTextDisplay->setCharHeight(0.03 * FONT_SZ_MULT);
     studySettingTextDisplay->setFontName("MainSmall");
     studySettingTextDisplay->setCaption("Study Settings");
-    
+    /*
     //Numpad Objects
     numpadBackground->setMetricsMode(GMM_RELATIVE);
     numpadBackground->setPosition(0.650, 0.50);
@@ -599,10 +599,10 @@ void HudMainSettings::initOverlay()
     password_Choice3->setPosition(0.21, 0.05);
     password_Choice3->setDimensions(0.03, 0.03);
     
-    password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
-    password_Choice1->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
-    password_Choice2->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
-    password_Choice3->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+   // password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+    //password_Choice1->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+   // password_Choice2->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+   // password_Choice3->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
     
     password_Title->setMetricsMode(GMM_RELATIVE);
     password_Title->setAlignment(TextAreaOverlayElement::Center);
@@ -686,7 +686,7 @@ void HudMainSettings::initOverlay()
     numpadButton_9_TextDisplay->setPosition(0.035, 0.01);
     numpadButton_9_TextDisplay->setCharHeight(0.03 * FONT_SZ_MULT);
     numpadButton_9_TextDisplay->setFontName("MainSmall");
-    numpadButton_9_TextDisplay->setCaption("9");
+    numpadButton_9_TextDisplay->setCaption("9");*/
 
     
     musicVolumeSliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
@@ -703,14 +703,14 @@ void HudMainSettings::initOverlay()
     backButtonBackground->setMaterialName("General/BackButton1");
     controlSettingsButtonBackground->setMaterialName("General/ControlSettingsButton");
     studySettingsButtonBackground->setMaterialName("General/StudySettingsButton");
-    numpadBackground->setMaterialName("General/NumpadBackground");
+    //numpadBackground->setMaterialName("General/NumpadBackground");
     
     //Position Buttons
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.01, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_CONTROL_SETTINGS].setButton("controlsettings", overlays[0], GMM_RELATIVE, Vector2(0.33, 0.90), Vector2(0.30, 0.08), controlSettingsButtonBackground, NULL);
     buttons[BUTTON_STUDY_SETTINGS].setButton("studysettings", overlays[0], GMM_RELATIVE, Vector2(0.65, .90), Vector2(0.30, 0.08), studySettingsButtonBackground, NULL);
     
-    buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.305), Vector2(0.06, 0.06), numpadButton_0, NULL);
+    /*buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.305), Vector2(0.06, 0.06), numpadButton_0, NULL);
     
     buttons[BUTTON_NUMPAD_1].setButton("numpadbutton1", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.095), Vector2(0.06, 0.06), numpadButton_1, NULL);
     buttons[BUTTON_NUMPAD_2].setButton("numpadbutton2", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.095), Vector2(0.06, 0.06), numpadButton_2, NULL);
@@ -724,7 +724,7 @@ void HudMainSettings::initOverlay()
     buttons[BUTTON_NUMPAD_8].setButton("numpadbutton8", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.235), Vector2(0.06, 0.06), numpadButton_8, NULL);
     buttons[BUTTON_NUMPAD_9].setButton("numpadbutton9", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.235), Vector2(0.06, 0.06), numpadButton_9, NULL);
     
-    buttons[BUTTON_NUMPAD_CANCEL].setButton("numpadbuttoncancel", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.305), Vector2(0.06, 0.06), numpadButton_Cancel, NULL);
+    buttons[BUTTON_NUMPAD_CANCEL].setButton("numpadbuttoncancel", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.305), Vector2(0.06, 0.06), numpadButton_Cancel, NULL);*/
 
 
 

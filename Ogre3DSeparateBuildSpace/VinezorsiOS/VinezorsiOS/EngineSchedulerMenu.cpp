@@ -141,6 +141,19 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);*/
         player->levelRequest = &player->scheduleManRecessLevel;
         engineStateMgr->requestPushEngine(ENGINE_STAGE, player);
+        /*std::cout << "Choice0Counter: " << player->choice0RestartCounter << std::endl;
+        std::cout << "Choice1Counter: " << player->choice1RestartCounter << std::endl;;
+        std::cout << "Choice2Counter: " << player->choice2RestartCounter << std::endl;;
+        std::cout << "Choice3Counter: " << player->choice3RestartCounter << std::endl;;*/
+
+        //Is it always Choice1 ??
+        player->choice0RestartCounter++;
+        player->choice1RestartCounter++;
+        player->choice2RestartCounter++;
+        player->choice3RestartCounter++;
+
+
+        
     
         
     }
@@ -200,6 +213,15 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "reroll")
     {
         if(!player->manRecessEnabled)
+        {
+            if (player->rerollCounter > 0)
+            {
+                player->feedLevelRequestFromSchedule();
+                player->rerollCounter--;
+                player->saveProgress(globals.savePath);
+            }
+        }
+        else //manRecessEnabled
         {
             if(player->manRecessCount != player->manRecessLevelLimit)
             {

@@ -28,7 +28,19 @@ void HudStudySettings::init()
 {
     alloc();
     initOverlay();
+    initStrings();
     showOverlays();
+}
+
+void HudStudySettings::initStrings()
+{
+    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+    manRecessString = Util::toStringInt(player->manRecessLevelLimit);
+    newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
+    indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+    initSpeedString = Util::toStringInt(player->initialVelocity);
+    
 }
 
 void HudStudySettings::adjust()
@@ -46,7 +58,16 @@ void HudStudySettings::update(float elapsed)
     enableIndRecessNumberText->setCaption(indRecessString);
     enableHoldoutDelayNumberTextDisplay->setCaption(holdoutDelayString);
     
-    
+    if(player->enableSettingsPasscode)
+    {
+        enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxGreen");
+    }
+    else
+    {
+        enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxBlank");
+    }
     //Ind Recess Checkbox
     if (player->indRecessEnabled)
     {
@@ -257,17 +278,15 @@ void HudStudySettings::update(float elapsed)
         enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
         enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
 
-
-
-
-        
     }
 
-    
+
 }
 
 void HudStudySettings::alloc()
 {
+    
+    
     // Allocate Resources
     studySettingsBackdrop1 = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsBackdrop1"));
     studySettingsBackdrop2 = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsBackdrop2"));
@@ -357,7 +376,10 @@ void HudStudySettings::alloc()
     enableHoldoutDelayNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsHoldoutDelayNumberText"));
     enableHoldoutDelayNumberButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableHoldoutDelayNumberBackground"));
 
-    
+    //Passcode Checkbox
+    enableSettingsPasscodeBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableSettingsPasscodeBackground"));
+    enableSettingsPasscodeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsEnableSettingsPasscodeText"));
+    enableSettingsPasscodeButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsEnableSettingsPasscodeButtonBackground"));
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
@@ -407,6 +429,11 @@ void HudStudySettings::alloc()
     overlay1->add2D(enableUnlimitedFuelBackground);
     enableUnlimitedFuelBackground->addChild(enableUnlimitedFuelTextDisplay);
     overlay1->add2D(enableUnlimitedFuelButtonBackground);
+    
+    //Passcode Checkbox
+    overlay1->add2D(enableSettingsPasscodeBackground);
+    enableSettingsPasscodeBackground->addChild(enableSettingsPasscodeTextDisplay);
+    overlay1->add2D(enableSettingsPasscodeButtonBackground);
     
     //IndRecess Checkbox
     overlay1->add2D(enableIndRecessBackground);
@@ -549,6 +576,10 @@ void HudStudySettings::dealloc()
 
 
 
+    //Passcode Checkbox
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSettingsPasscodeButtonBackground);
 
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
@@ -559,6 +590,22 @@ void HudStudySettings::dealloc()
 void HudStudySettings::initOverlay()
 {
 
+    
+    //Passcode Checkbox
+    enableSettingsPasscodeBackground->setMetricsMode(GMM_RELATIVE);
+    enableSettingsPasscodeBackground->setPosition(0.2, 0.66);
+    enableSettingsPasscodeBackground->setDimensions(0.60, 0.10);
+    
+    enableSettingsPasscodeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableSettingsPasscodeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableSettingsPasscodeTextDisplay->setPosition(0.0, 0.07);
+    enableSettingsPasscodeTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableSettingsPasscodeTextDisplay->setFontName("MainSmall");
+    enableSettingsPasscodeTextDisplay->setCaption("Enable Settings Passcode");
+    enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+    
+    enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxBlank");
+    
     //HoldoutDelay
     enableHoldoutDelayBackground->setMetricsMode(GMM_RELATIVE);
     enableHoldoutDelayBackground->setPosition(0.55, 0.16);
@@ -581,8 +628,9 @@ void HudStudySettings::initOverlay()
     enableHoldoutDelayNumberTextDisplay->setPosition(0.13, 0.05);
     enableHoldoutDelayNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     enableHoldoutDelayNumberTextDisplay->setFontName("MainSmall");
-    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
-    enableHoldoutDelayNumberTextDisplay->setCaption(Util::toStringFloat(player->holdoutdelayNumber,1));
+    //WOW: In iOS version initOverlay always runs. Inificient?
+    //holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+    //enableHoldoutDelayNumberTextDisplay->setCaption(Util::toStringFloat(player->holdoutdelayNumber,1));
 
     //Vector2(0.60, 0.26)
     
@@ -616,8 +664,8 @@ void HudStudySettings::initOverlay()
     enableIndRecessNumberText->setPosition(0.01, 0.0);
     enableIndRecessNumberText->setCharHeight(0.030 * FONT_SZ_MULT);
     enableIndRecessNumberText->setFontName("MainSmall");
-    indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
-    enableIndRecessNumberText->setCaption(Util::toStringFloat(player->indRecessIncrement,2));
+    //indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+    //enableIndRecessNumberText->setCaption(Util::toStringFloat(player->indRecessIncrement,2));
     
     //End IndRecess
     
@@ -664,8 +712,8 @@ void HudStudySettings::initOverlay()
     enableNewNavNumberText->setPosition(0.01, 0.0);
     enableNewNavNumberText->setCharHeight(0.030 * FONT_SZ_MULT);
     enableNewNavNumberText->setFontName("MainSmall");
-    newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
-    enableNewNavNumberText->setCaption(Util::toStringFloat(player->newNavIncrement,2));
+    //newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
+    //enableNewNavNumberText->setCaption(Util::toStringFloat(player->newNavIncrement,2));
     
     //End New Nav
     
@@ -858,8 +906,8 @@ void HudStudySettings::initOverlay()
     initSpeedNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     initSpeedNumberTextDisplay->setFontName("MainSmall");
     //initSpeedNumberTextDisplay->setCaption("0");
-    initSpeedString = Util::toStringInt(player->initialVelocity);
-    initSpeedNumberTextDisplay->setCaption(Util::toStringInt(player->initialVelocity));
+    //initSpeedString = Util::toStringInt(player->initialVelocity);
+    //initSpeedNumberTextDisplay->setCaption(Util::toStringInt(player->initialVelocity));
 
     
     
@@ -868,8 +916,8 @@ void HudStudySettings::initOverlay()
     enableMandatoryRecessNumberTextDisplay->setPosition(0.025, 0.005);
     enableMandatoryRecessNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     enableMandatoryRecessNumberTextDisplay->setFontName("MainSmall");
-    manRecessString = Util::toStringInt(player->manRecessLevelLimit);
-    enableMandatoryRecessNumberTextDisplay->setCaption(Util::toStringInt(player->manRecessLevelLimit));
+    //manRecessString = Util::toStringInt(player->manRecessLevelLimit);
+    //enableMandatoryRecessNumberTextDisplay->setCaption(Util::toStringInt(player->manRecessLevelLimit));
     //enableMandatoryRecessNumberTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
     
     
@@ -926,6 +974,14 @@ void HudStudySettings::initOverlay()
     {
         
         buttons[BUTTON_MANDATORY_RECESS_NUMBER].setButton("mandatoryrecessnumber", overlays[0], GMM_RELATIVE, Vector2(0.53, 0.29), Vector2(.05, .06), enableMandatoryRecessNumberBackground, NULL);
+    }
+    
+    // The Enable Passcode Checkbox
+    {
+        // calculate dimensions for button size and make sure it's square
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        buttons[BUTTON_ENABLE_PASSCODE].setButton("checksettingspasscode", overlays[0], GMM_RELATIVE, Vector2(0.125, 0.73), Vector2(pw, ph), enableSettingsPasscodeButtonBackground, NULL); //Position: .125,.20
     }
     
     
@@ -989,6 +1045,17 @@ void HudStudySettings::initOverlay()
         buttons[BUTTON_ENABLE_IND_RECESS_NUMBER].setButton("checkindrecessnumber", overlays[0], GMM_RELATIVE, Vector2(0.50, 0.68), Vector2(.10, pw), enableIndRecessNumberButtonBackground, NULL);
     }
     
+    //should add the check for passcode toggle only in OSX Version
+    if(player->enableSettingsPasscode)
+    {
+        enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+        enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxGreen");
+    }
+    else
+    {
+        enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+        enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxBlank");
+    }
     //NewSounds Checkbox
     if (globals.newSounds)
     {
