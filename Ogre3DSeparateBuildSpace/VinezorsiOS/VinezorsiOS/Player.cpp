@@ -38,7 +38,8 @@ Player::Player()
     tunnel = NULL;
     
     scheduler = new LevelScheduler();
-    levelRequest = NULL;    
+    levelRequest = NULL;
+    sessionStarted = false;
     
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
     initPowerUps();
@@ -68,6 +69,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     
     scheduler = new LevelScheduler();
     levelRequest = NULL;
+    sessionStarted = false;
     
     tunnel = NULL;
     levelProgress = std::vector<std::vector<PlayerProgress> >(NUM_LEVELS, std::vector<PlayerProgress>(NUM_TASKS));
@@ -1164,7 +1166,9 @@ void Player::testPodGiveFeedback(Pod* test)
             
             // Add to fuel gauge for correct zaps
             if (tunnel->getMode() == STAGE_MODE_RECESS)
+            {
                 tunnel->addToFuelTimer(tunnel->getFuelReturn());
+            }
             else
                 tunnel->addToFuelBuffer(2.667); //
         }

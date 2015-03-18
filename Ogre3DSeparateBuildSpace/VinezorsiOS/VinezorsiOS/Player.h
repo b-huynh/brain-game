@@ -496,6 +496,7 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleManRecessLevel;
     LevelPhase lastPlayed;
     int rerollCounter;
+    bool sessionStarted;
     
     void feedLevelRequestFromSchedule();
     

@@ -220,15 +220,8 @@ void EngineStage::update(float elapsed)
             std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
             std::cout << "-----------------------------------------\n\n";
             
-            if(player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
+            if (player->scheduler->sessionFinished)
             {
-                // If player has not visited end of session slide yet, set it up
-                std::cout << "\n\n\n===========================================\n"
-                << "Session Finished!\n"
-                << "===========================================\n";
-                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
-                
                 // Update session ID before save
                 player->setSessionID(player->getSessionID() + 1);
             }
@@ -261,6 +254,17 @@ void EngineStage::update(float elapsed)
                 player->choice1RestartCounter = 0;
                 player->choice2RestartCounter = 0;
                 player->choice3RestartCounter = 0;
+            }
+            
+            if((!player->manRecessEnabled || player->manRecessCount < player->manRecessLevelLimit) &&
+               player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
+            {
+                // If player has not visited end of session slide yet, set it up
+                std::cout << "\n\n\n===========================================\n"
+                << "Session Finished!\n"
+                << "===========================================\n";
+                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
             }
             
             // Unpause Settings but without the sound deactivating

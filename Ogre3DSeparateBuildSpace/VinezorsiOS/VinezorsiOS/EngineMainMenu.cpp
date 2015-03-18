@@ -53,6 +53,17 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     if (queryGUI == "play")
     {
         engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
+        
+        if (!player->sessionStarted) // Should always be false when game first starts up
+        {
+            // Initialize scheduler session time
+            globals.sessionTime = globals.sessionTimeMin;
+            globals.sessionTime += ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * (player->getSessionID());
+            std::cout << "Session Length: " << globals.sessionTime << std::endl;
+            //globals.sessionTime = 5; // For debugging end of session window
+        
+            player->sessionStarted = true;
+        }
     }
     else if (queryGUI == "credits")
     {

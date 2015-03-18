@@ -57,6 +57,18 @@ void EngineMainSettings::update(float elapsed)
         //std::cout<<"Called\n";
         engineStateMgr->requestPushEngine(ENGINE_STUDY_SETTINGS, player);
         
+        // There is no warning yet for notifying the user
+        // the session ID will update when going into study settings.
+        //
+        // The update for session ID should only occur when the user
+        // ever went into the scheduler menu.
+        if (player->sessionStarted)
+        {
+            
+            player->setSessionID(player->getSessionID() + 1);
+            player->sessionStarted = false;
+        }
+        std::cout << "WHIMPER: " << player->getSessionID() << std::endl;
     }
 }
 
