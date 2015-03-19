@@ -233,7 +233,7 @@ public:
     int choice3RestartCounter = 0;
     int numRetries = 3;
     
-    //Save
+    //Study Settings
     bool fuelEnabled = false;   //Study Settings
     bool holdoutEnabled = false; //Study Settings
     int initialVelocity = 15; //Study Settings
@@ -251,7 +251,6 @@ public:
     
     bool holdoutdelayEnabled = false;
     float holdoutdelayNumber = 2.5f;
-    //End Save
     
     bool enableSettingsPasscode = false;
     
@@ -261,6 +260,8 @@ public:
     int numOfSessions = 20;
     
     bool sessionNeedsIncrement = true;
+    
+    bool sessionScreenEnabled = false;
     
     //End Study Settings
 

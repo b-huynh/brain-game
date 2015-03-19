@@ -67,6 +67,7 @@ protected:
     int tempsessionEndTime ;
     int tempnumOfSessions ;
     bool tempnewSounds;
+    bool tempsessionScreenEnabled;
     
     void alloc();
     void dealloc();

@@ -3013,9 +3013,10 @@ bool Player::saveSession(std::string file)
             out << "% sessionStartTime - Study Settings to set min session length in mins" << endl;
             out << "% sessionEndTime - Study Settings to set max session length in mins" << endl;
             out << "% numOfSessions - Study Settings to set number of sessions" << endl;
+            out << "% sessionScreenEnabled - Study Settings to enable the SessionID screen" << endl;
 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled" << endl;
         }
         
         //Logging Study Settings
@@ -3082,8 +3083,9 @@ bool Player::saveSession(std::string file)
         << enableSettingsPasscode << " "
         << sessionStartTime << " "
         << sessionEndTime << " "
-        << numOfSessions << "\n";
-        
+        << numOfSessions << " "
+        << sessionScreenEnabled << "\n";
+
         out.close();
     }
     else {
@@ -3145,6 +3147,8 @@ bool Player::saveProgress(std::string file)
     out << "sessionStartTime" << " " << sessionStartTime << std::endl;
     out << "sessionEndTime" << " " << sessionEndTime << std::endl;
     out << "numOfSessions" << " " << numOfSessions << std::endl;
+    out << "sessionScreenEnabled" << " " << sessionScreenEnabled << std::endl;
+
 
 
 
@@ -3281,6 +3285,8 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> sessionEndTime;
     else if (paramName == "numOfSessions")
         in >> numOfSessions;
+    else if (paramName == "sessionScreenEnabled")
+        in >> sessionScreenEnabled;
     return in;
     
 

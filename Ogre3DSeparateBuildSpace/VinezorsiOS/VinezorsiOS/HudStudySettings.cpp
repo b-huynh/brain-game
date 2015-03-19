@@ -65,6 +65,18 @@ void HudStudySettings::update(float elapsed)
     sessionEndTimeNumberTextDisplay->setCaption(sessionEndtimeString);
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
+    if(player->sessionScreenEnabled)
+    {
+        enableSessionScreenButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableSessionScreenTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+    }
+    else
+    {
+        enableSessionScreenButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableSessionScreenTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+
+    }
+    
     if(player->enableSettingsPasscode)
     {
         enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -474,6 +486,11 @@ void HudStudySettings::alloc()
     sessionNumNumberBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingssessionNumNumberBackground"));
     sessionNumNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingssessionNumNumberTextDisplay"));
     
+    //SessionID Screen Toggle
+    enableSessionScreenBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsenableSessionScreenBackground"));
+    enableSessionScreenTextDisplay   = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsenableSessionScreenTextDisplay"));
+    enableSessionScreenButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsenableSessionScreenButtonBackground"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -523,6 +540,11 @@ void HudStudySettings::alloc()
     enableUnlimitedFuelBackground->addChild(enableUnlimitedFuelTextDisplay);
     overlay1->add2D(enableUnlimitedFuelButtonBackground);
     
+    //Enable Session Screen
+    
+    overlay1->add2D(enableSessionScreenBackground);
+    enableSessionScreenBackground->addChild(enableSessionScreenTextDisplay);
+    overlay1->add2D(enableSessionScreenButtonBackground);
     
     //Session Start Time and End Time and Num Sessions
     //Session Num Time
@@ -713,6 +735,11 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionNumNumberTextDisplay);
 
 
+    //SessionID Screen Toggle
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSessionScreenBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSessionScreenTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSessionScreenButtonBackground);
+
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
@@ -721,6 +748,22 @@ void HudStudySettings::dealloc()
 
 void HudStudySettings::initOverlay()
 {
+    //SessionID Screen Toggle
+    //Session StartTime
+    enableSessionScreenBackground->setMetricsMode(GMM_RELATIVE);
+    enableSessionScreenBackground->setPosition(0.62, 0.37);
+    enableSessionScreenBackground->setDimensions(0.60, 0.10);
+    
+    enableSessionScreenTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableSessionScreenTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableSessionScreenTextDisplay->setPosition(0.02, 0.00);
+    enableSessionScreenTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableSessionScreenTextDisplay->setFontName("MainSmall");
+    enableSessionScreenTextDisplay->setCaption("Enable SessionID");
+    
+    //enableUnlimitedFuelButtonBackground->setMaterialName("General/CheckboxBlank");
+
+    //OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableSessionScreenButtonBackground);
 
     //Session Num Sessions
     sessionNumTextDisplay->setMetricsMode(GMM_RELATIVE);
@@ -1185,7 +1228,13 @@ void HudStudySettings::initOverlay()
         // calculate dimensions for button size and make sure it's square
         buttons[BUTTON_NUM_OF_SESSIONS_NUMBER].setButton("sessionnum", overlays[0], GMM_RELATIVE, Vector2(0.55, 0.78), Vector2(.08, .06), sessionNumNumberBackground, NULL);
     }
-    
+    // The Enable session id screen
+    {
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_ENABLE_SESSION_SCREEN].setButton("checksessionid", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.37), Vector2(pw, ph), enableSessionScreenButtonBackground, NULL);
+    }
     
     buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.305), Vector2(0.06, 0.06), numpadButton_0, NULL);
     

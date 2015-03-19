@@ -47,6 +47,7 @@ void EngineStudySettings::enter()
     tempsessionEndTime = player->sessionEndTime;
     tempnumOfSessions = player->numOfSessions;
     tempnewSounds= globals.newSounds;
+    tempsessionScreenEnabled = player->sessionScreenEnabled;
     
     // Set skybox
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -94,19 +95,70 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
            tempsessionStartTime == player->sessionStartTime &&
            tempsessionEndTime == player->sessionEndTime &&
            tempnumOfSessions == player->numOfSessions &&
-           tempnewSounds== globals.newSounds)
+           tempnewSounds== globals.newSounds &&
+           tempsessionScreenEnabled == player->sessionScreenEnabled)
         {
             //Still the same
+            std::cout << "Nothing Changed!" <<std::endl;
         }
         else
         {
             //Something Changed
+            std::cout << "Something Changed!" << std::endl;
             player->sessionStarted = false;
 
         }
            
            
         
+    }
+    else if (queryGUI == "checksessionid")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        
+        if(player->sessionScreenEnabled)
+        {
+            player->sessionScreenEnabled = false;
+        }
+        else
+        {
+            player->sessionScreenEnabled = true;
+        }
     }
     else if (queryGUI == "checkfuel")
     {
