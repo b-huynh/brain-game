@@ -405,36 +405,6 @@ void LevelSet::initializeLevelSet()
     //const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int TOTAL_COLLECTIONS = 13;
     
-#ifdef DEMO_BUILD
-    /////////////////////
-    /// Level DEMO  0 ///
-    /////////////////////
-    
-    level = StageRequest();
-    level.stageNo++;
-    level.nback = 1;
-    level.stageTime = HARD_TIME;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
-        level.collectionCriteria.push_back(CollectionCriteria(2));
-    //level.powerups.push_back(POWERUP_TIME_WARP);
-    level.nameTunnelTile = "General/WallBindingD";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music3";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phaseX = PHASE_ALL_SIGNAL;
-    level.initCamSpeed = 10;
-    level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;
-    stageList[0][0] = level;
-#else
     /////////////////////
     /// Level 0   1-A ///
     /////////////////////
@@ -1945,5 +1915,4 @@ void LevelSet::initializeLevelSet()
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
     stageList[8][5] = level;
-#endif
 }

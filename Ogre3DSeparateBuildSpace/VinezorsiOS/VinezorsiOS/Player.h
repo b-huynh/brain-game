@@ -261,8 +261,6 @@ public:
     
     bool sessionNeedsIncrement = true;
     
-    bool sessionScreenEnabled = false;
-    
     //End Study Settings
 
     

@@ -146,9 +146,7 @@ void TutorialManager::disable()
 std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) const
 {
     std::vector<TutorialSlide> ret;
-#ifdef DEMO_BUILD
-    return ret;
-#else
+
     switch (type)
     {
         case TUTORIAL_SLIDES_TEXTBOX_NAVIGATION:
@@ -205,7 +203,6 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             break;
     }
     return ret;
-#endif
 }
 
 // Load set of slides in a queue with a timer that when expired, will load the slides up

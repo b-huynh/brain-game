@@ -47,7 +47,7 @@ void EngineStudySettings::enter()
     tempsessionEndTime = player->sessionEndTime;
     tempnumOfSessions = player->numOfSessions;
     tempnewSounds= globals.newSounds;
-    tempsessionScreenEnabled = player->sessionScreenEnabled;
+    tempsessionScreenEnabled = globals.sessionScreenEnabled;
     
     // Set skybox
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -76,6 +76,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "back")
     {
+        globals.saveGlobalSettings(globals.globalPath);
         player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
         
@@ -96,7 +97,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
            tempsessionEndTime == player->sessionEndTime &&
            tempnumOfSessions == player->numOfSessions &&
            tempnewSounds== globals.newSounds &&
-           tempsessionScreenEnabled == player->sessionScreenEnabled)
+           tempsessionScreenEnabled == globals.sessionScreenEnabled)
         {
             //Still the same
             std::cout << "Nothing Changed!" <<std::endl;
@@ -151,13 +152,13 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
         
-        if(player->sessionScreenEnabled)
+        if(globals.sessionScreenEnabled)
         {
-            player->sessionScreenEnabled = false;
+            globals.sessionScreenEnabled = false;
         }
         else
         {
-            player->sessionScreenEnabled = true;
+            globals.sessionScreenEnabled = true;
         }
     }
     else if (queryGUI == "checkfuel")

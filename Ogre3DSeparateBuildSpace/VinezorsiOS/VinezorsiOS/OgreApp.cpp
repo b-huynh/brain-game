@@ -184,7 +184,9 @@ void OgreApp::update(float elapsed)
 
 void OgreApp::setupDemoScene()
 {
+    globals.initGlobalSettingsPath();
     globals.initPaths();
+    globals.saveGlobalSettings(globals.globalPath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
     //syncConfig();
 #endif
@@ -210,10 +212,6 @@ void OgreApp::setupDemoScene()
     resourceText2->load();
     
     Util::createDefaultSegments(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
-    
-    globals.initPaths();
-    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3::ZERO);
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3::ZERO);

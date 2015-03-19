@@ -530,10 +530,12 @@ void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & leve
             background->setMaterialName("General/IconNone");
             break;
     }
-    if (level.phaseX != PHASE_COLLECT)
-        title->setCaption(Util::toStringInt(levelRequest.first.nback) + "-Back");
-    else
-        title->setCaption("Recess");
+    std::string iconName = Util::toStringInt(levelRequest.first.nback) + "-Back";
+    if (level.phaseX == PHASE_COLLECT)
+        iconName = "Recess";
+    if (level.hasHoldout())
+        iconName += " H";
+    title->setCaption(iconName);
 }
 
 void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background)

@@ -3084,7 +3084,7 @@ bool Player::saveSession(std::string file)
         << sessionStartTime << " "
         << sessionEndTime << " "
         << numOfSessions << " "
-        << sessionScreenEnabled << "\n";
+        << globals.sessionScreenEnabled << "\n";
 
         out.close();
     }
@@ -3147,14 +3147,6 @@ bool Player::saveProgress(std::string file)
     out << "sessionStartTime" << " " << sessionStartTime << std::endl;
     out << "sessionEndTime" << " " << sessionEndTime << std::endl;
     out << "numOfSessions" << " " << numOfSessions << std::endl;
-    out << "sessionScreenEnabled" << " " << sessionScreenEnabled << std::endl;
-
-
-
-
-
-
-    
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -3285,8 +3277,6 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> sessionEndTime;
     else if (paramName == "numOfSessions")
         in >> numOfSessions;
-    else if (paramName == "sessionScreenEnabled")
-        in >> sessionScreenEnabled;
     return in;
     
 

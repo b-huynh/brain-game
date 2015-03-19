@@ -17,4 +17,7 @@
 // a different location separate from its associated Documents folder.
 std::string applicationDocumentsPath();
 
+// Requests to open the URL. On iOS, this generally opens Safari.
+void openURL(std::string url);
+
 #endif

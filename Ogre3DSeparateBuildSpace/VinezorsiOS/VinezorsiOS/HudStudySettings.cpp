@@ -65,7 +65,7 @@ void HudStudySettings::update(float elapsed)
     sessionEndTimeNumberTextDisplay->setCaption(sessionEndtimeString);
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
-    if(player->sessionScreenEnabled)
+    if(globals.sessionScreenEnabled)
     {
         enableSessionScreenButtonBackground->setMaterialName("General/CheckboxGreen");
         enableSessionScreenTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));

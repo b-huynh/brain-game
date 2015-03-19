@@ -179,6 +179,11 @@ void OgreFramework::requestResize()
     globals.set();
 }
 
+void OgreFramework::requestOpenURL(std::string url)
+{
+    openURL(url);
+}
+
 OgreFramework::~OgreFramework()
 {
     if(m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
