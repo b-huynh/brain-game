@@ -63,6 +63,8 @@
 		5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB00D418A4F057005452C6 /* MainView.storyboard */; };
 		5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB685D19297AFB00B07365 /* HudElements.cpp */; };
 		5DFB686219297B0800B07365 /* TutorialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB686019297B0800B07365 /* TutorialManager.cpp */; };
+		C93653AA1ABAA53500AB16B1 /* HudInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C93653A91ABAA53500AB16B1 /* HudInformation.cpp */; };
+		C93653AD1ABAA55B00AB16B1 /* EngineInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */; };
 		C95D553E1AB8C77E00589A57 /* EngineStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */; };
 		C95D553F1AB8C77E00589A57 /* HudStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */; };
 /* End PBXBuildFile section */
@@ -169,6 +171,10 @@
 		5DFB685E19297AFB00B07365 /* HudElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudElements.h; sourceTree = "<group>"; };
 		5DFB686019297B0800B07365 /* TutorialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TutorialManager.cpp; sourceTree = "<group>"; };
 		5DFB686119297B0800B07365 /* TutorialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialManager.h; sourceTree = "<group>"; };
+		C93653A81ABAA52400AB16B1 /* HudInformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HudInformation.h; sourceTree = "<group>"; };
+		C93653A91ABAA53500AB16B1 /* HudInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudInformation.cpp; sourceTree = "<group>"; };
+		C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineInformation.cpp; sourceTree = "<group>"; };
+		C93653AC1ABAA55B00AB16B1 /* EngineInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineInformation.h; sourceTree = "<group>"; };
 		C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStudySettings.cpp; sourceTree = "<group>"; };
 		C95D553B1AB8C77E00589A57 /* EngineStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStudySettings.h; sourceTree = "<group>"; };
 		C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStudySettings.cpp; sourceTree = "<group>"; };
@@ -258,17 +264,18 @@
 		5D46023019080E4000F73DC3 /* EngineModes */ = {
 			isa = PBXGroup;
 			children = (
-				C95D55391AB8C75500589A57 /* EngineStudySettings */,
 				5D46024219080E8E00F73DC3 /* EngineStateManager.cpp */,
 				5D46024319080E8E00F73DC3 /* EngineStateManager.h */,
 				5D46024619080E9400F73DC3 /* BaseClasses */,
 				5D46023319080E6800F73DC3 /* EngineCredits */,
 				5D46023219080E5A00F73DC3 /* EngineMainMenu */,
+				C93653A71ABAA4DA00AB16B1 /* EngineInformation */,
 				5D46023119080E5300F73DC3 /* EngineStage */,
 				5D709B0119CCF31F00A4CEEE /* EngineSchedulerMenu */,
 				5D46022F19080E3700F73DC3 /* EngineLevelSelection */,
 				5D196F52193D0E490042DEA0 /* EngineControlSettings */,
 				5DDD51D6195CBE0E00F82DBF /* EngineMainSettings */,
+				C95D55391AB8C75500589A57 /* EngineStudySettings */,
 			);
 			name = EngineModes;
 			sourceTree = "<group>";
@@ -452,6 +459,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		C93653A71ABAA4DA00AB16B1 /* EngineInformation */ = {
+			isa = PBXGroup;
+			children = (
+				C93653A81ABAA52400AB16B1 /* HudInformation.h */,
+				C93653A91ABAA53500AB16B1 /* HudInformation.cpp */,
+				C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */,
+				C93653AC1ABAA55B00AB16B1 /* EngineInformation.h */,
+			);
+			name = EngineInformation;
+			sourceTree = "<group>";
+		};
 		C95D55391AB8C75500589A57 /* EngineStudySettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -571,6 +589,7 @@
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
 				5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */,
 				5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */,
+				C93653AD1ABAA55B00AB16B1 /* EngineInformation.cpp in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
@@ -598,6 +617,7 @@
 				5D46023619080E7200F73DC3 /* EngineCredits.cpp in Sources */,
 				5D709B0619CCF33400A4CEEE /* EngineSchedulerMenu.cpp in Sources */,
 				5DFB686219297B0800B07365 /* TutorialManager.cpp in Sources */,
+				C93653AA1ABAA53500AB16B1 /* HudInformation.cpp in Sources */,
 				5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */,
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
 				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,

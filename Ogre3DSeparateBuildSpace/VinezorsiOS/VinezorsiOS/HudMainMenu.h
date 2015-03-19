@@ -47,15 +47,23 @@ protected:
     
     enum Buttons {
         BUTTON_PLAY, BUTTON_CREDITS, BUTTON_SETTINGS, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3, BUTTON_NUMPAD_4, BUTTON_NUMPAD_5, BUTTON_NUMPAD_6, BUTTON_NUMPAD_7, BUTTON_NUMPAD_8, BUTTON_NUMPAD_9,
-        BUTTON_NUMPAD_CANCEL
+        BUTTON_NUMPAD_CANCEL, BUTTON_INFORMATION
     };
     
     // Overlay items for GAME_STATE_MENU
     PanelOverlayElement* mainMenuEntireBackground;
     
     PanelOverlayElement* playButtonBackground;
+    TextAreaOverlayElement* playButtonTextDisplay;
+
     PanelOverlayElement* creditsButtonBackground;
+    TextAreaOverlayElement* creditsButtonTextDisplay;
+
     PanelOverlayElement* settingsButtonBackground;
+    TextAreaOverlayElement* settingsButtonTextDisplay;
+
+    PanelOverlayElement* informationButtonBackground;
+    TextAreaOverlayElement* informationButtonTextDisplay;
     
     //Numpad
     PanelOverlayElement* numpadBackground;

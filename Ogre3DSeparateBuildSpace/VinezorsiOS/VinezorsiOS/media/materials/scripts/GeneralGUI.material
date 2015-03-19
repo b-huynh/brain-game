@@ -253,7 +253,78 @@ material General/ScreenBackgroundMainMenu
       }
     }
 }
+material General/MainMenuButton1
+{
+    technique
+    {
+      pass
+      {
 
+      	scene_blend alpha_blend
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture mainmenubutton1.png
+	    tex_address_mode border
+        }
+      }
+    }
+}
+material General/MainMenuButton2
+{
+    technique
+    {
+      pass
+      {
+
+      	scene_blend alpha_blend
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture mainmenubutton2.png
+	    tex_address_mode border
+        }
+      }
+    }
+}
+material General/MainMenuButton3
+{
+    technique
+    {
+      pass
+      {
+
+      	scene_blend alpha_blend
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture mainmenubutton3.png
+	    tex_address_mode border
+        }
+      }
+    }
+}
+material General/MainMenuButton4
+{
+    technique
+    {
+      pass
+      {
+
+      	scene_blend alpha_blend
+        lighting off
+        depth_write off
+        texture_unit
+        {
+            texture mainmenubutton4.png
+	    tex_address_mode border
+        }
+      }
+    }
+}
 material General/ScreenBackgroundSchedulerMenu
 {
     technique

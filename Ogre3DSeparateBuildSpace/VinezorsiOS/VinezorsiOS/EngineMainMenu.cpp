@@ -87,6 +87,12 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         }
         //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
     }
+    else if (queryGUI == "information")
+    {
+        std::cout << "Information Pressed" <<std::endl;
+        player->reactGUI();
+        engineStateMgr->requestPushEngine(ENGINE_INFORMATION, player);
+    }
     else if(queryGUI == "numpadbuttoncancel")
     {
         if(hud->enableNumpad)

@@ -139,7 +139,13 @@ void HudMainMenu::alloc()
                                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuCreditsButtonBackground"));
     settingsButtonBackground = static_cast<PanelOverlayElement*>(
                                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuSettingsButtonBackground"));
+    informationButtonBackground= static_cast<PanelOverlayElement*>(
+                                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainMenuInformationButtonBackground"));
     
+    playButtonTextDisplay= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainMenuPlayButtonText"));
+    creditsButtonTextDisplay= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainMenuCreditsButtonText"));
+    settingsButtonTextDisplay= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainMenuSettingsButtonText"));
+    informationButtonTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainMenuInformationButtonText"));
     
     //Numpad
     numpadBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "MainSettingsNumpadBackground"));
@@ -174,14 +180,20 @@ void HudMainMenu::alloc()
     password_Title= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "MainSettingsNumpadPasswordText"));
     
  
-    buttons = std::vector<HudButton>(14);
+    buttons = std::vector<HudButton>(15);
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("MainMenuOverlay");
     overlay1->add2D(mainMenuEntireBackground);
     overlay1->add2D(playButtonBackground);
+    playButtonBackground->addChild(playButtonTextDisplay);
     overlay1->add2D(creditsButtonBackground);
+    creditsButtonBackground->addChild(creditsButtonTextDisplay);
     overlay1->add2D(settingsButtonBackground);
+    settingsButtonBackground->addChild(settingsButtonTextDisplay);
+    overlay1->add2D(informationButtonBackground);
+    informationButtonBackground->addChild(informationButtonTextDisplay);
+
     
     //Numpad
     numpadButton_0->addChild(numpadButton_0_TextDisplay);
@@ -226,6 +238,16 @@ void HudMainMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(creditsButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(settingsButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(informationButtonBackground);
+
+    
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(creditsButtonTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(settingsButtonTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(informationButtonTextDisplay);
+
+
+
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(numpadBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(numpadButton_0);
@@ -262,7 +284,36 @@ void HudMainMenu::dealloc()
 
 void HudMainMenu::initOverlay()
 {
-    //Newest!
+    //Set Buttons Text
+    playButtonTextDisplay->setMetricsMode(GMM_RELATIVE);
+    playButtonTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    playButtonTextDisplay->setPosition(0.015, 0.03);
+    playButtonTextDisplay->setCharHeight(0.02 * FONT_SZ_MULT);
+    playButtonTextDisplay->setFontName("MainSmall");
+    playButtonTextDisplay->setCaption("Train");
+    
+    creditsButtonTextDisplay->setMetricsMode(GMM_RELATIVE);
+    creditsButtonTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    creditsButtonTextDisplay->setPosition(0.015, 0.03);
+    creditsButtonTextDisplay->setCharHeight(0.02 * FONT_SZ_MULT);
+    creditsButtonTextDisplay->setFontName("MainSmall");
+    creditsButtonTextDisplay->setCaption("Levels");
+    
+    settingsButtonTextDisplay->setMetricsMode(GMM_RELATIVE);
+    settingsButtonTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    settingsButtonTextDisplay->setPosition(0.015, 0.03);
+    settingsButtonTextDisplay->setCharHeight(0.02 * FONT_SZ_MULT);
+    settingsButtonTextDisplay->setFontName("MainSmall");
+    settingsButtonTextDisplay->setCaption("Settings");
+    
+    informationButtonTextDisplay->setMetricsMode(GMM_RELATIVE);
+    informationButtonTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    informationButtonTextDisplay->setPosition(0.015, 0.03);
+    informationButtonTextDisplay->setCharHeight(0.02 * FONT_SZ_MULT);
+    informationButtonTextDisplay->setFontName("MainSmall");
+    informationButtonTextDisplay->setCaption("Information");
+    
+    
     // Link and set resources
     mainMenuEntireBackground->setMetricsMode(GMM_RELATIVE);
     mainMenuEntireBackground->setPosition(0.0, 0.0);
@@ -393,11 +444,18 @@ void HudMainMenu::initOverlay()
     
     numpadBackground->setMaterialName("General/TutorialBackdrop");
 
-    
+    //Set Material to Buttons:
+    playButtonBackground->setMaterialName("General/MainMenuButton1");
+    creditsButtonBackground->setMaterialName("General/MainMenuButton2");
+    settingsButtonBackground->setMaterialName("General/MainMenuButton3");
+    informationButtonBackground->setMaterialName("General/MainMenuButton4");
+
+    //End Set Material to Buttons
     
     buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.40), Vector2(0.12, 0.08), playButtonBackground, NULL);
-    buttons[BUTTON_CREDITS].setButton("credits", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.49), Vector2(0.15, 0.08), creditsButtonBackground, NULL);
-    buttons[BUTTON_SETTINGS].setButton("settings", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.58), Vector2(0.18, 0.08), settingsButtonBackground, NULL);
+    buttons[BUTTON_CREDITS].setButton("credits", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.49), Vector2(0.155, 0.08), creditsButtonBackground, NULL);
+    buttons[BUTTON_SETTINGS].setButton("settings", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.58), Vector2(0.190, 0.08), settingsButtonBackground, NULL);
+    buttons[BUTTON_INFORMATION].setButton("information", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.67), Vector2(0.225, 0.08), informationButtonBackground, NULL);
     
     
     buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.345), Vector2(0.06, 0.06), numpadButton_0, NULL);
