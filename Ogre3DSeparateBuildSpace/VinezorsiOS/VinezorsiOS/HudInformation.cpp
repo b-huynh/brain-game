@@ -54,6 +54,15 @@ void HudInformation::alloc()
     paragraphText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "InformationParagraphText"));
     paragraphTextBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "InformationParagraphTextBackground"));
 
+    gameTitleText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "InformationGameTitleText"));
+    BGCTopLinkText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "InformationBGCTopLinkText"));
+    nbackLinkText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "InformationNBackLinkText"));
+    BGCRecallLinkText = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "InformationRecallLinkText"));
+    
+    BGCTopLinkButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "InformationBGCTopLinkButtonBackground"));
+    nbackLinkButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "InformationNBackLinkButtonBackground"));
+    BGCRecallLinkButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "InformationBGCRecallLinkButtonBackground"));
+    
 
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
@@ -64,10 +73,17 @@ void HudInformation::alloc()
     overlay1->add2D(informationBackdrop2);
     overlay1->add2D(informationTitleBackground);
     overlay1->add2D(paragraphTextBackground);
+    overlay1->add2D(BGCTopLinkButtonBackground);
+    overlay1->add2D(nbackLinkButtonBackground);
+    overlay1->add2D(BGCRecallLinkButtonBackground);
+
+
     informationTitleBackground->addChild(informationTitleText);
     paragraphTextBackground->addChild(paragraphText);
-
-    
+    paragraphTextBackground->addChild(gameTitleText);
+    paragraphTextBackground->addChild(BGCTopLinkText);
+    paragraphTextBackground->addChild(nbackLinkText);
+    paragraphTextBackground->addChild(BGCRecallLinkText);
     
     overlay1->add2D(backButtonBackground);
     
@@ -85,6 +101,13 @@ void HudInformation::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(paragraphText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(paragraphTextBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(gameTitleText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(BGCTopLinkText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackLinkText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(BGCRecallLinkText);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(BGCTopLinkButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackLinkButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(BGCRecallLinkButtonBackground);
 
 
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
@@ -118,15 +141,56 @@ void HudInformation::initOverlay()
     
     paragraphText->setMetricsMode(GMM_RELATIVE);
     paragraphText->setAlignment(TextAreaOverlayElement::Left);
-    paragraphText->setPosition(0.1, 0.20);
-    paragraphText->setCharHeight(0.015 * FONT_SZ_MULT);
-    paragraphText->setFontName("MainSmall"); //http:// bgc.ucr.edu/recall http://en.wikipedia.org/wiki/N-back
-    paragraphText->setCaption("Recall the Game  - \nUC Riverside Brain Game Center Production \n\n\n\nThis game is based upon the n-back task \n\n\nIn our space-themed game, you have been abducted by a hostile alien species. \nTo escape you must navigate though a series of wormholes using one of their \nforeign ships. To advance wormholes you need to zap matching fuel cells \n(determined by the n-back). The ships sensors will give you cues to help you \ndetermine which fuel pods to zap (the n-back targets) and which ones to \ncollect (the other fuel pods) to fuel your ship. Remember the sequence of \ncolors, shapes and sounds. \n\nSometimes the fuel pods may randomly cloak their color, shape or sound. This \nmeans one of those signals will be missing, so you should remember all 3 \npieces of information (color, shape, sound) together. \n\nDon’t fret if you don’t get it at first, this is brain training and is meant to be \nchallenging, after a few days you’ll be proud of your progress. \n\nMore information (FAQs and Tutorials) can be found on our webpage: \nhttp:// bgc.ucr.edu/recall");
+    paragraphText->setPosition(0.1, 0.08);
+    paragraphText->setCharHeight(0.018 * FONT_SZ_MULT);
+    paragraphText->setFontName("MainSmall"); // http://en.wikipedia.org/wiki/N-back
+    paragraphText->setCaption("\n\n\n\nThis game is based upon the\n\nIn our space-themed game, you have been abducted by a hostile\nalien species. To escape you must navigate though a series of \nwormholes using one of their foreign ships. To advance wormholes \nyou need to zap matching fuel cells (determined by the n-back). \nThe ships sensors will give you cues to help you determine which \nfuel pods to zap (the n-back targets) and which ones to collect \n(the other fuel pods) to fuel your ship. Remember the sequence of \ncolors, shapes and sounds. \n\nSometimes the fuel pods may randomly cloak their color, shape or \nsound. This means one of those signals will be missing, so you \nshould remember all 3 pieces of information (color, shape, sound) \ntogether. \n\nDon\'t fret if you don\'t get it at first, this is brain training and is \nmeant to be challenging, after a few days you\'ll be proud of your \nprogress. \n\nMore information (FAQs and Tutorials) can be found on our \nwebpage:");
+    
+    gameTitleText->setMetricsMode(GMM_RELATIVE);
+    gameTitleText->setAlignment(TextAreaOverlayElement::Left);
+    gameTitleText->setPosition(0.1, 0.11);
+    gameTitleText->setCharHeight(0.04 * FONT_SZ_MULT);
+    gameTitleText->setFontName("MainSmall");
+    gameTitleText->setCaption("Recall the Game");
+    
+    BGCTopLinkText->setMetricsMode(GMM_RELATIVE);
+    BGCTopLinkText->setAlignment(TextAreaOverlayElement::Left);
+    BGCTopLinkText->setPosition(0.1, 0.16);
+    BGCTopLinkText->setCharHeight(0.024 * FONT_SZ_MULT);
+    BGCTopLinkText->setFontName("MainSmall");
+    BGCTopLinkText->setCaption("UC Riverside Brain Game Center Production");
+    BGCTopLinkText->setColour(Ogre::ColourValue(0,.7,1,1));
+    
+    nbackLinkText->setMetricsMode(GMM_RELATIVE);
+    nbackLinkText->setAlignment(TextAreaOverlayElement::Left);
+    nbackLinkText->setPosition(0.48, 0.205); //.298
+    nbackLinkText->setCharHeight(0.018 * FONT_SZ_MULT);
+    nbackLinkText->setFontName("MainSmall");
+    nbackLinkText->setCaption("n-back task.");
+    nbackLinkText->setColour(Ogre::ColourValue(0,.7,1,1));
+    
+    BGCRecallLinkText->setMetricsMode(GMM_RELATIVE);
+    BGCRecallLinkText->setAlignment(TextAreaOverlayElement::Left);
+    BGCRecallLinkText->setPosition(0.24, 0.865);
+    BGCRecallLinkText->setCharHeight(0.028 * FONT_SZ_MULT);
+    BGCRecallLinkText->setFontName("MainSmall");
+    BGCRecallLinkText->setCaption("braingamecenter.ucr.edu/games/recall");
+    BGCRecallLinkText->setColour(Ogre::ColourValue(0,.7,1,1));
+
+
     
     backButtonBackground->setMaterialName("General/BackButton1");
-    
+    //BGCTopLinkButtonBackground->setMaterialName("General/BackButton1");
+    //nbackLinkButtonBackground->setMaterialName("General/BackButton1");
+    //BGCRecallLinkButtonBackground->setMaterialName("General/BackButton1");
+
+
     //Position Buttons
-    buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.01, 0.90), Vector2(0.30, 0.08), backButtonBackground, NULL);
+    buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.01, 0.91), Vector2(0.30, 0.08), backButtonBackground, NULL);
+    buttons[BUTTON_BGC_TOP_LINK].setButton("bgctoplink", overlays[0], GMM_RELATIVE, Vector2(0.09, 0.145), Vector2(0.72, 0.035), BGCTopLinkButtonBackground, NULL);
+    
+    buttons[BUTTON_N_BACK_LINK].setButton("nbacklink", overlays[0], GMM_RELATIVE, Vector2(0.48, 0.211), Vector2(0.15, 0.025), nbackLinkButtonBackground, NULL);
+    buttons[BUTTON_BGC_RECALL_LINK].setButton("bgcrecalllink", overlays[0], GMM_RELATIVE, Vector2(0.23, 0.870), Vector2(0.69, 0.035), BGCRecallLinkButtonBackground, NULL);
 
 }
 

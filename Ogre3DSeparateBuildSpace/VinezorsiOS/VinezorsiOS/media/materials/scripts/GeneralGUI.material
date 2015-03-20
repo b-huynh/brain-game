@@ -248,7 +248,7 @@ material General/ScreenBackgroundMainMenu
         depth_write off
         texture_unit
         {
-            texture title1.png
+            texture title2.png
         }
       }
     }

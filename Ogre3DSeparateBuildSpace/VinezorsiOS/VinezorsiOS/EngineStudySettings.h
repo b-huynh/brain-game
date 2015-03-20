@@ -68,6 +68,11 @@ protected:
     int tempnumOfSessions ;
     bool tempnewSounds;
     bool tempsessionScreenEnabled;
+    bool tempenableIndRecessFixed;
+    double tempholdoutoffsetA;
+    double tempholdoutoffsetB;
+    double tempholdoutoffsetD;
+
     
     void alloc();
     void dealloc();

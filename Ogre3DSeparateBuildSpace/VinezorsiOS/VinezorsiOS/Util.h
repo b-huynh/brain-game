@@ -130,6 +130,7 @@ namespace Util
     {
         //New Sounds
         bool newSounds = false; //Study Settings
+        std::string VendorID = "";
         
         std::string scheduleMain;
         std::string scheduleRepeat;

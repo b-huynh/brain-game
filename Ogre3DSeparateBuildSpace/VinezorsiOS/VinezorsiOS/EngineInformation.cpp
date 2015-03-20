@@ -59,6 +59,22 @@ void EngineInformation::activatePerformSingleTap(float x, float y)
         player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
     }
+    else if (queryGUI == "bgctoplink")
+    {
+        
+        std::cout << "Link Pressed!" << std::endl;
+    }
+    else if (queryGUI == "nbacklink")
+    {
+        
+        std::cout << "N Back Pressed!" << std::endl;
+    }
+    else if (queryGUI == "bgcrecalllink")
+    {
+        
+        std::cout << "Recall Link Pressed!" << std::endl;
+    }
+    
 }
 
 // The following deal with injecting coordinates to simulate a slider

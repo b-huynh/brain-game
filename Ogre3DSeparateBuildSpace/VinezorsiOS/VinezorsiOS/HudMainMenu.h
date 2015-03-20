@@ -41,9 +41,11 @@ public:
     float passwordDot2Init_x = .16;
     float passwordDot3Init_x = .21;
     
+    const int PASSWORD[4] = {3,1,4,1};
+
+    
 protected:
     Player* player;
-    const int PASSWORD[4] = {3,1,4,1};
     
     enum Buttons {
         BUTTON_PLAY, BUTTON_CREDITS, BUTTON_SETTINGS, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3, BUTTON_NUMPAD_4, BUTTON_NUMPAD_5, BUTTON_NUMPAD_6, BUTTON_NUMPAD_7, BUTTON_NUMPAD_8, BUTTON_NUMPAD_9,

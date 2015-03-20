@@ -263,6 +263,8 @@ public:
     
     bool sessionScreenEnabled = false;
     
+    bool enableIndRecessFixed = false;
+    
     //End Study Settings
 
     

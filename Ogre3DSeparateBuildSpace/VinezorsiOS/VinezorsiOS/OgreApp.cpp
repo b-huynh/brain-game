@@ -184,7 +184,9 @@ void OgreApp::update(float elapsed)
 
 void OgreApp::setupDemoScene()
 {
+    
     globals.initPaths();
+    globals.VendorID = getVendorID();
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
     //syncConfig();
 #endif

@@ -48,6 +48,11 @@ void EngineStudySettings::enter()
     tempnumOfSessions = player->numOfSessions;
     tempnewSounds= globals.newSounds;
     tempsessionScreenEnabled = player->sessionScreenEnabled;
+    tempenableIndRecessFixed = player->enableIndRecessFixed;
+    tempholdoutoffsetA = player->scheduler->holdoutOffsetA;
+    tempholdoutoffsetB = player->scheduler->holdoutOffsetB;
+    tempholdoutoffsetD = player->scheduler->holdoutOffsetD;
+
     
     // Set skybox
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -76,9 +81,6 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         player->reactGUI();
     if (queryGUI == "back")
     {
-        player->saveProgress(globals.savePath);
-        engineStateMgr->requestPopEngine();
-        
         // Check if anything changes
         if(tempfuelEnabled == player->fuelEnabled &&
            tempholdoutEnabled == player->holdoutEnabled &&
@@ -96,7 +98,8 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
            tempsessionEndTime == player->sessionEndTime &&
            tempnumOfSessions == player->numOfSessions &&
            tempnewSounds== globals.newSounds &&
-           tempsessionScreenEnabled == player->sessionScreenEnabled)
+           tempsessionScreenEnabled == player->sessionScreenEnabled &&
+           tempenableIndRecessFixed == player->enableIndRecessFixed)
         {
             //Still the same
             std::cout << "Nothing Changed!" <<std::endl;
@@ -105,11 +108,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             //Something Changed
             std::cout << "Something Changed!" << std::endl;
+            player->feedLevelRequestFromSchedule();
+            //Reroll Marbles (IF okay is pressed)
+            //Show pop-up!
+            //Disable Buttons
+            //Change everything back (If not okay is pressed!)
+            //Revert the player settings
             player->sessionStarted = false;
-
+            
         }
-           
-           
+        
+        player->saveProgress(globals.savePath);
+        engineStateMgr->requestPopEngine();
         
     }
     else if (queryGUI == "checksessionid")
@@ -351,6 +361,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         else
         {
             player->holdoutEnabled = true;
+            player->holdoutdelayEnabled = false;
         }
     }
     else if (queryGUI == "checkholdoutdelay")
@@ -392,15 +403,42 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         hud->showDecimal = false;
         hud->nStatus = hud->NONE;
         
+        if(player->holdoutEnabled)
+        {
+            if(player->holdoutdelayEnabled)
+            {
+                player->holdoutdelayEnabled = false;
+                //If holdoutdelay is disabled then we must revert to the old holdout offset.
+                player->scheduler->holdoutOffsetA = tempholdoutoffsetA;
+                player->scheduler->holdoutOffsetB = tempholdoutoffsetB;
+                player->scheduler->holdoutOffsetD = tempholdoutoffsetD;
+            }
+            else
+            {
+                player->holdoutdelayEnabled = true;
+                //If holdoutdelay is enabled then we use the new offset
+                //Update the holdout offset
+                if(player->holdoutdelayNumber == 1)
+                {
+                    player->scheduler->holdoutOffsetA = 0;
+                    player->scheduler->holdoutOffsetB = 0;
+                    player->scheduler->holdoutOffsetD = 0;
+                    
+                    
+                }
+                else
+                {
+                    player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
+                    player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
+                    player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+                    
+                    
+                }
+
+            
+            }
+        }
         
-        if(player->holdoutdelayEnabled)
-        {
-            player->holdoutdelayEnabled = false;
-        }
-        else
-        {
-            player->holdoutdelayEnabled = true;
-        }
     }
     else if (queryGUI == "sessionstarttime")
     {
@@ -545,7 +583,8 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
         }
-        if(player->holdoutdelayEnabled)
+        
+        if( player->holdoutEnabled && player->holdoutdelayEnabled)
         {
             //std::cout<<"IND RECESS NUMBER" << std::endl;
             hud->enableNumpad = true;
@@ -694,6 +733,59 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             player->indRecessEnabled = true;
         }
     }
+    else if (queryGUI == "checkindrecessfixed")
+    {
+        //Fix input fields
+        if(hud->nStatus == hud->INIT_VELOCITY)
+        {
+            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+        }
+        if(hud->nStatus == hud->MAN_RECESS)
+        {
+            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+        }
+        if(hud->nStatus == hud->NEW_NAV_INC)
+        {
+            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+        }
+        if(hud->nStatus == hud->IND_RECESS_INC)
+        {
+            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+        }
+        if(hud->nStatus == hud->HOLDOUT_DELAY)
+        {
+            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+        }
+        if(hud->nStatus == hud->SESSION_START_TIME)
+        {
+            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+        }
+        if(hud->nStatus == hud->SESSION_END_TIME)
+        {
+            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+        }
+        if(hud->nStatus == hud->NUM_OF_SESSIONS)
+        {
+            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+        }
+        hud->enableNumpad = false;
+        hud->showDecimal = false;
+        hud->nStatus = hud->NONE;
+        std::cout << "Fixed Pressed" << std::endl;
+        
+        if(player->indRecessEnabled){
+            if(player->enableIndRecessFixed)
+            {
+                player->enableIndRecessFixed = false;
+            }
+            else
+            {
+                player->enableIndRecessFixed = true;
+            }
+        }
+        
+    }
+
     else if(queryGUI == "checkindrecessnumber")
     {
         //Fix OTHER input fields
@@ -1587,9 +1679,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->newNavIncrement= std::atof(hud->newNavigationIncAmountString.c_str());
-                if(player->newNavIncrement < 0.00f) //What do I use!
+                if(player->newNavIncrement < 0.01f) //What do I use!
                 {
-                    player->newNavIncrement = 0.00f;
+                    player->newNavIncrement = 0.01f;
                 }
                 if(player->newNavIncrement > 1.0f) //What do I use!
                 {
@@ -1608,9 +1700,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->indRecessIncrement= std::atof(hud->indRecessString.c_str());
-                if(player->indRecessIncrement < 0.00f) //What do I use!
+                if(player->indRecessIncrement < 0.01f) //What do I use!
                 {
-                    player->indRecessIncrement = 0.00f;
+                    player->indRecessIncrement = 0.01f;
                 }
                 if(player->indRecessIncrement > 1.0f) //What do I use!
                 {
@@ -1628,13 +1720,30 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 
                 player->holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
-                if(player->holdoutdelayNumber < 0.00f) //What do I use!
+                if(player->holdoutdelayNumber < 1.00f) //What do I use!
                 {
-                    player->indRecessIncrement = 0.00f;
+                    player->holdoutdelayNumber = 1.00f;
                 }
                 if(player->holdoutdelayNumber > 99.9f) //What do I use!
                 {
                     player->holdoutdelayNumber = 99.9f;
+                }
+                //Update the holdout offset
+                if(player->holdoutdelayNumber == 1)
+                {
+                    player->scheduler->holdoutOffsetA = 0;
+                    player->scheduler->holdoutOffsetB = 0;
+                    player->scheduler->holdoutOffsetD = 0;
+
+                    
+                }
+                else
+                {
+                    player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
+                    player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
+                    player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+
+
                 }
                 
             }
