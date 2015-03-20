@@ -192,25 +192,50 @@ void HudStage::update(float elapsed)
         
 
     }
-    else if (!tunnel->needsCleaning() && tunnel->getEval() != PASS)
+    else if (!tunnel->needsCleaning())
     {
-        if (player->getHP() <= 0)
+        if (tunnel->getEval() != PASS)
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nToo many unstable zaps");
+    
+            if (player->getHP() <= 0)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nToo many unstable zaps");
+            }
+            else if (tunnel->getEval() == EVEN)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Fuel");
+            }
+            else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Time");
+            }
         }
-        else if (tunnel->getEval() == EVEN)
+    }
+    else //if (tunnel->needsCleaning())
+    {
+        label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+        label7->setCharHeight(0.025 * FONT_SZ_MULT);
+        
+        bool retryEnabled = !pausePanelBack->isVisible(); // !IsVisible means the gray version is not visible
+        if (tunnel->getEval() == PASS || player->getAccuracy() >= 0.75)
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nWe've run out of Fuel");
+            if (retryEnabled)
+                label7->setCaption("\nYou may play again or continue.");
+            else
+                label7->setCaption("\nContinue to the next wormhole.");
         }
-        else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
+        else
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nWe've run out of Time");
+            if (retryEnabled)
+                label7->setCaption("\nTry again or continue?");
+            else
+                label7->setCaption("\nContinue to the next wormhole.");
         }
     }
 }
