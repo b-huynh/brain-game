@@ -63,16 +63,21 @@ void EngineInformation::activatePerformSingleTap(float x, float y)
     {
         
         std::cout << "Link Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://braingamecenter.ucr.edu");
     }
     else if (queryGUI == "nbacklink")
     {
         
         std::cout << "N Back Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://en.wikipedia.org/wiki/N-back");
+
     }
     else if (queryGUI == "bgcrecalllink")
     {
         
         std::cout << "Recall Link Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://braingamecenter.ucr.edu/games/recall");
+
     }
     
 }

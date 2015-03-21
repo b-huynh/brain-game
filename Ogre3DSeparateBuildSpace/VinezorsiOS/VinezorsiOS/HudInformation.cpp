@@ -144,7 +144,7 @@ void HudInformation::initOverlay()
     paragraphText->setPosition(0.1, 0.08);
     paragraphText->setCharHeight(0.018 * FONT_SZ_MULT);
     paragraphText->setFontName("MainSmall"); // http://en.wikipedia.org/wiki/N-back
-    paragraphText->setCaption("\n\n\n\nThis game is based upon the\n\nIn our space-themed game, you have been abducted by a hostile\nalien species. To escape you must navigate though a series of \nwormholes using one of their foreign ships. To advance wormholes \nyou need to zap matching fuel cells (determined by the n-back). \nThe ships sensors will give you cues to help you determine which \nfuel pods to zap (the n-back targets) and which ones to collect \n(the other fuel pods) to fuel your ship. Remember the sequence of \ncolors, shapes and sounds. \n\nSometimes the fuel pods may randomly cloak their color, shape or \nsound. This means one of those signals will be missing, so you \nshould remember all 3 pieces of information (color, shape, sound) \ntogether. \n\nDon\'t fret if you don\'t get it at first, this is brain training and is \nmeant to be challenging, after a few days you\'ll be proud of your \nprogress. \n\nMore information (FAQs and Tutorials) can be found on our \nwebpage:");
+    paragraphText->setCaption("\n\n\n\n\nThis game is based upon the\nIn our space-themed game, you have been abducted by a\nhostile alien species. To escape you must navigate though a \nseries of wormholes using one of their foreign ships. To advance \nwormholes you need to zap matching fuel cells (determined by the \nn-back).The ships sensors will give you cues to help you determine \nwhich fuel pods to zap (the n-back targets) and which ones to \ncollect (the other fuel pods) to fuel your ship. Remember the \nsequence of colors, shapes and sounds. \n\nSometimes the fuel pods may randomly cloak their color, shape or \nsound. This means one of those signals will be missing, so you \nshould remember all 3 pieces of information (color, shape, sound) \ntogether. \n\nDon\'t fret if you don\'t get it at first, this is brain training and is \nmeant to be challenging, after a few days you\'ll be proud of your \nprogress. \n\nMore information (FAQs and Tutorials) can be found on our \nwebpage:");
     
     gameTitleText->setMetricsMode(GMM_RELATIVE);
     gameTitleText->setAlignment(TextAreaOverlayElement::Left);
@@ -163,7 +163,7 @@ void HudInformation::initOverlay()
     
     nbackLinkText->setMetricsMode(GMM_RELATIVE);
     nbackLinkText->setAlignment(TextAreaOverlayElement::Left);
-    nbackLinkText->setPosition(0.48, 0.205); //.298
+    nbackLinkText->setPosition(0.48, 0.235); //.205
     nbackLinkText->setCharHeight(0.018 * FONT_SZ_MULT);
     nbackLinkText->setFontName("MainSmall");
     nbackLinkText->setCaption("n-back task.");
@@ -189,7 +189,7 @@ void HudInformation::initOverlay()
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.01, 0.91), Vector2(0.30, 0.08), backButtonBackground, NULL);
     buttons[BUTTON_BGC_TOP_LINK].setButton("bgctoplink", overlays[0], GMM_RELATIVE, Vector2(0.09, 0.145), Vector2(0.72, 0.035), BGCTopLinkButtonBackground, NULL);
     
-    buttons[BUTTON_N_BACK_LINK].setButton("nbacklink", overlays[0], GMM_RELATIVE, Vector2(0.48, 0.211), Vector2(0.15, 0.025), nbackLinkButtonBackground, NULL);
+    buttons[BUTTON_N_BACK_LINK].setButton("nbacklink", overlays[0], GMM_RELATIVE, Vector2(0.48, 0.241), Vector2(0.15, 0.025), nbackLinkButtonBackground, NULL);
     buttons[BUTTON_BGC_RECALL_LINK].setButton("bgcrecalllink", overlays[0], GMM_RELATIVE, Vector2(0.23, 0.870), Vector2(0.69, 0.035), BGCRecallLinkButtonBackground, NULL);
 
 }

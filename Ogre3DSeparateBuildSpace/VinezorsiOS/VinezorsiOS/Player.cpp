@@ -3014,9 +3014,11 @@ bool Player::saveSession(std::string file)
             out << "% sessionEndTime - Study Settings to set max session length in mins" << endl;
             out << "% numOfSessions - Study Settings to set number of sessions" << endl;
             out << "% sessionScreenEnabled - Study Settings to enable the SessionID screen" << endl;
+            out << "% enableIndRecessFixed - Study Settings to enable fixed Navigation for Independent Recess Levels" << endl;
+
 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
         }
         
         //Logging Study Settings
@@ -3084,7 +3086,8 @@ bool Player::saveSession(std::string file)
         << sessionStartTime << " "
         << sessionEndTime << " "
         << numOfSessions << " "
-        << sessionScreenEnabled << "\n";
+        << globals.sessionScreenEnabled << " "
+        << enableIndRecessFixed << "\n";
 
         out.close();
     }
@@ -3147,14 +3150,8 @@ bool Player::saveProgress(std::string file)
     out << "sessionStartTime" << " " << sessionStartTime << std::endl;
     out << "sessionEndTime" << " " << sessionEndTime << std::endl;
     out << "numOfSessions" << " " << numOfSessions << std::endl;
-    out << "sessionScreenEnabled" << " " << sessionScreenEnabled << std::endl;
+    out << "enableIndRecessFixed" << " " << enableIndRecessFixed << std::endl;
 
-
-
-
-
-
-    
     
     std::cout << "Save Level Progress: " << file << std::endl;
     ret = out.good();
@@ -3285,8 +3282,8 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> sessionEndTime;
     else if (paramName == "numOfSessions")
         in >> numOfSessions;
-    else if (paramName == "sessionScreenEnabled")
-        in >> sessionScreenEnabled;
+    else if (paramName == "enableIndRecessFixed")
+        in >> enableIndRecessFixed;
     return in;
     
 

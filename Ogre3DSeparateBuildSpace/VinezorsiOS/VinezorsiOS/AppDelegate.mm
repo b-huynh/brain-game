@@ -3,7 +3,9 @@
 #import "SimpleMenuViewController.h"
 #import "MainViewController.h"
 
-#define AUTO_START
+#include "Util.h"
+
+extern Util::ConfigGlobal globals;
 
 @implementation AppDelegate
 
@@ -12,21 +14,24 @@
     NSLog(@"Launch");
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-#ifdef AUTO_START
-    self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
-#ifdef DEMO_BUILD
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101"];
-#else
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subjecta110"];
-#endif
-    self.mWindow.rootViewController = self.mViewControllerMain;
-    [self.mWindow makeKeyAndVisible];
-#else
-    // Main Menu
-    self.mViewControllerMenu = [[UIStoryboard storyboardWithName:@"SimpleMenu" bundle:nil] instantiateViewControllerWithIdentifier:@"SimpleMenuViewControllerStoryboard"];
-    self.mWindow.rootViewController = self.mViewControllerMenu;
-    [self.mWindow makeKeyAndVisible];
-#endif
+    globals.initGlobalSettingsPath();
+    globals.loadGlobalSettings(globals.globalPath);
+    
+    if (!globals.sessionScreenEnabled)
+    {
+        self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
+
+        [self.mViewControllerMain startWithWindow:self.mWindow:[NSString stringWithUTF8String:globals.playerName.c_str()]];
+        self.mWindow.rootViewController = self.mViewControllerMain;
+        [self.mWindow makeKeyAndVisible];
+    }
+    else
+    {
+        // Main Menu
+        self.mViewControllerMenu = [[UIStoryboard storyboardWithName:@"SimpleMenu" bundle:nil] instantiateViewControllerWithIdentifier:@"SimpleMenuViewControllerStoryboard"];
+        self.mWindow.rootViewController = self.mViewControllerMenu;
+        [self.mWindow makeKeyAndVisible];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

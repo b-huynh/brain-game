@@ -1741,14 +1741,17 @@ void EngineStage::setTaskPrompt()
         {
             globals.setMessage("Zap matching " + Util::toStringInt(level.nback) + "-Back fuel", MESSAGE_NORMAL);
             if (level.phaseX == PHASE_COLOR_SOUND)
-                globals.appendMessage("\nusing Color and Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Color and Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_SHAPE_SOUND)
-                globals.appendMessage("\nusing Shape and Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Shape and Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_SOUND_ONLY)
-                globals.appendMessage("\nusing Only Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Only Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_ALL_SIGNAL)
-                globals.appendMessage("\nUsing Color, Shape, and Sound", MESSAGE_NORMAL);
-            globals.appendMessage("\n", MESSAGE_NORMAL);
+                globals.appendMessage("\nUsing Color, Shape, and Sound.", MESSAGE_NORMAL);
+            if (level.hasHoldout())
+                globals.appendMessage("\nCareful... Holdout is active.", MESSAGE_NORMAL);
+            else
+                globals.appendMessage("\n", MESSAGE_NORMAL);
         }
         
         

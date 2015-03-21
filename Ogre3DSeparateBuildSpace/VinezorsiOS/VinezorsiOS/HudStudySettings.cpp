@@ -53,6 +53,44 @@ void HudStudySettings::adjust()
     player->getTutorialMgr()->adjust();
 }
 
+void HudStudySettings::showPopUp()
+{
+    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");//create("StudySettingsOverlay");
+    overlay1->add2D(somethingChangedDisableBackground);
+    
+    somethingChangedMessageBackground->addChild(somethingChangedMessageText);
+    overlay1->add2D(somethingChangedMessageBackground);
+    
+    somethingChangedOkButton->addChild(somethingChangedOkButtonText);
+    overlay1->add2D(somethingChangedOkButton);
+    
+    somethingChangedRevertButton->addChild(somethingChangedRevertButtonText);
+    overlay1->add2D(somethingChangedRevertButton);
+    
+    /*
+    //Button "Restart Session"
+    PanelOverlayElement* somethingChangedOkButton;
+    TextAreaOverlayElement* somethingChangedOkButtonText;
+    
+    //Button "Revert"
+    PanelOverlayElement* somethingChangedRevertButton;
+    TextAreaOverlayElement* somethingChangedRevertButtonText;*/
+    
+}
+void HudStudySettings::hidePopUp()
+{
+    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");//create("StudySettingsOverlay");
+    overlay1->remove2D(somethingChangedDisableBackground);
+    
+    somethingChangedMessageBackground->removeChild("somethingChangedMessageText");
+    overlay1->remove2D(somethingChangedMessageBackground);
+    
+    somethingChangedOkButton->removeChild("somethingChangedOkButtonText");
+    overlay1->remove2D(somethingChangedOkButton);
+    
+    somethingChangedRevertButton->removeChild("somethingChangedRevertButtonText");
+    overlay1->remove2D(somethingChangedRevertButton);
+}
 void HudStudySettings::update(float elapsed)
 {
 
@@ -65,9 +103,8 @@ void HudStudySettings::update(float elapsed)
     sessionEndTimeNumberTextDisplay->setCaption(sessionEndtimeString);
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
-
     
-    if(player->sessionScreenEnabled)
+    if(globals.sessionScreenEnabled)
     {
         enableSessionScreenButtonBackground->setMaterialName("General/CheckboxGreen");
         enableSessionScreenTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -517,6 +554,20 @@ void HudStudySettings::alloc()
     vendorIDTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StudySettingsvendorIDTextDisplay"));
     vendorIDBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StudySettingsvendorIDBackground"));
     
+    //PopUp
+    //PopUp Change
+    somethingChangedMessageBackground= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedMessageBackground"));
+    somethingChangedDisableBackground= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedDisableBackground"));
+    somethingChangedMessageText= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "somethingChangedMessageText"));
+    
+    //Button "Restart Session"
+    somethingChangedOkButton= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedOkButton"));
+    somethingChangedOkButtonText= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "somethingChangedOkButtonText"));
+    
+    //Button "Revert"
+    somethingChangedRevertButton= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedRevertButton"));
+    somethingChangedRevertButtonText= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "somethingChangedRevertButtonText"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -787,7 +838,19 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(vendorIDTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(vendorIDBackground);
 
+    //PopUp Change
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedMessageBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedDisableBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedMessageText);
+
     
+    //Button "Restart Session"
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedOkButton);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedOkButtonText);
+
+    //Button "Revert"
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedRevertButton);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedRevertButtonText);
 
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
@@ -797,6 +860,53 @@ void HudStudySettings::dealloc()
 
 void HudStudySettings::initOverlay()
 {
+    
+    somethingChangedRevertButtonText->setMetricsMode(GMM_RELATIVE);
+    somethingChangedRevertButtonText->setAlignment(TextAreaOverlayElement::Left);
+    somethingChangedRevertButtonText->setPosition(0.01, 0.01);
+    somethingChangedRevertButtonText->setCharHeight(0.020 * FONT_SZ_MULT);
+    somethingChangedRevertButtonText->setFontName("MainSmall");
+    somethingChangedRevertButtonText->setCaption("Revert");
+    somethingChangedRevertButtonText->setColour(Ogre::ColourValue(1,0,0,1));
+    
+    
+    
+    somethingChangedRevertButton->setMaterialName("General/BlankInput");
+    buttons[BUTTON_POPUP_REVERT].setButton("popuprevert", overlays[0], GMM_RELATIVE, Vector2(0.25, 0.6), Vector2(0.12, 0.06), somethingChangedRevertButton, NULL);
+    
+    somethingChangedOkButtonText->setMetricsMode(GMM_RELATIVE);
+    somethingChangedOkButtonText->setAlignment(TextAreaOverlayElement::Left);
+    somethingChangedOkButtonText->setPosition(0.01, 0.01);
+    somethingChangedOkButtonText->setCharHeight(0.020 * FONT_SZ_MULT);
+    somethingChangedOkButtonText->setFontName("MainSmall");
+    somethingChangedOkButtonText->setCaption("Continue");
+    somethingChangedOkButtonText->setColour(Ogre::ColourValue(0,1,0,1));
+
+
+    
+
+    somethingChangedOkButton->setMaterialName("General/BlankInput");
+    buttons[BUTTON_POPUP_OK].setButton("popupok", overlays[0], GMM_RELATIVE, Vector2(0.50, 0.6), Vector2(0.12, 0.06), somethingChangedOkButton, NULL);
+    
+    //Message Popup
+    somethingChangedMessageBackground->setMetricsMode(GMM_RELATIVE);
+    somethingChangedMessageBackground->setPosition(0.20, 0.20);
+    somethingChangedMessageBackground->setDimensions(.5, 0.5);
+    somethingChangedMessageBackground->setMaterialName("General/TutorialBackdrop");
+    
+    somethingChangedMessageText->setMetricsMode(GMM_RELATIVE);
+    somethingChangedMessageText->setAlignment(TextAreaOverlayElement::Left);
+    somethingChangedMessageText->setPosition(0.05, 0.12);
+    somethingChangedMessageText->setCharHeight(0.020 * FONT_SZ_MULT);
+    somethingChangedMessageText->setFontName("MainSmall");
+    somethingChangedMessageText->setCaption("Settings were changed! \n\n  If you wish to continue, \n  your current session will be \n  restarted.");
+    
+    //Disable PopUP
+    somethingChangedDisableBackground->setMetricsMode(GMM_RELATIVE);
+    somethingChangedDisableBackground->setPosition(0.00, 0.00);
+    somethingChangedDisableBackground->setDimensions(1, 1);
+    somethingChangedDisableBackground->setMaterialName("General/DisableBackGroundBlack");
+    
     //Ind Recess Fixed
     vendorIDBackground->setMetricsMode(GMM_RELATIVE);
     vendorIDBackground->setPosition(0.0, 0.0);
@@ -814,7 +924,7 @@ void HudStudySettings::initOverlay()
     enableIndRecessFixedTextDisplay->setPosition(0.07, 0.0);
     enableIndRecessFixedTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
     enableIndRecessFixedTextDisplay->setFontName("MainSmall");
-    enableIndRecessFixedTextDisplay->setCaption("Fixed");
+    enableIndRecessFixedTextDisplay->setCaption("Fixed Navigation");
     
     enableIndRecessFixedButtonBackground->setMaterialName("General/CheckboxBlank");
     

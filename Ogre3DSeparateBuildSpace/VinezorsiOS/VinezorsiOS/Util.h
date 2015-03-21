@@ -15,7 +15,6 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEMO_BUILD
 #define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
@@ -129,7 +128,7 @@ namespace Util
     struct ConfigGlobal
     {
         //New Sounds
-        bool newSounds = false; //Study Settings
+        bool newSounds = true; //Study Settings
         std::string VendorID = "";
         
         std::string scheduleMain;
@@ -298,9 +297,11 @@ namespace Util
         int numSegmentsWithObstacles;
         int previousNumSegmentsWithObstacles;
         
+        bool sessionScreenEnabled = false;
         int currStageID;
         std::string configPath;
         std::string configBackup;
+        std::string globalPath;
         std::string logPath;
         std::string actionPath;
         std::string sessionPath;
@@ -327,6 +328,11 @@ namespace Util
         void clearMessage();
         bool setName(const char* name);
         std::string buildPath(std::string ext, std::string playerName, int session);
+        
+        void initGlobalSettingsPath();
+        bool saveGlobalSettings(std::string file);
+        bool loadGlobalSettings1_0(std::string savePath);
+        bool loadGlobalSettings(std::string savePath);
     };
     
     float clamp(float val, float min, float max);
