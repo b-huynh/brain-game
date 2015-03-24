@@ -351,9 +351,21 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            hud->enableNumpad = true;
-            hud->showDecimal = false;
-            hud->nStatus = hud->PASSCODE;
+            
+            if(globals.enableSettingsPasscode)
+            {
+                hud->enableNumpad = false;
+                hud->showDecimal = false;
+                hud->nStatus = hud->NONE;
+                globals.enableSettingsPasscode = false;
+            }
+            else
+            {
+                hud->enableNumpad = true;
+                hud->showDecimal = false;
+                hud->nStatus = hud->PASSCODE;
+            }
+            
             
             
             
