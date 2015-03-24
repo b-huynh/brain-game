@@ -338,19 +338,19 @@ void HudMainMenu::initOverlay()
     numpadButton_Cancel->Ogre::OverlayElement::setMaterialName("General/CheckboxBlank");
     
     password_Choice0->setMetricsMode(GMM_RELATIVE);
-    password_Choice0->setPosition(0.06, 0.09);
+    password_Choice0->setPosition(0.06, 0.10);
     password_Choice0->setDimensions(0.03, 0.03);
     
     password_Choice1->setMetricsMode(GMM_RELATIVE);
-    password_Choice1->setPosition(0.11, 0.09);
+    password_Choice1->setPosition(0.11, 0.10);
     password_Choice1->setDimensions(0.03, 0.03);
     
     password_Choice2->setMetricsMode(GMM_RELATIVE);
-    password_Choice2->setPosition(0.16, 0.09);
+    password_Choice2->setPosition(0.16, 0.10);
     password_Choice2->setDimensions(0.03, 0.03);
     
     password_Choice3->setMetricsMode(GMM_RELATIVE);
-    password_Choice3->setPosition(0.21, 0.09);
+    password_Choice3->setPosition(0.21, 0.10);
     password_Choice3->setDimensions(0.03, 0.03);
     
     // password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
@@ -361,7 +361,7 @@ void HudMainMenu::initOverlay()
     password_Title->setMetricsMode(GMM_RELATIVE);
     password_Title->setAlignment(TextAreaOverlayElement::Center);
     password_Title->setPosition(0.15, 0.04); //.01
-    password_Title->setCharHeight(0.015 * FONT_SZ_MULT);
+    password_Title->setCharHeight(0.017 * FONT_SZ_MULT);
     password_Title->setFontName("MainSmall");
     
     numpadButton_Cancel_TextDisplay->setMetricsMode(GMM_RELATIVE);
@@ -457,21 +457,21 @@ void HudMainMenu::initOverlay()
     buttons[BUTTON_INFORMATION].setButton("information", overlays[0], GMM_RELATIVE, Vector2(0.16, 0.67), Vector2(0.225, 0.08), informationButtonBackground, NULL);
     
     
-    buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.345), Vector2(0.06, 0.06), numpadButton_0, NULL);
+    buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.355), Vector2(0.06, 0.06), numpadButton_0, NULL);
     
-    buttons[BUTTON_NUMPAD_1].setButton("numpadbutton1", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.135), Vector2(0.06, 0.06), numpadButton_1, NULL);
-    buttons[BUTTON_NUMPAD_2].setButton("numpadbutton2", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.135), Vector2(0.06, 0.06), numpadButton_2, NULL);
-    buttons[BUTTON_NUMPAD_3].setButton("numpadbutton3", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.135), Vector2(0.06, 0.06), numpadButton_3, NULL);
+    buttons[BUTTON_NUMPAD_1].setButton("numpadbutton1", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.145), Vector2(0.06, 0.06), numpadButton_1, NULL);
+    buttons[BUTTON_NUMPAD_2].setButton("numpadbutton2", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.145), Vector2(0.06, 0.06), numpadButton_2, NULL);
+    buttons[BUTTON_NUMPAD_3].setButton("numpadbutton3", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.145), Vector2(0.06, 0.06), numpadButton_3, NULL);
     
-    buttons[BUTTON_NUMPAD_4].setButton("numpadbutton4", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.205), Vector2(0.06, 0.06), numpadButton_4, NULL);
-    buttons[BUTTON_NUMPAD_5].setButton("numpadbutton5", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.205), Vector2(0.06, 0.06), numpadButton_5, NULL);
-    buttons[BUTTON_NUMPAD_6].setButton("numpadbutton6", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.205), Vector2(0.06, 0.06), numpadButton_6, NULL);
+    buttons[BUTTON_NUMPAD_4].setButton("numpadbutton4", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.215), Vector2(0.06, 0.06), numpadButton_4, NULL);
+    buttons[BUTTON_NUMPAD_5].setButton("numpadbutton5", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.215), Vector2(0.06, 0.06), numpadButton_5, NULL);
+    buttons[BUTTON_NUMPAD_6].setButton("numpadbutton6", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.215), Vector2(0.06, 0.06), numpadButton_6, NULL);
     
-    buttons[BUTTON_NUMPAD_7].setButton("numpadbutton7", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.275), Vector2(0.06, 0.06), numpadButton_7, NULL);
-    buttons[BUTTON_NUMPAD_8].setButton("numpadbutton8", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.275), Vector2(0.06, 0.06), numpadButton_8, NULL);
-    buttons[BUTTON_NUMPAD_9].setButton("numpadbutton9", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.275), Vector2(0.06, 0.06), numpadButton_9, NULL);
+    buttons[BUTTON_NUMPAD_7].setButton("numpadbutton7", overlays[0], GMM_RELATIVE, Vector2(0.05, 0.285), Vector2(0.06, 0.06), numpadButton_7, NULL);
+    buttons[BUTTON_NUMPAD_8].setButton("numpadbutton8", overlays[0], GMM_RELATIVE, Vector2(0.12, 0.285), Vector2(0.06, 0.06), numpadButton_8, NULL);
+    buttons[BUTTON_NUMPAD_9].setButton("numpadbutton9", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.285), Vector2(0.06, 0.06), numpadButton_9, NULL);
     
-    buttons[BUTTON_NUMPAD_CANCEL].setButton("numpadbuttoncancel", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.345), Vector2(0.06, 0.06), numpadButton_Cancel, NULL);
+    buttons[BUTTON_NUMPAD_CANCEL].setButton("numpadbuttoncancel", overlays[0], GMM_RELATIVE, Vector2(0.19, 0.355), Vector2(0.06, 0.06), numpadButton_Cancel, NULL);
 
 }
 

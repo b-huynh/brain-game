@@ -243,7 +243,7 @@ void EngineStage::update(float elapsed)
                 player->choice3RestartCounter = 0;
             }
             
-            if((!player->manRecessEnabled || player->manRecessCount < player->manRecessLevelLimit) &&
+            if((!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
                player->scheduler->sessionFinished)
             {
                 if (player->scheduler->sessionFinished) {

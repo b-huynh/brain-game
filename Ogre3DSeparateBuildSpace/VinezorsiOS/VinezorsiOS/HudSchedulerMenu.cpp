@@ -31,6 +31,7 @@ void HudSchedulerMenu::init()
     alloc();
     initOverlay();
     showOverlays();
+    std::cout << "Man RecessEnabled,Count,limie " <<globals.manRecessEnabled << " " <<globals.manRecessCount << " "<< globals.manRecessLevelLimit <<std::endl;
 }
 
 void HudSchedulerMenu::adjust()
@@ -42,12 +43,12 @@ void HudSchedulerMenu::adjust()
 void HudSchedulerMenu::update(float elapsed)
 {
     //If its time for recess
-    if(player->manRecessEnabled)
+    if(globals.manRecessEnabled)
     {
-        if(player->manRecessCount == player->manRecessLevelLimit)
+        if(globals.manRecessCount == globals.manRecessLevelLimit)
         {
             //Maybe do this when I deallocate!
-            //player->manRecessCount = 0;
+            //globals.manRecessCount = 0;
             //Mandatory Recess Time!
             //std::cout<<"Show GUI for Mandatory Recess Time!"<<std::endl;
             //Show
@@ -95,7 +96,7 @@ void HudSchedulerMenu::update(float elapsed)
 std::string HudSchedulerMenu::processButtons(Vector2 target)
 {
     std::string ret = Hud::queryButtons(target);
-    if(!player->manRecessEnabled)
+    if(!globals.manRecessEnabled)
     {
     if (ret == "selection0")
     {
@@ -132,7 +133,7 @@ std::string HudSchedulerMenu::processButtons(Vector2 target)
     }
     else
     {
-        if(player->manRecessCount != player->manRecessLevelLimit)
+        if(globals.manRecessCount != globals.manRecessLevelLimit)
         {
             if (ret == "selection0")
             {
@@ -267,10 +268,10 @@ void HudSchedulerMenu::alloc()
     overlay1->add2D(sessionBackground);
     sessionBackground->addChild(sessionDisplay);
     
-    if(player->manRecessEnabled)
+    if(globals.manRecessEnabled)
     {
         
-        if(player->manRecessCount == player->manRecessLevelLimit)
+        if(globals.manRecessCount == globals.manRecessLevelLimit)
         {
             //Man Recess overlay add
             overlay1->add2D(schedulerManRecessDisableBackground);

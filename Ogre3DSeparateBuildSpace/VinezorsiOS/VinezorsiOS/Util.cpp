@@ -903,6 +903,23 @@ bool Util::ConfigGlobal::saveGlobalSettings(std::string file)
     
     out << "sessionScreenEnabled" << " " << sessionScreenEnabled << std::endl;
     out << "playerName" << " " << playerName << std::endl;
+    out << "fuelEnabled" << " " << fuelEnabled << std::endl;
+    out << "holdoutEnabled" << " " << holdoutEnabled << std::endl;
+    out << "initialVelocity" << " " << initialVelocity << std::endl;
+    out << "manRecessEnabled" << " " << manRecessEnabled << std::endl;
+    out << "manRecessLevelLimit" << " " << manRecessLevelLimit << std::endl;
+    out << "newNavEnabled" << " " << newNavEnabled << std::endl;
+    out << "newNavIncrement" << " " << newNavIncrement << std::endl;
+    out << "indRecessEnabled" << " " << indRecessEnabled << std::endl;
+    out << "indRecessIncrement" << " " << indRecessIncrement << std::endl;
+    out << "holdoutdelayEnabled" << " " << holdoutdelayEnabled << std::endl;
+    out << "holdoutdelayNumber" << " " << holdoutdelayNumber << std::endl;
+    out << "newSounds" << " " << newSounds << std::endl;
+    out << "enableSettingsPasscode" << " " << enableSettingsPasscode << std::endl;
+    out << "sessionStartTime" << " " << sessionStartTime << std::endl;
+    out << "sessionEndTime" << " " << sessionEndTime << std::endl;
+    out << "numOfSessions" << " " << numOfSessions << std::endl;
+    out << "enableIndRecessFixed" << " " << enableIndRecessFixed << std::endl;
     
     std::cout << "Save Global Settings: " << file << std::endl;
     ret = out.good();
@@ -927,6 +944,41 @@ bool Util::ConfigGlobal::loadGlobalSettings1_0(std::string savePath)
                 saveFile >> sessionScreenEnabled;
             else if (input == "playerName")
                 saveFile >> playerName;
+            else if(input == "fuelEnabled")
+                saveFile >> fuelEnabled;
+            else if(input == "holdoutEnabled")
+                saveFile >> holdoutEnabled;
+            else if(input == "initialVelocity")
+                saveFile >> initialVelocity;
+            else if(input == "manRecessEnabled")
+                saveFile >> manRecessEnabled;
+            else if(input == "manRecessLevelLimit")
+                saveFile >> manRecessLevelLimit;
+            else if(input == "newNavEnabled")
+                saveFile >> newNavEnabled;
+            else if(input == "newNavIncrement")
+                saveFile >> newNavIncrement;
+            else if(input == "indRecessEnabled")
+                saveFile >> indRecessEnabled;
+            else if(input == "indRecessIncrement")
+                saveFile >> indRecessIncrement;
+            else if(input == "holdoutdelayEnabled")
+                saveFile >> holdoutdelayEnabled;
+            else if(input == "holdoutdelayNumber")
+                saveFile >> holdoutdelayNumber;
+            else if (input == "newSounds")
+                saveFile >> newSounds;
+            else if (input == "enableSettingsPasscode")
+                saveFile >> enableSettingsPasscode;
+            else if (input == "sessionStartTime")
+                saveFile >> sessionStartTime;
+            else if (input == "sessionEndTime")
+                saveFile >> sessionEndTime;
+            else if (input == "numOfSessions")
+                saveFile >> numOfSessions;
+            else if (input == "enableIndRecessFixed")
+                saveFile >> enableIndRecessFixed;
+
         }
     }
     return saveFile.eof();

@@ -128,6 +128,36 @@ namespace Util
     struct ConfigGlobal
     {
         //New Sounds
+        //Study Settings
+        bool fuelEnabled = true;   //Study Settings
+        bool holdoutEnabled = true; //Study Settings
+        int initialVelocity = 15; //Study Settings
+        bool manRecessEnabled = false; //Study Settings
+        int manRecessLevelLimit = 5; //StudySettings
+        int manRecessCount = 0; //StudySettings
+        bool newNavEnabled = false; //StudySettings
+        float newNavIncrement = .35f; //Study Settings
+        
+        bool indRecessEnabled = true; //StudySettings
+        float indRecessIncrement = .5f; //Study Settings
+        double indRecessNBackLevel = 1.0;
+        float indRecessNBackDelta = 0.0f;
+        
+        
+        bool holdoutdelayEnabled = true;
+        float holdoutdelayNumber = 2.5f;
+        
+        bool enableSettingsPasscode = false;
+        
+        int sessionStartTime = 20; //In Minutes
+        int sessionEndTime = 20;
+        int numOfSessions = 20;
+        
+        bool sessionNeedsIncrement = true;
+        
+        bool enableIndRecessFixed = false;
+        
+        //End Study Settings
         bool newSounds = true; //Study Settings
         std::string VendorID = "";
         

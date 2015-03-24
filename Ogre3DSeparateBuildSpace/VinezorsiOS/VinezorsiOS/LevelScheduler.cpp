@@ -10,6 +10,10 @@
 #include <iostream>
 #include "LevelScheduler.h"
 
+extern Util::ConfigGlobal globals;
+
+
+
 using namespace std;
 
 #define SCHEDULE_SIZE 5     // Number of levels in a schedule
@@ -42,6 +46,14 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->holdoutOffsetA = 0.0f;
     this->holdoutOffsetB = 0.0f;
     this->holdoutOffsetD = 0.0f;
+    
+    if(globals.holdoutEnabled && globals.holdoutdelayEnabled)
+    {
+        //Goes here everytime that the app opens up from an exit.
+        this->holdoutOffsetA = -(globals.holdoutdelayNumber-1);
+        this->holdoutOffsetB = -(globals.holdoutdelayNumber-1);
+        this->holdoutOffsetD = -(globals.holdoutdelayNumber-1);
+    }
     initTutorialLevels(); // Also called after loading the scheduler
 }
 //________________________________________________________________________________________
@@ -362,12 +374,13 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "IND_DRECESS: " << indRecessNBackLevel << endl
          <<  "__________________________________" << endl
          <<  "/--------------------------------\\" << endl
-         <<  "|       Current nBackHoldout Levels     |" << endl
+         <<  "|  Current nBackHoldout Levels   |" << endl
          << "\\--------------------------------/" << endl
          << "holdoutOffsetA: " << holdoutOffsetA << endl
          << "holdoutOffsetB: " << holdoutOffsetB << endl
          << "holdoutOffsetD: " << holdoutOffsetD << endl
          << "currentHoldout(Used in creating holdoutLevel): " << currentHoldout << endl
+         << "Man Recess: " << manRecess <<endl
          <<  "__________________________________" << endl;
     // */
     

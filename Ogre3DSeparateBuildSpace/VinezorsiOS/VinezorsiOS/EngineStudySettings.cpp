@@ -31,23 +31,23 @@ void EngineStudySettings::enter()
     
     
     //TempStudySettings
-    tempfuelEnabled = player->fuelEnabled;
-    tempholdoutEnabled = player->holdoutEnabled;
-    tempinitialVelocity = player->initialVelocity;
-    tempmanRecessEnabled = player->manRecessEnabled;
-    tempmanRecessLevelLimit = player->manRecessLevelLimit;
-    tempnewNavEnabled = player->newNavEnabled;
-    tempnewNavIncrement = player->newNavIncrement;
-    tempindRecessEnabled = player->indRecessEnabled;
-    tempindRecessIncrement = player->indRecessIncrement;
-    tempholdoutdelayEnabled = player->holdoutdelayEnabled;
-    tempholdoutdelayNumber = player->holdoutdelayNumber;
-    tempenableSettingsPasscode= player->enableSettingsPasscode;
-    tempsessionStartTime = player->sessionStartTime;
-    tempsessionEndTime = player->sessionEndTime;
-    tempnumOfSessions = player->numOfSessions;
+    tempfuelEnabled = globals.fuelEnabled;
+    tempholdoutEnabled = globals.holdoutEnabled;
+    tempinitialVelocity = globals.initialVelocity;
+    tempmanRecessEnabled = globals.manRecessEnabled;
+    tempmanRecessLevelLimit = globals.manRecessLevelLimit;
+    tempnewNavEnabled = globals.newNavEnabled;
+    tempnewNavIncrement = globals.newNavIncrement;
+    tempindRecessEnabled = globals.indRecessEnabled;
+    tempindRecessIncrement = globals.indRecessIncrement;
+    tempholdoutdelayEnabled = globals.holdoutdelayEnabled;
+    tempholdoutdelayNumber = globals.holdoutdelayNumber;
+    tempenableSettingsPasscode= globals.enableSettingsPasscode;
+    tempsessionStartTime = globals.sessionStartTime;
+    tempsessionEndTime = globals.sessionEndTime;
+    tempnumOfSessions = globals.numOfSessions;
     tempnewSounds= globals.newSounds;
-    tempenableIndRecessFixed = player->enableIndRecessFixed;
+    tempenableIndRecessFixed = globals.enableIndRecessFixed;
     tempholdoutoffsetA = player->scheduler->holdoutOffsetA;
     tempholdoutoffsetB = player->scheduler->holdoutOffsetB;
     tempholdoutoffsetD = player->scheduler->holdoutOffsetD;
@@ -91,6 +91,19 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             player->reactGUI();
             std::cout<<"Pressed Continue" << std::endl;
+            
+            if(tempmanRecessEnabled != globals.manRecessEnabled)
+            {
+                //If they are different then we changed from to another so we
+                //should restart the counter
+                globals.manRecessCount = 0;
+            }
+            if(tempholdoutdelayEnabled && !globals.holdoutdelayEnabled)
+            {
+                player->scheduler->holdoutOffsetA = 0;
+                player->scheduler->holdoutOffsetB = 0;
+                player->scheduler->holdoutOffsetD = 0;
+            }
             /* Need to do this when I press ok!*/
              player->feedLevelRequestFromSchedule();
              player->sessionStarted = false;
@@ -109,23 +122,23 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Put all temp settings back
             //TempStudySettings
             
-            player->fuelEnabled = tempfuelEnabled;
-            player->holdoutEnabled =tempholdoutEnabled;
-            player->initialVelocity=tempinitialVelocity;
-            player->manRecessEnabled=tempmanRecessEnabled;
-            player->manRecessLevelLimit=tempmanRecessLevelLimit;
-            player->newNavEnabled=tempnewNavEnabled;
-            player->newNavIncrement=tempnewNavIncrement;
-            player->indRecessEnabled=tempindRecessEnabled;
-            player->indRecessIncrement=tempindRecessIncrement;
-            player->holdoutdelayEnabled=tempholdoutdelayEnabled;
-            player->holdoutdelayNumber=tempholdoutdelayNumber;
-            player->enableSettingsPasscode=tempenableSettingsPasscode;
-            player->sessionStartTime=tempsessionStartTime;
-            player->sessionEndTime=tempsessionEndTime;
-            player->numOfSessions=tempnumOfSessions;
+            globals.fuelEnabled = tempfuelEnabled;
+            globals.holdoutEnabled =tempholdoutEnabled;
+            globals.initialVelocity=tempinitialVelocity;
+            globals.manRecessEnabled=tempmanRecessEnabled;
+            globals.manRecessLevelLimit=tempmanRecessLevelLimit;
+            globals.newNavEnabled=tempnewNavEnabled;
+            globals.newNavIncrement=tempnewNavIncrement;
+            globals.indRecessEnabled=tempindRecessEnabled;
+            globals.indRecessIncrement=tempindRecessIncrement;
+            globals.holdoutdelayEnabled=tempholdoutdelayEnabled;
+            globals.holdoutdelayNumber=tempholdoutdelayNumber;
+            globals.enableSettingsPasscode=tempenableSettingsPasscode;
+            globals.sessionStartTime=tempsessionStartTime;
+            globals.sessionEndTime=tempsessionEndTime;
+            globals.numOfSessions=tempnumOfSessions;
             globals.newSounds=tempnewSounds;
-            player->enableIndRecessFixed=tempenableIndRecessFixed;
+            globals.enableIndRecessFixed=tempenableIndRecessFixed;
             player->scheduler->holdoutOffsetA=tempholdoutoffsetA;
             player->scheduler->holdoutOffsetB=tempholdoutoffsetB;
             player->scheduler->holdoutOffsetD=tempholdoutoffsetD;
@@ -147,30 +160,32 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
 
             // Check if anything changes
-            if(tempfuelEnabled == player->fuelEnabled &&
-               tempholdoutEnabled == player->holdoutEnabled &&
-               tempinitialVelocity == player->initialVelocity &&
-               tempmanRecessEnabled == player->manRecessEnabled &&
-               tempmanRecessLevelLimit == player->manRecessLevelLimit &&
-               tempnewNavEnabled == player->newNavEnabled &&
-               tempnewNavIncrement == player->newNavIncrement &&
-               tempindRecessEnabled == player->indRecessEnabled &&
-               tempindRecessIncrement == player->indRecessIncrement &&
-               tempholdoutdelayEnabled == player->holdoutdelayEnabled &&
-               tempholdoutdelayNumber == player->holdoutdelayNumber &&
-               tempenableSettingsPasscode== player->enableSettingsPasscode &&
-               tempsessionStartTime == player->sessionStartTime &&
-               tempsessionEndTime == player->sessionEndTime &&
-               tempnumOfSessions == player->numOfSessions &&
+            if(tempfuelEnabled == globals.fuelEnabled &&
+               tempholdoutEnabled == globals.holdoutEnabled &&
+               tempinitialVelocity == globals.initialVelocity &&
+               tempmanRecessEnabled == globals.manRecessEnabled &&
+               tempmanRecessLevelLimit == globals.manRecessLevelLimit &&
+               tempnewNavEnabled == globals.newNavEnabled &&
+               tempnewNavIncrement == globals.newNavIncrement &&
+               tempindRecessEnabled == globals.indRecessEnabled &&
+               tempindRecessIncrement == globals.indRecessIncrement &&
+               tempholdoutdelayEnabled == globals.holdoutdelayEnabled &&
+               tempholdoutdelayNumber == globals.holdoutdelayNumber &&
+               tempenableSettingsPasscode== globals.enableSettingsPasscode &&
+               tempsessionStartTime == globals.sessionStartTime &&
+               tempsessionEndTime == globals.sessionEndTime &&
+               tempnumOfSessions == globals.numOfSessions &&
                tempnewSounds== globals.newSounds &&
                tempsessionScreenEnabled == globals.sessionScreenEnabled &&
-               tempenableIndRecessFixed == player->enableIndRecessFixed)
+               tempenableIndRecessFixed == globals.enableIndRecessFixed)
                 
             {
                 //Still the same
+
                 std::cout << "Nothing Changed!" <<std::endl;
                 globals.saveGlobalSettings(globals.globalPath);
                 player->saveProgress(globals.savePath);
+                std::cout<<player->scheduler->holdoutOffsetA<<std::endl;
                 engineStateMgr->requestPopEngine();
             }
             else
@@ -200,35 +215,35 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
@@ -253,47 +268,47 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
-            if(player->fuelEnabled)
+            if(globals.fuelEnabled)
             {
-                player->fuelEnabled = false;
+                globals.fuelEnabled = false;
             }
             else
             {
-                player->fuelEnabled = true;
+                globals.fuelEnabled = true;
             }
 
         }
@@ -306,50 +321,52 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            hud->enableNumpad = false;
+            hud->enableNumpad = true;
             hud->showDecimal = false;
             hud->nStatus = hud->PASSCODE;
             
+            
+            
             //Show Passcode option, check if password inputted
             
-            if(player->enableSettingsPasscode)
+            /*if(player->enableSettingsPasscode)
             {
                 player->enableSettingsPasscode = false;
             }
             else
             {
                 player->enableSettingsPasscode = true;
-            }
+            }*/
 
         }
     }
@@ -360,35 +377,35 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
@@ -412,49 +429,49 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
             
-            if(player->holdoutEnabled)
+            if(globals.holdoutEnabled)
             {
-                player->holdoutEnabled = false;
+                globals.holdoutEnabled = false;
             }
             else
             {
-                player->holdoutEnabled = true;
-                player->holdoutdelayEnabled = false;
+                globals.holdoutEnabled = true;
+                globals.holdoutdelayEnabled = false;
             }
         }
         
@@ -466,45 +483,45 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
-            if(player->holdoutEnabled)
+            if(globals.holdoutEnabled)
             {
-                if(player->holdoutdelayEnabled)
+                if(globals.holdoutdelayEnabled)
                 {
-                    player->holdoutdelayEnabled = false;
+                    globals.holdoutdelayEnabled = false;
                     //If holdoutdelay is disabled then we must revert to the old holdout offset.
                     player->scheduler->holdoutOffsetA = tempholdoutoffsetA;
                     player->scheduler->holdoutOffsetB = tempholdoutoffsetB;
@@ -512,10 +529,10 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 }
                 else
                 {
-                    player->holdoutdelayEnabled = true;
+                    globals.holdoutdelayEnabled = true;
                     //If holdoutdelay is enabled then we use the new offset
                     //Update the holdout offset
-                    if(player->holdoutdelayNumber == 1)
+                    if(globals.holdoutdelayNumber == 1)
                     {
                         player->scheduler->holdoutOffsetA = 0;
                         player->scheduler->holdoutOffsetB = 0;
@@ -525,9 +542,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     }
                     else
                     {
-                        player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
-                        player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
-                        player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetA = -(globals.holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetB = -(globals.holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetD = -(globals.holdoutdelayNumber-1);
                         
                         
                     }
@@ -545,31 +562,31 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = true;
             hud->showDecimal = false;
@@ -586,31 +603,31 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = true;
             hud->showDecimal = false;
@@ -627,31 +644,31 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             hud->enableNumpad = true;
             hud->showDecimal = false;
@@ -669,34 +686,34 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             
-            if( player->holdoutEnabled && player->holdoutdelayEnabled)
+            if( globals.holdoutEnabled && globals.holdoutdelayEnabled)
             {
                 //std::cout<<"IND RECESS NUMBER" << std::endl;
                 hud->enableNumpad = true;
@@ -715,48 +732,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
             
-            if(player->newNavEnabled)
+            if(globals.newNavEnabled)
             {
-                player->newNavEnabled = false;
+                globals.newNavEnabled = false;
             }
             else
             {
-                player->newNavEnabled = true;
+                globals.newNavEnabled = true;
             }
         }
         
@@ -768,33 +785,33 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            if(player->newNavEnabled)
+            if(globals.newNavEnabled)
             {
                 std::cout<<"New_Nav Number" << std::endl;
                 hud->enableNumpad = true;
@@ -813,48 +830,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
             
-            if(player->indRecessEnabled)
+            if(globals.indRecessEnabled)
             {
-                player->indRecessEnabled = false;
+                globals.indRecessEnabled = false;
             }
             else
             {
-                player->indRecessEnabled = true;
+                globals.indRecessEnabled = true;
             }
         }
         
@@ -866,49 +883,49 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             std::cout << "Fixed Pressed" << std::endl;
             
-            if(player->indRecessEnabled){
-                if(player->enableIndRecessFixed)
+            if(globals.indRecessEnabled){
+                if(globals.enableIndRecessFixed)
                 {
-                    player->enableIndRecessFixed = false;
+                    globals.enableIndRecessFixed = false;
                 }
                 else
                 {
-                    player->enableIndRecessFixed = true;
+                    globals.enableIndRecessFixed = true;
                 }
             }
         }
@@ -921,33 +938,33 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            if(player->indRecessEnabled)
+            if(globals.indRecessEnabled)
             {
                 std::cout<<"IND RECESS NUMBER" << std::endl;
                 hud->enableNumpad = true;
@@ -967,33 +984,33 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            //player->initialVelocity = 20;
+            //globals.initialVelocity = 20;
             hud->enableNumpad = true;
             hud->showDecimal = false;
             hud->nStatus = hud->INIT_VELOCITY;
@@ -1008,47 +1025,47 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->MAN_RECESS)
             {
-                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
             hud->nStatus = hud->NONE;
             
-            if(player->manRecessEnabled)
+            if(globals.manRecessEnabled)
             {
-                player->manRecessEnabled = false;
+                globals.manRecessEnabled = false;
             }
             else
             {
-                player->manRecessEnabled= true;
+                globals.manRecessEnabled= true;
             }
         }
         
@@ -1060,34 +1077,34 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             //Fix OTHER input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
-                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
             }
             if(hud->nStatus == hud->NEW_NAV_INC)
             {
-                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
             }
             if(hud->nStatus == hud->IND_RECESS_INC)
             {
-                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
             }
             if(hud->nStatus == hud->HOLDOUT_DELAY)
             {
-                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
             }
             if(hud->nStatus == hud->SESSION_START_TIME)
             {
-                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
             }
             if(hud->nStatus == hud->SESSION_END_TIME)
             {
-                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
             }
             if(hud->nStatus == hud->NUM_OF_SESSIONS)
             {
-                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
             }
-            //player->initialVelocity = 20;
-            if(player->manRecessEnabled)
+            //globals.initialVelocity = 20;
+            if(globals.manRecessEnabled)
             {
                 std::cout<<"Man_recess_number" << std::endl;
                 hud->enableNumpad = true;
@@ -1236,6 +1253,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "0";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 0;
+                    hud->Passcode_counter++;
+                }
+            }
         }
         
     }
@@ -1300,6 +1325,50 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "1";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 1;
+                    if(hud->Passcode_counter == 3)
+                    {
+                        //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                        bool valid = true;
+                        for(int i = 0; i < hud->PASSWORD_LENGTH; i++)
+                        {
+                            if(hud->user_password[i] != hud->PASSWORD[i])
+                            {
+                                valid = false;
+                            }
+                        }
+                        
+                        if(valid)
+                        {
+                            if(globals.enableSettingsPasscode)
+                            {
+                                globals.enableSettingsPasscode = false;
+                            }
+                            else
+                            {
+                                globals.enableSettingsPasscode = true;
+                            }
+                            hud->enableNumpad = false;
+                            hud->nStatus = hud->NONE;
+                            hud->Passcode_counter = 0;
+                        }
+                        else
+                        {
+                            hud->Passcode_counter++;
+                        }
+                        
+                    }
+                    else
+                    {
+                        hud->Passcode_counter++;
+                    }
+                }
+
+            }
         }
         
     }
@@ -1361,6 +1430,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString.size() < 2)
                 {
                     hud->numOfSessionsString+= "2";
+                }
+            }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 2;
+                    hud->Passcode_counter++;
                 }
             }
         }
@@ -1425,6 +1502,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString.size() < 2)
                 {
                     hud->numOfSessionsString+= "3";
+                }
+            }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 3;
+                    hud->Passcode_counter++;
                 }
             }
         }
@@ -1492,6 +1577,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "4";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 4;
+                    hud->Passcode_counter++;
+                }
+            }
         }
         
         
@@ -1555,6 +1648,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString.size() < 2)
                 {
                     hud->numOfSessionsString+= "5";
+                }
+            }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 5;
+                    hud->Passcode_counter++;
                 }
             }
         }
@@ -1623,6 +1724,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "6";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 6;
+                    hud->Passcode_counter++;
+                }
+            }
         }
         
         
@@ -1688,6 +1797,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "7";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 7;
+                    hud->Passcode_counter++;
+                }
+            }
         }
         
     }
@@ -1750,6 +1867,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString.size() < 2)
                 {
                     hud->numOfSessionsString+= "8";
+                }
+            }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 8;
+                    hud->Passcode_counter++;
                 }
             }
         }
@@ -1817,6 +1942,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString+= "9";
                 }
             }
+            if(hud->nStatus == hud->PASSCODE)
+            {
+                if(hud->Passcode_counter < 4)
+                {
+                    hud->user_password[hud->Passcode_counter] = 9;
+                    hud->Passcode_counter++;
+                }
+            }
         }
         
         
@@ -1832,17 +1965,17 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->initSpeedString != "")
                 {
                     
-                    player->initialVelocity = std::atoi(hud->initSpeedString.c_str());
-                    if(player->initialVelocity > globals.maxCamSpeed) //What should I use!
+                    globals.initialVelocity = std::atoi(hud->initSpeedString.c_str());
+                    if(globals.initialVelocity > globals.maxCamSpeed) //What should I use!
                     {
-                        player->initialVelocity = globals.maxCamSpeed;
+                        globals.initialVelocity = globals.maxCamSpeed;
                     }
-                    if(player->initialVelocity < 10) //What do I use!
+                    if(globals.initialVelocity < 10) //What do I use!
                     {
-                        player->initialVelocity = 10;
+                        globals.initialVelocity = 10;
                     }
                 }
-                hud->initSpeedString = Util::toStringInt(player->initialVelocity);
+                hud->initSpeedString = Util::toStringInt(globals.initialVelocity);
                 hud->enableNumpad = false;
                 
             }
@@ -1851,13 +1984,13 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->manRecessString != "")
                 {
                     
-                    player->manRecessLevelLimit= std::atoi(hud->manRecessString.c_str());
-                    if(player->manRecessLevelLimit < 1) //What do I use!
+                    globals.manRecessLevelLimit= std::atoi(hud->manRecessString.c_str());
+                    if(globals.manRecessLevelLimit < 1) //What do I use!
                     {
-                        player->manRecessLevelLimit = 1;
+                        globals.manRecessLevelLimit = 1;
                     }
                 }
-                hud->manRecessString = Util::toStringInt(player->manRecessLevelLimit);
+                hud->manRecessString = Util::toStringInt(globals.manRecessLevelLimit);
                 hud->enableNumpad = false;
                 
             }
@@ -1866,18 +1999,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->newNavigationIncAmountString != "")
                 {
                     
-                    player->newNavIncrement= std::atof(hud->newNavigationIncAmountString.c_str());
-                    if(player->newNavIncrement < 0.01f) //What do I use!
+                    globals.newNavIncrement= std::atof(hud->newNavigationIncAmountString.c_str());
+                    if(globals.newNavIncrement < 0.01f) //What do I use!
                     {
-                        player->newNavIncrement = 0.01f;
+                        globals.newNavIncrement = 0.01f;
                     }
-                    if(player->newNavIncrement > 1.0f) //What do I use!
+                    if(globals.newNavIncrement > 1.0f) //What do I use!
                     {
-                        player->newNavIncrement = 1.0f;
+                        globals.newNavIncrement = 1.0f;
                     }
                     
                 }
-                hud->newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
+                hud->newNavigationIncAmountString = Util::toStringFloat(globals.newNavIncrement,2);
                 hud->enableNumpad = false;
                 
             }
@@ -1887,18 +2020,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->indRecessString != "")
                 {
                     
-                    player->indRecessIncrement= std::atof(hud->indRecessString.c_str());
-                    if(player->indRecessIncrement < 0.01f) //What do I use!
+                    globals.indRecessIncrement= std::atof(hud->indRecessString.c_str());
+                    if(globals.indRecessIncrement < 0.01f) //What do I use!
                     {
-                        player->indRecessIncrement = 0.01f;
+                        globals.indRecessIncrement = 0.01f;
                     }
-                    if(player->indRecessIncrement > 1.0f) //What do I use!
+                    if(globals.indRecessIncrement > 1.0f) //What do I use!
                     {
-                        player->indRecessIncrement = 1.0f;
+                        globals.indRecessIncrement = 1.0f;
                     }
                     
                 }
-                hud->indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+                hud->indRecessString = Util::toStringFloat(globals.indRecessIncrement,2);
                 hud->enableNumpad = false;
                 
             }
@@ -1907,17 +2040,17 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->holdoutDelayString != "")
                 {
                     
-                    player->holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
-                    if(player->holdoutdelayNumber < 1.00f) //What do I use!
+                    globals.holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
+                    if(globals.holdoutdelayNumber < 1.00f) //What do I use!
                     {
-                        player->holdoutdelayNumber = 1.00f;
+                        globals.holdoutdelayNumber = 1.00f;
                     }
-                    if(player->holdoutdelayNumber > 99.9f) //What do I use!
+                    if(globals.holdoutdelayNumber > 99.9f) //What do I use!
                     {
-                        player->holdoutdelayNumber = 99.9f;
+                        globals.holdoutdelayNumber = 99.9f;
                     }
                     //Update the holdout offset
-                    if(player->holdoutdelayNumber == 1)
+                    if(globals.holdoutdelayNumber == 1)
                     {
                         player->scheduler->holdoutOffsetA = 0;
                         player->scheduler->holdoutOffsetB = 0;
@@ -1927,15 +2060,16 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     }
                     else
                     {
-                        player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
-                        player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
-                        player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+
+                        player->scheduler->holdoutOffsetA = -(globals.holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetB = -(globals.holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetD = -(globals.holdoutdelayNumber-1);
                         
                         
                     }
                     
                 }
-                hud->holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->holdoutDelayString = Util::toStringFloat(globals.holdoutdelayNumber,1);
                 hud->enableNumpad = false;
                 
             }
@@ -1944,19 +2078,19 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->sessionStartTimeString != "")
                 {
                     
-                    player->sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
-                    if(player->sessionStartTime < 1) //What do I use!
+                    globals.sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
+                    if(globals.sessionStartTime < 1) //What do I use!
                     {
-                        player->sessionStartTime = 1;
+                        globals.sessionStartTime = 1;
                     }
-                    if(player->sessionStartTime > player->sessionEndTime) //What do I use!
+                    if(globals.sessionStartTime > globals.sessionEndTime) //What do I use!
                     {
-                        player->sessionStartTime = player->sessionEndTime;
+                        globals.sessionStartTime = globals.sessionEndTime;
                     }
                     
                 }
                 
-                hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+                hud->sessionStartTimeString = Util::toStringInt(globals.sessionStartTime);
                 hud->enableNumpad = false;
                 
             }
@@ -1965,24 +2099,24 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->sessionEndtimeString != "")
                 {
                     
-                    player->sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
-                    if(player->sessionEndTime < 1) //What do I use!
+                    globals.sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
+                    if(globals.sessionEndTime < 1) //What do I use!
                     {
-                        player->sessionEndTime = 1;
+                        globals.sessionEndTime = 1;
                     }
-                    if(player->sessionEndTime > 99) //What do I use!
+                    if(globals.sessionEndTime > 99) //What do I use!
                     {
-                        player->sessionEndTime = 99;
+                        globals.sessionEndTime = 99;
                     }
-                    if(player->sessionEndTime < player->sessionStartTime)
+                    if(globals.sessionEndTime < globals.sessionStartTime)
                     {
-                        player->sessionStartTime = player->sessionEndTime;
-                        hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+                        globals.sessionStartTime = globals.sessionEndTime;
+                        hud->sessionStartTimeString = Util::toStringInt(globals.sessionStartTime);
 
                     }
                     
                 }
-                hud->sessionEndtimeString = Util::toStringInt(player->sessionEndTime);
+                hud->sessionEndtimeString = Util::toStringInt(globals.sessionEndTime);
                 hud->enableNumpad = false;
                 
             }
@@ -1991,18 +2125,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString != "")
                 {
                     
-                    player->numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
-                    if(player->numOfSessions < 1) //What do I use!
+                    globals.numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
+                    if(globals.numOfSessions < 1) //What do I use!
                     {
-                        player->numOfSessions = 1;
+                        globals.numOfSessions = 1;
                     }
-                    if(player->numOfSessions > 99) //What do I use!
+                    if(globals.numOfSessions > 99) //What do I use!
                     {
-                        player->numOfSessions = 99;
+                        globals.numOfSessions = 99;
                     }
                     
                 }
-                hud->numOfSessionsString = Util::toStringInt(player->numOfSessions);
+                hud->numOfSessionsString = Util::toStringInt(globals.numOfSessions);
                 hud->enableNumpad = false;
                 
             }
@@ -2052,37 +2186,38 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 if(hud->nStatus == hud->INIT_VELOCITY)
                 {
-                    hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                    hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
                 }
                 if(hud->nStatus == hud->MAN_RECESS)
                 {
-                    hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                    hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
                 }
                 if(hud->nStatus == hud->NEW_NAV_INC)
                 {
-                    hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                    hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
                 }
                 if(hud->nStatus == hud->IND_RECESS_INC)
                 {
-                    hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                    hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
                 }
                 if(hud->nStatus == hud->HOLDOUT_DELAY)
                 {
-                    hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                    hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
                 }
                 if(hud->nStatus == hud->SESSION_START_TIME)
                 {
-                    hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                    hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
                 }
                 if(hud->nStatus == hud->SESSION_END_TIME)
                 {
-                    hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                    hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
                 }
                 if(hud->nStatus == hud->NUM_OF_SESSIONS)
                 {
-                    hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                    hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
                 }
                 hud->enableNumpad = false;
+                hud->nStatus = hud->NONE;
                 hud->showDecimal = false;
             }
         }

@@ -28,21 +28,25 @@ void HudStudySettings::init()
 {
     alloc();
     initOverlay();
+    password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+     password_Choice1->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+     password_Choice2->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+     password_Choice3->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
     initStrings();
     showOverlays();
 }
 
 void HudStudySettings::initStrings()
 {
-    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
-    manRecessString = Util::toStringInt(player->manRecessLevelLimit);
-    newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
-    indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
-    holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
-    initSpeedString = Util::toStringInt(player->initialVelocity);
-    sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
-    sessionEndtimeString= Util::toStringInt(player->sessionEndTime);
-    numOfSessionsString = Util::toStringInt(player->numOfSessions);
+    holdoutDelayString = Util::toStringFloat(globals.holdoutdelayNumber,1);
+    manRecessString = Util::toStringInt(globals.manRecessLevelLimit);
+    newNavigationIncAmountString = Util::toStringFloat(globals.newNavIncrement,2);
+    indRecessString = Util::toStringFloat(globals.indRecessIncrement,2);
+    holdoutDelayString = Util::toStringFloat(globals.holdoutdelayNumber,1);
+    initSpeedString = Util::toStringInt(globals.initialVelocity);
+    sessionStartTimeString = Util::toStringInt(globals.sessionStartTime);
+    sessionEndtimeString= Util::toStringInt(globals.sessionEndTime);
+    numOfSessionsString = Util::toStringInt(globals.numOfSessions);
 
     
 }
@@ -104,8 +108,117 @@ void HudStudySettings::update(float elapsed)
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
     
-    //Passcode Switch:
+    if(startDotTimer)
+    {
+        numToWait -= elapsed;
+        if(numToWait <= 0)
+        {
+            enterStudySettings = true;
+        }
+    }
     
+    if(startDotTimerIncorrect)
+    {
+        numToWaitIncorrect -=elapsed;
+        if(numToWaitIncorrect <=0)
+        {
+            //Animate the choices!
+            
+            password_Choice0->setMaterialName("General/PasswordDotDisabled");
+            password_Choice1->setMaterialName("General/PasswordDotDisabled");
+            password_Choice2->setMaterialName("General/PasswordDotDisabled");
+            password_Choice3->setMaterialName("General/PasswordDotDisabled");
+            Passcode_counter = 0;
+            startDotTimerIncorrect = false;
+            numToWaitIncorrect = .3;
+        }
+    }
+    
+    if((Passcode_counter == 1) && (password_Choice0->getMaterialName() != "General/PasswordDotEnabled"))
+    {
+        password_Choice0->setMaterialName("General/PasswordDotEnabled");
+        //std::cout<<"Woah1!\n";
+    }
+    if((Passcode_counter == 2) && (password_Choice1->getMaterialName() != "General/PasswordDotEnabled"))
+    {
+        password_Choice1->setMaterialName("General/PasswordDotEnabled");
+        //std::cout<<"Woah2!\n";
+    }
+    if((Passcode_counter == 3) && (password_Choice2->getMaterialName() != "General/PasswordDotEnabled"))
+    {
+        password_Choice2->setMaterialName("General/PasswordDotEnabled");
+        //std::cout<<"Woah3!\n";
+    }
+    if((Passcode_counter == 4) && (password_Choice3->getMaterialName() != "General/PasswordDotEnabled"))
+    {
+        password_Choice3->setMaterialName("General/PasswordDotEnabled");
+        //std::cout<<"Woah4!\n";
+        
+        //Check if passcode is valid:
+        bool valid = true;
+        for(int i = 0; i < PASSWORD_LENGTH; i++)
+        {
+            if(user_password[i] != PASSWORD[i])
+            {
+                valid = false;
+            }
+        }
+        
+        if(valid)
+        {
+            //std::cout<<"HEHEHEHE\n";
+            startDotTimer = true;
+        }
+        else
+        {
+            startDotTimerIncorrect = true;
+            
+            
+        }
+        
+    }
+
+    
+    //Passcode Switch:
+    if(nStatus ==PASSCODE)
+    {
+        if(Passcode_counter == 0)
+        {
+            //std::cout << "HERE!!!! "<< Passcode_counter<< std::endl;
+            password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+            password_Choice1->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+            password_Choice2->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+            password_Choice3->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+        }
+        password_Title->show();
+        password_Choice0->show();
+        password_Choice1->show();
+        password_Choice2->show();
+        password_Choice3->show();
+        numpadButton_Save->hide();
+        numpadButton_Save_TextDisplay->hide();
+        numpadButton_Back->hide();
+        numpadButton_Back_TextDisplay->hide();
+        
+
+        
+        
+    }
+    else
+    {
+        //std::cout << "HERE2!!!! "<< Passcode_counter<< std::endl;
+
+        password_Title->hide();
+        password_Choice0->hide();
+        password_Choice1->hide();
+        password_Choice2->hide();
+        password_Choice3->hide();
+        numpadButton_Save->show();
+        numpadButton_Save_TextDisplay->show();
+        numpadButton_Back->show();
+        numpadButton_Back_TextDisplay->show();
+        Passcode_counter =0;
+    }
     
     
     if(globals.sessionScreenEnabled)
@@ -120,7 +233,7 @@ void HudStudySettings::update(float elapsed)
 
     }
     
-    if(player->enableSettingsPasscode)
+    if(globals.enableSettingsPasscode)
     {
         enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
         enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxGreen");
@@ -131,7 +244,7 @@ void HudStudySettings::update(float elapsed)
         enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxBlank");
     }
     //Ind Recess Checkbox
-    if (player->indRecessEnabled)
+    if (globals.indRecessEnabled)
     {
         enableIndRecessButtonBackground->setMaterialName("General/CheckboxGreen");
         enableIndRecessTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -140,7 +253,7 @@ void HudStudySettings::update(float elapsed)
         enableIndRecessNumberText->show();
         enableIndRecessFixedButtonBackground->show();
         enableIndRecessFixedTextDisplay->show();
-        if(player->enableIndRecessFixed)
+        if(globals.enableIndRecessFixed)
         {
             enableIndRecessFixedButtonBackground->setMaterialName("General/CheckboxGreen");
             enableIndRecessFixedTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -183,7 +296,7 @@ void HudStudySettings::update(float elapsed)
     }
     
     //New Nav Checkbox
-    if (player->newNavEnabled)
+    if (globals.newNavEnabled)
     {
         enableNewNavButtonBackground->setMaterialName("General/CheckboxGreen");
         enableNewNavTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -203,7 +316,7 @@ void HudStudySettings::update(float elapsed)
     }
     
     //Fuel Checkbox
-    if (player->fuelEnabled)
+    if (globals.fuelEnabled)
     {
         //If fuel is enabled, then unlimited fuel is not enabled
         enableUnlimitedFuelButtonBackground->setMaterialName("General/CheckboxBlank");
@@ -218,7 +331,7 @@ void HudStudySettings::update(float elapsed)
     }
     
     //Holdout Checkbox
-    if (player->holdoutEnabled)
+    if (globals.holdoutEnabled)
     {
    
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxGreen");
@@ -226,7 +339,7 @@ void HudStudySettings::update(float elapsed)
         enableHoldoutDelayButtonBackground->show();
         enableHoldoutDelayTextDisplay->show();
         //HoldoutDelayCheckBox
-        if (player->holdoutdelayEnabled)
+        if (globals.holdoutdelayEnabled)
         {
             enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxGreen");
             enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -260,7 +373,7 @@ void HudStudySettings::update(float elapsed)
     }
     
     //Man Recess Checkbox
-    if (player->manRecessEnabled)
+    if (globals.manRecessEnabled)
     {
         
         enableMandatoryRecessButtonBackground->setMaterialName("General/CheckboxGreen");
@@ -572,6 +685,12 @@ void HudStudySettings::alloc()
     somethingChangedRevertButton= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedRevertButton"));
     somethingChangedRevertButtonText= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "somethingChangedRevertButtonText"));
     
+    password_Title = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "password_Title"));
+    password_Choice0= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice0"));
+    password_Choice1= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice1"));
+    password_Choice2= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice2"));
+    password_Choice3= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice3"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
     
     // Create an overlay, and add the panel
@@ -708,6 +827,11 @@ void HudStudySettings::alloc()
     enableMandatoryRecessNumberBackground->addChild(enableMandatoryRecessNumberTextDisplay);
     
     overlay1->add2D(backButtonBackground);
+    numpadBackground->addChild(password_Choice0);
+    numpadBackground->addChild(password_Choice1);
+    numpadBackground->addChild(password_Choice2);
+    numpadBackground->addChild(password_Choice3);
+    numpadBackground->addChild(password_Title);
     overlay1->add2D(numpadBackground);
 
     overlays.push_back(overlay1);
@@ -856,6 +980,13 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedRevertButton);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(somethingChangedRevertButtonText);
 
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Title);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice0);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice1);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice2);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice3);
+
+
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
@@ -864,6 +995,34 @@ void HudStudySettings::dealloc()
 
 void HudStudySettings::initOverlay()
 {
+    
+    password_Choice0->setMetricsMode(GMM_RELATIVE);
+    password_Choice0->setPosition(0.09, 0.08);
+    password_Choice0->setDimensions(0.03, 0.03);
+    
+    password_Choice1->setMetricsMode(GMM_RELATIVE);
+    password_Choice1->setPosition(0.14, 0.08);
+    password_Choice1->setDimensions(0.03, 0.03);
+    
+    password_Choice2->setMetricsMode(GMM_RELATIVE);
+    password_Choice2->setPosition(0.19, 0.08);
+    password_Choice2->setDimensions(0.03, 0.03);
+    
+    password_Choice3->setMetricsMode(GMM_RELATIVE);
+    password_Choice3->setPosition(0.24, 0.08);
+    password_Choice3->setDimensions(0.03, 0.03);
+    
+    /*password_Choice0->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+    password_Choice1->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+    password_Choice2->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");
+    password_Choice3->Ogre::OverlayElement::setMaterialName("General/PasswordDotDisabled");*/
+    
+    password_Title->setMetricsMode(GMM_RELATIVE);
+    password_Title->setAlignment(TextAreaOverlayElement::Center);
+    password_Title->setPosition(0.18, 0.05); //.01
+    password_Title->setCharHeight(0.019 * FONT_SZ_MULT);
+    password_Title->setFontName("MainSmall");
+    password_Title->setCaption("Enter Passcode");
     
     somethingChangedRevertButtonText->setMetricsMode(GMM_RELATIVE);
     somethingChangedRevertButtonText->setAlignment(TextAreaOverlayElement::Left);
@@ -1042,8 +1201,8 @@ void HudStudySettings::initOverlay()
     enableHoldoutDelayNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     enableHoldoutDelayNumberTextDisplay->setFontName("MainSmall");
     //WOW: In iOS version initOverlay always runs. Inificient?
-    //holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
-    //enableHoldoutDelayNumberTextDisplay->setCaption(Util::toStringFloat(player->holdoutdelayNumber,1));
+    //holdoutDelayString = Util::toStringFloat(globals.holdoutdelayNumber,1);
+    //enableHoldoutDelayNumberTextDisplay->setCaption(Util::toStringFloat(globals.holdoutdelayNumber,1));
 
     //Vector2(0.60, 0.26)
     
@@ -1077,8 +1236,8 @@ void HudStudySettings::initOverlay()
     enableIndRecessNumberText->setPosition(0.01, 0.0);
     enableIndRecessNumberText->setCharHeight(0.030 * FONT_SZ_MULT);
     enableIndRecessNumberText->setFontName("MainSmall");
-    //indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
-    //enableIndRecessNumberText->setCaption(Util::toStringFloat(player->indRecessIncrement,2));
+    //indRecessString = Util::toStringFloat(globals.indRecessIncrement,2);
+    //enableIndRecessNumberText->setCaption(Util::toStringFloat(globals.indRecessIncrement,2));
     
     //End IndRecess
     
@@ -1125,8 +1284,8 @@ void HudStudySettings::initOverlay()
     enableNewNavNumberText->setPosition(0.01, 0.0);
     enableNewNavNumberText->setCharHeight(0.030 * FONT_SZ_MULT);
     enableNewNavNumberText->setFontName("MainSmall");
-    //newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
-    //enableNewNavNumberText->setCaption(Util::toStringFloat(player->newNavIncrement,2));
+    //newNavigationIncAmountString = Util::toStringFloat(globals.newNavIncrement,2);
+    //enableNewNavNumberText->setCaption(Util::toStringFloat(globals.newNavIncrement,2));
     
     //End New Nav
     
@@ -1319,8 +1478,8 @@ void HudStudySettings::initOverlay()
     initSpeedNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     initSpeedNumberTextDisplay->setFontName("MainSmall");
     //initSpeedNumberTextDisplay->setCaption("0");
-    //initSpeedString = Util::toStringInt(player->initialVelocity);
-    //initSpeedNumberTextDisplay->setCaption(Util::toStringInt(player->initialVelocity));
+    //initSpeedString = Util::toStringInt(globals.initialVelocity);
+    //initSpeedNumberTextDisplay->setCaption(Util::toStringInt(globals.initialVelocity));
 
     
     
@@ -1329,8 +1488,8 @@ void HudStudySettings::initOverlay()
     enableMandatoryRecessNumberTextDisplay->setPosition(0.025, 0.005);
     enableMandatoryRecessNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
     enableMandatoryRecessNumberTextDisplay->setFontName("MainSmall");
-    //manRecessString = Util::toStringInt(player->manRecessLevelLimit);
-    //enableMandatoryRecessNumberTextDisplay->setCaption(Util::toStringInt(player->manRecessLevelLimit));
+    //manRecessString = Util::toStringInt(globals.manRecessLevelLimit);
+    //enableMandatoryRecessNumberTextDisplay->setCaption(Util::toStringInt(globals.manRecessLevelLimit));
     //enableMandatoryRecessNumberTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
     
     
@@ -1420,25 +1579,25 @@ void HudStudySettings::initOverlay()
         buttons[BUTTON_ENABLE_SESSION_SCREEN].setButton("checksessionid", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.37), Vector2(pw, ph), enableSessionScreenButtonBackground, NULL);
     }
     
-    buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.305), Vector2(0.06, 0.06), numpadButton_0, NULL);
+    buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.325), Vector2(0.06, 0.06), numpadButton_0, NULL);
     
-    buttons[BUTTON_NUMPAD_1].setButton("numpadbutton1", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.095), Vector2(0.06, 0.06), numpadButton_1, NULL);
-    buttons[BUTTON_NUMPAD_2].setButton("numpadbutton2", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.095), Vector2(0.06, 0.06), numpadButton_2, NULL);
-    buttons[BUTTON_NUMPAD_3].setButton("numpadbutton3", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.095), Vector2(0.06, 0.06), numpadButton_3, NULL);
+    buttons[BUTTON_NUMPAD_1].setButton("numpadbutton1", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.115), Vector2(0.06, 0.06), numpadButton_1, NULL);
+    buttons[BUTTON_NUMPAD_2].setButton("numpadbutton2", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.115), Vector2(0.06, 0.06), numpadButton_2, NULL);
+    buttons[BUTTON_NUMPAD_3].setButton("numpadbutton3", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.115), Vector2(0.06, 0.06), numpadButton_3, NULL);
     
-    buttons[BUTTON_NUMPAD_4].setButton("numpadbutton4", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.165), Vector2(0.06, 0.06), numpadButton_4, NULL);
-    buttons[BUTTON_NUMPAD_5].setButton("numpadbutton5", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.165), Vector2(0.06, 0.06), numpadButton_5, NULL);
-    buttons[BUTTON_NUMPAD_6].setButton("numpadbutton6", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.165), Vector2(0.06, 0.06), numpadButton_6, NULL);
+    buttons[BUTTON_NUMPAD_4].setButton("numpadbutton4", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.185), Vector2(0.06, 0.06), numpadButton_4, NULL);
+    buttons[BUTTON_NUMPAD_5].setButton("numpadbutton5", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.185), Vector2(0.06, 0.06), numpadButton_5, NULL);
+    buttons[BUTTON_NUMPAD_6].setButton("numpadbutton6", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.185), Vector2(0.06, 0.06), numpadButton_6, NULL);
     
-    buttons[BUTTON_NUMPAD_7].setButton("numpadbutton7", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.235), Vector2(0.06, 0.06), numpadButton_7, NULL);
-    buttons[BUTTON_NUMPAD_8].setButton("numpadbutton8", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.235), Vector2(0.06, 0.06), numpadButton_8, NULL);
-    buttons[BUTTON_NUMPAD_9].setButton("numpadbutton9", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.235), Vector2(0.06, 0.06), numpadButton_9, NULL);
+    buttons[BUTTON_NUMPAD_7].setButton("numpadbutton7", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.255), Vector2(0.06, 0.06), numpadButton_7, NULL);
+    buttons[BUTTON_NUMPAD_8].setButton("numpadbutton8", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.255), Vector2(0.06, 0.06), numpadButton_8, NULL);
+    buttons[BUTTON_NUMPAD_9].setButton("numpadbutton9", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.255), Vector2(0.06, 0.06), numpadButton_9, NULL);
     
-    buttons[BUTTON_NUMPAD_DECIMAL].setButton("numpadbuttondecimal", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.305), Vector2(0.06, 0.06), numpadButton_Decimal, NULL);
+    buttons[BUTTON_NUMPAD_DECIMAL].setButton("numpadbuttondecimal", overlays[0], GMM_RELATIVE, Vector2(0.085, 0.325), Vector2(0.06, 0.06), numpadButton_Decimal, NULL);
     
-    buttons[BUTTON_NUMPAD_BACK].setButton("numpadbuttonback", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.305), Vector2(0.06, 0.06), numpadButton_Back, NULL);
+    buttons[BUTTON_NUMPAD_BACK].setButton("numpadbuttonback", overlays[0], GMM_RELATIVE, Vector2(0.225, 0.325), Vector2(0.06, 0.06), numpadButton_Back, NULL);
     
-    buttons[BUTTON_NUMPAD_SAVE].setButton("numpadbuttonsave", overlays[0], GMM_RELATIVE, Vector2(0.165, 0.375), Vector2(0.12, 0.06), numpadButton_Save, NULL);
+    buttons[BUTTON_NUMPAD_SAVE].setButton("numpadbuttonsave", overlays[0], GMM_RELATIVE, Vector2(0.165, 0.395), Vector2(0.12, 0.06), numpadButton_Save, NULL); //.375 .02
     
     buttons[NUMPAD_BG].setButton("numpad", overlays[0], GMM_RELATIVE, Vector2(0.65, 0.40), Vector2(0.5, 0.5), numpadBackground, NULL);
     
@@ -1488,7 +1647,7 @@ void HudStudySettings::initOverlay()
     }
     
     //should add the check for passcode toggle only in OSX Version
-    if(player->enableSettingsPasscode)
+    if(globals.enableSettingsPasscode)
     {
         enableSettingsPasscodeTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
         enableSettingsPasscodeButtonBackground->setMaterialName("General/CheckboxGreen");
@@ -1516,7 +1675,7 @@ void HudStudySettings::initOverlay()
 
     
     //This is for no flash(change) in hud
-    if (player->newNavEnabled)
+    if (globals.newNavEnabled)
     {
         enableNewNavButtonBackground->setMaterialName("General/CheckboxGreen");
         enableNewNavTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -1539,7 +1698,7 @@ void HudStudySettings::initOverlay()
     }
     
     //Ind Recess Checkbox
-    if (player->indRecessEnabled)
+    if (globals.indRecessEnabled)
     {
         enableIndRecessButtonBackground->setMaterialName("General/CheckboxGreen");
         enableIndRecessTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -1548,7 +1707,7 @@ void HudStudySettings::initOverlay()
         enableIndRecessNumberText->show();
         enableIndRecessFixedButtonBackground->show();
         enableIndRecessFixedTextDisplay->show();
-        if(player->enableIndRecessFixed)
+        if(globals.enableIndRecessFixed)
         {
             enableIndRecessFixedButtonBackground->setMaterialName("General/CheckboxGreen");
             enableIndRecessFixedTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -1576,7 +1735,7 @@ void HudStudySettings::initOverlay()
 
 
     
-    if (player->fuelEnabled)
+    if (globals.fuelEnabled)
     {
         //If fuel is enabled, then unlimited fuel is not enabled
         enableUnlimitedFuelButtonBackground->setMaterialName("General/CheckboxBlank");
@@ -1591,7 +1750,7 @@ void HudStudySettings::initOverlay()
     }
     
     //Holdout Checkbox
-    if (player->holdoutEnabled)
+    if (globals.holdoutEnabled)
     {
         
         enableHoldoutButtonBackground->setMaterialName("General/CheckboxGreen");
@@ -1599,7 +1758,7 @@ void HudStudySettings::initOverlay()
         enableHoldoutDelayButtonBackground->show();
         enableHoldoutDelayTextDisplay->show();
         //HoldoutDelayCheckBox
-        if (player->holdoutdelayEnabled)
+        if (globals.holdoutdelayEnabled)
         {
             enableHoldoutDelayButtonBackground->setMaterialName("General/CheckboxGreen");
             enableHoldoutDelayTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
@@ -1634,7 +1793,7 @@ void HudStudySettings::initOverlay()
 
     
     //Man Recess Checkbox
-    if (player->manRecessEnabled)
+    if (globals.manRecessEnabled)
     {
         
         enableMandatoryRecessButtonBackground->setMaterialName("General/CheckboxGreen");
