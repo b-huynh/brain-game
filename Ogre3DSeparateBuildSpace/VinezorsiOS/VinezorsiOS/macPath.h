@@ -4,7 +4,6 @@
 //
 //  Created by Calvin Phung on 10/21/14.
 //
-//
 
 #ifndef VinezorsiOS_macPath_h
 #define VinezorsiOS_macPath_h
