@@ -29,3 +29,8 @@ void openURL(std::string cstrurl)
         NSLog(@"%@%@",@"Failed to open url:",[url description]);
     }
 }
+
+float getScalingFactor()
+{
+    return [[UIScreen mainScreen] scale];
+}
