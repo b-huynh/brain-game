@@ -12,7 +12,7 @@
 @interface SimpleMenuViewController ()
 
 @property (retain, nonatomic) IBOutlet UITextField *TextField_Input;
-@property (retain, nonatomic) IBOutlet UISwitch *Switch_Music;
+@property (retain, nonatomic) IBOutlet UIButton *Button_Play;
 
 @end
 
@@ -58,6 +58,19 @@
     
     return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
 }
+
+- (IBAction)textInput_OnChange:(UITextField *)sender {
+    if ([sender.text length] <= 0)
+    {
+            _Button_Play.hidden = YES;
+            
+    }
+    else
+    {
+        _Button_Play.hidden = NO;
+    }
+}
+
 
 - (IBAction)buttonBegin_OnPress:(UIButton *)sender {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];

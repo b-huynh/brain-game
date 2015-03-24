@@ -21,8 +21,11 @@
                                 <rect key="frame" x="234" y="210" width="300" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="textInput_OnChange:" destination="jFx-zD-t1A" eventType="editingChanged" id="qF8-1u-mbA"/>
+                                </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCe-HO-EhR" userLabel="Button_Begin">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCe-HO-EhR" userLabel="Button_Begin">
                                 <rect key="frame" x="361" y="248" width="46" height="30"/>
                                 <color key="backgroundColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -41,6 +44,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="Button_Play" destination="rCe-HO-EhR" id="JOX-Ig-HQ1"/>
                         <outlet property="TextField_Input" destination="jIj-nJ-RSM" id="4Y3-Ra-aAT"/>
                     </connections>
                 </viewController>
