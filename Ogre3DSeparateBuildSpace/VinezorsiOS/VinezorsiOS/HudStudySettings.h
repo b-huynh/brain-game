@@ -63,7 +63,7 @@ public:
     enum NumpadStatus {
         
         NONE, INIT_VELOCITY, MAN_RECESS, HOLDOUT_DELAY, NEW_NAV_INC, IND_RECESS_INC, SESSION_START_TIME, SESSION_END_TIME,
-        NUM_OF_SESSIONS
+        NUM_OF_SESSIONS, PASSCODE
         
     };
     

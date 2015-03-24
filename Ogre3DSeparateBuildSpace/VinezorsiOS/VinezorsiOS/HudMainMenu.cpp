@@ -360,10 +360,9 @@ void HudMainMenu::initOverlay()
     
     password_Title->setMetricsMode(GMM_RELATIVE);
     password_Title->setAlignment(TextAreaOverlayElement::Center);
-    password_Title->setPosition(0.15, 0.05); //.01
-    password_Title->setCharHeight(0.02 * FONT_SZ_MULT);
+    password_Title->setPosition(0.15, 0.04); //.01
+    password_Title->setCharHeight(0.015 * FONT_SZ_MULT);
     password_Title->setFontName("MainSmall");
-    password_Title->setCaption("Enter Passcode");
     
     numpadButton_Cancel_TextDisplay->setMetricsMode(GMM_RELATIVE);
     numpadButton_Cancel_TextDisplay->setAlignment(TextAreaOverlayElement::Center);
