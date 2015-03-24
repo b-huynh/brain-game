@@ -43,7 +43,14 @@ public:
     
     const int PASSWORD[4] = {3,1,4,1};
 
+    //Password
+    TextAreaOverlayElement* password_Title;
+    PanelOverlayElement* password_Choice0;
+    PanelOverlayElement* password_Choice1;
+    PanelOverlayElement* password_Choice2;
+    PanelOverlayElement* password_Choice3;
     
+
 protected:
     Player* player;
     
@@ -103,12 +110,6 @@ protected:
     PanelOverlayElement* numpadButton_Cancel;
     TextAreaOverlayElement* numpadButton_Cancel_TextDisplay;
     
-    //Password
-    TextAreaOverlayElement* password_Title;
-    PanelOverlayElement* password_Choice0;
-    PanelOverlayElement* password_Choice1;
-    PanelOverlayElement* password_Choice2;
-    PanelOverlayElement* password_Choice3;
 
     
     void link(Player* player);

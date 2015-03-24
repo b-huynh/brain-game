@@ -69,15 +69,32 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "credits")
     {
-        //player->reactGUI();
-        //player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
-        //player->marbleChoice = -1;
-        //engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        settingsPressed = false;
+        levelsPressed = true;
+        player->reactGUI();
+
+        hud->password_Title->setCaption("Enter Passcode\n(Levels)");
+
+        if(hud->enableNumpad)
+        {
+            hud->Passcode_counter = 0;
+            hud->password_Choice0->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice1->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice2->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice3->setMaterialName("General/PasswordDotDisabled");
+        }
+        if(player->enableSettingsPasscode)
+        {
+            hud->enableNumpad = true;
+        }
         
-        //OgreFramework::getSingletonPtr()->requestOpenURL("http://en.wikipedia.org/wiki/N-back");
+        
     }
     else if (queryGUI == "settings")
     {
+        hud->password_Title->setCaption("Enter Passcode\n(Settings)");
+        settingsPressed = true;
+        levelsPressed = false;
         player->reactGUI();
         if(player->enableSettingsPasscode)
         {
@@ -147,8 +164,19 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
                 
                 if(valid)
                 {
-                    engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                    if(settingsPressed)
+                    {
+                        //Settings
+                        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                    }
                     
+                    if(levelsPressed)
+                    {
+                        //Levels
+                        player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
+                        player->marbleChoice = -1;
+                        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+                    }
                 }
                 else
                 {

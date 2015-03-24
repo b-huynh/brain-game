@@ -104,6 +104,10 @@ void HudStudySettings::update(float elapsed)
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
     
+    //Passcode Switch:
+    
+    
+    
     if(globals.sessionScreenEnabled)
     {
         enableSessionScreenButtonBackground->setMaterialName("General/CheckboxGreen");

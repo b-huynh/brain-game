@@ -38,10 +38,17 @@ public:
 	virtual void keyReleased(const OIS::KeyEvent &keyEventRef);
 #endif
     
+    
     virtual void requestResize();
+    
+    
 protected:
 	Player* player;
     HudMainMenu* hud;
+    
+    bool levelsPressed = false;
+    bool settingsPressed = false;
+
     
     void alloc();
     void dealloc();

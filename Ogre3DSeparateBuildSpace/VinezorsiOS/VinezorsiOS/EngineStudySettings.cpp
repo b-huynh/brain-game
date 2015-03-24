@@ -338,7 +338,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
-            hud->nStatus = hud->NONE;
+            hud->nStatus = hud->PASSCODE;
+            
+            //Show Passcode option, check if password inputted
             
             if(player->enableSettingsPasscode)
             {
@@ -529,7 +531,6 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                         
                         
                     }
-                    
                     
                 }
             }

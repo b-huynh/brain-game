@@ -360,6 +360,14 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "D: " << nBackLevelD << endl
          << "E: " << nBackLevelE << endl
          << "IND_DRECESS: " << indRecessNBackLevel << endl
+         <<  "__________________________________" << endl
+         <<  "/--------------------------------\\" << endl
+         <<  "|       Current nBackHoldout Levels     |" << endl
+         << "\\--------------------------------/" << endl
+         << "holdoutOffsetA: " << holdoutOffsetA << endl
+         << "holdoutOffsetB: " << holdoutOffsetB << endl
+         << "holdoutOffsetD: " << holdoutOffsetD << endl
+         << "currentHoldout(Used in creating holdoutLevel): " << currentHoldout << endl
          <<  "__________________________________" << endl;
     // */
     
