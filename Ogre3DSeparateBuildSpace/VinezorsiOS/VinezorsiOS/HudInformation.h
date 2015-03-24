@@ -27,9 +27,9 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 1;
+    static const int NUM_UNIQUE_BUTTONS = 4;
     enum Buttons {
-        BUTTON_BACK
+        BUTTON_BACK, BUTTON_BGC_TOP_LINK, BUTTON_N_BACK_LINK, BUTTON_BGC_RECALL_LINK
     };
     
     
@@ -42,7 +42,20 @@ protected:
     
     PanelOverlayElement* backButtonBackground;
     
+    
     PanelOverlayElement* paragraphTextBackground;
+    
+    TextAreaOverlayElement* gameTitleText;
+    TextAreaOverlayElement* BGCTopLinkText;
+    PanelOverlayElement* BGCTopLinkButtonBackground;
+
+    TextAreaOverlayElement* nbackLinkText;
+    PanelOverlayElement* nbackLinkButtonBackground;
+
+    TextAreaOverlayElement* BGCRecallLinkText;
+    PanelOverlayElement* BGCRecallLinkButtonBackground;
+
+    
     TextAreaOverlayElement* paragraphText;
 
 

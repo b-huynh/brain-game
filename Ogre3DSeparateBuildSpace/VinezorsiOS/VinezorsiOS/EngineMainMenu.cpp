@@ -47,7 +47,7 @@ void EngineMainMenu::update(float elapsed)
 
     if(hud->enterStudySettings)
      {
-         engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);     
+         //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
      }
 }
 
@@ -69,12 +69,12 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "credits")
     {
-       /* player->reactGUI();
-        player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
-        player->marbleChoice = -1;
-        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);*/
+        //player->reactGUI();
+        //player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
+        //player->marbleChoice = -1;
+        //engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
         
-        OgreFramework::getSingletonPtr()->requestOpenURL("http://en.wikipedia.org/wiki/N-back");
+        //OgreFramework::getSingletonPtr()->requestOpenURL("http://en.wikipedia.org/wiki/N-back");
     }
     else if (queryGUI == "settings")
     {
@@ -85,7 +85,6 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         }
         else{
             engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
-
         }
         //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
     }
@@ -134,7 +133,35 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
         if(hud->Passcode_counter < 4)
         {
             hud->user_password[hud->Passcode_counter] = 1;
-            hud->Passcode_counter++;
+            if(hud->Passcode_counter == 3)
+            {
+                //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                bool valid = true;
+                for(int i = 0; i < hud->PASSWORD_LENGTH; i++)
+                {
+                    if(hud->user_password[i] != hud->PASSWORD[i])
+                    {
+                        valid = false;
+                    }
+                }
+                
+                if(valid)
+                {
+                    engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                    
+                }
+                else
+                {
+                    hud->Passcode_counter++;
+                }
+                
+            }
+            else
+            {
+                 hud->Passcode_counter++;
+            }
+
+            
         }
         
     }

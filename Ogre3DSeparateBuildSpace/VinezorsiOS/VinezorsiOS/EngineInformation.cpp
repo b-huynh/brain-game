@@ -59,6 +59,27 @@ void EngineInformation::activatePerformSingleTap(float x, float y)
         player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
     }
+    else if (queryGUI == "bgctoplink")
+    {
+        
+        std::cout << "Link Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://braingamecenter.ucr.edu");
+    }
+    else if (queryGUI == "nbacklink")
+    {
+        
+        std::cout << "N Back Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://en.wikipedia.org/wiki/N-back");
+
+    }
+    else if (queryGUI == "bgcrecalllink")
+    {
+        
+        std::cout << "Recall Link Pressed!" << std::endl;
+        OgreFramework::getSingletonPtr()->requestOpenURL("http://braingamecenter.ucr.edu/games/recall");
+
+    }
+    
 }
 
 // The following deal with injecting coordinates to simulate a slider

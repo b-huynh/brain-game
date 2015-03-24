@@ -234,8 +234,8 @@ public:
     int numRetries = 3;
     
     //Study Settings
-    bool fuelEnabled = false;   //Study Settings
-    bool holdoutEnabled = false; //Study Settings
+    bool fuelEnabled = true;   //Study Settings
+    bool holdoutEnabled = true; //Study Settings
     int initialVelocity = 15; //Study Settings
     bool manRecessEnabled = false; //Study Settings
     int manRecessLevelLimit = 5; //StudySettings
@@ -243,23 +243,25 @@ public:
     bool newNavEnabled = false; //StudySettings
     float newNavIncrement = .35f; //Study Settings
     
-    bool indRecessEnabled = false; //StudySettings
+    bool indRecessEnabled = true; //StudySettings
     float indRecessIncrement = .5f; //Study Settings
     double indRecessNBackLevel = 1.0;
     float indRecessNBackDelta = 0.0f;
     
     
-    bool holdoutdelayEnabled = false;
+    bool holdoutdelayEnabled = true;
     float holdoutdelayNumber = 2.5f;
     
     bool enableSettingsPasscode = false;
     
     //bool sessionTimeSettings = false;
-    int sessionStartTime = 8; //In Minutes
-    int sessionEndTime = 30;
+    int sessionStartTime = 20; //In Minutes
+    int sessionEndTime = 20;
     int numOfSessions = 20;
     
     bool sessionNeedsIncrement = true;
+    
+    bool enableIndRecessFixed = false;
     
     //End Study Settings
 

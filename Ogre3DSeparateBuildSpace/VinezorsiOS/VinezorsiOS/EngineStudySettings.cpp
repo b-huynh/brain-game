@@ -47,6 +47,10 @@ void EngineStudySettings::enter()
     tempsessionEndTime = player->sessionEndTime;
     tempnumOfSessions = player->numOfSessions;
     tempnewSounds= globals.newSounds;
+    tempenableIndRecessFixed = player->enableIndRecessFixed;
+    tempholdoutoffsetA = player->scheduler->holdoutOffsetA;
+    tempholdoutoffsetB = player->scheduler->holdoutOffsetB;
+    tempholdoutoffsetD = player->scheduler->holdoutOffsetD;
     tempsessionScreenEnabled = globals.sessionScreenEnabled;
     
     // Set skybox
@@ -73,1675 +77,127 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
     if (queryGUI != "")
-        player->reactGUI();
-    if (queryGUI == "back")
     {
-        globals.saveGlobalSettings(globals.globalPath);
-        player->saveProgress(globals.savePath);
-        engineStateMgr->requestPopEngine();
-        
-        // Check if anything changes
-        if(tempfuelEnabled == player->fuelEnabled &&
-           tempholdoutEnabled == player->holdoutEnabled &&
-           tempinitialVelocity == player->initialVelocity &&
-           tempmanRecessEnabled == player->manRecessEnabled &&
-           tempmanRecessLevelLimit == player->manRecessLevelLimit &&
-           tempnewNavEnabled == player->newNavEnabled &&
-           tempnewNavIncrement == player->newNavIncrement &&
-           tempindRecessEnabled == player->indRecessEnabled &&
-           tempindRecessIncrement == player->indRecessIncrement &&
-           tempholdoutdelayEnabled == player->holdoutdelayEnabled &&
-           tempholdoutdelayNumber == player->holdoutdelayNumber &&
-           tempenableSettingsPasscode== player->enableSettingsPasscode &&
-           tempsessionStartTime == player->sessionStartTime &&
-           tempsessionEndTime == player->sessionEndTime &&
-           tempnumOfSessions == player->numOfSessions &&
-           tempnewSounds== globals.newSounds &&
-           tempsessionScreenEnabled == globals.sessionScreenEnabled)
+        if(!hud->popUpisOut)
         {
-            //Still the same
-            std::cout << "Nothing Changed!" <<std::endl;
-        }
-        else
-        {
-            //Something Changed
-            std::cout << "Something Changed!" << std::endl;
-            player->sessionStarted = false;
+            player->reactGUI();
 
         }
-           
-           
+
+    }
+    if (queryGUI == "popupok")
+    {
+        if(hud->popUpisOut)
+        {
+            player->reactGUI();
+            std::cout<<"Pressed Continue" << std::endl;
+            /* Need to do this when I press ok!*/
+             player->feedLevelRequestFromSchedule();
+             player->sessionStarted = false;
+             globals.saveGlobalSettings(globals.globalPath);
+             player->saveProgress(globals.savePath);
+             engineStateMgr->requestPopEngine();
+            
+        }
+    }
+    else if (queryGUI == "popuprevert")
+    {
+        if(hud->popUpisOut)
+        {
+            player->reactGUI();
+            std::cout<<"Pressed Revert "<< std::endl;
+            //Put all temp settings back
+            //TempStudySettings
+            
+            player->fuelEnabled = tempfuelEnabled;
+            player->holdoutEnabled =tempholdoutEnabled;
+            player->initialVelocity=tempinitialVelocity;
+            player->manRecessEnabled=tempmanRecessEnabled;
+            player->manRecessLevelLimit=tempmanRecessLevelLimit;
+            player->newNavEnabled=tempnewNavEnabled;
+            player->newNavIncrement=tempnewNavIncrement;
+            player->indRecessEnabled=tempindRecessEnabled;
+            player->indRecessIncrement=tempindRecessIncrement;
+            player->holdoutdelayEnabled=tempholdoutdelayEnabled;
+            player->holdoutdelayNumber=tempholdoutdelayNumber;
+            player->enableSettingsPasscode=tempenableSettingsPasscode;
+            player->sessionStartTime=tempsessionStartTime;
+            player->sessionEndTime=tempsessionEndTime;
+            player->numOfSessions=tempnumOfSessions;
+            globals.newSounds=tempnewSounds;
+            player->enableIndRecessFixed=tempenableIndRecessFixed;
+            player->scheduler->holdoutOffsetA=tempholdoutoffsetA;
+            player->scheduler->holdoutOffsetB=tempholdoutoffsetB;
+            player->scheduler->holdoutOffsetD=tempholdoutoffsetD;
+            globals.sessionScreenEnabled=tempsessionScreenEnabled;
+            /* Need to do this when I press ok!*/
+             
+             
+            globals.saveGlobalSettings(globals.globalPath);
+            player->saveProgress(globals.savePath);
+            hud->initStrings();
+            hud->popUpisOut = false;
+            hud->hidePopUp();
+            
+        }
+    }
+    else if (queryGUI == "back")
+    {
+        if(!hud->popUpisOut)
+        {
+
+            // Check if anything changes
+            if(tempfuelEnabled == player->fuelEnabled &&
+               tempholdoutEnabled == player->holdoutEnabled &&
+               tempinitialVelocity == player->initialVelocity &&
+               tempmanRecessEnabled == player->manRecessEnabled &&
+               tempmanRecessLevelLimit == player->manRecessLevelLimit &&
+               tempnewNavEnabled == player->newNavEnabled &&
+               tempnewNavIncrement == player->newNavIncrement &&
+               tempindRecessEnabled == player->indRecessEnabled &&
+               tempindRecessIncrement == player->indRecessIncrement &&
+               tempholdoutdelayEnabled == player->holdoutdelayEnabled &&
+               tempholdoutdelayNumber == player->holdoutdelayNumber &&
+               tempenableSettingsPasscode== player->enableSettingsPasscode &&
+               tempsessionStartTime == player->sessionStartTime &&
+               tempsessionEndTime == player->sessionEndTime &&
+               tempnumOfSessions == player->numOfSessions &&
+               tempnewSounds== globals.newSounds &&
+               tempsessionScreenEnabled == globals.sessionScreenEnabled &&
+               tempenableIndRecessFixed == player->enableIndRecessFixed)
+                
+            {
+                //Still the same
+                std::cout << "Nothing Changed!" <<std::endl;
+                globals.saveGlobalSettings(globals.globalPath);
+                player->saveProgress(globals.savePath);
+                engineStateMgr->requestPopEngine();
+            }
+            else
+            {
+                
+                //Something Changed
+                std::cout << "Something Changed!" << std::endl;
+                //Show PopUp
+                hud->showPopUp();
+                hud->popUpisOut = true;
+                //DisableButton
+                
+                /* Need to do this when I press ok!
+                 player->feedLevelRequestFromSchedule();
+                 player->sessionStarted = false;*/
+                
+            }
+            
+            
+        }
         
     }
     else if (queryGUI == "checksessionid")
     {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
+        if(!hud->popUpisOut)
         {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        if(globals.sessionScreenEnabled)
-        {
-            globals.sessionScreenEnabled = false;
-        }
-        else
-        {
-            globals.sessionScreenEnabled = true;
-        }
-    }
-    else if (queryGUI == "checkfuel")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-           hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        if(player->fuelEnabled)
-        {
-            player->fuelEnabled = false;
-        }
-        else
-        {
-            player->fuelEnabled = true;
-        }
-    }
-    else if (queryGUI == "checksettingspasscode")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        if(player->enableSettingsPasscode)
-        {
-            player->enableSettingsPasscode = false;
-        }
-        else
-        {
-            player->enableSettingsPasscode = true;
-        }
-    }
-    else if (queryGUI == "checknewsounds")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        if(globals.newSounds)
-        {
-            globals.newSounds = false;
-        }
-        else
-        {
-            globals.newSounds = true;
-        }
-    }
-    else if (queryGUI == "checkholdout")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        
-        if(player->holdoutEnabled)
-        {
-            player->holdoutEnabled = false;
-        }
-        else
-        {
-            player->holdoutEnabled = true;
-        }
-    }
-    else if (queryGUI == "checkholdoutdelay")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        
-        if(player->holdoutdelayEnabled)
-        {
-            player->holdoutdelayEnabled = false;
-        }
-        else
-        {
-            player->holdoutdelayEnabled = true;
-        }
-    }
-    else if (queryGUI == "sessionstarttime")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = true;
-        hud->showDecimal = false;
-        hud->nStatus = hud->SESSION_START_TIME;
-        hud->sessionStartTimeString = "";
-
-    }
-    else if (queryGUI == "sessionendtime")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = true;
-        hud->showDecimal = false;
-        hud->nStatus = hud->SESSION_END_TIME;
-        hud->sessionEndtimeString = "";
-        
-    }
-    else if (queryGUI == "sessionnum")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        hud->enableNumpad = true;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NUM_OF_SESSIONS;
-        hud->numOfSessionsString = "";
-        
-    }
-
-    else if (queryGUI == "checkholdoutdelaynumber")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        if(player->holdoutdelayEnabled)
-        {
-            //std::cout<<"IND RECESS NUMBER" << std::endl;
-            hud->enableNumpad = true;
-            hud->showDecimal = true;
-            hud->nStatus = hud->HOLDOUT_DELAY;
-            hud->holdoutDelayString = "";
-            
-        }
-    }
-    else if (queryGUI == "checknewnav")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        
-        if(player->newNavEnabled)
-        {
-            player->newNavEnabled = false;
-        }
-        else
-        {
-            player->newNavEnabled = true;
-        }
-    }
-    else if(queryGUI == "checknewnavnumber")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        if(player->newNavEnabled)
-        {
-            std::cout<<"New_Nav Number" << std::endl;
-            hud->enableNumpad = true;
-            hud->showDecimal = true;
-            hud->nStatus = hud->NEW_NAV_INC;
-            hud->newNavigationIncAmountString = "";
-            
-        }
-    }
-    else if (queryGUI == "checkindrecess")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        
-        if(player->indRecessEnabled)
-        {
-            player->indRecessEnabled = false;
-        }
-        else
-        {
-            player->indRecessEnabled = true;
-        }
-    }
-    else if(queryGUI == "checkindrecessnumber")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        if(player->indRecessEnabled)
-        {
-            std::cout<<"IND RECESS NUMBER" << std::endl;
-            hud->enableNumpad = true;
-            hud->showDecimal = true;
-            hud->nStatus = hud->IND_RECESS_INC;
-            hud->indRecessString = "";
-            
-        }
-    }
-
-    else if (queryGUI == "checkinitspeed")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        //player->initialVelocity = 20;
-        hud->enableNumpad = true;
-        hud->showDecimal = false;
-        hud->nStatus = hud->INIT_VELOCITY;
-        hud->initSpeedString = "";
-    }
-    else if (queryGUI == "checkmandatoryrecess")
-    {
-        //Fix input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        hud->enableNumpad = false;
-        hud->showDecimal = false;
-        hud->nStatus = hud->NONE;
-        
-        if(player->manRecessEnabled)
-        {
-            player->manRecessEnabled = false;
-        }
-        else
-        {
-            player->manRecessEnabled= true;
-        }
-    }
-    else if (queryGUI == "mandatoryrecessnumber")
-    {
-        //Fix OTHER input fields
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            hud->initSpeedString =Util::toStringInt(player->initialVelocity);
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
-        }
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
-        }
-        //player->initialVelocity = 20;
-        if(player->manRecessEnabled)
-        {
-            std::cout<<"Man_recess_number" << std::endl;
-            hud->enableNumpad = true;
-            hud->showDecimal = false;
-            hud->nStatus = hud->MAN_RECESS;
-            hud->manRecessString = "";
-        }
-    }
-    else if(queryGUI == "numpadbuttonback")
-    {
-        //make numpad go away
-        std::cout<<"back pressed";
-        //hud->enableNumpad = false;
-        
-        //Initial Velocity Update
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() != 0)
-            {
-                hud->initSpeedString.erase(hud->initSpeedString.size()-1,1);
-            }
-        }
-        //ManRecess Update
-        if( hud->nStatus == hud->MAN_RECESS )
-        {
-            if(hud->manRecessString.size() != 0)
-            {
-                hud->manRecessString.erase(hud->manRecessString.size()-1,1);
-            }
-        }
-        //NewNav Update
-        if( hud->nStatus == hud->NEW_NAV_INC )
-        {
-            if(hud->newNavigationIncAmountString.size() != 0)
-            {
-                hud->newNavigationIncAmountString.erase(hud->newNavigationIncAmountString.size()-1,1);
-            }
-        }
-        //IndRecess Update
-        if( hud->nStatus == hud->IND_RECESS_INC )
-        {
-            if(hud->indRecessString.size() != 0)
-            {
-                hud->indRecessString.erase(hud->indRecessString.size()-1,1);
-            }
-        }
-        //DelayHoldout Update
-        if( hud->nStatus == hud->HOLDOUT_DELAY )
-        {
-            if(hud->holdoutDelayString.size() != 0)
-            {
-                hud->holdoutDelayString.erase(hud->holdoutDelayString.size()-1,1);
-            }
-        }
-        //SessionStartTime Update
-        if( hud->nStatus == hud->SESSION_START_TIME )
-        {
-            if(hud->sessionStartTimeString.size() != 0)
-            {
-                hud->sessionStartTimeString.erase(hud->sessionStartTimeString.size()-1,1);
-            }
-        }
-        //SessionEndTime Update
-        if( hud->nStatus == hud->SESSION_END_TIME )
-        {
-            if(hud->sessionEndtimeString.size() != 0)
-            {
-                hud->sessionEndtimeString.erase(hud->sessionEndtimeString.size()-1,1);
-            }
-        }
-        //SessionNum Update
-        if( hud->nStatus == hud->NUM_OF_SESSIONS )
-        {
-            if(hud->numOfSessionsString.size() != 0)
-            {
-                hud->numOfSessionsString.erase(hud->numOfSessionsString.size()-1,1);
-            }
-        }
-        
-        
-    }
-    else if(queryGUI == "numpadbutton0")
-    {
-        std::cout<<"Pressed 0\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "0";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "0";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "0";
-            }
-        }
-        
-        
-    }
-    else if(queryGUI == "numpadbutton1")
-    {
-        std::cout<<"Pressed 1\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "1";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "1";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "1";
-            }
-        }
-    }
-    else if(queryGUI == "numpadbutton2")
-    {
-        std::cout<<"Pressed 2\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "2";
-            }
-        }if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "2";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "2";
-            }
-        }
-    }
-    else if(queryGUI == "numpadbutton3")
-    {
-        std::cout<<"Pressed 3\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "3";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "3";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "3";
-            }
-        }
-        
-    }
-    else if(queryGUI == "numpadbutton4")
-    {
-        std::cout<<"Pressed 4\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "4";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "4";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "4";
-            }
-        }
-        
-    }
-    else if(queryGUI == "numpadbutton5")
-    {
-        std::cout<<"Pressed 5\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "5";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "5";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "5";
-            }
-        }
-        
-        
-    }
-    else if(queryGUI == "numpadbutton6")
-    {
-        std::cout<<"Pressed 6\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "6";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "6";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "6";
-            }
-        }
-        
-    }
-    else if(queryGUI == "numpadbutton7")
-    {
-        std::cout<<"Pressed 7\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "7";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "7";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "7";
-            }
-        }
-    }
-    else if(queryGUI == "numpadbutton8")
-    {
-        std::cout<<"Pressed 8\n";
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "8";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "8";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "8";
-            }
-        }
-        
-    }
-    else if(queryGUI == "numpadbutton9")
-    {
-        std::cout<<"Pressed 9\n"; 
-        if( hud->nStatus == hud->INIT_VELOCITY)
-        {
-            if(hud->initSpeedString.size() < 2)
-            {
-                hud->initSpeedString += "9";
-            }
-        }
-        if( hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString.size() < 1)
-            {
-                hud->manRecessString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString.size() < 2)
-            {
-                hud->sessionStartTimeString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString.size() < 2)
-            {
-                hud->sessionEndtimeString+= "9";
-            }
-        }
-        if( hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString.size() < 2)
-            {
-                hud->numOfSessionsString+= "9";
-            }
-        }
-        
-    }
-    else if(queryGUI == "numpadbuttonsave" )
-    {
-        std::cout<<"SAVE"<<std::endl;
-        if(hud->nStatus == hud->INIT_VELOCITY)
-        {
-            //std::cout << hud->initSpeedString[0] << std::endl;
-            if(hud->initSpeedString != "")
-            {
-            
-                player->initialVelocity = std::atoi(hud->initSpeedString.c_str());
-                if(player->initialVelocity > globals.maxCamSpeed) //What should I use!
-                {
-                    player->initialVelocity = globals.maxCamSpeed;
-                }
-                if(player->initialVelocity < 10) //What do I use!
-                {
-                    player->initialVelocity = 10;
-                }
-            }
-            hud->initSpeedString = Util::toStringInt(player->initialVelocity);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->MAN_RECESS)
-        {
-            if(hud->manRecessString != "")
-            {
-                
-                player->manRecessLevelLimit= std::atoi(hud->manRecessString.c_str());
-                if(player->manRecessLevelLimit < 1) //What do I use!
-                {
-                    player->manRecessLevelLimit = 1;
-                }
-            }
-            hud->manRecessString = Util::toStringInt(player->manRecessLevelLimit);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString != "")
-            {
-                
-                player->newNavIncrement= std::atof(hud->newNavigationIncAmountString.c_str());
-                if(player->newNavIncrement < 0.00f) //What do I use!
-                {
-                    player->newNavIncrement = 0.00f;
-                }
-                if(player->newNavIncrement > 1.0f) //What do I use!
-                {
-                    player->newNavIncrement = 1.0f;
-                }
-                
-            }
-            hud->newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
-            hud->enableNumpad = false;
-            
-        }
-        
-        if(hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString != "")
-            {
-                
-                player->indRecessIncrement= std::atof(hud->indRecessString.c_str());
-                if(player->indRecessIncrement < 0.00f) //What do I use!
-                {
-                    player->indRecessIncrement = 0.00f;
-                }
-                if(player->indRecessIncrement > 1.0f) //What do I use!
-                {
-                    player->indRecessIncrement = 1.0f;
-                }
-                
-            }
-            hud->indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString != "")
-            {
-                
-                player->holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
-                if(player->holdoutdelayNumber < 0.00f) //What do I use!
-                {
-                    player->indRecessIncrement = 0.00f;
-                }
-                if(player->holdoutdelayNumber > 99.9f) //What do I use!
-                {
-                    player->holdoutdelayNumber = 99.9f;
-                }
-                
-            }
-            hud->holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->SESSION_START_TIME)
-        {
-            if(hud->sessionStartTimeString != "")
-            {
-                
-                player->sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
-                if(player->sessionStartTime < 1) //What do I use!
-                {
-                    player->sessionStartTime = 1;
-                }
-                if(player->sessionStartTime > 99) //What do I use!
-                {
-                    player->sessionStartTime = 99;
-                }
-                
-            }
-            
-            hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->SESSION_END_TIME)
-        {
-            if(hud->sessionEndtimeString != "")
-            {
-                
-                player->sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
-                if(player->sessionEndTime < 1) //What do I use!
-                {
-                    player->sessionEndTime = 1;
-                }
-                if(player->sessionEndTime > 99) //What do I use!
-                {
-                    player->sessionEndTime = 99;
-                }
-                
-            }
-            hud->sessionEndtimeString = Util::toStringInt(player->sessionEndTime);
-            hud->enableNumpad = false;
-            
-        }
-        if(hud->nStatus == hud->NUM_OF_SESSIONS)
-        {
-            if(hud->numOfSessionsString != "")
-            {
-                
-                player->numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
-                if(player->numOfSessions < 1) //What do I use!
-                {
-                    player->numOfSessions = 1;
-                }
-                if(player->numOfSessions > 99) //What do I use!
-                {
-                    player->numOfSessions = 99;
-                }
-                
-            }
-            hud->numOfSessionsString = Util::toStringInt(player->numOfSessions);
-            hud->enableNumpad = false;
-            
-        }
-
-    }
-    else if(queryGUI == "numpadbuttondecimal")
-    {
-        std::cout<<"Pressed Decimal"<<std::endl;
-        if( hud->nStatus == hud->NEW_NAV_INC)
-        {
-            if(hud->newNavigationIncAmountString.size() < 3)
-            {
-                hud->newNavigationIncAmountString+= ".";
-            }
-        }
-        if( hud->nStatus == hud->IND_RECESS_INC)
-        {
-            if(hud->indRecessString.size() < 3)
-            {
-                hud->indRecessString+= ".";
-            }
-        }
-        if( hud->nStatus == hud->HOLDOUT_DELAY)
-        {
-            if(hud->holdoutDelayString.size() < 3)
-            {
-                hud->holdoutDelayString+= ".";
-            }
-        }
-    }
-    else if(queryGUI == "numpad")
-    {
-        
-    }
-    
-    else
-    {
-        //std::cout<<"Pressed something else "<<std::endl;
-        //Close without Saving!
-        if(hud->enableNumpad)
-        {
+            //Fix input fields
             if(hud->nStatus == hud->INIT_VELOCITY)
             {
                 hud->initSpeedString =Util::toStringInt(player->initialVelocity);
@@ -1776,10 +232,1859 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             }
             hud->enableNumpad = false;
             hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(globals.sessionScreenEnabled)
+            {
+                globals.sessionScreenEnabled = false;
+            }
+            else
+            {
+                globals.sessionScreenEnabled = true;
+            }
+   
+        }
+        
+    }
+    else if (queryGUI == "checkfuel")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(player->fuelEnabled)
+            {
+                player->fuelEnabled = false;
+            }
+            else
+            {
+                player->fuelEnabled = true;
+            }
+
+        }
+        
+    }
+    else if (queryGUI == "checksettingspasscode")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(player->enableSettingsPasscode)
+            {
+                player->enableSettingsPasscode = false;
+            }
+            else
+            {
+                player->enableSettingsPasscode = true;
+            }
+
+        }
+    }
+    else if (queryGUI == "checknewsounds")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(globals.newSounds)
+            {
+                globals.newSounds = false;
+            }
+            else
+            {
+                globals.newSounds = true;
+            }
+        }
+
+    }
+    else if (queryGUI == "checkholdout")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            
+            if(player->holdoutEnabled)
+            {
+                player->holdoutEnabled = false;
+            }
+            else
+            {
+                player->holdoutEnabled = true;
+                player->holdoutdelayEnabled = false;
+            }
+        }
+        
+    }
+    else if (queryGUI == "checkholdoutdelay")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(player->holdoutEnabled)
+            {
+                if(player->holdoutdelayEnabled)
+                {
+                    player->holdoutdelayEnabled = false;
+                    //If holdoutdelay is disabled then we must revert to the old holdout offset.
+                    player->scheduler->holdoutOffsetA = tempholdoutoffsetA;
+                    player->scheduler->holdoutOffsetB = tempholdoutoffsetB;
+                    player->scheduler->holdoutOffsetD = tempholdoutoffsetD;
+                }
+                else
+                {
+                    player->holdoutdelayEnabled = true;
+                    //If holdoutdelay is enabled then we use the new offset
+                    //Update the holdout offset
+                    if(player->holdoutdelayNumber == 1)
+                    {
+                        player->scheduler->holdoutOffsetA = 0;
+                        player->scheduler->holdoutOffsetB = 0;
+                        player->scheduler->holdoutOffsetD = 0;
+                        
+                        
+                    }
+                    else
+                    {
+                        player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+                        
+                        
+                    }
+                    
+                    
+                }
+            }
+        }
+        
+        
+    }
+    else if (queryGUI == "sessionstarttime")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = false;
+            hud->nStatus = hud->SESSION_START_TIME;
+            hud->sessionStartTimeString = "";
+        }
+        
+
+    }
+    else if (queryGUI == "sessionendtime")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = false;
+            hud->nStatus = hud->SESSION_END_TIME;
+            hud->sessionEndtimeString = "";
+        }
+        
+        
+    }
+    else if (queryGUI == "sessionnum")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NUM_OF_SESSIONS;
+            hud->numOfSessionsString = "";
+        }
+        
+        
+    }
+
+    else if (queryGUI == "checkholdoutdelaynumber")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            
+            if( player->holdoutEnabled && player->holdoutdelayEnabled)
+            {
+                //std::cout<<"IND RECESS NUMBER" << std::endl;
+                hud->enableNumpad = true;
+                hud->showDecimal = true;
+                hud->nStatus = hud->HOLDOUT_DELAY;
+                hud->holdoutDelayString = "";
+                
+            }
+        }
+        
+    }
+    else if (queryGUI == "checknewnav")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            
+            if(player->newNavEnabled)
+            {
+                player->newNavEnabled = false;
+            }
+            else
+            {
+                player->newNavEnabled = true;
+            }
+        }
+        
+    }
+    else if(queryGUI == "checknewnavnumber")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            if(player->newNavEnabled)
+            {
+                std::cout<<"New_Nav Number" << std::endl;
+                hud->enableNumpad = true;
+                hud->showDecimal = true;
+                hud->nStatus = hud->NEW_NAV_INC;
+                hud->newNavigationIncAmountString = "";
+                
+            }
+        }
+        
+    }
+    else if (queryGUI == "checkindrecess")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            
+            if(player->indRecessEnabled)
+            {
+                player->indRecessEnabled = false;
+            }
+            else
+            {
+                player->indRecessEnabled = true;
+            }
+        }
+        
+    }
+    else if (queryGUI == "checkindrecessfixed")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            std::cout << "Fixed Pressed" << std::endl;
+            
+            if(player->indRecessEnabled){
+                if(player->enableIndRecessFixed)
+                {
+                    player->enableIndRecessFixed = false;
+                }
+                else
+                {
+                    player->enableIndRecessFixed = true;
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "checkindrecessnumber")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            if(player->indRecessEnabled)
+            {
+                std::cout<<"IND RECESS NUMBER" << std::endl;
+                hud->enableNumpad = true;
+                hud->showDecimal = true;
+                hud->nStatus = hud->IND_RECESS_INC;
+                hud->indRecessString = "";
+                
+            }
+        }
+        
+    }
+
+    else if (queryGUI == "checkinitspeed")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            //player->initialVelocity = 20;
+            hud->enableNumpad = true;
+            hud->showDecimal = false;
+            hud->nStatus = hud->INIT_VELOCITY;
+            hud->initSpeedString = "";
+        }
+        
+    }
+    else if (queryGUI == "checkmandatoryrecess")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(player->manRecessEnabled)
+            {
+                player->manRecessEnabled = false;
+            }
+            else
+            {
+                player->manRecessEnabled= true;
+            }
+        }
+        
+    }
+    else if (queryGUI == "mandatoryrecessnumber")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix OTHER input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+            }
+            //player->initialVelocity = 20;
+            if(player->manRecessEnabled)
+            {
+                std::cout<<"Man_recess_number" << std::endl;
+                hud->enableNumpad = true;
+                hud->showDecimal = false;
+                hud->nStatus = hud->MAN_RECESS;
+                hud->manRecessString = "";
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpadbuttonback")
+    {
+        if(!hud->popUpisOut)
+        {
+            //make numpad go away
+            std::cout<<"back pressed";
+            //hud->enableNumpad = false;
+            
+            //Initial Velocity Update
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() != 0)
+                {
+                    hud->initSpeedString.erase(hud->initSpeedString.size()-1,1);
+                }
+            }
+            //ManRecess Update
+            if( hud->nStatus == hud->MAN_RECESS )
+            {
+                if(hud->manRecessString.size() != 0)
+                {
+                    hud->manRecessString.erase(hud->manRecessString.size()-1,1);
+                }
+            }
+            //NewNav Update
+            if( hud->nStatus == hud->NEW_NAV_INC )
+            {
+                if(hud->newNavigationIncAmountString.size() != 0)
+                {
+                    hud->newNavigationIncAmountString.erase(hud->newNavigationIncAmountString.size()-1,1);
+                }
+            }
+            //IndRecess Update
+            if( hud->nStatus == hud->IND_RECESS_INC )
+            {
+                if(hud->indRecessString.size() != 0)
+                {
+                    hud->indRecessString.erase(hud->indRecessString.size()-1,1);
+                }
+            }
+            //DelayHoldout Update
+            if( hud->nStatus == hud->HOLDOUT_DELAY )
+            {
+                if(hud->holdoutDelayString.size() != 0)
+                {
+                    hud->holdoutDelayString.erase(hud->holdoutDelayString.size()-1,1);
+                }
+            }
+            //SessionStartTime Update
+            if( hud->nStatus == hud->SESSION_START_TIME )
+            {
+                if(hud->sessionStartTimeString.size() != 0)
+                {
+                    hud->sessionStartTimeString.erase(hud->sessionStartTimeString.size()-1,1);
+                }
+            }
+            //SessionEndTime Update
+            if( hud->nStatus == hud->SESSION_END_TIME )
+            {
+                if(hud->sessionEndtimeString.size() != 0)
+                {
+                    hud->sessionEndtimeString.erase(hud->sessionEndtimeString.size()-1,1);
+                }
+            }
+            //SessionNum Update
+            if( hud->nStatus == hud->NUM_OF_SESSIONS )
+            {
+                if(hud->numOfSessionsString.size() != 0)
+                {
+                    hud->numOfSessionsString.erase(hud->numOfSessionsString.size()-1,1);
+                }
+            }
         }
         
         
         
+    }
+    else if(queryGUI == "numpadbutton0")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 0\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "0";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "0";
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton1")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 1\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "1";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "1";
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton2")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 2\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "2";
+                }
+            }if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "2";
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton3")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 3\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "3";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "3";
+                }
+            }
+        }
+        
+        
+    }
+    else if(queryGUI == "numpadbutton4")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 4\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "4";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "4";
+                }
+            }
+        }
+        
+        
+    }
+    else if(queryGUI == "numpadbutton5")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 5\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "5";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "5";
+                }
+            }
+        }
+        
+        
+        
+    }
+    else if(queryGUI == "numpadbutton6")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 6\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "6";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "6";
+                }
+            }
+        }
+        
+        
+    }
+    else if(queryGUI == "numpadbutton7")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 7\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "7";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "7";
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton8")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 8\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "8";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "8";
+                }
+            }
+        }
+        
+        
+    }
+    else if(queryGUI == "numpadbutton9")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed 9\n";
+            if( hud->nStatus == hud->INIT_VELOCITY)
+            {
+                if(hud->initSpeedString.size() < 2)
+                {
+                    hud->initSpeedString += "9";
+                }
+            }
+            if( hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString.size() < 1)
+                {
+                    hud->manRecessString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString.size() < 2)
+                {
+                    hud->sessionStartTimeString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString.size() < 2)
+                {
+                    hud->sessionEndtimeString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString.size() < 2)
+                {
+                    hud->numOfSessionsString+= "9";
+                }
+            }
+        }
+        
+        
+    }
+    else if(queryGUI == "numpadbuttonsave" )
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"SAVE"<<std::endl;
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                //std::cout << hud->initSpeedString[0] << std::endl;
+                if(hud->initSpeedString != "")
+                {
+                    
+                    player->initialVelocity = std::atoi(hud->initSpeedString.c_str());
+                    if(player->initialVelocity > globals.maxCamSpeed) //What should I use!
+                    {
+                        player->initialVelocity = globals.maxCamSpeed;
+                    }
+                    if(player->initialVelocity < 10) //What do I use!
+                    {
+                        player->initialVelocity = 10;
+                    }
+                }
+                hud->initSpeedString = Util::toStringInt(player->initialVelocity);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                if(hud->manRecessString != "")
+                {
+                    
+                    player->manRecessLevelLimit= std::atoi(hud->manRecessString.c_str());
+                    if(player->manRecessLevelLimit < 1) //What do I use!
+                    {
+                        player->manRecessLevelLimit = 1;
+                    }
+                }
+                hud->manRecessString = Util::toStringInt(player->manRecessLevelLimit);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString != "")
+                {
+                    
+                    player->newNavIncrement= std::atof(hud->newNavigationIncAmountString.c_str());
+                    if(player->newNavIncrement < 0.01f) //What do I use!
+                    {
+                        player->newNavIncrement = 0.01f;
+                    }
+                    if(player->newNavIncrement > 1.0f) //What do I use!
+                    {
+                        player->newNavIncrement = 1.0f;
+                    }
+                    
+                }
+                hud->newNavigationIncAmountString = Util::toStringFloat(player->newNavIncrement,2);
+                hud->enableNumpad = false;
+                
+            }
+            
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString != "")
+                {
+                    
+                    player->indRecessIncrement= std::atof(hud->indRecessString.c_str());
+                    if(player->indRecessIncrement < 0.01f) //What do I use!
+                    {
+                        player->indRecessIncrement = 0.01f;
+                    }
+                    if(player->indRecessIncrement > 1.0f) //What do I use!
+                    {
+                        player->indRecessIncrement = 1.0f;
+                    }
+                    
+                }
+                hud->indRecessString = Util::toStringFloat(player->indRecessIncrement,2);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString != "")
+                {
+                    
+                    player->holdoutdelayNumber= std::atof(hud->holdoutDelayString.c_str());
+                    if(player->holdoutdelayNumber < 1.00f) //What do I use!
+                    {
+                        player->holdoutdelayNumber = 1.00f;
+                    }
+                    if(player->holdoutdelayNumber > 99.9f) //What do I use!
+                    {
+                        player->holdoutdelayNumber = 99.9f;
+                    }
+                    //Update the holdout offset
+                    if(player->holdoutdelayNumber == 1)
+                    {
+                        player->scheduler->holdoutOffsetA = 0;
+                        player->scheduler->holdoutOffsetB = 0;
+                        player->scheduler->holdoutOffsetD = 0;
+                        
+                        
+                    }
+                    else
+                    {
+                        player->scheduler->holdoutOffsetA = -(player->holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetB = -(player->holdoutdelayNumber-1);
+                        player->scheduler->holdoutOffsetD = -(player->holdoutdelayNumber-1);
+                        
+                        
+                    }
+                    
+                }
+                hud->holdoutDelayString = Util::toStringFloat(player->holdoutdelayNumber,1);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                if(hud->sessionStartTimeString != "")
+                {
+                    
+                    player->sessionStartTime= std::atoi(hud->sessionStartTimeString.c_str());
+                    if(player->sessionStartTime < 1) //What do I use!
+                    {
+                        player->sessionStartTime = 1;
+                    }
+                    if(player->sessionStartTime > player->sessionEndTime) //What do I use!
+                    {
+                        player->sessionStartTime = player->sessionEndTime;
+                    }
+                    
+                }
+                
+                hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                if(hud->sessionEndtimeString != "")
+                {
+                    
+                    player->sessionEndTime= std::atoi(hud->sessionEndtimeString.c_str());
+                    if(player->sessionEndTime < 1) //What do I use!
+                    {
+                        player->sessionEndTime = 1;
+                    }
+                    if(player->sessionEndTime > 99) //What do I use!
+                    {
+                        player->sessionEndTime = 99;
+                    }
+                    if(player->sessionEndTime < player->sessionStartTime)
+                    {
+                        player->sessionStartTime = player->sessionEndTime;
+                        hud->sessionStartTimeString = Util::toStringInt(player->sessionStartTime);
+
+                    }
+                    
+                }
+                hud->sessionEndtimeString = Util::toStringInt(player->sessionEndTime);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                if(hud->numOfSessionsString != "")
+                {
+                    
+                    player->numOfSessions= std::atoi(hud->numOfSessionsString.c_str());
+                    if(player->numOfSessions < 1) //What do I use!
+                    {
+                        player->numOfSessions = 1;
+                    }
+                    if(player->numOfSessions > 99) //What do I use!
+                    {
+                        player->numOfSessions = 99;
+                    }
+                    
+                }
+                hud->numOfSessionsString = Util::toStringInt(player->numOfSessions);
+                hud->enableNumpad = false;
+                
+            }
+        }
+        
+
+    }
+    else if(queryGUI == "numpadbuttondecimal")
+    {
+        if(!hud->popUpisOut)
+        {
+            std::cout<<"Pressed Decimal"<<std::endl;
+            if( hud->nStatus == hud->NEW_NAV_INC)
+            {
+                if(hud->newNavigationIncAmountString.size() < 3)
+                {
+                    hud->newNavigationIncAmountString+= ".";
+                }
+            }
+            if( hud->nStatus == hud->IND_RECESS_INC)
+            {
+                if(hud->indRecessString.size() < 3)
+                {
+                    hud->indRecessString+= ".";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                if(hud->holdoutDelayString.size() < 3)
+                {
+                    hud->holdoutDelayString+= ".";
+                }
+            }
+        }
+        
+    }
+    else if(queryGUI == "numpad")
+    {
+        
+    }
+    
+    else
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->enableNumpad)
+            {
+                if(hud->nStatus == hud->INIT_VELOCITY)
+                {
+                    hud->initSpeedString =Util::toStringInt(player->initialVelocity);
+                }
+                if(hud->nStatus == hud->MAN_RECESS)
+                {
+                    hud->manRecessString =Util::toStringInt(player->manRecessLevelLimit);
+                }
+                if(hud->nStatus == hud->NEW_NAV_INC)
+                {
+                    hud->newNavigationIncAmountString =Util::toStringFloat(player->newNavIncrement,2);
+                }
+                if(hud->nStatus == hud->IND_RECESS_INC)
+                {
+                    hud->indRecessString =Util::toStringFloat(player->indRecessIncrement,2);
+                }
+                if(hud->nStatus == hud->HOLDOUT_DELAY)
+                {
+                    hud->holdoutDelayString =Util::toStringFloat(player->holdoutdelayNumber,1);
+                }
+                if(hud->nStatus == hud->SESSION_START_TIME)
+                {
+                    hud->sessionStartTimeString =Util::toStringInt(player->sessionStartTime);
+                }
+                if(hud->nStatus == hud->SESSION_END_TIME)
+                {
+                    hud->sessionEndtimeString =Util::toStringInt(player->sessionEndTime);
+                }
+                if(hud->nStatus == hud->NUM_OF_SESSIONS)
+                {
+                    hud->numOfSessionsString =Util::toStringInt(player->numOfSessions);
+                }
+                hud->enableNumpad = false;
+                hud->showDecimal = false;
+            }
+        }
         
     }
 

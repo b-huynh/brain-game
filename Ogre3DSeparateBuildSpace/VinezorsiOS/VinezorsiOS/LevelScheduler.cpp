@@ -347,7 +347,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled)
 {
     
     /* For debugging purposes */
@@ -418,10 +418,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         switch ( phase ) {
             case PHASE_COLLECT:
                 playerSkill = nBackLevelE;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
-                {
-                    readyForHoldout = false;
-                }
+                readyForHoldout = false;
                 playerOffset = 0.0;
                 break;
             case PHASE_COLOR_SOUND:
@@ -442,10 +439,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
             case PHASE_SOUND_ONLY:
                 playerSkill = nBackLevelC;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
-                {
-                    readyForHoldout = false;
-                }
+                readyForHoldout = false;
                 playerOffset = 0.0;
                 break;
             case PHASE_ALL_SIGNAL:
@@ -477,7 +471,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             std::cout << "IND RECESS: " << indRecessNBackLevel << std::endl;
 
         }
-                if(holdoutEnabled)
+        if(holdoutEnabled)
         {
             if (holdout)
                 nBackRounded = (int)round(playerSkill + playerOffset + shift);
@@ -499,20 +493,20 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             {
                 if(readyForHoldout)
                 {
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
                 else{
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
             }
             else
             {
-                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
             }
         }
         else
         {
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
         }
         
         
@@ -537,7 +531,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     nBackRounded = (int)round(playerSkill + shift);
     
     std::pair<StageRequest, PlayerProgress> Recessnode;
-    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,newNavEnabled);
+    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
     result.push_back(Recessnode);
     
     return result;

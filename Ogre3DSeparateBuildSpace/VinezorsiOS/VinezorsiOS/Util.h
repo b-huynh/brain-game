@@ -128,7 +128,8 @@ namespace Util
     struct ConfigGlobal
     {
         //New Sounds
-        bool newSounds = false; //Study Settings
+        bool newSounds = true; //Study Settings
+        std::string VendorID = "";
         
         std::string scheduleMain;
         std::string scheduleRepeat;
@@ -296,7 +297,7 @@ namespace Util
         int numSegmentsWithObstacles;
         int previousNumSegmentsWithObstacles;
         
-        bool sessionScreenEnabled;
+        bool sessionScreenEnabled = false;
         int currStageID;
         std::string configPath;
         std::string configBackup;
