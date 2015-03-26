@@ -233,7 +233,7 @@ void OgreApp::setupDemoScene()
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);
     
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    if (player->syncDataToServer) syncLogs();
+    if (globals.syncDataToServer) syncLogs();
 #endif
 }
 
@@ -243,7 +243,7 @@ void OgreApp::endGame()
     player->logData();
     player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    if (player->syncDataToServer) syncLogs();
+    if (globals.syncDataToServer) syncLogs();
 #endif
     OgreFramework::getSingletonPtr()->requestOgreShutdown();
 }

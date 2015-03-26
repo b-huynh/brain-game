@@ -55,7 +55,7 @@ Player::Player()
     holdout = 0.40f;
     holdoutLB = 1.0f;
     holdoutUB = 1.0f;
-    syncDataToServer = false;
+    //syncDataToServer = false;
     inverted = true;
     initSettings();
 }
@@ -86,7 +86,7 @@ Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, floa
     holdout = 0.40f;
     holdoutLB = 1.0f;
     holdoutUB = 1.0f;
-    syncDataToServer = false;
+    //syncDataToServer = false;
     inverted = true;
     initSettings();
 }
@@ -924,7 +924,7 @@ void Player::updateBoost(float elapsed)
         //mat->setDiffuse(boostColor);
         mat->setSelfIllumination(boostColor);
         
-        if (percentFuel < 0.70)
+        if (percentFuel < 0.40)
             tutorialMgr->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_FUEL);
         
         if (boostTimer > 0.0)
@@ -2925,7 +2925,7 @@ bool Player::saveSession(std::string file)
     sessions.back().speedE = scheduler->speedE;
     sessions.back().musicVolume = musicVolume;
     sessions.back().soundVolume = soundVolume;
-    sessions.back().syncDataToServer = syncDataToServer;
+    sessions.back().syncDataToServer = globals.syncDataToServer;
     sessions.back().maxVel = maxVel;
     sessions.back().minVelFree = minVelFree;
     sessions.back().minVelStopper = minVelStopper;
@@ -2996,7 +2996,7 @@ bool Player::saveSession(std::string file)
             out << "% Damping Drop Free - Controller Settings for a linear slow down in free motion" << endl;
             out << "% Damping Drop Stop - Controller Settings for a linear slow down by held down input" << endl;
             out << "% Inverted - Controller Settings to invert direction" << endl;
-            /*out << "% fuelEnabled - Study Settings to enable fuel usage" << endl;
+            out << "% fuelEnabled - Study Settings to enable fuel usage" << endl;
             out << "% holdoutEnabled - Study Settings to enable holdout" << endl;
             out << "% initialVelocity - Study Settings to initialize starting speed" << endl;
             out << "% manRecessEnabled - Study Settings to enable mandatory recess" << endl;
@@ -3014,11 +3014,11 @@ bool Player::saveSession(std::string file)
             out << "% sessionEndTime - Study Settings to set max session length in mins" << endl;
             out << "% numOfSessions - Study Settings to set number of sessions" << endl;
             out << "% sessionScreenEnabled - Study Settings to enable the SessionID screen" << endl;
-            out << "% enableIndRecessFixed - Study Settings to enable fixed Navigation for Independent Recess Levels" << endl;*/
+            out << "% enableIndRecessFixed - Study Settings to enable fixed Navigation for Independent Recess Levels" << endl;
 
 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
             //fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed
         }
         
@@ -3070,25 +3070,25 @@ bool Player::saveSession(std::string file)
         << sessions.back().dampingDecayStop << " "
         << sessions.back().dampingDropFree << " "
         << sessions.back().dampingDropStop << " "
-        << sessions.back().inverted << "\n";
-        /*<< fuelEnabled << " "
-        << holdoutEnabled << " "
-        << initialVelocity << " "
-        << manRecessEnabled << " "
-        << manRecessLevelLimit << " "
-        << newNavEnabled << " "
-        << newNavIncrement << " "
-        << indRecessEnabled << " "
-        << indRecessIncrement << " "
-        << holdoutdelayEnabled << " "
-        << holdoutdelayNumber << " "
+        << sessions.back().inverted << " "
+        << globals.fuelEnabled << " "
+        << globals.holdoutEnabled << " "
+        << globals.initialVelocity << " "
+        << globals.manRecessEnabled << " "
+        << globals.manRecessLevelLimit << " "
+        << globals.newNavEnabled << " "
+        << globals.newNavIncrement << " "
+        << globals.indRecessEnabled << " "
+        << globals.indRecessIncrement << " "
+        << globals.holdoutdelayEnabled << " "
+        << globals.holdoutdelayNumber << " "
         << globals.newSounds << " "
-        << enableSettingsPasscode << " "
-        << sessionStartTime << " "
-        << sessionEndTime << " "
-        << numOfSessions << " "
+        << globals.enableSettingsPasscode << " "
+        << globals.sessionStartTime << " "
+        << globals.sessionEndTime << " "
+        << globals.numOfSessions << " "
         << globals.sessionScreenEnabled << " "
-        << enableIndRecessFixed << "\n";*/
+        << globals.enableIndRecessFixed << "\n";
 
         out.close();
     }
@@ -3123,7 +3123,7 @@ bool Player::saveProgress(std::string file)
     out << "rerollCounter" << " " << rerollCounter << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
-    out << "syncDataToServer" << " " << syncDataToServer << std::endl;
+    //out << "syncDataToServer" << " " << syncDataToServer << std::endl;
     out << "maxVel" << " " << maxVel << std::endl;
     out << "minVelStopper" << " " << minVelStopper << std::endl;
     out << "holdout" << " " << holdout << std::endl;
@@ -3229,8 +3229,8 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
         in >> soundVolume;
     else if (paramName == "musicVolume")
         in >> musicVolume;
-    else if (paramName == "syncDataToServer")
-        in >> syncDataToServer;
+    //else if (paramName == "syncDataToServer")
+      //  in >> syncDataToServer;
     else if (paramName == "maxVel")
         in >> maxVel;
     else if (paramName == "minVelStopper")
@@ -3556,9 +3556,14 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             {
                 globals.manRecessCount = 0;
             }
+            
+            
             globals.indRecessNBackLevel += nBackDelta;
-            //std::cout<<"RECESS: NBackDelta: "<<nBackDelta<<std::endl;
-            scheduler->nBackLevelE += nBackDelta;
+            
+            if(!globals.indRecessEnabled) //Problem 1:
+            {
+                scheduler->nBackLevelE += nBackDelta;
+            }
             if (scheduler->nBackLevelE < 0.0)
             {
                 scheduler->nBackLevelE = 0.0;

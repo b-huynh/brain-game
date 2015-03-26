@@ -920,6 +920,9 @@ bool Util::ConfigGlobal::saveGlobalSettings(std::string file)
     out << "sessionEndTime" << " " << sessionEndTime << std::endl;
     out << "numOfSessions" << " " << numOfSessions << std::endl;
     out << "enableIndRecessFixed" << " " << enableIndRecessFixed << std::endl;
+    out << "syncDataToServer" << " " << syncDataToServer << std::endl;
+
+    
     
     std::cout << "Save Global Settings: " << file << std::endl;
     ret = out.good();
@@ -978,6 +981,8 @@ bool Util::ConfigGlobal::loadGlobalSettings1_0(std::string savePath)
                 saveFile >> numOfSessions;
             else if (input == "enableIndRecessFixed")
                 saveFile >> enableIndRecessFixed;
+            else if (input == "syncDataToServer")
+                saveFile >> syncDataToServer;
 
         }
     }

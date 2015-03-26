@@ -80,7 +80,9 @@ void EngineMainSettings::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "checksyncdata")
     {
-        player->syncDataToServer = !player->syncDataToServer;
+        globals.syncDataToServer = !globals.syncDataToServer;
+        globals.saveGlobalSettings(globals.globalPath);
+        player->saveProgress(globals.savePath);
         //hud->enableNumpad = false;
     }
     else if (queryGUI == "studysettings")

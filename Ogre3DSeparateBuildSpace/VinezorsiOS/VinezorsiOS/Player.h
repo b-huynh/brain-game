@@ -275,7 +275,7 @@ public:
     float holdout;
     float holdoutLB;
     float holdoutUB;
-    bool syncDataToServer;
+    //bool syncDataToServer;
     
     float maxVel;
     float minVelFree;       // not recorded and set by player

@@ -127,6 +127,7 @@ namespace Util
 
     struct ConfigGlobal
     {
+        bool syncDataToServer = false;
         //New Sounds
         //Study Settings
         bool fuelEnabled = true;   //Study Settings

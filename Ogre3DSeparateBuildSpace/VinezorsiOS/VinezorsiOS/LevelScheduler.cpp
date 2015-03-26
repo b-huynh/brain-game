@@ -494,7 +494,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         }
         if(holdoutEnabled)
         {
-            if (holdout)
+            if (holdout && readyForHoldout) //Problem2
                 nBackRounded = (int)round(playerSkill + playerOffset + shift);
             else
                 nBackRounded = (int)round(playerSkill + shift);

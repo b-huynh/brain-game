@@ -662,10 +662,22 @@ void HudSchedulerMenu::setSelection()
     holdout = level.hasHoldout() ? "yes" : "no";
     potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 1.0, true));
     bool tooEasy = player->getMemoryChallenge(level, progress) < -0.5;
-    if (tooEasy || level.phaseX == PHASE_COLLECT)
+    if(tooEasy && (level.phaseX != PHASE_COLLECT))
+    {
+        potential += "N";
+    }
+    else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
+    {
+        potential += "M";
+    }
+    else if(level.phaseX == PHASE_COLLECT)
+    {
+        potential += "R";
+    }
+    /*if (tooEasy || level.phaseX == PHASE_COLLECT)
         potential += "R";
     else 
-        potential += "M";
+        potential += "M";*/
     
     if (level.phaseX == PHASE_COLLECT)
         length = "medium";
@@ -735,10 +747,23 @@ void HudSchedulerMenu::setSelection()
             else
                 delta = "(" + Util::toStringFloat(progress.nBackReturn) + ") " + delta;
         }
-        if (tooEasy && level.phaseX != PHASE_COLLECT)
+        
+        if(tooEasy && (level.phaseX != PHASE_COLLECT))
+        {
+            delta += "N";
+        }
+        else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
+        {
+            delta += "M";
+        }
+        else if(level.phaseX == PHASE_COLLECT)
+        {
+            delta += "R";
+        }
+        /*if (tooEasy && level.phaseX != PHASE_COLLECT)
             delta += "R";
         if (!tooEasy || progress.nBackDelta < 0.0f || progress.nBackReturn < 0.0f)
-            delta += "M";
+            delta += "M";*/
         
         //if (progress.accuracy >= 1.0 - Util::EPSILON)
         //    delta = "x1.3 " + delta;
