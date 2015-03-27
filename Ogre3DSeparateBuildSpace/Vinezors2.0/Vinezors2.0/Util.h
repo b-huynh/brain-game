@@ -15,7 +15,6 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-//#define DEMO_BUILD
 #define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
@@ -128,8 +127,40 @@ namespace Util
 
     struct ConfigGlobal
     {
+        bool syncDataToServer = false;
         //New Sounds
-        bool newSounds = false; //Study Settings
+        //Study Settings
+        bool fuelEnabled = true;   //Study Settings
+        bool holdoutEnabled = true; //Study Settings
+        int initialVelocity = 15; //Study Settings
+        bool manRecessEnabled = false; //Study Settings
+        int manRecessLevelLimit = 5; //StudySettings
+        int manRecessCount = 0; //StudySettings
+        bool newNavEnabled = false; //StudySettings
+        float newNavIncrement = .35f; //Study Settings
+        
+        bool indRecessEnabled = true; //StudySettings
+        float indRecessIncrement = .5f; //Study Settings
+        double indRecessNBackLevel = 1.0;
+        float indRecessNBackDelta = 0.0f;
+        
+        
+        bool holdoutdelayEnabled = true;
+        float holdoutdelayNumber = 2.5f;
+        
+        bool enableSettingsPasscode = false;
+        
+        int sessionStartTime = 20; //In Minutes
+        int sessionEndTime = 20;
+        int numOfSessions = 20;
+        
+        bool sessionNeedsIncrement = true;
+        
+        bool enableIndRecessFixed = false;
+        
+        //End Study Settings
+        bool newSounds = true; //Study Settings
+        std::string VendorID = "";
         
         std::string scheduleMain;
         std::string scheduleRepeat;
@@ -297,9 +328,11 @@ namespace Util
         int numSegmentsWithObstacles;
         int previousNumSegmentsWithObstacles;
         
+        bool sessionScreenEnabled = false;
         int currStageID;
         std::string configPath;
         std::string configBackup;
+        std::string globalPath;
         std::string logPath;
         std::string actionPath;
         std::string sessionPath;
@@ -326,6 +359,11 @@ namespace Util
         void clearMessage();
         bool setName(const char* name);
         std::string buildPath(std::string ext, std::string playerName, int session);
+        
+        void initGlobalSettingsPath();
+        bool saveGlobalSettings(std::string file);
+        bool loadGlobalSettings1_0(std::string savePath);
+        bool loadGlobalSettings(std::string savePath);
     };
     
     float clamp(float val, float min, float max);

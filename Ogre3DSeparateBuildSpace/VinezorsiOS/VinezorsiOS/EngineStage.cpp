@@ -228,7 +228,6 @@ void EngineStage::update(float elapsed)
                 player->assessLevelPerformance(player->levelRequest);
                 
                 player->lastPlayed = player->levelRequest->first.phaseX;
-                player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
@@ -243,7 +242,8 @@ void EngineStage::update(float elapsed)
                 player->choice3RestartCounter = 0;
             }
             
-            if((!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
+            if(player->levelRequest &&
+               (!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
                player->scheduler->sessionFinished)
             {
                 if (player->scheduler->sessionFinished) {
@@ -270,8 +270,9 @@ void EngineStage::update(float elapsed)
                 << "Session Finished!\n"
                 << "===========================================\n";
                 player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
+                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
             }
+            player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
             player->saveProgress(globals.savePath);
             
             // Unpause Settings but without the sound deactivating

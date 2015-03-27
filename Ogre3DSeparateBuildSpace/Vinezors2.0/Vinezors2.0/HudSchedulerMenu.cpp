@@ -31,6 +31,7 @@ void HudSchedulerMenu::init()
     alloc();
     initOverlay();
     showOverlays();
+    std::cout << "Man RecessEnabled,Count,limie " <<globals.manRecessEnabled << " " <<globals.manRecessCount << " "<< globals.manRecessLevelLimit <<std::endl;
 }
 
 void HudSchedulerMenu::adjust()
@@ -42,12 +43,12 @@ void HudSchedulerMenu::adjust()
 void HudSchedulerMenu::update(float elapsed)
 {
     //If its time for recess
-    if(player->manRecessEnabled)
+    if(globals.manRecessEnabled)
     {
-        if(player->manRecessCount == player->manRecessLevelLimit)
+        if(globals.manRecessCount == globals.manRecessLevelLimit)
         {
             //Maybe do this when I deallocate!
-            //player->manRecessCount = 0;
+            //globals.manRecessCount = 0;
             //Mandatory Recess Time!
             //std::cout<<"Show GUI for Mandatory Recess Time!"<<std::endl;
             //Show
@@ -88,12 +89,34 @@ void HudSchedulerMenu::update(float elapsed)
         rerollButtonBackground->setMaterialName("General/RerollButton");
     else
         rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
+    
+    sessionDisplay->setCaption("Session\n" + Util::toStringInt(player->getSessionID()));
+    
+    timeRemainingTotal = globals.sessionTime -  player->getTotalElapsed();
+    if(timeRemainingTotal < 0)
+    {
+        timeRemainingTotal = 0;
+    }
+    
+    timeRemainingMins = int(timeRemainingTotal + 0.5);
+    timeRemainingSecs = timeRemainingMins % 60;
+    timeRemainingMins = timeRemainingMins/60;
+    
+    timeRemainingString = "Time Remaining: "+ Util::toStringInt(timeRemainingMins) + ":";
+    
+    if(timeRemainingSecs < 10) // 1 digit
+    {
+        timeRemainingString += "0";
+    }
+    timeRemainingString += Util::toStringInt(timeRemainingSecs);
+    
+    sessionTimeRemainingTextDisplay->setCaption(timeRemainingString);
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
 {
     std::string ret = Hud::queryButtons(target);
-    if(!player->manRecessEnabled)
+    if(!globals.manRecessEnabled)
     {
     if (ret == "selection0")
     {
@@ -130,7 +153,7 @@ std::string HudSchedulerMenu::processButtons(Vector2 target)
     }
     else
     {
-        if(player->manRecessCount != player->manRecessLevelLimit)
+        if(globals.manRecessCount != globals.manRecessLevelLimit)
         {
             if (ret == "selection0")
             {
@@ -223,6 +246,13 @@ void HudSchedulerMenu::alloc()
     playButtonBackground    = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuPlayButtonBackground"));
     rerollButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuRerollButtonBackground"));
     
+    sessionBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSessionBackground"));
+    sessionDisplay  = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuSessionDisplay"));
+    
+    sessionTimeRemainingBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSessionTimeRemainingBackground"));
+    sessionTimeRemainingTextDisplay  = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuSessionTimeRemainingTextDisplay"));
+    
+
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuSelector");
@@ -259,11 +289,15 @@ void HudSchedulerMenu::alloc()
     overlay1->add2D(backButtonBackground);
     overlay1->add2D(rerollButtonBackground);
     overlay1->add2D(playButtonBackground);
+    overlay1->add2D(sessionBackground);
+    sessionBackground->addChild(sessionDisplay);
+    overlay1->add2D(sessionTimeRemainingBackground);
+    sessionTimeRemainingBackground->addChild(sessionTimeRemainingTextDisplay);
     
-    if(player->manRecessEnabled)
+    if(globals.manRecessEnabled)
     {
         
-        if(player->manRecessCount == player->manRecessLevelLimit)
+        if(globals.manRecessCount == globals.manRecessLevelLimit)
         {
             //Man Recess overlay add
             overlay1->add2D(schedulerManRecessDisableBackground);
@@ -315,12 +349,41 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(playButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconHistory);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionTimeRemainingBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionTimeRemainingTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
 }
 
 void HudSchedulerMenu::initOverlay()
 {
+    Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
+    
+    
+    sessionTimeRemainingBackground->setMetricsMode(GMM_RELATIVE);
+    sessionTimeRemainingBackground->setPosition(0.700, 0.185);
+    sessionTimeRemainingBackground->setDimensions(0.0, 0.0);
+    
+    sessionTimeRemainingTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionTimeRemainingTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionTimeRemainingTextDisplay->setPosition(0.1315, 0.0);
+    sessionTimeRemainingTextDisplay->setCharHeight(0.018 * FONT_SZ_MULT);
+    sessionTimeRemainingTextDisplay->setFontName("MainSmall");
+    sessionTimeRemainingTextDisplay->setColour(fontColor);
+    
+    sessionBackground->setMetricsMode(GMM_RELATIVE);
+    sessionBackground->setPosition(0.700, 0.275);
+    sessionBackground->setDimensions(0.0, 0.0);
+    
+    sessionDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionDisplay->setPosition(0.1315, 0.0);
+    sessionDisplay->setCharHeight(0.032 * FONT_SZ_MULT);
+    sessionDisplay->setFontName("MainSmall");
+    sessionDisplay->setColour(fontColor);
+    
     //Man Recess Init
     schedulerManRecessMessageBackground->setMetricsMode(GMM_RELATIVE);
     schedulerManRecessMessageBackground->setPosition(0.20, 0.20);
@@ -344,7 +407,6 @@ void HudSchedulerMenu::initOverlay()
     
     //End Man Recess Init
     
-    Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
     
     schedulerMenuEntireBackground->setMetricsMode(GMM_RELATIVE);
     schedulerMenuEntireBackground->setPosition(0.00, 0.00);
@@ -464,9 +526,9 @@ void HudSchedulerMenu::initOverlay()
     // Set up buttons
     backButtonBackground->setMaterialName("General/BackButton2");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.875), Vector2(0.263, 0.100), backButtonBackground, NULL);
-    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.281), Vector2(0.263, 0.215), playButtonBackground, NULL);
+    buttons[BUTTON_PLAY].setButton("play", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.431), Vector2(0.263, 0.215), playButtonBackground, NULL);
     buttons[BUTTON_START_MAN_RECESS].setButton("manrecessplay", overlays[0], GMM_RELATIVE, Vector2(0.6, 0.65), Vector2(0.08, 0.09), schedulerManRecessPlayButtonBackground, NULL);
-    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.550), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
+    buttons[BUTTON_REROLL].setButton("reroll", overlays[0], GMM_RELATIVE, Vector2(0.700, 0.700), Vector2(0.263, 0.100), rerollButtonBackground, NULL);
     
     // Needed for some reason to allow materials to be set in update
     clearSelection();
@@ -509,10 +571,12 @@ void setBigIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & leve
             background->setMaterialName("General/IconNone");
             break;
     }
-    if (level.phaseX != PHASE_COLLECT)
-        title->setCaption(Util::toStringInt(levelRequest.first.nback) + "-Back");
-    else
-        title->setCaption("Recess");
+    std::string iconName = Util::toStringInt(levelRequest.first.nback) + "-Back";
+    if (level.phaseX == PHASE_COLLECT)
+        iconName = "Recess";
+    if (level.hasHoldout())
+        iconName += " H";
+    title->setCaption(iconName);
 }
 
 void setIconBasedOnLevel(const std::pair<StageRequest, PlayerProgress> & levelRequest, PanelOverlayElement* background)
@@ -638,10 +702,22 @@ void HudSchedulerMenu::setSelection()
     holdout = level.hasHoldout() ? "yes" : "no";
     potential = Util::toStringFloat(player->modifyNBackDelta(level, progress, 1.0, true));
     bool tooEasy = player->getMemoryChallenge(level, progress) < -0.5;
-    if (tooEasy || level.phaseX == PHASE_COLLECT)
+    if(tooEasy && (level.phaseX != PHASE_COLLECT))
+    {
+        potential += "N";
+    }
+    else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
+    {
+        potential += "M";
+    }
+    else if(level.phaseX == PHASE_COLLECT)
+    {
+        potential += "R";
+    }
+    /*if (tooEasy || level.phaseX == PHASE_COLLECT)
         potential += "R";
     else 
-        potential += "M";
+        potential += "M";*/
     
     if (level.phaseX == PHASE_COLLECT)
         length = "medium";
@@ -711,10 +787,23 @@ void HudSchedulerMenu::setSelection()
             else
                 delta = "(" + Util::toStringFloat(progress.nBackReturn) + ") " + delta;
         }
-        if (tooEasy && level.phaseX != PHASE_COLLECT)
+        
+        if(tooEasy && (level.phaseX != PHASE_COLLECT))
+        {
+            delta += "N";
+        }
+        else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
+        {
+            delta += "M";
+        }
+        else if(level.phaseX == PHASE_COLLECT)
+        {
+            delta += "R";
+        }
+        /*if (tooEasy && level.phaseX != PHASE_COLLECT)
             delta += "R";
         if (!tooEasy || progress.nBackDelta < 0.0f || progress.nBackReturn < 0.0f)
-            delta += "M";
+            delta += "M";*/
         
         //if (progress.accuracy >= 1.0 - Util::EPSILON)
         //    delta = "x1.3 " + delta;

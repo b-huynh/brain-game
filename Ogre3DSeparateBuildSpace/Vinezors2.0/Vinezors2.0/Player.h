@@ -233,34 +233,38 @@ public:
     int choice3RestartCounter = 0;
     int numRetries = 3;
     
-    //Save
-    bool fuelEnabled = false;   //Study Settings
-    bool holdoutEnabled = false; //Study Settings
-    int initialVelocity = 10; //Study Settings
+    /*
+    //Study Settings
+    bool fuelEnabled = true;   //Study Settings
+    bool holdoutEnabled = true; //Study Settings
+    int initialVelocity = 15; //Study Settings
     bool manRecessEnabled = false; //Study Settings
-    int manRecessLevelLimit = 1; //StudySettings
+    int manRecessLevelLimit = 5; //StudySettings
     int manRecessCount = 0; //StudySettings
     bool newNavEnabled = false; //StudySettings
     float newNavIncrement = .35f; //Study Settings
     
-    bool indRecessEnabled = false; //StudySettings
+    bool indRecessEnabled = true; //StudySettings
     float indRecessIncrement = .5f; //Study Settings
     double indRecessNBackLevel = 1.0;
     float indRecessNBackDelta = 0.0f;
     
-    bool holdoutdelayEnabled = false;
-    float holdoutdelayNumber = 2.5f;
-    //End Save
     
-    bool sessionTimeSettings = false;
-    int sessionStartTime = 20;
-    int sessionEndTime = 30;
+    bool holdoutdelayEnabled = true;
+    float holdoutdelayNumber = 2.5f;
+    
+    bool enableSettingsPasscode = false;
+    
+    int sessionStartTime = 20; //In Minutes
+    int sessionEndTime = 20;
     int numOfSessions = 20;
     
     bool sessionNeedsIncrement = true;
     
+    bool enableIndRecessFixed = false;
+    
     //End Study Settings
-
+*/
     
     bool fadeMusic;
     float xsTimer; // timer for the three X's display
@@ -271,7 +275,7 @@ public:
     float holdout;
     float holdoutLB;
     float holdoutUB;
-    bool syncDataToServer;
+    //bool syncDataToServer;
     
     float maxVel;
     float minVelFree;       // not recorded and set by player
@@ -482,6 +486,7 @@ public:
     std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
     
     void initSettings();
+    void startSession();
     
     bool endFlag;
     
@@ -493,8 +498,10 @@ public:
     std::pair<StageRequest, PlayerProgress> scheduleChoice1;
     std::pair<StageRequest, PlayerProgress> scheduleChoice2;
     std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    std::pair<StageRequest, PlayerProgress> scheduleManRecessLevel;
     LevelPhase lastPlayed;
     int rerollCounter;
+    bool sessionStarted;
     
     void feedLevelRequestFromSchedule();
     

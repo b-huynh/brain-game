@@ -90,6 +90,19 @@ bool syncConfig() {
     return syncConfig(globals.configPath, globals.playerName);
 }
 
+std::string getVendorID()
+{
+#if defined(OGRE_IS_IOS)
+    NSString *userName;
+    userName = [UIDevice currentDevice].identifierForVendor.UUIDString; // For IOS 6.0 & greater
+    std::string cppString([userName cStringUsingEncoding:NSUTF8StringEncoding]);
+    std::cout << "Networking: " << cppString << std::endl;
+    return cppString;
+#else
+    return "none";
+#endif
+}
+
 /*
  Attempts to upload log files from filePath to Lab Server under user folder
  */

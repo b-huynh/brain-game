@@ -213,6 +213,11 @@ void OgreFramework::requestResize()
     globals.set();
 }
 
+void OgreFramework::requestOpenURL(std::string url)
+{
+    std::cout << "URLS will not open via OS X, only iOS\n";
+}
+
 OgreFramework::~OgreFramework()
 {
     if(m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);

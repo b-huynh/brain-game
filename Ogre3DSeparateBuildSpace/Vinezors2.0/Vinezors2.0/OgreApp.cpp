@@ -184,7 +184,10 @@ void OgreApp::update(float elapsed)
 
 void OgreApp::setupDemoScene()
 {
-    globals.initPaths();
+        globals.initPaths();
+    globals.VendorID = getVendorID();
+    globals.initGlobalSettingsPath();
+    globals.saveGlobalSettings(globals.globalPath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
     //syncConfig();
 #endif
@@ -211,10 +214,6 @@ void OgreApp::setupDemoScene()
     
     Util::createDefaultSegments(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     
-    globals.initPaths();
-    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3::ZERO);
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3::ZERO);
 	player = new Player(
@@ -230,13 +229,11 @@ void OgreApp::setupDemoScene()
         std::cout << "WARNING: Save File could not be loaded correctly" << std::endl;
     player->feedLevelRequestFromSchedule();
     
-    globals.initLogs(player->getSessionID());
-    
     engineStateMgr = new EngineStateManager();
     engineStateMgr->requestPushEngine(ENGINE_MAIN_MENU, player);
     
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    if (player->syncDataToServer) syncLogs();
+    if (globals.syncDataToServer) syncLogs();
 #endif
 }
 
@@ -246,7 +243,7 @@ void OgreApp::endGame()
     player->logData();
     player->saveProgress(globals.savePath);
 #if defined(OGRE_IS_IOS) && defined(NETWORKING)
-    if (player->syncDataToServer) syncLogs();
+    if (globals.syncDataToServer) syncLogs();
 #endif
     OgreFramework::getSingletonPtr()->requestOgreShutdown();
 }

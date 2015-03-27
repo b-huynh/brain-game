@@ -96,6 +96,7 @@ public:
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     void requestResize();
+    void requestOpenURL(std::string url);
     
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);

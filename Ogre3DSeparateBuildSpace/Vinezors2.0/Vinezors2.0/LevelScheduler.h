@@ -102,7 +102,7 @@ struct LevelScheduler
     std::list<Bin>* pickRandomBin();
     void pickRandomMarble( std::vector<Bin>& choices );
     void setHoldout( std::list<Bin>* b );
-    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled,double indRecessNBackLevel, bool holdoutDelayEnabled, float holdoutDelayNumber);
+    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled,double indRecessNBackLevel, bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled);
     int rand_num( int lower, int upper );
     int predictAverageStartingSpeed(int initVel);
     

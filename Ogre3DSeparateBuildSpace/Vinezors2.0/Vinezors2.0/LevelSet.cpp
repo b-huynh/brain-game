@@ -12,7 +12,7 @@
 
 extern Util::ConfigGlobal globals;
 
-void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled)
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled)
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
@@ -22,7 +22,7 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     // Below meant for 5, 4, 3 lives on wrong zaps respectively
     // Below meant for 3, 3, 3 lives on misses respectively
     
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
     //const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int EASY_COLLECTIONS = 4, NORMAL_COLLECTIONS = 8, HARD_COLLECTIONS = 13;
     StageRequest* ret = this;
@@ -114,37 +114,97 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
             break;
     }
     
+    //If level indepRecess is enabled and indepRecessFixed is enabled, USE NEW NAV LEVELS
+    //If level indepRecess is enabled and indepRecessFixed is  not enabled, USE OLD NAV LEVELS
+    //If level indepRecess is not enabled, just use old nav map
     
-    if(newNavEnabled)
+    if(PHASE_X == PHASE_COLLECT)
     {
-        int randSpot1 = rand() % 4;
-        int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.fixedNavMap.size() - 1);
-        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][0]);
-        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][1]);
-        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][2]);
-        ret->navLevels.push_back(globals.fixedNavMap[navIndex1][3]);
-
-
+        if(indRecessEnabled)
+        {
+            if(indRecessFixedEnabled)
+            {
+                int randSpot1 = rand() % 4;
+                int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.fixedNavMap.size() - 1);
+                ret->navLevels.push_back(globals.fixedNavMap[navIndex1][0]);
+                ret->navLevels.push_back(globals.fixedNavMap[navIndex1][1]);
+                ret->navLevels.push_back(globals.fixedNavMap[navIndex1][2]);
+                ret->navLevels.push_back(globals.fixedNavMap[navIndex1][3]);
+            }
+            else
+            {
+                int randSpot1 = rand() % 4;
+                int randSpot2 = rand() % 4;
+                int randSpot3 = rand() % 4;
+                int randSpot4 = rand() % 4;
+                std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+                
+                int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
+                int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
+                int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
+                int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+                
+                
+                ret->navLevels.push_back(globals.navMap[navIndex1]);
+                ret->navLevels.push_back(globals.navMap[navIndex2]);
+                ret->navLevels.push_back(globals.navMap[navIndex3]);
+                ret->navLevels.push_back(globals.navMap[navIndex4]);
+            }
+        }
+        else
+        {
+            int randSpot1 = rand() % 4;
+            int randSpot2 = rand() % 4;
+            int randSpot3 = rand() % 4;
+            int randSpot4 = rand() % 4;
+            std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+            
+            int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
+            int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
+            int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
+            int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+            
+            
+            ret->navLevels.push_back(globals.navMap[navIndex1]);
+            ret->navLevels.push_back(globals.navMap[navIndex2]);
+            ret->navLevels.push_back(globals.navMap[navIndex3]);
+            ret->navLevels.push_back(globals.navMap[navIndex4]);
+        }
     }
-    else
+    else //Not a Recess Level, Check newNav
     {
-        int randSpot1 = rand() % 4;
-        int randSpot2 = rand() % 4;
-        int randSpot3 = rand() % 4;
-        int randSpot4 = rand() % 4;
-        std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
-        
-        int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
-        int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
-        int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
-        int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
-        
-        
-        ret->navLevels.push_back(globals.navMap[navIndex1]);
-        ret->navLevels.push_back(globals.navMap[navIndex2]);
-        ret->navLevels.push_back(globals.navMap[navIndex3]);
-        ret->navLevels.push_back(globals.navMap[navIndex4]);
+        if(newNavEnabled)
+        {
+            int randSpot1 = rand() % 4;
+            int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.fixedNavMap.size() - 1);
+            ret->navLevels.push_back(globals.fixedNavMap[navIndex1][0]);
+            ret->navLevels.push_back(globals.fixedNavMap[navIndex1][1]);
+            ret->navLevels.push_back(globals.fixedNavMap[navIndex1][2]);
+            ret->navLevels.push_back(globals.fixedNavMap[navIndex1][3]);
+        }
+        else
+        {
+            int randSpot1 = rand() % 4;
+            int randSpot2 = rand() % 4;
+            int randSpot3 = rand() % 4;
+            int randSpot4 = rand() % 4;
+            std::cout<< "spots: "<<randSpot1<<std::endl<<randSpot2<<std::endl<<randSpot3<<std::endl<<randSpot4<<std::endl;
+            
+            int navIndex1 = Util::clamp(UNL-2+randSpot1, 0, globals.navMap.size() - 1);
+            int navIndex2 = Util::clamp(UNL-2+randSpot2, 0, globals.navMap.size() - 1);
+            int navIndex3 = Util::clamp(UNL-2+randSpot3, 0, globals.navMap.size() - 1);
+            int navIndex4 = Util::clamp(UNL-2+randSpot4, 0, globals.navMap.size() - 1);
+            
+            
+            ret->navLevels.push_back(globals.navMap[navIndex1]);
+            ret->navLevels.push_back(globals.navMap[navIndex2]);
+            ret->navLevels.push_back(globals.navMap[navIndex3]);
+            ret->navLevels.push_back(globals.navMap[navIndex4]);
+        }
     }
+
+    
+
     
 
     
@@ -401,40 +461,10 @@ void LevelSet::initializeLevelSet()
     // Not entirely sure on collection requirements as of now
     //
     // Time
-    const double EASY_TIME = 48.0, NORMAL_TIME = 80.0, HARD_TIME = 120.0;
+    const double EASY_TIME = 60.0, NORMAL_TIME = 100.0, HARD_TIME = 140.0;
     //const double EASY_TIME = 56.0, NORMAL_TIME = 88.0, HARD_TIME = 128.0;
     const int TOTAL_COLLECTIONS = 13;
     
-#ifdef DEMO_BUILD
-    /////////////////////
-    /// Level DEMO  0 ///
-    /////////////////////
-    
-    level = StageRequest();
-    level.stageNo++;
-    level.nback = 1;
-    level.stageTime = HARD_TIME;
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 4, 0));
-    level.navLevels.push_back(NavigationLevel(0, 3, 0));
-    level.navLevels.push_back(NavigationLevel(0, 2, 0));
-    level.navLevels.push_back(NavigationLevel(0, 1, 0));
-    for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
-        level.collectionCriteria.push_back(CollectionCriteria(2));
-    //level.powerups.push_back(POWERUP_TIME_WARP);
-    level.nameTunnelTile = "General/WallBindingD";
-    level.nameSkybox = "General/BlankStarrySkyPlane";
-    level.nameMusic = "Music3";
-    level.tunnelSectionsPerNavLevel = 10;
-    level.phaseX = PHASE_ALL_SIGNAL;
-    level.initCamSpeed = 10;
-    level.minCamSpeed = 10;
-    level.maxCamSpeed = 40;
-    stageList[0][0] = level;
-#else
     /////////////////////
     /// Level 0   1-A ///
     /////////////////////
@@ -1945,5 +1975,4 @@ void LevelSet::initializeLevelSet()
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
     stageList[8][5] = level;
-#endif
 }

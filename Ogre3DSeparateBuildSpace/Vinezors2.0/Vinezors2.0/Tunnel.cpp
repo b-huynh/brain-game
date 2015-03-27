@@ -887,7 +887,7 @@ void Tunnel::addToFuelTimer(float value)
 {
     if (!isDone())
     {
-        fuelTimer = fuelMax;
+        //fuelTimer = fuelMax;
     
         fuelTimer += value;
         //float currentMax = fuelMax - fuelSize * (globals.startingHP - player->getHP());
@@ -1936,7 +1936,7 @@ void Tunnel::update(float elapsed)
         totalElapsed += elapsedAdjusted;
         
        //Only implement if Recess or FuelActive
-        if(  (player->fuelEnabled) || (phaseX == PHASE_COLLECT) ) 
+        if(  (globals.fuelEnabled) || (phaseX == PHASE_COLLECT) ) 
         {
             if (fuelBuffer > 0.0f)
                 fuelBuffer -= elapsedAdjusted;

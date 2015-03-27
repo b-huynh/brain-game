@@ -10,6 +10,10 @@
 #include <iostream>
 #include "LevelScheduler.h"
 
+extern Util::ConfigGlobal globals;
+
+
+
 using namespace std;
 
 #define SCHEDULE_SIZE 5     // Number of levels in a schedule
@@ -42,6 +46,14 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->holdoutOffsetA = 0.0f;
     this->holdoutOffsetB = 0.0f;
     this->holdoutOffsetD = 0.0f;
+    
+    if(globals.holdoutEnabled && globals.holdoutdelayEnabled)
+    {
+        //Goes here everytime that the app opens up from an exit.
+        this->holdoutOffsetA = -(globals.holdoutdelayNumber-1);
+        this->holdoutOffsetB = -(globals.holdoutdelayNumber-1);
+        this->holdoutOffsetD = -(globals.holdoutdelayNumber-1);
+    }
     initTutorialLevels(); // Also called after loading the scheduler
 }
 //________________________________________________________________________________________
@@ -347,7 +359,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled)
 {
     
     /* For debugging purposes */
@@ -360,6 +372,15 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "D: " << nBackLevelD << endl
          << "E: " << nBackLevelE << endl
          << "IND_DRECESS: " << indRecessNBackLevel << endl
+         <<  "__________________________________" << endl
+         <<  "/--------------------------------\\" << endl
+         <<  "|  Current nBackHoldout Levels   |" << endl
+         << "\\--------------------------------/" << endl
+         << "holdoutOffsetA: " << holdoutOffsetA << endl
+         << "holdoutOffsetB: " << holdoutOffsetB << endl
+         << "holdoutOffsetD: " << holdoutOffsetD << endl
+         << "currentHoldout(Used in creating holdoutLevel): " << currentHoldout << endl
+         << "Man Recess: " << manRecess <<endl
          <<  "__________________________________" << endl;
     // */
     
@@ -378,11 +399,17 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     // If the player has played enough stages, provide one
     // of the three choices to be a recess overriding
     // the randomly selected marble
+    
+    //Only choose a marble to be recess if manRecess is not enabled
     int recessIndex = -1;
     if (playCount >= 5)
     {
+        
         playCount = 0;
-        recessIndex = rand() % 3;
+        if(!manRecess)
+        {
+            recessIndex = rand() % 3;
+        }
     }
     
     for(int i = 0; i < 3; ++i)
@@ -412,10 +439,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         switch ( phase ) {
             case PHASE_COLLECT:
                 playerSkill = nBackLevelE;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
-                {
-                    readyForHoldout = false;
-                }
+                readyForHoldout = false;
                 playerOffset = 0.0;
                 break;
             case PHASE_COLOR_SOUND:
@@ -436,10 +460,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
             case PHASE_SOUND_ONLY:
                 playerSkill = nBackLevelC;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
-                {
-                    readyForHoldout = false;
-                }
+                readyForHoldout = false;
                 playerOffset = 0.0;
                 break;
             case PHASE_ALL_SIGNAL:
@@ -471,9 +492,9 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             std::cout << "IND RECESS: " << indRecessNBackLevel << std::endl;
 
         }
-                if(holdoutEnabled)
+        if(holdoutEnabled)
         {
-            if (holdout)
+            if (holdout && readyForHoldout) //Problem2
                 nBackRounded = (int)round(playerSkill + playerOffset + shift);
             else
                 nBackRounded = (int)round(playerSkill + shift);
@@ -493,20 +514,20 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             {
                 if(readyForHoldout)
                 {
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
                 else{
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
             }
             else
             {
-                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
             }
         }
         else
         {
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
         }
         
         
@@ -518,6 +539,21 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     }
     
     //Push Recess Level
+    holdout = false;
+    shift = 0.0;
+    int currentUNL = (int)round(nBackLevelE);
+    //If Recess and indRecess Enabled, we use another UNL!
+    if(indRecessEnabled)
+    {
+        playerSkill = indRecessNBackLevel;
+        currentUNL = (int)round(indRecessNBackLevel);
+        
+    }
+    nBackRounded = (int)round(playerSkill + shift);
+    
+    std::pair<StageRequest, PlayerProgress> Recessnode;
+    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+    result.push_back(Recessnode);
     
     return result;
 }
