@@ -104,13 +104,13 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "back")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             engineStateMgr->requestPopEngine();
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 engineStateMgr->requestPopEngine();
             }
@@ -121,7 +121,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     {
         /*std::cout<<"Make Man Recess the level request and request the pushback to engine!"<<std::endl;
         //Push the level request for a recess level!
-        //player->levelRequest = &player->scheduleChoice1;
+        //globals.levelRequest = &globals.scheduleChoice1;
         bool holdout = false;
         double shift = 0.0;
         int currentUNL = (int)round(player->scheduler->nBackLevelE);
@@ -159,7 +159,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "play")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             // If a level is selected, then we can continue,
             // Also make sure it isn't a level selected from the history panel
@@ -183,7 +183,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 // If a level is selected, then we can continue,
                 // Also make sure it isn't a level selected from the history panel
@@ -212,7 +212,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "reroll")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             if (player->rerollCounter > 0)
             {
@@ -223,7 +223,7 @@ void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)
         }
         else //manRecessEnabled
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 if (player->rerollCounter > 0)
                 {
@@ -311,7 +311,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     if (queryGUI == "selection0")
     {
         
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             player->marbleChoice = 1;
             player->levelRequest = &player->scheduleChoice1;
@@ -319,7 +319,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 player->marbleChoice = 1;
                 player->levelRequest = &player->scheduleChoice1;
@@ -329,7 +329,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     }
     else if (queryGUI == "selection1")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             player->marbleChoice = 2;
             player->levelRequest = &player->scheduleChoice2;
@@ -337,7 +337,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 player->marbleChoice = 2;
                 player->levelRequest = &player->scheduleChoice2;
@@ -348,7 +348,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     }
     else if (queryGUI == "selection2")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             player->marbleChoice = 3;
             player->levelRequest = &player->scheduleChoice3;
@@ -356,7 +356,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 player->marbleChoice = 3;
                 player->levelRequest = &player->scheduleChoice3;
@@ -367,7 +367,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
     }
     else if (queryGUI.substr(0, 7) == "history")
     {
-        if(!player->manRecessEnabled)
+        if(!globals.manRecessEnabled)
         {
             int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
             
@@ -418,7 +418,7 @@ bool EngineSchedulerMenu::testForLevelButtons(const std::string & queryGUI)
         }
         else
         {
-            if(player->manRecessCount != player->manRecessLevelLimit)
+            if(globals.manRecessCount != globals.manRecessLevelLimit)
             {
                 int iconNo = std::atoi(queryGUI.substr(7, 1).c_str());
                 

@@ -54,7 +54,7 @@ void HudMainSettings::update(float elapsed)
         enableTutorialsButtonBackground->setMaterialName("General/CheckboxBlank");
     }
     
-    if (player->syncDataToServer)
+    if (globals.syncDataToServer)
     {
         syncDataButtonBackground->setMaterialName("General/CheckboxGreen");
         syncDataInternetNotification->setCaption("A Wi-Fi connection must be enabled for this option");

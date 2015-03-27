@@ -69,13 +69,7 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "credits")
     {
-        settingsPressed = false;
-        levelsPressed = true;
-        player->reactGUI();
-
-        hud->password_Title->setCaption("Enter Passcode\n(Levels)");
-
-        if(hud->enableNumpad)
+        if(hud->enableNumpad && settingsPressed)
         {
             hud->Passcode_counter = 0;
             hud->password_Choice0->setMaterialName("General/PasswordDotDisabled");
@@ -83,9 +77,22 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
             hud->password_Choice2->setMaterialName("General/PasswordDotDisabled");
             hud->password_Choice3->setMaterialName("General/PasswordDotDisabled");
         }
-        if(player->enableSettingsPasscode)
+        settingsPressed = false;
+        levelsPressed = true;
+        player->reactGUI();
+
+        hud->password_Title->setCaption("Enter Passcode\n(Levels)");
+
+        
+        if(globals.enableSettingsPasscode)
         {
             hud->enableNumpad = true;
+        }
+        else
+        {
+            player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
+            player->marbleChoice = -1;
+            engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
         }
         
         
@@ -93,10 +100,19 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
     else if (queryGUI == "settings")
     {
         hud->password_Title->setCaption("Enter Passcode\n(Settings)");
+        if(hud->enableNumpad && levelsPressed)
+        {
+            hud->Passcode_counter = 0;
+            hud->password_Choice0->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice1->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice2->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice3->setMaterialName("General/PasswordDotDisabled");
+        }
         settingsPressed = true;
         levelsPressed = false;
         player->reactGUI();
-        if(player->enableSettingsPasscode)
+
+        if(globals.enableSettingsPasscode)
         {
             hud->enableNumpad = true;
         }

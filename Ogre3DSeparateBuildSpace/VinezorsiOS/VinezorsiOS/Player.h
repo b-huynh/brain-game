@@ -233,6 +233,7 @@ public:
     int choice3RestartCounter = 0;
     int numRetries = 3;
     
+    /*
     //Study Settings
     bool fuelEnabled = true;   //Study Settings
     bool holdoutEnabled = true; //Study Settings
@@ -254,7 +255,6 @@ public:
     
     bool enableSettingsPasscode = false;
     
-    //bool sessionTimeSettings = false;
     int sessionStartTime = 20; //In Minutes
     int sessionEndTime = 20;
     int numOfSessions = 20;
@@ -264,7 +264,7 @@ public:
     bool enableIndRecessFixed = false;
     
     //End Study Settings
-
+*/
     
     bool fadeMusic;
     float xsTimer; // timer for the three X's display
@@ -275,7 +275,7 @@ public:
     float holdout;
     float holdoutLB;
     float holdoutUB;
-    bool syncDataToServer;
+    //bool syncDataToServer;
     
     float maxVel;
     float minVelFree;       // not recorded and set by player

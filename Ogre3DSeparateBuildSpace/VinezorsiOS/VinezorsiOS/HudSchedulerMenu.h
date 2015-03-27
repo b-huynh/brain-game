@@ -91,6 +91,15 @@ protected:
     PanelOverlayElement* sessionBackground;
     TextAreaOverlayElement* sessionDisplay;
     
+    float timeRemainingTotal = 0.0f;
+    int timeRemainingMins = 0;
+    int timeRemainingSecs = 0;
+    std::string timeRemainingString;
+    
+    PanelOverlayElement* sessionTimeRemainingBackground;
+    TextAreaOverlayElement* sessionTimeRemainingTextDisplay;
+    
+    
     void link(Player* player);
     void unlink();
     virtual void alloc();

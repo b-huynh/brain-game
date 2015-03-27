@@ -243,12 +243,20 @@ void EngineStage::update(float elapsed)
                 player->choice3RestartCounter = 0;
             }
             
-            if((!player->manRecessEnabled || player->manRecessCount < player->manRecessLevelLimit) &&
+            if((!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
                player->scheduler->sessionFinished)
             {
                 if (player->scheduler->sessionFinished) {
                     // Update session ID before save
+                    //Sync Here!
+                    player->logData();
+                    player->saveProgress(globals.savePath);
+                    #if defined(OGRE_IS_IOS) && defined(NETWORKING)
+                    if (globals.syncDataToServer) syncLogs();
+                    #endif
+                    
                     player->setSessionID(player->getSessionID() + 1);
+                    
                     
                     std::cout << "finished!\n";
                 }

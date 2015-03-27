@@ -432,7 +432,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeA)
                     startingSpeed = player->scheduler->speedA;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_SHAPE_SOUND:
@@ -440,7 +440,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeB)
                     startingSpeed = player->scheduler->speedB;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_SOUND_ONLY:
@@ -448,7 +448,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeC)
                     startingSpeed = player->scheduler->speedC;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_ALL_SIGNAL:
@@ -456,7 +456,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeD)
                     startingSpeed = player->scheduler->speedD;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_COLLECT:
@@ -464,7 +464,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeE)
                     startingSpeed = player->scheduler->speedE;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             default:

@@ -53,6 +53,24 @@ public:
     //NumberofSessions
     std::string numOfSessionsString = "";
     
+    //Passcode
+    int Passcode_counter = 0;
+    int PASSWORD_LENGTH = 4;
+    int user_password[4] = {-1,-1,-1,-1};
+    bool enterStudySettings = false;
+    bool startDotTimer = false;
+    bool startDotTimerIncorrect= false;
+    
+    float numToWait = .3;
+    float numToWaitIncorrect = .3;
+    
+    float passwordDot0Init_x = .06;
+    float passwordDot1Init_x = .11;
+    float passwordDot2Init_x = .16;
+    float passwordDot3Init_x = .21;
+    
+    const int PASSWORD[4] = {3,1,4,1};
+    
     bool showDecimal = false;
     bool popUpisOut = false;
     
@@ -235,7 +253,12 @@ protected:
     PanelOverlayElement* somethingChangedRevertButton;
     TextAreaOverlayElement* somethingChangedRevertButtonText;
 
-
+    //Passcode Bubbles
+    TextAreaOverlayElement* password_Title;
+    PanelOverlayElement* password_Choice0;
+    PanelOverlayElement* password_Choice1;
+    PanelOverlayElement* password_Choice2;
+    PanelOverlayElement* password_Choice3;
 
     
     void link(Player* player);

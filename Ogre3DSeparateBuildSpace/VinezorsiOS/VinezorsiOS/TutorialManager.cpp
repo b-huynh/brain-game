@@ -85,7 +85,7 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
         comments.push_back("Good cadet,\nbut you can do better.");
         comments.push_back("Try again,\nthis time faster.");
         comments.push_back("You made it cadet. You\ncould do better though.");
-        comments.push_back("Is that's your best cadet?\nBecause I don't think so.");
+        comments.push_back("Is that your best cadet?\nBecause I don't think so.");
         //comments.push_back("You cleared it cadet! A bit\nlackluster on the finish though."); // too long
         comments.push_back("You cleared it cadet! A bit\nlackluster on the finish.");
     }
