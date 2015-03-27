@@ -91,6 +91,26 @@ void HudSchedulerMenu::update(float elapsed)
         rerollButtonBackground->setMaterialName("General/RerollButtonDisabled");
     
     sessionDisplay->setCaption("Session\n" + Util::toStringInt(player->getSessionID()));
+    
+    timeRemainingTotal = globals.sessionTime -  player->getTotalElapsed();
+    if(timeRemainingTotal < 0)
+    {
+        timeRemainingTotal = 0;
+    }
+    
+    timeRemainingMins = int(timeRemainingTotal + 0.5);
+    timeRemainingSecs = timeRemainingMins % 60;
+    timeRemainingMins = timeRemainingMins/60;
+    
+    timeRemainingString = "Time Remaining: "+ Util::toStringInt(timeRemainingMins) + ":";
+    
+    if(timeRemainingSecs < 10) // 1 digit
+    {
+        timeRemainingString += "0";
+    }
+    timeRemainingString += Util::toStringInt(timeRemainingSecs);
+    
+    sessionTimeRemainingTextDisplay->setCaption(timeRemainingString);
 }
 
 std::string HudSchedulerMenu::processButtons(Vector2 target)
@@ -229,6 +249,10 @@ void HudSchedulerMenu::alloc()
     sessionBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSessionBackground"));
     sessionDisplay  = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuSessionDisplay"));
     
+    sessionTimeRemainingBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "SchedulerMenuSessionTimeRemainingBackground"));
+    sessionTimeRemainingTextDisplay  = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "SchedulerMenuSessionTimeRemainingTextDisplay"));
+    
+
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuOverlay");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("SchedulerMenuSelector");
@@ -267,6 +291,8 @@ void HudSchedulerMenu::alloc()
     overlay1->add2D(playButtonBackground);
     overlay1->add2D(sessionBackground);
     sessionBackground->addChild(sessionDisplay);
+    overlay1->add2D(sessionTimeRemainingBackground);
+    sessionTimeRemainingBackground->addChild(sessionTimeRemainingTextDisplay);
     
     if(globals.manRecessEnabled)
     {
@@ -325,6 +351,8 @@ void HudSchedulerMenu::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(selectIconChoice);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionTimeRemainingBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sessionTimeRemainingTextDisplay);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
 }
@@ -332,6 +360,18 @@ void HudSchedulerMenu::dealloc()
 void HudSchedulerMenu::initOverlay()
 {
     Ogre::ColourValue fontColor = Ogre::ColourValue(0.62f, 0.85f, 0.85f);
+    
+    
+    sessionTimeRemainingBackground->setMetricsMode(GMM_RELATIVE);
+    sessionTimeRemainingBackground->setPosition(0.700, 0.185);
+    sessionTimeRemainingBackground->setDimensions(0.0, 0.0);
+    
+    sessionTimeRemainingTextDisplay->setMetricsMode(GMM_RELATIVE);
+    sessionTimeRemainingTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    sessionTimeRemainingTextDisplay->setPosition(0.1315, 0.0);
+    sessionTimeRemainingTextDisplay->setCharHeight(0.018 * FONT_SZ_MULT);
+    sessionTimeRemainingTextDisplay->setFontName("MainSmall");
+    sessionTimeRemainingTextDisplay->setColour(fontColor);
     
     sessionBackground->setMetricsMode(GMM_RELATIVE);
     sessionBackground->setPosition(0.700, 0.275);

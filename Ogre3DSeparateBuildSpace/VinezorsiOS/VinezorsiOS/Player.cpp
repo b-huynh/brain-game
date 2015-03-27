@@ -3516,6 +3516,7 @@ float Player::modifyNBackDelta(StageRequest level, PlayerProgress assessment, fl
 }
 
 // Grades level and updates nBackLevel of scheduler using the accuracy formula
+//Minimum of all scores will be 1!
 void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade)
 {
     // first and second parts of the explicit pair
@@ -3551,7 +3552,6 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // it is zero'd out and the difference is added into skill level.
     switch (level.phaseX) {
         case PHASE_COLLECT:
-            //Added this: Do i need to update playerskill?
             if(globals.manRecessEnabled)
             {
                 globals.manRecessCount = 0;
@@ -3559,21 +3559,33 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             
             
             globals.indRecessNBackLevel += nBackDelta;
+            if(  globals.indRecessNBackLevel < 1.0)
+            {
+                globals.indRecessNBackLevel = 1.0;
+            }
+
             
             if(!globals.indRecessEnabled) //Problem 1:
             {
                 scheduler->nBackLevelE += nBackDelta;
             }
-            if (scheduler->nBackLevelE < 0.0)
+            
+            if (scheduler->nBackLevelE < 1.0)
             {
-                scheduler->nBackLevelE = 0.0;
+                scheduler->nBackLevelE = 1.0;
             }
             playerSkill = scheduler->nBackLevelE;
             playerOffset = 0.0;
             break;
         case PHASE_COLOR_SOUND:
             if (tooEasy)
+            {
                 scheduler->nBackLevelE += nBackDelta;
+                if (scheduler->nBackLevelE < 1.0)
+                {
+                    scheduler->nBackLevelE = 1.0;
+                }
+            }
             if (!tooEasy || nBackDelta < 0.0)
             {
                 if (level.hasHoldout())
@@ -3584,6 +3596,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                         nBackDelta = scheduler->holdoutOffsetA;
                         
                         scheduler->nBackLevelA += scheduler->holdoutOffsetA;
+                        
                         scheduler->holdoutOffsetA = 0;              //reset offset
                     }
                     else {
@@ -3595,14 +3608,20 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                 {
                     scheduler->nBackLevelA += nBackDelta;
                 }
-                if (scheduler->nBackLevelA < 0.0) scheduler->nBackLevelA = 0.0;
+                if (scheduler->nBackLevelA < 1) scheduler->nBackLevelA = 1.0;
             }
             playerSkill = scheduler->nBackLevelA;
             playerOffset = scheduler->holdoutOffsetA;
             break;
         case PHASE_SHAPE_SOUND:
             if (tooEasy)
+            {
                 scheduler->nBackLevelE += nBackDelta;
+                if (scheduler->nBackLevelE < 1.0)
+                {
+                    scheduler->nBackLevelE = 1.0;
+                }
+            }
             if (!tooEasy || nBackDelta < 0.0)
             {
                 if (level.hasHoldout())
@@ -3624,25 +3643,37 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                 {
                     scheduler->nBackLevelB += nBackDelta;
                 }
-                if (scheduler->nBackLevelB < 0.0) scheduler->nBackLevelB = 0.0;
+                if (scheduler->nBackLevelB < 1.0) scheduler->nBackLevelB = 1.0;
             }
             playerSkill = scheduler->nBackLevelB;
             playerOffset = scheduler->holdoutOffsetB;
             break;
         case PHASE_SOUND_ONLY:
             if (tooEasy)
+            {
                 scheduler->nBackLevelE += nBackDelta;
+                if (scheduler->nBackLevelE < 1.0)
+                {
+                    scheduler->nBackLevelE = 1.0;
+                }
+            }
             if (!tooEasy || nBackDelta < 0.0)
             {
                 scheduler->nBackLevelC += nBackDelta;
-                if (scheduler->nBackLevelC < 0.0) scheduler->nBackLevelC = 0.0;
+                if (scheduler->nBackLevelC < 1.0) scheduler->nBackLevelC = 1.0;
             }
             playerSkill = scheduler->nBackLevelC;
             playerOffset = 0.0;
             break;
         case PHASE_ALL_SIGNAL:
             if (tooEasy)
+            {
                 scheduler->nBackLevelE += nBackDelta;
+                if (scheduler->nBackLevelE < 1.0)
+                {
+                    scheduler->nBackLevelE = 1.0;
+                }
+            }
             if (!tooEasy || nBackDelta < 0.0)
             {
                 if (nBackChallenge < -0.5)
@@ -3668,7 +3699,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                 {
                     scheduler->nBackLevelD += nBackDelta;
                 }
-                if (scheduler->nBackLevelD < 0.0) scheduler->nBackLevelD = 0.0;
+                if (scheduler->nBackLevelD < 1.0) scheduler->nBackLevelD = 1.0;
             }
             playerSkill = scheduler->nBackLevelD;       //set nbacklevel to playerskill
             playerOffset = scheduler->holdoutOffsetD;

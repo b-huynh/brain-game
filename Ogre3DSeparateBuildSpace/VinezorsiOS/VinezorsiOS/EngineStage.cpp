@@ -248,7 +248,15 @@ void EngineStage::update(float elapsed)
             {
                 if (player->scheduler->sessionFinished) {
                     // Update session ID before save
+                    //Sync Here!
+                    player->logData();
+                    player->saveProgress(globals.savePath);
+                    #if defined(OGRE_IS_IOS) && defined(NETWORKING)
+                    if (globals.syncDataToServer) syncLogs();
+                    #endif
+                    
                     player->setSessionID(player->getSessionID() + 1);
+                    
                     
                     std::cout << "finished!\n";
                 }
