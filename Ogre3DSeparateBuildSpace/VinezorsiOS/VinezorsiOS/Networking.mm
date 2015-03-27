@@ -92,11 +92,15 @@ bool syncConfig() {
 
 std::string getVendorID()
 {
+#if defined(OGRE_IS_IOS)
     NSString *userName;
     userName = [UIDevice currentDevice].identifierForVendor.UUIDString; // For IOS 6.0 & greater
     std::string cppString([userName cStringUsingEncoding:NSUTF8StringEncoding]);
     std::cout << "Networking: " << cppString << std::endl;
     return cppString;
+#else
+    return "none";
+#endif
 }
 
 /*
