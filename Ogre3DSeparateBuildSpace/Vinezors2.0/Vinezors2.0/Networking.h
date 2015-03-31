@@ -15,6 +15,7 @@ bool configStageType(std::string configPath, std::string backupPath, std::string
  Returns true on success.
  */
 bool syncConfig ();
+std::string getVendorID();
 
 /*
  Attempts to sync existing log files with server.

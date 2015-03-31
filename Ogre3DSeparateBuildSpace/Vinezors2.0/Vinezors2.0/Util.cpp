@@ -430,6 +430,8 @@ Util::ConfigGlobal::ConfigGlobal()
     speedMap[59] = 40.0;
     speedMap[60] = 40.0;
      */
+    playerName = "subject100";
+    sessionScreenEnabled = false;
 }
 
 // Updates variables that depend on other globals, should call this if a game global has changed
@@ -486,10 +488,12 @@ void Util::ConfigGlobal::initPaths()
     savePath = Util::getIOSDir() + "/" + playerName + "/" + playerName + ".save";
     configPath = Util::getIOSDir() + "/" + playerName + "/config.json";
     configBackup = Util::getIOSDir() + "/config.json";
+    globalPath = Util::getIOSDir() + "/globalSettings.save";
 #else
     savePath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".save";
     configPath = Util::getOSXDir() + "/" + playerName + "/" + playerName + ".json";
     configBackup = Util::getOSXDir() + "/config.json";
+    globalPath = Util::getOSXDir() + "/globalSettings.save";
 #endif
 }
 
@@ -878,6 +882,130 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     logPath = logPath + ext;
     
     return logPath;
+}
+
+void Util::ConfigGlobal::initGlobalSettingsPath()
+{
+#if defined(OGRE_IS_IOS)
+    globalPath = Util::getIOSDir() + "/globalSettings.save";
+#else
+    globalPath = Util::getOSXDir() + "/globalSettings.save";
+#endif
+}
+
+bool Util::ConfigGlobal::saveGlobalSettings(std::string file)
+{
+    std::ofstream out;
+    out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
+    bool ret = true;
+    
+    out << "V1.0" << std::endl;
+    
+    out << "sessionScreenEnabled" << " " << sessionScreenEnabled << std::endl;
+    out << "playerName" << " " << playerName << std::endl;
+    out << "fuelEnabled" << " " << fuelEnabled << std::endl;
+    out << "holdoutEnabled" << " " << holdoutEnabled << std::endl;
+    out << "initialVelocity" << " " << initialVelocity << std::endl;
+    out << "manRecessEnabled" << " " << manRecessEnabled << std::endl;
+    out << "manRecessLevelLimit" << " " << manRecessLevelLimit << std::endl;
+    out << "newNavEnabled" << " " << newNavEnabled << std::endl;
+    out << "newNavIncrement" << " " << newNavIncrement << std::endl;
+    out << "indRecessEnabled" << " " << indRecessEnabled << std::endl;
+    out << "indRecessIncrement" << " " << indRecessIncrement << std::endl;
+    out << "holdoutdelayEnabled" << " " << holdoutdelayEnabled << std::endl;
+    out << "holdoutdelayNumber" << " " << holdoutdelayNumber << std::endl;
+    out << "newSounds" << " " << newSounds << std::endl;
+    out << "enableSettingsPasscode" << " " << enableSettingsPasscode << std::endl;
+    out << "sessionStartTime" << " " << sessionStartTime << std::endl;
+    out << "sessionEndTime" << " " << sessionEndTime << std::endl;
+    out << "numOfSessions" << " " << numOfSessions << std::endl;
+    out << "enableIndRecessFixed" << " " << enableIndRecessFixed << std::endl;
+    out << "syncDataToServer" << " " << syncDataToServer << std::endl;
+
+    
+    
+    std::cout << "Save Global Settings: " << file << std::endl;
+    ret = out.good();
+    
+    out.close();
+    return ret;
+}
+
+// Load based on player results in level progression
+// Version 1.0
+bool Util::ConfigGlobal::loadGlobalSettings1_0(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    
+    if (saveFile.good()) {
+        std::string input;
+        saveFile >> input; // Receive version string
+        
+        while (saveFile >> input)
+        {
+            if (input == "sessionScreenEnabled")
+                saveFile >> sessionScreenEnabled;
+            else if (input == "playerName")
+                saveFile >> playerName;
+            else if(input == "fuelEnabled")
+                saveFile >> fuelEnabled;
+            else if(input == "holdoutEnabled")
+                saveFile >> holdoutEnabled;
+            else if(input == "initialVelocity")
+                saveFile >> initialVelocity;
+            else if(input == "manRecessEnabled")
+                saveFile >> manRecessEnabled;
+            else if(input == "manRecessLevelLimit")
+                saveFile >> manRecessLevelLimit;
+            else if(input == "newNavEnabled")
+                saveFile >> newNavEnabled;
+            else if(input == "newNavIncrement")
+                saveFile >> newNavIncrement;
+            else if(input == "indRecessEnabled")
+                saveFile >> indRecessEnabled;
+            else if(input == "indRecessIncrement")
+                saveFile >> indRecessIncrement;
+            else if(input == "holdoutdelayEnabled")
+                saveFile >> holdoutdelayEnabled;
+            else if(input == "holdoutdelayNumber")
+                saveFile >> holdoutdelayNumber;
+            else if (input == "newSounds")
+                saveFile >> newSounds;
+            else if (input == "enableSettingsPasscode")
+                saveFile >> enableSettingsPasscode;
+            else if (input == "sessionStartTime")
+                saveFile >> sessionStartTime;
+            else if (input == "sessionEndTime")
+                saveFile >> sessionEndTime;
+            else if (input == "numOfSessions")
+                saveFile >> numOfSessions;
+            else if (input == "enableIndRecessFixed")
+                saveFile >> enableIndRecessFixed;
+            else if (input == "syncDataToServer")
+                saveFile >> syncDataToServer;
+
+        }
+    }
+    return saveFile.eof();
+}
+
+// Loads global settings. First it decides which version,
+// the save file is and calls the correct function
+bool Util::ConfigGlobal::loadGlobalSettings(std::string savePath)
+{
+    std::ifstream saveFile (savePath.c_str());
+    
+    if (saveFile.good()) {
+        std::string input;
+        saveFile >> input;
+        
+        saveFile.close();
+        if (input == "V1.0")
+            return loadGlobalSettings1_0(savePath);
+        else
+            return false;
+    }
+    return false;
 }
 
 float Util::clamp(float val, float min, float max)

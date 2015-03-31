@@ -192,25 +192,50 @@ void HudStage::update(float elapsed)
         
 
     }
-    else if (!tunnel->needsCleaning() && tunnel->getEval() != PASS)
+    else if (!tunnel->needsCleaning())
     {
-        if (player->getHP() <= 0)
+        if (tunnel->getEval() != PASS)
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nToo many unstable zaps");
+    
+            if (player->getHP() <= 0)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nToo many unstable zaps");
+            }
+            else if (tunnel->getEval() == EVEN)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Fuel");
+            }
+            else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Time");
+            }
         }
-        else if (tunnel->getEval() == EVEN)
+    }
+    else //if (tunnel->needsCleaning())
+    {
+        label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+        label7->setCharHeight(0.025 * FONT_SZ_MULT);
+        
+        bool retryEnabled = !pausePanelBack->isVisible(); // !IsVisible means the gray version is not visible
+        if (tunnel->getEval() == PASS || player->getAccuracy() >= 0.75)
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nWe've run out of Fuel");
+            if (retryEnabled)
+                label7->setCaption("\nYou may play again or continue.");
+            else
+                label7->setCaption("\nContinue to the next wormhole.");
         }
-        else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
+        else
         {
-            label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-            label7->setCharHeight(0.025 * FONT_SZ_MULT);
-            label7->setCaption("\nBlast\nWe've run out of Time");
+            if (retryEnabled)
+                label7->setCaption("\nTry again or continue?");
+            else
+                label7->setCaption("\nContinue to the next wormhole.");
         }
     }
 }
@@ -407,7 +432,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeA)
                     startingSpeed = player->scheduler->speedA;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_SHAPE_SOUND:
@@ -415,7 +440,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeB)
                     startingSpeed = player->scheduler->speedB;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_SOUND_ONLY:
@@ -423,7 +448,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeC)
                     startingSpeed = player->scheduler->speedC;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_ALL_SIGNAL:
@@ -431,7 +456,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeD)
                     startingSpeed = player->scheduler->speedD;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             case PHASE_COLLECT:
@@ -439,7 +464,7 @@ void HudStage::alloc()
                 if (!player->scheduler->firstTimeE)
                     startingSpeed = player->scheduler->speedE;
                 else
-                    startingSpeed = player->scheduler->predictAverageStartingSpeed(player->initialVelocity);
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
                 break;
             }
             default:

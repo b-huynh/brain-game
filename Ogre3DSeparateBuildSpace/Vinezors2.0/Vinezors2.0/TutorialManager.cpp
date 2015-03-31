@@ -85,7 +85,7 @@ std::string getEndFeedbackText(int accuracy, Evaluation eval)
         comments.push_back("Good cadet,\nbut you can do better.");
         comments.push_back("Try again,\nthis time faster.");
         comments.push_back("You made it cadet. You\ncould do better though.");
-        comments.push_back("Is that's your best cadet?\nBecause I don't think so.");
+        comments.push_back("Is that your best cadet?\nBecause I don't think so.");
         //comments.push_back("You cleared it cadet! A bit\nlackluster on the finish though."); // too long
         comments.push_back("You cleared it cadet! A bit\nlackluster on the finish.");
     }
@@ -146,9 +146,7 @@ void TutorialManager::disable()
 std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) const
 {
     std::vector<TutorialSlide> ret;
-#ifdef DEMO_BUILD
-    return ret;
-#else
+
     switch (type)
     {
         case TUTORIAL_SLIDES_TEXTBOX_NAVIGATION:
@@ -198,13 +196,13 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("", "General/TutorialBackdropLined", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
+            //ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
             ret.push_back(TutorialSlide("\n\n  Good work today!\n\n Make sure you take\n     a break.\n\n   You earned it!", "General/TutorialBackdrop", ""));
             break;
         default:
             break;
     }
     return ret;
-#endif
 }
 
 // Load set of slides in a queue with a timer that when expired, will load the slides up
@@ -651,11 +649,6 @@ bool TutorialManager::processInput(Vector2 target)
         {
             if (specialStage)
             {
-                Ogre::TextAreaOverlayElement* label7 = (Ogre::TextAreaOverlayElement*)OgreFramework::getSingletonPtr()->m_pOverlayMgr->getOverlayElement("StageTextAreaLabel7");
-                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
-                label7->setCharHeight(0.025 * FONT_SZ_MULT);
-                label7->setCaption("\nTry again or continue?");
-
                 if (fireworkNode)
                 {
                     for (int i = 0; i < fireworkEffects.size(); ++i)

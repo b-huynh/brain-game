@@ -24,6 +24,8 @@
 		5D4B5091195CE63F00912FC9 /* EngineMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B508A195CE63F00912FC9 /* EngineMainSettings.cpp */; };
 		5D4B5092195CE63F00912FC9 /* HudControlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B508C195CE63F00912FC9 /* HudControlSettings.cpp */; };
 		5D4B5093195CE63F00912FC9 /* HudMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B508E195CE63F00912FC9 /* HudMainSettings.cpp */; };
+		5D73A9431AC6030D006902DE /* HudInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D73A9411AC6030D006902DE /* HudInformation.cpp */; };
+		5D73A9461AC60315006902DE /* EngineInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D73A9441AC60315006902DE /* EngineInformation.cpp */; };
 		5DA3B27418BB10E4001BFBB9 /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA3B27318BB10E4001BFBB9 /* Networking.mm */; };
 		5DA8045119E4C6BD001E0928 /* EngineSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */; };
 		5DA8045219E4C6BD001E0928 /* HudSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA8044D19E4C6BD001E0928 /* HudSchedulerMenu.cpp */; };
@@ -134,6 +136,10 @@
 		5D4B508D195CE63F00912FC9 /* HudControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudControlSettings.h; sourceTree = "<group>"; };
 		5D4B508E195CE63F00912FC9 /* HudMainSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudMainSettings.cpp; sourceTree = "<group>"; };
 		5D4B508F195CE63F00912FC9 /* HudMainSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudMainSettings.h; sourceTree = "<group>"; };
+		5D73A9411AC6030D006902DE /* HudInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudInformation.cpp; sourceTree = "<group>"; };
+		5D73A9421AC6030D006902DE /* HudInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudInformation.h; sourceTree = "<group>"; };
+		5D73A9441AC60315006902DE /* EngineInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineInformation.cpp; sourceTree = "<group>"; };
+		5D73A9451AC60315006902DE /* EngineInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineInformation.h; sourceTree = "<group>"; };
 		5DA3B27218BB10E4001BFBB9 /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
 		5DA3B27318BB10E4001BFBB9 /* Networking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Networking.mm; sourceTree = "<group>"; };
 		5DA8044B19E4C6BD001E0928 /* EngineSchedulerMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineSchedulerMenu.cpp; sourceTree = "<group>"; };
@@ -232,6 +238,7 @@
 			children = (
 				5D04AD411900D01400E0A98B /* EngineStateManager.cpp */,
 				5D04AD421900D01400E0A98B /* EngineStateManager.h */,
+				5D73A9401AC602DF006902DE /* Information */,
 				5D04AD3319006C2600E0A98B /* BaseClasses */,
 				5DD5E04918FDA65F0063491A /* Stage */,
 				5D29449419FA06E2002950C7 /* LevelScheduler */,
@@ -334,6 +341,17 @@
 				5D4B5088195CE63F00912FC9 /* EngineControlSettings.h */,
 			);
 			name = ControlSettings;
+			sourceTree = "<group>";
+		};
+		5D73A9401AC602DF006902DE /* Information */ = {
+			isa = PBXGroup;
+			children = (
+				5D73A9441AC60315006902DE /* EngineInformation.cpp */,
+				5D73A9451AC60315006902DE /* EngineInformation.h */,
+				5D73A9411AC6030D006902DE /* HudInformation.cpp */,
+				5D73A9421AC6030D006902DE /* HudInformation.h */,
+			);
+			name = Information;
 			sourceTree = "<group>";
 		};
 		5DC16B71193CCCEE007E8EFD /* MainSettings */ = {
@@ -568,6 +586,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D73A9461AC60315006902DE /* EngineInformation.cpp in Sources */,
 				5DD5E04C18FF7EAD0063491A /* EngineStage.cpp in Sources */,
 				5D04AD431900D01400E0A98B /* EngineStateManager.cpp in Sources */,
 				B6C64C2317DE8C5B0092CA8E /* main.mm in Sources */,
@@ -578,6 +597,7 @@
 				5DA8045319E4C6BD001E0928 /* LevelScheduler.cpp in Sources */,
 				5D4B5090195CE63F00912FC9 /* EngineControlsSettings.cpp in Sources */,
 				C978E9CC1AB79CCD00AB3A76 /* EngineStudySettings.cpp in Sources */,
+				5D73A9431AC6030D006902DE /* HudInformation.cpp in Sources */,
 				B6C64C4617DE8C5B0092CA8E /* OgreFramework.cpp in Sources */,
 				5DA8045219E4C6BD001E0928 /* HudSchedulerMenu.cpp in Sources */,
 				5D3041C518431C3800BD26C0 /* Hud.cpp in Sources */,

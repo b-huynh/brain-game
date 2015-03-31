@@ -196,8 +196,8 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
             ret.push_back(TutorialSlide("", "General/TutorialBackdropLined", ""));
             break;
         case TUTORIAL_END_OF_SESSION:
-            ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
-            //ret.push_back(TutorialSlide("\n\n  Good work today!\n\n Make sure you take\n     a break.\n\n   You earned it!", "General/TutorialBackdrop", ""));
+            //ret.push_back(TutorialSlide("That's it for Today.\n    Please check in.", "General/TutorialBackdrop", ""));
+            ret.push_back(TutorialSlide("\n\n  Good work today!\n\n Make sure you take\n     a break.\n\n   You earned it!", "General/TutorialBackdrop", ""));
             break;
         default:
             break;

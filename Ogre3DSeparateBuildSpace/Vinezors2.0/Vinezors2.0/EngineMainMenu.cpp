@@ -8,7 +8,7 @@
 
 #include "EngineMainMenu.h"
 #include "EngineStateManager.h"
-#include "HudMainMenu.h"
+//#include "HudMainMenu.h"
 #include "Player.h"
 
 extern Util::ConfigGlobal globals;
@@ -43,27 +43,293 @@ void EngineMainMenu::exit()
 
 void EngineMainMenu::update(float elapsed)
 {
+    hud->update(elapsed);
+
+    if(hud->enterStudySettings)
+     {
+         //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+     }
 }
 
 void EngineMainMenu::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
-    if (queryGUI != "")
-        player->reactGUI();
+    
     if (queryGUI == "play")
     {
+        player->reactGUI();
         engineStateMgr->requestPushEngine(ENGINE_SCHEDULER_MENU, player);
+        
+        if (!player->sessionStarted) // Should always be false when game first starts up
+        {
+            player->startSession();
+        
+            player->sessionStarted = true;
+        }
     }
     else if (queryGUI == "credits")
     {
-        player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
-        player->marbleChoice = -1;
-        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        if(hud->enableNumpad && settingsPressed)
+        {
+            hud->Passcode_counter = 0;
+            hud->password_Choice0->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice1->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice2->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice3->setMaterialName("General/PasswordDotDisabled");
+        }
+        settingsPressed = false;
+        levelsPressed = true;
+        player->reactGUI();
+
+        hud->password_Title->setCaption("Enter Passcode\n(Levels)");
+
+        
+        if(globals.enableSettingsPasscode)
+        {
+            hud->enableNumpad = true;
+        }
+        else
+        {
+            player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
+            player->marbleChoice = -1;
+            engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+        }
+        
+        
     }
     else if (queryGUI == "settings")
     {
-        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+        hud->password_Title->setCaption("Enter Passcode\n(Settings)");
+        if(hud->enableNumpad && levelsPressed)
+        {
+            hud->Passcode_counter = 0;
+            hud->password_Choice0->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice1->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice2->setMaterialName("General/PasswordDotDisabled");
+            hud->password_Choice3->setMaterialName("General/PasswordDotDisabled");
+        }
+        settingsPressed = true;
+        levelsPressed = false;
+        player->reactGUI();
+
+        if(globals.enableSettingsPasscode)
+        {
+            hud->enableNumpad = true;
+        }
+        else{
+            engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+        }
+        //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
     }
+    else if (queryGUI == "information")
+    {
+        std::cout << "Information Pressed" <<std::endl;
+        player->reactGUI();
+        engineStateMgr->requestPushEngine(ENGINE_INFORMATION, player);
+    }
+    else if(queryGUI == "numpadbuttoncancel")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+
+        }
+        //make numpad go away
+        std::cout<<"cancel pressed";
+        hud->enableNumpad = false;
+        //hud->Passcode_counter = 0;
+        
+    }
+    else if(queryGUI == "numpadbutton0")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 0\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 0;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton1")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 1\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 1;
+            if(hud->Passcode_counter == 3)
+            {
+                //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                bool valid = true;
+                for(int i = 0; i < hud->PASSWORD_LENGTH; i++)
+                {
+                    if(hud->user_password[i] != hud->PASSWORD[i])
+                    {
+                        valid = false;
+                    }
+                }
+                
+                if(valid)
+                {
+                    if(settingsPressed)
+                    {
+                        //Settings
+                        engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+                    }
+                    
+                    if(levelsPressed)
+                    {
+                        //Levels
+                        player->levelRequest = NULL;  // Set to NULL so it won't force jump to scheduler levels
+                        player->marbleChoice = -1;
+                        engineStateMgr->requestPushEngine(ENGINE_LEVEL_SELECTION, player);
+                    }
+                }
+                else
+                {
+                    hud->Passcode_counter++;
+                }
+                
+            }
+            else
+            {
+                 hud->Passcode_counter++;
+            }
+
+            
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton2")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 2\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 2;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton3")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 3\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 3;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton4")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 4\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 4;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton5")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 5\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 5;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton6")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 6\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 6;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton7")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 7\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 7;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton8")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 8\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 8;
+            hud->Passcode_counter++;
+        }
+        
+    }
+    else if(queryGUI == "numpadbutton9")
+    {
+        if(hud->enableNumpad)
+        {
+            player->reactGUI();
+            
+        }
+        std::cout<<"Pressed 9\n";
+        if(hud->Passcode_counter < 4)
+        {
+            hud->user_password[hud->Passcode_counter] = 9;
+            hud->Passcode_counter++;
+        }
+        
+    }
+
 }
 
 #if !defined(OGRE_IS_IOS)

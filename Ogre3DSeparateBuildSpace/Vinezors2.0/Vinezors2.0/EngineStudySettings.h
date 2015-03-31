@@ -50,6 +50,30 @@ protected:
     Player* player;
     HudStudySettings* hud;
     
+    //TempStudySettings
+    bool tempfuelEnabled ;
+    bool tempholdoutEnabled ;
+    int tempinitialVelocity ;
+    bool tempmanRecessEnabled;
+    int tempmanRecessLevelLimit;
+    bool tempnewNavEnabled;
+    float tempnewNavIncrement ;
+    bool tempindRecessEnabled ;
+    float tempindRecessIncrement ;
+    bool tempholdoutdelayEnabled ;
+    float tempholdoutdelayNumber ;
+    bool tempenableSettingsPasscode;
+    int tempsessionStartTime ;
+    int tempsessionEndTime ;
+    int tempnumOfSessions ;
+    bool tempnewSounds;
+    bool tempsessionScreenEnabled;
+    bool tempenableIndRecessFixed;
+    double tempholdoutoffsetA;
+    double tempholdoutoffsetB;
+    double tempholdoutoffsetD;
+
+    
     void alloc();
     void dealloc();
 };

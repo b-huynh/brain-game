@@ -23,6 +23,8 @@ public:
     virtual void adjust();
     virtual void update(float elapsed);
     
+    void initStrings();
+    
     //Enable NumPad:
     bool enableNumpad = false;
     
@@ -51,12 +53,35 @@ public:
     //NumberofSessions
     std::string numOfSessionsString = "";
     
+    //Passcode
+    int Passcode_counter = 0;
+    int PASSWORD_LENGTH = 4;
+    int user_password[4] = {-1,-1,-1,-1};
+    bool enterStudySettings = false;
+    bool startDotTimer = false;
+    bool startDotTimerIncorrect= false;
+    
+    float numToWait = .3;
+    float numToWaitIncorrect = .3;
+    
+    float passwordDot0Init_x = .06;
+    float passwordDot1Init_x = .11;
+    float passwordDot2Init_x = .16;
+    float passwordDot3Init_x = .21;
+    
+    const int PASSWORD[4] = {3,1,4,1};
+    
     bool showDecimal = false;
+    bool popUpisOut = false;
+    
+    
+    void showPopUp();
+    void hidePopUp();
     
     enum NumpadStatus {
         
         NONE, INIT_VELOCITY, MAN_RECESS, HOLDOUT_DELAY, NEW_NAV_INC, IND_RECESS_INC, SESSION_START_TIME, SESSION_END_TIME,
-        NUM_OF_SESSIONS
+        NUM_OF_SESSIONS, PASSCODE
         
     };
     
@@ -65,7 +90,7 @@ public:
 protected:
     Player* player;
     
-    static const int NUM_UNIQUE_BUTTONS = 31;
+    static const int NUM_UNIQUE_BUTTONS = 36;
     enum Buttons {
         BUTTON_BACK,BUTTON_ENABLE_UNLIMITED_FUEL, BUTTON_ENABLE_HOLDOUT, BUTTON_INPUT_INIT_SPEED, BUTTON_ENABLE_MANDATORY_RECESS,
         BUTTON_MANDATORY_RECESS_NUMBER, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3,
@@ -73,7 +98,8 @@ protected:
         BUTTON_NUMPAD_9, BUTTON_NUMPAD_BACK, BUTTON_NUMPAD_SAVE, BUTTON_NUMPAD_DECIMAL, NUMPAD_BG,
         BUTTON_ENABLE_HOLDOUT_DELAY, BUTTON_HOLDOUT_DELAY_NUMBER, BUTTON_ENABLE_NEW_NAV, BUTTON_ENABLE_NEW_NAV_NUMBER, BUTTON_ENABLE_NEW_SOUNDS,
         BUTTON_ENABLE_IND_RECESS, BUTTON_ENABLE_IND_RECESS_NUMBER, BUTTON_ENABLE_SESSION_SETTINGS, BUTTON_SESSION_START_NUMBER, BUTTON_SESSION_END_NUMBER,
-        BUTTON_NUM_OF_SESSIONS_NUMBER
+        BUTTON_NUM_OF_SESSIONS_NUMBER, BUTTON_ENABLE_PASSCODE, BUTTON_ENABLE_SESSION_SCREEN, BUTTON_ENABLE_IND_RECESS_FIXED,
+        BUTTON_POPUP_OK, BUTTON_POPUP_REVERT
         
     };
     
@@ -177,9 +203,63 @@ protected:
     TextAreaOverlayElement* enableIndRecessText2Display;
     PanelOverlayElement* enableIndRecessNumberButtonBackground;
     TextAreaOverlayElement* enableIndRecessNumberText;
+    
+    //Passcode Checkbox
+    PanelOverlayElement* enableSettingsPasscodeBackground;
+    TextAreaOverlayElement* enableSettingsPasscodeTextDisplay;
+    PanelOverlayElement* enableSettingsPasscodeButtonBackground;
 
     
+    //Session Start Time
+    PanelOverlayElement* sessionTimeSettingsBackground;
+    TextAreaOverlayElement* sessionStartTimeTextDisplay;
+    PanelOverlayElement* sessionStartTimeNumberBackground;
+    TextAreaOverlayElement* sessionStartTimeNumberTextDisplay;
     
+    //Session End Time
+    TextAreaOverlayElement* sessionEndTimeTextDisplay;
+    PanelOverlayElement* sessionEndTimeNumberBackground;
+    TextAreaOverlayElement* sessionEndTimeNumberTextDisplay;
+    
+    //Session Num Time
+    TextAreaOverlayElement* sessionNumTextDisplay;
+    PanelOverlayElement* sessionNumNumberBackground;
+    TextAreaOverlayElement* sessionNumNumberTextDisplay;
+    
+    //SessionID Screen Toggle
+    PanelOverlayElement* enableSessionScreenBackground;
+    TextAreaOverlayElement* enableSessionScreenTextDisplay;
+    PanelOverlayElement* enableSessionScreenButtonBackground;
+    
+    //Ind Recess Fixed Checkbox
+    TextAreaOverlayElement* enableIndRecessFixedTextDisplay;
+    PanelOverlayElement* enableIndRecessFixedButtonBackground;
+    //PanelOverlayElement* enableIndRecessFixedBackground;
+    
+    //Vendor ID
+    TextAreaOverlayElement* vendorIDTextDisplay;
+    PanelOverlayElement* vendorIDBackground;
+    
+    //PopUp Change
+    PanelOverlayElement* somethingChangedMessageBackground;
+    PanelOverlayElement* somethingChangedDisableBackground;
+    TextAreaOverlayElement* somethingChangedMessageText;
+    
+    //Button "Restart Session"
+    PanelOverlayElement* somethingChangedOkButton;
+    TextAreaOverlayElement* somethingChangedOkButtonText;
+    
+    //Button "Revert"
+    PanelOverlayElement* somethingChangedRevertButton;
+    TextAreaOverlayElement* somethingChangedRevertButtonText;
+
+    //Passcode Bubbles
+    TextAreaOverlayElement* password_Title;
+    PanelOverlayElement* password_Choice0;
+    PanelOverlayElement* password_Choice1;
+    PanelOverlayElement* password_Choice2;
+    PanelOverlayElement* password_Choice3;
+
     
     void link(Player* player);
     void unlink();

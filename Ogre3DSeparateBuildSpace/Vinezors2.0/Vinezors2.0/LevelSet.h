@@ -12,13 +12,8 @@
 #include "Util.h"
 
 // Number of Columns and Rows
-#ifdef DEMO_BUILD
-#define NUM_TASKS 1
-#define NUM_LEVELS 1
-#else
 #define NUM_TASKS 6
 #define NUM_LEVELS 9
-#endif
 
 struct CollectionCriteria
 {
@@ -100,7 +95,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled);
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled);
     
     StageRequest()
     {

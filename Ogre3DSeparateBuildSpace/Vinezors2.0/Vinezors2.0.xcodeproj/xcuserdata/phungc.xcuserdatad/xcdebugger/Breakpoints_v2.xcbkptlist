@@ -252,7 +252,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1572"
-            endingLineNumber = "1572">
+            endingLineNumber = "1572"
+            landmarkName = "Util::createBox(Ogre::SceneManager* sceneMgr, const std::string&amp; strName, float l, float w, float h)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

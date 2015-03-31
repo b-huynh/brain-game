@@ -220,35 +220,14 @@ void EngineStage::update(float elapsed)
             std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
             std::cout << "-----------------------------------------\n\n";
             
-            if(player->scheduler->sessionFinished && !player->getTutorialMgr()->hasVisitedSlide(TutorialManager::TUTORIAL_END_OF_SESSION))
-            {
-                // If player has not visited end of session slide yet, set it up
-                std::cout << "\n\n\n===========================================\n"
-                << "Session Finished!\n"
-                << "===========================================\n";
-                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
-                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
-                
-                // Update session ID before save
-                player->setSessionID(player->getSessionID() + 1);
-            }
-            
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
             if (player->levelRequest && player->levelRequest->second.rating >= 0)
             {
                 
                 player->assessLevelPerformance(player->levelRequest);
-                if (player->scheduler->sessionFinished) {
-                    std::cout << "finished!\n";
-                }
-                else
-                {
-                    std::cout << "not finished!\n";
-                }
-                player->saveProgress(globals.savePath);
+                
                 player->lastPlayed = player->levelRequest->first.phaseX;
-                player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
                 
                 // Grab new choices for player to choose from
                 player->feedLevelRequestFromSchedule();
@@ -262,6 +241,39 @@ void EngineStage::update(float elapsed)
                 player->choice2RestartCounter = 0;
                 player->choice3RestartCounter = 0;
             }
+            
+            if(player->levelRequest &&
+               (!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
+               player->scheduler->sessionFinished)
+            {
+                if (player->scheduler->sessionFinished) {
+                    // Update session ID before save
+                    //Sync Here!
+                    player->logData();
+                    player->saveProgress(globals.savePath);
+                    #if defined(OGRE_IS_IOS) && defined(NETWORKING)
+                    if (globals.syncDataToServer) syncLogs();
+                    #endif
+                    
+                    player->setSessionID(player->getSessionID() + 1);
+                    
+                    
+                    std::cout << "finished!\n";
+                }
+                else
+                {
+                    std::cout << "not finished!\n";
+                }
+                
+                // If player has not visited end of session slide yet, set it up
+                std::cout << "\n\n\n===========================================\n"
+                << "Session Finished!\n"
+                << "===========================================\n";
+                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
+            }
+            player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+            player->saveProgress(globals.savePath);
             
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
@@ -1738,14 +1750,17 @@ void EngineStage::setTaskPrompt()
         {
             globals.setMessage("Zap matching " + Util::toStringInt(level.nback) + "-Back fuel", MESSAGE_NORMAL);
             if (level.phaseX == PHASE_COLOR_SOUND)
-                globals.appendMessage("\nusing Color and Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Color and Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_SHAPE_SOUND)
-                globals.appendMessage("\nusing Shape and Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Shape and Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_SOUND_ONLY)
-                globals.appendMessage("\nusing Only Sound", MESSAGE_NORMAL);
+                globals.appendMessage("\nusing Only Sound.", MESSAGE_NORMAL);
             else if (level.phaseX == PHASE_ALL_SIGNAL)
-                globals.appendMessage("\nUsing Color, Shape, and Sound", MESSAGE_NORMAL);
-            globals.appendMessage("\n", MESSAGE_NORMAL);
+                globals.appendMessage("\nUsing Color, Shape, and Sound.", MESSAGE_NORMAL);
+            if (level.hasHoldout())
+                globals.appendMessage("\nCareful... Holdout is active.", MESSAGE_NORMAL);
+            else
+                globals.appendMessage("\n", MESSAGE_NORMAL);
         }
         
         
