@@ -79,7 +79,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2229"
             endingLineNumber = "2229"
-            landmarkName = "Player::addAction(ActionCode actType)"
+            landmarkName = "Player::decideFinalSpeed(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -95,7 +95,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2230"
             endingLineNumber = "2230"
-            landmarkName = "Player::addAction(ActionCode actType)"
+            landmarkName = "Player::decideFinalSpeed(float elapsed)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -110,7 +110,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2226"
-            endingLineNumber = "2226">
+            endingLineNumber = "2226"
+            landmarkName = "Player::decideFinalSpeed(float elapsed)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -136,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "445481741.70977"
+            timestampString = "449629630.057277"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1501"
-            endingLineNumber = "1501"
+            startingLineNumber = "1498"
+            endingLineNumber = "1498"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
          </BreakpointContent>
@@ -152,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/EngineStage.cpp"
-            timestampString = "445481741.70977"
+            timestampString = "449629630.057277"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1500"
-            endingLineNumber = "1500"
+            startingLineNumber = "1497"
+            endingLineNumber = "1497"
             landmarkName = "EngineStage::setup()"
             landmarkType = "5">
          </BreakpointContent>

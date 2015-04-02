@@ -95,7 +95,7 @@ struct StageRequest
         maxCamSpeed = 40.0f;
     }
     
-    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled);
+    void generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdoutPerc, float holdColor, float holdShape, float holdSound, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled);
     
     StageRequest()
     {

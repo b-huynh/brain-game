@@ -12,7 +12,7 @@
 
 extern Util::ConfigGlobal globals;
 
-void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled)
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdoutPerc, float holdColor, float holdShape, float holdSound, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled)
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
@@ -77,18 +77,18 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     ret->phaseX = PHASE_X;
     ret->difficultyX = DIFFICULTY_X;
     ret->durationX = DURATION_X;
-    ret->holdoutPerc = holdout / 100.0;
+    ret->holdoutPerc = holdoutPerc / 100.0;
     ret->UserNavLevel = UNL;
     ret->stageTime = duration;
     
-    if (holdoutPerc > 0.0)
+    if (ret->holdoutPerc > 0.0)
     {
         ret->holdoutStart = 0.20;
         ret->holdoutEnd = 0.80;
         ret->holdoutLevel = hlevel;
-        ret->holdoutSound = 1;
-        ret->holdoutColor = 1;
-        ret->holdoutShape = 1;
+        ret->holdoutSound = holdSound;
+        ret->holdoutColor = holdColor;
+        ret->holdoutShape = holdShape;
     }
     else
     {

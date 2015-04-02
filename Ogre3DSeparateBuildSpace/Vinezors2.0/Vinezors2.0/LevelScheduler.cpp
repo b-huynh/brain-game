@@ -46,6 +46,9 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->holdoutOffsetA = 0.0f;
     this->holdoutOffsetB = 0.0f;
     this->holdoutOffsetD = 0.0f;
+    this->holdoutLevelA = 0;
+    this->holdoutLevelB = 0;
+    this->holdoutLevelD = 0;
     
     if(globals.holdoutEnabled && globals.holdoutdelayEnabled)
     {
@@ -435,6 +438,9 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
 //        cout << "\n\n================================\n\nPhase: " << phase << endl;
 //        cout << "Difficulty: " << difficulty << endl;
         bool readyForHoldout = true;
+        bool holdColor = true;
+        bool holdShape = true;
+        bool holdSound = true;
         
         switch ( phase ) {
             case PHASE_COLLECT:
@@ -448,6 +454,20 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     readyForHoldout = false;
                 }
+                if (holdoutLevelA <= 2)
+                {
+                    int r = rand() % 2;
+                    if (r == 0)
+                    {
+                        holdColor = false;
+                        holdShape = false;
+                    }
+                    else
+                    {
+                        holdSound = false;
+                        holdShape = false;
+                    }
+                }
                 playerOffset = holdoutOffsetA;
                 break;
             case PHASE_SHAPE_SOUND:
@@ -455,6 +475,20 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
                 {
                     readyForHoldout = false;
+                }
+                if (holdoutLevelB <= 2)
+                {
+                    int r = rand() % 2;
+                    if (r == 0)
+                    {
+                        holdShape = false;
+                        holdColor = false;
+                    }
+                    else
+                    {
+                        holdSound = false;
+                        holdColor = false;
+                    }
                 }
                 playerOffset = holdoutOffsetB;
                 break;
@@ -468,6 +502,41 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
                 {
                     readyForHoldout = false;
+                }
+                if (holdoutLevelB <= 3)
+                {
+                    int r = rand() % 3;
+                    if (r == 0)
+                    {
+                        holdColor = false;
+                        holdSound = false;
+                    }
+                    else if (r == 1)
+                    {
+                        holdShape = false;
+                        holdSound = false;
+                    }
+                    else
+                    {
+                        holdColor = false;
+                        holdShape = false;
+                    }
+                }
+                else if (holdoutLevelB <= 6)
+                {
+                    int r = rand() % 3;
+                    if (r == 0)
+                    {
+                        holdColor = false;
+                    }
+                    else if (r == 1)
+                    {
+                        holdShape = false;
+                    }
+                    else
+                    {
+                        holdSound = false;
+                    }
                 }
                 playerOffset = holdoutOffsetD;
                 break;
@@ -514,20 +583,21 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
             {
                 if(readyForHoldout)
                 {
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, (int)round(currentHoldout), currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+                    std::cout << "HOLDOUT FLAGS IN LEVEL: " << holdColor << " " << holdShape << " " << holdSound << std::endl;
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, holdColor, holdShape, holdSound, (int)round(currentHoldout), currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
                 else{
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, false, false, false, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
             }
             else
             {
-                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+                node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, false, false, false, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
             }
         }
         else
         {
-            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+            node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, false, false, false, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
         }
         
         
@@ -552,7 +622,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     nBackRounded = (int)round(playerSkill + shift);
     
     std::pair<StageRequest, PlayerProgress> Recessnode;
-    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+    Recessnode.first.generateStageRequest(nBackRounded, PHASE_COLLECT, DIFFICULTY_HARD, DURATION_NORMAL, 0.0, false, false, false, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
     result.push_back(Recessnode);
     
     return result;
@@ -602,42 +672,45 @@ int LevelScheduler::predictAverageStartingSpeed(int initVel)
 //________________________________________________________________________________________
 
 
-std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
+void LevelScheduler::saveScheduler1_1(std::ostream& out)
 {
-    std::cout << "Saving Scheduler\n";
-    out << sch.nBackLevelA << " "
-        << sch.nBackLevelB << " "
-        << sch.nBackLevelC << " "
-        << sch.nBackLevelD << " "
-        << sch.nBackLevelE << " "
-        << sch.scoreCurr << " "
-        << sch.currentHoldout << " "
-        << sch.holdoutOffsetA << " "
-        << sch.holdoutOffsetB << " "
-        << sch.holdoutOffsetD << " "
-        << sch.speedA << " "
-        << sch.speedB << " "
-        << sch.speedC << " "
-        << sch.speedD << " "
-        << sch.speedE << " "
-        << sch.firstTimeA << " "
-        << sch.firstTimeB << " "
-        << sch.firstTimeC << " "
-        << sch.firstTimeD << " "
-        << sch.firstTimeE << " "
-        << sch.playCount << " ";
+    std::cout << "Saving Scheduler 1.1\n";
+    out << nBackLevelA << " "
+        << nBackLevelB << " "
+        << nBackLevelC << " "
+        << nBackLevelD << " "
+        << nBackLevelE << " "
+        << scoreCurr << " "
+        << currentHoldout << " "
+        << holdoutOffsetA << " "
+        << holdoutOffsetB << " "
+        << holdoutOffsetD << " "
+        << holdoutLevelA << " "
+        << holdoutLevelB << " "
+        << holdoutLevelD << " "
+        << speedA << " "
+        << speedB << " "
+        << speedC << " "
+        << speedD << " "
+        << speedE << " "
+        << firstTimeA << " "
+        << firstTimeB << " "
+        << firstTimeC << " "
+        << firstTimeD << " "
+        << firstTimeE << " "
+        << playCount << " ";
     
-    std::cout << sch.binA->size() << " "
-    << sch.binB->size() << " "
-    << sch.binC->size() << " "
-    << sch.binD->size() << " "
-    << sch.binE->size() << "\n";
+    std::cout << binA->size() << " "
+    << binB->size() << " "
+    << binC->size() << " "
+    << binD->size() << " "
+    << binE->size() << "\n";
     
     // save binA
-    if( sch.binA )  // if bin is null don't save
+    if( binA )  // if bin is null don't save
     {
-        out << sch.binA->size() << " ";
-        for (std::list<Bin>::iterator it = sch.binA->begin(); it != sch.binA->end(); ++it) {
+        out << binA->size() << " ";
+        for (std::list<Bin>::iterator it = binA->begin(); it != binA->end(); ++it) {
             out << it->phaseX << " "
                 << it->difficultyX << " "
                 << it->durationX << " "
@@ -649,10 +722,10 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         out << 0 << " ";
     
     // save binB
-    if( sch.binB )  // if bin is null don't save
+    if( binB )  // if bin is null don't save
     {
-        out << sch.binB->size() << " ";
-        for (std::list<Bin>::iterator it = sch.binB->begin(); it != sch.binB->end(); ++it) {
+        out << binB->size() << " ";
+        for (std::list<Bin>::iterator it = binB->begin(); it != binB->end(); ++it) {
             out << it->phaseX << " "
                 << it->difficultyX << " "
                 << it->durationX << " "
@@ -664,10 +737,10 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         out << 0 << " ";
     
     // save binC
-    if( sch.binC )  // if bin is null don't save
+    if( binC )  // if bin is null don't save
     {
-        out << sch.binC->size() << " ";
-        for (std::list<Bin>::iterator it = sch.binC->begin(); it != sch.binC->end(); ++it) {
+        out << binC->size() << " ";
+        for (std::list<Bin>::iterator it = binC->begin(); it != binC->end(); ++it) {
             out << it->phaseX << " "
                 << it->difficultyX << " "
                 << it->durationX << " "
@@ -679,10 +752,10 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         out << 0 << " ";
     
     // save binD
-    if( sch.binD )  // if bin is null don't save
+    if( binD )  // if bin is null don't save
     {
-        out << sch.binD->size() << " ";
-        for (std::list<Bin>::iterator it = sch.binD->begin(); it != sch.binD->end(); ++it) {
+        out << binD->size() << " ";
+        for (std::list<Bin>::iterator it = binD->begin(); it != binD->end(); ++it) {
             out << it->phaseX << " "
                 << it->difficultyX << " "
                 << it->durationX << " "
@@ -694,10 +767,10 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
         out << 0 << " ";
     
     // save binE
-    if( sch.binE )  // if bin is null don't save
+    if( binE )  // if bin is null don't save
     {
-        out << sch.binE->size() << " ";
-        for (std::list<Bin>::iterator it = sch.binE->begin(); it != sch.binE->end(); ++it) {
+        out << binE->size() << " ";
+        for (std::list<Bin>::iterator it = binE->begin(); it != binE->end(); ++it) {
             out << it->phaseX << " "
                 << it->difficultyX << " "
                 << it->durationX << " "
@@ -708,76 +781,73 @@ std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch)
     else
         out << 0 << " ";
     
-    if (sch.scheduleHistoryA.size() > 0)
+    if (scheduleHistoryA.size() > 0)
     {
         out << 1 << " ";
-        out << sch.scheduleHistoryA.back().first << " " << sch.scheduleHistoryA.back().second << " ";
+        out << scheduleHistoryA.back().first << " " << scheduleHistoryA.back().second << " ";
     }
     else
         out << 0 << " ";
     
-    if (sch.scheduleHistoryB.size() > 0)
+    if (scheduleHistoryB.size() > 0)
     {
         out << 1 << " ";
-        out << sch.scheduleHistoryB.back().first << " " << sch.scheduleHistoryB.back().second << " ";
+        out << scheduleHistoryB.back().first << " " << scheduleHistoryB.back().second << " ";
     }
     else
         out << 0 << " ";
     
-    if (sch.scheduleHistoryC.size() > 0)
+    if (scheduleHistoryC.size() > 0)
     {
         out << 1 << " ";
-        out << sch.scheduleHistoryC.back().first << " " << sch.scheduleHistoryC.back().second << " ";
+        out << scheduleHistoryC.back().first << " " << scheduleHistoryC.back().second << " ";
     }
     else
         out << 0 << " ";
     
-    if (sch.scheduleHistoryD.size() > 0)
+    if (scheduleHistoryD.size() > 0)
     {
         out << 1 << " ";
-        out << sch.scheduleHistoryD.back().first << " " << sch.scheduleHistoryD.back().second << " ";
+        out << scheduleHistoryD.back().first << " " << scheduleHistoryD.back().second << " ";
     }
     else
         out << 0 << " ";
     
-    if (sch.scheduleHistoryE.size() > 0)
+    if (scheduleHistoryE.size() > 0)
     {
         out << 1 << " ";
-        out << sch.scheduleHistoryE.back().first << " " << sch.scheduleHistoryE.back().second << " ";
+        out << scheduleHistoryE.back().first << " " << scheduleHistoryE.back().second << " ";
     }
     else
         out << 0 << " ";
-    
-    return out;
 }
 //________________________________________________________________________________________
 
-
-std::istream& operator>>(std::istream& in, LevelScheduler& sch)
+void LevelScheduler::loadScheduler1_0(std::istream& in)
 {
-    std::cout << "Loading Scheduler\n";
-    in  >> sch.nBackLevelA
-        >> sch.nBackLevelB
-        >> sch.nBackLevelC
-        >> sch.nBackLevelD
-        >> sch.nBackLevelE
-        >> sch.scoreCurr
-        >> sch.currentHoldout
-        >> sch.holdoutOffsetA
-        >> sch.holdoutOffsetB
-        >> sch.holdoutOffsetD
-        >> sch.speedA
-        >> sch.speedB
-        >> sch.speedC
-        >> sch.speedD
-        >> sch.speedE
-        >> sch.firstTimeA
-        >> sch.firstTimeB
-        >> sch.firstTimeC
-        >> sch.firstTimeD
-        >> sch.firstTimeE
-        >> sch.playCount;
-    sch.initTutorialLevels();
+    std::cout << "Loading Scheduler 1.0\n";
+    in  >> nBackLevelA
+        >> nBackLevelB
+        >> nBackLevelC
+        >> nBackLevelD
+        >> nBackLevelE
+        >> scoreCurr
+        >> currentHoldout
+        >> holdoutOffsetA
+        >> holdoutOffsetB
+        >> holdoutOffsetD
+        >> speedA
+        >> speedB
+        >> speedC
+        >> speedD
+        >> speedE
+        >> firstTimeA
+        >> firstTimeB
+        >> firstTimeC
+        >> firstTimeD
+        >> firstTimeE
+        >> playCount;
+    initTutorialLevels();
     
     int size;
     int tmpPhase;
@@ -788,61 +858,61 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     
     // read binA
     in >> size;
-    if (sch.binA) delete sch.binA;
-    sch.binA = new std::list<Bin>();
+    if (binA) delete binA;
+    binA = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
         Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
-        sch.binA->push_back(tmpBin);
+        binA->push_back(tmpBin);
         cout << "Marble A: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
     }
     
     // read binB
     in >> size;
-    if (sch.binB) delete sch.binB;
-    sch.binB = new std::list<Bin>();
+    if (binB) delete binB;
+    binB = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
         Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
-        sch.binB->push_back(tmpBin);
+        binB->push_back(tmpBin);
         cout << "Marble B: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
     }
     
     // read binC
     in >> size;
-    if (sch.binC) delete sch.binC;
-    sch.binC = new std::list<Bin>();
+    if (binC) delete binC;
+    binC = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
         Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
-        sch.binC->push_back(tmpBin);
+        binC->push_back(tmpBin);
         cout << "Marble C: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
     }
     
     // read binD
     in >> size;
-    if (sch.binD) delete sch.binD;
-    sch.binD = new std::list<Bin>();
+    if (binD) delete binD;
+    binD = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
         Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
-        sch.binD->push_back(tmpBin);
+        binD->push_back(tmpBin);
         cout << "Marble D: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
     }
     
     // read binE
     in >> size;
-    if (sch.binE) delete sch.binE;
-    sch.binE = new std::list<Bin>();
+    if (binE) delete binE;
+    binE = new std::list<Bin>();
     for (int i = 0; i < size; ++i)
     {
         in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
         Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
-        sch.binE->push_back(tmpBin);
+        binE->push_back(tmpBin);
         cout << "Marble E: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
     }
     
@@ -851,7 +921,7 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     {
         std::pair<StageRequest, PlayerProgress> level;
         in >> level.first >> level.second;
-        sch.scheduleHistoryA.push_back(level);
+        scheduleHistoryA.push_back(level);
     }
     
     in >> size;
@@ -859,7 +929,7 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     {
         std::pair<StageRequest, PlayerProgress> level;
         in >> level.first >> level.second;
-        sch.scheduleHistoryB.push_back(level);
+        scheduleHistoryB.push_back(level);
     }
     
     in >> size;
@@ -867,7 +937,7 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     {
         std::pair<StageRequest, PlayerProgress> level;
         in >> level.first >> level.second;
-        sch.scheduleHistoryC.push_back(level);
+        scheduleHistoryC.push_back(level);
     }
     
     in >> size;
@@ -875,7 +945,7 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     {
         std::pair<StageRequest, PlayerProgress> level;
         in >> level.first >> level.second;
-        sch.scheduleHistoryD.push_back(level);
+        scheduleHistoryD.push_back(level);
     }
     
     in >> size;
@@ -883,8 +953,145 @@ std::istream& operator>>(std::istream& in, LevelScheduler& sch)
     {
         std::pair<StageRequest, PlayerProgress> level;
         in >> level.first >> level.second;
-        sch.scheduleHistoryE.push_back(level);
+        scheduleHistoryE.push_back(level);
     }
-    return in;
 }
+
+void LevelScheduler::loadScheduler1_1(std::istream& in)
+{
+    std::cout << "Loading Scheduler 1.1\n";
+    in  >> nBackLevelA
+    >> nBackLevelB
+    >> nBackLevelC
+    >> nBackLevelD
+    >> nBackLevelE
+    >> scoreCurr
+    >> currentHoldout
+    >> holdoutOffsetA
+    >> holdoutOffsetB
+    >> holdoutOffsetD
+    >> holdoutLevelA
+    >> holdoutLevelB
+    >> holdoutLevelD
+    >> speedA
+    >> speedB
+    >> speedC
+    >> speedD
+    >> speedE
+    >> firstTimeA
+    >> firstTimeB
+    >> firstTimeC
+    >> firstTimeD
+    >> firstTimeE
+    >> playCount;
+    initTutorialLevels();
+    
+    int size;
+    int tmpPhase;
+    int tmpDifficulty;
+    int tmpDuration;
+    bool tmpHoldout;
+    double tmpnbackShift;
+    
+    // read binA
+    in >> size;
+    if (binA) delete binA;
+    binA = new std::list<Bin>();
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        binA->push_back(tmpBin);
+        cout << "Marble A: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
+    }
+    
+    // read binB
+    in >> size;
+    if (binB) delete binB;
+    binB = new std::list<Bin>();
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        binB->push_back(tmpBin);
+        cout << "Marble B: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
+    }
+    
+    // read binC
+    in >> size;
+    if (binC) delete binC;
+    binC = new std::list<Bin>();
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        binC->push_back(tmpBin);
+        cout << "Marble C: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
+    }
+    
+    // read binD
+    in >> size;
+    if (binD) delete binD;
+    binD = new std::list<Bin>();
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        binD->push_back(tmpBin);
+        cout << "Marble D: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
+    }
+    
+    // read binE
+    in >> size;
+    if (binE) delete binE;
+    binE = new std::list<Bin>();
+    for (int i = 0; i < size; ++i)
+    {
+        in >> tmpPhase >> tmpDifficulty >> tmpDuration >> tmpHoldout >> tmpnbackShift;
+        Bin tmpBin = Bin((LevelPhase)tmpPhase, (StageDifficulty)tmpDifficulty, (StageDuration)tmpDuration, tmpHoldout, tmpnbackShift);
+        binE->push_back(tmpBin);
+        cout << "Marble E: " << tmpPhase << " " << tmpDifficulty << " " << tmpDuration << " " << tmpHoldout << " " << tmpnbackShift << std::endl;
+    }
+    
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        std::pair<StageRequest, PlayerProgress> level;
+        in >> level.first >> level.second;
+        scheduleHistoryA.push_back(level);
+    }
+    
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        std::pair<StageRequest, PlayerProgress> level;
+        in >> level.first >> level.second;
+        scheduleHistoryB.push_back(level);
+    }
+    
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        std::pair<StageRequest, PlayerProgress> level;
+        in >> level.first >> level.second;
+        scheduleHistoryC.push_back(level);
+    }
+    
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        std::pair<StageRequest, PlayerProgress> level;
+        in >> level.first >> level.second;
+        scheduleHistoryD.push_back(level);
+    }
+    
+    in >> size;
+    for (int i = 0; i < size; ++i)
+    {
+        std::pair<StageRequest, PlayerProgress> level;
+        in >> level.first >> level.second;
+        scheduleHistoryE.push_back(level);
+    }
+}
+
 //________________________________________________________________________________________

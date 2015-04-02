@@ -3119,7 +3119,7 @@ bool Player::saveProgress(std::string file)
     
     out << "sessionID" << " " << sessionID << std::endl;
     out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
-    out << "scheduler1.0" << " " << (*scheduler) << std::endl;
+    out << "scheduler1.1" << " "; scheduler->saveScheduler1_1(out); out << std::endl;
     out << "rerollCounter" << " " << rerollCounter << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
@@ -3203,10 +3203,12 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
 {
     if (paramName == "sessionID")
         in >> sessionID;
-    if (paramName == "tutorial1.0")
+    else if (paramName == "tutorial1.0")
         in >> (*tutorialMgr);
     else if (paramName == "scheduler1.0")
-        in >> (*scheduler);
+        scheduler->loadScheduler1_0(in);
+    else if (paramName == "scheduler1.1")
+        scheduler->loadScheduler1_1(in);
     else if (paramName == "rerollCounter")
         in >> rerollCounter;
     else if (paramName == "levelSize")
@@ -3711,11 +3713,26 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     scheduler->scoreCurr += score;
     
     // Update holdout experience based on performance
-    if(nBackDelta > 0 && level.hasHoldout() && scheduler->currentHoldout < 6.0)
+    if(nBackDelta > 0 && level.hasHoldout())
     {
         scheduler->currentHoldout+=1.0;
         if (scheduler->currentHoldout > 6.0)
             scheduler->currentHoldout = 6.0;
+        
+        switch (level.phaseX)
+        {
+            case PHASE_COLOR_SOUND:
+                scheduler->holdoutLevelA++;
+                break;
+            case PHASE_SHAPE_SOUND:
+                scheduler->holdoutLevelB++;
+                break;
+            case PHASE_ALL_SIGNAL:
+                scheduler->holdoutLevelD++;
+                break;
+            default:
+                break;
+        }
     }
     
     // Record for reporting purposes

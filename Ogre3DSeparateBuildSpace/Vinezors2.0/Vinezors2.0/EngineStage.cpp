@@ -1446,7 +1446,6 @@ void EngineStage::setup()
     {
         if (level.durationX == DURATION_SHORT)
         {
-            globals.startingHP = 5;
             globals.wrongAnswerTimePenalty = 3.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;
@@ -1454,7 +1453,6 @@ void EngineStage::setup()
         }
         else if (level.durationX == DURATION_NORMAL)
         {
-            globals.startingHP = 4;
             globals.wrongAnswerTimePenalty = 5.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;
@@ -1462,7 +1460,6 @@ void EngineStage::setup()
         }
         else
         {
-            globals.startingHP = 3;
             globals.wrongAnswerTimePenalty = 10.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;
