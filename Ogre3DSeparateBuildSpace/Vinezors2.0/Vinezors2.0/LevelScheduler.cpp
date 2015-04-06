@@ -22,7 +22,7 @@ using namespace std;
 /**
  Creates a new scheduler
  */
-LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE, double currentHoldout )
+LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double nBackLevelC, double nBackLevelD, double nBackLevelE )
 : tutorialLevels(), scheduleHistoryA(), scheduleHistoryB(), scheduleHistoryC(), scheduleHistoryD(), scheduleHistoryE(), binA(NULL), binB(NULL), binC(NULL), binD(NULL), binE(NULL), totalMarbles(0), sessionFinished(false), sessionFinishedAcknowledged(false)
 {
     this->nBackLevelA = nBackLevelA;
@@ -31,7 +31,6 @@ LevelScheduler::LevelScheduler( double nBackLevelA, double nBackLevelB, double n
     this->nBackLevelD = nBackLevelD;
     this->nBackLevelE = nBackLevelE;
     this->scoreCurr = 0.0;
-    this->currentHoldout = currentHoldout;
     this->speedA = 15.0f;
     this->speedB = 15.0f;
     this->speedC = 15.0f;
@@ -382,7 +381,6 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "holdoutOffsetA: " << holdoutOffsetA << endl
          << "holdoutOffsetB: " << holdoutOffsetB << endl
          << "holdoutOffsetD: " << holdoutOffsetD << endl
-         << "currentHoldout(Used in creating holdoutLevel): " << currentHoldout << endl
          << "Man Recess: " << manRecess <<endl
          <<  "__________________________________" << endl;
     // */
@@ -441,6 +439,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
         bool holdColor = true;
         bool holdShape = true;
         bool holdSound = true;
+        int holdoutLevel = 0;   // Holdout intensity
         
         switch ( phase ) {
             case PHASE_COLLECT:
@@ -454,20 +453,18 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     readyForHoldout = false;
                 }
-                if (holdoutLevelA <= 2)
+                // Tutorial For Holdout on Color/Sound
+                if (holdoutLevelA <= 0)
                 {
-                    int r = rand() % 2;
-                    if (r == 0)
-                    {
-                        holdColor = false;
-                        holdShape = false;
-                    }
-                    else
-                    {
-                        holdSound = false;
-                        holdShape = false;
-                    }
+                    holdColor = false;
+                    holdShape = false;
                 }
+                else if (holdoutLevelA == 1)
+                {
+                    holdSound = false;
+                    holdShape = false;
+                }
+                holdoutLevel = std::max(holdoutLevelA - HOLDOUT_CHECKPOINTA, 0);
                 playerOffset = holdoutOffsetA;
                 break;
             case PHASE_SHAPE_SOUND:
@@ -476,20 +473,18 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     readyForHoldout = false;
                 }
-                if (holdoutLevelB <= 2)
+                // Tutorial For Holdout on Shape/Sound
+                if (holdoutLevelB <= 0)
                 {
-                    int r = rand() % 2;
-                    if (r == 0)
-                    {
-                        holdShape = false;
-                        holdColor = false;
-                    }
-                    else
-                    {
-                        holdSound = false;
-                        holdColor = false;
-                    }
+                    holdColor = false;
+                    holdShape = false;
                 }
+                else if (holdoutLevelB == 1)
+                {
+                    holdColor = false;
+                    holdSound = false;
+                }
+                holdoutLevel = std::max(holdoutLevelB - HOLDOUT_CHECKPOINTB, 0);
                 playerOffset = holdoutOffsetB;
                 break;
             case PHASE_SOUND_ONLY:
@@ -503,41 +498,26 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     readyForHoldout = false;
                 }
-                if (holdoutLevelB <= 3)
+                if (holdoutLevelD <= 0)
                 {
-                    int r = rand() % 3;
-                    if (r == 0)
-                    {
-                        holdColor = false;
-                        holdSound = false;
-                    }
-                    else if (r == 1)
-                    {
-                        holdShape = false;
-                        holdSound = false;
-                    }
-                    else
-                    {
-                        holdColor = false;
-                        holdShape = false;
-                    }
+                    holdColor = false;
+                    holdShape = false;
                 }
-                else if (holdoutLevelB <= 6)
+                else if (holdoutLevelD == 1)
                 {
-                    int r = rand() % 3;
-                    if (r == 0)
-                    {
-                        holdColor = false;
-                    }
-                    else if (r == 1)
-                    {
-                        holdShape = false;
-                    }
-                    else
-                    {
-                        holdSound = false;
-                    }
+                    holdColor = false;
+                    holdSound = false;
                 }
+                else if (holdoutLevelD == 2)
+                {
+                    holdShape = false;
+                    holdSound = false;
+                }
+                else if (holdoutLevelD == 3)
+                {
+                    holdSound = false;
+                }
+                holdoutLevel = std::max(holdoutLevelD - HOLDOUT_CHECKPOINTD, 0);
                 playerOffset = holdoutOffsetD;
                 break;
             default:
@@ -584,7 +564,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 if(readyForHoldout)
                 {
                     std::cout << "HOLDOUT FLAGS IN LEVEL: " << holdColor << " " << holdShape << " " << holdSound << std::endl;
-                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, holdColor, holdShape, holdSound, (int)round(currentHoldout), currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
+                    node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 100.0, holdColor, holdShape, holdSound, holdoutLevel, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
                 }
                 else{
                     node.first.generateStageRequest(nBackRounded, phase, difficulty, duration, 0.0, false, false, false, 0, currentUNL,newNavEnabled, indRecessEnabled, indRecessFixedEnabled);
@@ -681,7 +661,6 @@ void LevelScheduler::saveScheduler1_1(std::ostream& out)
         << nBackLevelD << " "
         << nBackLevelE << " "
         << scoreCurr << " "
-        << currentHoldout << " "
         << holdoutOffsetA << " "
         << holdoutOffsetB << " "
         << holdoutOffsetD << " "
@@ -825,6 +804,7 @@ void LevelScheduler::saveScheduler1_1(std::ostream& out)
 
 void LevelScheduler::loadScheduler1_0(std::istream& in)
 {
+    float currentHoldout; // obsolete now
     std::cout << "Loading Scheduler 1.0\n";
     in  >> nBackLevelA
         >> nBackLevelB
@@ -966,7 +946,6 @@ void LevelScheduler::loadScheduler1_1(std::istream& in)
     >> nBackLevelD
     >> nBackLevelE
     >> scoreCurr
-    >> currentHoldout
     >> holdoutOffsetA
     >> holdoutOffsetB
     >> holdoutOffsetD

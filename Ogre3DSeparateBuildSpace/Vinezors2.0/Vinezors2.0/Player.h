@@ -41,6 +41,12 @@ private:
     int numWrongTotal;
     int numIgnoredTotal;    // Unsuccessful Pickups
     int numPickupsTotal;    // Successful Pickups
+    
+    int numCorrectHoldout;
+    int numSafeHoldout;
+    int numMissedHoldout;
+    int numWrongHoldout;
+    
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
@@ -158,6 +164,9 @@ private:
         float holdoutOffsetA;
         float holdoutOffsetB;
         float holdoutOffsetD;
+        int holdoutLevelA;
+        int holdoutLevelB;
+        int holdoutLevelD;
         float speedA;
         float speedB;
         float speedC;
