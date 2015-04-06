@@ -28,6 +28,10 @@ struct PlayerProgress
     int numSafe;
     int numMissed;
     int numPickups;
+    int numCorrectH;
+    int numWrongH;
+    int numSafeH;
+    int numMissedH;
     
     int startSpeed;
     int exitSpeed;

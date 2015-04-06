@@ -593,6 +593,21 @@ bool Tunnel::getPodIsGood(int toggle) const
     return getPodIsGood(podIndex, toggle);
 }
 
+// Determines whether one or the other signal (n steps back) has holdout.
+// If so, then it is considered to be in the holdout pool for determining holdout accuracy
+bool Tunnel::getIsHoldoutTest(int index, int nvalue)
+{
+    if (index - nvalue >= 0)
+        return types[index - nvalue].hasHoldout() || types[index].hasHoldout();
+    else
+        return false;
+}
+// Determines whether one or the other signal (n steps back) has holdout for the pod where the player is.
+bool Tunnel::getIsHoldoutTest(int nvalue)
+{
+    return getIsHoldoutTest(podIndex, nvalue);
+}
+
 // Returns the n-back based on the player's current toggle value.
 // if there is only one n-back in a stage, this toggle value should be fixed
 int Tunnel::getNBackToggle(int toggle) const

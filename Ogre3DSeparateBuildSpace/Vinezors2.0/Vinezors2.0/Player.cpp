@@ -32,7 +32,7 @@ bool flyLeft;
 bool soundStart;
 
 Player::Player()
-: seed(0), sessionID(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(0), sessionID(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectHoldout(0), numSafeHoldout(0), numMissedHoldout(0), numWrongHoldout(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     
     tunnel = NULL;
@@ -61,7 +61,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), sessionID(0), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(seed), sessionID(0), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectHoldout(0), numSafeHoldout(0), numMissedHoldout(0), numWrongHoldout(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     
     levels = new LevelSet();
@@ -139,6 +139,26 @@ int Player::getNumWrongTotal() const
 int Player::getNumPickupsTotal() const
 {
     return numPickupsTotal;
+}
+
+int Player::getNumCorrectHoldout() const
+{
+    return numCorrectHoldout;
+}
+
+int Player::getNumSafeHoldout() const
+{
+    return numSafeHoldout;
+}
+
+int Player::getNumMissedHoldout() const
+{
+    return numMissedHoldout;
+}
+
+int Player::getNumWrongHoldout() const
+{
+    return numWrongHoldout;
 }
 
 int Player::getNumCorrectBonus() const
@@ -1138,6 +1158,8 @@ void Player::testPodGiveFeedback(Pod* test)
         {
             // You zapped the right target
             ++numCorrectTotal;
+            if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                ++numCorrectHoldout;
             ++numCorrectCombo;
             numWrongCombo = 0;
             
@@ -1179,6 +1201,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 // You missed zapping the target
                 numCorrectCombo = 0;
                 ++numMissedTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numMissedHoldout;
                 ++numWrongCombo;
                 
                 if (tunnel->getMode() != STAGE_MODE_RECESS)
@@ -1210,6 +1234,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 numCorrectCombo = 0;
                 numCorrectBonus = 0;
                 ++numWrongTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numWrongHoldout;
                 
                 //beginBadFuelPickUp();
                 xsTimer = 1.0f;
@@ -1251,6 +1277,8 @@ void Player::testPodGiveFeedback(Pod* test)
                     numCorrectCombo = 0;
                     numCorrectBonus = 0;
                     ++numMissedTotal;
+                    if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                        ++numMissedHoldout;
                     ++numWrongCombo;
                     ++numIgnoredTotal;
                     if (numWrongCombo % globals.numToSpeedDown == 0)
@@ -1273,6 +1301,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 numCorrectCombo = 0;
                 numCorrectBonus = 0;
                 ++numMissedTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numMissedHoldout;
                 ++numWrongCombo;
                 
                 updateSpeed(initSpeed, false);
@@ -1285,6 +1315,8 @@ void Player::testPodGiveFeedback(Pod* test)
     {
         // You picked up the right target
         numSafeTotal++;
+        if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+            ++numSafeHoldout;
         numCorrectBonus++;
         if (podTaken)
         {
@@ -1295,6 +1327,11 @@ void Player::testPodGiveFeedback(Pod* test)
             tunnel->addToFuelTimer(tunnel->getFuelReturn());
         }
     }
+    
+    std::cout << "numCorrectHoldout: " << numCorrectHoldout << std::endl;
+    std::cout << "numSafeHoldout: " << numSafeHoldout << std::endl;
+    std::cout << "numWrongHoldout: " << numWrongHoldout << std::endl;
+    std::cout << "numMissedHoldout: " << numMissedHoldout << std::endl;
     
     // Check after passing a pod so that they might obtain fuel and be safe
     if (!tunnel->isDone() && tunnel->getFuelTimer() <= 0.0f && (tunnel->getFuelBuffer() <= 0.0 || forceCheckEnd))
@@ -1769,6 +1806,10 @@ void Player::newTunnel(const std::string & nameMusic)
     numWrongTotal = 0;
     numIgnoredTotal = 0;
     numPickupsTotal = 0;
+    numCorrectHoldout = 0;
+    numSafeHoldout = 0;
+    numMissedHoldout = 0;
+    numWrongHoldout = 0;
     numCorrectBonus = 0;
     numCorrectCombo = 0;
     numWrongCombo = 0;
@@ -2617,6 +2658,10 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->numSafe = numSafeTotal;
         levelResult->numMissed = numMissedTotal;
         levelResult->numPickups = numPickupsTotal;
+        levelResult->numCorrectH = numCorrectHoldout;
+        levelResult->numWrongH = numWrongHoldout;
+        levelResult->numSafeH = numSafeHoldout;
+        levelResult->numMissedH = numMissedHoldout;
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
@@ -2902,6 +2947,10 @@ bool Player::saveSession(std::string file)
     sessions.back().FP = numWrongTotal;
     sessions.back().TN = numMissedTotal;
     sessions.back().FN = numSafeTotal;
+    sessions.back().TPh = numCorrectHoldout;
+    sessions.back().FPh = numWrongHoldout;
+    sessions.back().TNh = numMissedHoldout;
+    sessions.back().FNh = numSafeHoldout;
     sessions.back().ignored = numIgnoredTotal;
     sessions.back().pickups = numPickupsTotal;
     sessions.back().obsHit = numCollisionsTotal;
@@ -2966,6 +3015,10 @@ bool Player::saveSession(std::string file)
             out << "% FP - Total Zapped and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
             out << "% FN - Total Missed and Non-Match { 0, inf }" << endl;
+            out << "% TPh - Holdouts Zapped and Match { 0, inf }" << endl;
+            out << "% FPh - Holdouts Zapped and Non-Match { 0, inf }" << endl;
+            out << "% TNh - Holdouts Missed and Match { 0, inf }" << endl;
+            out << "% FNh - Holdouts Missed and Non-Match { 0, inf }" << endl;
             out << "% Ignored - Total Grabbed and Match { 0, inf }" << endl;
             out << "% Pickups - Total Grabbed and Non-Match { 0, inf }" << endl;
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
@@ -3022,7 +3075,7 @@ bool Player::saveSession(std::string file)
 
 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN TPh FPh TNh FNh Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
             //fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed
         }
         
@@ -3043,6 +3096,10 @@ bool Player::saveSession(std::string file)
         << sessions.back().FP << " "
         << sessions.back().TN << " "
         << sessions.back().FN << " "
+        << sessions.back().TPh << " "
+        << sessions.back().FPh << " "
+        << sessions.back().TNh << " "
+        << sessions.back().FNh << " "
         << sessions.back().ignored << " "
         << sessions.back().pickups << " "
         << sessions.back().obsHit << " "
@@ -3114,7 +3171,7 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = true;
     
-    out << "V1.5" << std::endl;
+    out << "V1.6" << std::endl;
     
     out << levelProgress.size() << std::endl;
     for (int i = 0; i < levelProgress.size(); ++i)
@@ -3169,8 +3226,8 @@ bool Player::saveProgress(std::string file)
 }
 
 // Load based on player results in level progression
-// Version 1.5
-bool Player::loadProgress1_5(std::string savePath)
+// Version 1.6
+bool Player::loadProgress1_6(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
     
@@ -3198,8 +3255,8 @@ bool Player::loadProgress(std::string savePath)
         saveFile >> input;
         
         saveFile.close();
-        if (input == "V1.5")
-            return loadProgress1_5(savePath);
+        if (input == "V1.6")
+            return loadProgress1_6(savePath);
         else
             return false;
     }

@@ -1905,6 +1905,11 @@ float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSe
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
 }
 
+bool PodInfo::hasHoldout() const
+{
+    return podColor == POD_COLOR_HOLDOUT || podShape == POD_SHAPE_HOLDOUT || podSound == POD_SOUND_HOLDOUT;
+}
+
 void PodInfo::performHoldout(LevelPhase phase, bool sound)
 {
     //float rand_holdOut = Ogre::Math::UnitRandom();

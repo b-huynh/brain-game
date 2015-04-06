@@ -148,6 +148,10 @@ private:
         int FP;
         int TN;
         int FN;
+        int TPh;
+        int FPh;
+        int TNh;
+        int FNh;
         int ignored;
         int pickups;
         int obsHit;
@@ -312,6 +316,10 @@ public:
     int getNumMissedTotal() const;
     int getNumWrongTotal() const;
     int getNumPickupsTotal() const;
+    int getNumCorrectHoldout() const;
+    int getNumSafeHoldout() const;
+    int getNumMissedHoldout() const;
+    int getNumWrongHoldout() const;
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
@@ -489,7 +497,7 @@ public:
     bool saveSession(std::string file);
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
-    bool loadProgress1_5(std::string savePath);
+    bool loadProgress1_6(std::string savePath);
     bool loadProgress(std::string savePath);
     
     std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
