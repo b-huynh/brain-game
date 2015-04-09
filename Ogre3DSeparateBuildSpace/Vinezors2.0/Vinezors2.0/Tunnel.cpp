@@ -1331,6 +1331,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             }
         }
         
+        //Assign Features:
         ret = signalTypes[final][rand() % signalTypes[final].size()];
         
         ret.podLoc = podLoc;
@@ -1477,8 +1478,23 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             }
             
             ++holdoutCounter;
-            if( holdoutIndex == holdoutPod) {
-                ret.performHoldout(phaseX, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
+            if( holdoutIndex == holdoutPod)
+            {
+                bool applyConstraints = false;
+                PodInfo prevMatch;
+                if(setting == GOOD_TARGET)
+                {
+                    //Bernie Modifying
+                    //Its a match
+                    //Cannot have matching holdouts.
+                    std::cout << "This holdout Pod is going to be a match!!!" << std::endl;
+                    applyConstraints = true;
+                    //Make the attributes different from the previous match.
+                    prevMatch = types[types.size()-nback];
+                }
+                
+                ret.performHoldout(phaseX, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape,applyConstraints,prevMatch);
+                
                 //ret.performHoldout(phase, player->soundVolume > 0.0);
                 
                 if (remainderUsed)
@@ -1913,11 +1929,8 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 
 void Tunnel::update(float elapsed)
 {
-    
     if (!isDone() && !player->isPowerUpActive("TimeWarp"))
     {
-        
-        
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
         tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
@@ -1940,7 +1953,6 @@ void Tunnel::update(float elapsed)
                     fuelTimer = 0.0;
              }
         }
-        
     }
     
     // Animate Pod Growing outwards or Growing inwards
@@ -1975,7 +1987,7 @@ void Tunnel::update(float elapsed)
             for (int i = 0; i < pods.size(); ++i) {
                 pods[i]->uncloakPod();
                 player->playSound(pods[i]->getSignalSound());
-                //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
+                //pods[i]->setRo2tateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
                 {
                     pods[i]->generateIndicator();

@@ -302,8 +302,8 @@ void Pod::loadPowerup()
             headContentEntity->setMaterialName("General/PodRed");
             break;
         case POD_COLOR_GREEN:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/slowdown.mesh");
-            headContentEntity->getSubEntity(0)->setMaterialName("slowdown/Bubble");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID),"Ships/runnerShip.mesh" );//"Powerups/slowdown.mesh");
+            //headContentEntity->getSubEntity(0)->setMaterialName("General");//"slowdown/Bubble");
             break;
         case POD_COLOR_BLUE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");

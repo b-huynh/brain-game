@@ -3740,7 +3740,7 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                         if(scheduler->holdoutOffsetA>0) {
                             holdoutDelta = nBackDeltaHoldout - scheduler->holdoutOffsetA;
                             nBackDeltaHoldout = scheduler->holdoutOffsetA;
-                        
+                    
                             scheduler->nBackLevelA += scheduler->holdoutOffsetA;
                         
                             scheduler->holdoutOffsetA = 0;              //reset offset

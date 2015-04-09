@@ -27,7 +27,10 @@ EngineLevelSelection::~EngineLevelSelection()
 void EngineLevelSelection::enter()
 {
     alloc();
+    TutorialManager* tutorialMgr = player->getTutorialMgr();
+    tutorialMgr->disable();
     player->startMenu();
+    
     
     // Set skybox
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
@@ -84,11 +87,62 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "checktutorials")
     {
-        TutorialManager* tutorialMgr = player->getTutorialMgr();
+        /*TutorialManager* tutorialMgr = player->getTutorialMgr();
         if (tutorialMgr->isEnabled())
             tutorialMgr->disable();
         else
-            tutorialMgr->enable();
+            tutorialMgr->enable();*/
+        
+        //Initally its set to No Holdout.
+        
+        if(player->levelsHoldout)
+        {
+            //Disable all levels
+            player->levelsHoldout = false;
+            
+            for(int i = 0; i < 9; i++) //Columns
+            {
+                for(int j =0; j < 6; j++) //Rows
+                {
+                    player->getLevels()->stageList[i][j].holdoutPerc = 0;
+                    player->getLevels()->stageList[i][j].holdoutStart = 0;
+                    player->getLevels()->stageList[i][j].holdoutEnd= 0;
+                    
+                    player->getLevels()->stageList[i][j].holdoutColor = 0;
+                    player->getLevels()->stageList[i][j].holdoutShape = 0;
+                    player->getLevels()->stageList[i][j].holdoutSound = 0;
+                }
+            }
+            
+            
+
+            
+            
+            
+            
+        }
+        else
+        {
+            //Enable all levels
+            player->levelsHoldout = true;
+            for(int i = 0; i < 9; i++) //Columns
+            {
+                for(int j =0; j < 6; j++) //Rows
+                {
+                    player->getLevels()->stageList[i][j].holdoutPerc = 1.00;
+                    player->getLevels()->stageList[i][j].holdoutStart = 0.00;
+                    player->getLevels()->stageList[i][j].holdoutEnd= 0.0;
+                    
+                    player->getLevels()->stageList[i][j].holdoutColor = 1;
+                    player->getLevels()->stageList[i][j].holdoutShape = 1;
+                    player->getLevels()->stageList[i][j].holdoutSound = 1;
+                }
+            }
+            
+            
+            
+        }
+        
     }
 
 }

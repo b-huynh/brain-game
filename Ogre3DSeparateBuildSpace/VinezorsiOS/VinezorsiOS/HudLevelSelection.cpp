@@ -142,7 +142,7 @@ void HudLevelSelection::alloc()
     levelSelectEntireBackground->addChild(backButtonBackground);
     levelSelectEntireBackground->addChild(buttonEnableTutorialsBackground);
     buttonEnableTutorialsBackground->addChild(checkDisplayEnableTutorialsBackground);
-    //buttonEnableTutorialsBackground->addChild(textEnableTutorialsPrompt);
+    buttonEnableTutorialsBackground->addChild(textEnableTutorialsPrompt);
     overlays.push_back(overlay1);
     
 }
@@ -304,12 +304,12 @@ void HudLevelSelection::initOverlay()
     
     textEnableTutorialsPrompt->setMetricsMode(GMM_RELATIVE);
     textEnableTutorialsPrompt->setAlignment(TextAreaOverlayElement::Center);
-    textEnableTutorialsPrompt->setPosition(-0.0625, 0.0);
-    textEnableTutorialsPrompt->setCharHeight(0.020 * FONT_SZ_MULT);
+    textEnableTutorialsPrompt->setPosition(0.0625, 0.0);
+    textEnableTutorialsPrompt->setCharHeight(0.025 * FONT_SZ_MULT);
     textEnableTutorialsPrompt->setDimensions(0.80, 0.20);
     textEnableTutorialsPrompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
     textEnableTutorialsPrompt->setFontName("MainSmall");
-    textEnableTutorialsPrompt->setCaption("Tutorials");
+    textEnableTutorialsPrompt->setCaption("Holdout");
     
     // Display Text
     checkDisplayEnableTutorialsBackground->setMetricsMode(GMM_RELATIVE);
@@ -335,7 +335,7 @@ void HudLevelSelection::initOverlay()
         // calculate dimensions for button size and make sure it's square
         float pw = 0.2050;
         float ph = 0.0350;
-        buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.205, 0.790), Vector2(pw, ph), buttonEnableTutorialsBackground, NULL);
+        buttons[BUTTON_ENABLETUTORIALS].setButton("checktutorials", overlays[0], GMM_RELATIVE, Vector2(0.205, 0.790), Vector2(pw, ph), buttonEnableTutorialsBackground, NULL); //Location: .205,.790
     }
     
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.175, 0.85), Vector2(0.15, 0.05), backButtonBackground, NULL);
@@ -388,7 +388,7 @@ void HudLevelSelection::updateDisplay()
     float entireScore = player->getTotalLevelScore();
     levelTotalScore->setCaption(Util::toStringInt(entireScore));
     
-    if (player->getTutorialMgr()->isEnabled())
+    if (player->levelsHoldout)
         checkDisplayEnableTutorialsBackground->setMaterialName("General/CheckboxGreen");
     else
         checkDisplayEnableTutorialsBackground->setMaterialName("General/CheckboxBlank");

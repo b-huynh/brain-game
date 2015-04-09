@@ -2077,7 +2077,6 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                         player->scheduler->holdoutOffsetB = -(globals.holdoutdelayNumber-1);
                         player->scheduler->holdoutOffsetD = -(globals.holdoutdelayNumber-1);
                         
-                        
                     }
                     
                 }

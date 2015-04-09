@@ -109,8 +109,10 @@ std::istream& operator>>(std::istream& infile, StageRequest & sr);
 class LevelSet
 {
 private:
-    std::vector<std::vector<StageRequest> > stageList;
+    //std::vector<std::vector<StageRequest> > stageList;
 public:
+    std::vector<std::vector<StageRequest> > stageList;
+
     float holdoutFreqvar;
     LevelSet() : stageList(), holdoutFreqvar(4) {}
     

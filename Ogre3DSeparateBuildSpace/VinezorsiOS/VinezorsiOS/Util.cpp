@@ -1993,32 +1993,331 @@ void PodInfo::performHoldout(LevelPhase phase, bool sound)
     }
 }
 
-void PodInfo::performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape)
+void PodInfo::performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape, bool applyConstraints, PodInfo prevMatch)
 {
+    
+    //Phases:
+    // ColorSound, ShapeSound, Sound Only, AllSignal, Recess
+    
+    // For a ColorSound level, ignore shape holdout boolean. (Dont make it possible. Dont set it true.)
+    // For a ShapeSound level, ignore color holdout boolean. (Dont make it possible. Dont set it true.)
+
+ 
+    
+    //List of possible holdouts!
+    //0: Color Holdout Only
+    //1: Sound Holdout Only
+    //2: Shape Holdout Only
+    //3: ShapeSound Holdout Only
+    //4: ShapeColor Holdout Only
+    //5: ColorSound Holdout Only
+    //6: No Holdout!
+    bool PossibleHoldouts[7] = {false,false,false,false,false,false,false};
+    int sizeOfPossibilites = 0;
+    
+    
+    if((phase != PHASE_SOUND_ONLY) && (phase != PHASE_COLLECT))
+    {
+        if(applyConstraints) //This pod is a match and it may have a feature held out
+        {
+            
+            if(phase != PHASE_SHAPE_SOUND)
+            {
+                PossibleHoldouts[0] = holdcolor;
+            }
+            
+            PossibleHoldouts[1] = holdsound;
+            
+            
+            if(phase != PHASE_COLOR_SOUND)
+            {
+                PossibleHoldouts[2] = holdshape;
+            }
+            
+            //All Signals Cases
+            if(phase == PHASE_ALL_SIGNAL)
+            {
+                if(holdshape && holdcolor && holdsound)
+                {
+                    PossibleHoldouts[3] = true;
+                    PossibleHoldouts[4] = true;
+                    PossibleHoldouts[5] = true;
+                }
+                if(holdshape && !holdcolor && holdsound)
+                {
+                    PossibleHoldouts[3] = true;
+                }
+                if(holdshape && holdcolor && !holdsound)
+                {
+                    PossibleHoldouts[4] = true;
+                    
+                }
+                if(!holdshape && holdcolor && holdsound)
+                {
+                    PossibleHoldouts[5] = true;
+                }
+            }//End All Signals Case
+            
+            //Check Previous Match Pod
+            bool prevHoldSound = (prevMatch.podSound == POD_SOUND_HOLDOUT);
+            bool prevHoldColor = (prevMatch.podColor == POD_COLOR_HOLDOUT);
+            bool prevHoldShape= (prevMatch.podShape == POD_SHAPE_HOLDOUT);
+            
+            if (prevHoldShape && prevHoldSound)
+            {
+                PossibleHoldouts[3] = false;
+            }
+            else if(prevHoldColor && prevHoldShape)
+            {
+                PossibleHoldouts[4] = false;
+            }
+            else if(prevHoldColor && prevHoldSound)
+            {
+                PossibleHoldouts[5] = false;
+            }
+            else if(prevHoldColor && !prevHoldSound && !prevHoldShape)
+            {
+                PossibleHoldouts[0] = false;
+            }
+            else if(!prevHoldColor && prevHoldSound && !prevHoldShape)
+            {
+                PossibleHoldouts[1] = false;
+            }
+            else if(!prevHoldColor && !prevHoldSound && prevHoldShape)
+            {
+                PossibleHoldouts[2] = false;
+            }
+            
+            for(int i =0; i < 7; i++) //Count the number of Possibilities
+            {
+                if(PossibleHoldouts[i])
+                {
+                    std::cout << "THIS WAS TRUE: " << i << std::endl;
+                    sizeOfPossibilites++;
+                }
+            }
+            std::cout << "***********Size of Possibilities: " << sizeOfPossibilites << std::endl;
+            
+            if(sizeOfPossibilites > 0)
+            {
+                //Choose a random holdout type and apply to the signal
+                
+                int rand_holdout_type = Util::randRangeInt(1, sizeOfPossibilites);
+                int chosenHoldoutTypeIndex = 0;
+                std::cout << "***********The random holdout type chosen: " << rand_holdout_type << std::endl;
+                
+                for(int i = 0; i < 7; i++)
+                {
+                    if(PossibleHoldouts[i])
+                    {
+                        rand_holdout_type--;
+                        if(rand_holdout_type == 0)
+                        {
+                            chosenHoldoutTypeIndex = i;
+                        }
+                    }
+                    
+                }
+                std::cout << "***********Index Chosen: " << chosenHoldoutTypeIndex << std::endl;
+                
+                //Apply the holdout
+                //List of possible holdouts!
+                //0: Color Holdout Only
+                //1: Sound Holdout Only
+                //2: Shape Holdout Only
+                //3: ShapeSound Holdout Only
+                //4: ShapeColor Holdout Only
+                //5: ColorSound Holdout Only
+                if(chosenHoldoutTypeIndex == 0)
+                {
+                    podColor = POD_COLOR_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 1)
+                {
+                    podSound = POD_SOUND_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 2)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 3)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    podSound = POD_SOUND_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 4)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    podColor = POD_COLOR_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 5)
+                {
+                    podSound = POD_SOUND_HOLDOUT;
+                    podColor = POD_COLOR_HOLDOUT;
+                }
+                
+            }
+            
+            
+        }// End applyConstraints
+        else  //Distractors that can have holdout may not have holdout.
+        {
+            //Same thing as above but dont worry about matching because it wont be the same signal anyway.
+            //Create the same list of possible holdouts except we dont remove the match and add the possiblity of having
+            //All possible features
+            if(phase != PHASE_SHAPE_SOUND)
+            {
+                PossibleHoldouts[0] = holdcolor;
+            }
+            
+            PossibleHoldouts[1] = holdsound;
+            
+            
+            if(phase != PHASE_COLOR_SOUND)
+            {
+                PossibleHoldouts[2] = holdshape;
+            }
+            PossibleHoldouts[6] = true;
+            
+            //All Signals Cases
+            if(phase == PHASE_ALL_SIGNAL)
+            {
+                if(holdshape && holdcolor && holdsound)
+                {
+                    PossibleHoldouts[3] = true;
+                    PossibleHoldouts[4] = true;
+                    PossibleHoldouts[5] = true;
+                }
+                if(holdshape && !holdcolor && holdsound)
+                {   
+                    PossibleHoldouts[3] = true;
+                }
+                if(holdshape && holdcolor && !holdsound)
+                {
+                    PossibleHoldouts[4] = true;
+                    
+                }
+                if(!holdshape && holdcolor && holdsound)
+                {
+                    PossibleHoldouts[5] = true;
+                }
+            }//End All Signals Case
+            
+            for(int i =0; i < 7; i++) //Count the number of Possibilities
+            {
+                if(PossibleHoldouts[i])
+                {
+                    std::cout << "Distractor Holdout THIS WAS TRUE: " << i << std::endl;
+                    sizeOfPossibilites++;
+                }
+            }
+            std::cout << "***********Distractor Size of Possibilities: " << sizeOfPossibilites << std::endl;
+            
+            if(sizeOfPossibilites > 0)
+            {
+                //Choose a random holdout type and apply to the signal
+                
+                int rand_holdout_type = Util::randRangeInt(1, sizeOfPossibilites);
+                int chosenHoldoutTypeIndex = 0;
+                std::cout << "***********Distractor random holdout type chosen: " << rand_holdout_type << std::endl;
+                
+                for(int i = 0; i < 7; i++)
+                {
+                    if(PossibleHoldouts[i])
+                    {
+                        rand_holdout_type--;
+                        if(rand_holdout_type == 0)
+                        {
+                            chosenHoldoutTypeIndex = i;
+                        }
+                    }
+                    
+                }
+                std::cout << "*********** Distractor Index Chosen: " << chosenHoldoutTypeIndex << std::endl;
+                
+                //Apply the holdout
+                //List of possible holdouts!
+                //0: Color Holdout Only
+                //1: Sound Holdout Only
+                //2: Shape Holdout Only
+                //3: ShapeSound Holdout Only
+                //4: ShapeColor Holdout Only
+                //5: ColorSound Holdout Only
+                //6: NoHoldout
+                if(chosenHoldoutTypeIndex == 0)
+                {
+                    podColor = POD_COLOR_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 1)
+                {
+                    podSound = POD_SOUND_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 2)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 3)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    podSound = POD_SOUND_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 4)
+                {
+                    podShape = POD_SHAPE_HOLDOUT;
+                    podColor = POD_COLOR_HOLDOUT;
+                    
+                }
+                else if(chosenHoldoutTypeIndex == 5)
+                {
+                    podSound = POD_SOUND_HOLDOUT;
+                    podColor = POD_COLOR_HOLDOUT;
+                }
+                //else if (chosenHoldoutTypeIndex == 6) No Holdout
+                
+            }
+            
+            
+        }
+
+    }
+    
+    
+    /*
+    
     //float rand_holdOut = Ogre::Math::UnitRandom();
     float rand_signal = Ogre::Math::UnitRandom();
     
-    if( true ) {//|| rand_holdOut < 0.1f ) {
+    if(!applyConstraints ){//true ) {//|| rand_holdOut < 0.1f ) {      Do this for not a match.
         switch(phase) {
             case PHASE_COLOR_SOUND:   // levels that normally have color and sound active
                 //if sound is not available, holdout is not availabe
                 if(sound) {
-                    if(holdcolor&&!holdsound){
-                        
+                    if(holdcolor&&!holdsound) //Color Holdout Only
+                    {
                         podColor = POD_COLOR_HOLDOUT;
                         std::cout << "Hold out: color" << std::endl;
                     }
-                    else if(!holdcolor&&holdsound){
-                        
+                    else if(!holdcolor&&holdsound) //Sound Holdout Only
+                    {
                         podSound = POD_SOUND_HOLDOUT;
                         std::cout << "Hold out: sound" << std::endl;
                     }
-                    else if( rand_signal < 0.5f) {
-                        
+                    else if( rand_signal < 0.5f)
+                    {
                         podColor = POD_COLOR_HOLDOUT;
                         std::cout << "Hold out: color" << std::endl;
                     }
-                    else {
+                    else
+                    {
                         podSound = POD_SOUND_HOLDOUT;
                         std::cout << "Hold out: sound" << std::endl;
                     }
@@ -2155,8 +2454,9 @@ void PodInfo::performHoldout(LevelPhase phase, bool sound, bool holdsound, bool 
                 break;
             default:
                 break;
-        }
-    }
+        }//end switch
+    }//end if
+     */
 }
 
 Vector3 Util::EulerRotate(Vector3 v, Degree d, char Axis)

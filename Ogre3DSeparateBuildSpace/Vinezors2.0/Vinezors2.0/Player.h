@@ -242,6 +242,9 @@ private:
     TutorialManager* tutorialMgr;
     
 public:
+    //Level Menu Holdout Toggle
+    bool levelsHoldout = false;
+    
     // Marble Restart Counter of Study Version
     int marbleChoice = 0;
     int choice0RestartCounter = 0;  //Tutorial Counter

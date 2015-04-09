@@ -805,7 +805,15 @@ void HudSchedulerMenu::setSelection()
         
         if(tooEasy && (level.phaseX != PHASE_COLLECT))
         {
-            delta += "N";
+            if (progress.nBackDelta < 0.0 || progress.nBackReturn < 0.0)
+            {
+                if (level.hasHoldout())
+                    delta += "H";
+                else
+                    delta += "M";
+            }
+            else
+                delta += "N";
         }
         else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
         {
