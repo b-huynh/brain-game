@@ -32,7 +32,7 @@ bool flyLeft;
 bool soundStart;
 
 Player::Player()
-: seed(0), sessionID(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(0), sessionID(0), name(""), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectHoldout(0), numSafeHoldout(0), numMissedHoldout(0), numWrongHoldout(0), numIgnoredHoldout(0), numPickupsHoldout(0), numCorrectBonus(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(), camPos(), oldRot(), oldRoll(0), camRot(), camRoll(0), desireRot(), desireRoll(0), baseSpeed(0.0), bonusSpeed(0.0), finalSpeed(0.0), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(0), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     
     tunnel = NULL;
@@ -61,7 +61,7 @@ Player::Player()
 }
 
 Player::Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename)
-: seed(seed), sessionID(0), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
+: seed(seed), sessionID(0), name(name), hp(globals.startingHP), numCorrectTotal(0), numSafeTotal(0), numCorrectBonus(0), numMissedTotal(0), numWrongTotal(0), numIgnoredTotal(0), numPickupsTotal(0), numAvoidancesTotal(0), numCollisionsTotal(0), numCorrectHoldout(0), numSafeHoldout(0), numMissedHoldout(0), numWrongHoldout(0), numIgnoredHoldout(0), numPickupsHoldout(0), numCorrectCombo(0), numWrongCombo(0), score(0.0), mouseLeft(false), keyUp(false), keyDown(false), keyLeft(false), keyRight(false), keySpace(false), vines(), movementMode(MOVEMENT_ROTATING), showCombo(true), camDir(SOUTH), mousePos(), oldPos(camPos), camPos(camPos), oldRot(camRot), oldRoll(0), camRot(camRot), camRoll(0), desireRot(camRot), desireRoll(0), baseSpeed(camSpeed), bonusSpeed(0.0), finalSpeed(camSpeed), initSpeed(0.0), minSpeed(0.0), maxSpeed(0.0), vineOffset(offset), lookback(NULL), selectedTarget(NULL), glowSpeed(0.0), toggleBack(0), results(), actions(), sessions(), logged(false), skillLevel(), totalElapsed(0), totalDistanceTraveled(0.0), animationTimer(0.0), speedTimer(0.0), badFuelPickUpTimer(0.0), boostTimer(0.0), selectTimerFlag(false), selectTimer(0.0), startMusicTimer(0.0), godMode(false), soundMusic(NULL), soundFeedbackGood(NULL), soundFeedbackBad(NULL), soundFeedbackMiss(NULL), triggerStartup(true), numStagesWon(0), levelRequestRow(0), levelRequestCol(0), menuRowIndex(0), levelProgress(), tutorialMgr(NULL), offsetRoll(0.0), offsetRollDest(0.0), endFlag(false)
 {
     
     levels = new LevelSet();
@@ -139,6 +139,36 @@ int Player::getNumWrongTotal() const
 int Player::getNumPickupsTotal() const
 {
     return numPickupsTotal;
+}
+
+int Player::getNumCorrectHoldout() const
+{
+    return numCorrectHoldout;
+}
+
+int Player::getNumSafeHoldout() const
+{
+    return numSafeHoldout;
+}
+
+int Player::getNumMissedHoldout() const
+{
+    return numMissedHoldout;
+}
+
+int Player::getNumWrongHoldout() const
+{
+    return numWrongHoldout;
+}
+
+int Player::getNumIgnoredHoldout() const
+{
+    return numIgnoredHoldout;
+}
+
+int Player::getNumPickupsHoldout() const
+{
+    return numPickupsHoldout;
 }
 
 int Player::getNumCorrectBonus() const
@@ -1138,6 +1168,8 @@ void Player::testPodGiveFeedback(Pod* test)
         {
             // You zapped the right target
             ++numCorrectTotal;
+            if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                ++numCorrectHoldout;
             ++numCorrectCombo;
             numWrongCombo = 0;
             
@@ -1179,6 +1211,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 // You missed zapping the target
                 numCorrectCombo = 0;
                 ++numMissedTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numMissedHoldout;
                 ++numWrongCombo;
                 
                 if (tunnel->getMode() != STAGE_MODE_RECESS)
@@ -1210,6 +1244,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 numCorrectCombo = 0;
                 numCorrectBonus = 0;
                 ++numWrongTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numWrongHoldout;
                 
                 //beginBadFuelPickUp();
                 xsTimer = 1.0f;
@@ -1251,8 +1287,12 @@ void Player::testPodGiveFeedback(Pod* test)
                     numCorrectCombo = 0;
                     numCorrectBonus = 0;
                     ++numMissedTotal;
+                    if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                        ++numMissedHoldout;
                     ++numWrongCombo;
                     ++numIgnoredTotal;
+                    if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                        ++numIgnoredHoldout;
                     if (numWrongCombo % globals.numToSpeedDown == 0)
                     {
                         updateSpeed(initSpeed, false);
@@ -1273,6 +1313,8 @@ void Player::testPodGiveFeedback(Pod* test)
                 numCorrectCombo = 0;
                 numCorrectBonus = 0;
                 ++numMissedTotal;
+                if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                    ++numMissedHoldout;
                 ++numWrongCombo;
                 
                 updateSpeed(initSpeed, false);
@@ -1285,10 +1327,14 @@ void Player::testPodGiveFeedback(Pod* test)
     {
         // You picked up the right target
         numSafeTotal++;
+        if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+            ++numSafeHoldout;
         numCorrectBonus++;
         if (podTaken)
         {
             numPickupsTotal++;
+            if (tunnel->getIsHoldoutTest(tunnel->getNBack()))
+                ++numPickupsHoldout;
             playSound(soundFeedbackGood);
             
             // Add to fuel gauge for correct pickups
@@ -1769,6 +1815,12 @@ void Player::newTunnel(const std::string & nameMusic)
     numWrongTotal = 0;
     numIgnoredTotal = 0;
     numPickupsTotal = 0;
+    numCorrectHoldout = 0;
+    numSafeHoldout = 0;
+    numMissedHoldout = 0;
+    numWrongHoldout = 0;
+    numIgnoredHoldout = 0;
+    numPickupsHoldout = 0;
     numCorrectBonus = 0;
     numCorrectCombo = 0;
     numWrongCombo = 0;
@@ -2617,6 +2669,11 @@ void Player::saveAllResults(Evaluation eval)
         levelResult->numSafe = numSafeTotal;
         levelResult->numMissed = numMissedTotal;
         levelResult->numPickups = numPickupsTotal;
+        levelResult->numCorrectH = numCorrectHoldout;
+        levelResult->numWrongH = numWrongHoldout;
+        levelResult->numSafeH = numSafeHoldout;
+        levelResult->numMissedH = numMissedHoldout;
+        levelResult->numPickupsH = numPickupsHoldout;
         levelResult->startSpeed = initSpeed;
         levelResult->exitSpeed = baseSpeed;
         // Assign other level progress info here since it is a new score
@@ -2902,8 +2959,14 @@ bool Player::saveSession(std::string file)
     sessions.back().FP = numWrongTotal;
     sessions.back().TN = numMissedTotal;
     sessions.back().FN = numSafeTotal;
+    sessions.back().TPh = numCorrectHoldout;
+    sessions.back().FPh = numWrongHoldout;
+    sessions.back().TNh = numMissedHoldout;
+    sessions.back().FNh = numSafeHoldout;
     sessions.back().ignored = numIgnoredTotal;
     sessions.back().pickups = numPickupsTotal;
+    sessions.back().ignoredH = numIgnoredHoldout;
+    sessions.back().pickupsH = numPickupsHoldout;
     sessions.back().obsHit = numCollisionsTotal;
     sessions.back().obsAvoided = numAvoidancesTotal;
     sessions.back().score = score;
@@ -2914,10 +2977,12 @@ bool Player::saveSession(std::string file)
     sessions.back().nbackLevelD = scheduler->nBackLevelD;
     sessions.back().nbackLevelE = scheduler->nBackLevelE;
     sessions.back().scoreCurr = scheduler->scoreCurr;
-    sessions.back().currentHoldout = scheduler->currentHoldout;
     sessions.back().holdoutOffsetA = scheduler->holdoutOffsetA;
     sessions.back().holdoutOffsetB = scheduler->holdoutOffsetB;
     sessions.back().holdoutOffsetD = scheduler->holdoutOffsetD;
+    sessions.back().holdoutLevelA = scheduler->holdoutLevelA;
+    sessions.back().holdoutLevelB = scheduler->holdoutLevelB;
+    sessions.back().holdoutLevelD = scheduler->holdoutLevelD;
     sessions.back().speedA = scheduler->speedA;
     sessions.back().speedB = scheduler->speedB;
     sessions.back().speedC = scheduler->speedC;
@@ -2964,8 +3029,14 @@ bool Player::saveSession(std::string file)
             out << "% FP - Total Zapped and Non-Match { 0, inf }" << endl;
             out << "% TN - Total Missed and Match { 0, inf }" << endl;
             out << "% FN - Total Missed and Non-Match { 0, inf }" << endl;
+            out << "% TPh - Holdouts Zapped and Match { 0, inf }" << endl;
+            out << "% FPh - Holdouts Zapped and Non-Match { 0, inf }" << endl;
+            out << "% TNh - Holdouts Missed and Match { 0, inf }" << endl;
+            out << "% FNh - Holdouts Missed and Non-Match { 0, inf }" << endl;
             out << "% Ignored - Total Grabbed and Match { 0, inf }" << endl;
             out << "% Pickups - Total Grabbed and Non-Match { 0, inf }" << endl;
+            out << "% IgnoredH - Holdouts Grabbed and Match { 0, inf }" << endl;
+            out << "% PickupsH - Holdouts Grabbed and Non-Match { 0, inf }" << endl;
             out << "% ObsHit - Segments with Obstacles Hit { 0, inf }" << endl;
             out << "% ObsAvoid - Segments with Obstacles Avoided { 0, inf }" << endl;
             out << "% Score - Player points earned in level" << endl;
@@ -2976,10 +3047,12 @@ bool Player::saveSession(std::string file)
             out << "% NBackLevelD - All Signals scheduler skill level" << endl;
             out << "% NBackLevelE - Recess      scheduler skill level" << endl;
             out << "% Scheduler Score - Total scheduler score" << endl;
-            out << "% Current Holdout - Holdout experience in scheduler" << endl;
             out << "% Holdout OffsetA - Offset to Color/Sound skill level in scheduler" << endl;
             out << "% Holdout OffsetB - Offset to Shape/Sound skill level in scheduler" << endl;
             out << "% Holdout OffsetD - Offset to All Signals skill level in scheduler" << endl;
+            out << "% Holdout LevelA - Represents number of succeed levels in holdout A in scheduler" << endl;
+            out << "% Holdout LevelB - Represents number of succeed levels in holdout B in scheduler" << endl;
+            out << "% Holdout LevelD - Represents number of succeed levels in holdout D in scheduler" << endl;
             out << "% SpeedA - Scheduler recommended speed for Color/Sound" << endl;
             out << "% SpeedB - Scheduler recommended speed for Shape/Sound" << endl;
             out << "% SpeedC - Scheduler recommended speed for Sound Only" << endl;
@@ -3018,7 +3091,7 @@ bool Player::saveSession(std::string file)
 
 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN Ignored Pickups ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore CurrentHoldout HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN TPh FPh TNh FNh Ignored Pickups IgnoredH PickupsH ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
             //fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed
         }
         
@@ -3039,8 +3112,14 @@ bool Player::saveSession(std::string file)
         << sessions.back().FP << " "
         << sessions.back().TN << " "
         << sessions.back().FN << " "
+        << sessions.back().TPh << " "
+        << sessions.back().FPh << " "
+        << sessions.back().TNh << " "
+        << sessions.back().FNh << " "
         << sessions.back().ignored << " "
         << sessions.back().pickups << " "
+        << sessions.back().ignoredH << " "
+        << sessions.back().pickupsH << " "
         << sessions.back().obsHit << " "
         << sessions.back().obsAvoided << " "
         << sessions.back().score << " "
@@ -3055,6 +3134,9 @@ bool Player::saveSession(std::string file)
         << sessions.back().holdoutOffsetA << " "
         << sessions.back().holdoutOffsetB << " "
         << sessions.back().holdoutOffsetD << " "
+        << sessions.back().holdoutLevelA << " "
+        << sessions.back().holdoutLevelB << " "
+        << sessions.back().holdoutLevelD << " "
         << sessions.back().speedA << " "
         << sessions.back().speedB << " "
         << sessions.back().speedC << " "
@@ -3107,7 +3189,7 @@ bool Player::saveProgress(std::string file)
     out.open(file.c_str(), std::ofstream::out | std::ofstream::trunc);
     bool ret = true;
     
-    out << "V1.5" << std::endl;
+    out << "V1.6" << std::endl;
     
     out << levelProgress.size() << std::endl;
     for (int i = 0; i < levelProgress.size(); ++i)
@@ -3119,7 +3201,7 @@ bool Player::saveProgress(std::string file)
     
     out << "sessionID" << " " << sessionID << std::endl;
     out << "tutorial1.0" << " " << (*tutorialMgr) << std::endl;
-    out << "scheduler1.0" << " " << (*scheduler) << std::endl;
+    out << "scheduler1.1" << " "; scheduler->saveScheduler1_1(out); out << std::endl;
     out << "rerollCounter" << " " << rerollCounter << std::endl;
     out << "musicVolume" << " " << musicVolume << std::endl;
     out << "soundVolume" << " " << soundVolume << std::endl;
@@ -3162,8 +3244,8 @@ bool Player::saveProgress(std::string file)
 }
 
 // Load based on player results in level progression
-// Version 1.5
-bool Player::loadProgress1_5(std::string savePath)
+// Version 1.6
+bool Player::loadProgress1_6(std::string savePath)
 {
     std::ifstream saveFile (savePath.c_str());
     
@@ -3191,8 +3273,8 @@ bool Player::loadProgress(std::string savePath)
         saveFile >> input;
         
         saveFile.close();
-        if (input == "V1.5")
-            return loadProgress1_5(savePath);
+        if (input == "V1.6")
+            return loadProgress1_6(savePath);
         else
             return false;
     }
@@ -3203,10 +3285,12 @@ std::istream& Player::setSaveValue(std::istream& in, std::string paramName, std:
 {
     if (paramName == "sessionID")
         in >> sessionID;
-    if (paramName == "tutorial1.0")
+    else if (paramName == "tutorial1.0")
         in >> (*tutorialMgr);
     else if (paramName == "scheduler1.0")
-        in >> (*scheduler);
+        scheduler->loadScheduler1_0(in);
+    else if (paramName == "scheduler1.1")
+        scheduler->loadScheduler1_1(in);
     else if (paramName == "rerollCounter")
         in >> rerollCounter;
     else if (paramName == "levelSize")
@@ -3525,10 +3609,21 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     // Formula for accuracy = TP / TP + TN + FP
     double accuracy = 0.0f;
+    double accuracyHoldout = 0.0f;
     if (assessment.numCorrect + assessment.numMissed + assessment.numWrong > 0)
         accuracy = assessment.numCorrect / (float)(assessment.numCorrect + assessment.numMissed + assessment.numWrong);
+    if (assessment.numCorrectH + assessment.numMissedH + assessment.numWrongH > 0)
+        accuracyHoldout = assessment.numCorrectH / (float)(assessment.numCorrectH + assessment.numMissedH + assessment.numWrongH);
+    
+    // If there was no holdout (but maybe false negative holdouts) give em 100%
+    if (assessment.numCorrectH + assessment.numMissedH + assessment.numWrongH <= 0 &&
+        assessment.numSafeH > 0)
+        accuracyHoldout = 1.0;
+    // Accuracy holdout cannot be higher than original accuracy
+    accuracyHoldout = std::min(accuracy, accuracyHoldout);
     
     float nBackDelta = modifyNBackDelta(level, assessment, accuracy, false);
+    float nBackDeltaHoldout = modifyNBackDelta(level, assessment, accuracyHoldout, false);
     
     // If tutorial level, zero it out if they played one of those types already
     if (level.stageNo < 0)
@@ -3541,6 +3636,55 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     
     float nBackChallenge = getMemoryChallenge(level, assessment);
     bool tooEasy = nBackChallenge < -0.5;
+    
+    
+    const float UPPER_BOUND = 0.75;
+    bool updateHoldoutOffset = true;
+    // Update holdout experience based on performance
+    if(level.hasHoldout()) // 75% is the UPPER_BOUND of the deadzone
+    {   
+        switch (level.phaseX)
+        {
+            case PHASE_COLOR_SOUND:
+                if (accuracyHoldout > UPPER_BOUND) scheduler->holdoutLevelA++;
+                if (scheduler->holdoutLevelA < scheduler->HOLDOUT_CHECKPOINTA)
+                    updateHoldoutOffset = false;
+                else if (scheduler->holdoutLevelA == scheduler->HOLDOUT_CHECKPOINTA)
+                {
+                    updateHoldoutOffset = false;
+                    // When user graduates from holdout, have holdout offset be at 2.
+                    if (accuracyHoldout > UPPER_BOUND) // make sure they just won
+                        scheduler->holdoutOffsetA = 2 - scheduler->nBackLevelA;
+                }
+                break;
+            case PHASE_SHAPE_SOUND:
+                if (accuracyHoldout > UPPER_BOUND) scheduler->holdoutLevelB++;
+                if (scheduler->holdoutLevelB < scheduler->HOLDOUT_CHECKPOINTB)
+                    updateHoldoutOffset = false;
+                else if (scheduler->holdoutLevelB == scheduler->HOLDOUT_CHECKPOINTB)
+                {
+                    updateHoldoutOffset = false;
+                    // When user graduates from holdout, have holdout offset be at 2.
+                    if (accuracyHoldout > UPPER_BOUND) // make sure they just won
+                        scheduler->holdoutOffsetB = 2 - scheduler->nBackLevelB;
+                }
+                break;
+            case PHASE_ALL_SIGNAL:
+                if (accuracyHoldout > UPPER_BOUND) scheduler->holdoutLevelD++;
+                if (scheduler->holdoutLevelD < scheduler->HOLDOUT_CHECKPOINTD)
+                    updateHoldoutOffset = false;
+                else if (scheduler->holdoutLevelD == scheduler->HOLDOUT_CHECKPOINTD)
+                {
+                    updateHoldoutOffset = false;
+                    // When user graduates from holdout, have holdout offset be at 2.
+                    if (accuracyHoldout > UPPER_BOUND) // make sure they just won
+                        scheduler->holdoutOffsetD = 2 - scheduler->nBackLevelD;
+                }
+                break;
+            default:
+                break;
+        }
+    }
     
     double playerSkill;
     double playerOffset;
@@ -3590,23 +3734,31 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             {
                 if (level.hasHoldout())
                 {
-                    scheduler->holdoutOffsetA += nBackDelta;     //get nbackdelta
-                    if(scheduler->holdoutOffsetA>0) {
-                        holdoutDelta = nBackDelta - scheduler->holdoutOffsetA;
-                        nBackDelta = scheduler->holdoutOffsetA;
+                    if (updateHoldoutOffset)
+                    {
+                        scheduler->holdoutOffsetA += nBackDeltaHoldout;     //get nbackdelta
+                        if(scheduler->holdoutOffsetA>0) {
+                            holdoutDelta = nBackDeltaHoldout - scheduler->holdoutOffsetA;
+                            nBackDeltaHoldout = scheduler->holdoutOffsetA;
                         
-                        scheduler->nBackLevelA += scheduler->holdoutOffsetA;
+                            scheduler->nBackLevelA += scheduler->holdoutOffsetA;
                         
-                        scheduler->holdoutOffsetA = 0;              //reset offset
-                    }
-                    else {
-                        holdoutDelta = nBackDelta;
-                        nBackDelta = 0.0;
+                            scheduler->holdoutOffsetA = 0;              //reset offset
+                        }
+                        else {
+                            holdoutDelta = nBackDeltaHoldout;
+                            nBackDelta = 0.0;
+                        }
                     }
                 }
                 else
                 {
                     scheduler->nBackLevelA += nBackDelta;
+                    if (scheduler->holdoutLevelA < scheduler->HOLDOUT_CHECKPOINTA)
+                    {
+                        // If user is still not a holdout graduate, put their offset so they'll be at 1-Back
+                        scheduler->holdoutOffsetA = 1 - scheduler->nBackLevelA;
+                    }
                 }
                 if (scheduler->nBackLevelA < 1) scheduler->nBackLevelA = 1.0;
             }
@@ -3626,22 +3778,30 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
             {
                 if (level.hasHoldout())
                 {
-                    scheduler->holdoutOffsetB += nBackDelta;     //get nbackdelta
-                    if(scheduler->holdoutOffsetB>0) {
-                        holdoutDelta = nBackDelta - scheduler->holdoutOffsetB;
-                        nBackDelta = scheduler->holdoutOffsetB;
-                    
-                        scheduler->nBackLevelB += scheduler->holdoutOffsetB;
-                        scheduler->holdoutOffsetB = 0;              //reset offset
-                    }
-                    else {
-                        holdoutDelta = nBackDelta;
-                        nBackDelta = 0.0;
+                    if (updateHoldoutOffset)
+                    {
+                        scheduler->holdoutOffsetB += nBackDeltaHoldout;     //get nbackdelta
+                        if(scheduler->holdoutOffsetB>0) {
+                            holdoutDelta = nBackDeltaHoldout - scheduler->holdoutOffsetB;
+                            nBackDeltaHoldout = scheduler->holdoutOffsetB;
+                            
+                            scheduler->nBackLevelB += scheduler->holdoutOffsetB;
+                            scheduler->holdoutOffsetB = 0;              //reset offset
+                        }
+                        else {
+                            holdoutDelta = nBackDeltaHoldout;
+                            nBackDelta = 0.0;
+                        }
                     }
                 }
                 else
                 {
                     scheduler->nBackLevelB += nBackDelta;
+                    if (scheduler->holdoutLevelB < scheduler->HOLDOUT_CHECKPOINTB)
+                    {
+                        // If user is still not a holdout graduate, put their offset so they'll be at 1-Back
+                        scheduler->holdoutOffsetB = 1 - scheduler->nBackLevelB;
+                    }
                 }
                 if (scheduler->nBackLevelB < 1.0) scheduler->nBackLevelB = 1.0;
             }
@@ -3682,22 +3842,30 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
                 }
                 else if (level.hasHoldout())
                 {
-                    scheduler->holdoutOffsetD += nBackDelta;     //get nbackdelta
-                    if(scheduler->holdoutOffsetD>0) {
-                        holdoutDelta = nBackDelta - scheduler->holdoutOffsetD;
-                        nBackDelta = scheduler->holdoutOffsetD;
+                    if (updateHoldoutOffset)
+                    {
+                        scheduler->holdoutOffsetD += nBackDeltaHoldout;     //get nbackdelta
+                        if(scheduler->holdoutOffsetD>0) {
+                            holdoutDelta = nBackDeltaHoldout - scheduler->holdoutOffsetD;
+                            nBackDeltaHoldout = scheduler->holdoutOffsetD;
                     
-                        scheduler->nBackLevelD += scheduler->holdoutOffsetD;
-                        scheduler->holdoutOffsetD = 0;              //reset offset
-                    }
-                    else {
-                        holdoutDelta = nBackDelta;
-                        nBackDelta = 0.0;
+                            scheduler->nBackLevelD += scheduler->holdoutOffsetD;
+                            scheduler->holdoutOffsetD = 0;              //reset offset
+                        }
+                        else {
+                            holdoutDelta = nBackDeltaHoldout;
+                            nBackDelta = 0.0;
+                        }
                     }
                 }
                 else
                 {
                     scheduler->nBackLevelD += nBackDelta;
+                    if (scheduler->holdoutLevelD < scheduler->HOLDOUT_CHECKPOINTD)
+                    {
+                        // If user is still not a holdout graduate, put their offset so they'll be at 1-Back
+                        scheduler->holdoutOffsetD = 1 - scheduler->nBackLevelD;
+                    }
                 }
                 if (scheduler->nBackLevelD < 1.0) scheduler->nBackLevelD = 1.0;
             }
@@ -3710,16 +3878,9 @@ void Player::assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* lev
     // Update total score
     scheduler->scoreCurr += score;
     
-    // Update holdout experience based on performance
-    if(nBackDelta > 0 && level.hasHoldout() && scheduler->currentHoldout < 6.0)
-    {
-        scheduler->currentHoldout+=1.0;
-        if (scheduler->currentHoldout > 6.0)
-            scheduler->currentHoldout = 6.0;
-    }
-    
     // Record for reporting purposes
     levelToGrade->second.accuracy = accuracy;
+    levelToGrade->second.accuracyH = accuracyHoldout;
     levelToGrade->second.nBackDelta = nBackDelta;
     levelToGrade->second.nBackReturn = holdoutDelta;
     levelToGrade->second.nBackNoffset = playerOffset;

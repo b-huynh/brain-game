@@ -1269,12 +1269,13 @@ std::string Util::getMusicFile(const std::string & musicName)
     return "";
 }
 
-
+// Returns a random number from min and max [inclusive, inclusive]
 int Util::randRangeInt(int min, int max)
 {
     return min + rand () % (max - min + 1);
 }
 
+// Returns a random float from min and max
 float Util::randRangeFloat(float min, float max)
 {
     return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
@@ -1903,6 +1904,11 @@ void Util::tuneProficiencyExam(ConfigGlobal & globals, float initSpeed, float le
 float Util::getModdedLengthByNumSegments(const ConfigGlobal & globals, int numSegments)
 {
     return (globals.tunnelSegmentDepth + globals.tunnelSegmentBuffer) / globals.globalModifierCamSpeed * numSegments;
+}
+
+bool PodInfo::hasHoldout() const
+{
+    return podColor == POD_COLOR_HOLDOUT || podShape == POD_SHAPE_HOLDOUT || podSound == POD_SOUND_HOLDOUT;
 }
 
 void PodInfo::performHoldout(LevelPhase phase, bool sound)

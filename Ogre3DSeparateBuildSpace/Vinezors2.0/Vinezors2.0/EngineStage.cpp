@@ -165,6 +165,18 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_PROMPT:
         {
+            // Navigation Debug Keys
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             globals.setBigMessage("");
@@ -1086,7 +1098,7 @@ void EngineStage::activateReturnFromPopup()
 #if !defined(OGRE_IS_IOS)
 void EngineStage::mouseMoved(const OIS::MouseEvent &evt)
 {
-    if (stageState == STAGE_STATE_PAUSE)
+    if (stageState == STAGE_STATE_PAUSE || stageState == STAGE_STATE_PROMPT)
     {
         // Move the camera when paused
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);

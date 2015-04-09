@@ -47,7 +47,7 @@ struct Bin
 struct LevelScheduler
 {
     // Constructor
-    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0, double currentHoldout = 0.0 );
+    LevelScheduler( double nBackLevelA = 1.0, double nBackLevelB = 1.0, double bBackLevelC = 1.0, double nBackLevelD = 1.0, double nBackLevelE = 1.0 );
     
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > > schedule;
     // std::vector< std::vector< std::pair<StageRequest, PlayerProgress> > >::iterator scheduleIt;
@@ -73,11 +73,16 @@ struct LevelScheduler
     double nBackLevelD;
     double nBackLevelE;
     double scoreCurr;
-    double currentHoldout;
 
     double holdoutOffsetA;
     double holdoutOffsetB;
     double holdoutOffsetD;
+    const int HOLDOUT_CHECKPOINTA = 3;
+    const int HOLDOUT_CHECKPOINTB = 3;
+    const int HOLDOUT_CHECKPOINTD = 4;
+    int holdoutLevelA;
+    int holdoutLevelB;
+    int holdoutLevelD;
 
     double speedA;
     double speedB;
@@ -106,12 +111,13 @@ struct LevelScheduler
     int rand_num( int lower, int upper );
     int predictAverageStartingSpeed(int initVel);
     
-    friend std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
-    friend std::istream& operator>>(std::istream& in, LevelScheduler& sch);
+    
+    void saveScheduler1_1(std::ostream& out);
+    
+    void loadScheduler1_0(std::istream& in);
+    void loadScheduler1_1(std::istream& in);
 };
 
-std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
-std::istream& operator>>(std::istream& in, LevelScheduler& sch);
 //________________________________________________________________________________________
 
 #endif /* defined(__Vinezors2_0__LevelScheduler__) */

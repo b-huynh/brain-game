@@ -46,6 +46,8 @@ private:
     int numSafeHoldout;
     int numMissedHoldout;
     int numWrongHoldout;
+    int numIgnoredHoldout;    // Unsuccessful Pickups
+    int numPickupsHoldout;    // Successful Pickups
     
     int numCorrectBonus;
     int numCorrectCombo;
@@ -154,6 +156,8 @@ private:
         int FNh;
         int ignored;
         int pickups;
+        int ignoredH;
+        int pickupsH;
         int obsHit;
         int obsAvoided;
         int score;
@@ -320,6 +324,8 @@ public:
     int getNumSafeHoldout() const;
     int getNumMissedHoldout() const;
     int getNumWrongHoldout() const;
+    int getNumIgnoredHoldout() const;
+    int getNumPickupsHoldout() const;
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;

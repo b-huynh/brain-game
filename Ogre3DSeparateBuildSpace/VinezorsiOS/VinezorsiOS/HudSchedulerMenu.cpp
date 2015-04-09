@@ -708,7 +708,10 @@ void HudSchedulerMenu::setSelection()
     }
     else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
     {
-        potential += "M";
+        if (level.hasHoldout())
+            potential += "H";
+        else
+            potential += "M";
     }
     else if(level.phaseX == PHASE_COLLECT)
     {
@@ -746,6 +749,10 @@ void HudSchedulerMenu::setSelection()
     {
         completed = progress.rating >= 5 ? "yes" : "no";
         accuracy = Util::toStringInt(progress.accuracy * 100.0);
+        if (level.hasHoldout())
+        {
+            accuracy = "(" + Util::toStringInt(progress.accuracyH * 100.0) + ") " + accuracy;
+        }
         if (level.phaseX != PHASE_COLLECT)
         {
             int criteria = 0;
@@ -765,9 +772,17 @@ void HudSchedulerMenu::setSelection()
                     break;
             }
             mistakes = Util::toStringInt(progress.numWrong);
+            if (level.hasHoldout())
+                mistakes = "(" + Util::toStringInt(progress.numWrongH) + ") " + mistakes;
             missed = Util::toStringInt(progress.numMissed);
+            if (level.hasHoldout())
+                missed = "(" + Util::toStringInt(progress.numMissedH) + ") " + missed;
             pickups = Util::toStringInt(progress.numPickups) + " / " + Util::toStringInt(progress.numSafe + progress.numWrong);
+            if (level.hasHoldout())
+                pickups = "(" + Util::toStringInt(progress.numPickupsH) + ") " + pickups;
             collected = Util::toStringInt(progress.numCorrect) + " / " + Util::toStringInt(criteria);
+            if (level.hasHoldout())
+                collected = "(" + Util::toStringInt(progress.numCorrectH) + ") " + collected;
         }
         else
         {
@@ -794,7 +809,10 @@ void HudSchedulerMenu::setSelection()
         }
         else if(!tooEasy && (level.phaseX != PHASE_COLLECT))
         {
-            delta += "M";
+            if (level.hasHoldout())
+                delta += "H";
+            else
+                delta += "M";
         }
         else if(level.phaseX == PHASE_COLLECT)
         {

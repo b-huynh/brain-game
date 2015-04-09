@@ -381,6 +381,9 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
          << "holdoutOffsetA: " << holdoutOffsetA << endl
          << "holdoutOffsetB: " << holdoutOffsetB << endl
          << "holdoutOffsetD: " << holdoutOffsetD << endl
+         << "holdoutLevelA: " << holdoutLevelA << endl
+         << "holdoutLevelB: " << holdoutLevelB << endl
+         << "holdoutLevelD: " << holdoutLevelD << endl
          << "Man Recess: " << manRecess <<endl
          <<  "__________________________________" << endl;
     // */
@@ -458,13 +461,23 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     holdColor = false;
                     holdShape = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
                 else if (holdoutLevelA == 1)
                 {
                     holdSound = false;
                     holdShape = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
-                holdoutLevel = std::max(holdoutLevelA - HOLDOUT_CHECKPOINTA, 0);
+                else if (holdoutLevelA == 2)
+                {
+                    // normal 1-back holdout
+                    holdoutLevel = 999; // highest holdout intensity
+                }
+                else
+                {
+                    holdoutLevel = std::max(holdoutLevelA - HOLDOUT_CHECKPOINTA, 0);
+                }
                 playerOffset = holdoutOffsetA;
                 break;
             case PHASE_SHAPE_SOUND:
@@ -478,13 +491,23 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     holdColor = false;
                     holdShape = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
                 else if (holdoutLevelB == 1)
                 {
                     holdColor = false;
                     holdSound = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
-                holdoutLevel = std::max(holdoutLevelB - HOLDOUT_CHECKPOINTB, 0);
+                else if (holdoutLevelB == 2)
+                {
+                    // normal 1-back holdout
+                    holdoutLevel = 999; // highest holdout intensity
+                }
+                else
+                {
+                    holdoutLevel = std::max(holdoutLevelB - HOLDOUT_CHECKPOINTB, 0);
+                }
                 playerOffset = holdoutOffsetB;
                 break;
             case PHASE_SOUND_ONLY:
@@ -502,22 +525,29 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 {
                     holdColor = false;
                     holdShape = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
                 else if (holdoutLevelD == 1)
                 {
                     holdColor = false;
                     holdSound = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
                 else if (holdoutLevelD == 2)
                 {
                     holdShape = false;
                     holdSound = false;
+                    holdoutLevel = 999; // highest holdout intensity
                 }
                 else if (holdoutLevelD == 3)
                 {
-                    holdSound = false;
+                    // normal 1-back holdout
+                    holdoutLevel = 999; // highest holdout intensity
                 }
-                holdoutLevel = std::max(holdoutLevelD - HOLDOUT_CHECKPOINTD, 0);
+                else
+                {
+                    holdoutLevel = std::max(holdoutLevelD - HOLDOUT_CHECKPOINTD, 0);
+                }
                 playerOffset = holdoutOffsetD;
                 break;
             default:

@@ -41,6 +41,14 @@ private:
     int numWrongTotal;
     int numIgnoredTotal;    // Unsuccessful Pickups
     int numPickupsTotal;    // Successful Pickups
+    
+    int numCorrectHoldout;
+    int numSafeHoldout;
+    int numMissedHoldout;
+    int numWrongHoldout;
+    int numIgnoredHoldout;    // Unsuccessful Pickups
+    int numPickupsHoldout;    // Successful Pickups
+    
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
@@ -142,8 +150,14 @@ private:
         int FP;
         int TN;
         int FN;
+        int TPh;
+        int FPh;
+        int TNh;
+        int FNh;
         int ignored;
         int pickups;
+        int ignoredH;
+        int pickupsH;
         int obsHit;
         int obsAvoided;
         int score;
@@ -158,6 +172,9 @@ private:
         float holdoutOffsetA;
         float holdoutOffsetB;
         float holdoutOffsetD;
+        int holdoutLevelA;
+        int holdoutLevelB;
+        int holdoutLevelD;
         float speedA;
         float speedB;
         float speedC;
@@ -303,6 +320,12 @@ public:
     int getNumMissedTotal() const;
     int getNumWrongTotal() const;
     int getNumPickupsTotal() const;
+    int getNumCorrectHoldout() const;
+    int getNumSafeHoldout() const;
+    int getNumMissedHoldout() const;
+    int getNumWrongHoldout() const;
+    int getNumIgnoredHoldout() const;
+    int getNumPickupsHoldout() const;
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
@@ -480,7 +503,7 @@ public:
     bool saveSession(std::string file);
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
-    bool loadProgress1_5(std::string savePath);
+    bool loadProgress1_6(std::string savePath);
     bool loadProgress(std::string savePath);
     
     std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);

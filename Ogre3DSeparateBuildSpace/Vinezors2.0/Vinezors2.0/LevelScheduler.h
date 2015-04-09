@@ -77,8 +77,8 @@ struct LevelScheduler
     double holdoutOffsetA;
     double holdoutOffsetB;
     double holdoutOffsetD;
-    const int HOLDOUT_CHECKPOINTA = 2;
-    const int HOLDOUT_CHECKPOINTB = 2;
+    const int HOLDOUT_CHECKPOINTA = 3;
+    const int HOLDOUT_CHECKPOINTB = 3;
     const int HOLDOUT_CHECKPOINTD = 4;
     int holdoutLevelA;
     int holdoutLevelB;
