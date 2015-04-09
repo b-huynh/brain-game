@@ -1122,15 +1122,53 @@ void TunnelSlice::clearPods()
 
 void TunnelSlice::updateGrowth(float nt)
 {
+    if (!this->tunnelObjInitAnimationDone) {
+        // grow tunnel obj until it hits 1.3
+        if (!this->tunnelObjGrown) {
+            // cout << "grow" << endl;
+            growthT += nt;
+            if (growthT >= 1.3) {
+                this->tunnelObjGrown = true;
+            }
+        }
+        
+        // shrink tunnel obj until it goes back to 1.0
+        if (this->tunnelObjGrown) {
+            // cout << "shrink" << endl;
+            growthT -= nt;
+            if (growthT < 1.0) {
+                growthT = 1.0;
+                this->tunnelObjInitAnimationDone = true;
+                this->tunnelObjGrown = false;
+            }
+        }
+    }
+    else {
+        // keep tunnel obj at 1.0 once the init animation is done
+        growthT = 1.0;
+    }
+    
+    for (int i = 0; i < pods.size(); ++i) {
+        if (tunnelObjGrown) {
+            pods[i]->setPodCrystalGrown(true);
+        }
+        pods[i]->setToGrowth(growthT);
+    }
+    
+    /* // Original spawn growth animation
     growthT += nt;
-    if (growthT > 1) growthT = 1;
+    if (growthT > 1.0) growthT = 1;
     if (growthT < 0) growthT = 0;
+    
     for (int i = 0; i < pods.size(); ++i)
         pods[i]->setToGrowth(growthT);
+    */
 }
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
 {
+    this->tunnelObjInitAnimationDone = false;
+    this->tunnelObjGrown = false;
     this->tunnelSliceID = nid;
     this->type = type;
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
@@ -1168,6 +1206,8 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
 {
+    this->tunnelObjInitAnimationDone = false;
+    this->tunnelObjGrown = false;
     this->tunnelSliceID = nid;
     this->type = type;
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;

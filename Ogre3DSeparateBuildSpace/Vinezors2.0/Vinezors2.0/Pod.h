@@ -27,8 +27,12 @@ private:
     
     SceneNode* glowNode;                // Extraction glow for selection. Particularly for tractor beam
     ParticleSystem* glowEffect;
+    
     SceneNode* indicatorNode;           // Indicator used to tell player it is a good target
     ParticleSystem* indicatorEffect;
+    
+    SceneNode* uncloakNode;
+    ParticleSystem* uncloakPFX;         // Indicator used to get player's attention that a new pod has appeared
     
     int hazardID;
     SceneNode* bPFXNode;
@@ -61,6 +65,8 @@ private:
     bool podTrigger;    // Feedback on collision or when completely passed, memory signals set this to false, obstacles set this to true
     bool podGood;       // *** Should remove if continuing with multiple N-Backs test
     bool podZapped;
+    bool podCrystalGrown;
+    bool uncloaked;
     
     Vector3 dest;
 public:
@@ -99,6 +105,7 @@ public:
     ParticleSystem* getGlowEffect() const;
     SceneNode* getIndicatorNode() const;
     ParticleSystem* getIndicatorEffect() const;
+    ParticleSystem* getUncloakPFX() const;
     OgreOggSound::OgreOggISound* getSignalSound() const;
     
     bool isPodTested() const;
@@ -106,16 +113,19 @@ public:
     bool getPodTrigger() const;
     bool isPodGood() const;
     bool isPodZapped() const;
+    bool isPodCrystalGrown() const;
     
 	void move(Vector3 delta);
 	
     void setToGrowth(float t);
     void setSkin();
+    void setPodCrystalGrown(bool tf);
     void takePod();
     void zapPod();
     void hidePod();
     void revealPod();
     void uncloakPod();
+    void generateUncloakPFX();
     void generateGlow(PodColor color, PodShape shape);
     void generateHoldoutEffect();
     void generateIndicator();
@@ -131,6 +141,7 @@ public:
     void removeGlow();
     void removeIndicator();
 	void removeFromScene();
+    void removeUncloakPFX();
     
 	void update(float elapsed);
     

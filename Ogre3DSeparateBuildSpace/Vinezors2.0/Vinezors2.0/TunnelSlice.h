@@ -116,6 +116,10 @@ public:
     void connect(TunnelSlice* next);
     void disconnect();
     void clearPods();
+    
+    // these two bools are used to determine which stage of animation
+    bool tunnelObjGrown = false;
+    bool tunnelObjInitAnimationDone = false;
     void updateGrowth(float nt);
     
     void rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material);

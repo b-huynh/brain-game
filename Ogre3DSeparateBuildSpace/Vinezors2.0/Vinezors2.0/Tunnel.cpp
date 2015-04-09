@@ -1954,7 +1954,11 @@ void Tunnel::update(float elapsed)
     }
     
     // Animate Pod Growing outwards or Growing inwards
-    const float GROWTH_SPEED = player->getFinalSpeed() / 10.0;
+    const float GROWTH_SPEED = 3.0;
+    // const float GROWTH_SPEED = player->getFinalSpeed() / 5.0;
+    // cout << "Growth: " << GROWTH_SPEED << endl;
+    // cout << "Elapsed: " << elapsed << endl;
+    
     TunnelSlice* nextSliceM = getNext(globals.podAppearance);
     if (nextSliceM) {
         nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
@@ -1963,6 +1967,8 @@ void Tunnel::update(float elapsed)
     if (nextSliceM) {
         nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
     }
+    
+    
     
     // Check to see if we need to recycle tunnel segments
     if (!flyOut && updateIterators(player->getCamPos())) {
@@ -1983,8 +1989,10 @@ void Tunnel::update(float elapsed)
         {
             std::vector<Pod*> pods = nextSliceN->getPods();
             for (int i = 0; i < pods.size(); ++i) {
-                pods[i]->uncloakPod();
-                player->playSound(pods[i]->getSignalSound());
+//                pods[i]->uncloakPod();
+//                pods[i]->generateUncloakPFX();
+//                player->playSound(pods[i]->getSignalSound());
+                
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
                 {
