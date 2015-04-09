@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "890"
             endingLineNumber = "890"
-            landmarkName = "HudStudySettings::initOverlay()"
+            landmarkName = "HudStudySettings::dealloc()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

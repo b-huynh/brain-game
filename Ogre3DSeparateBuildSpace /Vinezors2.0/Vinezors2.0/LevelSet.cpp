@@ -12,7 +12,7 @@
 
 extern Util::ConfigGlobal globals;
 
-void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdout, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled)
+void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDifficulty DIFFICULTY_X, StageDuration DURATION_X, float holdoutPerc, float holdColor, float holdShape, float holdSound, int hlevel, int UNL, bool newNavEnabled, bool indRecessEnabled, bool indRecessFixedEnabled)
 {
     // These are set for all levels regardless of phase/diffuculty
     // Not entirely sure on collection requirements as of now
@@ -77,18 +77,18 @@ void StageRequest::generateStageRequest(int nback, LevelPhase PHASE_X, StageDiff
     ret->phaseX = PHASE_X;
     ret->difficultyX = DIFFICULTY_X;
     ret->durationX = DURATION_X;
-    ret->holdoutPerc = holdout / 100.0;
+    ret->holdoutPerc = holdoutPerc / 100.0;
     ret->UserNavLevel = UNL;
     ret->stageTime = duration;
     
-    if (holdoutPerc > 0.0)
+    if (ret->holdoutPerc > 0.0)
     {
         ret->holdoutStart = 0.20;
         ret->holdoutEnd = 0.80;
         ret->holdoutLevel = hlevel;
-        ret->holdoutSound = 1;
-        ret->holdoutColor = 1;
-        ret->holdoutShape = 1;
+        ret->holdoutSound = holdSound;
+        ret->holdoutColor = holdColor;
+        ret->holdoutShape = holdShape;
     }
     else
     {
@@ -500,6 +500,7 @@ void LevelSet::initializeLevelSet()
     level.navLevels.push_back(NavigationLevel(0, 2, 0));
     for (int i = 0; i < TOTAL_COLLECTIONS; ++i)
         level.collectionCriteria.push_back(CollectionCriteria(1));
+    //POWER UP UNCOMMENT: Testing the holdout matches.
     //level.powerups.push_back(POWERUP_TIME_WARP);
     level.nameTunnelTile = "General/WallBindingA";
     level.nameSkybox = "General/BlankStarrySkyPlane";
@@ -510,12 +511,12 @@ void LevelSet::initializeLevelSet()
     level.initCamSpeed = 10;
     level.minCamSpeed = 10;
     level.maxCamSpeed = 40;
-    level.holdoutPerc = 0.00;
-    level.holdoutStart = 0.0;
-    level.holdoutEnd = 0.0;
-    level.holdoutSound = 0;
-    level.holdoutColor = 0;
-    level.holdoutShape = 0;
+    level.holdoutPerc = 1.00;
+    level.holdoutStart = 0.0; //.2
+    level.holdoutEnd = 0.0;  //.8
+    level.holdoutSound = 0; //0
+    level.holdoutColor = 0; //0
+    level.holdoutShape = 0; //0
     stageList[0][1] = level;
     
     /////////////////////
@@ -686,9 +687,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[1][1] = level;
     
     /////////////////////
@@ -717,9 +718,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[1][2] = level;
     
     /////////////////////
@@ -773,9 +774,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[1][4] = level;
     
     /////////////////////
@@ -853,9 +854,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[2][1] = level;
     
     /////////////////////
@@ -884,9 +885,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[2][2] = level;
     
     /////////////////////
@@ -940,9 +941,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[2][4] = level;
     
     /////////////////////
@@ -1020,9 +1021,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[3][1] = level;
     
     /////////////////////
@@ -1051,9 +1052,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[3][2] = level;
     
     /////////////////////
@@ -1107,9 +1108,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[3][4] = level;
     
     /////////////////////
@@ -1187,9 +1188,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[4][1] = level;
     
     /////////////////////
@@ -1218,9 +1219,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[4][2] = level;
     
     /////////////////////
@@ -1274,9 +1275,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[4][4] = level;
     
     /////////////////////
@@ -1354,9 +1355,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[5][1] = level;
     
     /////////////////////
@@ -1385,9 +1386,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[5][2] = level;
     
     /////////////////////
@@ -1441,9 +1442,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[5][4] = level;
     
     /////////////////////
@@ -1521,9 +1522,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[6][1] = level;
     
     /////////////////////
@@ -1552,9 +1553,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[6][2] = level;
     
     /////////////////////
@@ -1608,9 +1609,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[6][4] = level;
     
     /////////////////////
@@ -1688,9 +1689,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[7][1] = level;
     
     /////////////////////
@@ -1719,9 +1720,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[7][2] = level;
     
     /////////////////////
@@ -1775,9 +1776,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[7][4] = level;
     
     /////////////////////
@@ -1857,9 +1858,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[8][1] = level;
     
     /////////////////////
@@ -1888,9 +1889,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[8][2] = level;
     
     /////////////////////
@@ -1944,9 +1945,9 @@ void LevelSet::initializeLevelSet()
     level.holdoutPerc = 1.00;
     level.holdoutStart = 0.20;
     level.holdoutEnd = 0.80;
-    level.holdoutSound = 1;
-    level.holdoutColor = 1;
-    level.holdoutShape = 1;
+    level.holdoutSound = 0;
+    level.holdoutColor = 0;
+    level.holdoutShape = 0;
     stageList[8][4] = level;
     
     /////////////////////

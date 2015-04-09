@@ -99,7 +99,7 @@ struct PodInfo
     {}
     
     void performHoldout(LevelPhase phase, bool sound);
-    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
+    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape, bool applyConstraints, PodInfo prevMatch);
 };
 
 // Vine Info

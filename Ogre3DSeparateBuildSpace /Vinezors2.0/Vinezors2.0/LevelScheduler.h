@@ -78,6 +78,9 @@ struct LevelScheduler
     double holdoutOffsetA;
     double holdoutOffsetB;
     double holdoutOffsetD;
+    int holdoutLevelA;
+    int holdoutLevelB;
+    int holdoutLevelD;
 
     double speedA;
     double speedB;
@@ -106,12 +109,13 @@ struct LevelScheduler
     int rand_num( int lower, int upper );
     int predictAverageStartingSpeed(int initVel);
     
-    friend std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
-    friend std::istream& operator>>(std::istream& in, LevelScheduler& sch);
+    
+    void saveScheduler1_1(std::ostream& out);
+    
+    void loadScheduler1_0(std::istream& in);
+    void loadScheduler1_1(std::istream& in);
 };
 
-std::ostream& operator<<(std::ostream& out, const LevelScheduler& sch);
-std::istream& operator>>(std::istream& in, LevelScheduler& sch);
 //________________________________________________________________________________________
 
 #endif /* defined(__Vinezors2_0__LevelScheduler__) */
