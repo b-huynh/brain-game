@@ -1346,17 +1346,17 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         frequencyValues.push_back(85.5);
         frequencyValues.push_back(95.0);
         std::vector<float> uboundTimes;
-        uboundTimes.push_back(0.500f);
-        uboundTimes.push_back(0.425f);
-        uboundTimes.push_back(0.350f);
-        uboundTimes.push_back(0.275f);
-        uboundTimes.push_back(0.200f);
+        uboundTimes.push_back(0.600f);
+        uboundTimes.push_back(0.525f);
+        uboundTimes.push_back(0.450f);
+        uboundTimes.push_back(0.375f);
+        uboundTimes.push_back(0.300f);
         
         bool timevar = false;
         float timefreq;
         
         //Percentage of stage time being withheld
-        float starttime = holdoutStart;
+        float starttime = 0.2; //holdoutStart;
         //float endtime = holdoutEnd;
         float endtime = uboundTimes[std::min(holdoutLevel, (int)(uboundTimes.size() - 1))];
         

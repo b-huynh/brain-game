@@ -359,7 +359,8 @@ void Pod::loadSignalSound()
             signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), pod4sound, false, false, true);
             break;
         case POD_SOUND_HOLDOUT:
-            signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), holdoutsound, false, false, true);
+            signalSound = NULL;
+            //signalSound = OgreFramework::getSingletonPtr()->m_pSoundMgr->createSound("SoundPod" + Util::toStringInt(podID), holdoutsound, false, false, true);
             break;
         default:
             signalSound = NULL;
