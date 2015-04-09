@@ -1,3 +1,33 @@
+particle_system General/UncloakPFX
+{
+    material        General/Star
+    particle_width  4.0
+    particle_height 4.0
+    cull_each       true
+    quota           200
+    billboard_type  point
+    local_space	    false
+
+    // Area emitter
+    emitter Ring
+    {
+        angle            45
+        position         0 3 0
+        direction        0 1 0
+        inner_width      0.9
+        inner_height     0.9
+        inner_depth      0.9
+        width 3
+        height 3
+        depth 1
+        emission_rate    1000
+        time_to_live     0.25
+        velocity         35
+        duration         0.1
+        colour           1 1 1
+    }
+}
+
 particle_system General/StarBoost
  {
     material        General/Star    

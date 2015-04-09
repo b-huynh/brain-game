@@ -16,14 +16,15 @@ static int podID = 0;
 static int glowID = 0;
 static int indicatorID = 0;
 static int headEffectID = 0;
+static int uncloakPfxID = 0;
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false)
 {
 }
 
 Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), uncloakNode(NULL), uncloakPFX(NULL),base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false)
 {
     loadPod();
 }
@@ -51,7 +52,7 @@ void Pod::loadPod()
             break;
     }
     ++podID;
-
+    
 }
 
 void Pod::loadBasicShape()
@@ -110,7 +111,7 @@ void Pod::loadFuelCell()
 {
     removeFromScene();
     
-	float stemLength = base.distance(tip);
+    float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
@@ -234,7 +235,7 @@ void Pod::loadFlower()
 {
     removeFromScene();
     
-	float stemLength = base.distance(tip);
+    float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
@@ -253,7 +254,7 @@ void Pod::loadHazard()
 {
     removeFromScene();
     
-	float stemLength = base.distance(tip);
+    float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
@@ -266,7 +267,7 @@ void Pod::loadHazard()
     Entity* stemContentEntity = stem->getCreator()->createEntity("stemEntity" + Util::toStringInt(podID), "Barriers/obelisk.mesh");
     headContentEntity->setMaterialName("General/BarrierMaterial");
     stemContentEntity->setMaterialName("General/BarrierMaterial");
-
+    
     head->attachObject(headContentEntity);
     head->setOrientation(globals.tunnelReferenceUpward.getRotationTo(v));
     head->setPosition(base);
@@ -279,7 +280,7 @@ void Pod::loadHazard()
     stem->setPosition(base);
     stem->translate(Vector3(3.5, 0.0, 0.0), Ogre::Node::TS_LOCAL);
     stem->roll(Degree(5.0));
-
+    
     hazardID = podID;
     
     setToGrowth(0.0);
@@ -289,7 +290,7 @@ void Pod::loadPowerup()
 {
     removeFromScene();
     
-	float stemLength = base.distance(tip);
+    float stemLength = base.distance(tip);
     entirePod = parentNode->createChildSceneNode("entirePodNode" + Util::toStringInt(podID));
     Vector3 v = tip - base;
     
@@ -297,13 +298,13 @@ void Pod::loadPowerup()
     switch (podColor)
     {
         case POD_COLOR_PINK:
-//            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/TractorBeam.mesh");
+            //            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/TractorBeam.mesh");
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "sphereMesh");
             headContentEntity->setMaterialName("General/PodRed");
             break;
         case POD_COLOR_GREEN:
-            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID),"Ships/runnerShip.mesh" );//"Powerups/slowdown.mesh");
-            //headContentEntity->getSubEntity(0)->setMaterialName("General");//"slowdown/Bubble");
+            headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/slowdown.mesh");
+            headContentEntity->getSubEntity(0)->setMaterialName("slowdown/Bubble");
             break;
         case POD_COLOR_BLUE:
             headContentEntity = head->getCreator()->createEntity("headEntity" + Util::toStringInt(podID), "Powerups/shields.mesh");
@@ -342,7 +343,7 @@ void Pod::loadSignalSound()
         pod4sound = "pod2b.wav";
         holdoutsound = "holdoutb.wav";
     }
-   
+    
     switch (podSound)
     {
         case POD_SOUND_1:
@@ -414,7 +415,7 @@ void Pod::setToGrowth(float t)
     else if (mtype == POD_POWERUP)
     {
         head->setScale(Vector3(t * headRadius / 1.5, t * headRadius / 1.5, t * headRadius / 1.5));
-//        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
+        //        head->setScale(Vector3(t * headRadius * 1.5, t * headRadius * 1.5, t * headRadius * 1.5));
     }
     else if (mtype == POD_CRYSTAL)
     {
@@ -426,32 +427,53 @@ void Pod::setToGrowth(float t)
         else if (podShape == POD_SHAPE_DIAMOND)
             scaleMult = 1.2;
         
-        head->setScale(Vector3(headRadius, t * headRadius, headRadius) * scaleMult);
+        // std::cout << "head: " << headRadius << std::endl;
+        // std::cout << "t * head: " << t * headRadius << std::endl;
+        head->setScale(Vector3(headRadius, t * t * headRadius, headRadius) * scaleMult);
         
-        //setRotateSpeed(direction * 2);
-        //rotateSpeed = 2 + 98 * (1 - t);
-        //setRotateSpeed(direction * rotateSpeed);
+        if (podCrystalGrown && !uncloaked) {
+            this->uncloakPod();
+            this->generateUncloakPFX();
+            this->signalSound = getSignalSound();
+            if (signalSound)
+            {
+                signalSound->setVolume(0.50f);
+                signalSound->stop();
+                signalSound->play();
+            }
+            std::cout << "SIGNAL SOUND: " << this->signalSound;
+            uncloaked = true;
+            podCrystalGrown = false;
+        }
+        
+        if (uncloakPFX) {
+            // uncloakPFX->setDefaultDimensions(uncloakPFX->getDefaultHeight() - 0.2, uncloakPFX->getDefaultWidth() - 0.2);
+        }
+        
+        // setRotateSpeed(direction * 2);
+        // rotateSpeed = 2 + 98 * (1 - t);
+        // setRotateSpeed(direction * rotateSpeed);
     }
 }
 
 PodSignal Pod::getPodSignal() const
 {
-	return podSignal;
+    return podSignal;
 }
 
 PodColor Pod::getPodColor() const
 {
-	return podColor;
+    return podColor;
 }
 
 PodShape Pod::getPodShape() const
 {
-	return podShape;
+    return podShape;
 }
 
 PodSound Pod::getPodSound() const
 {
-	return podSound;
+    return podSound;
 }
 
 SceneNode* Pod::getEntirePod() const
@@ -461,22 +483,22 @@ SceneNode* Pod::getEntirePod() const
 
 SceneNode* Pod::getStem() const
 {
-	return stem;
+    return stem;
 }
 
 SceneNode* Pod::getHead() const
 {
-	return head;
+    return head;
 }
 
 Vector3 Pod::getDest() const
 {
-	return dest;
+    return dest;
 }
 
 Vector3 Pod::getPosition() const
 {
-	return entirePod->getPosition();
+    return entirePod->getPosition();
 }
 
 Direction Pod::getLoc() const
@@ -524,6 +546,11 @@ ParticleSystem* Pod::getIndicatorEffect() const
     return indicatorEffect;
 }
 
+ParticleSystem* Pod::getUncloakPFX() const
+{
+    return uncloakPFX;
+}
+
 OgreOggSound::OgreOggISound* Pod::getSignalSound() const
 {
     return signalSound;
@@ -552,6 +579,16 @@ bool Pod::isPodGood() const
 bool Pod::isPodZapped() const
 {
     return podZapped;
+}
+
+bool Pod::isPodCrystalGrown() const
+{
+    return podCrystalGrown;
+}
+
+void Pod::setPodCrystalGrown(bool tf)
+{
+    podCrystalGrown = tf;
 }
 
 void Pod::move(Vector3 delta)
@@ -589,7 +626,7 @@ void Pod::takePod()
     if (!podTaken)
     {
         podTaken = true;
-    
+        
         materialName += "Transparent";
         if (mtype == POD_POWERUP)
             hidePod();
@@ -646,6 +683,19 @@ void Pod::uncloakPod()
     if (podTaken || isIndicatorVisible())
         materialName += "Transparent";
     setSkin();
+}
+
+void Pod::generateUncloakPFX()
+{
+    if (!uncloakNode && (mtype == POD_CRYSTAL))
+    {
+        uncloakNode = head->createChildSceneNode("UncloakNode" + Util::toStringInt(uncloakPfxID));
+        std::string particleName = "General/UncloakPFX";
+        uncloakPFX = uncloakNode->getCreator()->createParticleSystem("UncloakFX" + Util::toStringInt(uncloakPfxID), particleName);
+        uncloakNode->attachObject(uncloakPFX);
+        ++uncloakPfxID;
+        int numEmit = uncloakPFX->getNumEmitters();
+    }
 }
 
 void Pod::generateGlow(PodColor color, PodShape shape)
@@ -720,39 +770,39 @@ void Pod::generateGlow(PodColor color, PodShape shape)
 
 void Pod::generateHoldoutEffect()
 {
-        if (!headContentEffect)
+    if (!headContentEffect)
+    {
+        std::string headEffectName = "General/HoldOutPod";
+        headContentEffect = head->getCreator()->createParticleSystem("HeadEffect" + Util::toStringInt(headEffectID), headEffectName);
+        Ogre::ColourValue emitterColor;
+        switch (podColor)
         {
-            std::string headEffectName = "General/HoldOutPod";
-            headContentEffect = head->getCreator()->createParticleSystem("HeadEffect" + Util::toStringInt(headEffectID), headEffectName);
-            Ogre::ColourValue emitterColor;
-            switch (podColor)
-            {
-                case POD_COLOR_BLUE:
-                    emitterColor = Ogre::ColourValue(0.0,0.5,1.0);
-                    break;
-                case POD_COLOR_GREEN:
-                    emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
-                    break;
-                case POD_COLOR_PINK:
-                    emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
-                    break;
-                case POD_COLOR_YELLOW:
-                    emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
-                    break;
-                case POD_COLOR_PURPLE:
-                    emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
-                    break;
-                case POD_COLOR_HOLDOUT:
-                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
-                    break;
-                default:
-                    emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
-                    break;
-            }
-            headContentEffect->getEmitter(0)->setColour(emitterColor);
-            head->attachObject(headContentEffect);
-            ++headEffectID;
+            case POD_COLOR_BLUE:
+                emitterColor = Ogre::ColourValue(0.0,0.5,1.0);
+                break;
+            case POD_COLOR_GREEN:
+                emitterColor = Ogre::ColourValue(0.0,1.0,0.0);
+                break;
+            case POD_COLOR_PINK:
+                emitterColor = Ogre::ColourValue(1.0,0.0,0.0);
+                break;
+            case POD_COLOR_YELLOW:
+                emitterColor = Ogre::ColourValue(1.0,1.0,0.0);
+                break;
+            case POD_COLOR_PURPLE:
+                emitterColor = Ogre::ColourValue(1.0,0.0,1.0);
+                break;
+            case POD_COLOR_HOLDOUT:
+                emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                break;
+            default:
+                emitterColor = Ogre::ColourValue(1.0,1.0,1.0);
+                break;
         }
+        headContentEffect->getEmitter(0)->setColour(emitterColor);
+        head->attachObject(headContentEffect);
+        ++headEffectID;
+    }
 }
 
 void Pod::generateIndicator()
@@ -837,8 +887,24 @@ void Pod::removeIndicator()
     }
 }
 
+void Pod::removeUncloakPFX()
+{
+    if(uncloakNode) {
+        uncloakNode->getCreator()->destroyParticleSystem(uncloakPFX);
+        uncloakNode->removeAndDestroyAllChildren();
+        uncloakNode->getCreator()->destroySceneNode(uncloakNode);
+        uncloakNode = NULL;
+        uncloakPFX = NULL;
+    }
+}
+
 void Pod::removeFromScene()
 {
+    uncloaked = false;
+    if (uncloakNode) {
+        removeUncloakPFX();
+    }
+    
     if(bPFXNode) {
         bPFXNode->getCreator()->destroyParticleSystem(bPFX);
         head->getCreator()->destroySceneNode(bPFXNode);
@@ -896,7 +962,7 @@ void Pod::update(float elapsed)
     if (moveSpeed != 0.0)
     {
         Vector3 dist = dest - entirePod->getPosition();
-    
+        
         Vector3 norm = dist;
         norm.normalise();
         Vector3 delta = dist * moveSpeed * elapsed;
@@ -905,7 +971,7 @@ void Pod::update(float elapsed)
         if (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z >
             dist.x * dist.x + dist.y * dist.y + dist.z * dist.z)
             delta = dist;
-    
+        
         move(delta);
     }
     if (rotateSpeed != Vector3::ZERO)
@@ -919,7 +985,7 @@ void Pod::update(float elapsed)
         // Animate growth of barrier in the x-axis
         bPFX->getEmitter(0)->setParameter("width",Util::toStringFloat(bPFXwidth));
         
-         // Animate to orange particle barrier
+        // Animate to orange particle barrier
         bPFX->getEmitter(0)->setColour(ColourValue(0.5f,bPFXcolor / 2,bPFXcolor / 8));
         if( bPFXwidth+0.75f < 4.0f ) bPFXwidth += 0.75f;
         else bPFXwidth = 4.5f;
@@ -930,5 +996,5 @@ void Pod::update(float elapsed)
 
 Pod::~Pod()
 {
-
+    
 }

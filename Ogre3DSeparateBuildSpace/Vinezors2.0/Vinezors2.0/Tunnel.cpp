@@ -1339,7 +1339,6 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
         
-        
         std::vector<float> frequencyValues;
         frequencyValues.push_back(60.0);
         frequencyValues.push_back(68.5);
@@ -1929,8 +1928,11 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 
 void Tunnel::update(float elapsed)
 {
+    
     if (!isDone() && !player->isPowerUpActive("TimeWarp"))
     {
+        
+        
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
         tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
@@ -1938,25 +1940,30 @@ void Tunnel::update(float elapsed)
         //totalDistance += elapsedAdjusted;
         totalElapsed += elapsedAdjusted;
         
-       //Only implement if Recess or FuelActive
-        if(  (globals.fuelEnabled) || (phaseX == PHASE_COLLECT) ) 
+        //Only implement if Recess or FuelActive
+        if(  (globals.fuelEnabled) || (phaseX == PHASE_COLLECT) )
         {
             if (fuelBuffer > 0.0f)
                 fuelBuffer -= elapsedAdjusted;
             else
             {
-             
+                
                 fuelTimer -= fuelBuffer;
                 fuelBuffer = 0.0f;
                 fuelTimer -= elapsedAdjusted;
                 if (fuelTimer < 0.0)
                     fuelTimer = 0.0;
-             }
+            }
         }
+        
     }
     
     // Animate Pod Growing outwards or Growing inwards
-    const float GROWTH_SPEED = player->getFinalSpeed() / 10.0;
+    const float GROWTH_SPEED = 3.0;
+    // const float GROWTH_SPEED = player->getFinalSpeed() / 5.0;
+    // cout << "Growth: " << GROWTH_SPEED << endl;
+    // cout << "Elapsed: " << elapsed << endl;
+    
     TunnelSlice* nextSliceM = getNext(globals.podAppearance);
     if (nextSliceM) {
         nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
@@ -1965,6 +1972,8 @@ void Tunnel::update(float elapsed)
     if (nextSliceM) {
         nextSliceM->updateGrowth(GROWTH_SPEED * elapsed);
     }
+    
+    
     
     // Check to see if we need to recycle tunnel segments
     if (!flyOut && updateIterators(player->getCamPos())) {
@@ -1985,22 +1994,24 @@ void Tunnel::update(float elapsed)
         {
             std::vector<Pod*> pods = nextSliceN->getPods();
             for (int i = 0; i < pods.size(); ++i) {
-                pods[i]->uncloakPod();
-                player->playSound(pods[i]->getSignalSound());
-                //pods[i]->setRo2tateSpeed(Vector3(5.0, 5.0, 5.0));
+                //                pods[i]->uncloakPod();
+                //                pods[i]->generateUncloakPFX();
+                //                player->playSound(pods[i]->getSignalSound());
+                
+                //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
                 {
                     pods[i]->generateIndicator();
                     pods[i]->setVisibleIndicator(false);
                 }
                 /*
-#ifdef DEBUG_MODE
-                if (!pods[i]->getPodTrigger())
-                {
-                    pods[i]->generateIndicator();
-                    pods[i]->setVisibleIndicator(getPodIsGood(player->getToggleBack()) && player->getGodMode());
-                }
-#endif
+                 #ifdef DEBUG_MODE
+                 if (!pods[i]->getPodTrigger())
+                 {
+                 pods[i]->generateIndicator();
+                 pods[i]->setVisibleIndicator(getPodIsGood(player->getToggleBack()) && player->getGodMode());
+                 }
+                 #endif
                  */
                 // First time you saw your first correct item? TELL THEM
                 if (!pods[i]->getPodTrigger() && getPodIsGood(podIndex, 0) && getMode() != STAGE_MODE_RECESS && nback == 1)

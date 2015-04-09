@@ -259,7 +259,34 @@ protected:
     PanelOverlayElement* password_Choice1;
     PanelOverlayElement* password_Choice2;
     PanelOverlayElement* password_Choice3;
-
+    
+    //Holdout Min Frequency Levels
+    PanelOverlayElement* holdoutMinFrequencySettingsBackground;
+    TextAreaOverlayElement* holdoutMinFrequencyTextDisplay;
+    PanelOverlayElement* holdoutMinFrequencyNumberBackground;
+    TextAreaOverlayElement* holdoutMinFrequencyNumberTextDisplay;
+    
+    //Holdout Max Frequency Levels
+    TextAreaOverlayElement* holdoutMaxFrequencyTextDisplay;
+    PanelOverlayElement* holdoutMaxFrequencyNumberBackground;
+    TextAreaOverlayElement* holdoutMaxFrequencyNumberTextDisplay;
+    
+    //Holdout Min End Time Levels
+    PanelOverlayElement* holdoutMinEndTimeSettingsBackground;
+    TextAreaOverlayElement* holdoutMinEndTimeTextDisplay;
+    PanelOverlayElement* holdoutMinEndTimeNumberBackground;
+    TextAreaOverlayElement* holdoutMinEndTimeNumberTextDisplay;
+    
+    //Holdout Max End Time Levels
+    TextAreaOverlayElement* holdoutMaxEndTimeTextDisplay;
+    PanelOverlayElement* holdoutMaxEndTimeNumberBackground;
+    TextAreaOverlayElement* holdoutMaxEndTimeNumberTextDisplay;
+    
+    //Holdout Num Levels
+    TextAreaOverlayElement* holdoutNumTextDisplay;
+    PanelOverlayElement* holdoutNumNumberBackground;
+    TextAreaOverlayElement* holdoutNumNumberTextDisplay;
+    
     
     void link(Player* player);
     void unlink();
