@@ -165,6 +165,18 @@ void EngineStage::update(float elapsed)
         }
         case STAGE_STATE_PROMPT:
         {
+            // Navigation Debug Keys
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             /* // ===============================================================================================
@@ -1460,7 +1472,6 @@ void EngineStage::setup()
     {
         if (level.durationX == DURATION_SHORT)
         {
-            globals.startingHP = 5;
             globals.wrongAnswerTimePenalty = 3.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;
@@ -1468,7 +1479,6 @@ void EngineStage::setup()
         }
         else if (level.durationX == DURATION_NORMAL)
         {
-            globals.startingHP = 4;
             globals.wrongAnswerTimePenalty = 5.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;
@@ -1476,7 +1486,6 @@ void EngineStage::setup()
         }
         else
         {
-            globals.startingHP = 3;
             globals.wrongAnswerTimePenalty = 10.0;
             globals.podBinSize = 10;
             globals.stageTotalSignals = 120;

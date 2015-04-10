@@ -98,8 +98,9 @@ struct PodInfo
     : podExists(true), podSignal(psig), meshType(mtype), podColor(pcol), podShape(pshp), podSound(psod), podLoc(pl), goodPod(good), podTrigger(trigger), podTaken(taken), podZapped(zapped)
     {}
     
+    bool hasHoldout() const;
     void performHoldout(LevelPhase phase, bool sound);
-    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape);
+    void performHoldout(LevelPhase phase, bool sound, bool holdsound, bool holdcolor, bool holdshape, bool applyConstraints, PodInfo prevMatch);
 };
 
 // Vine Info

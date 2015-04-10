@@ -53,9 +53,12 @@ protected:
     PanelOverlayElement* backButtonBackground;
     PanelOverlayElement* buttonGoUpBackground;
     PanelOverlayElement* buttonGoDownBackground;
+    
     PanelOverlayElement* buttonEnableTutorialsBackground;
     PanelOverlayElement* checkDisplayEnableTutorialsBackground;
     TextAreaOverlayElement* textEnableTutorialsPrompt;
+    
+    
     
     void link(Player* player);
     void unlink();

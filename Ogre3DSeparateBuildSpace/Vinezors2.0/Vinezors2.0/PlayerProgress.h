@@ -28,6 +28,11 @@ struct PlayerProgress
     int numSafe;
     int numMissed;
     int numPickups;
+    int numCorrectH;
+    int numWrongH;
+    int numSafeH;
+    int numMissedH;
+    int numPickupsH;
     
     int startSpeed;
     int exitSpeed;
@@ -35,6 +40,7 @@ struct PlayerProgress
     int initSpeedSetting;
     
     float accuracy;
+    float accuracyH;
     float nBackDelta;   // Delta change for experience
     float nBackReturn;  // Offset delta for holdouts
     float nBackSkill;   // Memory Experience
@@ -46,6 +52,7 @@ struct PlayerProgress
     bool setRating(int nrating);
     
     PlayerProgress();
+    
 };
 std::ostream& operator<<(std::ostream& outfile, const PlayerProgress & prg);
 std::istream& operator>>(std::istream& infile, PlayerProgress & prg);

@@ -194,6 +194,8 @@ public:
     // Uses getNBackTest and determines n-back to test by the player's toggleBack
     bool getPodIsGood(int index, int toggle) const;
     bool getPodIsGood(int toggle) const;
+    bool getIsHoldoutTest(int index, int nvalue);
+    bool getIsHoldoutTest(int nvalue);   // Determines whether one or the other signal has holdout
     int getNBackToggle(int toggle) const;
     
     StageMode getMode() const;

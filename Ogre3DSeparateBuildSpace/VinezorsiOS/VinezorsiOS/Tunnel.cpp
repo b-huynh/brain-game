@@ -593,6 +593,21 @@ bool Tunnel::getPodIsGood(int toggle) const
     return getPodIsGood(podIndex, toggle);
 }
 
+// Determines whether one or the other signal (n steps back) has holdout.
+// If so, then it is considered to be in the holdout pool for determining holdout accuracy
+bool Tunnel::getIsHoldoutTest(int index, int nvalue)
+{
+    if (index - nvalue >= 0)
+        return types[index - nvalue].hasHoldout() || types[index].hasHoldout();
+    else
+        return false;
+}
+// Determines whether one or the other signal (n steps back) has holdout for the pod where the player is.
+bool Tunnel::getIsHoldoutTest(int nvalue)
+{
+    return getIsHoldoutTest(podIndex, nvalue);
+}
+
 // Returns the n-back based on the player's current toggle value.
 // if there is only one n-back in a stage, this toggle value should be fixed
 int Tunnel::getNBackToggle(int toggle) const
@@ -1316,6 +1331,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             }
         }
         
+        //Assign Features:
         ret = signalTypes[final][rand() % signalTypes[final].size()];
         
         ret.podLoc = podLoc;
@@ -1324,12 +1340,26 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.podTrigger = false;
         
         
+        std::vector<float> frequencyValues;
+        frequencyValues.push_back(60.0);
+        frequencyValues.push_back(68.5);
+        frequencyValues.push_back(77.0);
+        frequencyValues.push_back(85.5);
+        frequencyValues.push_back(95.0);
+        std::vector<float> uboundTimes;
+        uboundTimes.push_back(0.500f);
+        uboundTimes.push_back(0.425f);
+        uboundTimes.push_back(0.350f);
+        uboundTimes.push_back(0.275f);
+        uboundTimes.push_back(0.200f);
+        
         bool timevar = false;
         float timefreq;
         
         //Percentage of stage time being withheld
         float starttime = holdoutStart;
-        float endtime = holdoutEnd;
+        //float endtime = holdoutEnd;
+        float endtime = uboundTimes[std::min(holdoutLevel, (int)(uboundTimes.size() - 1))];
         
         if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f) {
             starttime = player->holdoutLB;
@@ -1357,15 +1387,59 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         std::cout << "LB holdout time: " << holdouttimelb << std::endl;
         std::cout << "quartertime * 4: " << quartertime * 4 << std::endl;
         
+        // Determine what phase we are in for holdout, we have the following phases:
+        //
+        // NONE, 1, 2, 3, 4, MAX
+        //
+        // Where NONE has no holdout and MAX has the maximum holdout specified
+        // The intermediate phases in between have holdout and lerp towards MAX from NONE.
+        //
+        int hphase = 0;
+        const int NUM_HOLDOUT_PHASES = 5;
+        if (getTimeLeft() <= holdouttimelb - quartertime * 4)
+        {
+            hphase = 5;
+            std::cout<<"                        HOLDOUT 80%-100% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft() <= holdouttimelb - quartertime * 3)
+        {
+            hphase = 4;
+            std::cout<<"                        HOLDOUT 60%-80% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft() <= holdouttimelb - quartertime * 2)
+        {
+            hphase = 3;
+            std::cout<<"                        HOLDOUT 40%-60% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft() <= holdouttimelb - quartertime * 1)
+        {
+            hphase = 2;
+            std::cout<<"                        HOLDOUT 20%-40% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else if (getTimeLeft() <= holdouttimelb)
+        {
+            hphase = 1;
+            std::cout<<"                        HOLDOUT 0%-20% --->"<< Tunnel::holdoutFrequency<<std::endl;
+        }
+        else
+            hphase = 0;
+        
+        // Given the phase, determine the number of pods needed to mimic the holdout percentage at a given phase.
+        // For example, if we have a 25% holdout, frequencyquarter should be the value 25, and we
+        // will be holding out one of the next four pods.
         float freqF = 100;
         int freqI = 0;
         bool remainderUsed = false;
-        if(getTimeLeft()<=holdouttimelb-quartertime*4) {
-            if (holdoutPerc > 0.5)
+        if (hphase > 0)
+        {
+            if (holdoutPerc > Util::EPSILON)
             {
-                frequencyquarter = 100;
+                int minFreq = 0;
+                int maxFreq = frequencyValues[std::min(holdoutLevel, (int)(frequencyValues.size() - 1))];
+                float deltaFreq = (maxFreq - minFreq) / static_cast<float>(NUM_HOLDOUT_PHASES);
+                frequencyquarter = std::round(hphase * deltaFreq);
             }
-            //freqF = 100 / (frequencyquarter*4);
+            
             freqF = 100 / frequencyquarter;
             freqI = freqF;
             if ((int)(freqF + holdoutRemainder) > freqI)
@@ -1374,92 +1448,9 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
                 freqI++;
             }
             setHoldout(true, freqI);
-            std::cout<<"                        HOLDOUT 80%-100% --->"<< Tunnel::holdoutFrequency<<std::endl;
         }
-        else if(getTimeLeft()<=holdouttimelb-quartertime*3) {
-            if (holdoutPerc > 0.5)
-            {
-                if (holdoutLevel <= 1) frequencyquarter = 75;
-                else if (holdoutLevel == 2) frequencyquarter = 87;
-                else if (holdoutLevel == 3) frequencyquarter = 95;
-                else if (holdoutLevel == 4) frequencyquarter = 100;
-                else if (holdoutLevel == 5) frequencyquarter = 100;
-                else frequencyquarter = 100;
-            }
-            //freqF = 100 / (frequencyquarter*4);
-            freqF = 100 / frequencyquarter;
-            freqI = freqF;
-            if ((int)(freqF + holdoutRemainder) > freqI)
-            {
-                remainderUsed = true;
-                freqI++;
-            }
-            setHoldout(true, freqI);
-            std::cout<<"                        HOLDOUT 60%-80% --->"<< Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb-quartertime*2) {
-            if (holdoutPerc > 0.5)
-            {
-                if (holdoutLevel <= 1) frequencyquarter = 50;
-                else if (holdoutLevel == 2) frequencyquarter = 69;
-                else if (holdoutLevel == 3) frequencyquarter = 85;
-                else if (holdoutLevel == 4) frequencyquarter = 97;
-                else if (holdoutLevel == 5) frequencyquarter = 100;
-                else frequencyquarter = 100;
-            }
-            //freqF = 100 / (frequencyquarter*3);
-            freqF = 100 / frequencyquarter;
-            freqI = freqF;
-            if ((int)(freqF + holdoutRemainder) > freqI)
-            {
-                remainderUsed = true;
-                freqI++;
-            }
-            setHoldout(true, freqI);
-            std::cout<<"                        HOLDOUT 40%-60% --->"<<Tunnel::holdoutFrequency <<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb-quartertime) {
-            if (holdoutPerc > 0.5)
-            {
-                if (holdoutLevel <= 1) frequencyquarter = 25;
-                else if (holdoutLevel == 2) frequencyquarter = 43;
-                else if (holdoutLevel == 3) frequencyquarter = 65;
-                else if (holdoutLevel == 4) frequencyquarter = 84;
-                else if (holdoutLevel == 5) frequencyquarter = 100;
-                else frequencyquarter = 100;
-            }
-            //freqF = 100 / (frequencyquarter*2);
-            freqF = 100 / frequencyquarter;
-            freqI = freqF;
-            if ((int)(freqF + holdoutRemainder) > freqI)
-            {
-                remainderUsed = true;
-                freqI++;
-            }
-            setHoldout(true, freqI);
-            std::cout<<"                        HOLDOUT 20%-40% --->"<< Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if(getTimeLeft()<=holdouttimelb) {
-            if (holdoutPerc > 0.5)
-            {
-                if (holdoutLevel <= 1) frequencyquarter = Util::EPSILON;
-                else if (holdoutLevel == 2) frequencyquarter = Util::EPSILON;
-                else if (holdoutLevel == 3) frequencyquarter = 1;
-                else if (holdoutLevel == 4) frequencyquarter = 35;
-                else if (holdoutLevel == 5) frequencyquarter = 75;
-                else frequencyquarter = 100;
-            }
-            freqF = 100 / (frequencyquarter);
-            freqI = freqF;
-            if ((int)(freqF + holdoutRemainder) > freqI)
-            {
-                remainderUsed = true;
-                freqI++;
-            }
-            setHoldout(true, freqI);
-            std::cout<<"                        HOLDOUT 0-20%. --->"<<Tunnel::holdoutFrequency<<std::endl;
-        }
-        else if (getTimeLeft()>=holdouttimelb) {
+        else
+        {
             setHoldout(false);
             std::cout<<"                        HOLDOUT IS NOT ON. --->"<<Tunnel::holdoutFrequency <<std::endl;
         }
@@ -1487,8 +1478,23 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             }
             
             ++holdoutCounter;
-            if( holdoutIndex == holdoutPod) {
-                ret.performHoldout(phaseX, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape);
+            if( holdoutIndex == holdoutPod)
+            {
+                bool applyConstraints = false;
+                PodInfo prevMatch;
+                if(setting == GOOD_TARGET)
+                {
+                    //Bernie Modifying
+                    //Its a match
+                    //Cannot have matching holdouts.
+                    std::cout << "This holdout Pod is going to be a match!!!" << std::endl;
+                    applyConstraints = true;
+                    //Make the attributes different from the previous match.
+                    prevMatch = types[types.size()-nback];
+                }
+                
+                ret.performHoldout(phaseX, player->soundVolume > 0.0,holdoutSound,holdoutColor,holdoutShape,applyConstraints,prevMatch);
+                
                 //ret.performHoldout(phase, player->soundVolume > 0.0);
                 
                 if (remainderUsed)
@@ -1923,11 +1929,8 @@ void Tunnel::constructTunnel(const std::string & nameTunnelTile, int size)
 
 void Tunnel::update(float elapsed)
 {
-    
     if (!isDone() && !player->isPowerUpActive("TimeWarp"))
     {
-        
-        
         // If a player is going faster, let time go faster as well
         // sort of like exhausting more fuel at faster speeds
         tsModifier = player->getBaseSpeed() / globals.baselineSpeed; // 15.0 speed is baseline
@@ -1950,7 +1953,6 @@ void Tunnel::update(float elapsed)
                     fuelTimer = 0.0;
              }
         }
-        
     }
     
     // Animate Pod Growing outwards or Growing inwards
@@ -1985,7 +1987,7 @@ void Tunnel::update(float elapsed)
             for (int i = 0; i < pods.size(); ++i) {
                 pods[i]->uncloakPod();
                 player->playSound(pods[i]->getSignalSound());
-                //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
+                //pods[i]->setRo2tateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
                 {
                     pods[i]->generateIndicator();
