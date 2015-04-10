@@ -688,7 +688,7 @@ void Pod::uncloakPod()
 
 void Pod::generateUncloakPFX()
 {
-    if (!uncloakNode && (mtype == POD_CRYSTAL))
+    if (!uncloakNode && mtype == POD_CRYSTAL && podSound != POD_SOUND_HOLDOUT && podSound != POD_SOUND_UNKNOWN)
     {
         uncloakNode = head->createChildSceneNode("UncloakNode" + Util::toStringInt(uncloakPfxID));
         std::string particleName = "General/UncloakPFX";
