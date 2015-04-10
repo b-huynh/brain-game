@@ -442,13 +442,8 @@ void Pod::setToGrowth(float t)
                 signalSound->stop();
                 signalSound->play();
             }
-            std::cout << "SIGNAL SOUND: " << this->signalSound;
             uncloaked = true;
             podCrystalGrown = false;
-        }
-        
-        if (uncloakPFX) {
-            // uncloakPFX->setDefaultDimensions(uncloakPFX->getDefaultHeight() - 0.2, uncloakPFX->getDefaultWidth() - 0.2);
         }
         
         // setRotateSpeed(direction * 2);

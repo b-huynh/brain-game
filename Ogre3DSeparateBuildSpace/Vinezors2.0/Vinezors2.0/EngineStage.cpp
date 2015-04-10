@@ -179,6 +179,21 @@ void EngineStage::update(float elapsed)
             
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
+            /* // ===============================================================================================
+            //      Adds navigation to state
+            //      Navigation Debug Keys
+            // ==================================================================================================
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            */ // ===============================================================================================
+            
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
@@ -1102,7 +1117,6 @@ void EngineStage::mouseMoved(const OIS::MouseEvent &evt)
     {
         // Move the camera when paused
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
-        
         Vector3 right = player->getCamRight(true);
         Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;

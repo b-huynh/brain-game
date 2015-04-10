@@ -114,9 +114,7 @@ public:
     bool isPodGood() const;
     bool isPodZapped() const;
     bool isPodCrystalGrown() const;
-    
     void move(Vector3 delta);
-    
     void setToGrowth(float t);
     void setSkin();
     void setPodCrystalGrown(bool tf);
@@ -140,7 +138,7 @@ public:
     
     void removeGlow();
     void removeIndicator();
-    void removeFromScene();
+	void removeFromScene();
     void removeUncloakPFX();
     
     void update(float elapsed);

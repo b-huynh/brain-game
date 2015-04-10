@@ -1994,9 +1994,10 @@ void Tunnel::update(float elapsed)
         {
             std::vector<Pod*> pods = nextSliceN->getPods();
             for (int i = 0; i < pods.size(); ++i) {
-                //                pods[i]->uncloakPod();
-                //                pods[i]->generateUncloakPFX();
-                //                player->playSound(pods[i]->getSignalSound());
+
+//                pods[i]->uncloakPod();
+//                pods[i]->generateUncloakPFX();
+//                player->playSound(pods[i]->getSignalSound());
                 
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())

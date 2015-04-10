@@ -1156,13 +1156,13 @@ void TunnelSlice::updateGrowth(float nt)
     }
     
     /* // Original spawn growth animation
-     growthT += nt;
-     if (growthT > 1.0) growthT = 1;
-     if (growthT < 0) growthT = 0;
-     
-     for (int i = 0; i < pods.size(); ++i)
-     pods[i]->setToGrowth(growthT);
-     */
+    growthT += nt;
+    if (growthT > 1.0) growthT = 1;
+    if (growthT < 0) growthT = 0;
+    
+    for (int i = 0; i < pods.size(); ++i)
+        pods[i]->setToGrowth(growthT);
+    */
 }
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)

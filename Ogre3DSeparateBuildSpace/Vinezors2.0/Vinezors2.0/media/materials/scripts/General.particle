@@ -1,12 +1,12 @@
 particle_system General/UncloakPFX
 {
-    material        General/Star
+    material        General/Star2
     particle_width  4.0
     particle_height 4.0
     cull_each       true
     quota           200
     billboard_type  point
-    local_space	    false
+    local_space     false
 
     // Area emitter
     emitter Ring
@@ -29,15 +29,15 @@ particle_system General/UncloakPFX
 }
 
 particle_system General/StarBoost
- {
-    material        General/Star    
+{
+    material        General/Star
     particle_width  4.0
     particle_height 4.0
     cull_each       true
     quota           100
     billboard_type  point
-    local_space	    true
- 
+    local_space     true
+
     // Area emitter
     emitter Ellipsoid
     {
@@ -47,13 +47,13 @@ particle_system General/StarBoost
         time_to_live_max 0.5
         direction       0 0 -1
         velocity_min    30
-        velocity_max	 50
+        velocity_max     50
         colour 0.0 0.7 1.0
         width           1
         height          1
         depth           1
     }
- }
+}
 
 particle_system General/Beam
 {
@@ -63,7 +63,7 @@ particle_system General/Beam
     cull_each       true
     quota           250
     billboard_type  point
-    local_space	    true
+    local_space     true
 
     // Area emitter
     emitter Ring
@@ -85,8 +85,8 @@ particle_system General/GlowPodEllipsoid
     cull_each       true
     quota           100
     billboard_type  point
-    local_space	    true
- 
+    local_space     true
+
     // Area emitter
     emitter Ellipsoid
     {
@@ -111,8 +111,8 @@ particle_system General/GoodPodIndicator
     cull_each       true
     quota           100
     billboard_type  point
-    local_space	    true
- 
+    local_space     true
+
     // Area emitter
     emitter HollowEllipsoid
     {
@@ -123,15 +123,15 @@ particle_system General/GoodPodIndicator
         direction       0 1 0
         velocity       1.5
         colour 0.0 0.3 0.5
-        width		0.5
-        height		0.5
-        depth		0.5
+        width       0.5
+        height      0.5
+        depth       0.5
         inner_width     1
-        inner_height	1
+        inner_height    1
         inner_depth     1
     }
  }
- 
+
  particle_system General/HoldOutPod
  {
     material        General/WhiteStar
@@ -140,8 +140,8 @@ particle_system General/GoodPodIndicator
     cull_each       true
     quota           300
     billboard_type  point
-    local_space	    true
- 
+    local_space     true
+
     // Area emitter
     emitter HollowEllipsoid
     {
@@ -151,12 +151,12 @@ particle_system General/GoodPodIndicator
         time_to_live_max 1.0
         direction       0 1 0
         velocity       0.0
-        colour 		1.0 1.0 1.0
-        width		1
-        height		1
-        depth		1
+        colour      1.0 1.0 1.0
+        width       1
+        height      1
+        depth       1
         inner_width     6
-        inner_height	6
+        inner_height    6
         inner_depth     6
     }
  }
@@ -169,8 +169,8 @@ particle_system Barrier/PFX
     cull_each       true
     quota           200
     billboard_type  point
-    local_space	    true
- 
+    local_space     true
+
     // Area emitter
     emitter Box
     {
@@ -180,42 +180,42 @@ particle_system Barrier/PFX
         time_to_live_max 0.2
         velocity       0.3
         colour 1.0 1.0 1.0
-        width		4
-        height		3
-        depth		1
+        width       4
+        height      3
+        depth       1
     }
  }
 
 particle_system StageEnding/Fireworks
 {
-	material        General/Star
-	particle_width  0.05
-	particle_height 0.05
-	cull_each       false
-	quota           100
-	billboard_type  point
+    material        General/Star
+    particle_width  0.05
+    particle_height 0.05
+    cull_each       false
+    quota           100
+    billboard_type  point
     local_space     false
 
-	// Fireworks launcher
-	emitter Point
-	{
-		angle           360
-		emission_rate   10000
-		time_to_live    2.6
-		direction       0 1 0
-		velocity_min    0.05
-		velocity_max    0.15
-		colour          1 1 1
+    // Fireworks launcher
+    emitter Point
+    {
+        angle           360
+        emission_rate   10000
+        time_to_live    2.6
+        direction       0 1 0
+        velocity_min    0.05
+        velocity_max    0.15
+        colour          1 1 1
         duration        2.5
-	}
+    }
 
-	// Fader
-	affector ColourFader
-	{
-		red -0.25
+    // Fader
+    affector ColourFader
+    {
+        red -0.25
         green -0.25
         blue -0.25
-	}
+    }
 
     affector Scaler
     {
