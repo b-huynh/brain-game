@@ -79,6 +79,7 @@ bool OgreFramework::initOgre(OIS::KeyListener *pKeyListener, OIS::MouseListener 
 #ifdef OGRE_STATIC_LIB
     m_StaticPluginLoader.load();
 #endif
+
     if(m_pRoot->restoreConfig() || m_pRoot->showConfigDialog())
         m_pRenderWnd = m_pRoot->initialise(true, "");
     else

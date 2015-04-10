@@ -1498,16 +1498,6 @@ void EngineStage::setup()
         globals.stageTotalTargets = 40;
     }
     
-    
-    std::cout << "Level Params:" << std::endl;
-    std::cout << level.navLevels[0].level;
-    std::cout << level.navLevels[1].level;
-    std::cout << level.navLevels[2].level;
-    std::cout << level.navLevels[3].level;
-    std::cout << level.navLevels[0].obstacles;
-    std::cout << level.navLevels[1].obstacles;
-    std::cout << level.navLevels[2].obstacles;
-    std::cout << level.navLevels[3].obstacles;
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
                         origin + forward * (globals.tunnelSegmentWidth / 2),
@@ -1532,7 +1522,7 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
+    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
     tunnel->setFuelLevel(globals.fuelMax, globals.fuelReturn, globals.startingHP);
 

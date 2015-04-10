@@ -38,8 +38,8 @@ struct StageRequest
     StageDuration durationX;
     
     float holdoutPerc;
-    float holdoutStart;
-    float holdoutEnd;
+    float holdoutStart; // obsolete
+    float holdoutEnd;   // obsolete
     int holdoutLevel;
     bool holdoutSound;
     bool holdoutColor;

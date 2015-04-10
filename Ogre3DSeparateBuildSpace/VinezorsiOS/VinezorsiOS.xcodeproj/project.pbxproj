@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3F5A87BA18BE90F0003C6741 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F5A87B918BE90F0003C6741 /* Images.xcassets */; };
-		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
 		5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */; };
 		5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */; };
 		5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EAEB11864D54B004C9756 /* Hud.cpp */; };
@@ -71,8 +70,6 @@
 
 /* Begin PBXFileReference section */
 		3F5A87B918BE90F0003C6741 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Vines-Space/Images.xcassets"; sourceTree = "<group>"; };
-		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
-		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineControlsSettings.cpp; sourceTree = "<group>"; };
 		5D196F54193D0E920042DEA0 /* EngineControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineControlSettings.h; sourceTree = "<group>"; };
 		5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudControlSettings.cpp; sourceTree = "<group>"; };
@@ -244,8 +241,6 @@
 				5DC32AC619D0E91900277C5C /* LevelScheduler.h */,
 				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
 				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
-				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
-				5D15DF4C1825CCFB00DF0F99 /* History.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -630,7 +625,6 @@
 				5D46024419080E8E00F73DC3 /* Engine.cpp in Sources */,
 				5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */,
 				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
-				5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

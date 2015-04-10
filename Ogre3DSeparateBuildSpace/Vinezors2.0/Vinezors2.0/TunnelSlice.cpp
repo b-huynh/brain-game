@@ -614,7 +614,7 @@ void TunnelSlice::move(Vector3 delta)
         pods[i]->move(delta);
 }
 
-void TunnelSlice::addPod(const PodInfo & value)
+void TunnelSlice::addPod(const PodInfo & value, float soundVolume)
 {
     float wallLength = getWallLength();
     const float STEM_RADIUS = globals.podStemRadius;
@@ -627,7 +627,7 @@ void TunnelSlice::addPod(const PodInfo & value)
     Vector3 head = move;
     
     //Actual Pod Creation
-    Pod* pod = new Pod(sliceNode, base, head, value.meshType, value.podSignal, value.podColor, value.podShape, value.podSound, value.podLoc, STEM_RADIUS, HEAD_RADIUS);
+    Pod* pod = new Pod(sliceNode, base, head, value.meshType, value.podSignal, value.podColor, value.podShape, value.podSound, value.podLoc, STEM_RADIUS, HEAD_RADIUS, soundVolume);
     pod->setPodGood(value.goodPod);
     pod->setPodTrigger(value.podTrigger);
     pods.push_back(pod);

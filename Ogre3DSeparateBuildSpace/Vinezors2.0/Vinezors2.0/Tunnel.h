@@ -293,7 +293,7 @@ public:
     void setHoldout(bool val);
     void setHoldout(int holdoutFrequency);
     void setHoldout(bool val, int holdoutFrequency);
-    void setHoldoutSettings( float perc, float start, float end, int level, bool sound, bool color, bool shape);
+    void setHoldoutSettings( float perc, int level, bool sound, bool color, bool shape);
     bool levelHasHoldout() const;
     
     void gateAnimation(float elapsed);

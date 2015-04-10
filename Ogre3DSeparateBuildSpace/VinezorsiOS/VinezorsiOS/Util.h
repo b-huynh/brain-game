@@ -159,8 +159,17 @@ namespace Util
         
         bool enableIndRecessFixed = false;
         
-        //End Study Settings
         bool newSounds = true; //Study Settings
+        
+        float holdoutMinUpperBound = 0.60;
+        float holdoutMaxUpperBound = 0.95;
+        float holdoutLowerBoundTime = 0.20;
+        float holdoutUpperBoundMinTime = 0.30;
+        float holdoutUpperBoundMaxTime = 0.60;
+        float holdoutSteps = 5;
+        
+        //End Study Settings
+        
         std::string VendorID = "";
         
         std::string scheduleMain;

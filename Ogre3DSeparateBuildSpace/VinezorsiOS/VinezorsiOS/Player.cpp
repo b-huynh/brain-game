@@ -3130,7 +3130,6 @@ bool Player::saveSession(std::string file)
         << sessions.back().nbackLevelD << " "
         << sessions.back().nbackLevelE << " "
         << sessions.back().scoreCurr << " "
-        << sessions.back().currentHoldout << " "
         << sessions.back().holdoutOffsetA << " "
         << sessions.back().holdoutOffsetB << " "
         << sessions.back().holdoutOffsetD << " "
