@@ -15,7 +15,7 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
 
@@ -159,8 +159,17 @@ namespace Util
         
         bool enableIndRecessFixed = false;
         
-        //End Study Settings
         bool newSounds = true; //Study Settings
+       
+        float holdoutMinUpperBound = 60.0;
+        float holdoutMaxUpperBound = 95.0;
+        float holdoutLowerBoundTime = 0.20;
+        float holdoutUpperBoundMinTime = 0.30;
+        float holdoutUpperBoundMaxTime = 0.60;
+        int holdoutSteps = 5;
+        
+        //End Study Settings
+        
         std::string VendorID = "";
         
         std::string scheduleMain;

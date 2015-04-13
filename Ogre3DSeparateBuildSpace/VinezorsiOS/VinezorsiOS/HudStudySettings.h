@@ -53,6 +53,22 @@ public:
     //NumberofSessions
     std::string numOfSessionsString = "";
     
+    //Holdout Min Upper Bound
+    std::string holdoutMinUpperBoundString = "";
+    //Holdout Max Upper Bound
+    std::string holdoutMaxUpperBoundString = "";
+    
+    //Holdout Lower Bound Time
+    std::string holdoutLowerBoundTimeString = "";
+    //Holdout Min Upper Bound Time
+    std::string holdoutMinUpperBoundTimeString = "";
+    //Holdout Max Upper Bound Time
+    std::string holdoutMaxUpperBoundTimeString = "";
+    
+    //Number of Holdout Levels
+    std::string holdoutStepsString = "";
+
+    
     //Passcode
     int Passcode_counter = 0;
     int PASSWORD_LENGTH = 4;
@@ -73,6 +89,7 @@ public:
     
     bool showDecimal = false;
     bool popUpisOut = false;
+    bool numpadIsOut = false;
     
     
     void showPopUp();
@@ -81,16 +98,17 @@ public:
     enum NumpadStatus {
         
         NONE, INIT_VELOCITY, MAN_RECESS, HOLDOUT_DELAY, NEW_NAV_INC, IND_RECESS_INC, SESSION_START_TIME, SESSION_END_TIME,
-        NUM_OF_SESSIONS, PASSCODE
+        NUM_OF_SESSIONS, PASSCODE,
+        HOLDOUT_MIN_UPPER_BOUND, HOLDOUT_MAX_UPPER_BOUND,
+        HOLDOUT_LOWER_BOUND_TIME, HOLDOUT_MIN_UPPER_BOUND_TIME, HOLDOUT_MAX_UPPER_BOUND_TIME,
+        HOLDOUT_STEPS
+
         
     };
     
     int nStatus = NONE;
     
-protected:
-    Player* player;
-    
-    static const int NUM_UNIQUE_BUTTONS = 36;
+    static const int NUM_UNIQUE_BUTTONS = 43;
     enum Buttons {
         BUTTON_BACK,BUTTON_ENABLE_UNLIMITED_FUEL, BUTTON_ENABLE_HOLDOUT, BUTTON_INPUT_INIT_SPEED, BUTTON_ENABLE_MANDATORY_RECESS,
         BUTTON_MANDATORY_RECESS_NUMBER, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3,
@@ -99,7 +117,11 @@ protected:
         BUTTON_ENABLE_HOLDOUT_DELAY, BUTTON_HOLDOUT_DELAY_NUMBER, BUTTON_ENABLE_NEW_NAV, BUTTON_ENABLE_NEW_NAV_NUMBER, BUTTON_ENABLE_NEW_SOUNDS,
         BUTTON_ENABLE_IND_RECESS, BUTTON_ENABLE_IND_RECESS_NUMBER, BUTTON_ENABLE_SESSION_SETTINGS, BUTTON_SESSION_START_NUMBER, BUTTON_SESSION_END_NUMBER,
         BUTTON_NUM_OF_SESSIONS_NUMBER, BUTTON_ENABLE_PASSCODE, BUTTON_ENABLE_SESSION_SCREEN, BUTTON_ENABLE_IND_RECESS_FIXED,
-        BUTTON_POPUP_OK, BUTTON_POPUP_REVERT
+        BUTTON_POPUP_OK, BUTTON_POPUP_REVERT, BUTTON_NEXT_SETTINGS,
+        BUTTON_HOLDOUT_MIN_UPPER_BOUND, BUTTON_HOLDOUT_MAX_UPPER_BOUND,
+        BUTTON_HOLDOUT_LOWER_BOUND_TIME, BUTTON_HOLDOUT_MIN_UPPER_BOUND_TIME, BUTTON_HOLDOUT_MAX_UPPER_BOUND_TIME,
+        BUTTON_HOLDOUT_STEPS
+        
         
     };
     
@@ -176,6 +198,7 @@ protected:
     TextAreaOverlayElement* numpadButton_Decimal_TextDisplay;
     
     //Holdout Delay Checkbox
+    
     PanelOverlayElement* enableHoldoutDelayBackground;
     TextAreaOverlayElement* enableHoldoutDelayTextDisplay;
     PanelOverlayElement* enableHoldoutDelayButtonBackground;
@@ -190,7 +213,7 @@ protected:
     TextAreaOverlayElement* enableNewNavText2Display;
     PanelOverlayElement* enableNewNavNumberButtonBackground;
     TextAreaOverlayElement* enableNewNavNumberText;
-
+    
     //New Sounds Checkbox
     PanelOverlayElement* enableNewSoundsBackground;
     TextAreaOverlayElement* enableNewSoundsTextDisplay;
@@ -208,7 +231,7 @@ protected:
     PanelOverlayElement* enableSettingsPasscodeBackground;
     TextAreaOverlayElement* enableSettingsPasscodeTextDisplay;
     PanelOverlayElement* enableSettingsPasscodeButtonBackground;
-
+    
     
     //Session Start Time
     PanelOverlayElement* sessionTimeSettingsBackground;
@@ -252,14 +275,61 @@ protected:
     //Button "Revert"
     PanelOverlayElement* somethingChangedRevertButton;
     TextAreaOverlayElement* somethingChangedRevertButtonText;
-
+    
     //Passcode Bubbles
     TextAreaOverlayElement* password_Title;
     PanelOverlayElement* password_Choice0;
     PanelOverlayElement* password_Choice1;
     PanelOverlayElement* password_Choice2;
     PanelOverlayElement* password_Choice3;
-
+    
+    //Next/Back Settings Button
+    TextAreaOverlayElement* nextButtonTextDisplay;
+    PanelOverlayElement* nextButtonBackground;
+    
+    //Page 2
+    
+    //Holdout Min Upper Bound
+    TextAreaOverlayElement* holdoutMinUpperBoundTextDisplay;
+    PanelOverlayElement* holdoutMinUpperBoundNumberBackground;
+    TextAreaOverlayElement* holdoutMinUpperBoundNumberTextDisplay;
+    //Holdout Max Upper Bound
+    TextAreaOverlayElement* holdoutMaxUpperBoundTextDisplay;
+    PanelOverlayElement* holdoutMaxUpperBoundNumberBackground;
+    TextAreaOverlayElement* holdoutMaxUpperBoundNumberTextDisplay;
+    
+    
+    //Holdout Lower Bound Time
+    TextAreaOverlayElement* holdoutLowerBoundTimeTextDisplay;
+    PanelOverlayElement* holdoutLowerBoundTimeNumberBackground;
+    TextAreaOverlayElement* holdoutLowerBoundTimeNumberTextDisplay;
+    //Holdout Min Upper Bound Time
+    TextAreaOverlayElement* holdoutMinUpperBoundTimeTextDisplay;
+    PanelOverlayElement* holdoutMinUpperBoundTimeNumberBackground;
+    TextAreaOverlayElement* holdoutMinUpperBoundTimeNumberTextDisplay;
+    //Holdout Max Upper Bound Time
+    TextAreaOverlayElement* holdoutMaxUpperBoundTimeTextDisplay;
+    PanelOverlayElement* holdoutMaxUpperBoundTimeNumberBackground;
+    TextAreaOverlayElement* holdoutMaxUpperBoundTimeNumberTextDisplay;
+    
+    
+    //Number of Holdout Levels
+    TextAreaOverlayElement* holdoutStepsTextDisplay;
+    PanelOverlayElement* holdoutStepsNumberBackground;
+    TextAreaOverlayElement* holdoutStepsNumberTextDisplay;
+    
+    
+    /*Holdout Min Upper Bound
+    Holdout Max Upper Bound
+    
+    Holdout Lower Bound Time
+    Holdout Min Upper Bound Time
+    Holdout Max Upper Bound Time
+    
+    Number of Holdout Levels*/
+    
+protected:
+    Player* player;
     
     void link(Player* player);
     void unlink();

@@ -19,12 +19,12 @@ static int headEffectID = 0;
 static int uncloakPfxID = 0;
 
 Pod::Pod()
-: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false)
+: parentNode(NULL), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false), soundVolume(0.5f)
 {
 }
 
-Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius)
-: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), uncloakNode(NULL), uncloakPFX(NULL),base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false)
+Pod::Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius, float soundVolume)
+: parentNode(parentNode), mtype(mtype), materialName(""), headContentEntity(NULL), headContentEffect(NULL), glowNode(NULL), glowEffect(NULL), indicatorNode(NULL), indicatorEffect(NULL), uncloakNode(NULL), uncloakPFX(NULL),base(base), tip(tip), podSignal(podSignal), podColor(podColor), podShape(podShape), podSound(podSound), stemRadius(stemRadius), stemLength(base.distance(tip)), headRadius(headRadius), entirePod(NULL), stem(NULL), head(NULL), shell(NULL), moveSpeed(0.0), rotateSpeed(0.0, 0.0, 0.0), loc(loc), podTested(false), podTaken(false), podGood(false), podZapped(false), dest(), bPFXNode(NULL), bPFX(NULL), bPFXwidth(0.0f), bPFXcolor(1.0f), signalSound(NULL), podCrystalGrown(false), uncloaked(false), soundVolume(soundVolume)
 {
     loadPod();
 }
@@ -438,17 +438,12 @@ void Pod::setToGrowth(float t)
             this->signalSound = getSignalSound();
             if (signalSound)
             {
-                signalSound->setVolume(0.50f);
+                signalSound->setVolume(soundVolume);
                 signalSound->stop();
                 signalSound->play();
             }
-            std::cout << "SIGNAL SOUND: " << this->signalSound;
             uncloaked = true;
             podCrystalGrown = false;
-        }
-        
-        if (uncloakPFX) {
-            // uncloakPFX->setDefaultDimensions(uncloakPFX->getDefaultHeight() - 0.2, uncloakPFX->getDefaultWidth() - 0.2);
         }
         
         // setRotateSpeed(direction * 2);
@@ -688,7 +683,11 @@ void Pod::uncloakPod()
 
 void Pod::generateUncloakPFX()
 {
-    if (!uncloakNode && (mtype == POD_CRYSTAL))
+    if (!uncloakNode &&
+        mtype == POD_CRYSTAL &&
+        podSound != POD_SOUND_HOLDOUT &&
+        podSound != POD_SOUND_UNKNOWN
+        )
     {
         uncloakNode = head->createChildSceneNode("UncloakNode" + Util::toStringInt(uncloakPfxID));
         std::string particleName = "General/UncloakPFX";

@@ -110,7 +110,7 @@ public:
     void setPodHistory(bool value);
     void setInfoStored(bool value);
     void move(Vector3 delta);
-    void addPod(const PodInfo & value);
+    void addPod(const PodInfo & value, float soundVolume);
     void setIntermediateWall(SceneNode* entire, Direction dir, ManualObject * manual, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 & bl, Vector3 & tr);
     void addTransitionSet(std::string name, Vector3 p1, Vector3 p2, bool include1, bool include2, float railingRoll, float scaleValue, float scaleAmount);
     void connect(TunnelSlice* next);

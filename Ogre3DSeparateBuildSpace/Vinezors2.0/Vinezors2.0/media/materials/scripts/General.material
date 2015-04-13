@@ -116,6 +116,25 @@ material General/Star
 	}
 }
 
+material General/Star2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture star3.png
+            }
+        }
+    }
+}
+
 material General/BarrierMaterial
 {
     technique

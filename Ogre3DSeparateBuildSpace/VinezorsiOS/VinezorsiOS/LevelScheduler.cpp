@@ -207,11 +207,17 @@ void LevelScheduler::populateBins()
     binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     binD->push_back(Bin(PHASE_ALL_SIGNAL, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     
-    std::vector<Bin*> holdoutCandidates;
-    addToHoldoutCandidates(holdoutCandidates, binA);
-    addToHoldoutCandidates(holdoutCandidates, binB);
-    addToHoldoutCandidates(holdoutCandidates, binD);
-    setHoldoutToCandidates(holdoutCandidates, holdoutCandidates.size() / 2);
+    
+    std::vector<Bin*> holdoutCandidatesA;
+    std::vector<Bin*> holdoutCandidatesB;
+    std::vector<Bin*> holdoutCandidatesD;
+    addToHoldoutCandidates(holdoutCandidatesA, binA);
+    addToHoldoutCandidates(holdoutCandidatesB, binB);
+    addToHoldoutCandidates(holdoutCandidatesD, binD);
+    
+    setHoldoutToCandidates(holdoutCandidatesA, holdoutCandidatesA.size() / 2);
+    setHoldoutToCandidates(holdoutCandidatesB, holdoutCandidatesB.size() / 2);
+    setHoldoutToCandidates(holdoutCandidatesD, holdoutCandidatesD.size() / 2);
     
     //setHoldout(binA);
     //setHoldout(binB);

@@ -168,7 +168,6 @@ private:
         float nbackLevelD;
         float nbackLevelE;
         float scoreCurr;
-        float currentHoldout;
         float holdoutOffsetA;
         float holdoutOffsetB;
         float holdoutOffsetD;

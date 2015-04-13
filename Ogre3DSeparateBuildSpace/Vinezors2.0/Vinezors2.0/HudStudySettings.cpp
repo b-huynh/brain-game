@@ -453,7 +453,7 @@ void HudStudySettings::update(float elapsed)
             numpadButton_Decimal_TextDisplay->hide();
         }
         //Add to overlay
-        //numpadBackground->show();
+        numpadBackground->show();
         Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
         if(!numpadIsOut)
         {
@@ -779,7 +779,7 @@ void HudStudySettings::update(float elapsed)
     else
     {
         //Remove from Overlay!
-        //numpadBackground->hide();
+        numpadBackground->hide();
         Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
         
         if(numpadIsOut)
@@ -999,6 +999,8 @@ void HudStudySettings::alloc()
     holdoutStepsNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutStepsNumberTextDisplay"));
     
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
+    buttons[BUTTON_POPUP_REVERT].hide();
+    buttons[BUTTON_POPUP_OK].hide();
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StudySettingsOverlay");
@@ -1377,7 +1379,7 @@ void HudStudySettings::initOverlay()
     holdoutMinUpperBoundTextDisplay->setPosition(-0.450, 0.01); //.07
     holdoutMinUpperBoundTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
     holdoutMinUpperBoundTextDisplay->setFontName("MainSmall");
-    holdoutMinUpperBoundTextDisplay->setCaption("Holdout Min Upper Bound: ");
+    holdoutMinUpperBoundTextDisplay->setCaption("Holdout Min: ");
     
     holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
     
@@ -1396,7 +1398,7 @@ void HudStudySettings::initOverlay()
     holdoutMaxUpperBoundTextDisplay->setPosition(-0.450, 0.01); //.07
     holdoutMaxUpperBoundTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
     holdoutMaxUpperBoundTextDisplay->setFontName("MainSmall");
-    holdoutMaxUpperBoundTextDisplay->setCaption("Holdout Max Upper Bound: ");
+    holdoutMaxUpperBoundTextDisplay->setCaption("Holdout Max: ");
     
     holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
     
@@ -1536,7 +1538,6 @@ void HudStudySettings::initOverlay()
     
     somethingChangedRevertButton->setMaterialName("General/BlankInput");
     buttons[BUTTON_POPUP_REVERT].setButton("popuprevert", overlays[0], GMM_RELATIVE, Vector2(0.25, 0.6), Vector2(0.12, 0.06), somethingChangedRevertButton, NULL);
-    buttons[BUTTON_POPUP_REVERT].hide();
     
     somethingChangedOkButtonText->setMetricsMode(GMM_RELATIVE);
     somethingChangedOkButtonText->setAlignment(TextAreaOverlayElement::Left);
@@ -1551,7 +1552,6 @@ void HudStudySettings::initOverlay()
 
     somethingChangedOkButton->setMaterialName("General/BlankInput");
     buttons[BUTTON_POPUP_OK].setButton("popupok", overlays[0], GMM_RELATIVE, Vector2(0.50, 0.6), Vector2(0.12, 0.06), somethingChangedOkButton, NULL);
-    buttons[BUTTON_POPUP_OK].hide();
     
     //Message Popup
     somethingChangedMessageBackground->setMetricsMode(GMM_RELATIVE);

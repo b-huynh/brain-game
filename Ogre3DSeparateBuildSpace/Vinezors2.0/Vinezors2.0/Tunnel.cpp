@@ -1339,26 +1339,12 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
         ret.goodPod = (nback <= 0 || (types.size() >= nback && types[index - nback].podSignal == final));
         ret.podTrigger = false;
         
-        std::vector<float> frequencyValues;
-        frequencyValues.push_back(60.0);
-        frequencyValues.push_back(68.5);
-        frequencyValues.push_back(77.0);
-        frequencyValues.push_back(85.5);
-        frequencyValues.push_back(95.0);
-        std::vector<float> uboundTimes;
-        uboundTimes.push_back(0.600f);
-        uboundTimes.push_back(0.525f);
-        uboundTimes.push_back(0.450f);
-        uboundTimes.push_back(0.375f);
-        uboundTimes.push_back(0.300f);
-        
         bool timevar = false;
         float timefreq;
         
         //Percentage of stage time being withheld
-        float starttime = 0.2; //holdoutStart;
-        //float endtime = holdoutEnd;
-        float endtime = uboundTimes[std::min(holdoutLevel, (int)(uboundTimes.size() - 1))];
+        float starttime = holdoutStart;
+        float endtime = holdoutEnd;
         
         if (player->holdoutLB < 1.0f || player->holdoutUB < 1.0f) {
             starttime = player->holdoutLB;
@@ -1434,7 +1420,7 @@ PodInfo Tunnel::getNextPodInfoAt(SectionInfo segmentInfo, SetPodTarget setting)
             if (holdoutPerc > Util::EPSILON)
             {
                 int minFreq = 0;
-                int maxFreq = frequencyValues[std::min(holdoutLevel, (int)(frequencyValues.size() - 1))];
+                int maxFreq = holdoutPerc;
                 float deltaFreq = (maxFreq - minFreq) / static_cast<float>(NUM_HOLDOUT_PHASES);
                 frequencyquarter = std::round(hphase * deltaFreq);
             }
@@ -1615,7 +1601,7 @@ PodInfo Tunnel::getNextPodInfo(SectionInfo segmentInfo)
 void Tunnel::setPods(TunnelSlice* segment, const std::vector<PodInfo> & podInfos)
 {
     for (int i = 0; i < podInfos.size(); ++i)
-        segment->addPod(podInfos[i]);
+        segment->addPod(podInfos[i], player->soundVolume);
     
     std::vector<Pod*> pods = segment->getPods();
     for (int i = 0; i < pods.size(); ++i)
@@ -1994,9 +1980,10 @@ void Tunnel::update(float elapsed)
         {
             std::vector<Pod*> pods = nextSliceN->getPods();
             for (int i = 0; i < pods.size(); ++i) {
-                //                pods[i]->uncloakPod();
-                //                pods[i]->generateUncloakPFX();
-                //                player->playSound(pods[i]->getSignalSound());
+
+//                pods[i]->uncloakPod();
+//                pods[i]->generateUncloakPFX();
+//                player->playSound(pods[i]->getSignalSound());
                 
                 //pods[i]->setRotateSpeed(Vector3(5.0, 5.0, 5.0));
                 if (!pods[i]->getPodTrigger())
@@ -2211,12 +2198,58 @@ void Tunnel::setHoldout( int freq)
 }
 
 
-void Tunnel::setHoldoutSettings( float perc, float start, float end, int level, bool sound, bool color, bool shape)
+void Tunnel::setHoldoutSettings( float perc, int level, bool sound, bool color, bool shape)
 {
-    holdoutPerc = perc;
-    holdoutStart = start;
-    holdoutEnd = end;
+    // Holdout intensity is recorded
     holdoutLevel = level;
+    
+    // Set maximum holdout percentage based on holdout level intensity
+    if (perc > Util::EPSILON)
+    {
+        float holdoutPercMin = globals.holdoutMinUpperBound;
+        float holdoutPercMax = globals.holdoutMaxUpperBound;
+        float holdoutPercDelta = 0.0f;
+        if (globals.holdoutSteps > 1)
+            holdoutPercDelta = (holdoutPercMax - holdoutPercMin) / (globals.holdoutSteps - 1);
+        holdoutPerc = perc * (holdoutPercMin + level * holdoutPercDelta);   // Start from min to max
+        if (holdoutPerc < holdoutPercMin) holdoutPerc = holdoutPercMin;
+        if (holdoutPerc > holdoutPercMax) holdoutPerc = holdoutPercMax;
+    
+        // Set lower and upper bound for holdout in-level intensity progression
+        holdoutStart = globals.holdoutLowerBoundTime;
+        float holdoutEndMin = globals.holdoutUpperBoundMinTime;
+        float holdoutEndMax = globals.holdoutUpperBoundMaxTime;
+        float holdoutEndDelta = 0.0f;
+        if (globals.holdoutSteps > 1)
+            holdoutEndDelta = (holdoutEndMin - holdoutEndMax) / (globals.holdoutSteps - 1);
+        holdoutEnd = holdoutEndMax + level * holdoutEndDelta;   // Start from max to min
+        if (holdoutEnd < holdoutEndMin) holdoutEnd = holdoutEndMin;
+        if (holdoutEnd > holdoutEndMax) holdoutEnd = holdoutEndMax;
+        
+        std::cout << "holdoutPercMin: " << holdoutPercMin << std::endl;
+        std::cout << "holdoutPercMax: " << holdoutPercMax << std::endl;
+        std::cout << "holdoutPercDelta: " << holdoutPercDelta << std::endl;
+        std::cout << "holdoutPerc: " << holdoutPerc << std::endl;
+        std::cout << "holdoutStart: " << holdoutStart << std::endl;
+        std::cout << "holdoutEndMin: " << holdoutEndMin << std::endl;
+        std::cout << "holdoutEndMax: " << holdoutEndMax << std::endl;
+        std::cout << "holdoutEndDelta: " << holdoutEndDelta << std::endl;
+        std::cout << "holdoutEnd: " << holdoutEnd << std::endl;
+        std::cout << "holdoutLevel: " << holdoutLevel << std::endl;
+    }
+    else
+    {
+        holdoutPerc = perc;
+        holdoutStart = 0.0f;
+        holdoutEnd = 0.0;
+        
+        std::cout << "holdoutPerc: " << holdoutPerc << std::endl;
+        std::cout << "holdoutStart: " << holdoutStart << std::endl;
+        std::cout << "holdoutEnd: " << holdoutEnd << std::endl;
+        std::cout << "holdoutLevel: " << holdoutLevel << std::endl;
+    }
+    
+    // Flags for whether holdout is set
     holdoutSound = sound;
     holdoutColor = color;
     holdoutShape = shape;

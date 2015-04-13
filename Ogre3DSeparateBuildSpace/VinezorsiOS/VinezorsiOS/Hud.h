@@ -28,9 +28,10 @@ public:
     void setOverlay(int index, bool visible);
     void hideOverlays();
     void showOverlays();
+    std::vector<HudButton> buttons;
 protected:
     std::vector<Ogre::Overlay*> overlays;
-    std::vector<HudButton> buttons;
+    //std::vector<HudButton> buttons;
     
     virtual void alloc() = 0;
     virtual void dealloc() = 0;

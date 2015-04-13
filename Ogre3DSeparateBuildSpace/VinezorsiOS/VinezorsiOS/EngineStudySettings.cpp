@@ -53,6 +53,13 @@ void EngineStudySettings::enter()
     tempholdoutoffsetD = player->scheduler->holdoutOffsetD;
     tempsessionScreenEnabled = globals.sessionScreenEnabled;
     
+    tempholdoutMinUpperBound = globals.holdoutMinUpperBound;
+    tempholdoutMaxUpperBound = globals.holdoutMaxUpperBound;
+    tempholdoutLowerBoundTime = globals.holdoutLowerBoundTime;
+    tempholdoutUpperBoundMinTime = globals.holdoutUpperBoundMinTime;
+    tempholdoutUpperBoundMaxTime = globals.holdoutUpperBoundMaxTime;
+    tempholdoutSteps = globals.holdoutSteps;
+    
     // Set skybox
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
     OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
@@ -63,6 +70,7 @@ void EngineStudySettings::enter()
 
 void EngineStudySettings::exit()
 {
+    player->isNextPage = false;
     dealloc();
 }
 
@@ -78,14 +86,319 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
     if (queryGUI != "")
     {
-        if(!hud->popUpisOut)
+        if( (!hud->enableNumpad && (queryGUI == "numpad")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton0")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton1")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton2")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton3")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton4")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton5")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton6")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton7")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton8")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbutton9")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbuttondecimal")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbuttonsave")) ||
+            (!hud->enableNumpad && (queryGUI == "numpadbuttonback"))
+           )
+        {
+            //Dont sound off
+        }
+        else if(!hud->popUpisOut)
         {
             player->reactGUI();
 
         }
+        
 
     }
-    if (queryGUI == "popupok")
+    if(queryGUI == "nextsettings")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            
+            
+            
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
+            
+            if(!player->isNextPage)
+            {
+                
+                //HIDE PAGE 1
+                
+                //Hide UnlimitedFuel
+                overlay1->remove2D(hud->enableUnlimitedFuelBackground);
+                hud->buttons[hud->BUTTON_ENABLE_UNLIMITED_FUEL].hide();
+                
+                //Hide Holdout and Holdout Delay
+                overlay1->remove2D(hud->enableHoldoutBackground);
+                overlay1->remove2D(hud->enableHoldoutDelayBackground);
+                overlay1->remove2D(hud->enableHoldoutDelayButtonBackground);
+                overlay1->remove2D(hud->enableHoldoutDelayNumberButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_HOLDOUT].hide();
+                hud->buttons[hud->BUTTON_ENABLE_HOLDOUT_DELAY].hide();
+                hud->buttons[hud->BUTTON_HOLDOUT_DELAY_NUMBER].hide();
+                
+                //Hide ManRecess
+                overlay1->remove2D(hud->enableMandatoryRecessBackground);
+                overlay1->remove2D(hud->enableMandatoryRecessButtonBackground);
+                overlay1->remove2D(hud->enableMandatoryRecessNumberBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_MANDATORY_RECESS].hide();
+                hud->buttons[hud->BUTTON_MANDATORY_RECESS_NUMBER].hide();
+                
+                //Hide init Velocity
+                overlay1->remove2D(hud->initSpeedBackground);
+                hud->buttons[hud->BUTTON_INPUT_INIT_SPEED].hide();
+                
+                //Hide New Nav
+                overlay1->remove2D(hud->enableNewNavBackground);
+                overlay1->remove2D(hud->enableNewNavButtonBackground);
+                overlay1->remove2D(hud->enableNewNavNumberButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_NEW_NAV].hide();
+                hud->buttons[hud->BUTTON_ENABLE_NEW_NAV_NUMBER].hide();
+                
+                //Hide New Sounds
+                overlay1->remove2D(hud->enableNewSoundsBackground);
+                overlay1->remove2D(hud->enableNewSoundsButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_NEW_SOUNDS].hide();
+                
+                
+                //Hide Independent Recess
+                overlay1->remove2D(hud->enableIndRecessBackground);
+                overlay1->remove2D(hud->enableIndRecessButtonBackground);
+                overlay1->remove2D(hud->enableIndRecessNumberButtonBackground);
+                overlay1->remove2D(hud->enableIndRecessFixedButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS].hide();
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS_NUMBER].hide();
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS_FIXED].hide();
+                
+                //Hide Passcode
+                overlay1->remove2D(hud->enableSettingsPasscodeBackground);
+                overlay1->remove2D(hud->enableSettingsPasscodeButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_PASSCODE].hide();
+                
+                //Hide Session ID
+                overlay1->remove2D(hud->enableSessionScreenBackground);
+                overlay1->remove2D(hud->enableSessionScreenButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_SESSION_SCREEN].hide();
+                
+                //Hide Session Time Settings
+                overlay1->remove2D(hud->sessionTimeSettingsBackground);
+                overlay1->remove2D(hud->sessionStartTimeNumberBackground);
+                overlay1->remove2D(hud->sessionEndTimeNumberBackground);
+                overlay1->remove2D(hud->sessionNumNumberBackground);
+                
+                hud->buttons[hud->BUTTON_SESSION_START_NUMBER].hide();
+                hud->buttons[hud->BUTTON_SESSION_END_NUMBER].hide();
+                hud->buttons[hud->BUTTON_NUM_OF_SESSIONS_NUMBER].hide();
+                
+                
+                //SHOW PAGE 2
+                
+                //Show Holdout Min Upper Bound
+                overlay1->add2D(hud->holdoutMinUpperBoundNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MIN_UPPER_BOUND].show();
+                
+                //Show Holdout Max Upper Bound
+                overlay1->add2D(hud->holdoutMaxUpperBoundNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MAX_UPPER_BOUND].show();
+                
+                
+                //Show Holdout Lower Bound Time
+                overlay1->add2D(hud->holdoutLowerBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_LOWER_BOUND_TIME].show();
+                //Show Holdout Min Upper Bound Time
+                overlay1->add2D(hud->holdoutMinUpperBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MIN_UPPER_BOUND_TIME].show();
+                //Show Holdout Max Upper Bound Time
+                overlay1->add2D(hud->holdoutMaxUpperBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MAX_UPPER_BOUND_TIME].show();
+                
+                //Show Holdout Steps
+                overlay1->add2D(hud->holdoutStepsNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_STEPS].show();
+                
+                
+                
+                
+                
+                
+            }
+            else
+            {
+                //SHOW PAGE 1
+                
+                //Show UnlimitedFuel
+                overlay1->add2D(hud->enableUnlimitedFuelBackground);
+                hud->buttons[hud->BUTTON_ENABLE_UNLIMITED_FUEL].show();
+                
+                //Show Holdout and Holdout Delay
+                overlay1->add2D(hud->enableHoldoutBackground);
+                overlay1->add2D(hud->enableHoldoutDelayBackground);
+                overlay1->add2D(hud->enableHoldoutDelayButtonBackground);
+                overlay1->add2D(hud->enableHoldoutDelayNumberButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_HOLDOUT].show();
+                hud->buttons[hud->BUTTON_ENABLE_HOLDOUT_DELAY].show();
+                hud->buttons[hud->BUTTON_HOLDOUT_DELAY_NUMBER].show();
+                
+                //Show ManRecess
+                overlay1->add2D(hud->enableMandatoryRecessBackground);
+                overlay1->add2D(hud->enableMandatoryRecessButtonBackground);
+                overlay1->add2D(hud->enableMandatoryRecessNumberBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_MANDATORY_RECESS].show();
+                hud->buttons[hud->BUTTON_MANDATORY_RECESS_NUMBER].show();
+                
+                //Show init Velocity
+                overlay1->add2D(hud->initSpeedBackground);
+                hud->buttons[hud->BUTTON_INPUT_INIT_SPEED].show();
+                
+                //Show New Nav
+                overlay1->add2D(hud->enableNewNavBackground);
+                overlay1->add2D(hud->enableNewNavButtonBackground);
+                overlay1->add2D(hud->enableNewNavNumberButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_NEW_NAV].show();
+                hud->buttons[hud->BUTTON_ENABLE_NEW_NAV_NUMBER].show();
+                
+                //Show New Sounds
+                overlay1->add2D(hud->enableNewSoundsBackground);
+                overlay1->add2D(hud->enableNewSoundsButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_NEW_SOUNDS].show();
+                
+                //Show Indpendent Recess
+                overlay1->add2D(hud->enableIndRecessBackground);
+                overlay1->add2D(hud->enableIndRecessButtonBackground);
+                overlay1->add2D(hud->enableIndRecessNumberButtonBackground);
+                overlay1->add2D(hud->enableIndRecessFixedButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS].show();
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS_NUMBER].show();
+                hud->buttons[hud->BUTTON_ENABLE_IND_RECESS_FIXED].show();
+                
+                //Show Passcode
+                overlay1->add2D(hud->enableSettingsPasscodeBackground);
+                overlay1->add2D(hud->enableSettingsPasscodeButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_PASSCODE].show();
+                
+                //Show SessionID
+                overlay1->add2D(hud->enableSessionScreenBackground);
+                overlay1->add2D(hud->enableSessionScreenButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_SESSION_SCREEN].show();
+                
+                //Show Session Time Settings
+                overlay1->add2D(hud->sessionTimeSettingsBackground);
+                overlay1->add2D(hud->sessionStartTimeNumberBackground);
+                overlay1->add2D(hud->sessionEndTimeNumberBackground);
+                overlay1->add2D(hud->sessionNumNumberBackground);
+                
+                hud->buttons[hud->BUTTON_SESSION_START_NUMBER].show();
+                hud->buttons[hud->BUTTON_SESSION_END_NUMBER].show();
+                hud->buttons[hud->BUTTON_NUM_OF_SESSIONS_NUMBER].show();
+                
+                //HIDE PAGE 2
+                
+                //Hide Holdout Min Upper Bound
+                overlay1->remove2D(hud->holdoutMinUpperBoundNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MIN_UPPER_BOUND].hide();
+                
+                overlay1->remove2D(hud->holdoutMaxUpperBoundNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MAX_UPPER_BOUND].hide();
+                
+                //Hide Holdout Lower Bound Time
+                overlay1->remove2D(hud->holdoutLowerBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_LOWER_BOUND_TIME].hide();
+                //Hide Holdout Min Upper Bound Time
+                overlay1->remove2D(hud->holdoutMinUpperBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MIN_UPPER_BOUND_TIME].hide();
+                //Hide Holdout Max Upper Bound Time
+                overlay1->remove2D(hud->holdoutMaxUpperBoundTimeNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_MAX_UPPER_BOUND_TIME].hide();
+                
+                //Hide Holdout Steps
+                overlay1->remove2D(hud->holdoutStepsNumberBackground);
+                hud->buttons[hud->BUTTON_HOLDOUT_STEPS].hide();
+                
+            }
+            
+            player->isNextPage = !player->isNextPage;
+        }
+        
+    }
+    if(queryGUI == "popupok")
     {
         if(hud->popUpisOut)
         {
@@ -119,6 +432,7 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         {
             player->reactGUI();
             std::cout<<"Pressed Revert "<< std::endl;
+            
             //Put all temp settings back
             //TempStudySettings
             
@@ -143,6 +457,14 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             player->scheduler->holdoutOffsetB=tempholdoutoffsetB;
             player->scheduler->holdoutOffsetD=tempholdoutoffsetD;
             globals.sessionScreenEnabled=tempsessionScreenEnabled;
+            
+            globals.holdoutMinUpperBound =tempholdoutMinUpperBound;
+            globals.holdoutMaxUpperBound= tempholdoutMaxUpperBound;
+            globals.holdoutLowerBoundTime= tempholdoutLowerBoundTime;
+            globals.holdoutUpperBoundMinTime= tempholdoutUpperBoundMinTime;
+            globals.holdoutUpperBoundMaxTime= tempholdoutUpperBoundMaxTime;
+            globals.holdoutSteps=tempholdoutSteps ;
+            
             /* Need to do this when I press ok!*/
              
              
@@ -151,6 +473,8 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             hud->initStrings();
             hud->popUpisOut = false;
             hud->hidePopUp();
+            //player->isNextPage = false;
+            //Show everything again
             
         }
     }
@@ -177,7 +501,13 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                tempnumOfSessions == globals.numOfSessions &&
                tempnewSounds== globals.newSounds &&
                tempsessionScreenEnabled == globals.sessionScreenEnabled &&
-               tempenableIndRecessFixed == globals.enableIndRecessFixed)
+               tempenableIndRecessFixed == globals.enableIndRecessFixed &&
+               tempholdoutMinUpperBound == globals.holdoutMinUpperBound &&
+               tempholdoutMaxUpperBound == globals.holdoutMaxUpperBound &&
+               tempholdoutLowerBoundTime == globals.holdoutLowerBoundTime &&
+               tempholdoutUpperBoundMinTime == globals.holdoutUpperBoundMinTime &&
+               tempholdoutUpperBoundMaxTime == globals.holdoutUpperBoundMaxTime &&
+               tempholdoutSteps == globals.holdoutSteps)
                 
             {
                 //Still the same
@@ -1199,6 +1529,54 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->numOfSessionsString.erase(hud->numOfSessionsString.size()-1,1);
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() != 0)
+                {
+                    hud->holdoutMinUpperBoundString.erase(hud->holdoutMinUpperBoundString.size()-1,1);
+
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() != 0)
+                {
+                    hud->holdoutMaxUpperBoundString.erase(hud->holdoutMaxUpperBoundString.size()-1,1);
+                    
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() != 0)
+                {
+                    hud->holdoutLowerBoundTimeString.erase(hud->holdoutLowerBoundTimeString.size()-1,1);
+                    
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() != 0)
+                {
+                    hud->holdoutMinUpperBoundTimeString.erase(hud->holdoutMinUpperBoundTimeString.size()-1,1);
+                    
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() != 0)
+                {
+                    hud->holdoutMaxUpperBoundTimeString.erase(hud->holdoutMaxUpperBoundTimeString.size()-1,1);
+                    
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() != 0)
+                {
+                    hud->holdoutStepsString.erase(hud->holdoutStepsString.size()-1,1);
+                    
+                }
+            }
         }
         
         
@@ -1273,6 +1651,50 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "0";
+                }
+            }
+            
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "0";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "0";
+                }
+            }
+            
         }
         
     }
@@ -1335,6 +1757,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->numOfSessionsString.size() < 2)
                 {
                     hud->numOfSessionsString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "1";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "1";
                 }
             }
             if(hud->nStatus == hud->PASSCODE)
@@ -1452,6 +1916,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "2";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "2";
+                }
+            }
         }
         
     }
@@ -1522,6 +2028,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 {
                     hud->user_password[hud->Passcode_counter] = 3;
                     hud->Passcode_counter++;
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "3";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "3";
                 }
             }
         }
@@ -1597,6 +2145,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "4";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "4";
+                }
+            }
         }
         
         
@@ -1668,6 +2258,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 {
                     hud->user_password[hud->Passcode_counter] = 5;
                     hud->Passcode_counter++;
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "5";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "5";
                 }
             }
         }
@@ -1744,6 +2376,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "6";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "6";
+                }
+            }
         }
         
         
@@ -1817,12 +2491,54 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "7";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "7";
+                }
+            }
         }
         
     }
     else if(queryGUI == "numpadbutton8")
     {
-        if(!hud->popUpisOut)
+        if(!hud->popUpisOut )// To remove sound! && hud->enableNumpad)
         {
             std::cout<<"Pressed 8\n";
             if( hud->nStatus == hud->INIT_VELOCITY)
@@ -1889,8 +2605,49 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->Passcode_counter++;
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "8";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "8";
+                }
+            }
         }
-        
         
     }
     else if(queryGUI == "numpadbutton9")
@@ -1960,6 +2717,48 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 {
                     hud->user_password[hud->Passcode_counter] = 9;
                     hud->Passcode_counter++;
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= "9";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString.size() < 2)
+                {
+                    hud->holdoutStepsString+= "9";
                 }
             }
         }
@@ -2151,6 +2950,162 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->enableNumpad = false;
                 
             }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString != "")
+                {
+                    
+                    globals.holdoutMinUpperBound= std::atof(hud->holdoutMinUpperBoundString.c_str());
+                    if(globals.holdoutMinUpperBound < 0) //What do I use!
+                    {
+                        globals.holdoutMinUpperBound = 0;
+                    }
+                    if(globals.holdoutMinUpperBound > 100.0) //What do I use!
+                    {
+                        globals.holdoutMinUpperBound = 100.0;
+                    }
+                    if(globals.holdoutMinUpperBound > globals.holdoutMaxUpperBound) //What do I use!
+                    {
+                        globals.holdoutMinUpperBound = globals.holdoutMaxUpperBound;
+                    }
+                    
+                }
+                
+                hud->holdoutMinUpperBoundString = Util::toStringFloat(globals.holdoutMinUpperBound,1);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString != "")
+                {
+                    
+                    globals.holdoutMaxUpperBound= std::atof(hud->holdoutMaxUpperBoundString.c_str());
+                    if(globals.holdoutMaxUpperBound < 0) //What do I use!
+                    {
+                        globals.holdoutMaxUpperBound = 0;
+                    }
+                    if(globals.holdoutMaxUpperBound > 100.0) //What do I use!
+                    {
+                        globals.holdoutMaxUpperBound = 100.0;
+                    }
+                    if(globals.holdoutMaxUpperBound < globals.holdoutMinUpperBound) //What do I use!
+                    {
+                        globals.holdoutMaxUpperBound = globals.holdoutMinUpperBound;
+                    }
+                    
+                    
+                }
+                
+                hud->holdoutMaxUpperBoundString = Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString != "")
+                {
+                    
+                    globals.holdoutLowerBoundTime= std::atof(hud->holdoutLowerBoundTimeString.c_str());
+                    if(globals.holdoutLowerBoundTime < 0) //What do I use!
+                    {
+                        globals.holdoutLowerBoundTime = 0;
+                    }
+                    if(globals.holdoutLowerBoundTime > 1.0) //What do I use!
+                    {
+                        globals.holdoutLowerBoundTime = 1.0;
+                    }
+                    if(globals.holdoutLowerBoundTime > globals.holdoutUpperBoundMinTime) //What do I use!
+                    {
+                        globals.holdoutLowerBoundTime = globals.holdoutUpperBoundMinTime;
+                    }
+                    
+                    
+                }
+                
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString != "")
+                {
+                    
+                    globals.holdoutUpperBoundMinTime= std::atof(hud->holdoutMinUpperBoundTimeString.c_str());
+                    if(globals.holdoutUpperBoundMinTime < 0) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMinTime = 0;
+                    }
+                    if(globals.holdoutUpperBoundMinTime > 1.0) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMinTime = 1.0;
+                    }
+                    if(globals.holdoutUpperBoundMinTime > globals.holdoutUpperBoundMaxTime) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMinTime = globals.holdoutUpperBoundMaxTime;
+                    }
+                    if(globals.holdoutUpperBoundMinTime < globals.holdoutLowerBoundTime) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMinTime = globals.holdoutLowerBoundTime;
+                    }
+                    
+                    
+                }
+                
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString != "")
+                {
+                    
+                    globals.holdoutUpperBoundMaxTime= std::atof(hud->holdoutMaxUpperBoundTimeString.c_str());
+                    if(globals.holdoutUpperBoundMaxTime < 0) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMaxTime = 0;
+                    }
+                    if(globals.holdoutUpperBoundMaxTime > 1.0) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMaxTime = 1.0;
+                    }
+                    if(globals.holdoutUpperBoundMaxTime < globals.holdoutUpperBoundMinTime) //What do I use!
+                    {
+                        globals.holdoutUpperBoundMaxTime = globals.holdoutUpperBoundMinTime;
+                    }
+                    
+                }
+                
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+                hud->enableNumpad = false;
+                
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                if(hud->holdoutStepsString != "")
+                {
+                    
+                    globals.holdoutSteps= std::atoi(hud->holdoutStepsString.c_str());
+                    if(globals.holdoutSteps < 1) //What do I use!
+                    {
+                        globals.holdoutSteps = 1;
+                    }
+                    if(globals.holdoutSteps > 100) //What do I use!
+                    {
+                        globals.holdoutSteps = 99;
+                    }
+
+                    
+                }
+                
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+                hud->enableNumpad = false;
+                
+            }
+
+
         }
         
 
@@ -2181,12 +3136,243 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                     hud->holdoutDelayString+= ".";
                 }
             }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                if(hud->holdoutMinUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundString+= ".";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                if(hud->holdoutMaxUpperBoundString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundString+= ".";
+                }
+            }
+            
+            
+            if( hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                if(hud->holdoutLowerBoundTimeString.size() < 5)
+                {
+                    hud->holdoutLowerBoundTimeString+= ".";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMinUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMinUpperBoundTimeString+= ".";
+                }
+            }
+            if( hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                if(hud->holdoutMaxUpperBoundTimeString.size() < 5)
+                {
+                    hud->holdoutMaxUpperBoundTimeString+= ".";
+                }
+            }
+
         }
         
     }
     else if(queryGUI == "numpad")
     {
+        std::cout << "Touched numpad" << std::endl;
+    }
+    
+    
+    
+    
+    
+    
+    else if(queryGUI == "holdoutminupperbound")
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_MIN_UPPER_BOUND;
+            hud->holdoutMinUpperBoundString = "";
+        }
+    }
+    else if(queryGUI == "holdoutmaxupperbound")
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_MAX_UPPER_BOUND;
+            hud->holdoutMaxUpperBoundString = "";
+        }
+    }
+    else if(queryGUI == "holdoutlowerboundtime")
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_LOWER_BOUND_TIME;
+            hud->holdoutLowerBoundTimeString = "";
+        }
+    }
+    else if(queryGUI == "holdoutminupperboundtime")
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_MIN_UPPER_BOUND_TIME;
+            hud->holdoutMinUpperBoundTimeString = "";
+        }
+    }
+    else if(queryGUI == "holdoutmaxupperboundtime")
+    {
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_STEPS)
+            {
+                hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = true;
+            hud->nStatus = hud->HOLDOUT_MAX_UPPER_BOUND_TIME;
+            hud->holdoutMaxUpperBoundTimeString = "";
+        }
+    }
+    else if(queryGUI == "holdoutsteps")
+    {
         
+        
+        if(!hud->popUpisOut)
+        {
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+            {
+                hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+            {
+                hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+            }
+            if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+            {
+                hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+            }
+            if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+            {
+                hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+            }
+            hud->enableNumpad = true;
+            hud->showDecimal = false;
+            hud->nStatus = hud->HOLDOUT_STEPS;
+            hud->holdoutStepsString = "";
+        }
+        
+
     }
     
     else
@@ -2226,6 +3412,30 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 if(hud->nStatus == hud->NUM_OF_SESSIONS)
                 {
                     hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
+                }
+                if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND)
+                {
+                    hud->holdoutMinUpperBoundString =Util::toStringFloat(globals.holdoutMinUpperBound,1);
+                }
+                if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND)
+                {
+                    hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+                }
+                if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
+                {
+                    hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+                }
+                if(hud->nStatus == hud->HOLDOUT_MIN_UPPER_BOUND_TIME)
+                {
+                    hud->holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+                }
+                if(hud->nStatus == hud->HOLDOUT_MAX_UPPER_BOUND_TIME)
+                {
+                    hud->holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+                }
+                if(hud->nStatus == hud->HOLDOUT_STEPS)
+                {
+                    hud->holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
                 }
                 hud->enableNumpad = false;
                 hud->nStatus = hud->NONE;

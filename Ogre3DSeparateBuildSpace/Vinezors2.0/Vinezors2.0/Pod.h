@@ -59,6 +59,8 @@ private:
     Vector3 direction;
     Vector3 rotateSpeed;
     
+    float soundVolume;
+    
     Direction loc;
     bool podTested;     // Pod has already been tested. This is used to make sure we don't send feedback twice
     bool podTaken;      // Pod is picked up or selected
@@ -72,7 +74,7 @@ private:
 public:
     Pod();
     
-    Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius);
+    Pod(Ogre::SceneNode* parentNode, Vector3 base, Vector3 tip, PodMeshType mtype, PodSignal podSignal, PodColor podColor, PodShape podShape, PodSound podSound, Direction loc, float stemRadius, float headRadius, float soundVolume);
     
     void loadPod();
     void loadBasicShape();
@@ -114,9 +116,7 @@ public:
     bool isPodGood() const;
     bool isPodZapped() const;
     bool isPodCrystalGrown() const;
-    
     void move(Vector3 delta);
-    
     void setToGrowth(float t);
     void setSkin();
     void setPodCrystalGrown(bool tf);
@@ -140,7 +140,7 @@ public:
     
     void removeGlow();
     void removeIndicator();
-    void removeFromScene();
+	void removeFromScene();
     void removeUncloakPFX();
     
     void update(float elapsed);

@@ -15,7 +15,7 @@
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #define NETWORKING
 #define FONT_SZ_MULT 1.75
 
@@ -160,7 +160,7 @@ namespace Util
         bool enableIndRecessFixed = false;
         
         bool newSounds = true; //Study Settings
-        
+       
         float holdoutMinUpperBound = 60.0;
         float holdoutMaxUpperBound = 95.0;
         float holdoutLowerBoundTime = 0.20;

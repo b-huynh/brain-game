@@ -27,8 +27,6 @@ EngineLevelSelection::~EngineLevelSelection()
 void EngineLevelSelection::enter()
 {
     alloc();
-    TutorialManager* tutorialMgr = player->getTutorialMgr();
-    tutorialMgr->disable();
     player->startMenu();
     
     
@@ -149,7 +147,7 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
 
 void EngineLevelSelection::activatePerformPinch()
 {
-#if defined(DEBUG_MODE)
+//#if defined(DEBUG_MODE)
     if (player->isLevelAvailable(NUM_LEVELS * NUM_TASKS - 1))
     {
         PlayerProgress value;
@@ -162,7 +160,7 @@ void EngineLevelSelection::activatePerformPinch()
         value.rating = 5;
         player->setAllProgressTo(value);
     }
-#endif
+//#endif
 }
 
 #if !defined(OGRE_IS_IOS)

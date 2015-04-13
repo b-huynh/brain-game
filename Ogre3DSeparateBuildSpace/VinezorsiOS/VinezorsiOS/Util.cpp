@@ -922,7 +922,12 @@ bool Util::ConfigGlobal::saveGlobalSettings(std::string file)
     out << "enableIndRecessFixed" << " " << enableIndRecessFixed << std::endl;
     out << "syncDataToServer" << " " << syncDataToServer << std::endl;
 
-    
+    out << "holdoutMinUpperBound" << " " << holdoutMinUpperBound << std::endl;
+    out << "holdoutMaxUpperBound" << " " << holdoutMaxUpperBound << std::endl;
+    out << "holdoutLowerBoundTime" << " " << holdoutLowerBoundTime << std::endl;
+    out << "holdoutUpperBoundMinTime" << " " << holdoutUpperBoundMinTime << std::endl;
+    out << "holdoutUpperBoundMaxTime" << " " << holdoutUpperBoundMaxTime << std::endl;
+    out << "holdoutSteps" << " " << holdoutSteps << std::endl;
     
     std::cout << "Save Global Settings: " << file << std::endl;
     ret = out.good();
@@ -983,7 +988,19 @@ bool Util::ConfigGlobal::loadGlobalSettings1_0(std::string savePath)
                 saveFile >> enableIndRecessFixed;
             else if (input == "syncDataToServer")
                 saveFile >> syncDataToServer;
-
+            else if (input == "holdoutMinUpperBound")
+                saveFile >> holdoutMinUpperBound;
+            else if (input == "holdoutMaxUpperBound")
+                saveFile >> holdoutMaxUpperBound;
+            else if (input == "holdoutLowerBoundTime")
+                saveFile >> holdoutLowerBoundTime;
+            else if (input == "holdoutUpperBoundMinTime")
+                saveFile >> holdoutUpperBoundMinTime;
+            else if (input == "holdoutUpperBoundMaxTime")
+                saveFile >> holdoutUpperBoundMaxTime;
+            else if (input == "holdoutSteps")
+                saveFile >> holdoutSteps;
+            
         }
     }
     return saveFile.eof();

@@ -179,6 +179,21 @@ void EngineStage::update(float elapsed)
             
             //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
+            /* // ===============================================================================================
+            //      Adds navigation to state
+            //      Navigation Debug Keys
+            // ==================================================================================================
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            */ // ===============================================================================================
+            
             globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
@@ -1102,7 +1117,6 @@ void EngineStage::mouseMoved(const OIS::MouseEvent &evt)
     {
         // Move the camera when paused
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
-        
         Vector3 right = player->getCamRight(true);
         Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;
@@ -1484,16 +1498,6 @@ void EngineStage::setup()
         globals.stageTotalTargets = 40;
     }
     
-    
-    std::cout << "Level Params:" << std::endl;
-    std::cout << level.navLevels[0].level;
-    std::cout << level.navLevels[1].level;
-    std::cout << level.navLevels[2].level;
-    std::cout << level.navLevels[3].level;
-    std::cout << level.navLevels[0].obstacles;
-    std::cout << level.navLevels[1].obstacles;
-    std::cout << level.navLevels[2].obstacles;
-    std::cout << level.navLevels[3].obstacles;
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
                         origin + forward * (globals.tunnelSegmentWidth / 2),
@@ -1518,7 +1522,7 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutStart, level.holdoutEnd, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
+    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
     tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
     tunnel->setFuelLevel(globals.fuelMax, globals.fuelReturn, globals.startingHP);
 

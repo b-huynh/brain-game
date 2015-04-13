@@ -168,7 +168,6 @@ private:
         float nbackLevelD;
         float nbackLevelE;
         float scoreCurr;
-        float currentHoldout;
         float holdoutOffsetA;
         float holdoutOffsetB;
         float holdoutOffsetD;
@@ -244,6 +243,9 @@ private:
 public:
     //Level Menu Holdout Toggle
     bool levelsHoldout = false;
+    
+    //NextPage StudySetting
+    bool isNextPage = false;
     
     // Marble Restart Counter of Study Version
     int marbleChoice = 0;

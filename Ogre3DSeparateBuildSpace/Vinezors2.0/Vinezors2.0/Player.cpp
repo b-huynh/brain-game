@@ -3088,10 +3088,16 @@ bool Player::saveSession(std::string file)
             out << "% numOfSessions - Study Settings to set number of sessions" << endl;
             out << "% sessionScreenEnabled - Study Settings to enable the SessionID screen" << endl;
             out << "% enableIndRecessFixed - Study Settings to enable fixed Navigation for Independent Recess Levels" << endl;
-
-
+            
+            out << "% holdoutMin - Study Settings for min holdout intensity" << std::endl;
+            out << "% holdoutMax - Study Settings for max holdout intensity" << std::endl;
+            out << "% holdoutLowerBoundTime - Study Settings for in-level lowerbound time holdout" << std::endl;
+            out << "% holdoutUpperBoundMinTime - Study Settings for in-level upperbound min time holdout" << std::endl;
+            out << "% holdoutUpperBoundMaxTime - Study Settings for in-level upperbound max time holdout" << std::endl;
+            out << "% holdoutSteps - Study Settings for holdout steps" << std::endl;
+ 
             out << "%" << endl;
-            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN TPh FPh TNh FNh Ignored Pickups IgnoredH PickupsH ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed" << endl;
+            out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN TPh FPh TNh FNh Ignored Pickups IgnoredH PickupsH ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed holdoutMin holdoutMax  holdoutLowerBoundTime holdoutUpperBoundMinTime holdoutUpperBoundMaxTime holdoutSteps" << endl;
             //fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed
         }
         
@@ -3130,7 +3136,6 @@ bool Player::saveSession(std::string file)
         << sessions.back().nbackLevelD << " "
         << sessions.back().nbackLevelE << " "
         << sessions.back().scoreCurr << " "
-        << sessions.back().currentHoldout << " "
         << sessions.back().holdoutOffsetA << " "
         << sessions.back().holdoutOffsetB << " "
         << sessions.back().holdoutOffsetD << " "
@@ -3170,7 +3175,13 @@ bool Player::saveSession(std::string file)
         << globals.sessionEndTime << " "
         << globals.numOfSessions << " "
         << globals.sessionScreenEnabled << " "
-        << globals.enableIndRecessFixed << "\n";
+        << globals.enableIndRecessFixed << " "
+        << globals.holdoutMinUpperBound << " " // variable name should be changed to holdout min
+        << globals.holdoutMaxUpperBound << " " // and holdout max
+        << globals.holdoutLowerBoundTime << " "
+        << globals.holdoutUpperBoundMinTime << " "
+        << globals.holdoutUpperBoundMaxTime << " "
+        << globals.holdoutSteps << "\n";
 
         out.close();
     }

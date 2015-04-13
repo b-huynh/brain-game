@@ -72,6 +72,13 @@ protected:
     double tempholdoutoffsetA;
     double tempholdoutoffsetB;
     double tempholdoutoffsetD;
+    
+    float tempholdoutMinUpperBound;
+    float tempholdoutMaxUpperBound;
+    float tempholdoutLowerBoundTime;
+    float tempholdoutUpperBoundMinTime;
+    float tempholdoutUpperBoundMaxTime;
+    int tempholdoutSteps;
 
     
     void alloc();

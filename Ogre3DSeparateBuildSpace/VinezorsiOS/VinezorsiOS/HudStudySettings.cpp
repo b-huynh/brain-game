@@ -47,7 +47,13 @@ void HudStudySettings::initStrings()
     sessionStartTimeString = Util::toStringInt(globals.sessionStartTime);
     sessionEndtimeString= Util::toStringInt(globals.sessionEndTime);
     numOfSessionsString = Util::toStringInt(globals.numOfSessions);
-
+    
+    holdoutMinUpperBoundString = Util::toStringFloat(globals.holdoutMinUpperBound,1);
+    holdoutMaxUpperBoundString = Util::toStringFloat(globals.holdoutMaxUpperBound,1);
+    holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
+    holdoutMinUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMinTime,3);
+    holdoutMaxUpperBoundTimeString = Util::toStringFloat(globals.holdoutUpperBoundMaxTime,3);
+    holdoutStepsString = Util::toStringInt(globals.holdoutSteps);
     
 }
 
@@ -70,6 +76,9 @@ void HudStudySettings::showPopUp()
     
     somethingChangedRevertButton->addChild(somethingChangedRevertButtonText);
     overlay1->add2D(somethingChangedRevertButton);
+    
+    buttons[BUTTON_POPUP_REVERT].show();
+    buttons[BUTTON_POPUP_OK].show();
     
     /*
     //Button "Restart Session"
@@ -94,6 +103,9 @@ void HudStudySettings::hidePopUp()
     
     somethingChangedRevertButton->removeChild("somethingChangedRevertButtonText");
     overlay1->remove2D(somethingChangedRevertButton);
+    
+    buttons[BUTTON_POPUP_REVERT].hide();
+    buttons[BUTTON_POPUP_OK].hide();
 }
 void HudStudySettings::update(float elapsed)
 {
@@ -107,6 +119,37 @@ void HudStudySettings::update(float elapsed)
     sessionEndTimeNumberTextDisplay->setCaption(sessionEndtimeString);
     sessionNumNumberTextDisplay->setCaption(numOfSessionsString);
     
+    //New Holdout Page 2 Items
+    holdoutMinUpperBoundNumberTextDisplay->setCaption(holdoutMinUpperBoundString);
+    holdoutMaxUpperBoundNumberTextDisplay->setCaption(holdoutMaxUpperBoundString);
+    
+    holdoutLowerBoundTimeNumberTextDisplay->setCaption(holdoutLowerBoundTimeString);
+    holdoutMinUpperBoundTimeNumberTextDisplay->setCaption(holdoutMinUpperBoundTimeString);
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setCaption(holdoutMaxUpperBoundTimeString);
+    
+    holdoutStepsNumberTextDisplay->setCaption(holdoutStepsString);
+    
+    
+    Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
+
+    if(!player->isNextPage)
+    {
+    
+        //Hide Page 2 Contents
+        //Show Page 1 Contents
+        nextButtonTextDisplay->setCaption("Next Page");
+
+    
+    }
+    else
+    {
+        //Hide Page 1 Contents
+        //Show Page 2 Contents
+        
+        
+        nextButtonTextDisplay->setCaption("Prev. Page");
+
+    }
     
     if(startDotTimer)
     {
@@ -409,7 +452,19 @@ void HudStudySettings::update(float elapsed)
             numpadButton_Decimal->hide();
             numpadButton_Decimal_TextDisplay->hide();
         }
+        //Add to overlay
         numpadBackground->show();
+        Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
+        if(!numpadIsOut)
+        {
+            
+            buttons[NUMPAD_BG].show();
+            overlay1->add2D(numpadBackground);
+            
+        
+            numpadIsOut = true;
+        }
+        
         if(nStatus == INIT_VELOCITY)
         {
             initSpeedBackground->setMaterialName("General/SelectedInput");
@@ -420,6 +475,15 @@ void HudStudySettings::update(float elapsed)
             sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
 
 
         }
@@ -433,6 +497,15 @@ void HudStudySettings::update(float elapsed)
             sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
+
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
 
 
 
@@ -449,6 +522,14 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
 
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
 
 
 
@@ -464,6 +545,14 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
 
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
 
             
         }
@@ -478,7 +567,15 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
 
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
             
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+
             
         }
         else if(nStatus == SESSION_START_TIME)
@@ -492,7 +589,15 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
 
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
             
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+
             
         }
         else if(nStatus == SESSION_END_TIME)
@@ -506,7 +611,14 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/SelectedInput");
             sessionNumNumberBackground->setMaterialName("General/BlankInput");
 
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
             
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
             
             
         }
@@ -521,14 +633,164 @@ void HudStudySettings::update(float elapsed)
             sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
             sessionNumNumberBackground->setMaterialName("General/SelectedInput");
             
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
             
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+            
+        }
+        else if(nStatus == HOLDOUT_MIN_UPPER_BOUND)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/SelectedInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
             
             
         }
+        else if(nStatus == HOLDOUT_MAX_UPPER_BOUND)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/SelectedInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+            
+            
+        }
+        else if(nStatus == HOLDOUT_LOWER_BOUND_TIME)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/SelectedInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+            
+        }
+        else if(nStatus == HOLDOUT_MIN_UPPER_BOUND_TIME)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/SelectedInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+            
+            
+        }
+        else if(nStatus == HOLDOUT_MAX_UPPER_BOUND_TIME)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/SelectedInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+            
+            
+        }
+        else if(nStatus == HOLDOUT_STEPS)
+        {
+            initSpeedBackground->setMaterialName("General/BlankInput");
+            enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
+            enableIndRecessNumberButtonBackground->setMaterialName("General/BlankInput");
+            enableHoldoutDelayNumberButtonBackground->setMaterialName("General/BlankInput");
+            sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
+            sessionNumNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+            
+            holdoutStepsNumberBackground->setMaterialName("General/SelectedInput");
+            
+            
+        }
+        
     }
     else
     {
+        //Remove from Overlay!
         numpadBackground->hide();
+        Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");
+        
+        if(numpadIsOut)
+        {
+            buttons[NUMPAD_BG].hide();
+            overlay1->remove2D(numpadBackground);
+            
+            numpadIsOut = false;
+        }
+        
+        
         initSpeedBackground->setMaterialName("General/BlankInput");
         enableMandatoryRecessNumberBackground->setMaterialName("General/BlankInput");
         enableNewNavNumberButtonBackground->setMaterialName("General/BlankInput");
@@ -537,6 +799,15 @@ void HudStudySettings::update(float elapsed)
         sessionStartTimeNumberBackground->setMaterialName("General/BlankInput");
         sessionEndTimeNumberBackground->setMaterialName("General/BlankInput");
         sessionNumNumberBackground->setMaterialName("General/BlankInput");
+        
+        holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+        holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+
+        holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+        holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+        holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+        
+        holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
 
 
     }
@@ -685,13 +956,51 @@ void HudStudySettings::alloc()
     somethingChangedRevertButton= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "somethingChangedRevertButton"));
     somethingChangedRevertButtonText= static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "somethingChangedRevertButtonText"));
     
+    //Next/Back Button
+    nextButtonTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "nextButtonTextDisplay"));
+    nextButtonBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "nextButtonBackground"));
+    
     password_Title = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "password_Title"));
     password_Choice0= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice0"));
     password_Choice1= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice1"));
     password_Choice2= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice2"));
     password_Choice3= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice3"));
     
+    
+    //Page 2
+    
+    //Holdout Min Upper Bound
+    holdoutMinUpperBoundTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMinUpperBoundTextDisplay"));
+    holdoutMinUpperBoundNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutMinUpperBoundNumberBackground"));
+    holdoutMinUpperBoundNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMinUpperBoundNumberTextDisplay"));
+    //Holdout Max Upper Bound
+    holdoutMaxUpperBoundTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMaxUpperBoundTextDisplay"));
+    holdoutMaxUpperBoundNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutMaxUpperBoundNumberBackground"));
+    holdoutMaxUpperBoundNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMaxUpperBoundNumberTextDisplay"));
+    
+    
+    //Holdout Lower Bound Time
+    holdoutLowerBoundTimeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutLowerBoundTimeTextDisplay"));
+    holdoutLowerBoundTimeNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutLowerBoundTimeNumberBackground"));
+    holdoutLowerBoundTimeNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutLowerBoundTimeNumberTextDisplay"));
+    //Holdout Min Upper Bound Time
+    holdoutMinUpperBoundTimeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMinUpperBoundTimeTextDisplay"));
+    holdoutMinUpperBoundTimeNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutMinUpperBoundTimeNumberBackground"));
+    holdoutMinUpperBoundTimeNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMinUpperBoundTimeNumberTextDisplay"));
+    //Holdout Max Upper Bound Time
+    holdoutMaxUpperBoundTimeTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMaxUpperBoundTimeTextDisplay"));
+    holdoutMaxUpperBoundTimeNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutMaxUpperBoundTimeNumberBackground"));
+    holdoutMaxUpperBoundTimeNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutMaxUpperBoundTimeNumberTextDisplay"));
+    
+    
+    //Number of Holdout Levels
+    holdoutStepsTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutStepsTextDisplay"));
+    holdoutStepsNumberBackground = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "holdoutStepsNumberBackground"));
+    holdoutStepsNumberTextDisplay = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "holdoutStepsNumberTextDisplay"));
+    
     buttons = std::vector<HudButton>(NUM_UNIQUE_BUTTONS);
+    buttons[BUTTON_POPUP_REVERT].hide();
+    buttons[BUTTON_POPUP_OK].hide();
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StudySettingsOverlay");
@@ -706,6 +1015,40 @@ void HudStudySettings::alloc()
 
 #endif
     //overlay1->add2D();
+    
+    //Start Page2
+    
+    //Holdout Min Upper Bound
+    //overlay1->add2D(holdoutMinUpperBoundNumberBackground);
+    holdoutMinUpperBoundNumberBackground->addChild(holdoutMinUpperBoundTextDisplay);
+    holdoutMinUpperBoundNumberBackground->addChild(holdoutMinUpperBoundNumberTextDisplay);
+    
+    //Holdout Max Upper Bound
+    //overlay1->add2D(holdoutMinUpperBoundNumberBackground);
+    holdoutMaxUpperBoundNumberBackground->addChild(holdoutMaxUpperBoundTextDisplay);
+    holdoutMaxUpperBoundNumberBackground->addChild(holdoutMaxUpperBoundNumberTextDisplay);
+    
+    //Holdout Lower Bound Time
+    holdoutLowerBoundTimeNumberBackground->addChild(holdoutLowerBoundTimeTextDisplay);
+    holdoutLowerBoundTimeNumberBackground->addChild(holdoutLowerBoundTimeNumberTextDisplay);
+    //Holdout Min Upper Bound Time
+    holdoutMinUpperBoundTimeNumberBackground->addChild(holdoutMinUpperBoundTimeTextDisplay);
+    holdoutMinUpperBoundTimeNumberBackground->addChild(holdoutMinUpperBoundTimeNumberTextDisplay);
+    //Holdout Max Upper Bound Time
+    holdoutMaxUpperBoundTimeNumberBackground->addChild(holdoutMaxUpperBoundTimeTextDisplay);
+    holdoutMaxUpperBoundTimeNumberBackground->addChild(holdoutMaxUpperBoundTimeNumberTextDisplay);
+    
+    //Holdout Steps
+    holdoutStepsNumberBackground->addChild(holdoutStepsTextDisplay);
+    holdoutStepsNumberBackground->addChild(holdoutStepsNumberTextDisplay);
+    //End Page2
+    
+    
+    
+    //Next/Back Button
+    overlay1->add2D(nextButtonBackground);
+    nextButtonBackground->addChild(nextButtonTextDisplay);
+    
 
     overlay1->add2D(enableIndRecessFixedButtonBackground);
     enableIndRecessFixedButtonBackground->addChild(enableIndRecessFixedTextDisplay);
@@ -832,8 +1175,7 @@ void HudStudySettings::alloc()
     numpadBackground->addChild(password_Choice2);
     numpadBackground->addChild(password_Choice3);
     numpadBackground->addChild(password_Title);
-    overlay1->add2D(numpadBackground);
-
+    //overlay1->add2D(numpadBackground);
     overlays.push_back(overlay1);
     
 
@@ -986,6 +1328,39 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice2);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(password_Choice3);
 
+    //Button Next/Back
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonTextDisplay);
+    
+    //Page 2
+    
+    //Holdout Min Upper Bound
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundNumberTextDisplay);
+    //Holdout Max Upper Bound
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundNumberTextDisplay);
+    
+    
+    //Holdout Lower Bound Time
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLowerBoundTimeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLowerBoundTimeNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutLowerBoundTimeNumberTextDisplay);
+    //Holdout Min Upper Bound Time
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundTimeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundTimeNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMinUpperBoundTimeNumberTextDisplay);
+    //Holdout Max Upper Bound Time
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundTimeTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundTimeNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutMaxUpperBoundTimeNumberTextDisplay);
+    
+    //Number of Holdout Levels
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutStepsTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutStepsNumberBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutStepsNumberTextDisplay);
 
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
@@ -995,6 +1370,133 @@ void HudStudySettings::dealloc()
 
 void HudStudySettings::initOverlay()
 {
+    //Holdout Min Upper Bound
+    
+    buttons[BUTTON_HOLDOUT_MIN_UPPER_BOUND].setButton("holdoutminupperbound", overlays[0], GMM_RELATIVE, Vector2(0.56, 0.13), Vector2(.18, .06), holdoutMinUpperBoundNumberBackground, NULL);
+    
+    holdoutMinUpperBoundTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMinUpperBoundTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutMinUpperBoundTextDisplay->setPosition(-0.450, 0.01); //.07
+    holdoutMinUpperBoundTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    holdoutMinUpperBoundTextDisplay->setFontName("MainSmall");
+    holdoutMinUpperBoundTextDisplay->setCaption("Holdout Min: ");
+    
+    holdoutMinUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+    
+    holdoutMinUpperBoundNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMinUpperBoundNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutMinUpperBoundNumberTextDisplay->setPosition(0.1, 0.01);
+    holdoutMinUpperBoundNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    holdoutMinUpperBoundNumberTextDisplay->setFontName("MainSmall");
+    
+    //Holdout Max Upper Bound
+    
+    buttons[BUTTON_HOLDOUT_MAX_UPPER_BOUND].setButton("holdoutmaxupperbound", overlays[0], GMM_RELATIVE, Vector2(0.56, 0.23), Vector2(.18, .06), holdoutMaxUpperBoundNumberBackground, NULL);
+    
+    holdoutMaxUpperBoundTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMaxUpperBoundTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutMaxUpperBoundTextDisplay->setPosition(-0.450, 0.01); //.07
+    holdoutMaxUpperBoundTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    holdoutMaxUpperBoundTextDisplay->setFontName("MainSmall");
+    holdoutMaxUpperBoundTextDisplay->setCaption("Holdout Max: ");
+    
+    holdoutMaxUpperBoundNumberBackground->setMaterialName("General/BlankInput");
+    
+    holdoutMaxUpperBoundNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMaxUpperBoundNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutMaxUpperBoundNumberTextDisplay->setPosition(0.1, 0.01);
+    holdoutMaxUpperBoundNumberTextDisplay->setCharHeight(0.030 * FONT_SZ_MULT);
+    holdoutMaxUpperBoundNumberTextDisplay->setFontName("MainSmall");
+
+    
+    //Holdout Lower Bound Time
+    buttons[BUTTON_HOLDOUT_LOWER_BOUND_TIME].setButton("holdoutlowerboundtime", overlays[0], GMM_RELATIVE, Vector2(0.48, 0.38), Vector2(.1, .06), holdoutLowerBoundTimeNumberBackground, NULL);
+    
+    holdoutLowerBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+
+    holdoutLowerBoundTimeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutLowerBoundTimeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutLowerBoundTimeTextDisplay->setPosition(-0.370, 0.01); //.07
+    holdoutLowerBoundTimeTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutLowerBoundTimeTextDisplay->setFontName("MainSmall");
+    holdoutLowerBoundTimeTextDisplay->setCaption("Holdout Lower Bound Time: ");
+    
+    
+    holdoutLowerBoundTimeNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutLowerBoundTimeNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutLowerBoundTimeNumberTextDisplay->setPosition(.05, 0.01);
+    holdoutLowerBoundTimeNumberTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutLowerBoundTimeNumberTextDisplay->setFontName("MainSmall");
+    
+    //Holdout Min Upper Bound Time
+    buttons[BUTTON_HOLDOUT_MIN_UPPER_BOUND_TIME].setButton("holdoutminupperboundtime", overlays[0], GMM_RELATIVE, Vector2(0.53, 0.48), Vector2(.1, .06), holdoutMinUpperBoundTimeNumberBackground, NULL);
+    
+    holdoutMinUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+    
+    holdoutMinUpperBoundTimeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMinUpperBoundTimeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutMinUpperBoundTimeTextDisplay->setPosition(-0.420, 0.01); //.07
+    holdoutMinUpperBoundTimeTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutMinUpperBoundTimeTextDisplay->setFontName("MainSmall");
+    holdoutMinUpperBoundTimeTextDisplay->setCaption("Holdout Min Upper Bound Time: ");
+    
+    
+    holdoutMinUpperBoundTimeNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMinUpperBoundTimeNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutMinUpperBoundTimeNumberTextDisplay->setPosition(0.05, 0.01);
+    holdoutMinUpperBoundTimeNumberTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutMinUpperBoundTimeNumberTextDisplay->setFontName("MainSmall");
+    
+    //Holdout Max Upper Bound Time
+    buttons[BUTTON_HOLDOUT_MAX_UPPER_BOUND_TIME].setButton("holdoutmaxupperboundtime", overlays[0], GMM_RELATIVE, Vector2(0.56, 0.58), Vector2(.1, .06), holdoutMaxUpperBoundTimeNumberBackground, NULL);
+    
+    holdoutMaxUpperBoundTimeNumberBackground->setMaterialName("General/BlankInput");
+    
+    holdoutMaxUpperBoundTimeTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMaxUpperBoundTimeTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutMaxUpperBoundTimeTextDisplay->setPosition(-0.450, 0.01); //.07
+    holdoutMaxUpperBoundTimeTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutMaxUpperBoundTimeTextDisplay->setFontName("MainSmall");
+    holdoutMaxUpperBoundTimeTextDisplay->setCaption("Holdout Max Upper Bound Time: ");
+    
+    
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setPosition(0.05, 0.01);
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutMaxUpperBoundTimeNumberTextDisplay->setFontName("MainSmall");
+    
+    //Holdout Steps
+    buttons[BUTTON_HOLDOUT_STEPS].setButton("holdoutsteps", overlays[0], GMM_RELATIVE, Vector2(0.36, 0.73), Vector2(.1, .06), holdoutStepsNumberBackground, NULL);
+    
+    holdoutStepsNumberBackground->setMaterialName("General/BlankInput");
+    
+    holdoutStepsTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutStepsTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    holdoutStepsTextDisplay->setPosition(-0.250, 0.01); //.07
+    holdoutStepsTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutStepsTextDisplay->setFontName("MainSmall");
+    holdoutStepsTextDisplay->setCaption("Holdout Steps: ");
+    
+    
+    holdoutStepsNumberTextDisplay->setMetricsMode(GMM_RELATIVE);
+    holdoutStepsNumberTextDisplay->setAlignment(TextAreaOverlayElement::Center);
+    holdoutStepsNumberTextDisplay->setPosition(0.05, 0.01);
+    holdoutStepsNumberTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    holdoutStepsNumberTextDisplay->setFontName("MainSmall");
+    
+    
+    
+    //Next/Back Button
+    nextButtonBackground->setMaterialName("General/BlankInput");
+    buttons[BUTTON_NEXT_SETTINGS].setButton("nextsettings", overlays[0], GMM_RELATIVE, Vector2(0.72, 0.85), Vector2(0.2, 0.06), nextButtonBackground, NULL);
+    
+    nextButtonTextDisplay->setMetricsMode(GMM_RELATIVE);
+    nextButtonTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    nextButtonTextDisplay->setPosition(0.01, 0.01);
+    nextButtonTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    nextButtonTextDisplay->setFontName("MainSmall");
+    
     
     password_Choice0->setMetricsMode(GMM_RELATIVE);
     password_Choice0->setPosition(0.09, 0.08);
@@ -1600,6 +2102,7 @@ void HudStudySettings::initOverlay()
     buttons[BUTTON_NUMPAD_SAVE].setButton("numpadbuttonsave", overlays[0], GMM_RELATIVE, Vector2(0.165, 0.395), Vector2(0.12, 0.06), numpadButton_Save, NULL); //.375 .02
     
     buttons[NUMPAD_BG].setButton("numpad", overlays[0], GMM_RELATIVE, Vector2(0.65, 0.40), Vector2(0.5, 0.5), numpadBackground, NULL);
+    buttons[NUMPAD_BG].hide();
     
     // The Enable NewNav Checkbox
     {
@@ -1816,7 +2319,16 @@ void HudStudySettings::initOverlay()
         
     }
 
-    numpadBackground->hide();
+    //Remove from overlay
+    //numpadBackground->hide();
+    /*Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->getByName("StudySettingsOverlay");//create("StudySettingsOverlay");
+    if(numpadIsOut)
+    {
+        overlay1->remove2D(numpadBackground);
+        numpadIsOut = false;
+    }*/
+    
+
 
     
 }
