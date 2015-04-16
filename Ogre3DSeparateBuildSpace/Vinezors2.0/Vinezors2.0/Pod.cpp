@@ -694,7 +694,11 @@ void Pod::generateUncloakPFX()
         uncloakPFX = uncloakNode->getCreator()->createParticleSystem("UncloakFX" + Util::toStringInt(uncloakPfxID), particleName);
         uncloakNode->attachObject(uncloakPFX);
         ++uncloakPfxID;
-        int numEmit = uncloakPFX->getNumEmitters();
+        
+        if (podColor == POD_COLOR_ORANGE) {
+            Ogre::ColourValue orangeColor = ColourValue(0.6, 0.5, 0.0);
+            uncloakPFX->getEmitter(0)->setColour(orangeColor);
+        }
     }
 }
 
