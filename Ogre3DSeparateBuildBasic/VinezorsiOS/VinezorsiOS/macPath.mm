@@ -20,3 +20,17 @@ std::string applicationDocumentsPath()
     
     return [str UTF8String];
 }
+
+void openURL(std::string cstrurl)
+{
+    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:cstrurl.c_str()]];
+    
+    if (![[UIApplication sharedApplication] openURL:url]) {
+        NSLog(@"%@%@",@"Failed to open url:",[url description]);
+    }
+}
+
+float getScalingFactor()
+{
+    return [[UIScreen mainScreen] scale];
+}

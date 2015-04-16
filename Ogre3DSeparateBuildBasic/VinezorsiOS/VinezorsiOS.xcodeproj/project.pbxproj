@@ -381,12 +381,14 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Overlay\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
 					"\"$(OGRE_SDK_ROOT)/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)\"",
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
@@ -397,13 +399,13 @@
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
 				);
-				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGGSOUND_SDK_ROOT = "~/OgreOggSound-v1.26";
 				OGRE_SDK_ROOT = "~/OgreSDKIOS";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -422,12 +424,14 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Overlay\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
 					"\"$(OGRE_SDK_ROOT)/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)\"",
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
@@ -438,12 +442,12 @@
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
 				);
-				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGGSOUND_SDK_ROOT = "~/OgreOggSound-v1.26";
 				OGRE_SDK_ROOT = "~/OgreSDKIOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv7s";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -453,22 +457,27 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OGGSOUND_SDK_ROOT = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
 					"-lOIS",
 					"-lOgreMainStatic",
+					"-lOgreOverlayStatic",
 					"-lRenderSystem_GLES2Static",
 					"-lOgreRTShaderSystemStatic",
-					"-lmesaglsl2",
+					"-lglsl_optimizer",
 					"-lboost_system",
 					"-lboost_chrono",
 					"-lboost_date_time",
 					"-lboost_thread",
+					"-lboost_atomic",
 					"-lFreeType",
 					"-lFreeImage",
 					"-lzzip",
@@ -477,6 +486,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -485,22 +495,27 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OGGSOUND_SDK_ROOT = "$(inherited)";
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
 					"-lOIS",
 					"-lOgreMainStatic",
+					"-lOgreOverlayStatic",
 					"-lRenderSystem_GLES2Static",
 					"-lOgreRTShaderSystemStatic",
-					"-lmesaglsl2",
+					"-lglsl_optimizer",
 					"-lboost_system",
 					"-lboost_chrono",
 					"-lboost_date_time",
 					"-lboost_thread",
+					"-lboost_atomic",
 					"-lFreeType",
 					"-lFreeImage",
 					"-lzzip",
@@ -509,6 +524,7 @@
 					"-lPlugin_ParticleFXStatic",
 				);
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};

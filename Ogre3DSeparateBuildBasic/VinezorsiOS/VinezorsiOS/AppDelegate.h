@@ -14,7 +14,7 @@
 @property (strong, nonatomic) SimpleMenuViewController* mViewControllerMenu;
 @property (strong, nonatomic) MainViewController* mViewControllerMain;
 
-- (void)go:(NSString*)str :(BOOL)isOn;
+- (void)go:(NSString*)str ;
 
 @end
 

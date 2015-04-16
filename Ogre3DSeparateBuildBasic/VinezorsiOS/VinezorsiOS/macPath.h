@@ -4,7 +4,6 @@
 //
 //  Created by Calvin Phung on 10/21/14.
 //
-//
 
 #ifndef VinezorsiOS_macPath_h
 #define VinezorsiOS_macPath_h
@@ -16,5 +15,10 @@
 // This is made in response to iOS 8.0 since the application bundle is moved to
 // a different location separate from its associated Documents folder.
 std::string applicationDocumentsPath();
+
+// Requests to open the URL. On iOS, this generally opens Safari.
+void openURL(std::string url);
+
+float getScalingFactor();
 
 #endif

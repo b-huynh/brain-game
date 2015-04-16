@@ -10,6 +10,7 @@
 
 @interface SimpleMenuViewController : UIViewController
 
+- (IBAction)textInput_OnChange:(id)sender;
 - (IBAction)buttonBegin_OnPress:(id)sender;
 
 @end

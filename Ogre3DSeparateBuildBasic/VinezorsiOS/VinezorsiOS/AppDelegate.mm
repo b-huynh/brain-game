@@ -14,7 +14,7 @@
 #ifdef AUTO_START
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100":TRUE];
+    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject100"];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 #else
@@ -47,14 +47,14 @@
     return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
-- (void)go:(NSString*)str :(BOOL)isOn
+- (void)go:(NSString*)str
 {
     [self.mViewControllerMenu release];
     
     // Run Ogre
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:str:isOn];
+    [self.mViewControllerMain startWithWindow:self.mWindow:str];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 }
