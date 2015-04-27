@@ -695,9 +695,41 @@ void Pod::generateUncloakPFX()
         uncloakNode->attachObject(uncloakPFX);
         ++uncloakPfxID;
         
+        // Set color of the effect based on the color of the signal
+        Ogre::ColourValue newPodColor;
         if (podColor == POD_COLOR_ORANGE) {
-            Ogre::ColourValue orangeColor = ColourValue(0.6, 0.5, 0.0);
-            uncloakPFX->getEmitter(0)->setColour(orangeColor);
+            newPodColor = ColourValue(1.0, 0.5, 0.0);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
+        } else if (podColor == POD_COLOR_PINK) {
+            newPodColor = ColourValue(1.0, 0.3, 0.0);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
+        } else if (podColor == POD_COLOR_GREEN) {
+            newPodColor = ColourValue(0.0, 1.0, 0.0);
+            uncloakPFX->getEmitter(0)->setColour(newPodColor);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
+        } else if (podColor == POD_COLOR_BLUE) {
+            newPodColor = ColourValue(0.0, 0.5, 1.0);
+            uncloakPFX->getEmitter(0)->setColour(newPodColor);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
+        } else if (podColor == POD_COLOR_YELLOW) {
+            newPodColor = ColourValue(1, 0.9, 0.0);
+            uncloakPFX->getEmitter(0)->setColour(newPodColor);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
+        } else {
+            newPodColor = ColourValue(1.0, 0.5, 0.0);
+            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+            }
         }
     }
 }
