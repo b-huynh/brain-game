@@ -100,7 +100,7 @@ particle_system General/UncloakPFXOld
         height 2.0
         depth 0.5
         emission_rate    8000
-	// time_to_live  0.25
+    // time_to_live  0.25
         time_to_live     0.75
         velocity         12
         duration         0.1
@@ -109,13 +109,13 @@ particle_system General/UncloakPFXOld
     }
     affector ColourFader
     {
-	// red -4.0
+    // red -4.0
         red -2.0
-	// green -4.0
+    // green -4.0
         green -2.0
-	// blue -4.0
+    // blue -4.0
         blue -2.0
-	// alpha -8.0
+    // alpha -8.0
         alpha -4.0
     }
 }

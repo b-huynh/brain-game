@@ -54,7 +54,7 @@ material General/VineTop
         pass
         {
             lighting on
-
+ 
             ambient 0.0 0.3 0.3 1
             diffuse 0.5 1.0 1.0 1
             emissive 0.0 0.3 0.3 1
@@ -69,7 +69,7 @@ material General/VineBase
         pass
         {
             lighting on
-
+ 
             ambient 0.1 0.1 0.1 1
             diffuse 0.8 0.8 0.8 1
             emissive 0.1 0.1 0.1 1
