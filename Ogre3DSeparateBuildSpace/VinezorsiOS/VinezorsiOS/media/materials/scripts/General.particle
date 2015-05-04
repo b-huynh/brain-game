@@ -1,6 +1,6 @@
 particle_system General/UncloakPFX
 {
-    material        General/UncloakCircle
+    material        General/UncloakCircleGray
     particle_width  10.0
     particle_height 10.0
     colour          1 1 1 1
