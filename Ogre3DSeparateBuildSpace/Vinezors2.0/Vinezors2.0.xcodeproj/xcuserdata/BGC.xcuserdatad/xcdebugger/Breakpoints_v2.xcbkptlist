@@ -10,12 +10,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vinezors2.0/HudStudySettings.cpp"
-            timestampString = "448309189.041502"
+            timestampString = "450355340.94423"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "890"
-            endingLineNumber = "890"
-            landmarkName = "HudStudySettings::initOverlay()"
+            startingLineNumber = "1230"
+            endingLineNumber = "1230"
+            landmarkName = "HudStudySettings::dealloc()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vinezors2.0/EngineStudySettings.cpp"
+            timestampString = "450347430.407943"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "EngineStudySettings::enter()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
