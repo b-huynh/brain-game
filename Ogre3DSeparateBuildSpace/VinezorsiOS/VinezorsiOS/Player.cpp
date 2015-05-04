@@ -938,12 +938,29 @@ void Player::updateBoost(float elapsed)
     {
         float dropOffPecentage = 0.9;
         float percentFuel = tunnel->getFuelTimer() / (globals.fuelMax * dropOffPecentage);
+        
         if (percentFuel >= 1.0f)
             percentFuel = 1.0f;
-        float origHue = 0.55f;
-        float origSat = 1.00f;
-        float origLit = 1.00f;
-        boostColor = Ogre::ColourValue(0.0, 0.7, 1.0);
+        
+        float origHue;
+        float origSat;
+        float origLit;
+        // set the ship's booster pfx to be orange in PHASE_SHAPE_SOUND only
+        // keep original blue booster pfx in all other stages
+        if (tunnel->phaseX == PHASE_SHAPE_SOUND) {
+            // cout << "orange" << endl;
+            origHue = 0.10f;
+            origSat = 0.80f;
+            origLit = 0.50f;
+            boostColor = Ogre::ColourValue(0.0, 0.7, 0.7);
+        } else {
+            // cout << "normal" << endl;
+            origHue = 0.55f;
+            origSat = 1.00f;
+            origLit = 1.00f;
+            boostColor = Ogre::ColourValue(0.0, 0.7, 0.7);
+        }
+        
         if (percentFuel <= 0.0 && tunnel->isDone())
             boostColor = Ogre::ColourValue(0.0, 0.0, 0.0);
         else
@@ -960,7 +977,7 @@ void Player::updateBoost(float elapsed)
         if (boostTimer > 0.0)
         {
             boostTimer -= elapsed;
-
+            
             if (boostTimer < 0.0)
             {
                 boostTimer = 0.0;

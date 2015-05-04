@@ -169,3 +169,41 @@ material General/TimeBonusMaterial
         }
     }
 }
+
+material General/UncloakCircle
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture uncloakpfx.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircle2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture uncloakpfx_alt.png
+            }
+        }
+    }
+}

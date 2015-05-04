@@ -258,6 +258,7 @@
     if (mOgreView.resized)
     {
         mApplication.requestResize();
+        mOgreView.resized = false;
     }
 }
 

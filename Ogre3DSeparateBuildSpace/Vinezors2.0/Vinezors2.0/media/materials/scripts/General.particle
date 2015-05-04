@@ -1,5 +1,84 @@
 particle_system General/UncloakPFX
 {
+    material        General/UncloakCircle
+    particle_width  10.0
+    particle_height 10.0
+    colour          1 1 1 1
+    cull_each       true
+    quota           100
+    billboard_type  oriented_self
+    local_space     false
+
+    // Area emitter
+    emitter Point
+    {
+        angle            0
+        position         0 0.5 0
+        direction        0 1 0
+        emission_rate    12
+        time_to_live     0.2
+        duration         0.25
+    }
+
+    affector Scaler
+    {
+        rate 40
+    }
+}
+
+particle_system General/UncloakPFX2
+{
+    material        General/UncloakCircle2
+    particle_width  1.0
+    particle_height 1.0
+    colour          1 1 1 1
+    cull_each       true
+    quota           100
+    billboard_type  oriented_self
+    local_space     false
+
+    // Area emitter
+    emitter Point
+    {
+        angle            0
+        position         0 1.5 0
+        direction        0 1 0
+        emission_rate    15
+        time_to_live     0.20
+        velocity         12
+        duration         0.25
+    }
+
+    emitter Point
+    {
+        angle            0
+        position         0 0 1.5
+        direction        0 0 1
+        emission_rate    15
+        time_to_live     0.20
+        velocity         12
+        duration         0.25
+    }
+
+    emitter Point
+    {
+        angle            0
+        position         0 0 -1.5
+        direction        0 0 -1
+        emission_rate    15
+        time_to_live     0.20
+        velocity         12
+        duration         0.25
+    }
+
+    affector Scaler
+    {
+        rate 30
+    }
+}
+
+particle_system General/UncloakPFXOld
+{
     material        General/Star2
     particle_width  3.0
     particle_height 3.0
@@ -21,7 +100,7 @@ particle_system General/UncloakPFX
         height 2.0
         depth 0.5
         emission_rate    8000
-	// time_to_live  0.25
+    // time_to_live  0.25
         time_to_live     0.75
         velocity         12
         duration         0.1
@@ -30,13 +109,13 @@ particle_system General/UncloakPFX
     }
     affector ColourFader
     {
-	// red -4.0
+    // red -4.0
         red -2.0
-	// green -4.0
+    // green -4.0
         green -2.0
-	// blue -4.0
+    // blue -4.0
         blue -2.0
-	// alpha -8.0
+    // alpha -8.0
         alpha -4.0
     }
 }
