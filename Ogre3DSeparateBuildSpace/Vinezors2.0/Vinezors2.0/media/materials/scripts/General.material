@@ -54,7 +54,7 @@ material General/VineTop
         pass
         {
             lighting on
- 
+
             ambient 0.0 0.3 0.3 1
             diffuse 0.5 1.0 1.0 1
             emissive 0.0 0.3 0.3 1
@@ -69,7 +69,7 @@ material General/VineBase
         pass
         {
             lighting on
- 
+
             ambient 0.1 0.1 0.1 1
             diffuse 0.8 0.8 0.8 1
             emissive 0.1 0.1 0.1 1
@@ -170,20 +170,109 @@ material General/TimeBonusMaterial
     }
 }
 
-material General/UncloakCircle
+material General/UncloakCircleGray
 {
     technique
     {
         pass
         {
             lighting off
-            scene_blend add
+            scene_blend alpha_blend
             depth_write off
-            diffuse vertexcolour
 
             texture_unit
             {
-                texture uncloakpfx.png
+                texture uncloakpfx_gray.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircleRed
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+            {
+                texture uncloakpfx_red.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircleGreen
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+            {
+                texture uncloakpfx_green.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircleBlue
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+            {
+                texture uncloakpfx_blue.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircleYellow
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+            {
+                texture uncloakpfx_yellow.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircleOrange
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+
+            texture_unit
+            {
+                texture uncloakpfx_orange.png
             }
         }
     }
