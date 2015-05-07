@@ -337,10 +337,10 @@ void Pod::loadSignalSound()
     if(globals.newSounds)
     {
         //use new sounds
-        pod1sound = "pod3b.wav";
-        pod2sound = "pod4b.wav";
-        pod3sound = "pod1b.wav";
-        pod4sound = "pod2b.wav";
+        pod1sound = "pod3c.wav";
+        pod2sound = "pod4c.wav";
+        pod3sound = "pod1c.wav";
+        pod4sound = "pod2c.wav"; //pod2b_new //pod2b.wav
         holdoutsound = "holdoutb.wav";
     }
     
@@ -699,40 +699,40 @@ void Pod::generateUncloakPFX()
         Ogre::ColourValue newPodColor;
         if (podColor == POD_COLOR_ORANGE) {
             uncloakPFX->setMaterialName("General/UncloakCircleOrange");
-            //            newPodColor = ColourValue(1.0, 0.5, 0.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(1.0, 0.5, 0.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         } else if (podColor == POD_COLOR_PINK) {
             uncloakPFX->setMaterialName("General/UncloakCircleRed");
-            //            newPodColor = ColourValue(1.0, 0.3, 0.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(1.0, 0.3, 0.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         } else if (podColor == POD_COLOR_GREEN) {
             uncloakPFX->setMaterialName("General/UncloakCircleGreen");
-            //            newPodColor = ColourValue(0.0, 1.0, 0.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(0.0, 1.0, 0.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         } else if (podColor == POD_COLOR_BLUE) {
             uncloakPFX->setMaterialName("General/UncloakCircleBlue");
-            //            newPodColor = ColourValue(0.0, 0.5, 1.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(0.0, 0.5, 1.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         } else if (podColor == POD_COLOR_YELLOW) {
             uncloakPFX->setMaterialName("General/UncloakCircleYellow");
-            //            newPodColor = ColourValue(1, 0.9, 0.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(1, 0.9, 0.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         } else {
             uncloakPFX->setMaterialName("General/UncloakCircleGray");
-            //            newPodColor = ColourValue(1.0, 0.5, 0.0);
-            //            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
-            //                uncloakPFX->getEmitter(i)->setColour(newPodColor);
-            //            }
+//            newPodColor = ColourValue(1.0, 0.5, 0.0);
+//            for (int i = 0; i < uncloakPFX->getNumEmitters(); ++i) {
+//                uncloakPFX->getEmitter(i)->setColour(newPodColor);
+//            }
         }
     }
 }

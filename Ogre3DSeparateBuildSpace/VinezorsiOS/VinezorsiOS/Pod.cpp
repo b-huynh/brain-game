@@ -337,10 +337,10 @@ void Pod::loadSignalSound()
     if(globals.newSounds)
     {
         //use new sounds
-        pod1sound = "pod3b.wav";
-        pod2sound = "pod4b.wav";
-        pod3sound = "pod1b.wav";
-        pod4sound = "pod2b_new.wav"; //pod2b_new //pod2b.wav
+        pod1sound = "pod3c.wav";
+        pod2sound = "pod4c.wav";
+        pod3sound = "pod1c.wav";
+        pod4sound = "pod2c.wav"; //pod2b_new //pod2b.wav
         holdoutsound = "holdoutb.wav";
     }
     
