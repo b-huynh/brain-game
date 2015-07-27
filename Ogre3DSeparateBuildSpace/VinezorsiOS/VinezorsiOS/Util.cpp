@@ -929,6 +929,10 @@ bool Util::ConfigGlobal::saveGlobalSettings(std::string file)
     out << "holdoutUpperBoundMaxTime" << " " << holdoutUpperBoundMaxTime << std::endl;
     out << "holdoutSteps" << " " << holdoutSteps << std::endl;
     
+    out << "timersetting" << " " << OverallTimerEnabled << std::endl;
+    out << "accelEnabled" << " " << accelEnabled << std::endl;
+    out << "soundOnlyLevelsEnabled" << " " << soundOnlyLevelsEnabled << std::endl;
+
     std::cout << "Save Global Settings: " << file << std::endl;
     ret = out.good();
     
@@ -1000,7 +1004,12 @@ bool Util::ConfigGlobal::loadGlobalSettings1_0(std::string savePath)
                 saveFile >> holdoutUpperBoundMaxTime;
             else if (input == "holdoutSteps")
                 saveFile >> holdoutSteps;
-            
+            else if (input == "timersetting")
+                saveFile >> OverallTimerEnabled;
+            else if (input == "accelEnabled")
+                saveFile >> accelEnabled;
+            else if (input == "soundOnlyLevelsEnabled")
+                saveFile >> soundOnlyLevelsEnabled;
         }
     }
     return saveFile.eof();
@@ -1272,8 +1281,7 @@ Vector3 Util::randVector3()
 std::string Util::getMusicFile(const std::string & musicName)
 {
     if (musicName == "MusicMenu")
-        return "TheReturn.ogg";
-        //return "VideoGameSong4.ogg";
+        return "VideoGameSong4.ogg";
     else if (musicName == "Music1")
         return "Dots5_converted.ogg";
     else if (musicName == "Music2")
@@ -1876,7 +1884,7 @@ void Util::setSkyboxAndFog(std::string nameSkybox)
     Plane plane;
     plane.d = 80;
     plane.normal = Ogre::Vector3(0, 0, 1);
-    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true);
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlane(true, plane, nameSkybox, 1, 4, true); //1,4
     OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setFog(Ogre::FOG_LINEAR, Ogre::ColourValue::ZERO, 0.0, 300.0, 600.0);
     OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
     OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->resetToInitialState();

@@ -44,11 +44,6 @@ void EngineMainMenu::exit()
 void EngineMainMenu::update(float elapsed)
 {
     hud->update(elapsed);
-
-    if(hud->enterStudySettings)
-     {
-         //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
-     }
 }
 
 void EngineMainMenu::activatePerformSingleTap(float x, float y)
@@ -117,9 +112,14 @@ void EngineMainMenu::activatePerformSingleTap(float x, float y)
             hud->enableNumpad = true;
         }
         else{
+            
+            //Main Settings
             engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
+            
+            //New Settings
+            //engineStateMgr->requestPushEngine(ENGINE_TAB_SETTINGS, player);
+
         }
-        //engineStateMgr->requestPushEngine(ENGINE_MAIN_SETTINGS, player);
     }
     else if (queryGUI == "information")
     {

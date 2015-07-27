@@ -16,6 +16,7 @@
 #include "EngineControlSettings.h"
 #include "EngineStudySettings.h"
 #include "EngineInformation.h"
+#include "EngineTabSettings.h"
 #include <iostream>
 
 EngineStateManager::EngineStateManager()
@@ -123,6 +124,15 @@ void EngineStateManager::requestPushEngine(EngineState engineType, Player* playe
             Engine* top = getActiveEngine();
             if (top) top->exit();
             top = new EngineInformation(this, player);
+            gameEngineStack.push_back(top);
+            top->enter();
+            break;
+        }
+        case ENGINE_TAB_SETTINGS:
+        {
+            Engine* top = getActiveEngine();
+            if (top) top->exit();
+            top = new EngineTabSettings(this, player);
             gameEngineStack.push_back(top);
             top->enter();
             break;

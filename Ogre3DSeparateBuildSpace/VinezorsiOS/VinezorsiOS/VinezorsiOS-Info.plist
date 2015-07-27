@@ -30,6 +30,8 @@
 	<string>Copyright © 2013 __MyCompanyName__. All rights reserved.</string>
 	<key>UIInterfaceOrientation</key>
 	<string>UIInterfaceOrientationLandscapeLeft</string>
+	<key>UIMainStoryboardFile~ipad</key>
+	<string>SimpleMenu</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

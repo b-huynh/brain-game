@@ -93,6 +93,12 @@ void HudSchedulerMenu::update(float elapsed)
     sessionDisplay->setCaption("Session\n" + Util::toStringInt(player->getSessionID()));
     
     timeRemainingTotal = globals.sessionTime -  player->getTotalElapsed();
+    
+    if(globals.OverallTimerEnabled)
+    {
+        timeRemainingTotal = globals.sessionTime -  player->totalElapsedGeneral;
+
+    }
     if(timeRemainingTotal < 0)
     {
         timeRemainingTotal = 0;

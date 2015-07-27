@@ -31,8 +31,6 @@ struct Bin
     LevelPhase phaseX;
     StageDifficulty difficultyX;
     StageDuration durationX;
-    
-    // Not checked in comparison
     bool holdout;
     
     // Not checked in comparison
@@ -40,7 +38,7 @@ struct Bin
     
     bool operator==(const Bin rhs) const
     {
-        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (durationX == rhs.durationX))
+        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout) && (durationX == rhs.durationX))
             return true;
         return false;
     }

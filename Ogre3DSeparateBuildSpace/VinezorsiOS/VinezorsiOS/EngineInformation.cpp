@@ -86,6 +86,23 @@ void EngineInformation::activatePerformSingleTap(float x, float y)
 //
 void EngineInformation::activateMoved(float x, float y, float dx, float dy)
 {
+    
+     //Testing Dragging!
+     
+     
+     std::cout<<"(" << x <<", " << y << ")" << " Dx: " << dx << " Dy: " << dy <<std::endl;
+     Ogre::Vector2 temp2 = globals.convertToPercentScreen(Vector2(x,y));
+     
+     std::cout <<"In percents: " << "(" << temp2.x <<", " << temp2.y << ")" << std::endl;
+     
+     //Move everything depending on the dy!
+     
+     //np = p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
+     Ogre::Vector2 temp = globals.convertToPercentScreen(Vector2(0.0,dy));
+     //std::cout << "Temp: "<<"(" << temp.x <<", " << temp.y << ")";
+     //std::cout << "Top: "<<hud->paragraphTextBackground->getTop() <<std::endl;
+     hud->paragraphTextBackground->setPosition(0, temp.y);
+    
 }
 
 void EngineInformation::activatePressed(float x, float y)

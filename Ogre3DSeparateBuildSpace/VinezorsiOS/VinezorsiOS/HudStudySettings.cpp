@@ -80,15 +80,6 @@ void HudStudySettings::showPopUp()
     buttons[BUTTON_POPUP_REVERT].show();
     buttons[BUTTON_POPUP_OK].show();
     
-    /*
-    //Button "Restart Session"
-    PanelOverlayElement* somethingChangedOkButton;
-    TextAreaOverlayElement* somethingChangedOkButtonText;
-    
-    //Button "Revert"
-    PanelOverlayElement* somethingChangedRevertButton;
-    TextAreaOverlayElement* somethingChangedRevertButtonText;*/
-    
 }
 void HudStudySettings::hidePopUp()
 {
@@ -261,6 +252,28 @@ void HudStudySettings::update(float elapsed)
         numpadButton_Back->show();
         numpadButton_Back_TextDisplay->show();
         Passcode_counter =0;
+    }
+    
+    if(globals.accelEnabled)
+    {
+        enableAccelButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableAccelTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+    }
+    else
+    {
+        enableAccelButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableAccelTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
+    }
+    
+    if(globals.OverallTimerEnabled)
+    {
+        enableOverallTimerButtonBackground->setMaterialName("General/CheckboxGreen");
+        enableOverallTimerTextDisplay->setColour(Ogre::ColourValue(1,1,1,1));
+    }
+    else
+    {
+        enableOverallTimerButtonBackground->setMaterialName("General/CheckboxBlank");
+        enableOverallTimerTextDisplay->setColour(Ogre::ColourValue(.5,.5,.5,1));
     }
     
     
@@ -966,6 +979,16 @@ void HudStudySettings::alloc()
     password_Choice2= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice2"));
     password_Choice3= static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "password_Choice3"));
     
+    //Overall Timer Toggle
+    enableOverallTimerBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "enableOverallTimerBackground"));
+    enableOverallTimerTextDisplay   = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "enableOverallTimerTextDisplay"));
+    enableOverallTimerButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "enableOverallTimerButtonBackground"));
+    
+    //Accel
+    enableAccelBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "enableAccelBackground"));
+    enableAccelTextDisplay   = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "enableAccelTextDisplay"));
+    enableAccelButtonBackground  = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "enableAccelButtonBackground"));
+    
     
     //Page 2
     
@@ -1094,6 +1117,17 @@ void HudStudySettings::alloc()
     overlay1->add2D(enableSessionScreenBackground);
     enableSessionScreenBackground->addChild(enableSessionScreenTextDisplay);
     overlay1->add2D(enableSessionScreenButtonBackground);
+    
+    //Enable Overall Timer
+    overlay1->add2D(enableOverallTimerBackground);
+    enableOverallTimerBackground->addChild(enableOverallTimerTextDisplay);
+    overlay1->add2D(enableOverallTimerButtonBackground);
+    
+    //Enable Accel
+    overlay1->add2D(enableAccelBackground);
+    enableAccelBackground->addChild(enableAccelTextDisplay);
+    overlay1->add2D(enableAccelButtonBackground);
+    
     
     //Session Start Time and End Time and Num Sessions
     //Session Num Time
@@ -1362,6 +1396,16 @@ void HudStudySettings::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutStepsNumberBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(holdoutStepsNumberTextDisplay);
 
+    //Overall Timer
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableOverallTimerBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableOverallTimerTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableOverallTimerButtonBackground);
+    
+    //Accel
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableAccelBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableAccelTextDisplay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(enableAccelButtonBackground);
+    
     
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     
@@ -1596,15 +1640,41 @@ void HudStudySettings::initOverlay()
     //SessionID Screen Toggle
     //Session StartTime
     enableSessionScreenBackground->setMetricsMode(GMM_RELATIVE);
-    enableSessionScreenBackground->setPosition(0.62, 0.37);
+    enableSessionScreenBackground->setPosition(0.62, 0.27);
     enableSessionScreenBackground->setDimensions(0.60, 0.10);
     
     enableSessionScreenTextDisplay->setMetricsMode(GMM_RELATIVE);
     enableSessionScreenTextDisplay->setAlignment(TextAreaOverlayElement::Left);
     enableSessionScreenTextDisplay->setPosition(0.02, 0.00);
-    enableSessionScreenTextDisplay->setCharHeight(0.025 * FONT_SZ_MULT);
+    enableSessionScreenTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
     enableSessionScreenTextDisplay->setFontName("MainSmall");
     enableSessionScreenTextDisplay->setCaption("Enable SessionID");
+    
+    //Overall Timer
+    enableOverallTimerBackground->setMetricsMode(GMM_RELATIVE);
+    enableOverallTimerBackground->setPosition(0.62, 0.37);
+    enableOverallTimerBackground->setDimensions(0.60, 0.10);
+    
+    enableOverallTimerTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableOverallTimerTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableOverallTimerTextDisplay->setPosition(0.02, 0.00);
+    enableOverallTimerTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    enableOverallTimerTextDisplay->setFontName("MainSmall");
+    enableOverallTimerTextDisplay->setCaption("Enable Timer");
+    
+    //Accel
+    enableAccelBackground->setMetricsMode(GMM_RELATIVE);
+    enableAccelBackground->setPosition(0.62, 0.75);
+    enableAccelBackground->setDimensions(0.60, 0.10);
+    
+    enableAccelTextDisplay->setMetricsMode(GMM_RELATIVE);
+    enableAccelTextDisplay->setAlignment(TextAreaOverlayElement::Left);
+    enableAccelTextDisplay->setPosition(0.02, 0.00);
+    enableAccelTextDisplay->setCharHeight(0.020 * FONT_SZ_MULT);
+    enableAccelTextDisplay->setFontName("MainSmall");
+    enableAccelTextDisplay->setCaption("Enable Tilt");
+    
+    
     
     //enableUnlimitedFuelButtonBackground->setMaterialName("General/CheckboxBlank");
 
@@ -2078,8 +2148,25 @@ void HudStudySettings::initOverlay()
         float ph = 0.05;
         float pw = ph * (globals.screenWidth / globals.screenHeight);
         // calculate dimensions for button size and make sure it's square
-        buttons[BUTTON_ENABLE_SESSION_SCREEN].setButton("checksessionid", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.37), Vector2(pw, ph), enableSessionScreenButtonBackground, NULL);
+        buttons[BUTTON_ENABLE_SESSION_SCREEN].setButton("checksessionid", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.27), Vector2(pw, ph), enableSessionScreenButtonBackground, NULL);
     }
+    
+    // The Enable Overall Timer
+    {
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_ENABLE_OVERALL_TIMER].setButton("checkoveralltimer", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.37), Vector2(pw, ph), enableOverallTimerButtonBackground, NULL);
+    }
+    
+    //Accel
+    {
+        float ph = 0.05;
+        float pw = ph * (globals.screenWidth / globals.screenHeight);
+        // calculate dimensions for button size and make sure it's square
+        buttons[BUTTON_ENABLE_ACCEL].setButton("checkaccel", overlays[0], GMM_RELATIVE, Vector2(0.58, 0.75), Vector2(pw, ph), enableAccelButtonBackground, NULL);
+    }
+    
     
     buttons[BUTTON_NUMPAD_0].setButton("numpadbutton0", overlays[0], GMM_RELATIVE, Vector2(0.155, 0.325), Vector2(0.06, 0.06), numpadButton_0, NULL);
     

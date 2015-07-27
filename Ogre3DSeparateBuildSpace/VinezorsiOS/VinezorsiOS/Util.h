@@ -128,11 +128,19 @@ namespace Util
 
     struct ConfigGlobal
     {
+        //accelerometer values
+        double acc_x;
+        double acc_y;
+        double acc_z;
+        
+        //Orientation
+        bool orientLeft;
+        
         bool syncDataToServer = false;
         //New Sounds
         //Study Settings
         bool fuelEnabled = true;   //Study Settings
-        bool holdoutEnabled = true; //Study Settings
+        bool holdoutEnabled = false; //Study Settings
         int initialVelocity = 15; //Study Settings
         bool manRecessEnabled = false; //Study Settings
         int manRecessLevelLimit = 5; //StudySettings
@@ -168,7 +176,20 @@ namespace Util
         float holdoutUpperBoundMaxTime = 0.60;
         int holdoutSteps = 5;
         
+        bool OverallTimerEnabled = false;
+        
+        bool accelEnabled = true;
+        
+        bool soundOnlyLevelsEnabled = true;
+        
         //End Study Settings
+        
+        //
+        enum QueryFlags
+        {
+            POD_MASK = 1 << 0,
+            NINJA_MASK = 1 << 1
+        };
         
         std::string VendorID = "";
         

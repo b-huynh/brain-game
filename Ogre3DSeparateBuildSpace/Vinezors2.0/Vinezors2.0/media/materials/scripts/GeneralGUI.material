@@ -1591,3 +1591,24 @@ material General/SpeedSliderBallHorizontal
       }
     }
 }
+
+material General/TabSettingsTitleBar
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                settings_title.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+
+            }
+        }
+    }
+}
+

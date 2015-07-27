@@ -393,6 +393,8 @@ void EngineStage::activatePerformLeftMove()
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val + 45);
+                std::cout<< "LEFT MOVE: "<< val << std::endl;
+
             }
             break;
         }

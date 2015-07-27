@@ -28,6 +28,7 @@ void EngineSchedulerMenu::enter()
 {
     alloc();
     
+    
     // Set skybox
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
@@ -90,6 +91,7 @@ void EngineSchedulerMenu::exit()
 void EngineSchedulerMenu::update(float elapsed)
 {
     hud->update(elapsed);
+    player->totalElapsedGeneral += elapsed;
 }
 
 void EngineSchedulerMenu::activatePerformSingleTap(float x, float y)

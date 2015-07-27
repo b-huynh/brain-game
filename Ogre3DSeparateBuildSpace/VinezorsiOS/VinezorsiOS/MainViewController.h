@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreMotion/CoreMotion.h>
+
 
 @class OgreView;
 
@@ -28,6 +30,8 @@
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender;
  */
 
+
+
 - (IBAction)handleDoubleTap:(UITapGestureRecognizer*)sender;
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender;
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender;
@@ -37,5 +41,7 @@
 - (void)cleanup;
 
 @property (nonatomic, copy) NSString *capital;
+@property (strong, nonatomic) CMMotionManager *motionManager;
+
 
 @end
