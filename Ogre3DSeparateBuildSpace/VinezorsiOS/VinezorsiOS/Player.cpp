@@ -3452,7 +3452,7 @@ void Player::startSession()
 
 void Player::feedLevelRequestFromSchedule()
 {
-    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(globals.holdoutEnabled,globals.newNavEnabled,globals.indRecessEnabled,globals.indRecessNBackLevel,globals.holdoutdelayEnabled,globals.holdoutdelayNumber,globals.manRecessEnabled,globals.enableIndRecessFixed, globals.soundOnlyLevelsEnabled);
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(globals.holdoutEnabled,globals.newNavEnabled,globals.indRecessEnabled,globals.indRecessNBackLevel,globals.holdoutdelayEnabled,globals.holdoutdelayNumber,globals.manRecessEnabled,globals.enableIndRecessFixed, true/*globals.soundOnlyLevelsEnabled*/);
     scheduleChoice1 = choices[0];
     scheduleChoice2 = choices[1];
     scheduleChoice3 = choices[2];
