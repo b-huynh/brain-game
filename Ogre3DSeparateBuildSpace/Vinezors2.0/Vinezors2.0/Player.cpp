@@ -1638,7 +1638,7 @@ void Player::setCamDir(Direction value)
 
 bool Player::setVineDirRequest(Direction value, bool force)
 {
-#if !defined(OGRE_IS_IOS)
+#if defined(OGRE_IS_IOS)
     // For iOS special swipe controls, refer to
     // updateSpin in EngineStage and offsetShip in Player as well
     vines[0]->loc = value;

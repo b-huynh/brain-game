@@ -1164,10 +1164,9 @@ void EngineStage::activateVelocity(float vel)
 
 void EngineStage::activateAngleTurn(float angle, float vel)
 {
+
     if(!globals.accelEnabled)
     {
-        
-    
         //std::cout << "ANGLE: " << angle << std::endl;
     
         if (tunnel && !tunnel->isDone())
