@@ -55,6 +55,7 @@ private:
     SceneNode* stem;
     SceneNode* head;
     SceneNode* shell;
+    SceneNode* touchPod;
     float moveSpeed;
     Vector3 direction;
     Vector3 rotateSpeed;

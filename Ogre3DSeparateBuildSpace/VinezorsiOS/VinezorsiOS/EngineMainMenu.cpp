@@ -44,6 +44,16 @@ void EngineMainMenu::exit()
 void EngineMainMenu::update(float elapsed)
 {
     hud->update(elapsed);
+    
+    /*if(globals.showAccelMainMenuPopUp )
+    {
+        std::cout << "ShowPop" << std::endl;
+    }
+    else
+    {
+        std::cout << "NoPop" << std::endl;
+
+    }*/
 }
 
 void EngineMainMenu::activatePerformSingleTap(float x, float y)

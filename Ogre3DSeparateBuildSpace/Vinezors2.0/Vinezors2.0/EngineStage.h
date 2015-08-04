@@ -97,12 +97,41 @@ protected:
     float freeAngleTraveled;
     std::vector<float> lastAngles;
     
+    //Accel Parameters
+    float sumMagPos= 0;
+    float sumMagNeg = 0;
+    bool acc_going_up = false;
+    bool tempJustOnce = false;
+    float accel_Vel = 0.0f;
+    bool isAccel = true;
+    float defIncrement;
+    float modifyer;
+    int currDirection = 0;
+    int prevDirection = 0;
+    
+    float AccelspinVelocity;
+    float AccelSpeedModifyer = 4000;
+    float AcceldampingDrop = 100.0f;
+    float AcceldampingDecay =  .5f;//0.937f;
+    int AccelDirection = 0;
+    float AccelMax = 5000;
+    float AccelminVelStopper = 1150.0f;
+    float currAcc_y;
+    float prevAcc_y = 0.0f;;
+    int AccelJerkTimer = 30; // 30 frames = 1 second
+
+    
     void setup();
     void dealloc();
     void setPause(bool value, bool targetAllSounds = true);
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
     void setTaskPrompt();
+    void updateAccel(float elapsed);
+    
+    //SceneRay
+    RaySceneQuery* mRaySceneQuery;
+    
 };
 
 #endif /* defined(__Vinezors2_0__EngineStage__) */

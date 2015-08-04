@@ -184,7 +184,7 @@ namespace Util
         
         //End Study Settings
         
-        //
+        bool showAccelMainMenuPopUp = false;
         enum QueryFlags
         {
             POD_MASK = 1 << 0,
@@ -395,6 +395,8 @@ namespace Util
         bool saveGlobalSettings(std::string file);
         bool loadGlobalSettings1_0(std::string savePath);
         bool loadGlobalSettings(std::string savePath);
+        int checkSetting(std::string savePath, std::string setting);
+
     };
     
     float clamp(float val, float min, float max);

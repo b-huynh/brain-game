@@ -263,11 +263,32 @@ void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX, S
  
  @return - A bin that has at least 1 element.
  */
-std::list<Bin>* LevelScheduler::pickRandomBin()
+std::list<Bin>* LevelScheduler::pickRandomBin(bool soundOnlyLevelsEnabled)
 {
-    const int MIN_BIN = 0, MAX_BIN = 4;
-    int binNum = rand_num(MIN_BIN, MAX_BIN);
+    
     enum binNums { binNumA, binNumB, binNumC, binNumD, binNumE };
+
+
+    std::vector <int> possibleBins;
+    if(soundOnlyLevelsEnabled)
+    {
+        possibleBins.push_back(binNumA);
+        possibleBins.push_back(binNumB);
+        possibleBins.push_back(binNumC);
+        possibleBins.push_back(binNumD);
+        possibleBins.push_back(binNumE);
+    }
+    else
+    {
+        possibleBins.push_back(binNumA);
+        possibleBins.push_back(binNumB);
+        possibleBins.push_back(binNumD);
+        possibleBins.push_back(binNumE);
+    }
+    
+    int MIN_BIN = 0, MAX_BIN = possibleBins.size()-1;
+    int binNum = rand_num(MIN_BIN, MAX_BIN);
+    binNum = possibleBins[binNum];
     
     // Keep track of the total number of elements in the bins.
     // If there are no elements left, populate the bin with more.
@@ -289,23 +310,23 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     
     switch (binNum) {
         case binNumA:
-            if(binA->empty()) return pickRandomBin();
+            if(binA->empty()) return pickRandomBin(soundOnlyLevelsEnabled);
             return binA;
             break;
         case binNumB:
-            if(binB->empty()) return pickRandomBin();
+            if(binB->empty()) return pickRandomBin(soundOnlyLevelsEnabled);
             return binB;
             break;
         case binNumC:
-            if(binC->empty()) return pickRandomBin();
+            if(binC->empty()) return pickRandomBin(soundOnlyLevelsEnabled);
             return binC;
             break;
         case binNumD:
-            if(binD->empty()) return pickRandomBin();
+            if(binD->empty()) return pickRandomBin(soundOnlyLevelsEnabled);
             return binD;
             break;
         case binNumE:
-            if(binE->empty()) return pickRandomBin();
+            if(binE->empty()) return pickRandomBin(soundOnlyLevelsEnabled);
             return binE;
             break;
         default:
@@ -333,9 +354,9 @@ void LevelScheduler::setHoldout( std::list<Bin>* b )
 
 
 // can keep a linear list of marbles to randomly pick from instead
-void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
+void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices, bool soundOnlyLevelsEnabled )
 {
-    std::list<Bin>& binRef = *pickRandomBin();
+    std::list<Bin>& binRef = *pickRandomBin(soundOnlyLevelsEnabled);
     std::list<Bin>::iterator binIt = binRef.begin();
     int binIndex = rand_num(0, binRef.size() - 1);
     for ( int i = 0; i < binIndex; ++i, ++binIt );
@@ -349,7 +370,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
                 cout << "Need to pick extra bin & marble due to duplicate" << endl;
             // =========================================================================
             
-            pickRandomMarble(choices);
+            pickRandomMarble(choices,soundOnlyLevelsEnabled);
             return;
         }
     }
@@ -367,7 +388,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled, bool soundOnlyLevelsEnabled)
 {
     
     /* For debugging purposes */
@@ -424,7 +445,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     
     for(int i = 0; i < 3; ++i)
     {
-        pickRandomMarble( choices );
+        pickRandomMarble( choices, soundOnlyLevelsEnabled );
         if (recessIndex == i)
         {
             phase = PHASE_COLLECT;

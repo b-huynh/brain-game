@@ -87,6 +87,23 @@ material General/TutorialTextbox1-3
     }
 }
 
+material General/TutorialTextbox1-4
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture Textbox1-4.png
+        }
+      } 
+    }
+}
+
 material General/TutorialTextbox2-1
 {
     technique

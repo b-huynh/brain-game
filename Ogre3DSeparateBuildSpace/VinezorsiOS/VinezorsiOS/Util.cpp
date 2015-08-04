@@ -1034,6 +1034,38 @@ bool Util::ConfigGlobal::loadGlobalSettings(std::string savePath)
     return false;
 }
 
+//Check in globals if the string exists
+//0: File does not exist
+//1: It was found
+//2: It was not found
+int Util::ConfigGlobal::checkSetting(std::string savePath, std::string setting)
+{
+    std::ifstream saveFile (savePath.c_str());
+    
+    if (saveFile.good())
+    {
+        std::string input;
+        saveFile >> input; // Receive version string
+        
+        while (saveFile >> input)
+        {
+            if (input == setting)
+            {
+                saveFile.close();
+                return 1;
+            }
+        }
+    }
+    else
+    {
+        saveFile.close();
+        return 0;
+    }
+    saveFile.close();
+    return 2;
+
+}
+
 float Util::clamp(float val, float min, float max)
 {
     if (val < min)

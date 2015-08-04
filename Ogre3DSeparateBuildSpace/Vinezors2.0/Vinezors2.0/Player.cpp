@@ -1638,7 +1638,7 @@ void Player::setCamDir(Direction value)
 
 bool Player::setVineDirRequest(Direction value, bool force)
 {
-#if defined(OGRE_IS_IOS)
+#if !defined(OGRE_IS_IOS)
     // For iOS special swipe controls, refer to
     // updateSpin in EngineStage and offsetShip in Player as well
     vines[0]->loc = value;
@@ -2313,6 +2313,7 @@ void Player::addAction(ActionCode actType)
 
 void Player::update(float elapsed)
 {
+    
     totalElapsed += elapsed;
     //std::cout << totalElapsed << std::endl;
     
@@ -3115,7 +3116,7 @@ bool Player::saveSession(std::string file)
  
             out << "%" << endl;
             out << "% SessionNumber EventNumber LevelNumber TaskType HasHoldout TSin TSout N-Back RunSpeedIn RunSpeedOut LevelEnding Accuracy TP FP TN FN TPh FPh TNh FNh Ignored Pickups IgnoredH PickupsH ObsHit ObsAvoid Score TotalMarbles NBackLevelA NBackLevelB NBackLevelC NBackLevelD NBackLevelE SchedulerScore HoldoutOffsetA HoldoutOffsetB HoldoutOffsetD HoldoutLevelA HoldoutLevelB HoldoutLevelD SpeedA SpeedB SpeedC SpeedD SpeedE MusicVolume SoundVolume SyncDataToServer MaxVel MinVelFree MinVelStopper DampingDecayFree DampingDecayStop DampingDropFree DampingDropStop Inverted fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed holdoutMin holdoutMax  holdoutLowerBoundTime holdoutUpperBoundMinTime holdoutUpperBoundMaxTime holdoutSteps" << endl;
-            //fuelEnabled holdoutEnabled initialVelocity manRecessEnabled manRecessLevelLimit newNavEnabled newNavIncrement indRecessEnabled indRecessIncrement holdoutdelayEnabled holdoutdelayNumber newSounds enableSettingsPasscode sessionStartTime sessionEndTime numOfSessions sessionScreenEnabled enableIndRecessFixed
+            
         }
         
         //Logging Study Settings
@@ -3446,11 +3447,12 @@ void Player::startSession()
     globals.initLogs(getSessionID());
     
     totalElapsed = 0.0f;
+    totalElapsedGeneral = 0.0f;
 }
 
 void Player::feedLevelRequestFromSchedule()
 {
-    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(globals.holdoutEnabled,globals.newNavEnabled,globals.indRecessEnabled,globals.indRecessNBackLevel,globals.holdoutdelayEnabled,globals.holdoutdelayNumber,globals.manRecessEnabled,globals.enableIndRecessFixed);
+    std::vector< std::pair<StageRequest, PlayerProgress> > choices = scheduler->generateChoices(globals.holdoutEnabled,globals.newNavEnabled,globals.indRecessEnabled,globals.indRecessNBackLevel,globals.holdoutdelayEnabled,globals.holdoutdelayNumber,globals.manRecessEnabled,globals.enableIndRecessFixed, true/*globals.soundOnlyLevelsEnabled*/);
     scheduleChoice1 = choices[0];
     scheduleChoice2 = choices[1];
     scheduleChoice3 = choices[2];

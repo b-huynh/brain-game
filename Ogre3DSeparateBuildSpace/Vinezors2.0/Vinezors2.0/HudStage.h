@@ -33,6 +33,9 @@ public:
     
     float leftZapT;
     float rightZapT;
+    
+    HudSlider* speedSlider;
+
 protected:
     Player* player;
     Tunnel* tunnel;
@@ -100,7 +103,9 @@ protected:
     PanelOverlayElement* leftZapperButtonBackground;
     PanelOverlayElement* rightZapperButtonBackground;
     
-    HudSlider* speedSlider;
+    PanelOverlayElement* amberBG;
+
+    
     
     bool goButtonActive;
     

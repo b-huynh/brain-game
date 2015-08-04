@@ -485,6 +485,26 @@ material General/DisableBackGroundBlack
   }
 }
 
+material General/BackGroundOrange
+{
+  technique
+  {
+    pass
+    {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture backgroundAmber.png
+            alpha_op_ex source1 src_manual src_current .3
+            tex_border_colour 0 0 0 0
+            tex_address_mode border
+        }
+    }
+  }
+}
+
 material General/ButtonGoDown
 {
     technique
@@ -1603,12 +1623,122 @@ material General/TabSettingsTitleBar
             depth_write off
             texture_unit
             {
-                settings_title.png
+                texture settings_title.png
                 tex_border_colour 0 0 0 0
                 tex_address_mode border
+		filtering anisotropic
+                max_anisotropy 16
+
 
             }
         }
     }
 }
+
+material General/TabSettingsLineSeperator
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture settings_panel_seperator.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+		filtering anisotropic
+                max_anisotropy 16
+
+
+            }
+        }
+    }
+}
+material General/TabSettingsSwitchOff
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture switch_off.png
+	    filtering anisotropic
+            max_anisotropy 16
+        }
+      }
+    }
+}
+
+material General/TabSettingsSwitchOn
+{
+    technique
+    {
+      pass
+      {
+        lighting off
+        scene_blend alpha_blend
+        depth_write off
+        texture_unit
+        {
+            texture switch_on.png
+	    filtering anisotropic
+            max_anisotropy 16
+        }
+      }
+    }
+}
+
+material General/TabSettingsLDottedSeperator
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture settings_panelL_seperator.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+		filtering anisotropic
+                max_anisotropy 16
+
+
+            }
+        }
+    }
+}
+
+material General/TabSettingsRDottedSeperator
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend alpha_blend
+            depth_write off
+            texture_unit
+            {
+                texture settings_panelR_seperator.png
+                tex_border_colour 0 0 0 0
+                tex_address_mode border
+		filtering anisotropic
+                max_anisotropy 16
+
+
+            }
+        }
+    }
+}
+
 
