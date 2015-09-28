@@ -20,6 +20,7 @@
 #include "PlayerProgress.h"
 #include "LevelSet.h"
 #include "TutorialManager.h"
+#include "LevelScheduler.h"
 
 class Player
 {
@@ -30,6 +31,7 @@ private:
     Tunnel* tunnel;
     
     unsigned seed;
+    int sessionID;
     
     std::string name;
     int hp;
@@ -37,6 +39,16 @@ private:
     int numSafeTotal;
     int numMissedTotal;
     int numWrongTotal;
+    int numIgnoredTotal;    // Unsuccessful Pickups
+    int numPickupsTotal;    // Successful Pickups
+    
+    int numCorrectHoldout;
+    int numSafeHoldout;
+    int numMissedHoldout;
+    int numWrongHoldout;
+    int numIgnoredHoldout;    // Unsuccessful Pickups
+    int numPickupsHoldout;    // Successful Pickups
+    
     int numCorrectBonus;
     int numCorrectCombo;
     int numWrongCombo;
@@ -79,58 +91,108 @@ private:
     
     int toggleBack; // 0, 1, or 2
     
+    // Logging Info:
+    // Encoding on each panel where a lower number can be overridden by a higher number
     static const char ENC_NO_PANEL = '0';
-    static const char ENC_YES_PANEL = '1';
-    static const char ENC_TARGET = '2';
-    static const char ENC_FAKE = '3';
-    static const char ENC_OBSTACLE_NO_HIT = '4';
-    static const char ENC_OBSTACLE_YES_HIT = '5';
-    static const char ENC_PLAYER_STATIC = '6';
-    static const char ENC_PLAYER_CORRECT = '7';
-    static const char ENC_PLAYER_WRONG = '8';
+    static const char ENC_EMPTY_PANEL = '1';
+    static const char ENC_PLAYER = '2';
+    static const char ENC_MATCH = '3';
+    static const char ENC_NONMATCH = '4';
+    static const char ENC_OBSTACLE = '5';
+    static const char ENC_TIMEWARP = '6';
+    // Results recorded at each segment in a tunnel
     struct Result {
         char segmentEncoding[NUM_DIRECTIONS];
         int eventID;
+        int levelID;
         int taskType;
         int nback;
-        int navigation;
+        int toggle;
+        int playerRollBase;
+        int playerRollOffset;
+        int playerRollSpeed;
+        float playerFuelTimer;
+        float playerFuelBuffer;
         Direction playerLoc;
         PodInfo podInfo;
         SectionInfo sectionInfo;
         int timestamp;
+        bool levelEnded;
         float minSpeed;
         float maxSpeed;
         float baseSpeed;
         float finalSpeed;
-        int navScore;
     };
+    // Player actions recorded here (does not track panning)
     struct Action {
         int eventID;
+        int levelID;
         ActionCode action;
         int timestamp;
         int baseSpeed;
         int finalSpeed;
     };
+    // Stores information about each tunnel level
     struct Session {
-        int sessionNo;
+        int sessionID;
         int eventID;
+        int levelID;
         int taskType;
-        int stageTime;
+        bool hasHoldout;
         int timestampIn;
         int timestampOut;
         int nback;
-        int rep;
         int runSpeedIn;
         int runSpeedOut;
-        int maxSpeed;
-        int navScore;
+        int eval;
+        float accuracy;
         int TP;
         int FP;
         int TN;
         int FN;
+        int TPh;
+        int FPh;
+        int TNh;
+        int FNh;
+        int ignored;
+        int pickups;
+        int ignoredH;
+        int pickupsH;
         int obsHit;
         int obsAvoided;
+        int score;
+        int totalMarbles;
+        float nbackLevelA;
+        float nbackLevelB;
+        float nbackLevelC;
+        float nbackLevelD;
+        float nbackLevelE;
+        float scoreCurr;
+        float holdoutOffsetA;
+        float holdoutOffsetB;
+        float holdoutOffsetD;
+        int holdoutLevelA;
+        int holdoutLevelB;
+        int holdoutLevelD;
+        float speedA;
+        float speedB;
+        float speedC;
+        float speedD;
+        float speedE;
+        float musicVolume;
+        float soundVolume;
+        bool syncDataToServer;
+        float maxVel;
+        float minVelFree;
+        float minVelStopper;
+        float dampingDecayFree;
+        float dampingDecayStop;
+        float dampingDropFree;
+        float dampingDropStop;
+        bool inverted;
     };
+    
+    bool logged;
     std::list<Result> results;
     std::list<Action> actions;
     std::list<Session> sessions;
@@ -149,14 +211,18 @@ private:
     float startMusicTimer;
     bool godMode;
     
+    Ogre::ColourValue boostColor;
+    
     OgreOggSound::OgreOggISound* soundMusic;
     OgreOggSound::OgreOggISound* soundFeedbackGreat;
     OgreOggSound::OgreOggISound* soundFeedbackGood;
     OgreOggSound::OgreOggISound* soundFeedbackBad;
+    OgreOggSound::OgreOggISound* soundFeedbackMiss;
     OgreOggSound::OgreOggISound* soundCollision;
     OgreOggSound::OgreOggISound* soundStartup;
     OgreOggSound::OgreOggISound* soundBoost;
-    std::vector<OgreOggSound::OgreOggISound*> soundPods;
+    OgreOggSound::OgreOggISound* soundButtonPress;
+    OgreOggSound::OgreOggISound* soundFirework;
     bool triggerStartup;
     
     // Study report at the end of the session
@@ -173,13 +239,56 @@ private:
     
     // Tutorials
     TutorialManager* tutorialMgr;
+    
 public:
+    //Overall Timer
+    float totalElapsedGeneral;
+
+    
+    //Level Menu Holdout Toggle
+    bool levelsHoldout = false;
+    
+    //NextPage StudySetting
+    bool isNextPage = false;
+    
+    // Marble Restart Counter of Study Version
+    int marbleChoice = 0;
+    int choice0RestartCounter = 0;  //Tutorial Counter
+    int choice1RestartCounter = 0;
+    int choice2RestartCounter = 0;
+    int choice3RestartCounter = 0;
+    int numRetries = 3;
+    
+    
+    
+    bool fadeMusic;
+    float xsTimer; // timer for the three X's display
+    
+    // Settings Parameters
+    float musicVolume;
+    float soundVolume;
+    float holdout;
+    float holdoutLB;
+    float holdoutUB;
+    //bool syncDataToServer;
+    
+    float maxVel;
+    float minVelFree;       // not recorded and set by player
+    float minVelStopper;
+    float dampingDecayFree;
+    float dampingDecayStop;
+    float dampingDropFree;
+    float dampingDropStop;
+    bool inverted;
+    
+    float rollSpeed;
     float offsetRoll;
     float offsetRollDest;
     
 	Player();
 	Player(const std::string & name, Vector3 camPos, Quaternion camRot, float camSpeed, float offset, unsigned seed, const std::string & filename);
-	
+    
+    Tunnel* getTunnel() const;
     LevelSet* getLevels() const;
     unsigned getSeed() const;
     std::string getName() const;
@@ -188,6 +297,13 @@ public:
     int getNumSafeTotal() const;
     int getNumMissedTotal() const;
     int getNumWrongTotal() const;
+    int getNumPickupsTotal() const;
+    int getNumCorrectHoldout() const;
+    int getNumSafeHoldout() const;
+    int getNumMissedHoldout() const;
+    int getNumWrongHoldout() const;
+    int getNumIgnoredHoldout() const;
+    int getNumPickupsHoldout() const;
     int getNumCorrectBonus() const;
     int getNumCorrectCombo() const;
     int getNumWrongCombo() const;
@@ -223,6 +339,9 @@ public:
     float getProgress() const;
     bool getShowCombo() const;
     PlayerLevel getSkillLevel() const;
+    int getSessionID() const;
+    std::string getStageStats() const;
+    std::string getSessionStats() const;
     int getToggleBack() const;
     bool getGodMode() const;
     int getNumStagesWon() const;
@@ -234,10 +353,13 @@ public:
     PlayerProgress getLevelProgress(int row, int col) const;
     bool isLevelAvailable(int level) const;
     bool isLevelAvailable(int row, int col) const;
+    bool isNextLevelAvailable() const;
+    int getNextLevel() const;
     int getMenuRowIndex() const;
     int getTotalLevelRating(int row) const;
     float getTotalLevelScore(int row) const;
     float getTotalLevelScore() const;
+    Ogre::ColourValue getBoostColor() const;
     bool hasTriggeredStartup() const;
     float getScoring() const;
     TutorialManager* getTutorialMgr() const;
@@ -273,6 +395,7 @@ public:
     void setDesireRoll(float value);
     void setBaseSpeed(float value);
     void setSkillLevel(PlayerLevel value);
+    void setSessionID(int value);
     void setToggleBack(int value);
     void setGodMode(bool value);
     void setLevelRequestRow(int value);
@@ -288,19 +411,24 @@ public:
     Quaternion getRot() const;
     Quaternion getRoll() const;
     Quaternion getCombinedRotAndRoll() const;
-    void playPodSound(int index) const;
+    void playSound(OgreOggSound::OgreOggISound* sound) const;
+    void reactGUI() const;
+    void playFireworkSound() const;
     float getStartMusicTimer() const;
     void playMusic() const;
+    void stopMusic();
+    void updateMusicVolume();
     void unpause();
     void pause();
     
-    void setSounds(bool mode);
+    void setSounds();
     
     void unlink();
     void link(Tunnel* tunnel);
     void initToggleBack();
     void newTunnel(const std::string & nameMusic);
     void startMenu();
+    void saveSpeedSettings();
     
 	void move(Vector3 delta);
     void changeMovementMode();
@@ -308,6 +436,7 @@ public:
 	void addVine(Vine* vine);
     void removeVines();
 	void checkCollisions();
+    void updateSpeed(int mean, bool step);
     void decideFinalSpeed(float elapsed);
     
     void addAction(ActionCode actType);
@@ -316,12 +445,13 @@ public:
     void updateTimeWarp(float elapsed);
     void performTimeWarp();
     void updateBoost(float elapsed);
+    void setBoostTimer(float value);
     void performBoost();
     void updateShields(float elapsed);
     bool triggerShields();
     void performShields();
     void updateGlowExtraction(float elapsed);
-    void setGlowGrabParameters();
+    void setGlowGrabParameters(Pod* pod);
     void beginBadFuelPickUp();
     void updateBadFuelPickUp(float elapsed);
     void testPodGiveFeedback(Pod* test);
@@ -345,14 +475,46 @@ public:
     std::string getCurrentStats() const;
     
     void saveAllResults(Evaluation eval);
+    void logData();
     bool saveStage(std::string file);
     bool saveActions(std::string file);
     bool saveSession(std::string file);
     //bool saveProgress(std::string file, bool updateSessionID);
     bool saveProgress(std::string file);
+    bool loadProgress1_6(std::string savePath);
     bool loadProgress(std::string savePath);
     
-    bool winFlag;
+    std::istream& setSaveValue(std::istream& in, std::string paramName, std::map<std::string, bool> ignoreList);
+    
+    void initSettings();
+    void startSession();
+    
+    bool endFlag;
+    
+    // =====================
+    // Scheduler Stuffs
+    // =========================================================
+    LevelScheduler* scheduler;
+    std::pair<StageRequest, PlayerProgress>* levelRequest;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice1;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice2;
+    std::pair<StageRequest, PlayerProgress> scheduleChoice3;
+    std::pair<StageRequest, PlayerProgress> scheduleManRecessLevel;
+    LevelPhase lastPlayed;
+    int rerollCounter;
+    bool sessionStarted;
+    
+    void feedLevelRequestFromSchedule();
+    
+    // Returns a multiplier when incrementing or decrementing memory level during assessment
+    float getMemoryChallenge(StageRequest level, PlayerProgress assessment) const;
+    float modifyNBackDelta(StageRequest level, PlayerProgress assessment, float accuracy, bool exclude);
+    float obtainDifficultyWeight(StageRequest level, PlayerProgress assessment, float nBackDelta);
+    float obtainSamplingWeight(StageRequest level, PlayerProgress assessment);
+    
+    // "Grade" the level to see if player should repeat, go back, or advance
+    float obtainDeltaNBack(std::pair<StageRequest, PlayerProgress>* levelToGrade, float accuracy) const;
+    void assessLevelPerformance(std::pair<StageRequest, PlayerProgress>* levelToGrade);
     
     ~Player();
 };

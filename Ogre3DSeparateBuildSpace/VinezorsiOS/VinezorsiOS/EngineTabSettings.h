@@ -1,0 +1,57 @@
+//
+//  EngineTabSettings.h
+//  VinezorsiOS
+//
+//  Created by BGC_Bernie on 4/28/15.
+//
+//
+
+#ifndef __VinezorsiOS__EngineTabSettings__
+#define __VinezorsiOS__EngineTabSettings__
+
+
+
+#include "Util.h"
+#include "Engine.h"
+#include "HudTabSettings.h"
+
+
+class EngineTabSettings : public Engine
+{
+public:
+    EngineTabSettings(EngineStateManager* engineStateMgr, Player* player);
+    virtual ~EngineTabSettings();
+    
+    virtual void enter();
+    virtual void exit();
+    virtual void update(float elapsed);
+    virtual EngineState getEngineType() const {
+        return ENGINE_TAB_SETTINGS;
+    }
+    
+    virtual void activatePerformSingleTap(float x, float y);
+    
+    virtual void activateMoved(float x, float y, float dx, float dy);
+    virtual void activatePressed(float x, float y);
+    virtual void activateReleased(float x, float y, float dx, float dy);
+    
+#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
+    virtual void mouseMoved(const OIS::MouseEvent &evt);
+    virtual void mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    virtual void mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    
+    virtual void keyPressed(const OIS::KeyEvent &keyEventRef);
+    virtual void keyReleased(const OIS::KeyEvent &keyEventRef);
+#endif
+    
+    virtual void requestResize();
+protected:
+    Player* player;
+    HudTabSettings* hud;
+    bool touchedBox = false;
+    
+    void alloc();
+    void dealloc();
+};
+
+#endif /* defined(__VinezorsiOS__EngineTabSettings__) */

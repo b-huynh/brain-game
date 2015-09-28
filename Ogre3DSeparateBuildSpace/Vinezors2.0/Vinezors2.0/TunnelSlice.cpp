@@ -18,8 +18,8 @@ static int wallID = 0;
 static int intermediateMeshID = 0;
 
 TunnelSlice::TunnelSlice()
-: parentNode(NULL), tunnelSliceID(0), center(), rot(), dir(NO_DIRECTION), dirAngle(0), width(0), depth(0), type(NORMAL), materialNames(), sliceNode(NULL), entireWall(NULL),
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL), topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL),
+: parentNode(NULL), tunnelSliceID(0), center(), rot(), dir(NO_DIRECTION), dirAngle(0), width(0), depth(0), type(NORMAL), materialNames(), sliceNode(NULL), entireWall(NULL), entireIntermediate(NULL),
+mainLeftSideRailing(NULL), mainRightSideRailing(NULL), connectorLeftSideRailing(NULL), connectorLeftSidePoint1(NULL), connectorLeftSidePoint2(NULL), connectorRightSideRailing(NULL), connectorRightSidePoint1(NULL), connectorRightSidePoint2(NULL), mainLeftTransition(NULL), mainRightTransition(NULL), connectorLeftTransition(NULL), connectorRightTransition(NULL), gateNode(NULL),
 pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 {
     for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -27,8 +27,9 @@ pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
 }
 
 TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
-: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(), sliceNode(NULL), entireWall(NULL),
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
+: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(), sliceNode(NULL), entireWall(NULL), entireIntermediate(NULL),
+mainLeftSideRailing(NULL), mainRightSideRailing(NULL), connectorLeftSideRailing(NULL), connectorLeftSidePoint1(NULL), connectorLeftSidePoint2(NULL), connectorRightSideRailing(NULL), connectorRightSidePoint1(NULL), connectorRightSidePoint2(NULL), mainLeftTransition(NULL), mainRightTransition(NULL), connectorLeftTransition(NULL), connectorRightTransition(NULL), gateNode(NULL),
+pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false), makeDecreasingTransition(false)
 {
     
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
@@ -44,8 +45,9 @@ topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRig
 }
 
 TunnelSlice::TunnelSlice(Ogre::SceneNode* parentNode, int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
-: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(materials), sliceNode(NULL), entireWall(NULL),
-topLeftWall(NULL), topWall(NULL), topRightWall(NULL), rightWall(NULL), bottomRightWall(NULL), bottomWall(NULL), bottomLeftWall(NULL), leftWall(NULL), entireIntermediate(NULL),topLeftIntermediate(NULL), topIntermediate(NULL), topRightIntermediate(NULL), rightIntermediate(NULL), bottomRightIntermediate(NULL), bottomIntermediate(NULL), bottomLeftIntermediate(NULL), leftIntermediate(NULL), pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false)
+: parentNode(parentNode), tunnelSliceID(nid), center(start), rot(rot), dir(info.tunnelDir), dirAngle(info.tunnelDirAngle), width(width), depth(depth), type(info.tunnelType), materialNames(materials), sliceNode(NULL), entireWall(NULL), entireIntermediate(NULL),
+mainLeftSideRailing(NULL), mainRightSideRailing(NULL), connectorLeftSideRailing(NULL), connectorLeftSidePoint1(NULL), connectorLeftSidePoint2(NULL), connectorRightSideRailing(NULL), connectorRightSidePoint1(NULL), connectorRightSidePoint2(NULL), mainLeftTransition(NULL), mainRightTransition(NULL), connectorLeftTransition(NULL), connectorRightTransition(NULL), gateNode(NULL),
+pods(), growthT(0), sidesUsed(), podHistory(false), infoStored(false), makeDecreasingTransition(false)
 {
     
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
@@ -89,7 +91,7 @@ void TunnelSlice::initWalls()
     }
     //entireWallEntity->setMaterialName(getMaterialName());
     for (int i = 0; i < entireWallEntity->getNumSubEntities(); ++i)
-        entireWallEntity->getSubEntity(i)->setMaterialName(getMaterialName());
+        entireWallEntity->getSubEntity(i)->setMaterialName(getMaterialName(false));
     entireWall->attachObject(entireWallEntity);
     entireWall->scale(width, width, depth);
     
@@ -98,28 +100,28 @@ void TunnelSlice::initWalls()
     {
         gateNode = sliceNode->createChildSceneNode("gateNode" + Util::toStringInt(wallID));
         gateEntity = gateNode->getCreator()->createEntity("gateEntity" + Util::toStringInt(wallID), "ExitGate/ExitGate.mesh");
-    
+        
         gateEntity->getSubEntity(0)->setMaterialName("Gate/TransparentNeonAqua");
         gateEntity->getSubEntity(1)->setMaterialName("Gate/NeonAqua");
         gateEntity->getSubEntity(2)->setMaterialName("Gate/LightGray");
         gateEntity->getSubEntity(3)->setMaterialName("Gate/DarkGray");
-    
+        
         for( int i = 0; i < 8; ++i )
         {
             gateDoorNodes[i] = gateNode->createChildSceneNode("gateDoorNode" + Util::toStringInt(wallID) + Util::toStringInt(i));
             gateDoorEntities[i] = gateDoorNodes[i]->getCreator()->createEntity("gateDoorEntity" + Util::toStringInt(wallID) + Util::toStringInt(i), "ExitGate/ExitGateDoor.mesh");
-        
+            
             gateDoorEntities[i]->getSubEntity(0)->setMaterialName("Gate/DarkestGray");
             gateDoorEntities[i]->getSubEntity(1)->setMaterialName("Gate/DarkGray");
-        
+            
             gateDoorNodes[i]->attachObject(gateDoorEntities[i]);
-        
+            
             gateDoorNodes[i]->roll(Degree(45*i));
-        }	
-    
+        }
+        
         gateNode->attachObject(gateEntity);
         gateNode->translate(Vector3(0,0,-10));
-        gateNode->scale(2.45f,2.45f,2.45f);
+        gateNode->scale(1.45f,1.45f,1.45f);
     }
     else if( type == CHECKPOINT_FAIL ) {
         gateNode = sliceNode->createChildSceneNode("gateNode" + Util::toStringInt(wallID));
@@ -149,103 +151,151 @@ void TunnelSlice::initWalls()
         
         gateNode->attachObject(gateEntity);
         gateNode->translate(Vector3(0,0,-10));
-        gateNode->scale(2.45f,2.45f,2.45f);
+        gateNode->scale(1.45f,1.45f,1.45f);
     }
     
-    
-    
-    /*
-     // The bottom initializes a node for each direction and attaches a plane mesh to them
     float wallLength = getWallLength();
-     
-    if (sidesUsed[NORTHWEST]) {
-        topLeftWall = entireWall->createChildSceneNode("topLeftWallNode" + Util::toStringInt(wallID));
-        Entity* topLeftWallEntity = topLeftWall->getCreator()->createEntity("topLeftWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        topLeftWall->attachObject(topLeftWallEntity);
-        move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
-        topLeftWall->translate(move);
-        topLeftWall->roll(Degree(225));
-        topLeftWall->scale(wallLength, 1.0, depth);
-        topLeftWallEntity->setMaterialName(materialName);
+    float scaleValue = 0.010f;
+    Vector3 leftbarrierOffset = Vector3(-scaleValue,scaleValue,0);
+    Vector3 rightbarrierOffset = leftbarrierOffset * Vector3(-1,1,1);
+    if( countSides == 3 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength / 2, 0);
+        
+        mainLeftSideRailing = sliceNode->createChildSceneNode("mainLeftSideRailingNode" + Util::toStringInt(wallID));
+        mainLeftSideRailing->translate(move);
+        mainLeftSideRailing->translate(leftbarrierOffset);
+        mainLeftSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        leftWallEntity->setMaterialName(getRailingMaterial());
+        mainLeftSideRailing->attachObject(leftWallEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), -wallLength / 2, 0);
+        
+        mainRightSideRailing = sliceNode->createChildSceneNode("mainRightSideRailingNode" + Util::toStringInt(wallID));
+        mainRightSideRailing->translate(move);
+        mainRightSideRailing->translate(rightbarrierOffset);
+        mainRightSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        rightWallEntity->setMaterialName(getRailingMaterial());
+        mainRightSideRailing->attachObject(rightWallEntity);
+    }
+    else if( countSides == 5 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength / 2, 0);
+        
+        mainLeftSideRailing = sliceNode->createChildSceneNode("mainLeftSideRailingNode" + Util::toStringInt(wallID));
+        mainLeftSideRailing->translate(move);
+        mainLeftSideRailing->translate(Util::EulerRotate(leftbarrierOffset,Degree(-45),'z'));
+        mainLeftSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        //mainLeftSideRailing->roll(Degree(-45));
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        leftWallEntity->setMaterialName(getRailingMaterial());
+        mainLeftSideRailing->attachObject(leftWallEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)), wallLength / 2, 0);
+        
+        mainRightSideRailing = sliceNode->createChildSceneNode("mainRightSideRailingNode" + Util::toStringInt(wallID));
+        mainRightSideRailing->translate(move);
+        mainRightSideRailing->translate(Util::EulerRotate(rightbarrierOffset,Degree(45),'z'));
+        mainRightSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        //mainRightSideRailing->roll(Degree(45));
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        rightWallEntity->setMaterialName(getRailingMaterial());
+        mainRightSideRailing->attachObject(rightWallEntity);
+    }
+    else if( countSides == 7 ) {
+        move = Vector3(-wallLength / 2, wallLength  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
+        
+        mainLeftSideRailing = sliceNode->createChildSceneNode("mainLeftSideRailingNode" + Util::toStringInt(wallID));
+        mainLeftSideRailing->translate(move);
+        mainLeftSideRailing->translate(Util::EulerRotate(leftbarrierOffset,Degree(-90),'z'));
+        mainLeftSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        //mainLeftSideRailing->roll(Degree(-90));
+        
+        Entity* leftWallEntity = sliceNode->getCreator()->createEntity("mainLeftSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        leftWallEntity->setMaterialName(getRailingMaterial());
+        mainLeftSideRailing->attachObject(leftWallEntity);
+        
+        
+        move = Vector3(wallLength / 2, wallLength  * (0.5 + Math::Sin(Ogre::Radian(Math::PI) / 4)), 0);
+        
+        mainRightSideRailing = sliceNode->createChildSceneNode("mainRightSideRailingNode" + Util::toStringInt(wallID));
+        mainRightSideRailing->translate(move);
+        mainRightSideRailing->translate(Util::EulerRotate(rightbarrierOffset,Degree(90),'z'));
+        mainRightSideRailing->scale(scaleValue,scaleValue,depth*scaleValue);
+        //mainRightSideRailing->roll(Degree(90));
+        
+        Entity* rightWallEntity = sliceNode->getCreator()->createEntity("mainRightSideRailingEntity" + Util::toStringInt(wallID), "Railing/cube.mesh");
+        rightWallEntity->setMaterialName(getRailingMaterial());
+        mainRightSideRailing->attachObject(rightWallEntity);
     }
     
-    if (sidesUsed[NORTH]) {
-        topWall = entireWall->createChildSceneNode("topWallNode" + Util::toStringInt(wallID));
-        Entity* topWallEntity = topWall->getCreator()->createEntity("topWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        topWall->attachObject(topWallEntity);
-        move = Vector3(0, width / 2, 0);
-        topWall->translate(move);
-        topWall->roll(Degree(180));
-        topWall->scale(wallLength, 1.0, depth);
-        topWallEntity->setMaterialName(materialName);
+    // Transitions
+    float tWidthOffset = 0.3;
+    float tHeightOffset = wallLength/16;
+    float tDepthOffset = -width/2;
+    Vector3 scaleAmount = Vector3(1, 3.775, 14);
+    if( makeDecreasingTransition && countSides == 3 ) {
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        mainLeftTransition = sliceNode->createChildSceneNode("mainLeftTransitionNode" + Util::toStringInt(intermediateMeshID));
+        mainLeftTransition->translate(move);
+        mainLeftTransition->scale(scaleAmount);
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("mainLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        mainLeftTransition->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        mainRightTransition = sliceNode->createChildSceneNode("mainRightTransitionNode" + Util::toStringInt(intermediateMeshID));
+        mainRightTransition->translate(move);
+        mainRightTransition->scale(scaleAmount);
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("mainRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        mainRightTransition->attachObject(rightTransitionEntity);
+        
+        mainLeftTransition->yaw(Degree(180));
+        mainRightTransition->yaw(Degree(180));
+    }
+    if( makeDecreasingTransition && countSides == 5 ) {
+        
+        move = Vector3(-wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(-45), 'z'));
+        mainLeftTransition = sliceNode->createChildSceneNode("mainLeftTransitionNode" + Util::toStringInt(intermediateMeshID));
+        mainLeftTransition->translate(move);
+        mainLeftTransition->scale(scaleAmount);
+        mainLeftTransition->roll(Degree(-45));
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("mainLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        mainLeftTransition->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(45), 'z'));
+        mainRightTransition = sliceNode->createChildSceneNode("mainRightTransitionNode" + Util::toStringInt(intermediateMeshID));
+        mainRightTransition->translate(move);
+        mainRightTransition->scale(scaleAmount);
+        mainRightTransition->roll(Degree(45));
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("mainRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        mainRightTransition->attachObject(rightTransitionEntity);
+        
+        mainLeftTransition->yaw(Degree(180));
+        mainRightTransition->yaw(Degree(180));
     }
     
-    if (sidesUsed[NORTHEAST]) {
-        topRightWall = entireWall->createChildSceneNode("topRightWallNode" + Util::toStringInt(wallID));
-        Entity* topRightWallEntity = topRightWall->getCreator()->createEntity("topRightWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        topRightWall->attachObject(topRightWallEntity);
-        move = Vector3((width + wallLength) / 4, (width + wallLength) / 4, 0);
-        topRightWall->translate(move);
-        topRightWall->roll(Degree(135));
-        topRightWall->scale(wallLength, 1.0, depth);
-        topRightWallEntity->setMaterialName(materialName);
-    }
-    
-    if (sidesUsed[EAST]) {
-        rightWall = entireWall->createChildSceneNode("rightWallNode" + Util::toStringInt(wallID));
-        Entity* rightWallEntity = rightWall->getCreator()->createEntity("rightWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        rightWall->attachObject(rightWallEntity);
-        move = Vector3(width / 2, 0, 0);
-        rightWall->translate(move);
-        rightWall->roll(Degree(90));
-        rightWall->scale(wallLength, 1.0, depth);
-        rightWallEntity->setMaterialName(materialName);
-    }
-    
-    if (sidesUsed[SOUTHEAST]) {
-        bottomRightWall = entireWall->createChildSceneNode("bottomRightWallNode" + Util::toStringInt(wallID));
-        Entity* bottomRightWallEntity = bottomRightWall->getCreator()->createEntity("bottomRightWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        bottomRightWall->attachObject(bottomRightWallEntity);
-        move = Vector3((width + wallLength) / 4, -(width + wallLength) / 4, 0);
-        bottomRightWall->translate(move);
-        bottomRightWall->roll(Degree(45));
-        bottomRightWall->scale(wallLength, 1.0, depth);
-        bottomRightWallEntity->setMaterialName(materialName);
-    }
-    
-    if (sidesUsed[SOUTH]) {
-        bottomWall = entireWall->createChildSceneNode("bottomWallNode" + Util::toStringInt(wallID));
-        Entity* bottomWallEntity = bottomWall->getCreator()->createEntity("bottomWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        bottomWall->attachObject(bottomWallEntity);
-        move = Vector3(0, -width / 2, 0);
-        bottomWall->translate(move);
-        bottomWall->roll(Degree(0));
-        bottomWall->scale(wallLength, 1.0, depth);
-        bottomWallEntity->setMaterialName(materialName);
-    }
-    
-    if (sidesUsed[SOUTHWEST]) {
-        bottomLeftWall = entireWall->createChildSceneNode("bottomLeftWallNode" + Util::toStringInt(wallID));
-        Entity* bottomLeftWallEntity = bottomLeftWall->getCreator()->createEntity("bottomLeftWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        bottomLeftWall->attachObject(bottomLeftWallEntity);
-        move = Vector3(-(width + wallLength) / 4, -(width + wallLength) / 4, 0);
-        bottomLeftWall->translate(move);
-        bottomLeftWall->roll(Degree(315));
-        bottomLeftWall->scale(wallLength, 1.0, depth);
-        bottomLeftWallEntity->setMaterialName(materialName);
-    }
-    
-    if (sidesUsed[WEST]) {
-        leftWall = entireWall->createChildSceneNode("leftWallNode" + Util::toStringInt(wallID));
-        Entity* leftWallEntity = leftWall->getCreator()->createEntity("leftWallEntity" + Util::toStringInt(wallID), "planeMesh");
-        leftWall->attachObject(leftWallEntity);
-        move = Vector3(-width / 2, 0, 0);
-        leftWall->translate(move);
-        leftWall->roll(Degree(270));
-        leftWall->scale(wallLength, 1.0, depth);
-        leftWallEntity->setMaterialName(materialName);
-    }
-     */
     sliceNode->setPosition(center);
     sliceNode->setOrientation(rot);
     ++wallID;
@@ -258,7 +308,7 @@ int TunnelSlice::getTunnelSliceID() const
 
 float TunnelSlice::getWallLength() const
 {
-	return width / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
+    return width / (2 * Math::Cos(Ogre::Radian(Math::PI) / 4) + 1);
 }
 
 TunnelType TunnelSlice::getType() const
@@ -283,7 +333,7 @@ Vector3 TunnelSlice::getEnd() const
 
 Vector3 TunnelSlice::getCenter() const
 {
-	return center;
+    return center;
 }
 
 Vector3 TunnelSlice::getCenter(float t) const
@@ -352,14 +402,40 @@ std::string TunnelSlice::getMaterialName() const
 {
     std::string materialName;
     /*if (type == CHECKPOINT_PASS)
-        materialName = "General/WallCheckpointPass";
+     materialName = "General/WallCheckpointPass";
      else if (type == CHECKPOINT_FAIL)
-         materialName = "General/WallCheckpointFail";
-    else*/ if (type == CHECKPOINT_EVEN)
+     materialName = "General/WallCheckpointFail";
+     else*/ if (type == CHECKPOINT_EVEN)
+         materialName = "General/WallCheckpointEven";
+     else if (materialNames.size() > 0)
+         materialName = materialNames[rand() % materialNames.size()];
+    return materialName;
+}
+
+std::string TunnelSlice::getMaterialName(bool isConnection) const
+{
+    std::string materialName;
+    if (type == CHECKPOINT_EVEN)
         materialName = "General/WallCheckpointEven";
     else if (materialNames.size() > 0)
         materialName = materialNames[rand() % materialNames.size()];
+    
+    
+    if(isConnection)
+        materialName = materialName + "2";  // if the tile is a connection tile
+    
     return materialName;
+}
+
+std::string TunnelSlice::getRailingMaterial() const
+{
+    return "Railing/Gray";
+}
+
+std::string TunnelSlice::getConnectorMaterial() const
+{
+    return "Railing/Gray";
+    //return "Railing/Gold";
 }
 
 // Finds collisions through bounding boxes
@@ -367,13 +443,13 @@ std::vector<Pod*> TunnelSlice::findCollisions(SceneNode* ent) const
 {
     std::vector<Pod*> ret;
     
-	for (int i = 0; i < pods.size(); ++i)
-	{
-		if (ent->_getWorldAABB().intersects(pods[i]->getHead()->_getWorldAABB()))
-			ret.push_back(pods[i]);
-	}
+    for (int i = 0; i < pods.size(); ++i)
+    {
+        if (ent->_getWorldAABB().intersects(pods[i]->getHead()->_getWorldAABB()))
+            ret.push_back(pods[i]);
+    }
     
-	return ret;
+    return ret;
 }
 
 // Finds collisions through t-prediction: can be improved
@@ -381,8 +457,8 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
 {
     std::vector<Pod*> ret;
     
-	for (int i = 0; i < pods.size(); ++i)
-	{
+    for (int i = 0; i < pods.size(); ++i)
+    {
         // Is Vine in same panel as pod?
         if (pods[i]->getPodTrigger())
         {
@@ -406,8 +482,8 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
         {
             // Pod Signals
             if (!pods[i]->isPodTaken() &&
-            ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
-             (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
+                ((vine->loc == vine->dest && vine->loc == pods[i]->getLoc()) ||
+                 (vine->loc != vine->dest && ((vine->loc == pods[i]->getLoc() && vine->transition < 0.50) || (vine->dest == pods[i]->getLoc() && vine->transition >= 0.50)))))
             {
                 // Is vine where pod is in time?
                 //std::cout << tunnelSliceID << ": " << vine->previousID << " " << vine->afterID << " " << vine->previoust << " " << vine->aftert << std::endl;
@@ -420,16 +496,16 @@ std::vector<Pod*> TunnelSlice::findCollisions(Vine* vine)
                 }
             }
         }
-	}
+    }
     
-	return ret;
+    return ret;
 }
 
 Vector3 TunnelSlice::requestWallDirection(Direction dir) const
 {
     Vector3 move;
-	switch (dir)
-	{
+    switch (dir)
+    {
         case NORTHWEST:
             move = Vector3(-sqrt(2.0) / 2, sqrt(2.0) / 2, 0.0);
             break;
@@ -458,16 +534,16 @@ Vector3 TunnelSlice::requestWallDirection(Direction dir) const
             // No Direction
             move = Vector3(0, 0, 0);
             break;
-	}
+    }
     return rot * move;
 }
 
 Vector3 TunnelSlice::requestWallDistance(Direction dir) const
 {
-	float wallLength = getWallLength();
+    float wallLength = getWallLength();
     Vector3 move;
-	switch (dir)
-	{
+    switch (dir)
+    {
         case NORTHWEST:
             move = Vector3(-(width + wallLength) / 4, (width + wallLength) / 4, 0);
             break;
@@ -496,7 +572,7 @@ Vector3 TunnelSlice::requestWallDistance(Direction dir) const
             // No Direction
             move = Vector3(0, 0, 0);
             break;
-	}
+    }
     return move;
 }
 
@@ -526,42 +602,35 @@ void TunnelSlice::setInfoStored(bool value)
 
 void TunnelSlice::move(Vector3 delta)
 {
-	center.x += delta.x;
-	center.y += delta.y;
-	center.z += delta.z;
-	
+    center.x += delta.x;
+    center.y += delta.y;
+    center.z += delta.z;
+    
     entireWall->translate(delta);
-	//topLeftWall->translate(delta);
-	//topWall->translate(delta);
-	//topRightWall->translate(delta);
-	//rightWall->translate(delta);
-	//bottomRightWall->translate(delta);
-	//bottomWall->translate(delta);
-	//bottomLeftWall->translate(delta);
-	//leftWall->translate(delta);
     if (entireIntermediate)
         entireIntermediate->translate(delta);
     
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->move(delta);
+    for (int i = 0; i < pods.size(); ++i)
+        pods[i]->move(delta);
 }
 
-void TunnelSlice::addPod(const PodInfo & value)
+void TunnelSlice::addPod(const PodInfo & value, float soundVolume)
 {
-	float wallLength = getWallLength();
-	const float STEM_RADIUS = globals.podStemRadius;
-	const float HEAD_RADIUS = globals.podHeadRadius;
-	const float STEM_LENGTH = globals.podStemLength;
+    float wallLength = getWallLength();
+    const float STEM_RADIUS = globals.podStemRadius;
+    const float HEAD_RADIUS = globals.podHeadRadius;
+    const float STEM_LENGTH = globals.podStemLength;
     
     Vector3 move = requestWallDistance(value.podLoc);
     Vector3 base = move;
     move = move * ((move.length() - STEM_LENGTH) / move.length());
     Vector3 head = move;
- 
-    Pod* pod = new Pod(sliceNode, base, head, value.meshType, value.podSignal, value.podColor, value.podShape, value.podSound, value.podLoc, STEM_RADIUS, HEAD_RADIUS);
+    
+    //Actual Pod Creation
+    Pod* pod = new Pod(sliceNode, base, head, value.meshType, value.podSignal, value.podColor, value.podShape, value.podSound, value.podLoc, STEM_RADIUS, HEAD_RADIUS, soundVolume);
     pod->setPodGood(value.goodPod);
     pod->setPodTrigger(value.podTrigger);
-	pods.push_back(pod);
+    pods.push_back(pod);
 }
 
 void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, ManualObject * manual, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 & bl, Vector3 & tr)
@@ -601,10 +670,55 @@ void TunnelSlice::setIntermediateWall(SceneNode* entire, Direction dir, ManualOb
     tr = Vector3(fmax(tr.x, p4.x), fmax(tr.y, p4.y), fmax(tr.z, p4.z));
 }
 
+void TunnelSlice::addTransitionSet(std::string name, Vector3 p1, Vector3 p2, bool include1, bool include2, float railingRoll, float scaleValue, float scalePoint)
+{
+    SceneNode* transitionRail = entireIntermediate->createChildSceneNode(name + "TransitionRailingNode" + Util::toStringInt(intermediateMeshID));
+    transitionRail->setPosition((p1 + p2) / 2);
+    transitionRail->scale(scaleValue, scaleValue, (p2 - p1).length() * scaleValue);
+    transitionRail->lookAt(p2, Node::TS_PARENT);
+    transitionRail->roll(Degree(railingRoll));
+    
+    Entity* railingEntity = sliceNode->getCreator()->createEntity(name + "TransitionRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+    railingEntity->setMaterialName(getRailingMaterial());
+    transitionRail->attachObject(railingEntity);
+    
+    transitions.push_back(transitionRail);
+    
+    if (include1)
+    {
+        SceneNode* point1 = entireIntermediate->createChildSceneNode(name + "TransitionPoint1Node" + Util::toStringInt(intermediateMeshID));
+        point1->setPosition(p1);
+        point1->scale(scaleValue * scalePoint, scaleValue * scalePoint, scaleValue * scalePoint);
+        point1->setOrientation(rot);
+        Entity* point1Entity = sliceNode->getCreator()->createEntity(name + "TransitionPoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        point1Entity->setMaterialName(getRailingMaterial());
+        point1->attachObject(point1Entity);
+        
+        transitions.push_back(point1);
+    }
+    
+    if (include2)
+    {
+        SceneNode* point2 = entireIntermediate->createChildSceneNode(name + "TransitionPoint2Node" + Util::toStringInt(intermediateMeshID));
+        point2->setPosition(p2);
+        point2->scale(scaleValue * scalePoint, scaleValue * scalePoint, scaleValue * scalePoint);
+        point2->setOrientation(rot);
+        Entity* point2Entity = sliceNode->getCreator()->createEntity(name + "TransitionPoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        point2Entity->setMaterialName(getRailingMaterial());
+        point2->attachObject(point2Entity);
+        
+        transitions.push_back(point2);
+    }
+}
+
 void TunnelSlice::connect(TunnelSlice* next)
 {
-	float wallLength1 = getWallLength();
-	float wallLength2 = next->getWallLength();
+    float wallLength1 = getWallLength();
+    float wallLength2 = next->getWallLength();
+    int sidesUsedBack = Util::getNumSides(sidesUsed);
+    int sidesUsedFront = Util::getNumSides(next->sidesUsed);
+    float scaleValue = 0.010f;
+    float scalePoint = 1.5f;
     
     int tempID = intermediateMeshID;
     entireIntermediate = parentNode->createChildSceneNode("intermediateSegmentNode" + Util::toStringInt(intermediateMeshID));
@@ -623,6 +737,12 @@ void TunnelSlice::connect(TunnelSlice* next)
     Vector3 p2;
     Vector3 p3;
     Vector3 p4;
+    Vector3 save1;
+    Vector3 save2;
+    Vector3 save3;
+    Vector3 save4;
+    Vector3 tr1;
+    Vector3 tr2;
     Vector3 bl = Vector3(Ogre::Math::POS_INFINITY, Ogre::Math::POS_INFINITY, Ogre::Math::POS_INFINITY);
     Vector3 tr = Vector3(Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY, Ogre::Math::NEG_INFINITY);
     
@@ -640,6 +760,15 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[NORTHWEST])
         setIntermediateWall(entireIntermediate, NORTHWEST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 7)
+    {
+        save1 = p3;
+        save2 = p4;
+    }
+    if (sidesUsedBack + 2 < sidesUsedFront)
+        addTransitionSet("NW", p2, p3, false, true, 45.0f, scaleValue, scalePoint);
+    else if (sidesUsedBack > sidesUsedFront + 2)
+        addTransitionSet("NW", p2, p3, true, false, 45.0f, scaleValue, scalePoint);
     
     p1 = p4;
     p2 = p3;
@@ -651,6 +780,15 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[NORTH])
         setIntermediateWall(entireIntermediate, NORTH, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 7)
+    {
+        tr1 = p2;
+        tr2 = p3;
+    }
+    if (sidesUsedBack < sidesUsedFront && sidesUsedFront == 8)
+        addTransitionSet("N", p2, p3, false, false, 0.0f, scaleValue, scalePoint);
+    else if (sidesUsedBack > sidesUsedFront && sidesUsedBack == 8)
+        addTransitionSet("N", p2, p3, true, true, 0.0f, scaleValue, scalePoint);
     
     p1 = p4;
     p2 = p3;
@@ -662,6 +800,15 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[NORTHEAST])
         setIntermediateWall(entireIntermediate, NORTHEAST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 7)
+    {
+        save3 = p2;
+        save4 = p1;
+    }
+    if (sidesUsedBack + 2 < sidesUsedFront)
+        addTransitionSet("NE", p2, p3, true, false, 45.0f, scaleValue, scalePoint);
+    else if (sidesUsedBack > sidesUsedFront + 2)
+        addTransitionSet("NE", p2, p3, false, true, 45.0f, scaleValue, scalePoint);
     
     p1 = p4;
     p2 = p3;
@@ -673,6 +820,15 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[EAST])
         setIntermediateWall(entireIntermediate, EAST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 5)
+    {
+        save3 = p2;
+        save4 = p1;
+    }
+    if (sidesUsedBack < 5 && sidesUsedBack + 2 < sidesUsedFront)
+        addTransitionSet("E", p2, p3, true, false, 0.0f, scaleValue, scalePoint);
+    else if (sidesUsedFront < 5 && sidesUsedBack > sidesUsedFront + 2)
+        addTransitionSet("E", p2, p3, false, true, 0.0f, scaleValue, scalePoint);
     
     p1 = p4;
     p2 = p3;
@@ -684,6 +840,11 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[SOUTHEAST])
         setIntermediateWall(entireIntermediate, SOUTHEAST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 3)
+    {
+        save3 = p2;
+        save4 = p1;
+    }
     
     p1 = p4;
     p2 = p3;
@@ -706,6 +867,11 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[SOUTHWEST])
         setIntermediateWall(entireIntermediate, SOUTHWEST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 3)
+    {
+        save1 = p3;
+        save2 = p4;
+    }
     
     p1 = p4;
     p2 = p3;
@@ -717,6 +883,128 @@ void TunnelSlice::connect(TunnelSlice* next)
     p4 = start + move;
     if (sidesUsed[WEST])
         setIntermediateWall(entireIntermediate, WEST, manual, p1, p2, p3, p4, bl, tr);
+    if (sidesUsedBack == 5)
+    {
+        save1 = p3;
+        save2 = p4;
+    }
+    if (sidesUsedBack < 5 && sidesUsedBack + 2 < sidesUsedFront)
+        addTransitionSet("W", p2, p3, false, true, 0.0f, scaleValue, scalePoint);
+    else if (sidesUsedFront < 5 && sidesUsedBack > sidesUsedFront + 2)
+        addTransitionSet("W", p2, p3, true, false, 0.0f, scaleValue, scalePoint);
+    
+    Vector3 leftSideDir = save2 - save1;
+    Vector3 rightSideDir = save4 - save3;
+    if(sidesUsedBack == 3 || sidesUsedBack == 5 || sidesUsedBack == 7) {
+        
+        connectorLeftSideRailing = entireIntermediate->createChildSceneNode("connectorLeftSideRailingNode" + Util::toStringInt(intermediateMeshID));
+        connectorLeftSideRailing->setPosition((save1 + save2) / 2);
+        connectorLeftSideRailing->scale(scaleValue, scaleValue, leftSideDir.length() * scaleValue);
+        connectorLeftSideRailing->lookAt(save1, Node::TS_PARENT);
+        
+        connectorLeftSidePoint1 = entireIntermediate->createChildSceneNode("connectorLeftSidePoint1Node" + Util::toStringInt(intermediateMeshID));
+        connectorLeftSidePoint1->setPosition(save1);
+        connectorLeftSidePoint1->scale(scaleValue * scalePoint, scaleValue * scalePoint, scaleValue * scalePoint);
+        connectorLeftSidePoint1->setOrientation(connectorLeftSideRailing->getOrientation());
+        
+        connectorLeftSidePoint2 = entireIntermediate->createChildSceneNode("connectorLeftSidePoint2Node" + Util::toStringInt(intermediateMeshID));
+        connectorLeftSidePoint2->setPosition(save2);
+        connectorLeftSidePoint2->scale(scaleValue * scalePoint,scaleValue * scalePoint,scaleValue * scalePoint);
+        connectorLeftSidePoint2->setOrientation(connectorLeftSideRailing->getOrientation());
+        
+        Entity* leftIntermediateEntity = sliceNode->getCreator()->createEntity("connectorLeftSideRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        Entity* leftConnector1Entity = sliceNode->getCreator()->createEntity("connectorLeftSidePoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        Entity* leftConnector2Entity = sliceNode->getCreator()->createEntity("connectorLeftSidePoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        leftIntermediateEntity->setMaterialName(getRailingMaterial());
+        leftConnector1Entity->setMaterialName(getConnectorMaterial());
+        leftConnector2Entity->setMaterialName(getConnectorMaterial());
+        
+        connectorLeftSideRailing->attachObject(leftIntermediateEntity);
+        connectorLeftSidePoint1->attachObject(leftConnector1Entity);
+        connectorLeftSidePoint2->attachObject(leftConnector2Entity);
+        
+        connectorRightSideRailing = entireIntermediate->createChildSceneNode("connectorRightSideRailingNode" + Util::toStringInt(intermediateMeshID));
+        connectorRightSideRailing->setPosition((save3 + save4) / 2);
+        connectorRightSideRailing->scale(scaleValue, scaleValue, rightSideDir.length() * scaleValue);
+        connectorRightSideRailing->lookAt(save3, Node::TS_PARENT);
+        
+        connectorRightSidePoint1 = entireIntermediate->createChildSceneNode("connectorRightSidePoint1Node" + Util::toStringInt(intermediateMeshID));
+        connectorRightSidePoint1->setPosition(save3);
+        connectorRightSidePoint1->scale(scaleValue * scalePoint,scaleValue * scalePoint,scaleValue * scalePoint);
+        connectorRightSidePoint1->setOrientation(connectorRightSideRailing->getOrientation());
+        
+        connectorRightSidePoint2 = entireIntermediate->createChildSceneNode("connectorRightSidePoint2Node" + Util::toStringInt(intermediateMeshID));
+        connectorRightSidePoint2->setPosition(save4);
+        connectorRightSidePoint2->scale(scaleValue * scalePoint,scaleValue * scalePoint,scaleValue * scalePoint);
+        connectorRightSidePoint2->setOrientation(connectorRightSideRailing->getOrientation());
+        
+        Entity* rightIntermediateEntity = sliceNode->getCreator()->createEntity("connectorRightSideRailingEntity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        Entity* rightConnector1Entity = sliceNode->getCreator()->createEntity("connectorRightSidePoint1Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        Entity* rightConnector2Entity = sliceNode->getCreator()->createEntity("connectorRightSidePoint2Entity" + Util::toStringInt(intermediateMeshID), "Railing/cube.mesh");
+        rightIntermediateEntity->setMaterialName(getRailingMaterial());
+        rightConnector1Entity->setMaterialName(getConnectorMaterial());
+        rightConnector2Entity->setMaterialName(getConnectorMaterial());
+        
+        connectorRightSideRailing->attachObject(rightIntermediateEntity);
+        connectorRightSidePoint1->attachObject(rightConnector1Entity);
+        connectorRightSidePoint2->attachObject(rightConnector2Entity);
+    }
+    
+    //Transitions
+    float tWidthOffset = 0.3;
+    float tHeightOffset = wallLength1/16;
+    float tDepthOffset = -width/4;
+    Vector3 scaleAmount = Vector3(1,3.775,14);
+    if( sidesUsedBack == 3 && sidesUsedFront == 5 ) {
+        
+        move = Vector3(-wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        connectorLeftTransition = sliceNode->createChildSceneNode("connectorLeftTransitionNode" + Util::toStringInt(intermediateMeshID));
+        connectorLeftTransition->translate(move);
+        connectorLeftTransition->scale(scaleAmount);
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("connectorLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        connectorLeftTransition->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        connectorRightTransition = sliceNode->createChildSceneNode("connectorRightTransitionNode" + Util::toStringInt(intermediateMeshID));
+        connectorRightTransition->translate(move);
+        connectorRightTransition->scale(scaleAmount);
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("connectorRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        connectorRightTransition->attachObject(rightTransitionEntity);
+    }
+    else if( sidesUsedBack == 5 && sidesUsedFront == 7 ) {
+        
+        move = Vector3(-wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) - tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(-45), 'z'));
+        connectorLeftTransition = sliceNode->createChildSceneNode("connectorLeftTransitionNode" + Util::toStringInt(intermediateMeshID));
+        connectorLeftTransition->translate(move);
+        connectorLeftTransition->scale(scaleAmount);
+        connectorLeftTransition->roll(Degree(-45));
+        Entity* leftTransitionEntity = sliceNode->getCreator()->createEntity("connectorLeftTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        leftTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        leftTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        connectorLeftTransition->attachObject(leftTransitionEntity);
+        
+        
+        move = Vector3(wallLength2 * (0.5 + Math::Cos(Ogre::Radian(Math::PI) / 4)) + tWidthOffset, tHeightOffset, -width - tDepthOffset);
+        
+        move = Vector3(Util::EulerRotate(move, Degree(45), 'z'));
+        connectorRightTransition = sliceNode->createChildSceneNode("connectorRightTransitionNode" + Util::toStringInt(intermediateMeshID));
+        connectorRightTransition->translate(move);
+        connectorRightTransition->scale(scaleAmount);
+        connectorRightTransition->roll(Degree(45));
+        Entity* rightTransitionEntity = sliceNode->getCreator()->createEntity("connectorRightTransitionEntity" + Util::toStringInt(intermediateMeshID), "Railing/railing_transition.mesh");
+        rightTransitionEntity->getSubEntity(1)->setMaterialName(getRailingMaterial());
+        rightTransitionEntity->getSubEntity(0)->setMaterialName(getRailingMaterial());
+        connectorRightTransition->attachObject(rightTransitionEntity);
+    }
     
     MeshPtr mesh = manual->convertToMesh(meshName);
     mesh->_setBounds( AxisAlignedBox( bl, tr ), true );
@@ -732,7 +1020,7 @@ void TunnelSlice::connect(TunnelSlice* next)
     Entity* intermediateSegmentEntity = entireIntermediate->getCreator()->createEntity("intermediateSegmentEntity" + Util::toStringInt(intermediateMeshID), meshName);
     //intermediateSegmentEntity->setMaterialName(getMaterialName());
     for (int i = 0; i < intermediateSegmentEntity->getNumSubEntities(); ++i)
-        intermediateSegmentEntity->getSubEntity(i)->setMaterialName(getMaterialName());
+        intermediateSegmentEntity->getSubEntity(i)->setMaterialName(getMaterialName(true));
     entireIntermediate->attachObject(intermediateSegmentEntity);
     
     meshes.push_back(mesh);
@@ -745,22 +1033,61 @@ void TunnelSlice::disconnect()
     if (!entireIntermediate)
         return;
     
-    if (topLeftIntermediate)
-        topLeftIntermediate->getCreator()->destroyMovableObject(topLeftIntermediate->getAttachedObject(0)); // Assuming only one entity
-    if (topIntermediate)
-        topIntermediate->getCreator()->destroyMovableObject(topIntermediate->getAttachedObject(0));
-    if (topRightIntermediate)
-        topRightIntermediate->getCreator()->destroyMovableObject(topRightIntermediate->getAttachedObject(0));
-    if (rightIntermediate)
-        rightIntermediate->getCreator()->destroyMovableObject(rightIntermediate->getAttachedObject(0));
-    if (bottomRightIntermediate)
-        bottomRightIntermediate->getCreator()->destroyMovableObject(bottomRightIntermediate->getAttachedObject(0));
-    if (bottomIntermediate)
-        bottomIntermediate->getCreator()->destroyMovableObject(bottomIntermediate->getAttachedObject(0));
-    if (bottomLeftIntermediate)
-        bottomLeftIntermediate->getCreator()->destroyMovableObject(bottomLeftIntermediate->getAttachedObject(0));
-    if (leftIntermediate)
-        leftIntermediate->getCreator()->destroyMovableObject(leftIntermediate->getAttachedObject(0));
+    if (connectorLeftSideRailing)
+    {
+        connectorLeftSideRailing->removeAndDestroyAllChildren();
+        connectorLeftSideRailing->getCreator()->destroyMovableObject(connectorLeftSideRailing->getAttachedObject(0)); // Assuming only one entity
+        connectorLeftSideRailing->getCreator()->destroySceneNode(connectorLeftSideRailing);
+    }
+    if (connectorLeftSidePoint1)
+    {
+        connectorLeftSidePoint1->removeAndDestroyAllChildren();
+        connectorLeftSidePoint1->getCreator()->destroyMovableObject(connectorLeftSidePoint1->getAttachedObject(0)); // Assuming only one entity
+        connectorLeftSidePoint1->getCreator()->destroySceneNode(connectorLeftSidePoint1);
+    }
+    if (connectorLeftSidePoint2)
+    {
+        connectorLeftSidePoint2->removeAndDestroyAllChildren();
+        connectorLeftSidePoint2->getCreator()->destroyMovableObject(connectorLeftSidePoint2->getAttachedObject(0)); // Assuming only one entity
+        connectorLeftSidePoint2->getCreator()->destroySceneNode(connectorLeftSidePoint2);
+    }
+    if (connectorRightSideRailing)
+    {
+        connectorRightSideRailing->removeAndDestroyAllChildren();
+        connectorRightSideRailing->getCreator()->destroyMovableObject(connectorRightSideRailing->getAttachedObject(0)); // Assuming only one entity
+        connectorRightSideRailing->getCreator()->destroySceneNode(connectorRightSideRailing);
+    }
+    if (connectorRightSidePoint1)
+    {
+        connectorRightSidePoint1->removeAndDestroyAllChildren();
+        connectorRightSidePoint1->getCreator()->destroyMovableObject(connectorRightSidePoint1->getAttachedObject(0)); // Assuming only one entity
+        connectorRightSidePoint1->getCreator()->destroySceneNode(connectorRightSidePoint1);
+    }
+    if (connectorRightSidePoint2)
+    {
+        connectorRightSidePoint2->removeAndDestroyAllChildren();
+        connectorRightSidePoint2->getCreator()->destroyMovableObject(connectorRightSidePoint2->getAttachedObject(0)); // Assuming only one entity
+        connectorRightSidePoint2->getCreator()->destroySceneNode(connectorRightSidePoint2);
+    }
+    if (connectorLeftTransition)
+    {
+        connectorLeftTransition->removeAndDestroyAllChildren();
+        connectorLeftTransition->getCreator()->destroyMovableObject(connectorLeftTransition->getAttachedObject(0)); // Assuming only one entity
+        connectorLeftTransition->getCreator()->destroySceneNode(connectorLeftTransition);
+    }
+    if (connectorRightTransition)
+    {
+        connectorRightTransition->removeAndDestroyAllChildren();
+        connectorRightTransition->getCreator()->destroyMovableObject(connectorRightTransition->getAttachedObject(0)); // Assuming only one entity
+        connectorRightTransition->getCreator()->destroySceneNode(connectorRightTransition);
+    }
+    for (int i = 0; i < transitions.size(); ++i)
+    {
+        transitions[i]->removeAndDestroyAllChildren();
+        transitions[i]->getCreator()->destroyMovableObject(transitions[i]->getAttachedObject(0)); // Assuming only one entity
+        transitions[i]->getCreator()->destroySceneNode(transitions[i]);
+    }
+    transitions.clear();
     
     for (int i = 0; i < meshes.size(); ++i)
     {
@@ -774,14 +1101,14 @@ void TunnelSlice::disconnect()
     entireIntermediate->getCreator()->destroyMovableObject(entireIntermediate->getAttachedObject(0));
     entireIntermediate->getCreator()->destroySceneNode(entireIntermediate);
     entireIntermediate = NULL;
-    topLeftIntermediate = NULL;
-    topIntermediate = NULL;
-    topRightIntermediate = NULL;
-    rightIntermediate = NULL;
-    bottomRightIntermediate = NULL;
-    bottomIntermediate = NULL;
-    bottomLeftIntermediate = NULL;
-    leftIntermediate = NULL;
+    connectorLeftSideRailing = NULL;
+    connectorLeftSidePoint1 = NULL;
+    connectorLeftSidePoint2 = NULL;
+    connectorRightSideRailing = NULL;
+    connectorRightSidePoint1 = NULL;
+    connectorRightSidePoint2 = NULL;
+    connectorLeftTransition = NULL;
+    connectorRightTransition = NULL;
 }
 
 void TunnelSlice::clearPods()
@@ -795,15 +1122,53 @@ void TunnelSlice::clearPods()
 
 void TunnelSlice::updateGrowth(float nt)
 {
+    if (!this->tunnelObjInitAnimationDone) {
+        // grow tunnel obj until it hits 1.3
+        if (!this->tunnelObjGrown) {
+            // cout << "grow" << endl;
+            growthT += nt;
+            if (growthT >= 1.3) {
+                this->tunnelObjGrown = true;
+            }
+        }
+        
+        // shrink tunnel obj until it goes back to 1.0
+        if (this->tunnelObjGrown) {
+            // cout << "shrink" << endl;
+            growthT -= nt;
+            if (growthT < 1.0) {
+                growthT = 1.0;
+                this->tunnelObjInitAnimationDone = true;
+                this->tunnelObjGrown = false;
+            }
+        }
+    }
+    else {
+        // keep tunnel obj at 1.0 once the init animation is done
+        growthT = 1.0;
+    }
+    
+    for (int i = 0; i < pods.size(); ++i) {
+        if (tunnelObjGrown) {
+            pods[i]->setPodCrystalGrown(true);
+        }
+        pods[i]->setToGrowth(growthT);
+    }
+    
+    /* // Original spawn growth animation
     growthT += nt;
-    if (growthT > 1) growthT = 1;
+    if (growthT > 1.0) growthT = 1;
     if (growthT < 0) growthT = 0;
+    
     for (int i = 0; i < pods.size(); ++i)
         pods[i]->setToGrowth(growthT);
+    */
 }
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::string & material)
 {
+    this->tunnelObjInitAnimationDone = false;
+    this->tunnelObjGrown = false;
     this->tunnelSliceID = nid;
     this->type = type;
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
@@ -817,7 +1182,8 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
     growthT = 0;
     infoStored = false;
     
-    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed))
+    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed) ||
+        mainLeftTransition || mainRightTransition || transitions.size() > 0)
     {
         removeFromScene();
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -840,6 +1206,8 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
 
 void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float width, float depth, const std::vector<std::string> & materials)
 {
+    this->tunnelObjInitAnimationDone = false;
+    this->tunnelObjGrown = false;
     this->tunnelSliceID = nid;
     this->type = type;
     Vector3 forward = info.tunnelRot * globals.tunnelReferenceForward;
@@ -852,7 +1220,8 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
     growthT = 0;
     infoStored = false;
     
-    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed))
+    if (!Util::doSidesMatch(sidesUsed, info.sidesUsed) ||
+        mainLeftTransition || mainRightTransition || transitions.size() > 0)
     {
         removeFromScene();
         for (int i = 0; i < NUM_DIRECTIONS; ++i)
@@ -875,25 +1244,26 @@ void TunnelSlice::rejuvenate(int nid, SectionInfo info, Vector3 start, float wid
 
 void TunnelSlice::removeFromScene()
 {
-	for (int i = 0; i < pods.size(); ++i)
-		pods[i]->removeFromScene();
+    for (int i = 0; i < pods.size(); ++i)
+        pods[i]->removeFromScene();
     
-    if (topLeftWall)
-        topLeftWall->getCreator()->destroyMovableObject(topLeftWall->getAttachedObject(0)); // Assuming only one entity
-    if (topWall)
-        topWall->getCreator()->destroyMovableObject(topWall->getAttachedObject(0));
-    if (topRightWall)
-        topRightWall->getCreator()->destroyMovableObject(topRightWall->getAttachedObject(0));
-    if (rightWall)
-        rightWall->getCreator()->destroyMovableObject(rightWall->getAttachedObject(0));
-    if (bottomRightWall)
-        bottomRightWall->getCreator()->destroyMovableObject(bottomRightWall->getAttachedObject(0));
-    if (bottomWall)
-        bottomWall->getCreator()->destroyMovableObject(bottomWall->getAttachedObject(0));
-    if (bottomLeftWall)
-        bottomLeftWall->getCreator()->destroyMovableObject(bottomLeftWall->getAttachedObject(0));
-    if (leftWall)
-        leftWall->getCreator()->destroyMovableObject(leftWall->getAttachedObject(0));
+    if (mainLeftSideRailing)
+        mainLeftSideRailing->getCreator()->destroyMovableObject(mainLeftSideRailing->getAttachedObject(0)); // Assuming only one entity
+    if (mainRightSideRailing)
+        mainRightSideRailing->getCreator()->destroyMovableObject(mainRightSideRailing->getAttachedObject(0));
+    if (mainLeftTransition)
+        mainLeftTransition->getCreator()->destroyMovableObject(mainLeftTransition->getAttachedObject(0)); // Assuming only one entity
+    if (mainRightTransition)
+        mainRightTransition->getCreator()->destroyMovableObject(mainRightTransition->getAttachedObject(0));
+    
+    if (gateNode)
+    {
+        for (int i = 0; i < 8; ++i)
+            gateDoorNodes[i]->getCreator()->destroyMovableObject(gateDoorNodes[i]->getAttachedObject(0));
+        gateNode->removeAndDestroyAllChildren();
+        gateNode->getCreator()->destroyMovableObject(gateNode->getAttachedObject(0));
+        gateNode->getCreator()->destroySceneNode(gateNode);
+    }
     if (entireWall)
     {
         entireWall->removeAndDestroyAllChildren();
@@ -901,22 +1271,18 @@ void TunnelSlice::removeFromScene()
         entireWall->getCreator()->destroySceneNode(entireWall);
     }
     
+    disconnect();
+    
     sliceNode->removeAndDestroyAllChildren();
     sliceNode->getCreator()->destroySceneNode(sliceNode);
     
-    disconnect();
-	
-	for (int i = 0; i < pods.size(); ++i)
+    for (int i = 0; i < pods.size(); ++i)
         delete pods[i];
     sliceNode = NULL;
-	topLeftWall = NULL;
-	topWall = NULL;
-	topRightWall = NULL;
-	rightWall = NULL;
-	bottomRightWall = NULL;
-	bottomWall = NULL;
-	bottomLeftWall = NULL;
-	leftWall = NULL;
+    mainLeftSideRailing = NULL;
+    mainRightSideRailing = NULL;
+    mainLeftTransition = NULL;
+    mainRightTransition = NULL;
     entireWall = NULL;
-	pods.clear();
+    pods.clear();
 }

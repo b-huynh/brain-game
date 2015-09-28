@@ -1,0 +1,90 @@
+// Old obelisk material file when there was many submeshes
+material Obelisk/DarkGray
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1.0
+			diffuse 0.1 0.1 0.1 1.0
+			specular 0.3 0.3 0.3 1.0 15.0
+		}
+
+	}
+
+}
+
+material Obelisk/LightGray
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.1 0.1 0.1 1.0
+			diffuse 0.3 0.3 0.3 1.0
+			specular 0.7 0.7 0.7 1.0 20.0
+		}
+
+	}
+
+}
+
+material Obelisk/Yellow
+{
+	technique
+	{
+		pass
+		{
+			ambient 1.0 1.0 0.0 1.0
+			diffuse 1.0 1.0 0.0 1.0
+			specular 1.0 1.0 0.0 1.0 30.0
+		}
+
+	}
+
+}
+
+material Obelisk/TransparentCyan
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.0 0.5 0.5 1.0
+			diffuse 0.0 0.8 0.8 1.0
+			specular 0.0 1.0 1.0 1.0 30.0
+		}
+
+	}
+
+}
+
+material Obelisk/Cyan
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.0 0.3 0.3 1.0
+			diffuse 0.0 0.8 0.8 1.0
+			specular 0.0 0.6 0.6 1.0 25.0
+		}
+
+	}
+
+}
+
+material Obelisk/Green
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.0 1.0 0.0 1.0
+			diffuse 0.0 1.0 0.0 1.0
+			specular 0.0 1.0 0.0 1.0 1.0
+		}
+
+	}
+
+}

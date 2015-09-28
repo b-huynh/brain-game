@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreMotion/CoreMotion.h>
+
 
 @class OgreView;
 
 @interface MainViewController : UIViewController  <UIGestureRecognizerDelegate>
 
-- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn;
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str;
 - (void)update:(id)sender;
 - (void)stop;
 - (void)inactivate;
@@ -28,6 +30,8 @@
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender;
  */
 
+
+
 - (IBAction)handleDoubleTap:(UITapGestureRecognizer*)sender;
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender;
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender;
@@ -37,5 +41,7 @@
 - (void)cleanup;
 
 @property (nonatomic, copy) NSString *capital;
+@property (strong, nonatomic) CMMotionManager *motionManager;
+
 
 @end

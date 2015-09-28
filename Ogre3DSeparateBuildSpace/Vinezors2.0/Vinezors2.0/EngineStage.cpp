@@ -12,6 +12,7 @@
 #include "Tunnel.h"
 #include "Player.h"
 #include "LevelSet.h"
+//#include "cmath.h"
 
 extern Util::ConfigGlobal globals;
 
@@ -22,11 +23,13 @@ EngineStage::EngineStage(EngineStateManager* engineStateMgr, Player* player)
     this->tunnel = NULL;
     this->player = player;
     this->hud = NULL;
-    enter();
+    this->mRaySceneQuery = NULL;
 }
 
 EngineStage::~EngineStage()
 {
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->destroyQuery(mRaySceneQuery);
+
 }
 
 void EngineStage::enter()
@@ -44,33 +47,57 @@ void EngineStage::exit()
 
 void EngineStage::update(float elapsed)
 {
+    if(globals.OverallTimerEnabled)
+    {
+        player->totalElapsedGeneral += elapsed;
+    }
+
+    
+    OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
+    bool replayableTutorial = (player->choice0RestartCounter < player->numRetries && player->marbleChoice == 0);
+    bool replayableMarble = (player->choice1RestartCounter < player->numRetries && player->marbleChoice == 1) ||
+                            (player->choice2RestartCounter < player->numRetries && player->marbleChoice == 2) ||
+                            (player->choice3RestartCounter < player->numRetries && player->marbleChoice == 3);
+    
     switch (stageState)
     {
         case STAGE_STATE_INIT:
         {
+            //std::cout<<"HERE"<<std::endl;
             setup();
+            //std::cout<<"HERE2"<<std::endl;
             setPause(true);
-            if (tunnel->getMode() != STAGE_MODE_RECESS || tunnel->getMode() != STAGE_MODE_TEACHING)
-                globals.appendMessage("\n\nSet Your Speed", MESSAGE_NORMAL);
             stageState = STAGE_STATE_PAUSE;
             
+            globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
+            hud->setOverlay(1, true);
             hud->setOverlay(2, false);
-            hud->setOverlay(3, false);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
+            hud->setSpeedDialState(true);
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
+            hud->setPauseNavDest(0.7);
             
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             break;
         }
         case STAGE_STATE_RUNNING:
         {
-            OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
-            
 #if defined(OGRE_IS_IOS)
             // Update the game state
-            updateSpin(elapsed);
+            if(globals.accelEnabled)
+            {
+                updateAccel(elapsed);
+            }
+            else
+            {
+                updateSpin(elapsed);
+            }
+                        
 #endif
             tunnel->update(elapsed);
             
@@ -83,11 +110,16 @@ void EngineStage::update(float elapsed)
                 std::string finalScoreMessage = Util::toStringInt(player->getScore());
                 globals.appendMessage("\nScore " + finalScoreMessage + "\n\nPlay Again?", MESSAGE_NORMAL);
             }
-
+            
+            globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
+            hud->setPauseNavDest(0.7);
             
             // Graphical view changes from camera, light, and skybox
             Quaternion camRot = player->getCombinedRotAndRoll();
@@ -96,17 +128,21 @@ void EngineStage::update(float elapsed)
             if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
                 OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
             if (lightNode)
+            {
                 lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+                lightMain->setDirection(Vector3::UNIT_Y * -1);
+            }
             
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
             // See by the end of this frame if we have a tutorial popup, if so pause the game, keep the music running
-            if (player->getTutorialMgr()->isVisible())
+            if (player->getTutorialMgr()->isVisible() && !player->getTutorialMgr()->isSpecial())
             {
                 setPause(true, false);
                 globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
                 stageState = STAGE_STATE_PAUSE;
             }
+            
             break;
         }
         case STAGE_STATE_PAUSE:
@@ -122,33 +158,185 @@ void EngineStage::update(float elapsed)
                 player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
             
             OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
             
             if (!player->hasTriggeredStartup())
             {
                 int sliderSpeed = hud->getSpeedSlider()->getIndex();
                 globals.initCamSpeed = Util::clamp(sliderSpeed, globals.minCamSpeed, globals.maxCamSpeed);
                 player->setSpeedParameters(globals.initCamSpeed, globals.minCamSpeed, globals.maxCamSpeed);
+                
+                // Save them results for people who replay
+                player->saveSpeedSettings();
             }
             
+            globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
-            hud->setOverlay(1, false);
-            hud->notifyGoButton(true);
+            hud->setGoButtonState(true, true);
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
+            hud->setPauseNavDest(0.7);
             break;
         }
         case STAGE_STATE_PROMPT:
         {
+            // Navigation Debug Keys
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
+            
+            /* // ===============================================================================================
+            //      Adds navigation to state
+            //      Navigation Debug Keys
+            // ==================================================================================================
+            if (player->getKeyUp())
+                player->move(Vector3(player->getCamForward() * globals.initCamSpeed * elapsed));
+            if (player->getKeyDown())
+                player->move(Vector3(player->getCamForward() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyLeft())
+                player->move(Vector3(player->getCamRight() * -globals.initCamSpeed * elapsed));
+            if (player->getKeyRight())
+                player->move(Vector3(player->getCamRight() * globals.initCamSpeed * elapsed));
+            OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(player->getCamPos());
+            */ // ===============================================================================================
+            
+            globals.setBigMessage("");
             hud->update(elapsed);
             hud->setOverlay(0, true);
             hud->setOverlay(1, true);
-            hud->notifyGoButton(false);
+            hud->setGoButtonState(false);
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
+            hud->setPauseNavDest(0.0);
+            break;
+        }
+        case STAGE_STATE_READY:
+        {
+            //OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
             
-            OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
+            globals.clearMessage();
+            readyTimer -= elapsed;
+            readyTimer = Util::clamp(readyTimer, 0.0, 3.0);
+            if (readyTimer <= 0.0)
+            {
+                stageState = STAGE_STATE_RUNNING;
+                setPause(false);
+            }
+            else if (readyTimer < 0.75)
+                globals.setBigMessage("GO");
+            else if (readyTimer < 1.50)
+                globals.setBigMessage("1");
+            else if (readyTimer < 2.25)
+                globals.setBigMessage("2");
+            else
+                globals.setBigMessage("3");
+            hud->update(elapsed);
+            hud->setOverlay(0, true);
+            hud->setGoButtonState(false);
+            hud->setPauseNavSettings(!tunnel->needsCleaning(),
+                                     (player->levelRequest && player->levelRequest->second.rating >= 0) || (!player->levelRequest && player->isNextLevelAvailable()),
+                                     (player->levelRequest && player->levelRequest->second.rating < 0 && (player->marbleChoice <= 0 || replayableMarble)) || (!player->levelRequest),
+                                     (player->levelRequest && (replayableTutorial || replayableMarble)) || (!player->levelRequest));
+            hud->setPauseNavDest(0.7);
+            hud->setSpeedDialState(false);
             break;
         }
         case STAGE_STATE_DONE:
         {
+            // have a done screen after a certain time limit is reached
+            
+            if(globals.OverallTimerEnabled)
+            {
+                if ( player->totalElapsedGeneral >= globals.sessionTime )
+                    player->scheduler->sessionFinished = true;
+                
+                std::cout << "\n\n-----------------------------------------\n";
+                std::cout << "Game Time Played: " << player->totalElapsedGeneral << std::endl;
+                std::cout << "-----------------------------------------\n\n";
+            }
+            else
+            {
+                if ( player->getTotalElapsed() >= globals.sessionTime )
+                    player->scheduler->sessionFinished = true;
+                
+                std::cout << "\n\n-----------------------------------------\n";
+                std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
+                std::cout << "-----------------------------------------\n\n";
+            }
+            
+            
+            
+           
+            
+            // scheduler grading done in here
+            // also need to save nback levels after finishing a level
+            if (player->levelRequest && player->levelRequest->second.rating >= 0)
+            {
+                
+                player->assessLevelPerformance(player->levelRequest);
+                
+                player->lastPlayed = player->levelRequest->first.phaseX;
+                
+                // Grab new choices for player to choose from
+                player->feedLevelRequestFromSchedule();
+                
+                
+                
+                //Reset Restart Counters:
+                
+                player->choice0RestartCounter = 0;
+                player->choice1RestartCounter = 0;
+                player->choice2RestartCounter = 0;
+                player->choice3RestartCounter = 0;
+            }
+            
+            if(player->levelRequest &&
+               (!globals.manRecessEnabled || globals.manRecessCount < globals.manRecessLevelLimit) &&
+               player->scheduler->sessionFinished)
+            {
+                if (player->scheduler->sessionFinished) {
+                    // Update session ID before save
+                    //Sync Here!
+                    player->logData();
+                    player->saveProgress(globals.savePath);
+                    #if defined(OGRE_IS_IOS) && defined(NETWORKING)
+                    if (globals.syncDataToServer) syncLogs();
+                    #endif
+                    
+                    player->setSessionID(player->getSessionID() + 1);
+                    
+                    
+                    std::cout << "finished!\n";
+                }
+                else
+                {
+                    std::cout << "not finished!\n";
+                }
+                
+                // If player has not visited end of session slide yet, set it up
+                std::cout << "\n\n\n===========================================\n"
+                << "Session Finished!\n"
+                << "===========================================\n";
+                player->getTutorialMgr()->prepareSlides(TutorialManager::TUTORIAL_END_OF_SESSION, 0.0);
+                //player->getTutorialMgr()->setAdditionalText(player->getSessionStats());   // For the study
+            }
+            player->levelRequest = NULL;    // Reset selection and avoid saving twice on next update frame
+            player->saveProgress(globals.savePath);
+            
             // Unpause Settings but without the sound deactivating
             engineStateMgr->requestPopEngine();
             break;
@@ -212,6 +400,36 @@ bool isPathable(SectionInfo info, float roll)
     
     return false;
 }
+TunnelSlice* closestPathable(Tunnel* tunnel, int numSegments, float roll, int & depthDist)
+{
+    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
+    depthDist = 0;
+    for (; depthDist < nextset.size(); ++depthDist)
+    {
+        SectionInfo info = nextset[depthDist]->getSectionInfo();
+        if (isPathable(info, roll))
+        {
+            return nextset[depthDist];
+        }
+    }
+    return NULL;
+}
+
+TunnelSlice* closestUnpathable(Tunnel* tunnel, int numSegments, float roll, int & depthDist)
+{
+    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
+    depthDist = 0;
+    for (; depthDist < nextset.size(); ++depthDist)
+    {
+        SectionInfo info = nextset[depthDist]->getSectionInfo();
+        if (!isPathable(info, roll))
+        {
+            return nextset[depthDist];
+        }
+    }
+    return NULL;
+}
+
 
 void EngineStage::activatePerformLeftMove()
 {
@@ -225,16 +443,16 @@ void EngineStage::activatePerformLeftMove()
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val + 45);
+                //std::cout<< "LEFT MOVE: "<< val << std::endl;
+
             }
             break;
         }
         case STAGE_STATE_PAUSE:
-        {
-            //stageState = STAGE_STATE_RUNNING;
-            //setPause(false);
             break;
-        }
         case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_READY:
             break;
         case STAGE_STATE_DONE:
             break;
@@ -261,9 +479,10 @@ void EngineStage::activatePerformLeftMove(float angle)
                     player->setCamRoll(normalizedAngle(nval));
                 else
                 {
+                    activateVelocity(0.0);
                     // resolve overshooting by setting the player directly on the panel
-                    float discreteDegrees = Util::getDegrees(getDirByRoll(val)) - 1;
-                    if (isPathable(info, discreteDegrees))
+                    float discreteDegrees = Util::getDegrees(getDirByRoll(val));
+                    if (isPathable(info, discreteDegrees - 1)) // border case call, so shift it over a little bit
                     {
                         player->setCamRoll(discreteDegrees); // resolve overshooting
                     }
@@ -272,12 +491,10 @@ void EngineStage::activatePerformLeftMove(float angle)
             break;
         }
         case STAGE_STATE_PAUSE:
-        {
-            //stageState = STAGE_STATE_RUNNING;
-            //setPause(false);
             break;
-        }
         case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_READY:
             break;
         case STAGE_STATE_DONE:
             break;
@@ -307,6 +524,8 @@ void EngineStage::activatePerformRightMove()
         }
         case STAGE_STATE_PROMPT:
             break;
+        case STAGE_STATE_READY:
+            break;
         case STAGE_STATE_DONE:
             break;
     }
@@ -332,12 +551,13 @@ void EngineStage::activatePerformRightMove(float angle)
                     player->setCamRoll(normalizedAngle(nval));
                 else
                 {
+                    activateVelocity(0.0);
                     // resolve overshooting by setting the player directly on the panel
-                    float discreteDegrees = Util::getDegrees(getDirByRoll(val)) + 1;
-                    if (isPathable(info, discreteDegrees))
+                    float discreteDegrees = Util::getDegrees(getDirByRoll(val));
+                    if (isPathable(info, discreteDegrees + 1)) //border case call, so shift it over a little bit
                     {
                         // Subtract 1 due to discrete angle values
-                        player->setCamRoll(discreteDegrees - 1); // resolve overshooting
+                        player->setCamRoll(discreteDegrees); // resolve overshooting
                     }
                 }
             }
@@ -350,6 +570,8 @@ void EngineStage::activatePerformRightMove(float angle)
             break;
         }
         case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_READY:
             break;
         case STAGE_STATE_DONE:
             break;
@@ -372,6 +594,8 @@ void EngineStage::activatePerformSwipeUp()
         }
         case STAGE_STATE_PROMPT:
             break;
+        case STAGE_STATE_READY:
+            break;
         case STAGE_STATE_DONE:
             break;
     }
@@ -393,6 +617,8 @@ void EngineStage::activatePerformSwipeDown()
         }
         case STAGE_STATE_PROMPT:
             break;
+        case STAGE_STATE_READY:
+            break;
         case STAGE_STATE_DONE:
             break;
     }
@@ -405,10 +631,13 @@ void EngineStage::activatePerformDoubleTap(float x, float y)
         case STAGE_STATE_INIT:
             break;
         case STAGE_STATE_RUNNING:
+            //player->performBoost();
             break;
         case STAGE_STATE_PAUSE:
             break;
         case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_READY:
             break;
         case STAGE_STATE_DONE:
             break;
@@ -424,52 +653,97 @@ void EngineStage::activatePerformSingleTap(float x, float y)
         case STAGE_STATE_RUNNING:
         {
             std::string queryGUI = hud->queryButtons(Vector2(x, y));
-            
-            if (queryGUI == "powerup1")
+            if (queryGUI == "pause")
+            {
+                
+                if (!player->endFlag)
+                {
+                    hud->setSpeedDialState(false);
+                    
+                    setPause(true);
+                    player->reactGUI();
+                    stageState = STAGE_STATE_PROMPT;
+                }
+            }
+            else if (queryGUI == "leftzap" && tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                hud->leftZapT = 0.1;
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
                 player->performPowerUp("TractorBeam");
-            else if (queryGUI == "powerup2")
-                player->performPowerUp("Shields");
-            else if (queryGUI == "powerup3")
-                player->performPowerUp("TimeWarp");
-            else if (queryGUI == "toggle1")
-            {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    // Bad hack but
-                    // Don't show 3-Back for multi-collection tasks of 1 or less.
-                    if (player->getLevelRequestRow() > 0)
-                        player->setToggleBack(0);
-                    tunnel->respondToToggleCheat();
-                }
             }
-            else if (queryGUI == "toggle2")
+            else if (queryGUI == "rightzap" && tunnel->getMode() != STAGE_MODE_RECESS)
             {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    player->setToggleBack(1);
-                    tunnel->respondToToggleCheat();
-                }
+                hud->rightZapT = 0.1;
+                // Perform Zap
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
             }
-            else if (queryGUI == "toggle3")
+            else
             {
-                if (tunnel && tunnel->isMultiCollectionTask())
+                //Regular tap on Screen!
+                //mRaySceneQuery;
+                mRaySceneQuery = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createRayQuery( Ogre::Ray() );
+                mRaySceneQuery->setQueryMask(globals.POD_MASK);
+
+
+                Ogre::Ray mouseRay =
+                OgreFramework::getSingletonPtr()->m_pCameraMain->getCameraToViewportRay(
+                                                x/ float(globals.screenWidth),
+                                                y / float(globals.screenHeight));
+                
+                bool mMovableFound = false;
+                
+                mRaySceneQuery->setRay(mouseRay);
+                mRaySceneQuery->setSortByDistance(true);
+                
+                Ogre::RaySceneQueryResult& result = mRaySceneQuery->execute();
+                Ogre::RaySceneQueryResult::iterator it = result.begin();
+                
+                mMovableFound = false;
+                if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
                 {
-                    player->setToggleBack(2);
-                    tunnel->respondToToggleCheat();
-                }
-            }
-            else if (queryGUI == "toggle4")
-            {
-                if (tunnel && tunnel->isMultiCollectionTask())
+                for ( ; it != result.end(); it++)
                 {
-                    player->setToggleBack(3);
-                    tunnel->respondToToggleCheat();
+                    //mMovableFound =
+                    //it->movable &&
+                    //it->movable->getName() != "" &&
+                    //it->movable->getName() != "PlayerCam";
+                    
+                   // if (mMovableFound)
+                    //{
+                        //mCurObject = it->movable->getParentSceneNode();
+                    
+                    if(it->movable->getName().substr(0,10) == "headEntity")
+                    {
+                       std:: cout << "POD CLICKED" << std::endl;
+                        // Perform Zap
+                        player->setPowerUp("TractorBeam", true);
+                        player->performPowerUp("TractorBeam");
+                    }
+                    
+                      //  break;
+                    //}
                 }
-            }
-            else if (queryGUI == "pause")
-            {
-                setPause(true);
-                stageState = STAGE_STATE_PROMPT;
+                }
+                
+                std::cout << x << "," << y << std::endl;
+                /*if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                    // Tap we are checking if it is inside circle
+                    Vector2 relTap = globals.convertToPercentScreen(Vector2(x, y));
+                    // Circle Center
+                    float relRadius = 0.15;
+                    Vector2 relCenter = Vector2(0.50, 0.75);
+                    // Distance between tap and circle center
+                    Vector2 relDist = relTap - relCenter;
+                    if (relDist.squaredLength() <= relRadius * relRadius)
+                    {
+                        // Perform Zap
+                        player->setPowerUp("TractorBeam", true);
+                        player->performPowerUp("TractorBeam");
+                    }
+                }*/
             }
             break;
         }
@@ -477,50 +751,33 @@ void EngineStage::activatePerformSingleTap(float x, float y)
         {
             std::string queryGUI = hud->queryButtons(Vector2(x, y));
             
-            if (queryGUI == "toggle1")
+            if (queryGUI == "go")
             {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    // Bad hack but
-                    // Don't show 3-Back for multi-collection tasks of 1 or less.
-                    if (player->getLevelRequestRow() > 0)
-                        player->setToggleBack(0);
-                    tunnel->respondToToggleCheat();
-                }
-            }
-            else if (queryGUI == "toggle2")
-            {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    player->setToggleBack(1);
-                    tunnel->respondToToggleCheat();
-                }
-            }
-            else if (queryGUI == "toggle3")
-            {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    player->setToggleBack(2);
-                    tunnel->respondToToggleCheat();
-                }
-            }
-            else if (queryGUI == "toggle4")
-            {
-                if (tunnel && tunnel->isMultiCollectionTask())
-                {
-                    player->setToggleBack(3);
-                    tunnel->respondToToggleCheat();
-                }
+                stageState = STAGE_STATE_READY;
+                readyTimer = 3.00f;
+                player->reactGUI();
             }
             else if (queryGUI == "pause")
             {
+                hud->setSpeedDialState(false);
+                
+                // Display current level index
+                LevelSet* levels = player->getLevels();
+                std::string msg = "Level: ";
+                msg += Util::toStringInt(player->getLevelRequestRow() + 1);
+                msg += "-";
+                msg += (char)('A' + player->getLevelRequestCol());
+                globals.setMessage(msg, MESSAGE_NORMAL);
+                
                 setPause(true);
+                player->reactGUI();
                 stageState = STAGE_STATE_PROMPT;
             }
-            else if (queryGUI == "go")
+            else
             {
-                stageState = STAGE_STATE_RUNNING;
-                setPause(false);
+                // Allows single tap on dial without dragging slider to be a way to verify
+                HudSlider* speedSlider = NULL;
+                if (hud) speedSlider = hud->getSpeedSlider();
             }
             break;
         }
@@ -532,49 +789,207 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             {
                 // If game hasn't started yet, go back to init prompt
                 // Otherwise, go to gameplay
-                if (hud->isGoButtonActive())
+                if (!player->hasTriggeredStartup())
                 {
+                    hud->setSpeedDialState(true);
                     stageState = STAGE_STATE_PAUSE;
-                    if (player->hasTriggeredStartup() && player->getStartMusicTimer() <= 0.0)
+                    if (player->getStartMusicTimer() <= 0.0)
                         player->playMusic();
                 }
                 else if (!tunnel->needsCleaning())
                 {
-                    setPause(false);
-                    stageState = STAGE_STATE_RUNNING;
+                    stageState = STAGE_STATE_READY;
+                    if (!tunnel->isDone())
+                        readyTimer = 3.00f;
+                    else
+                        readyTimer = 0.0f;
                 }
+                player->reactGUI();
             }
             else if (queryGUI == "next")
             {
-                LevelSet* levels = player->getLevels();
-                int row = player->getLevelRequestRow();
-                int col = player->getLevelRequestCol();
-                int level = levels->getLevelNo(row, col);
-                int nlevel = ((level + 1) % NUM_TASKS) != 5 ? level + 1 : level + 2;
-                if (player->isLevelAvailable(nlevel))
+                // If we came from the level select menu, extract the next level from that 2D grid.
+                // Otherwise, we came from a different set of levels
+                if (engineStateMgr->peek(1)->getEngineType() == ENGINE_LEVEL_SELECTION)
                 {
-                    row = levels->getLevelRow(nlevel);
-                    col = levels->getLevelCol(nlevel);
-                    player->setLevelRequest(row, col);
-                    stageState = STAGE_STATE_INIT;
-                    
-                    setPause(false);
-                    OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                    if (player->isNextLevelAvailable())
+                    {
+                        LevelSet* levels = player->getLevels();
+                        int nlevel = player->getNextLevel();
+                        int row = levels->getLevelRow(nlevel);
+                        int col = levels->getLevelCol(nlevel);
+                        player->setLevelRequest(row, col);
+                        stageState = STAGE_STATE_INIT;
+                        
+                        setPause(false, false);
+                    }
+                    player->reactGUI();
+                }
+                else
+                {
+                    if (player->levelRequest && player->levelRequest->second.rating >= 0)
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        setPause(false, false);
+                    }
+                    player->reactGUI();
                 }
             }
             else if (queryGUI == "restart")
             {
-                stageState = STAGE_STATE_INIT;
+                player->reactGUI();
+               
+                if (!player->levelRequest) // If not a scheduler level
+                {
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice0RestartCounter < player->numRetries) && (player->marbleChoice == 0))
+                {
+                    
+                    player->choice0RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                    
+                }
+                else if((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
+                {
+                    
+                    player->choice1RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
+                {
+                    
+                    player->choice2RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
+                {
+                    
+                    player->choice3RestartCounter++;
+                    stageState = STAGE_STATE_INIT;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
                 
-                setPause(false);
-                OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
             }
             else if (queryGUI == "levelselect")
             {
-                stageState = STAGE_STATE_DONE;
                 
-                setPause(false);
-                OgreFramework::getSingletonPtr()->m_pSoundMgr->stopAllSounds();
+                player->reactGUI();
+                
+                if (!player->levelRequest) // If not a scheduler level
+                {
+                    stageState = STAGE_STATE_DONE;
+                    
+                    player->logData();
+                    
+                    setPause(false, false);
+                }
+                else if((player->choice1RestartCounter < player->numRetries) && (player->marbleChoice == 1))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false, false);
+                    }
+                    
+                }
+                else if((player->choice2RestartCounter < player->numRetries) && (player->marbleChoice == 2))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false, false);
+                    }
+                    
+                }
+                
+                else if((player->choice3RestartCounter < player->numRetries) && (player->marbleChoice == 3))
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false, false);
+                    }
+                    
+                }
+                else if(player->marbleChoice == 0)
+                {
+                    if ((player->levelRequest && player->levelRequest->second.rating < 0) || // For scheduler
+                        (!player->levelRequest))    // For level from level select
+                    {
+                        stageState = STAGE_STATE_DONE;
+                        
+                        player->logData();
+                        
+                        setPause(false, false);
+                    }
+                }
+                
+            }
+            break;
+        }
+        case STAGE_STATE_READY:
+        {
+            std::string queryGUI = hud->queryButtons(Vector2(x, y));
+            
+            if (queryGUI == "pause")
+            {
+                hud->setSpeedDialState(false);
+                
+                // Display current level index
+                LevelSet* levels = player->getLevels();
+                std::string msg = "Level: ";
+                msg += Util::toStringInt(player->getLevelRequestRow() + 1);
+                msg += "-";
+                msg += (char)('A' + player->getLevelRequestCol());
+                globals.setMessage(msg, MESSAGE_NORMAL);
+                
+                setPause(true);
+                player->reactGUI();
+                stageState = STAGE_STATE_PROMPT;
+            }
+            else
+            {
+                if (readyTimer < 0.75)
+                    readyTimer = 0.0;
+                else if (readyTimer < 1.50)
+                    readyTimer = 0.75;
+                else if (readyTimer < 2.25)
+                    readyTimer = 1.50;
+                else
+                    readyTimer = 2.25;
             }
             break;
         }
@@ -587,7 +1002,13 @@ void EngineStage::activatePerformPinch()
 {
 #ifdef DEBUG_MODE
 #if defined(OGRE_IS_IOS)
-    if (stageState == STAGE_STATE_RUNNING) tunnel->setDone(PASS);
+    if (stageState == STAGE_STATE_RUNNING)
+    {
+        player->setGodMode(!player->getGodMode());
+        std::cout << "God Mode: " << player->getGodMode() << std::endl;
+        
+        //tunnel->setDone(PASS);
+    }
     else
 #endif
     {
@@ -606,6 +1027,8 @@ void EngineStage::activatePerformPinch()
             break;
         case STAGE_STATE_PROMPT:
             break;
+        case STAGE_STATE_READY:
+            break;
         case STAGE_STATE_DONE:
             break;
     }
@@ -619,12 +1042,15 @@ void EngineStage::activatePerformBeginLongPress()
             break;
         case STAGE_STATE_RUNNING:
         {
-            player->performBoost();
+            // In single tap now
+            //player->performBoost();
             break;
         }
         case STAGE_STATE_PAUSE:
             break;
         case STAGE_STATE_PROMPT:
+            break;
+        case STAGE_STATE_READY:
             break;
         case STAGE_STATE_DONE:
             break;
@@ -643,6 +1069,8 @@ void EngineStage::activatePerformEndLongPress()
             break;
         case STAGE_STATE_PROMPT:
             break;
+        case STAGE_STATE_READY:
+            break;
         case STAGE_STATE_DONE:
             break;
     }
@@ -658,21 +1086,7 @@ void EngineStage::activateMoved(float x, float y, float dx, float dy)
         if (hud) speedSlider = hud->getSpeedSlider();
         if (speedSlider && speedSlider->selected)
         {
-            Vector2 np;
-#if !defined(OGRE_IS_IOS)
-            if (speedSlider->orientation)
-                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
-            else
-                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
-#else
-            if (speedSlider->orientation)
-                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
-            else
-                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
-#endif
-            speedSlider->setBallPosition(np);
-            
-            //std::cout << "move " << speedSlider->p2.x << " " << globals.convertToPercentScreen(Vector2(dx, 0.0)).x << std::endl;;
+            speedSlider->activateMoved(x, y, dx, dy);
         }
     }
 }
@@ -685,33 +1099,7 @@ void EngineStage::activatePressed(float x, float y)
         if (hud) speedSlider = hud->getSpeedSlider();
         if (speedSlider)
         {
-            Vector2 pos = globals.convertToPercentScreen(Vector2(x, y));
-        
-            // Case for tapping into the slider which makes ball jump to position
-            if (speedSlider->isInsideRange(pos))
-            {
-                // Project position to range
-                if (speedSlider->orientation)
-                {
-                    float ny = pos.y - speedSlider->p1.y - speedSlider->dim2.y / 2;
-                    speedSlider->setBallPosition(Vector2(speedSlider->p2.x, ny));
-                }
-                else
-                {
-                    float nx = pos.x - speedSlider->p1.x - speedSlider->dim2.x / 2;
-                    speedSlider->setBallPosition(Vector2(nx, speedSlider->p2.y));
-                }
-            }
-        
-            // Initialize p2cache first time we touch ball
-            // p2cache is better since iOS tracking uses total dx which is more accurate
-            // then passing in a dx everytime
-            if (speedSlider->isInsideBall(pos))
-            {
-                speedSlider->selected = true;
-                speedSlider->p2cache = speedSlider->p2;
-            }
-            //std::cout << "press\n";
+            speedSlider->activatePressed(x, y);
         }
     }
 }
@@ -724,52 +1112,115 @@ void EngineStage::activateReleased(float x, float y, float dx, float dy)
         if (hud) speedSlider = hud->getSpeedSlider();
         if (speedSlider && speedSlider->selected)
         {
-            speedSlider->selected = false;
-            Vector2 np;
-#if !defined(OGRE_IS_IOS)
-            if (speedSlider->orientation)
-                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(0.0, dy));
-            else
-                np = speedSlider->p2 + globals.convertToPercentScreen(Vector2(dx, 0.0));
-#else
-            if (speedSlider->orientation)
-                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(0.0, dy));
-            else
-                np = speedSlider->p2cache + globals.convertToPercentScreen(Vector2(dx, 0.0));
-#endif
-            speedSlider->setBallPosition(np);
-            //std::cout << "release\n";
+            speedSlider->activateReleased(x, y, dx, dy);
         }
     }
 }
 
+#define NUM_ANGLES_SAVED 3
+#define ANGLE_LOOKBACK 0
+
 void EngineStage::activateVelocity(float vel)
 {
-    float maxVel = 4500.0;
-    
     //std::cout << "SPIN VELOCITY: " << vel << std::endl;
-    if (vel != 0.0) this->spinVelocity = abs(vel);
-    damping = 1.035;
-    if (vel < 0.0) spinClockwise = false;
-    else if (vel > 0.0) spinClockwise = true;
-    else damping = 5.0;
+    //if (vel != 0.0) this->spinVelocity = abs(vel);
+
+    dampingDecay = dampingDecayFree;
+    dampingDrop = dampingDropFree;
     
-    if (abs(spinVelocity) >= maxVel)
-        spinVelocity = maxVel;
+    if (abs(vel) <= minVelFree)
+        vel = 0.0;
+    spinVelocityTarget = abs(vel);
+    
+    freeMotion = true;
+    if (vel < 0.0)
+        spinClockwise = false;
+    else if (vel > 0.0)
+        spinClockwise = true;
+    else
+    {
+        // 0.0 vel means force stop in this algorithm
+        // So turn off everything! Make damping so high you scream
+        
+        // This'll eventually turn off by damping in update...
+        //freeMotion = false;
+        //spinVelocity = 0.0;
+        
+        spinVelocityTarget = 0.0;
+        dampingDecay = dampingDecayStop;
+        dampingDrop = dampingDropStop;
+        
+        /*
+        if (lastAngles.size() >= NUM_ANGLES_SAVED) {
+            player->setCamRoll(lastAngles[ANGLE_LOOKBACK]);
+            std::cerr << "Using last angle" << std::endl;
+        }
+         */
+    }
+    
+    if (abs(spinVelocityTarget) >= maxVel)
+        spinVelocityTarget = maxVel;
+}
+
+void EngineStage::activateAngleTurn(float angle, float vel)
+{
+
+    if(!globals.accelEnabled)
+    {
+        //std::cout << "ANGLE: " << angle << std::endl;
+    
+        if (tunnel && !tunnel->isDone())
+        {
+            //Convert to degrees;
+            double dT = (angle * 180.0) / Ogre::Math::PI;
+            float roll = player->getCamRoll();
+            //std::cout << "Degres: " << dT << std::endl;
+
+        
+            // If unpathable upahead, don't allow player to traverse through
+            int depthDist = 0;
+            if (!player->inverted)
+                dT = -dT;
+            TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
+            if (!unpathable)
+            {
+                player->setCamRoll(roll + dT);
+                player->offsetRollDest = dT;
+            }
+        }
+    }
 }
 
 void EngineStage::activateReturnFromPopup()
 {
+    if (player->endFlag)
+    {
+        tunnel->setCleaning(true);
+    }
+    // To prevent the game from immediately resume without prepping the user
+    // We throw them into a countdown before resuming
+    else if (stageState == STAGE_STATE_RUNNING)
+    {
+        // Save camera state to avoid odd camera jump when unpausing
+        player->pause();
+        stageState = STAGE_STATE_READY;
+        readyTimer = 3.00f;
+    }
+    else if (stageState == STAGE_STATE_PAUSE)
+    {   
+        // Turn on speed dial after they viewed tutorials
+        setTaskPrompt();
+        hud->setSpeedDialState(true);
+    }
 }
 
 #if !defined(OGRE_IS_IOS)
 void EngineStage::mouseMoved(const OIS::MouseEvent &evt)
 {
-    if (stageState == STAGE_STATE_PAUSE)
+    if (stageState == STAGE_STATE_PAUSE || stageState == STAGE_STATE_PROMPT)
     {
         // Move the camera when paused
         Vector2 dmove = Vector2(evt.state.X.rel, evt.state.Y.rel);
-        
         Vector3 right = player->getCamRight(true);
         Vector3 up = player->getCamUpward(true);
         Quaternion yawRot;
@@ -861,48 +1312,9 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             activatePerformSwipeDown();
             break;
         }
-        case OIS::KC_1:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                player->setToggleBack(3);
-                tunnel->respondToToggleCheat();
-            }
-            break;
-        }
-        case OIS::KC_2:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                player->setToggleBack(2);
-                tunnel->respondToToggleCheat();
-            }
-            break;
-        }
-        case OIS::KC_3:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                player->setToggleBack(1);
-                tunnel->respondToToggleCheat();
-            }
-            break;
-        }
-        case OIS::KC_4:
-        {
-            if (tunnel && tunnel->isMultiCollectionTask())
-            {
-                // Bad hack but
-                // Don't show 3-Back for multi-collection tasks of 1 or less.
-                if (player->getLevelRequestRow() > 0)
-                    player->setToggleBack(0);
-                tunnel->respondToToggleCheat();
-            }
-            break;
-        }
         case OIS::KC_P:
         {
-            if (stageState == STAGE_STATE_RUNNING)
+            if (stageState == STAGE_STATE_RUNNING || stageState == STAGE_STATE_READY)
             {
                 setPause(true);
                 globals.appendMessage("\n\nPaused", MESSAGE_NORMAL);
@@ -910,19 +1322,25 @@ void EngineStage::keyPressed(const OIS::KeyEvent &keyEventRef)
             }
             else
             {
-                setPause(false);
-                stageState = STAGE_STATE_RUNNING;
+                stageState = STAGE_STATE_READY;
+                readyTimer = 3.00f;
             }
             break;
         }
         case OIS::KC_Z:
         {
-            activatePerformBeginLongPress();
+            if (stageState == STAGE_STATE_RUNNING)
+                player->performBoost();
             break;
         }
         case OIS::KC_X:
         {
-            if (stageState == STAGE_STATE_RUNNING) player->performPowerUp("TractorBeam");
+            if (stageState == STAGE_STATE_RUNNING &&
+                tunnel->getMode() != STAGE_MODE_RECESS)
+            {
+                player->setPowerUp("TractorBeam", true);
+                player->performPowerUp("TractorBeam");
+            }
             break;
         }
         case OIS::KC_C:
@@ -1014,91 +1432,175 @@ void EngineStage::setup()
     Vector3 forward = globals.tunnelReferenceForward;
     Quaternion rot = Quaternion(1, 0, 0, 0);
     
-    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
-    
-    globals.maxCamSpeed = skillLevel.maxSpeed;
-    
-    globals.stageTotalTargets1 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    globals.stageTotalTargets2 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    globals.stageTotalTargets3 = globals.stageTotalSignals * (globals.podNBackChance / 100.0);
-    
     StageMode nmode = STAGE_MODE_PROFICIENCY;
-    StageRequest level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+    
+    StageRequest level;
+    if( player->levelRequest )
+        level = player->levelRequest->first;
+    else
+        level = player->getLevels()->retrieveLevel(player->getLevelRequestRow(), player->getLevelRequestCol());
+    
+    int numColors=NUM_POD_SIGNALS - 1;
+    int numShapes=NUM_POD_SIGNALS - 1;
+    int numSounds=NUM_POD_SIGNALS - 1;
+    
+    std::cout << "Available Features: " << numColors << " "<< numShapes << " "<< numSounds << std::endl;
+    
     int nlevel = level.nback;
-    switch (level.phase)
+    switch (level.phaseX)
     {
-        case 'A':
+        case PHASE_COLOR_SOUND:
         {
             nmode = STAGE_MODE_COLLECTION;
+            if(level.pods!=0){
+                int numofPods = std::min(numColors, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i), POD_SHAPE_UNKNOWN, (PodSound)(i)));
+                }
+                break;
+            }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_UNKNOWN, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_UNKNOWN, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_UNKNOWN, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.appendMessage("\nObtain matches by Color!", MESSAGE_NORMAL);
             break;
         }
-        case 'B':
+        case PHASE_SHAPE_SOUND:
         {
             nmode = STAGE_MODE_COLLECTION;
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, (PodShape)(i), (PodSound)(i)));
+                }
+                break;
+            }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_SPHERE, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_CONE, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.appendMessage("Obtain matches by Shape!", MESSAGE_NORMAL);
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_DIAMOND, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_SPHERE, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_CONE, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_ORANGE, POD_SHAPE_TRIANGLE, POD_SOUND_4));
             break;
         }
-        case 'C':
+        case PHASE_SOUND_ONLY:
         {
             nmode = STAGE_MODE_COLLECTION;
+            if(level.pods!=0){
+                int numofPods = std::min(numSounds, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, (PodSound)(i)));
+                }
+                break;
+            }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_2));
-            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_3));
-            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_HOLDOUT, POD_SHAPE_UNKNOWN, POD_SOUND_4));
-
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matches by only sound!", MESSAGE_NORMAL);
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_3));
+            globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_UNKNOWN, POD_SHAPE_UNKNOWN, POD_SOUND_4));
             break;
         }
-        case 'D':
+        case PHASE_ALL_SIGNAL:
             nmode = STAGE_MODE_COLLECTION;
+            if(level.pods!=0){
+                int numofPods = std::min(numShapes, numSounds);
+                numofPods = std::min(numofPods, numColors);
+                numofPods = std::min(numofPods, level.pods);
+                
+                std::cout<<"            Creating an Array of Pods Size: "<< numofPods << std::endl;
+                
+                globals.signalTypes = std::vector<std::vector<PodInfo> >(numofPods);
+                
+                for(int i=0; i<numofPods; i++){
+                    globals.signalTypes[(PodSignal)i].push_back(PodInfo((PodSignal)i, POD_FUEL, (PodColor)(i), (PodShape)(i), (PodSound)(i)));
+                }
+                break;
+            }
             globals.signalTypes = std::vector<std::vector<PodInfo> >(4);
-            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_DIAMOND, POD_SOUND_1));
-            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_SPHERE, POD_SOUND_2));
+            globals.signalTypes[POD_SIGNAL_1].push_back(PodInfo(POD_SIGNAL_1, POD_FUEL, POD_COLOR_GREEN, POD_SHAPE_DIAMOND, POD_SOUND_1));
+            globals.signalTypes[POD_SIGNAL_2].push_back(PodInfo(POD_SIGNAL_2, POD_FUEL, POD_COLOR_BLUE, POD_SHAPE_SPHERE, POD_SOUND_2));
             globals.signalTypes[POD_SIGNAL_3].push_back(PodInfo(POD_SIGNAL_3, POD_FUEL, POD_COLOR_PINK, POD_SHAPE_CONE, POD_SOUND_3));
             globals.signalTypes[POD_SIGNAL_4].push_back(PodInfo(POD_SIGNAL_4, POD_FUEL, POD_COLOR_YELLOW, POD_SHAPE_TRIANGLE, POD_SOUND_4));
-            
-            //globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-            globals.setMessage("Obtain matching signals!", MESSAGE_NORMAL);
             break;
-        case 'E':
+        case PHASE_COLLECT:
             nmode = STAGE_MODE_RECESS;
             globals.signalTypes.clear();
-            
-            if (level.initCamSpeed <= 15) // For starting slower stages, be nicer
-                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 3.0 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            else
-                globals.stageTotalCollections = (level.minCamSpeed + level.maxCamSpeed) / 2.5 * level.stageTime / Util::getModdedLengthByNumSegments(globals, globals.tunnelSegmentsPerPod);
-            //globals.setBigMessage("Recess!");
-            globals.setMessage("Reach the end! Grab Fuel Cells!", MESSAGE_NORMAL);
             break;
-        case 'F':
-            nmode = STAGE_MODE_TEACHING;
-            globals.signalTypes.clear();
-            //globals.setBigMessage("Training!");
-            globals.setMessage("Grab Fuel Cells!", MESSAGE_NORMAL);
+        default:
             break;
     }
     globals.initCamSpeed = level.initCamSpeed;
     globals.minCamSpeed = level.minCamSpeed;
     globals.maxCamSpeed = level.maxCamSpeed;
+    
+    // This should be a level parameter later
+    
+    int rank = level.nback;
+    /*
+    if (rank <= 1)
+        globals.fuelReturn = 90.0f;
+    else if (rank == 2)
+        globals.fuelReturn = 75.0f;
+    else //if (rank == 3)
+        globals.fuelReturn = 60.0f;
+    globals.fuelMax = 450.0;
+     */
+    if (level.phaseX == PHASE_COLLECT)
+        globals.fuelReturn = 2.667f;
+    else if (rank <= 1)
+        globals.fuelReturn = 6.0f;
+    else if (rank == 2)
+        globals.fuelReturn = 5.0f;
+    else //if (rank == 3)
+        globals.fuelReturn = 4.0f;
+    globals.fuelMax = 30.0;
+    
+    if (level.phaseX != PHASE_COLLECT)
+    {
+        if (level.durationX == DURATION_SHORT)
+        {
+            globals.wrongAnswerTimePenalty = 3.0;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
+        }
+        else if (level.durationX == DURATION_NORMAL)
+        {
+            globals.wrongAnswerTimePenalty = 5.0;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
+        }
+        else
+        {
+            globals.wrongAnswerTimePenalty = 10.0;
+            globals.podBinSize = 10;
+            globals.stageTotalSignals = 120;
+            globals.stageTotalTargets = 40;
+        }
+    }
+    else
+    {
+        globals.stageTotalSignals = 120;
+        globals.stageTotalTargets = 40;
+    }
     
     tunnel = new Tunnel(
                         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getRootSceneNode(),
@@ -1108,9 +1610,10 @@ void EngineStage::setup()
                         globals.tunnelSegmentDepth,
                         globals.tunnelMinAngleTurn,
                         globals.tunnelMaxAngleTurn,
-                        1, // replace or remove...
+                        globals.stageID,    // The n-th tunnel the player is playing
+                        player->getLevels()->getLevelNo(player->getLevelRequestRow(), player->getLevelRequestCol()), // The level number in the level set
                         nmode,
-                        level.phase, // replace or remove...
+                        level.phaseX,
                         nlevel,
                         level.stageTime,
                         SOUTH,
@@ -1123,18 +1626,10 @@ void EngineStage::setup()
     tunnel->link(player);
     player->link(tunnel);
     
-    tunnel->setHoldout(level.hasHoldout,level.holdoutFrequency);
-    if (tunnel->getMode() == STAGE_MODE_RECESS)
-    {
-        // Assign nav levels in an incremental order specified by Liam's formula if the mode is recess
-        // Therefore, the level parameter provided looks at the nav level provided as the starting index
-        tunnel->setNavigationLevels(level.navLevels[0].level, globals.navMap.size() - 1, level.tunnelSectionsPerNavLevel);
-    }
-    else
-    {
-        // Otherwise, nav levels provided by the parameters
-        tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
-    }
+    tunnel->setHoldoutSettings(level.holdoutPerc, level.holdoutLevel, level.holdoutSound, level.holdoutColor, level.holdoutShape);
+    tunnel->setNavigationLevels(level.navLevels, level.tunnelSectionsPerNavLevel);
+    tunnel->setFuelLevel(globals.fuelMax, globals.fuelReturn, globals.startingHP);
+
     tunnel->setCollectionCriteria(level.collectionCriteria);
     tunnel->constructTunnel(level.nameTunnelTile, globals.tunnelSections);
     player->newTunnel(level.nameMusic);
@@ -1142,25 +1637,13 @@ void EngineStage::setup()
     
     Util::setSkyboxAndFog(level.nameSkybox);
     
-    /*
-     if (skillLevel.set1Notify)
-     globals.setBigMessage("Congratulations! You earned " + Util::toStringInt(nlevel) + "-Back!");
-     else
-     {
-     if (skillLevel.set1Rep >= 2)
-     globals.setBigMessage(Util::toStringInt(nlevel) + "-Back. Challenge Round!");
-     else
-     globals.setBigMessage(Util::toStringInt(nlevel) + "-Back");
-     }
-     globals.setMessage("Match by Color!", MESSAGE_NORMAL);
-     */
-    
     hud = new HudStage(player, tunnel);
     
     Quaternion camRot = player->getCombinedRotAndRoll();
     
     // Set lighting
     lightMain = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createLight("StageLight");
+    //lightMain->setType(Ogre::Light::LT_DIRECTIONAL);
     lightMain->setDiffuseColour(1.0, 1.0, 1.0);
     lightMain->setSpecularColour(1.0, 1.0, 1.0);
     //lightMain->setAttenuation(10, 1.0, 0.0001, 0.0);
@@ -1172,62 +1655,132 @@ void EngineStage::setup()
     OgreFramework::getSingletonPtr()->m_pCameraMain->setOrientation(camRot);
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
         OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode()->setOrientation(player->getCombinedRotAndRoll());
-    if (lightNode)
+    if (lightNode) {
         lightNode->setPosition(OgreFramework::getSingletonPtr()->m_pCameraMain->getPosition());
+        //lightMain->setDirection(Vector3::UNIT_Y * -1);
+    }
     
     // Set tutorial slides for certain thingies
-    if (tunnel->getMode() == STAGE_MODE_RECESS || tunnel->getMode() == STAGE_MODE_TEACHING || tunnel->getHighestCriteria() <= 0)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ZERO_BACK);
-    if (tunnel->getHighestCriteria() == 1)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_ONE_BACK);
+    player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_NAVIGATION);
+    if (tunnel->getNBack() == 1)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_1BACK);
     if (tunnel->getHighestCriteria() == 2)
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TWO_BACK);
-    if (tunnel->getPhase() == 'A')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_COLOR_SOUND);
-    if (tunnel->getPhase() == 'B')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SHAPE_SOUND);
-    if (tunnel->getPhase() == 'C')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_SOUND_ONLY);
-    if (tunnel->getPhase() == 'D')
-        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_HOLDOUT);
-
-        
-
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_2BACK);
+    if (tunnel->getPhase() == PHASE_SOUND_ONLY)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_SOUND_ONLY);
+    if (level.hasHoldout())
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_HOLDOUT);
+    bool hasObstacles = false;
+    for (int i = 0; i < level.navLevels.size(); ++i) {
+        if (level.navLevels[i].obstacles > 0) {
+            hasObstacles = true;
+            break;
+        }
+    }
+    if (hasObstacles)
+        player->getTutorialMgr()->setSlides(TutorialManager::TUTORIAL_SLIDES_TEXTBOX_OBSTACLE);
+    
+    if (!player->getTutorialMgr()->isVisible())
+    {
+        setTaskPrompt();
+        hud->setSpeedDialState(true);
+    }
+    
+    // Spin Parameters
+    maxVel = player->maxVel;
+    minVelFree = player->minVelFree;
+    minVelStopper = player->minVelStopper;
+    dampingDecayFree = player->dampingDecayFree;
+    dampingDecayStop = player->dampingDecayStop;
+    dampingDropFree = player->dampingDropFree;
+    dampingDropStop = player->dampingDropStop;
+    
+    // Spin State Variables
     spinVelocity = 0.0f;
-    damping = 0.0f;
+    spinVelocityTarget = 0.0f;
+    dampingDecay = 0.0f;
+    dampingDrop = 0.0f;
+    freeMotion = false;
+    freeAngleTraveled = 0.0f;
 }
 
 void EngineStage::updateSpin(float elapsed)
 {
-    spinVelocity /= damping;
+    //std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
+    //std::cout << "Elapsed: " << elapsed << std::endl;
     
-    float dTheta = (spinVelocity / (globals.screenWidth / 2.0)) * elapsed;
-    const float PI = 3.14;
-    dTheta = (dTheta * 180.0) / PI;
+    float prevRoll = player->getCamRoll();
+    Direction prevDir = getDirByRoll(prevRoll);
+    float afterRoll;
+    Direction afterDir;
+    
+    if (freeMotion)
+    {
+        if (spinVelocityTarget > 0.0)
+        {
+            const float MAX_ACC = 30000;
+        
+            // Update towards velocity target
+            if (spinVelocity < spinVelocityTarget)
+                spinVelocity += (MAX_ACC * elapsed);
+        
+            // Don't exceed the velocity target
+            if (spinVelocity >= spinVelocityTarget)
+            {
+                spinVelocity = spinVelocityTarget;
+                spinVelocityTarget = 0.0;
+            }
+        
+            // Bound velocity to a max
+            if (spinVelocity >= maxVel)
+                spinVelocity = maxVel;
+        }
+        else
+        {
+            // Damp the current vel
+            spinVelocity *= dampingDecay;
+            spinVelocity -= dampingDrop;
+            
+            // Zero out vel that is close to stop
+            if (spinVelocity <= minVelFree)
+                spinVelocity = 0.0;
+            
+            // Notify free motion is off
+            if (spinVelocity <= 0.0)
+            {
+                freeMotion = false;
+                freeAngleTraveled = 0.0;
+            }
+        }
+    }
+    
+    // Convert radians to degree and obtain change in angle
+    player->rollSpeed = (spinVelocity / (globals.screenWidth / 2.0)) * (180.0 / Ogre::Math::PI);
+    float dTheta = player->rollSpeed * elapsed;
     
     // Perform Player Movement
-    if (spinClockwise) {
-        this->activatePerformRightMove(dTheta);
-        player->offsetRollDest = -dTheta;
-    } else {
-        this->activatePerformLeftMove(dTheta);
-        player->offsetRollDest = dTheta;
+    if (freeMotion)
+    {
+        if ((spinClockwise && player->inverted) ||
+            (!spinClockwise && !player->inverted)) {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = -dTheta;
+            freeAngleTraveled -= dTheta;
+        } else {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = dTheta;
+            freeAngleTraveled += dTheta;
+        }
     }
+    
+    lastAngles.insert(lastAngles.begin(), player->getCamRoll());
+    while (lastAngles.size() > NUM_ANGLES_SAVED)
+        lastAngles.pop_back();
     
     const float DELTA_DEGREE = 15.0;
     float curRoll = player->getCamRoll();
-    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
-    TunnelSlice* unpathable = NULL;
     int depthDist = 0;
-    for (; depthDist < nextset.size(); ++depthDist)
-    {
-        SectionInfo info = nextset[depthDist]->getSectionInfo();
-        if (!isPathable(info, curRoll))
-        {
-            unpathable = nextset[depthDist];
-            break;
-        }
-    }
+    TunnelSlice* unpathable = closestUnpathable(tunnel, 3, curRoll, depthDist);
     if (unpathable)
     {
         SectionInfo info = unpathable->getSectionInfo();
@@ -1265,53 +1818,9 @@ void EngineStage::updateSpin(float elapsed)
         {
             curRoll = Util::getDegrees(getDirByRoll(curRoll));
         }
-        player->setCamRoll(curRoll);
     }
     
-    /*
-    // Avoid moving into empty panels ahead of us
-    TunnelSlice* next = tunnel->getNext(1);
-    if (next)
-    {
-        SectionInfo nextInfo = next->getSectionInfo();
-        float curRoll = player->getCamRoll();
-        if (!isPathable(nextInfo, curRoll))
-        {
-            // Look for the closest panel using 15 degree delta steps
-            float thetaDistEstimate = DELTA_DEGREE;
-            while (thetaDistEstimate <= 180.0)
-            {
-                if (isPathable(nextInfo, curRoll - thetaDistEstimate))
-                {
-                    thetaDistEstimate = -thetaDistEstimate;
-                    break;
-                }
-                if (isPathable(nextInfo, curRoll + thetaDistEstimate))
-                {
-                    break;
-                }
-                thetaDistEstimate += DELTA_DEGREE;
-            }
-            
-            // Limit the force to 45 degrees
-            if (thetaDistEstimate > 45.0)
-                thetaDistEstimate = 45.0;
-            if (thetaDistEstimate < -45.0)
-                thetaDistEstimate = -45.0;
-            
-            // Assign new roll
-            float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
-            curRoll = curRoll + recoverRollSpeed * elapsed;
-            
-            // Resolve overshooting (if we are back on pathable ground)
-            if (isPathable(nextInfo, curRoll))
-            {
-                curRoll = Util::getDegrees(getDirByRoll(curRoll));
-            }
-            player->setCamRoll(curRoll);
-        }
-    }
-     */
+    player->setCamRoll(curRoll);
     
     // Animating the offset banking
     double bankingAnimationSpeed = 30.0;
@@ -1328,7 +1837,64 @@ void EngineStage::updateSpin(float elapsed)
             player->offsetRoll = player->offsetRollDest;
     }
     
+    afterRoll = player->getCamRoll();
+    afterDir = getDirByRoll(afterRoll);
+    float discreteDegrees = Util::getDegrees(afterDir);
+    
+    //std::cout << prevDir << " " << afterDir << " " << (discreteDegrees - prevRoll) * (discreteDegrees - afterRoll) << " " << spinVelocity;
+    //std::cout << freeAngleTraveled << std::endl;
+    
+    // Check dot product  for direction is same. If it switches it means we cross a boom
+    if (prevDir == afterDir &&  // Make sure it is the same panel in the first place
+        (discreteDegrees - prevRoll) * (discreteDegrees - afterRoll) < 0.0 &&   // Check for the transition to the other side of panel
+        spinVelocity <= minVelStopper &&    // Is the spin velocity slow enough?
+        abs(freeAngleTraveled) >= 5.0) // At least travel some degrees before being able to be stopped
+    {
+        activateVelocity(0.0);
+        player->setCamRoll(discreteDegrees);
+    }
+
     player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
+}
+
+void EngineStage::setTaskPrompt()
+{
+    if (player->levelRequest)
+    {
+        StageRequest level = player->levelRequest->first;
+        PlayerProgress progress = player->levelRequest->second;
+        
+        if (level.phaseX != PHASE_COLLECT)
+        {
+            globals.setMessage("Zap matching " + Util::toStringInt(level.nback) + "-Back fuel", MESSAGE_NORMAL);
+            if (level.phaseX == PHASE_COLOR_SOUND)
+                globals.appendMessage("\nusing Color and Sound.", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SHAPE_SOUND)
+                globals.appendMessage("\nusing Shape and Sound.", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_SOUND_ONLY)
+                globals.appendMessage("\nusing Only Sound.", MESSAGE_NORMAL);
+            else if (level.phaseX == PHASE_ALL_SIGNAL)
+                globals.appendMessage("\nUsing Color, Shape, and Sound.", MESSAGE_NORMAL);
+            if (level.hasHoldout())
+                globals.appendMessage("\nCareful... Holdout is active.", MESSAGE_NORMAL);
+            else
+                globals.appendMessage("\n", MESSAGE_NORMAL);
+        }
+        
+        
+        float potential = player->modifyNBackDelta(level, progress, 1.0, true);
+        if (level.phaseX == PHASE_COLLECT)
+            globals.appendMessage("\nEnjoy the cruise cadet.", MESSAGE_NORMAL);
+        if (potential >= 0.35)
+            globals.appendMessage("\nStay focused, it's going to get rough.", MESSAGE_NORMAL);
+        else if (potential >= 0.25)
+            globals.appendMessage("\nGood luck cadet.", MESSAGE_NORMAL);
+        else
+            globals.appendMessage("\nNo worries cadet. You'll do fine.", MESSAGE_NORMAL);
+    }
+    else
+        globals.setMessage("\n\nReady to launch?", MESSAGE_NORMAL);
+    globals.appendMessage("\nSet and verify your speed.", MESSAGE_NORMAL);
 }
 
 void EngineStage::dealloc()
@@ -1363,14 +1929,6 @@ void EngineStage::setPause(bool value, bool targetAllSounds)
             OgreFramework::getSingletonPtr()->m_pSoundMgr->pauseAllSounds();
         player->pause();
         
-        // Display current level index
-        LevelSet* levels = player->getLevels();
-        std::string msg = "Level: ";
-        msg += Util::toStringInt(player->getLevelRequestRow() + 1);
-        msg += "-";
-        msg += (char)('A' + player->getLevelRequestCol());
-        globals.setMessage(msg, MESSAGE_NORMAL);
-        
         Ogre::ControllerManager::getSingleton().setTimeFactor(0);
     }
     else
@@ -1386,5 +1944,290 @@ void EngineStage::setPause(bool value, bool targetAllSounds)
 void EngineStage::completeStage(Evaluation forced)
 {
     Evaluation eval = tunnel->getEval();
+    player->rerollCounter = 2;
     player->saveAllResults(eval);
+}
+
+void EngineStage::updateAccel( float elapsed)
+{
+    //New Version (SpinUpdate Inspired)
+    
+    prevAcc_y = currAcc_y;
+    currAcc_y = globals.acc_y;
+    
+    
+    float prevRoll = player->getCamRoll();
+    Direction prevDir = getDirByRoll(prevRoll);
+    float afterRoll;
+    Direction afterDir;
+    float mody;
+    
+    
+    float signV = -1.0f;
+
+    float mag = sqrtf((globals.acc_x*globals.acc_x )  +  (globals.acc_y*globals.acc_y)   + (globals.acc_z*globals.acc_z) );
+
+    
+    if(globals.acc_y >0)
+    {
+        //Going right
+        signV = 1.0f;
+        //AccelDirection = 1;
+    }
+    else if(globals.acc_y <0)
+    {
+        //AccelDirection = -1;
+    }
+    
+
+    prevDirection = currDirection;
+    currDirection = AccelDirection;
+    int speed = hud->speedSlider->getIndex();
+    
+
+ 
+        if(currAcc_y < -.1f)
+        {
+            AccelDirection = -1;
+
+        }
+        
+        if(currAcc_y > .1f)
+        {
+            AccelDirection = 1;
+
+        }
+
+        if( ((currAcc_y< -.1f) && (currAcc_y >= -.2)) || ((currAcc_y > .1f) && (currAcc_y <= .2))   )
+        {
+            //AccelMax = 4000;//2500;
+            mody  = 4000; //2000
+
+        }
+        else if( ((currAcc_y < -.2f)&& (currAcc_y>= -.4)) || ((currAcc_y> .2f) && (currAcc_y<= .4)) )
+        {
+            //AccelMax = 4700;//3300;
+            mody  = 4700; //2700
+        }
+        else if( ((currAcc_y < -.4f)&& (currAcc_y>= -.6)) || ((currAcc_y> .4f) && (currAcc_y<= .6)) )
+        {
+            //AccelMax = 5400;//3700;
+            mody  = 5700; //2700
+        }
+        else
+        {
+            //AccelMax = 5000;
+            mody  = 6500; //4500
+        }
+        
+        if(mag > 1.2)
+        {
+            //std::cout << " JERK "<< std::endl;
+            //AccelMax = 5000;
+            //AccelSpeedModifyer  = 2500;
+
+        }
+        //AccelSpeedModifyer = 2000*currAcc_y;
+    //}
+    mody += (2000*(speed/40));
+    if(currAcc_y < 0)
+    {
+        mody *= -1;
+    }
+    
+    AccelSpeedModifyer = (mody)*(currAcc_y) ;
+    //Figure out when to increment the speed!
+    //AccelspinVelocity += (AccelSpeedModifyer*elapsed);
+    //std::cout << "AccelSpinVel: " << AccelspinVelocity << std::endl;
+    AccelspinVelocity = (AccelSpeedModifyer);
+
+    
+    //std::cout << "Direction: " << AccelDirection << std::endl;
+    
+    // Bound velocity to a max
+    if (AccelspinVelocity >= AccelMax)
+    {
+        //AccelspinVelocity = AccelMax;
+    }
+    
+    if(prevDirection != currDirection)
+    {
+        //AccelspinVelocity = 300;
+    }
+    
+    player->rollSpeed = (AccelspinVelocity / (globals.screenWidth / 2.0)) * (180.0 / Ogre::Math::PI);
+    float dTheta = player->rollSpeed * elapsed;
+    
+    
+    //Actual Movement based on velocity
+    
+    if(currAcc_y < 0)//Moving Left!
+    {
+        if(!globals.orientLeft)
+        {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = -dTheta;
+            freeAngleTraveled -= dTheta;
+        }
+        else
+        {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = dTheta;
+            freeAngleTraveled += dTheta;
+        }
+        
+    }
+    else if (currAcc_y > 0) //Moving Right!
+    {
+        if(!globals.orientLeft)
+        {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = dTheta;
+            freeAngleTraveled += dTheta;
+        }
+        else
+        {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = -dTheta;
+            freeAngleTraveled -= dTheta;
+        }
+        
+    }
+    
+    //Snap to stuff
+    float curRoll = player->getCamRoll();
+    int depthDist = 0;
+    bool rollNeg = false;
+    bool doIt = false;
+    
+    
+    float desiredRoll;
+    
+    //std::cout <<" Curr Cam Roll: " << curRoll << std::endl;
+    if(curRoll < 0)
+    {
+        rollNeg = true;
+        curRoll  = curRoll * -1.0f;
+    }
+    
+    float tempnum = fmodf(curRoll, 45.0f);//Ogre::Math::modff(curRoll, 45.0f);//curRoll % 45.0f;
+    
+    if(tempnum <= 22.5f)
+    {
+        desiredRoll = curRoll-tempnum;
+    }
+    else if(tempnum > 22.5f)
+    {
+        desiredRoll = curRoll+(45.0f-tempnum);
+    }
+    
+    if(rollNeg)
+    {
+        curRoll = curRoll* -1.0f;
+        if(desiredRoll != 0)
+        {
+            desiredRoll = desiredRoll * -1.0f;
+        }
+    }
+    //std::cout<<"Desired Roll: " << desiredRoll << std::endl;
+    
+    float desiredAngle = desiredRoll - curRoll;
+    
+    float snapSpeed = .2f;
+    float angleTurnSpeed = .185f;
+    
+        
+    if(globals.acc_y >= -.08f && globals.acc_y <= .08f)
+    {
+        //Idle
+        //Snap to the closests Side!
+        //player->setCamRoll(desiredRoll); //Hard Snap
+        player->setCamRoll(curRoll+(desiredAngle*snapSpeed));
+    }
+    //End Snap Stuff
+    
+    
+    
+    lastAngles.insert(lastAngles.begin(), player->getCamRoll());
+    while (lastAngles.size() > NUM_ANGLES_SAVED)
+        lastAngles.pop_back();
+    
+    const float DELTA_DEGREE = 15.0;
+    /*float*/ curRoll = player->getCamRoll();
+    //int depthDist = 0;
+    TunnelSlice* unpathable = closestUnpathable(tunnel, 3, curRoll, depthDist);
+    if (unpathable)
+    {
+        SectionInfo info = unpathable->getSectionInfo();
+        
+        // Look for the closest panel using 15 degree delta steps
+        float thetaDistEstimate = DELTA_DEGREE;
+        while (thetaDistEstimate <= 180.0)
+        {
+            if (isPathable(info, curRoll - thetaDistEstimate))
+            {
+                thetaDistEstimate = -thetaDistEstimate;
+                break;
+            }
+            if (isPathable(info, curRoll + thetaDistEstimate))
+            {
+                break;
+            }
+            thetaDistEstimate += DELTA_DEGREE;
+        }
+        
+        thetaDistEstimate = thetaDistEstimate * (3 - depthDist);
+        
+        // Limit the force to 45 degrees
+        if (thetaDistEstimate > 45.0)
+            thetaDistEstimate = 45.0;
+        if (thetaDistEstimate < -45.0)
+            thetaDistEstimate = -45.0;
+        
+        // Assign new roll
+        float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
+        curRoll = curRoll + recoverRollSpeed * elapsed;
+        
+        // Resolve overshooting (if we are back on pathable ground)
+        if (isPathable(info, curRoll))
+        {
+            curRoll = Util::getDegrees(getDirByRoll(curRoll));
+        }
+    }
+    
+    player->setCamRoll(curRoll);
+    
+    // Animating the offset banking
+    double bankingAnimationSpeed = 30.0;
+    if (player->offsetRoll < player->offsetRollDest)
+    {
+        player->offsetRoll += bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll > player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
+    }
+    else if (player->offsetRoll > player->offsetRollDest)
+    {
+        player->offsetRoll -= bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll < player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
+    }
+    
+    afterRoll = player->getCamRoll();
+    afterDir = getDirByRoll(afterRoll);
+    float discreteDegrees = Util::getDegrees(afterDir);
+    
+    
+    // Check dot product  for direction is same. If it switches it means we cross a boom
+    if (prevDir == afterDir &&  // Make sure it is the same panel in the first place
+        (discreteDegrees - prevRoll) * (discreteDegrees - afterRoll) < 0.0 &&   // Check for the transition to the other side of panel
+        AccelspinVelocity <= AccelminVelStopper &&    // Is the spin velocity slow enough?
+        abs(freeAngleTraveled) >= 5.0) // At least travel some degrees before being able to be stopped
+    {
+        activateVelocity(0.0);
+        player->setCamRoll(discreteDegrees);
+    }
+    
+    player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
+
+    
 }

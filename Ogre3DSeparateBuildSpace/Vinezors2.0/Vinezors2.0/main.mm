@@ -16,6 +16,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT)
 int main(int argc, char **argv)
 #endif
 {
+    
 #if defined(OGRE_IS_IOS)
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	int retVal = UIApplicationMain(argc, argv, @"UIApplication", @"AppDelegate");

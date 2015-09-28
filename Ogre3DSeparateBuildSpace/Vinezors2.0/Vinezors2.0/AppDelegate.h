@@ -81,7 +81,7 @@ static id mAppDelegate;
     mTimer = nil;
     
     try {
-        demo.startDemo("subject101", MUSIC_ENABLED);
+        demo.startDemo("SP123");
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         

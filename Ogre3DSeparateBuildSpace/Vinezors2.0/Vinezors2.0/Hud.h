@@ -23,14 +23,15 @@ public:
     virtual void adjust() = 0;              // For resizing windows, we have to readjust some items
     virtual void update(float elapsed) = 0; // Update certain animated items (timers, ect.)
     
-    std::string queryButtons(Vector2 target) const; // Returns any buttons containing target
+    virtual std::string queryButtons(Vector2 target) const; // Returns any buttons containing target
     
     void setOverlay(int index, bool visible);
     void hideOverlays();
     void showOverlays();
+    std::vector<HudButton> buttons;
 protected:
     std::vector<Ogre::Overlay*> overlays;
-    std::vector<HudButton> buttons;
+    //std::vector<HudButton> buttons;
     
     virtual void alloc() = 0;
     virtual void dealloc() = 0;

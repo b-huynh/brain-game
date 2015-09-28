@@ -14,7 +14,7 @@
 extern Util::ConfigGlobal globals;
 
 HudStage::HudStage(Player* player, Tunnel* tunnel)
-: Hud(), goButtonActive(false)
+: Hud(), goButtonActive(false), pauseNavOffset(0.7f), pauseNavOffsetDest(0.7f), goOffset(0.7f), goOffsetDest(0.7f), leftZapT(0.0f), rightZapT(0.0f), prevFuelTimer(globals.fuelMax), fuelBarAnimationTimer(0.0f)
 {
     link(player, tunnel);
     init();
@@ -40,69 +40,6 @@ void HudStage::adjust()
 
 void HudStage::update(float elapsed)
 {
-    std::string GUIToggleNumber = "General/GUIToggleTextNumber";
-    toggle1TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(tunnel->getNBack() % 10));
-    toggle2TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 1) % 10, 0, tunnel->getNBack())));
-    toggle3TextArt->setMaterialName(GUIToggleNumber + Util::toStringInt(Util::clamp((tunnel->getNBack() - 2) % 10, 0, tunnel->getNBack())));
-    // toggle4 is always n-back 0
-    
-    if (!tunnel->needsCleaning())
-        resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    else
-        resumeButtonBackground->setMaterialName("General/ResumeButtonRoundGRAY");
-    
-    LevelSet* levels = player->getLevels();
-    int levelRow = player->getLevelRequestRow();
-    int levelCol = player->getLevelRequestCol();
-    int level = levels->getLevelNo(levelRow, levelCol);
-    if (player->isLevelAvailable(level + 1))
-        nextButtonBackground->setMaterialName("General/NextButtonRound");
-    else
-        nextButtonBackground->setMaterialName("General/NextButtonRoundGRAY");
-    
-    if( player->winFlag ) {
-        setOverlay(3, true);
-        
-        tunnel->addToTimePenalty(2.0f);
-        float timeLeft = tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty();
-        
-        if( timeLeft < 0.0f && timeLeft > -1.0f) player->setScore(player->getScore()+100.0f);
-        else if( timeLeft > 0.0f ) player->setScore(player->getScore()+200.0f);
-        
-        label2->setColour(ColourValue(1.0,1.0,0.0));
-        label5->setColour(ColourValue(1.0,1.0,0.0));
-        
-        label2->setCaption(Util::toStringInt(timeLeft));
-        endTallyTimeLabel->setCaption("Time  " + Util::toStringInt(timeLeft));
-        
-        label5->setCaption(Util::toStringInt(player->getScore()));
-        
-        endTallyScoreLabel->setCaption(Util::toStringInt(player->getScore()) + "  Score");
-        
-        if( timeLeft <= 0.0f ) {
-            label2->setCaption("0");
-            endTallyTimeLabel->setCaption("Time  0");
-            tunnel->setCleaning(true);
-            player->winFlag = false;
-        }
-        
-        return;
-    }
-    if( tunnel->isDone() ) return;
-    
-    
-    float timeLeft = fmax(tunnel->getStageTime() - tunnel->getTotalElapsed() - tunnel->getTimePenalty(), 0.0f);
-
-    label1->setCaption(globals.messageBig);
-    Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
-    label2->setColour(fontColor);
-    label2->setCaption(Util::toStringInt(timeLeft));
-
-    if (tunnel->getMode() == STAGE_MODE_RECESS)
-        label3->setCaption(Util::toStringInt(tunnel->getPercentComplete() * 100) + "%");
-    else
-        label3->setCaption("");
-    
     label4->setCaption(Util::toStringInt(player->getBaseSpeed()));
     if (player->hasTriggeredStartup())
     {
@@ -111,10 +48,94 @@ void HudStage::update(float elapsed)
     }
     speedSlider->adjust();
     
-    label5->setCaption(Util::toStringInt(player->getScore()));
-    label6->setCaption(globals.message);
-    label7->setCaption("");
+    setCollectionBar(false, elapsed);
+    setFuelBar(elapsed);
     
+    if (tunnel->getMode() != STAGE_MODE_RECESS)
+    {
+        if (leftZapT > 0.0f)
+        {
+            HudLeftZapper->setMaterialName("General/GUIMainHudLeftShifterPressed");
+            leftZapT -= elapsed;
+        }
+        else
+            HudLeftZapper->setMaterialName("General/GUIMainHudLeftShifter");
+        if (rightZapT > 0.0f)
+        {
+            HudRightZapper->setMaterialName("General/GUIMainHudRightShifterPressed");
+            rightZapT -= elapsed;
+        }
+        else
+            HudRightZapper->setMaterialName("General/GUIMainHudRightShifter");
+    }
+    else
+    {
+        HudLeftZapper->setMaterialName("General/GUIMainHudShifterOff");
+        HudRightZapper->setMaterialName("General/GUIMainHudShifterOff");
+    }
+    
+    // Pause nav animation
+    if (overlays[1]->isVisible())
+    {
+        float minySpeed = 0.25;
+        float yspeed = (pauseNavOffsetDest - pauseNavOffset) * 5.0;
+        if (pauseNavOffset > pauseNavOffsetDest)
+        {
+            if (yspeed > -minySpeed) yspeed = -minySpeed;
+            pauseNavOffset += (yspeed * elapsed);
+            if (pauseNavOffset < pauseNavOffsetDest)
+                pauseNavOffset = pauseNavOffsetDest;
+        }
+        else if (pauseNavOffset < pauseNavOffsetDest)
+        {
+            if (yspeed < minySpeed) yspeed = minySpeed;
+            pauseNavOffset += (yspeed * elapsed);
+            if (pauseNavOffset > pauseNavOffsetDest)
+                pauseNavOffset = pauseNavOffsetDest;
+        }
+        
+        float pauseNavHeight = 0.45;
+        float pauseNavWidth = pauseNavHeight * globals.screenHeight / globals.screenWidth;
+        float pauseNavX = 0.50 - pauseNavWidth / 2;
+        float pauseNavY = 0.55 - pauseNavHeight / 2 + pauseNavOffset;
+        pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
+        pauseBaseBackground->setPosition(0.325, 0.675 + pauseNavOffset);
+    }
+    
+    // Go button animation
+    if (overlays[1]->isVisible())
+    {
+        float minySpeed = 0.25;
+        float yspeed = (goOffsetDest - goOffset) * 5.0;
+        if (goOffset > goOffsetDest)
+        {
+            if (yspeed > -minySpeed) yspeed = -minySpeed;
+            goOffset += (yspeed * elapsed);
+            if (goOffset < goOffsetDest)
+                goOffset = goOffsetDest;
+        }
+        else if (goOffset < goOffsetDest)
+        {
+            if (yspeed < minySpeed) yspeed = minySpeed;
+            goOffset += (yspeed * elapsed);
+            if (goOffset > goOffsetDest)
+                goOffset = goOffsetDest;
+        }
+        
+        float gheight = 0.35;
+        float gwidth = gheight * globals.screenHeight / globals.screenWidth;
+        float gx = 0.50 - gwidth / 2;
+        float gy = 0.60 - gheight / 2 + goOffset;
+        goBackground->setPosition(gx, gy);
+        goBaseBackground->setPosition(0.325, 0.675 + goOffset);
+        sliderRangeBackground->setPosition(0.20, 0.35 + goOffset);
+    }
+    
+    // Update powerup GUI
+    float timeLeft = fmax(tunnel->getTimeLeft(), 0.0f);
+    Ogre::ColourValue fontColor = timeLeft <= 0.0 ? ColourValue(1.0, 0.0, 0.0) : ColourValue(1.0, 1.0, 1.0);
+    label2->setColour(fontColor);
+    label2->setCaption(Util::toStringInt(timeLeft));
     if( player->isPowerUpActive("TimeWarp") ) {
         TimeWarp* t = (TimeWarp*)player->getPowerUpPtr("TimeWarp");
         
@@ -146,87 +167,75 @@ void HudStage::update(float elapsed)
         label2->setCharHeight(0.025 * FONT_SZ_MULT);
     }
     
-    
-    // Set Progress Bar indicator position for the appropriate mode
-    float barWidth = barHP->getWidth();
-    if (tunnel->getMode() == STAGE_MODE_PROFICIENCY)
+    // Update these message as long as the tunnel generation is not over
+    if (!tunnel->isDone())
     {
-        float HPRange = globals.HPPositiveLimit - globals.HPNegativeLimit + 1;
-        //indicator->setPosition(barHP->getLeft() + barWidth * player->getProgress(), indicator->getTop());
-        indicator->setPosition(barHP->getLeft() + barWidth * (player->getHP() - globals.HPNegativeLimit) / HPRange, indicator->getTop());
-    }
-    
-    switch (player->getToggleBack())
-    {
-        case 0:
-            toggleIndicator->setPosition(0.897, 0.31);
-            break;
-        case 1:
-            toggleIndicator->setPosition(0.897, 0.43);
-            break;
-        case 2:
-            toggleIndicator->setPosition(0.897, 0.55);
-            break;
-        case 3:
-            toggleIndicator->setPosition(0.897, 0.67);
-            break;
-    }
-    
-    if (player->isPowerUpAvailable("TractorBeam"))
-        buttons[BUTTON_POWERUP1].backgroundRef->setMaterialName("General/GUIPowerupButton2");
-    else
-        buttons[BUTTON_POWERUP1].backgroundRef->setMaterialName("General/GUIPowerupButtonBlank");
-    if (player->isPowerUpAvailable("Shields"))
-        buttons[BUTTON_POWERUP2].backgroundRef->setMaterialName("General/GUIPowerupButton0");
-    else
-        buttons[BUTTON_POWERUP2].backgroundRef->setMaterialName("General/GUIPowerupButtonBlank");
-    if (player->isPowerUpAvailable("TimeWarp"))
-        buttons[BUTTON_POWERUP3].backgroundRef->setMaterialName("General/GUIPowerupButton1");
-    else
-        buttons[BUTTON_POWERUP3].backgroundRef->setMaterialName("General/GUIPowerupButtonBlank");
-    
-    std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
-    for (int i = 0; i < collectionBar.size(); ++i)
-    {
-        if (i < criterias.size())
+        label1->setCaption(globals.messageBig);
+        
+        player->xsTimer -= elapsed;
+        std::string xs = "";
+        for (int i = 0; i < globals.startingHP - player->getHP(); ++i)
         {
-            std::string scoreName = "General/GUICollection";
-            
-            // For togglebacks
-            //if (criterias[i].nback <= 0)
-            //    scoreName += Util::toStringInt(0);
-            //else
-            //    scoreName += Util::toStringInt(Util::clamp(3 - (tunnel->getNBack() - criterias[i].nback), 0, 3));
-            
-            // For just a single n-back and task
-            switch (tunnel->getPhase())
+            xs += "x";
+        }
+        if (tunnel->getMode() != STAGE_MODE_RECESS && player->xsTimer > 0.0f)
+        {
+            label6->setCaption(xs);
+            label6->setColour(ColourValue::ColourValue(1.0, 0.0, 0.0, player->xsTimer));
+        }
+        else
+            label6->setCaption("");
+        
+        label7->setCaption(globals.message);
+        label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+        label7->setCharHeight(0.025 * FONT_SZ_MULT);
+        
+
+    }
+    else if (!tunnel->needsCleaning())
+    {
+        if (tunnel->getEval() != PASS)
+        {
+    
+            if (player->getHP() <= 0)
             {
-                case 'A':
-                    scoreName += "0";
-                    break;
-                case 'B':
-                    scoreName += "1";
-                    break;
-                case 'C':
-                    scoreName += "2";
-                    break;
-                case 'D':
-                    scoreName += "3";
-                    break;
-                default:
-                    scoreName += "0";
-                    break;
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nToo many unstable zaps");
             }
-            
-            if (criterias[i].collected)
-                scoreName += "Filled";
+            else if (tunnel->getEval() == EVEN)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Fuel");
+            }
+            else if (tunnel->getEval() == FAIL && tunnel->getTimeLeft() <= 0.0f)
+            {
+                label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+                label7->setCharHeight(0.025 * FONT_SZ_MULT);
+                label7->setCaption("\nBlast\nWe've run out of Time");
+            }
+        }
+    }
+    else //if (tunnel->needsCleaning())
+    {
+        label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0, 1.0));
+        label7->setCharHeight(0.025 * FONT_SZ_MULT);
+        
+        bool retryEnabled = !pausePanelBack->isVisible(); // !IsVisible means the gray version is not visible
+        if (tunnel->getEval() == PASS || player->getAccuracy() >= 0.75)
+        {
+            if (retryEnabled)
+                label7->setCaption("\nYou may play again or continue.");
             else
-                scoreName += "Blank";
-            collectionBar[i]->setMaterialName(scoreName);
+                label7->setCaption("\nContinue to the next wormhole.");
         }
         else
         {
-            collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
+            if (retryEnabled)
+                label7->setCaption("\nTry again or continue?");
+            else
+                label7->setCaption("\nContinue to the next wormhole.");
         }
     }
 }
@@ -234,27 +243,23 @@ void HudStage::update(float elapsed)
 void HudStage::alloc()
 {
     // Allocate Resources
+    amberBG = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "amberBGLOL"));
+    
     panelText = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageTextInterface"));
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
     panelText->setDimensions(10, 10);
     
-    healthArea = static_cast<BorderPanelOverlayElement*>(
-                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("BorderPanel", "StageHealthAreaBorder"));
-    
-    barHP = static_cast<PanelOverlayElement*>(
-                                              OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHealthBar"));
-    indicator = static_cast<PanelOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageIndicator"));
     pauseBackground = static_cast<PanelOverlayElement*>(
                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseBackground"));
+    goBaseBackground = static_cast<PanelOverlayElement*>(
+                                                         OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageGoBaseBackground"));
     goBackground = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageGoBackground"));
-    
+                                                     OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageGoBackground"));
     sliderRangeBackground = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderRangeBackground"));
+                                                              OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderRangeBackground"));
     sliderBallBackground = static_cast<PanelOverlayElement*>(
-                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderBallBackground"));
+                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageSliderBallBackground"));
     
     collectionBar = std::vector<PanelOverlayElement*>();
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem0")));
@@ -265,17 +270,37 @@ void HudStage::alloc()
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem5")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem6")));
     collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem7")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem8")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem9")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem10")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem11")));
+    collectionBar.push_back(static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageCollectionItem12")));
     
-    GUITopPanel = static_cast<PanelOverlayElement*>(
-                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "GUITopPanel"));
+    // Allocate the hud elements
+    HudEntire = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudEntire"));
+    HudTopPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudTopPanel"));
+    HudLeftPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftPanel"));
+    HudRightPanel = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightPanel"));
+    HudLeftZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudLeftZapper"));
+    HudRightZapper = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudRightZapper"));
+    /*
+    for (int i = 0; i < globals.startingHP; ++i)
+    {
+        PanelOverlayElement* fuelContainer = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudFuelContainer" + Util::toStringInt(i)));
+        PanelOverlayElement* fuelBar = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudFuelBar" + Util::toStringInt(i)));
+        HudFuelContainers.push_back(fuelContainer);
+        HudFuelBars.push_back(fuelBar);
+    }
+    */
+    HudFuelBar = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageHudFuelBar"));
     
-    // Create text area
+    // Allocate text area elements
     label1 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel1"));
     label2 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel2"));
     label2prompt = static_cast<TextAreaOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel2Prompt"));
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel2Prompt"));
     label3 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel3"));
     label4 = static_cast<TextAreaOverlayElement*>(
@@ -283,7 +308,7 @@ void HudStage::alloc()
     label5 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel5"));
     label5prompt = static_cast<TextAreaOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel5Prompt"));
+                                                        OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel5Prompt"));
     label6 = static_cast<TextAreaOverlayElement*>(
                                                   OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextAreaLabel6"));
     label7 = static_cast<TextAreaOverlayElement*>(
@@ -291,94 +316,75 @@ void HudStage::alloc()
     
     timeWarpLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageTextTimeWarpLabel"));
     
-    endTallyTimeLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyTimeLabel"));
-    endTallyScoreLabel = static_cast<TextAreaOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "EndTallyScoreLabel"));
-    
     nbackDisplayBackground = static_cast<PanelOverlayElement*>(
                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNBackDisplayBackground"));
     nbackDisplayLabel = static_cast<TextAreaOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageNBackDisplayLabel"));
+                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("TextArea", "StageNBackDisplayLabel"));
     
-    // Note: These overlay elements are linked to a button, if we end up deleting these and NULLing it, it should be NULLed in the associated button as well
-    toggle1Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle1Background"));
-    toggle2Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle2Background"));
-    toggle3Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle3Background"));
-    toggle4Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle4Background"));
-    toggle1TextArt = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle1TextArt"));
-    toggle2TextArt = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle2TextArt"));
-    toggle3TextArt = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle3TextArt"));
-    toggle4TextArt = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggle4TextArt"));
-    toggleIndicator = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageToggleIndicator"));
-    powerup1Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Powerup1Background"));
-    powerup2Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Powerup2Background"));
-    powerup3Background = static_cast<PanelOverlayElement*>(
-                                                          OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "Powerup3Background"));
-    
+    pauseBaseBackground = static_cast<PanelOverlayElement*>(
+                                                            OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseBaseBackground"));
+    pauseNavigationBackground = static_cast<PanelOverlayElement*>(
+                                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePauseNavigationBackground"));
+
+    pausePanelPlay = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelPlay"));
+    pausePanelForward = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelForward"));
+    pausePanelBack = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelBack"));
+    pausePanelMenu = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StagePausePanelMenu"));
     
     resumeButtonBackground = static_cast<PanelOverlayElement*>(
-                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageResumeButtonBackground"));
+                                                               OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageResumeButtonBackground"));
     nextButtonBackground = static_cast<PanelOverlayElement*>(
-                                                           OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNextButtonBackground"));
+                                                             OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageNextButtonBackground"));
     restartButtonBackground = static_cast<PanelOverlayElement*>(
                                                                 OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRestartButtonBackground"));
     levelSelectButtonBackground = static_cast<PanelOverlayElement*>(
-                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageLevelSelectButtonBackground"));
+                                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageLevelSelectButtonBackground"));
+    leftZapperButtonBackground = static_cast<PanelOverlayElement*>(
+                                                                OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageLeftZapperButtonBackground"));
+    rightZapperButtonBackground = static_cast<PanelOverlayElement*>(
+                                                                    OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageRightZapperButtonBackground"));
     
-    buttons = std::vector<HudButton>(13);
+    buttons = std::vector<HudButton>(8);
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayHUD");
     Overlay* overlay2 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("StageOverlayPauseMenu");
     
-    
-    
     Overlay* overlay3 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("TimeWarpOverlay");
     timeWarpContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "TimeWarpInterface"));
+    
     overlay3->add2D(timeWarpContainer);
     timeWarpContainer->addChild(timeWarpLabel);
     
+    //Only add the amberBG for the Amber level.
+    if ( tunnel->getPhase() == PHASE_SHAPE_SOUND)
+    {
+        //overlay1->add2D(amberBG);
+
+    }
     
-    Overlay* overlay4 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("EndTallyOverlay");
-    endTallyContainer = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "EndTallyInterface"));
-    overlay4->add2D(endTallyContainer);
-    endTallyContainer->addChild(endTallyTimeLabel);
-    endTallyContainer->addChild(endTallyScoreLabel);
+    overlay1->add2D(HudEntire);
+    HudEntire->addChild(HudLeftPanel);
+    HudEntire->addChild (HudRightPanel);
+    HudEntire->addChild(HudTopPanel);
+    HudLeftPanel->addChild(leftZapperButtonBackground);
+    HudRightPanel->addChild(rightZapperButtonBackground);
+    HudLeftPanel->addChild(HudLeftZapper);
+    HudRightPanel->addChild(HudRightZapper);
+    HudTopPanel->addChild(HudFuelBar);
     
-    //overlay1->add2D(healthArea);
-    //overlay1->add2D(barHP);
-    //overlay1->add2D(indicator);
-    
-    overlay1->add2D(GUITopPanel);
+    //for (int i = 0; i < HudFuelContainers.size(); ++i)
+    //    HudTopPanel->addChild(HudFuelContainers[i]);
+    //for (int i = 0; i < HudFuelBars.size(); ++i)
+    //   HudTopPanel->addChild(HudFuelBars[i]);
     
     overlay1->add2D(pauseBackground);
-    for (int i = 0; i < collectionBar.size(); ++i)
+    //for (int i = 0; i < collectionBar.size(); ++i)
+    for (int i = collectionBar.size() - 1; i >= 0; --i)
         overlay1->add2D(collectionBar[i]);
     
-    overlay1->add2D(powerup1Background);
-    overlay1->add2D(powerup2Background);
-    overlay1->add2D(powerup3Background);
     overlay1->add2D(nbackDisplayBackground);
     nbackDisplayBackground->addChild(nbackDisplayLabel);
-    //overlay1->add2D(toggle1Background);
-    //overlay1->add2D(toggle2Background);
-    //overlay1->add2D(toggle3Background);
-    //overlay1->add2D(toggle4Background);
-    //toggle1Background->addChild(toggle1TextArt);
-    //toggle2Background->addChild(toggle2TextArt);
-    //toggle3Background->addChild(toggle3TextArt);
-    //toggle4Background->addChild(toggle4TextArt);
-    overlay1->add2D(toggleIndicator);
     overlay1->add2D(panelText);
     panelText->addChild(label1);
     panelText->addChild(label2);
@@ -389,51 +395,136 @@ void HudStage::alloc()
     panelText->addChild(label5prompt);
     panelText->addChild(label6);
     panelText->addChild(label7);
-    overlay2->add2D(resumeButtonBackground);
-    overlay2->add2D(nextButtonBackground);
-    overlay2->add2D(restartButtonBackground);
-    overlay2->add2D(levelSelectButtonBackground);
+    overlay2->add2D(pauseBaseBackground);
+    overlay2->add2D(pauseNavigationBackground);
+    overlay2->add2D(goBaseBackground);
+    overlay2->add2D(goBackground);
+    pauseNavigationBackground->addChild(pausePanelPlay);
+    pauseNavigationBackground->addChild(pausePanelForward);
+    pauseNavigationBackground->addChild(pausePanelBack);
+    pauseNavigationBackground->addChild(pausePanelMenu);
+    pauseNavigationBackground->addChild(resumeButtonBackground);
+    pauseNavigationBackground->addChild(nextButtonBackground);
+    pauseNavigationBackground->addChild(restartButtonBackground);
+    pauseNavigationBackground->addChild(levelSelectButtonBackground);
     
-    overlay1->add2D(goBackground);
     overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
     
+
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
     overlays.push_back(overlay3);
-    overlays.push_back(overlay4);
     
     speedSlider = new HudSlider();
     
-    // Horizontal slider
-    //speedSlider->setSlider("speed", overlays[0], Vector2(0.25, 0.45), Vector2(0.50, 0.10), Vector2(0.10, 0.10), false,
-    //                       globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
-    
-    // Vertical Slider
-    speedSlider->setSlider("speed", overlays[0], Vector2(0.04, 0.25), Vector2(0.03, 0.55), Vector2(0.03, 0.09), true,
+    // Horizontal Slider
+    speedSlider->setSlider("speed", overlays[1], Vector2(0.20, 0.35), Vector2(0.60, 0.03), Vector2(0.05, 0.03), false,
                            globals.minCamSpeed, globals.maxCamSpeed, globals.maxCamSpeed - globals.minCamSpeed + 1, sliderRangeBackground, sliderBallBackground);
     
     // Set the ball position to the previous speed setting if the player played this level before
     // Otherwise, use the suggested speed
     PlayerProgress levelPerformance = player->getLevelProgress(player->getLevelRequestRow(), player->getLevelRequestCol());
     speedSlider->adjust();
-    if (levelPerformance.initSpeedSetting >= 0)
-        speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+    //std::cout << "Performance: " << levelPerformance.initSpeedSetting << std::endl;
+    
+    if(player->levelRequest)
+    {
+        // Set starting speed based on speeds tracked from the scheduler
+        // Each task column tracks a speed
+        double startingSpeed = 15.0;
+        
+        // If assigned a specific level (via scheduler)
+        switch (player->levelRequest->first.phaseX)
+        {
+            case PHASE_COLOR_SOUND:
+            {
+                if (!player->scheduler->firstTimeA)
+                    startingSpeed = player->scheduler->speedA;
+                else
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
+                break;
+            }
+            case PHASE_SHAPE_SOUND:
+            {
+                //overlay1->add2D(amberBG);
+
+                if (!player->scheduler->firstTimeB)
+                    startingSpeed = player->scheduler->speedB;
+                else
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
+                break;
+            }
+            case PHASE_SOUND_ONLY:
+            {
+                if (!player->scheduler->firstTimeC)
+                    startingSpeed = player->scheduler->speedC;
+                else
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
+                break;
+            }
+            case PHASE_ALL_SIGNAL:
+            {
+                if (!player->scheduler->firstTimeD)
+                    startingSpeed = player->scheduler->speedD;
+                else
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
+                break;
+            }
+            case PHASE_COLLECT:
+            {
+                if (!player->scheduler->firstTimeE)
+                    startingSpeed = player->scheduler->speedE;
+                else
+                    startingSpeed = player->scheduler->predictAverageStartingSpeed(globals.initialVelocity);
+                break;
+            }
+            default:
+                speedSlider->setBallPosition(globals.initCamSpeed);
+                break;
+        }
+        
+        speedSlider->setBallPosition(startingSpeed);
+    }
     else
-        speedSlider->setBallPosition(globals.initCamSpeed);
+    {
+        // If level played by 2-D grid select
+        if (levelPerformance.initSpeedSetting >= 0)
+            speedSlider->setBallPosition(levelPerformance.initSpeedSetting);
+        else
+            speedSlider->setBallPosition(globals.initCamSpeed);
+    }
+    player->setBaseSpeed(speedSlider->getIndex());
+    std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
+    setCollectionBar(true, 0.0f); // Do not do in InitOverlay, it is called constantly on IPads
 }
 
 void HudStage::dealloc()
 {
     // Delete children first, then parents
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(healthArea);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(barHP);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(indicator);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(amberBG);
+
+    
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBaseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderRangeBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(sliderBallBackground);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(GUITopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudEntire);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudTopPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightPanel);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudLeftZapper);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudRightZapper);
+    /*
+    for (int i = 0; i < HudFuelContainers.size(); ++i)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelContainers[i]);
+    for (int i = 0; i < HudFuelBars.size(); ++i)
+        OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelBars[i]);
+    HudFuelContainers.clear();
+    HudFuelBars.clear();
+    */
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(HudFuelBar);
     for (int i = 0; i < collectionBar.size(); ++i)
         OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(collectionBar[i]);
     collectionBar.clear();
@@ -447,39 +538,40 @@ void HudStage::dealloc()
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label6);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(label7);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpLabel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyTimeLabel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyScoreLabel);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nbackDisplayLabel);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1TextArt);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2TextArt);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle3TextArt);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle4TextArt);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle1Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle2Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle3Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggle4Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(toggleIndicator);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup1Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup2Background);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(powerup3Background);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBaseBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseNavigationBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pausePanelPlay);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pausePanelForward);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pausePanelBack);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pausePanelMenu);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(resumeButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(nextButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(restartButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(levelSelectButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(leftZapperButtonBackground);
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(rightZapperButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(panelText);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(timeWarpContainer);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(endTallyContainer);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[1]);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[2]);
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[3]);
     if (speedSlider) delete speedSlider;
     speedSlider = NULL;
 }
 
+// Reinitializes overlay resources. Also called when screen is adjusted
 void HudStage::initOverlay()
 {
+    float AR = static_cast<float>(globals.screenHeight) / globals.screenWidth;
+    
+    
+    amberBG->setMetricsMode(GMM_RELATIVE);
+    amberBG->setPosition(0.0, 0.0);
+    amberBG->setDimensions(1, 1);
+    amberBG->setMaterialName("General/BackGroundOrange");
+    
     // Link and Set Resources
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
@@ -489,301 +581,196 @@ void HudStage::initOverlay()
     timeWarpContainer->setPosition(0.35, 0.15);
     timeWarpContainer->setDimensions(0.25, 0.25);
     
-    endTallyContainer->setMetricsMode(GMM_RELATIVE);
-    endTallyContainer->setPosition(0.375, 0.15);
-    endTallyContainer->setDimensions(0.25, 0.25);
+    //HudEntire->setMetricsMode(GMM_RELATIVE);
+    //HudEntire->setPosition(0.0, 0.0);
+    //HudEntire->setDimensions(1.0, 1.0);
+    //HudEntire->setMaterialName("General/GUIMainHudEntire");
     
-    healthArea->setMetricsMode(GMM_RELATIVE);
-    healthArea->setPosition(globals.HPBarXRef - 0.01, globals.HPBarYRef - 0.01);
-    healthArea->setDimensions(globals.HPBarWidth + 0.02, globals.HPBarHeight + 0.02);
-    barHP->setMetricsMode(GMM_RELATIVE);
-    barHP->setPosition(globals.HPBarXRef, globals.HPBarYRef);
-    barHP->setDimensions(0.0, globals.HPBarHeight);
-    barHP->setMaterialName("General/BarColors");
-    if (globals.HPPositiveLimit >= 8)
-    {
-        healthArea->setMaterialName("General/BarColors3");
-        barHP->setDimensions(healthArea->getWidth() * (14.0 / 14.0), healthArea->getHeight());
-    }
-    else if (globals.HPPositiveLimit >= 5)
-    {
-        healthArea->setMaterialName("General/BarColors2");
-        barHP->setDimensions(healthArea->getWidth() * (11.0 / 14.0), healthArea->getHeight());
-    }
-    else //if (globals.HPPositiveLimit >= 3)
-    {
-        healthArea->setMaterialName("General/BarColors1");
-        barHP->setDimensions(healthArea->getWidth() * (9.0 / 14.0), healthArea->getHeight());
-    }
+    HudLeftPanel->setMetricsMode(GMM_RELATIVE);
+    HudLeftPanel->setPosition(0.000, 0.000);
+    HudLeftPanel->setDimensions(0.260, 1.000);
+    HudLeftPanel->setMaterialName("General/GUIMainHudLeft");
     
-    indicator->setMetricsMode(GMM_RELATIVE);
-    indicator->setPosition(barHP->getLeft(), barHP->getTop() - 0.005);
-    indicator->setDimensions(healthArea->getWidth() / 20, globals.HPBarHeight + 0.01);
-    indicator->setMaterialName("General/Indicator");
+    HudTopPanel->setMetricsMode(GMM_RELATIVE);
+    HudTopPanel->setPosition(0.000, 0.030);
+    HudTopPanel->setDimensions(1.000, 0.101);
+    HudTopPanel->setMaterialName("General/GUIMainHudBar");
     
-    GUITopPanel->setMetricsMode(GMM_RELATIVE);
-    GUITopPanel->setPosition(0.0, 0.0);
-    GUITopPanel->setDimensions(1.0, 1.0);
-    GUITopPanel->setMaterialName("General/GUIMainHud");
+    HudRightPanel->setMetricsMode(GMM_RELATIVE);
+    HudRightPanel->setPosition(0.740, 0.000);
+    HudRightPanel->setDimensions(0.260, 1.000);
+    HudRightPanel->setMaterialName("General/GUIMainHudRight");
     
-    float x = 0.285;
-    float y = 0.035;
-    float wpadding = 0.0050;
-    float width = 0.0425;
-    float height = 0.075;
-    std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
-    for (int i = 0; i < collectionBar.size(); ++i)
-    {
-        collectionBar[i]->setMetricsMode(GMM_RELATIVE);
-        collectionBar[i]->setPosition(x + wpadding, y);
-        collectionBar[i]->setDimensions(width, height);
-        x += 2 * wpadding + width;
-    }
+    HudFuelBar->setMetricsMode(GMM_RELATIVE);
+    HudFuelBar->setPosition(0.760, 0.013);
+    HudFuelBar->setMaterialName("General/GUIFuelBar");
     
-    label1->setMetricsMode(GMM_PIXELS);
+    float leftZapperX = 0.016;
+    float leftZapperY = 0.000;
+    float rightZapperX = 0.178;
+    float rightZapperY = 0.000;
+    float dimZapperX = 0.066;
+    float dimZapperY = 1.000;
+    HudLeftZapper->setMetricsMode(GMM_RELATIVE);
+    HudLeftZapper->setPosition(leftZapperX, leftZapperY);
+    HudLeftZapper->setDimensions(dimZapperX, dimZapperY);
+    
+    HudRightZapper->setMetricsMode(GMM_RELATIVE);
+    HudRightZapper->setPosition(rightZapperX, rightZapperY);
+    HudRightZapper->setDimensions(dimZapperX, dimZapperY);
+    
+    label1->setMetricsMode(GMM_RELATIVE);
     label1->setAlignment(TextAreaOverlayElement::Center);
-    label1->setPosition(globals.label1_posX, globals.label1_posY);
-    label1->setCharHeight(globals.screenHeight / 40 * FONT_SZ_MULT);
-    label1->setFontName("Arial");
+    label1->setPosition(0.50, 0.20);
+    label1->setCharHeight(0.064 * FONT_SZ_MULT);
+    label1->setFontName("MainBig");
     label1->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
     
     label2->setMetricsMode(GMM_RELATIVE);
     label2->setAlignment(TextAreaOverlayElement::Left);
-    label2->setPosition(0.05, 0.035);
-    //label2->setAlignment(TextAreaOverlayElement::Right);
-    //label2->setPosition(0.21, 0.04);
+    label2->setPosition(0.060, 0.040);
     label2->setCharHeight(0.025 * FONT_SZ_MULT);
     label2->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label2->setFontName("Arial");
+    label2->setFontName("MainSmall");
     
     label2prompt->setMetricsMode(GMM_RELATIVE);
     label2prompt->setAlignment(TextAreaOverlayElement::Left);
-    label2prompt->setPosition(0.06, 0.08);
-    //label2prompt->setAlignment(TextAreaOverlayElement::Center);
-    //label2prompt->setPosition(0.12, 0.08);
+    label2prompt->setPosition(0.06, 0.085);
     label2prompt->setCharHeight(0.02 * FONT_SZ_MULT);
     label2prompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label2prompt->setFontName("Arial");
+    label2prompt->setFontName("MainSmall");
     label2prompt->setCaption("Time");
     
     label3->setMetricsMode(GMM_RELATIVE);
     label3->setAlignment(TextAreaOverlayElement::Right);
-    label3->setPosition(0.20, 0.08);
+    label3->setPosition(0.20, 0.085);
     label3->setCharHeight(0.02 * FONT_SZ_MULT);
     label3->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label3->setFontName("Arial");
+    label3->setFontName("MainSmall");
     
     label4->setMetricsMode(GMM_RELATIVE);
     label4->setAlignment(TextAreaOverlayElement::Center);
-    label4->setPosition(0.042, 0.175);
+    label4->setPosition(0.040, 0.215);
     label4->setCharHeight(0.02 * FONT_SZ_MULT);
     label4->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label4->setFontName("Arial");
+    label4->setFontName("MainSmall");
+    label4->setCaption(Util::toStringInt(speedSlider->getIndex()));
     
     label5->setMetricsMode(GMM_RELATIVE);
     label5->setAlignment(TextAreaOverlayElement::Right);
-    label5->setPosition(0.92, 0.035);
+    label5->setPosition(0.92, 0.040);
     label5->setCharHeight(0.025 * FONT_SZ_MULT);
     label5->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label5->setFontName("Arial");
+    label5->setFontName("MainSmall");
     
     label5prompt->setMetricsMode(GMM_RELATIVE);
     label5prompt->setAlignment(TextAreaOverlayElement::Right);
-    label5prompt->setPosition(0.92, 0.08);
-    //label5prompt->setAlignment(TextAreaOverlayElement::Center);
-    //label5prompt->setPosition(0.85, 0.08);
+    label5prompt->setPosition(0.92, 0.085);
     label5prompt->setCharHeight(0.02 * FONT_SZ_MULT);
     label5prompt->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    label5prompt->setFontName("Arial");
-    label5prompt->setCaption("Score");
+    label5prompt->setFontName("MainSmall");
+    label5prompt->setCaption("Fuel");
     
-    label6->setMetricsMode(GMM_PIXELS);
+    label6->setMetricsMode(GMM_RELATIVE);
     label6->setAlignment(TextAreaOverlayElement::Center);
-    label6->setPosition(globals.label6_posX, globals.label6_posY);
-    label6->setCharHeight(globals.screenHeight / 50 * FONT_SZ_MULT);
-    label6->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    label6->setFontName("Arial");
+    label6->setPosition(0.5, 0.3);
+    label6->setCharHeight(0.064 * FONT_SZ_MULT);
+    label6->setFontName("MainSmall");
     
-    label7->setMetricsMode(GMM_PIXELS);
+    label7->setMetricsMode(GMM_RELATIVE);
     label7->setAlignment(TextAreaOverlayElement::Center);
-    label7->setPosition(globals.label7_posX, globals.label7_posY);
-    label7->setCharHeight(globals.screenHeight / 50 * FONT_SZ_MULT);
-    label7->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    label7->setFontName("Arial");
+    label7->setPosition(0.50, 0.12);
+    label7->setFontName("MainSmall");
     
     timeWarpLabel->setMetricsMode(GMM_RELATIVE);
     timeWarpLabel->setAlignment(TextAreaOverlayElement::Center);
     timeWarpLabel->setPosition(0, 0);
     timeWarpLabel->setCharHeight(0.05 * FONT_SZ_MULT);
     timeWarpLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 0.0));
-    timeWarpLabel->setFontName("Arial");
+    timeWarpLabel->setFontName("MainSmall");
     
-    endTallyTimeLabel->setMetricsMode(GMM_PIXELS);
-    endTallyTimeLabel->setAlignment(TextAreaOverlayElement::Left);
-    endTallyTimeLabel->setPosition(0, 0);
-    endTallyTimeLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
-    endTallyTimeLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
-    endTallyTimeLabel->setFontName("Arial");
+    float pauseNavHeight = 0.45;
+    float pauseNavWidth = pauseNavHeight * AR;
+    float pauseNavX = 0.50 - pauseNavWidth / 2;
+    float pauseNavY = 0.54 - pauseNavHeight / 2 + pauseNavOffset;
+    pauseNavigationBackground->setMetricsMode(GMM_RELATIVE);
+    pauseNavigationBackground->setPosition(pauseNavX, pauseNavY);
+    pauseNavigationBackground->setDimensions(pauseNavWidth, pauseNavHeight);
     
-    endTallyScoreLabel->setMetricsMode(GMM_PIXELS);
-    endTallyScoreLabel->setAlignment(TextAreaOverlayElement::Right);
-    endTallyScoreLabel->setPosition(200, 20);
-    endTallyScoreLabel->setCharHeight(globals.screenHeight/40 * FONT_SZ_MULT);
-    endTallyScoreLabel->setColour(ColourValue::ColourValue(1.0,1.0,0.0));
-    endTallyScoreLabel->setFontName("Arial");
+    pauseBaseBackground->setMetricsMode(GMM_RELATIVE);
+    pauseBaseBackground->setPosition(0.325, 0.675 + pauseNavOffset);
+    pauseBaseBackground->setDimensions(0.35, 0.35);
+    // Little Panel Specifics
+    float len1 = 0.165;
+    float len2 = 0.100;
+    pausePanelPlay->setMetricsMode(GMM_RELATIVE);
+    pausePanelPlay->setPosition(0.142 * AR, 0.082);
+    pausePanelPlay->setDimensions(len1 * AR, len2);
+    pausePanelForward->setMetricsMode(GMM_RELATIVE);
+    pausePanelForward->setPosition(0.265 * AR, 0.142);
+    pausePanelForward->setDimensions(len2 * AR, len1);
+    pausePanelBack->setMetricsMode(GMM_RELATIVE);
+    pausePanelBack->setPosition(0.080 * AR, 0.142);
+    pausePanelBack->setDimensions(len2 * AR, len1);
+    pausePanelMenu->setMetricsMode(GMM_RELATIVE);
+    pausePanelMenu->setPosition(0.142 * AR, 0.268);
+    pausePanelMenu->setDimensions(len1 * AR, len2);
+    pauseNavigationBackground->setMaterialName("General/PauseNav");
+    pausePanelPlay->setMaterialName("General/PauseGrayPlay");
+    pausePanelBack->setMaterialName("General/PauseGrayBack");
+    pausePanelForward->setMaterialName("General/PauseGrayForward");
+    pausePanelMenu->setMaterialName("General/PauseGrayMenu");
     
-    toggle1TextArt->setMetricsMode(GMM_RELATIVE);
-    toggle1TextArt->setPosition(0.0250, 0.0025);
-    toggle1TextArt->setDimensions(0.03, 0.08);
+    float pauseheight = 0.10;
+    float pausewidth = pauseheight * AR;
+    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.912, 0.818), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
     
-    toggle2TextArt->setMetricsMode(GMM_RELATIVE);
-    toggle2TextArt->setPosition(0.0250, 0.0025);
-    toggle2TextArt->setDimensions(0.03, 0.08);
+    float gheight = 0.35;
+    float gwidth = gheight * AR;
+    float gx = 0.50 - gwidth / 2;
+    float gy = 0.50 - gheight / 2 + goOffset;
+    buttons[BUTTON_GO].setButton("go", overlays[1], GMM_RELATIVE, Vector2(gx, gy), Vector2(gwidth, gheight), goBackground, NULL);
     
-    toggle3TextArt->setMetricsMode(GMM_RELATIVE);
-    toggle3TextArt->setPosition(0.0250, 0.0025);
-    toggle3TextArt->setDimensions(0.03, 0.08);
+    sliderRangeBackground->setPosition(0.20, 0.35 + goOffset);
+    goBaseBackground->setMetricsMode(GMM_RELATIVE);
+    goBaseBackground->setPosition(0.325, 0.675 + goOffset);
+    goBaseBackground->setDimensions(0.35, 0.35);
     
-    toggle4TextArt->setMetricsMode(GMM_RELATIVE);
-    toggle4TextArt->setPosition(0.0250, 0.0025);
-    toggle4TextArt->setDimensions(0.03, 0.08);
-    toggle4TextArt->setMaterialName("General/GUIToggleTextNumber0");
+    float qheight = 0.085;
+    float qwidth = qheight * AR;
+    // Sets positions in local 2D space (relative to entire pause nav)
+    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675 - pauseNavX, 0.4075 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54 - pauseNavX, 0.50 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395 - pauseNavX, 0.50 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675 - pauseNavX, 0.59 - pauseNavY + pauseNavOffset), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
+    // Sets positions in global 2D space
+    //buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.4075), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
+    //buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.54, 0.50), Vector2(qwidth, qheight), nextButtonBackground, NULL);
+    //buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.395, 0.50), Vector2(qwidth, qheight), restartButtonBackground, NULL);
+    //buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.4675, 0.59), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
     
-    float pauseheight = 0.075;
-    float pausewidth = pauseheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_PAUSE].setButton("pause", overlays[0], GMM_RELATIVE, Vector2(0.91, 0.79), Vector2(pausewidth, pauseheight), pauseBackground, NULL);
-    
-    float gheight = 0.10;
-    float gwidth = gheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_GO].setButton("go", overlays[0], GMM_RELATIVE, Vector2(0.50 - gwidth / 2, 0.60), Vector2(gwidth, gheight), goBackground, NULL);
-    
-    buttons[BUTTON_TOGGLE1].setButton("toggle1", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.31), Vector2(0.08, 0.08), toggle1Background, NULL);
-    buttons[BUTTON_TOGGLE2].setButton("toggle2", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.43), Vector2(0.08, 0.08), toggle2Background, NULL);
-    buttons[BUTTON_TOGGLE3].setButton("toggle3", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.55), Vector2(0.08, 0.08), toggle3Background, NULL);
-    buttons[BUTTON_TOGGLE4].setButton("toggle4", overlays[0], GMM_RELATIVE, Vector2(0.897, 0.67), Vector2(0.08, 0.08), toggle4Background, NULL);
-    float pheight = 0.12;
-    float pwidth = pheight * globals.screenHeight / globals.screenWidth;
-    buttons[BUTTON_POWERUP1].setButton("powerup1", overlays[0], GMM_RELATIVE, Vector2(0.015, 0.45), Vector2(pwidth, pheight), powerup1Background, NULL);
-    buttons[BUTTON_POWERUP2].setButton("powerup2", overlays[0], GMM_RELATIVE, Vector2(0.015, 0.60), Vector2(pwidth, pheight), powerup2Background, NULL);
-    buttons[BUTTON_POWERUP3].setButton("powerup3", overlays[0], GMM_RELATIVE, Vector2(0.015, 0.75), Vector2(pwidth, pheight), powerup3Background, NULL);
-    
-    float qheight = 0.10;
-    float qwidth = 0.30;
-    buttons[BUTTON_RESUME].setButton("resume", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.30), Vector2(qwidth, qheight), resumeButtonBackground, NULL);
-    buttons[BUTTON_NEXT].setButton("next", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.42), Vector2(qwidth, qheight), nextButtonBackground, NULL);
-    buttons[BUTTON_RESTART].setButton("restart", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.54), Vector2(qwidth, qheight), restartButtonBackground, NULL);
-    buttons[BUTTON_LEVELSELECT].setButton("levelselect", overlays[1], GMM_RELATIVE, Vector2(0.35, 0.66), Vector2(qwidth, qheight), levelSelectButtonBackground, NULL);
-    
-    toggleIndicator->setMetricsMode(GMM_RELATIVE);
-    toggleIndicator->setDimensions(0.08, 0.08);
-    toggleIndicator->setMaterialName("General/GUIToggleIndicator");
-    switch (player->getToggleBack())
-    {
-        case 0:
-            toggleIndicator->setPosition(0.895, 0.45);
-            break;
-        case 1:
-            toggleIndicator->setPosition(0.895, 0.55);
-            break;
-        case 2:
-            toggleIndicator->setPosition(0.895, 0.65);
-            break;
-        case 3:
-            toggleIndicator->setPosition(0.895, 0.75);
-            break;
-    }
+    // padding for the button
+    float bufferZapperX = 0.04;
+    float bufferZapperY = 0.04;
+    buttons[BUTTON_LEFTZAPPER].setButton("leftzap", overlays[0], GMM_RELATIVE, Vector2(leftZapperX - bufferZapperX / 2, leftZapperY - bufferZapperY / 2), Vector2(dimZapperX + bufferZapperX, dimZapperY + bufferZapperY), leftZapperButtonBackground, NULL);
+    buttons[BUTTON_RIGHTZAPPER].setButton("rightzap", overlays[0], GMM_RELATIVE, Vector2(rightZapperX - bufferZapperX / 2, rightZapperY - bufferZapperY / 2), Vector2(dimZapperX + bufferZapperX, dimZapperY + bufferZapperY), rightZapperButtonBackground, NULL);
     
     pauseBackground->setMaterialName("General/PauseButton");
-    //sliderRangeBackground->setMaterialName("General/SliderRangeHorizontal");
-    sliderRangeBackground->setMaterialName("General/SliderRangeVertical");
-    sliderBallBackground->setMaterialName("General/SliderBall");
-    toggle1Background->setMaterialName("General/GUIToggleButton3");
-    toggle2Background->setMaterialName("General/GUIToggleButton2");
-    toggle3Background->setMaterialName("General/GUIToggleButton1");
-    toggle4Background->setMaterialName("General/GUIToggleButton0");
-    powerup1Background->setMaterialName("General/GUIPowerupButtonBlank");
-    powerup2Background->setMaterialName("General/GUIPowerupButtonBlank");
-    powerup3Background->setMaterialName("General/GUIPowerupButtonBlank");
-    
-    resumeButtonBackground->setMaterialName("General/ResumeButtonRound");
-    nextButtonBackground->setMaterialName("General/NextButtonRound");
-    restartButtonBackground->setMaterialName("General/RestartButtonRound");
-    levelSelectButtonBackground->setMaterialName("General/LevelSelectButtonRound");
+    pauseBaseBackground->setMaterialName("General/PauseBase");
+    goBaseBackground->setMaterialName("General/PauseBase");
     
     nbackDisplayBackground->setMetricsMode(GMM_RELATIVE);
-    nbackDisplayBackground->setPosition(0.897, 0.175);
-    nbackDisplayBackground->setDimensions(0.08, 0.08);
-    switch (tunnel->getPhase())
-    {
-        case 'A':
-            nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
-            break;
-        case 'B':
-            nbackDisplayBackground->setMaterialName("General/GUIToggleButton1");
-            break;
-        case 'C':
-            nbackDisplayBackground->setMaterialName("General/GUIToggleButton2");
-            break;
-        case 'D':
-            nbackDisplayBackground->setMaterialName("General/GUIToggleButton3");
-            break;
-        default:
-            nbackDisplayBackground->setMaterialName("General/GUIToggleButton0");
-            break;
-    }
+    nbackDisplayBackground->setPosition(0.910, 0.205);
+    nbackDisplayBackground->setDimensions(0.075, 0.08);
+    //nbackDisplayBackground->setMaterialName("General/GUIToggleButton");
     
     nbackDisplayLabel->setMetricsMode(GMM_RELATIVE);
     nbackDisplayLabel->setAlignment(TextAreaOverlayElement::Center);
     nbackDisplayLabel->setPosition(0.04, 0.0225);
     nbackDisplayLabel->setCharHeight(0.03 * FONT_SZ_MULT);
     nbackDisplayLabel->setColour(ColourValue::ColourValue(1.0, 1.0, 1.0));
-    nbackDisplayLabel->setFontName("Arial");
+    nbackDisplayLabel->setFontName("MainSmall");
     nbackDisplayLabel->setCaption(Util::toStringInt(tunnel->getHighestCriteria()));
-    
-    // NOTE: should have a button member function called inactivate so it deactivates
-    // in the queryGUI function! Hiding currently works since the effect of toggle
-    // is negligible in other logic
-    toggle1TextArt->hide();
-    toggle2TextArt->hide();
-    toggle3TextArt->hide();
-    toggle4TextArt->hide();
-    toggleIndicator->hide();
-    powerup1Background->hide();
-    powerup2Background->hide();
-    powerup3Background->hide();
-    if (tunnel->getMode() != STAGE_MODE_RECESS)
-    {
-        if (tunnel->isMultiCollectionTask())
-        {
-            // Bad hack but
-            // Don't show 3-Back for multi-collection tasks of 1 or less.
-            if (player->getLevelRequestRow() > 0)
-                toggle1TextArt->show();
-            toggle2TextArt->show();
-            toggle3TextArt->show();
-            toggle4TextArt->show();
-            toggleIndicator->show();
-        }
-        else
-        {
-            switch (player->getToggleBack())
-            {
-                case 0:
-                    toggle1TextArt->show();
-                    break;
-                case 1:
-                    toggle2TextArt->show();
-                    break;
-                case 2:
-                    toggle3TextArt->show();
-                    break;
-                case 3:
-                    toggle4TextArt->show();
-                    break;
-            }
-            toggleIndicator->hide();
-        }
-    }
 }
 
 void HudStage::link(Player* player, Tunnel* tunnel)
@@ -803,19 +790,220 @@ bool HudStage::isGoButtonActive() const
     return goButtonActive;
 }
 
-void HudStage::notifyGoButton(bool active)
+void HudStage::setGoButtonState(bool active, bool color)
 {
     goButtonActive = active;
     buttons[BUTTON_GO].setActive(goButtonActive);
     if (goButtonActive)
     {
+        goOffsetDest = 0.0;
         buttons[BUTTON_GO].show();
-        goBackground->setMaterialName("General/ButtonGo");
     }
     else
     {
+        goOffsetDest = 0.7;
         buttons[BUTTON_GO].hide();
+    }
+    if (color)
+        goBackground->setMaterialName("General/ButtonGo");
+    else
         goBackground->setMaterialName("General/ButtonGoGray");
+}
+
+void HudStage::setPauseNavDest(float navOffset)
+{
+    pauseNavOffsetDest = navOffset;
+}
+
+void HudStage::setSpeedDialState(bool active)
+{
+    sliderRangeBackground->setMaterialName("General/SpeedSliderRangeHorizontal");
+    if (active)
+        sliderBallBackground->setMaterialName("General/SpeedSliderBall");
+    else
+        sliderBallBackground->setMaterialName("General/SpeedSliderBallOff");
+}
+
+void HudStage::setPauseNavSettings(bool resumeAvail, bool forwardAvail, bool menuAvail, bool backAvail)
+{
+    // Note: These panels contain grayed versions of the buttons. Therefore, showing them means it's inactive.
+    if (resumeAvail) pausePanelPlay->hide();
+    else pausePanelPlay->show();
+    if (forwardAvail) pausePanelForward->hide();
+    else pausePanelForward->show();
+    if (menuAvail) pausePanelMenu->hide();
+    else pausePanelMenu->show();
+    if (backAvail) pausePanelBack->hide();
+    else pausePanelBack->show();
+}
+
+// Sets the collection bar positions and images.
+// If instant parameter is true, the positions will be set instantly,
+// otherwise it will animate towards their designated location at a speed.
+void HudStage::setCollectionBar(bool instant, float elapsed)
+{
+    int numSatisfied = tunnel->getNumSatisfiedCriteria();
+    
+    // How many has the player collected?
+    int starPhase = 0;
+    if (numSatisfied < 4)
+        starPhase = 0;
+    else if (numSatisfied < 8)
+        starPhase = 1;
+    else if (numSatisfied < 12)
+        starPhase = 2;
+    else
+        starPhase = 3;
+    
+    // Designate positions for each collection item
+    float x = 0.295;
+    float y = 0.035;
+    float wpadding = 0.0075;
+    float width = 0.0425;
+    float height = 0.075;
+    // When we win or lose, almost all of them are collapsed,
+    // so we want to re-adjust so it looks evenly split.
+    if ((tunnel->isDone() && tunnel->getMode() != STAGE_MODE_RECESS) ||
+        starPhase == 3)
+    {
+        x = 0.3125;
+        wpadding = 0.0250;
+        starPhase = 3;
+    }
+    
+    std::vector<CollectionCriteria> criterias = tunnel->getCollectionCriteria();
+    for (int i = 0; i < collectionBar.size(); ++i)
+    {
+        collectionBar[i]->setMetricsMode(GMM_RELATIVE);
+        collectionBar[i]->setDimensions(width, height);
+        if (instant)
+        {
+            collectionBar[i]->setPosition(x + wpadding, y);
+        }
+        else
+        {
+            // Move from current position towards destination
+            Vector2 to = Vector2(x + wpadding, y);
+            Vector2 from = Vector2(collectionBar[i]->getLeft(), collectionBar[i]->getTop());
+            Vector2 delta = (to - from);
+            if (delta.squaredLength() <= 0.000005f)
+                collectionBar[i]->setPosition(to.x, to.y);
+            else
+            {
+                Vector2 npos = from + delta * 3 * elapsed;
+                collectionBar[i]->setPosition(npos.x, npos.y);
+            }
+        }
+        
+        // Check to see if we should print our next tablet to the right
+        //
+        // is this tablet in the set that should be expanded?
+        //if (i / 4 == starPhase ||
+        //    // Is the next tablet in a new set and is it not the trophy tablet?
+        //    ((i + 1) % 4 == 0 && ((i + 1) != 12 || starPhase >= 3)))
+        if (i / 4 == starPhase || (i + 1) % 4 == 0)
+            x += 2 * wpadding + width;
+        
+        // Assign an image based on what type of collection and whether it is collected
+        if (i < criterias.size())
+        {
+            std::string scoreName = "General/GUICollection";
+            
+            // For just a single n-back and task
+            switch (i / 4)
+            {
+                case 0:
+                    scoreName += "0";
+                    break;
+                case 1:
+                    scoreName += "1";
+                    break;
+                case 2:
+                    scoreName += "2";
+                    break;
+                case 3:
+                    scoreName += "3";
+                    break;
+                default:
+                    scoreName += "0";
+                    break;
+            }
+            
+            if (criterias[i].collected)
+            {
+                if (i == 12)
+                    scoreName = "General/GUICollectionTrophyFull";
+                else
+                    scoreName += "Filled";
+            }
+            else
+            {
+                if (i == 12)
+                    scoreName = "General/GUICollectionTrophyEmpty";
+                else
+                    scoreName += "Blank";
+            }
+            collectionBar[i]->setMaterialName(scoreName);
+        }
+        else
+        {
+            collectionBar[i]->setMaterialName("General/GUICollectionGreyed");
+        }
     }
 }
 
+void HudStage::setFuelBar(float elapsed)
+{
+    float totalWidth = 0.180;
+    float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
+    HudFuelBar->setDimensions(percentFuel * totalWidth, 0.056);
+    
+    /*
+     // Animates fuel growth and shrinking to simulate fuel filling the container
+     if (tunnel->getFuelTimer() > prevFuelTimer)
+        fuelBarAnimationTimer = 1.0f;
+     prevFuelTimer = tunnel->getFuelTimer();
+     
+     if (fuelBarAnimationTimer > 0.0f)
+        fuelBarAnimationTimer -= 4 * elapsed;
+     else
+        fuelBarAnimationTimer = 0.0f;
+     
+     // Deals with fuel split into multiple containers depleting from the furthest to the right first
+    float sz = 0.005 * Ogre::Math::Sin(Ogre::Math::PI * fuelBarAnimationTimer);
+    float totalWidth = 0.1725;
+    float numBars = globals.startingHP;
+    float totalPadding = totalWidth * 0.1;
+    float fbPadding = (totalPadding) / (numBars - 1);
+    float fbSize = (totalWidth - totalPadding) / numBars;
+    
+    float percentFuel = tunnel->getFuelTimer() / globals.fuelMax;
+    float fbFuel = 1.0 / numBars;
+    for (int i = 0; i < HudFuelBars.size(); ++i)
+    {
+        HudFuelContainers[i]->setMetricsMode(GMM_RELATIVE);
+        HudFuelContainers[i]->setPosition(0.735 + (fbSize + fbPadding) * i - fbPadding, 0.025 - fbPadding);
+        HudFuelContainers[i]->setDimensions(fbSize + 2 * fbPadding, 0.045 + 2 * fbPadding);
+        HudFuelContainers[i]->setMaterialName("General/GUIFuelContainer");
+        
+        HudFuelBars[i]->setMetricsMode(GMM_RELATIVE);
+        HudFuelBars[i]->setPosition(0.735 + (fbSize + fbPadding) * i - sz / 2, 0.025 - sz / 2);
+        if (i < player->getHP())
+        {
+            percentFuel -= fbFuel;
+            if (percentFuel >= 0.0)
+                HudFuelBars[i]->setDimensions(fbSize + sz, 0.045 + sz);
+            else
+                HudFuelBars[i]->setDimensions(fbSize * ((fbFuel + percentFuel) / fbFuel) + sz, 0.045 + sz);
+            HudFuelBars[i]->setMaterialName("General/GUIFuelBar");
+        }
+        else
+        {
+            percentFuel -= fbFuel;
+            HudFuelBars[i]->setDimensions(fbSize + sz, 0.045 + sz);
+            HudFuelBars[i]->setMaterialName("General/GUIBrokenBar");
+        }
+    }
+    //HudFuelBar->setDimensions(percentFuel * totalWidth, 0.045);
+     */
+}

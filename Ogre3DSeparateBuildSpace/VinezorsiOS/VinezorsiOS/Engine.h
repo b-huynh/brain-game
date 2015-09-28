@@ -16,7 +16,7 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-enum EngineState { ENGINE_NONE, ENGINE_STAGE, ENGINE_LEVEL_SELECTION, ENGINE_MAIN_MENU, ENGINE_CREDITS };
+enum EngineState { ENGINE_NONE, ENGINE_STAGE, ENGINE_SCHEDULER_MENU, ENGINE_LEVEL_SELECTION, ENGINE_MAIN_MENU, ENGINE_CREDITS, ENGINE_MAIN_SETTINGS, ENGINE_CONTROL_SETTINGS, ENGINE_STUDY_SETTINGS, ENGINE_INFORMATION, ENGINE_TAB_SETTINGS };
 
 // Abstract Game Engine class (also known as the GameState in the stack)
 class EngineStateManager; // forward decl
@@ -55,7 +55,7 @@ public:
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
-    virtual void activateAngleTurn(float vel);
+    virtual void activateAngleTurn(float angle, float vel);
     
     virtual void activateReturnFromPopup();
     

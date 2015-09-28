@@ -35,8 +35,8 @@ int main(int argc, char **argv)
     
 	try
     {
-		DemoApp demo;
-		demo.startDemo();
+		OgreApp demo;
+		demo.startDemo("subject100", MUSIC_ENABLED);
     }
 	catch(std::exception& e)
     {

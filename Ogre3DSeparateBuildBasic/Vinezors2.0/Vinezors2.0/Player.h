@@ -34,6 +34,9 @@ struct PlayerLevel {
     int set2Notify; // Shape/Sound
     int set3Notify; // Sound only
     
+    // From Recall
+    float nbackLevel;
+    
     int navigation;
     
     int minSpeed;
@@ -170,12 +173,14 @@ private:
         int runSpeedOut;
         int maxSpeed;
         int navScore;
+        float accuracy;
         int TP;
         int FP;
         int TN;
         int FN;
         int obsHit;
         int obsAvoided;
+        float schedulerLevel;
     };
     std::list<Result> results;
     std::list<Action> actions;

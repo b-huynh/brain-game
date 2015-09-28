@@ -26,16 +26,24 @@ public:
     
     // Used to change the background of the go button
     bool isGoButtonActive() const;
-    void notifyGoButton(bool active);
+    void setGoButtonState(bool active, bool color = true);
+    void setPauseNavDest(float navOffset);
+    void setSpeedDialState(bool active);
+    void setPauseNavSettings(bool nextAvail, bool resumeAvail, bool forwardAvail, bool backAvail);
+    
+    float leftZapT;
+    float rightZapT;
+    
+    HudSlider* speedSlider;
+
 protected:
     Player* player;
     Tunnel* tunnel;
     
     enum ButtonSet {
         BUTTON_PAUSE, BUTTON_GO,
-        BUTTON_TOGGLE1, BUTTON_TOGGLE2, BUTTON_TOGGLE3, BUTTON_TOGGLE4,
-        BUTTON_POWERUP1, BUTTON_POWERUP2, BUTTON_POWERUP3,
-        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT
+        BUTTON_RESUME, BUTTON_NEXT, BUTTON_RESTART, BUTTON_LEVELSELECT,
+        BUTTON_LEFTZAPPER, BUTTON_RIGHTZAPPER
     };
     
     // Overlay items for GAME_STATE_PLAY
@@ -43,12 +51,22 @@ protected:
     PanelOverlayElement* barHP;
     PanelOverlayElement* indicator;
     PanelOverlayElement* pauseBackground;
+    
+    PanelOverlayElement* goBaseBackground;
     PanelOverlayElement* goBackground;
     PanelOverlayElement* sliderRangeBackground;
     PanelOverlayElement* sliderBallBackground;
     
     std::vector<PanelOverlayElement*> collectionBar;
-    PanelOverlayElement* GUITopPanel;
+    PanelOverlayElement* HudEntire;
+    PanelOverlayElement* HudTopPanel;
+    PanelOverlayElement* HudLeftPanel;
+    PanelOverlayElement* HudRightPanel;
+    PanelOverlayElement* HudLeftZapper;
+    PanelOverlayElement* HudRightZapper;
+    //std::vector<PanelOverlayElement*> HudFuelContainers;
+    //std::vector<PanelOverlayElement*> HudFuelBars;
+    PanelOverlayElement* HudFuelBar;
     OverlayContainer* panelText;
     TextAreaOverlayElement* label1;
     TextAreaOverlayElement* label2;
@@ -63,41 +81,45 @@ protected:
     OverlayContainer* timeWarpContainer;
     TextAreaOverlayElement* timeWarpLabel;
     
-    OverlayContainer* endTallyContainer;
-    TextAreaOverlayElement* endTallyTimeLabel;
-    TextAreaOverlayElement* endTallyScoreLabel;
-    
     PanelOverlayElement* nbackDisplayBackground;
     TextAreaOverlayElement* nbackDisplayLabel;
-    PanelOverlayElement* toggleEntireBackground;
-    PanelOverlayElement* toggle1Background;
-    PanelOverlayElement* toggle2Background;
-    PanelOverlayElement* toggle3Background;
-    PanelOverlayElement* toggle4Background;
-    PanelOverlayElement* toggle1TextArt;
-    PanelOverlayElement* toggle2TextArt;
-    PanelOverlayElement* toggle3TextArt;
-    PanelOverlayElement* toggle4TextArt;
-    PanelOverlayElement* toggleIndicator;
     
-    PanelOverlayElement* powerup1Background;
-    PanelOverlayElement* powerup2Background;
-    PanelOverlayElement* powerup3Background;
+    float pauseNavOffset;
+    float pauseNavOffsetDest;
     
+    float goOffset;
+    float goOffsetDest;
+    PanelOverlayElement* pauseBaseBackground;
+    PanelOverlayElement* pauseNavigationBackground;
+    PanelOverlayElement* pausePanelPlay;
+    PanelOverlayElement* pausePanelForward;
+    PanelOverlayElement* pausePanelBack;
+    PanelOverlayElement* pausePanelMenu;
     PanelOverlayElement* resumeButtonBackground;
     PanelOverlayElement* nextButtonBackground;
     PanelOverlayElement* restartButtonBackground;
     PanelOverlayElement* levelSelectButtonBackground;
     
-    HudSlider* speedSlider;
+    PanelOverlayElement* leftZapperButtonBackground;
+    PanelOverlayElement* rightZapperButtonBackground;
+    
+    PanelOverlayElement* amberBG;
+
+    
     
     bool goButtonActive;
+    
+    float prevFuelTimer;
+    float fuelBarAnimationTimer;
     
     void link(Player* player, Tunnel* tunnel);
     void unlink();
     virtual void alloc();
     virtual void dealloc();
     virtual void initOverlay();
+    
+    void setCollectionBar(bool instant, float elapsed);
+    void setFuelBar(float elapsed);
 };
 
 #endif /* defined(__Vinezors2_0__HudStage__) */

@@ -54,7 +54,7 @@
 #    define OGRE_STATIC_GLES 1
 #    ifdef OGRE_USE_GLES2
 #      define OGRE_STATIC_GLES2 1
-#      define USE_RTSHADER_SYSTEM
+#      define INCLUDE_RTSHADER_SYSTEM
 #      undef OGRE_STATIC_GLES
 #    endif
 #    ifdef __OBJC__
@@ -76,61 +76,60 @@ using namespace OgreOggSound;
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #ifdef OGRE_IS_IOS
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>
 #else
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
 #endif
 {
 public:
-	OgreFramework();
-	~OgreFramework();
+    OgreFramework();
+    ~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height);
 #else
-	bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+    bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
 #endif
-	void updateOgre(float timeSinceLastFrame);
+    void updateOgre(float timeSinceLastFrame);
     
     Ogre::String getMacBundlePath() const;
-	bool requestOgreShutdown(){m_bShutDownOgre = true;}
-	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
+    bool requestOgreShutdown(){m_bShutDownOgre = true;}
+    bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     void requestResize();
+    void requestOpenURL(std::string url);
     
-	bool keyPressed(const OIS::KeyEvent &keyEventRef);
-	bool keyReleased(const OIS::KeyEvent &keyEventRef);
+    bool keyPressed(const OIS::KeyEvent &keyEventRef);
+    bool keyReleased(const OIS::KeyEvent &keyEventRef);
     
 #ifndef OGRE_IS_IOS
-	bool mouseMoved(const OIS::MouseEvent &evt);
-	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    bool mouseMoved(const OIS::MouseEvent &evt);
+    bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+    bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
-    void buttonHit(OgreBites::Button* button);
-	
     float totalElapsed;
     
-	Ogre::Root*                 m_pRoot;
-	Ogre::RenderWindow*			m_pRenderWnd;
-	Ogre::SceneManager*			m_pSceneMgrMain;
-	Ogre::SceneManager*			m_pSceneMgrSide;
-	Ogre::Camera*				m_pCameraMain;
-	Ogre::Viewport*				m_pViewportMain;
-	Ogre::Camera*				m_pCameraSide;
-	Ogre::Viewport*				m_pViewportSide;
-	Ogre::Log*                  m_pLog;
-	Ogre::Timer*				m_pTimer;
-	
-	OIS::InputManager*			m_pInputMgr;
-	OIS::Keyboard*				m_pKeyboard;
+    Ogre::Root*                 m_pRoot;
+    Ogre::RenderWindow*			m_pRenderWnd;
+    Ogre::SceneManager*			m_pSceneMgrMain;
+    Ogre::SceneManager*			m_pSceneMgrSide;
+    Ogre::Camera*				m_pCameraMain;
+    Ogre::Viewport*				m_pViewportMain;
+    Ogre::Camera*				m_pCameraSide;
+    Ogre::Viewport*				m_pViewportSide;
+    Ogre::Log*                  m_pLog;
+    Ogre::Timer*				m_pTimer;
+    
+    OIS::InputManager*			m_pInputMgr;
+    OIS::Keyboard*				m_pKeyboard;
 #ifdef OGRE_IS_IOS
-	OIS::MultiTouch*			m_pMouse;
+    OIS::MultiTouch*			m_pMouse;
 #else
-	OIS::Mouse*					m_pMouse;
+    OIS::Mouse*					m_pMouse;
 #endif
     
     Ogre::ResourceGroupManager* m_pResourceGroupMgr;
-	Ogre::OverlayManager*		m_pOverlayMgr;
-	Ogre::FontManager*          m_pFontMgr;
+    Ogre::OverlayManager*		m_pOverlayMgr;
+    Ogre::FontManager*          m_pFontMgr;
     Ogre::MeshManager*          m_pMeshMgr;
     Ogre::MaterialManager*      m_pMaterialMgr;
     Ogre::TextureManager*       m_pTextureMgr;
@@ -138,21 +137,19 @@ public:
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
     
-	OgreBites::SdkTrayManager*  m_pTrayMgr;
 protected:
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
     
 private:
-	OgreFramework(const OgreFramework&);
-	OgreFramework& operator= (const OgreFramework&);
+    OgreFramework(const OgreFramework&);
+    OgreFramework& operator= (const OgreFramework&);
     
+    OgreBites::SdkTrayManager*  m_pTrayMgr;
     Ogre::FrameEvent            m_FrameEvent;
-	int                         m_iNumScreenShots;
+    int                         m_iNumScreenShots;
     
-	bool                        m_bShutDownOgre;
-    
-    OgreBites::Button*          m_quitButton;
+    bool                        m_bShutDownOgre;
     
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;

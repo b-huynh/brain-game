@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-/* 
- Configures values based on the dictionary object 
+/*
+ Configures values based on the dictionary object
  keyed by configKey in JSON file pointed to by configPath
  */
 bool configStageType(std::string configPath, std::string configKey);
@@ -15,6 +15,7 @@ bool configStageType(std::string configPath, std::string backupPath, std::string
  Returns true on success.
  */
 bool syncConfig ();
+std::string getVendorID();
 
 /*
  Attempts to sync existing log files with server.

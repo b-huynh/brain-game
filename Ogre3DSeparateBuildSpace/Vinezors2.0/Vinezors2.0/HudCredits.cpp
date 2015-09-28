@@ -42,8 +42,6 @@ void HudCredits::update(float elapsed)
 void HudCredits::alloc()
 {
     // Allocate Resources
-    creditsTitle = static_cast<PanelOverlayElement*>(
-                                                  OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "CreditsTitle"));
     backButtonBackground = static_cast<PanelOverlayElement*>(
                                                              OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "CreditsBackButtonBackground"));
     
@@ -51,7 +49,6 @@ void HudCredits::alloc()
     
     // Create an overlay, and add the panel
     Overlay* overlay1 = OgreFramework::getSingletonPtr()->m_pOverlayMgr->create("CreditsOverlay");
-    overlay1->add2D(creditsTitle);
     overlay1->add2D(backButtonBackground);
     overlays.push_back(overlay1);
 }
@@ -59,19 +56,12 @@ void HudCredits::alloc()
 void HudCredits::dealloc()
 {
     // Delete children first, then parents
-    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(creditsTitle);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(backButtonBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroy(overlays[0]);
 }
 
 void HudCredits::initOverlay()
 {
-    // Link and set resources
-    creditsTitle->setMetricsMode(GMM_RELATIVE);
-    creditsTitle->setPosition(0.25, 0.15);
-    creditsTitle->setDimensions(0.40, 0.20);
-    creditsTitle->setMaterialName("General/TextArtCreditsTitle");
-    
     backButtonBackground->setMaterialName("General/BackButton");
     buttons[BUTTON_BACK].setButton("back", overlays[0], GMM_RELATIVE, Vector2(0.20, 0.78), Vector2(0.30, 0.10), backButtonBackground, NULL);
 }

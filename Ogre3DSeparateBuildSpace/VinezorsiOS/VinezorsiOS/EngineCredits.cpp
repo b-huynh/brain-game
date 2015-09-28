@@ -18,7 +18,6 @@ EngineCredits::EngineCredits(EngineStateManager* engineStateMgr, Player* player)
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineCredits::~EngineCredits()
@@ -31,7 +30,6 @@ void EngineCredits::enter()
     player->startMenu();
     
     // Set skybox
-    Util::setSkyboxAndFog("General/PurpleSpaceSkyPlane");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -50,6 +48,8 @@ void EngineCredits::update(float elapsed)
 void EngineCredits::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
+    if (queryGUI != "")
+        player->reactGUI();
     if (queryGUI == "back")
     {
         engineStateMgr->requestPopEngine();

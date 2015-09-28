@@ -12,7 +12,7 @@
 @interface SimpleMenuViewController ()
 
 @property (retain, nonatomic) IBOutlet UITextField *TextField_Input;
-@property (retain, nonatomic) IBOutlet UISwitch *Switch_Music;
+@property (retain, nonatomic) IBOutlet UIButton *Button_Play;
 
 @end
 
@@ -41,22 +41,41 @@
 
 - (void)dealloc {
     [_TextField_Input release];
-    [_Switch_Music release];
     [super dealloc];
 }
 
 - (NSUInteger)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskPortrait;
+    NSUInteger mask = 0;
+    return mask | UIInterfaceOrientationMaskLandscape;
 }
 
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-    return UIInterfaceOrientationPortrait;
+- (BOOL)shouldAutoRotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return interfaceOrientation == UIInterfaceOrientationLandscapeLeft || interfaceOrientation == UIInterfaceOrientationLandscapeRight;
 }
+
+- (BOOL)shouldAutorotate {
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
+}
+
+- (IBAction)textInput_OnChange:(UITextField *)sender {
+    if ([sender.text length] <= 0)
+    {
+            _Button_Play.hidden = YES;
+            
+    }
+    else
+    {
+        _Button_Play.hidden = NO;
+    }
+}
+
 
 - (IBAction)buttonBegin_OnPress:(UIButton *)sender {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    [appDelegate go:_TextField_Input.text :[_Switch_Music isOn]];
+    [appDelegate go:_TextField_Input.text];
 }
 
 @end

@@ -1,108 +1,3 @@
-material General/BaseBlack
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture black_fixed.png
-        }
-      } 
-    }
-}
-
-material General/BaseGray
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture gray_fixed.png
-        }
-      } 
-    }
-}
-
-material General/BaseWhite
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture white_fixed.png
-        }
-      } 
-    }
-}
-x
-material General/BaseRed
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture red_fixed.png
-        }
-      } 
-    }
-}
-
-material General/BaseBlue
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture blue_fixed.png
-        }
-      } 
-    }
-}
-
-material General/BaseGreen
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture green_fixed.png
-        }
-      } 
-    }
-}
-
-material General/BaseYellow
-{
-    technique
-    {
-      pass
-      {
-        lighting off
-        texture_unit
-        {
-            texture yellow_fixed.png
-        }
-      } 
-    }
-}
-
 material General/Sun
 {
     technique
@@ -221,6 +116,43 @@ material General/Star
 	}
 }
 
+material General/Star2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture star3.png
+            }
+        }
+    }
+}
+
+material General/BarrierMaterial
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            ambient 0.5 0.5 0.5 1
+            diffuse 0.8 0.8 0.8 1
+            emissive 0.8 0.8 0.8 1
+            texture_unit
+            {
+                texture BarrierImageMap.jpg
+            }
+        }
+    }
+}
+
 material General/TimeBonusMaterial
 {
     technique
@@ -233,6 +165,44 @@ material General/TimeBonusMaterial
             texture_unit
             {
                 texture plus20Seconds.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircle
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture uncloakpfx.png
+            }
+        }
+    }
+}
+
+material General/UncloakCircle2
+{
+    technique
+    {
+        pass
+        {
+            lighting off
+            scene_blend add
+            depth_write off
+            diffuse vertexcolour
+
+            texture_unit
+            {
+                texture uncloakpfx_alt.png
             }
         }
     }

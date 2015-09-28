@@ -10,6 +10,7 @@
 #define Vinezors2_0_Powerup_h
 
 #include "Util.h"
+#include "Pod.h"
 
 struct Powerup {
 
@@ -26,9 +27,17 @@ struct Powerup {
 
 struct TractorBeam : public Powerup {
   
+    Pod* targetPod;
+    SceneNode* tractorBeamPulseNode;
+    ParticleSystem* tractorBeamPulseEffect;
+    float pulseTimer;
+    float pulseLen;
     SceneNode* tractorBeamRotatorNode;
     SceneNode* tractorBeamNode;
     ParticleSystem* tractorBeamEffect;
+    float expireTimer;
+    float expireCheckpoint;
+    float effectModifier;
     
     virtual PowerupType getPowerupType() const
     { return POWERUP_TRACTOR_BEAM; }

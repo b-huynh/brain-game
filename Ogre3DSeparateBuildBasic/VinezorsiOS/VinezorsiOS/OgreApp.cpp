@@ -18,41 +18,41 @@ OgreApp::OgreApp()
 
 OgreApp::~OgreApp()
 {
-#ifdef USE_RTSHADER_SYSTEM
+#ifdef INCLUDE_RTSHADER_SYSTEM
     mShaderGenerator->removeSceneManager(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
     
-    finalizeRTShaderSystem();
+    destroyRTShaderSystem();
 #endif
     delete OgreFramework::getSingletonPtr();
 }
 
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
-#ifdef USE_RTSHADER_SYSTEM
+#ifdef INCLUDE_RTSHADER_SYSTEM
 
 /*-----------------------------------------------------------------------------
  | Initialize the RT Shader system.
  -----------------------------------------------------------------------------*/
-bool OgreApp::initializeRTShaderSystem(SceneManager* sceneMgr)
+bool OgreApp::initialiseRTShaderSystem(Ogre::SceneManager* sceneMgr)
 {
-    if (RTShader::ShaderGenerator::initialize())
+    if (Ogre::RTShader::ShaderGenerator::initialize())
     {
-        mShaderGenerator = RTShader::ShaderGenerator::getSingletonPtr();
+        mShaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
         
         mShaderGenerator->addSceneManager(sceneMgr);
         
         // Setup core libraries and shader cache path.
-        StringVector groupVector = ResourceGroupManager::getSingleton().getResourceGroups();
-        StringVector::iterator itGroup = groupVector.begin();
-        StringVector::iterator itGroupEnd = groupVector.end();
-        String shaderCoreLibsPath;
-        String shaderCachePath;
+        Ogre::StringVector groupVector = Ogre::ResourceGroupManager::getSingleton().getResourceGroups();
+        Ogre::StringVector::iterator itGroup = groupVector.begin();
+        Ogre::StringVector::iterator itGroupEnd = groupVector.end();
+        Ogre::String shaderCoreLibsPath;
+        Ogre::String shaderCachePath;
         
         for (; itGroup != itGroupEnd; ++itGroup)
         {
-            ResourceGroupManager::LocationList resLocationsList = ResourceGroupManager::getSingleton().getResourceLocationList(*itGroup);
-            ResourceGroupManager::LocationList::iterator it = resLocationsList.begin();
-            ResourceGroupManager::LocationList::iterator itEnd = resLocationsList.end();
+            Ogre::ResourceGroupManager::LocationList resLocationsList = Ogre::ResourceGroupManager::getSingleton().getResourceLocationList(*itGroup);
+            Ogre::ResourceGroupManager::LocationList::iterator it = resLocationsList.begin();
+            Ogre::ResourceGroupManager::LocationList::iterator itEnd = resLocationsList.end();
             bool coreLibsFound = false;
             
             // Try to find the location of the core shader lib functions and use it
@@ -60,7 +60,7 @@ bool OgreApp::initializeRTShaderSystem(SceneManager* sceneMgr)
             // when running from different directories.
             for (; it != itEnd; ++it)
             {
-                if ((*it)->archive->getName().find("RTShaderLib") != String::npos)
+                if ((*it)->archive->getName().find("RTShaderLib") != Ogre::String::npos)
                 {
                     shaderCoreLibsPath = (*it)->archive->getName() + "/";
                     shaderCachePath = shaderCoreLibsPath;
@@ -79,53 +79,53 @@ bool OgreApp::initializeRTShaderSystem(SceneManager* sceneMgr)
         
         // Create and register the material manager listener.
         mMaterialMgrListener = new ShaderGeneratorTechniqueResolverListener(mShaderGenerator);
-        MaterialManager::getSingleton().addListener(mMaterialMgrListener);
+        Ogre::MaterialManager::getSingleton().addListener(mMaterialMgrListener);
     }
     
     return true;
 }
 
 /*-----------------------------------------------------------------------------
- | Finalize the RT Shader system.
+ | Destroy the RT Shader system.
  -----------------------------------------------------------------------------*/
-void OgreApp::finalizeRTShaderSystem()
+void OgreApp::destroyRTShaderSystem()
 {
     // Restore default scheme.
-    MaterialManager::getSingleton().setActiveScheme(MaterialManager::DEFAULT_SCHEME_NAME);
+    Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
     
     // Unregister the material manager listener.
     if (mMaterialMgrListener != NULL)
     {
-        MaterialManager::getSingleton().removeListener(mMaterialMgrListener);
+        Ogre::MaterialManager::getSingleton().removeListener(mMaterialMgrListener);
         delete mMaterialMgrListener;
         mMaterialMgrListener = NULL;
     }
     
-    // Finalize RTShader system.
+    // Destroy RTShader system.
     if (mShaderGenerator != NULL)
     {
-        RTShader::ShaderGenerator::finalize();
+        Ogre::RTShader::ShaderGenerator::destroy();
         mShaderGenerator = NULL;
     }
 }
-#endif // USE_RTSHADER_SYSTEM
+#endif // INCLUDE_RTSHADER_SYSTEM
 
 #if !defined(OGRE_IS_IOS)
 void OgreApp::startDemo(const char* name, MusicMode musica)
 #else
-void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name, MusicMode musica)
+void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsigned int height, const char* name)
 #endif
 {
     globals.playerName = name;
     gameState = STATE_PLAY;
-    musicMode = musica;
+    musicMode = MUSIC_ENABLED;
     
 	new OgreFramework();
 #if !defined(OGRE_IS_IOS)
     if (!OgreFramework::getSingletonPtr()->initOgre(this, this, this))
         return;
 #else
-	if (!OgreFramework::getSingletonPtr()->initOgre(uiWindow, uiView, width, height, this))
+	if (!OgreFramework::getSingletonPtr()->initOgre(uiWindow, uiView, width, height))
 		return;
 #endif
 
@@ -134,15 +134,15 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
     
 	OgreFramework::getSingletonPtr()->m_pLog->logMessage("Demo initialized!");
 	
-#ifdef USE_RTSHADER_SYSTEM
-    initializeRTShaderSystem(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
-    MaterialPtr baseWhite = MaterialManager::getSingleton().getByName("BaseWhite", ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);
+#ifdef INCLUDE_RTSHADER_SYSTEM
+    initialiseRTShaderSystem(OgreFramework::getSingletonPtr()->m_pSceneMgrMain);
+    Ogre::MaterialPtr baseWhite = Ogre::MaterialManager::getSingleton().getByName("BaseWhite", Ogre::ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);
     baseWhite->setLightingEnabled(false);
     mShaderGenerator->createShaderBasedTechnique(
                                                  "BaseWhite",
-                                                 MaterialManager::DEFAULT_SCHEME_NAME,
-                                                 RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
-    mShaderGenerator->validateMaterial(RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME,
+                                                 Ogre::MaterialManager::DEFAULT_SCHEME_NAME,
+                                                 Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+    mShaderGenerator->validateMaterial(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME,
                                        "BaseWhite");
     baseWhite->getTechnique(0)->getPass(0)->setVertexProgram(
                                                              baseWhite->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
@@ -152,17 +152,15 @@ void OgreApp::startDemo(void* uiWindow, void* uiView, unsigned int width, unsign
     // creates shaders for base material BaseWhiteNoLighting using the RTSS
     mShaderGenerator->createShaderBasedTechnique(
                                                  "BaseWhiteNoLighting",
-                                                 MaterialManager::DEFAULT_SCHEME_NAME,
-                                                 RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
-    mShaderGenerator->validateMaterial(RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME,
+                                                 Ogre::MaterialManager::DEFAULT_SCHEME_NAME,
+                                                 Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+    mShaderGenerator->validateMaterial(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME,
                                        "BaseWhiteNoLighting");
-    MaterialPtr baseWhiteNoLighting = MaterialManager::getSingleton().getByName("BaseWhiteNoLighting", ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);
+    Ogre::MaterialPtr baseWhiteNoLighting = Ogre::MaterialManager::getSingleton().getByName("BaseWhiteNoLighting", Ogre::ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);
     baseWhiteNoLighting->getTechnique(0)->getPass(0)->setVertexProgram(
                                                                        baseWhiteNoLighting->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
     baseWhiteNoLighting->getTechnique(0)->getPass(0)->setFragmentProgram(
                                                                          baseWhiteNoLighting->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());
-    
-    
 #endif
     
 	setupDemoScene();
@@ -194,8 +192,8 @@ void OgreApp::setupDemoScene()
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(origin);
     
     globals.initPaths();
-    if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
-        globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
+    //if (!configStageType(globals.configPath, globals.configBackup, "globalConfig"))
+    //    globals.setMessage("WARNING: Failed to read configuration", MESSAGE_ERROR);
     
 	player = new Player(
                         globals.playerName,
@@ -233,7 +231,7 @@ void OgreApp::setupDemoScene()
     hud = new Hud();
     
     // Determine length of time
-    globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
+    //globals.sessionTime = (globals.sessionTimeMin + ((globals.sessionTimeMax - globals.sessionTimeMin) / globals.expectedNumSessions) * player->getSkillLevel().sessionID);
     
     std::cout << "Session Length: " << globals.sessionTime << std::endl;
     
@@ -306,6 +304,7 @@ void OgreApp::endLevel(Evaluation forced)
     if (tunnel)
     {
         tunnel->setCleaning(true);
+        /*
         if (levelMgr->levelFinished(tunnel, forced))
         {
             gameState = STATE_PROMPT;
@@ -313,6 +312,8 @@ void OgreApp::endLevel(Evaluation forced)
         }
         else
             gameState = STATE_PLAY;
+         */
+        gameState = STATE_PLAY;
     }
 }
 
@@ -395,7 +396,7 @@ void OgreApp::setLevel(Evaluation forced, bool forward)
 
 float OgreApp::getTotalElapsed() const
 {
-    return OgreFramework::getSingletonPtr()->totalElapsed;
+    return player->getTotalElapsed();
 }
 
 void OgreApp::setPause(bool value)
@@ -742,11 +743,13 @@ bool OgreApp::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_SPACE:
         {
             player->setKeySpace(true);
-            activatePerformDoubleTap(0, 0);
+            activatePerformSingleTap(0, 0);
             break;
         }
         case OIS::KC_Z:
         {
+            player->setKeySpace(true);
+            activatePerformSingleTap(0, 0);
             break;
         }
         default:

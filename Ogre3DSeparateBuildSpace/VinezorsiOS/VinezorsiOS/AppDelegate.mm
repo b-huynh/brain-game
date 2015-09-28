@@ -3,42 +3,62 @@
 #import "SimpleMenuViewController.h"
 #import "MainViewController.h"
 
-#define AUTO_START
+#include "Util.h"
+
+extern Util::ConfigGlobal globals;
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
+    NSLog(@"Launch");
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    globals.initGlobalSettingsPath();
+
+    //Check the settings if accel ever existed.
     
-#ifdef AUTO_START
-    self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
-    [self.mViewControllerMain startWithWindow:self.mWindow:@"subject101":TRUE];
-    self.mWindow.rootViewController = self.mViewControllerMain;
-    [self.mWindow makeKeyAndVisible];
-#else
-    // Main Menu
-    self.mViewControllerMenu = [[UIStoryboard storyboardWithName:@"SimpleMenu" bundle:nil] instantiateViewControllerWithIdentifier:@"SimpleMenuViewControllerStoryboard"];
-    self.mWindow.rootViewController = self.mViewControllerMenu;
-    [self.mWindow makeKeyAndVisible];
-#endif
+    if(globals.checkSetting(globals.globalPath, "accelEnabled") == 2)
+    {
+        //Show popup at start!
+        globals.showAccelMainMenuPopUp = true;
+    }
+    
+    globals.loadGlobalSettings(globals.globalPath);
+    
+    if (!globals.sessionScreenEnabled)
+    {
+        self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
+
+        [self.mViewControllerMain startWithWindow:self.mWindow:[NSString stringWithUTF8String:globals.playerName.c_str()]];
+        self.mWindow.rootViewController = self.mViewControllerMain;
+        [self.mWindow makeKeyAndVisible];
+    }
+    else
+    {
+        // Main Menu
+        self.mViewControllerMenu = [[UIStoryboard storyboardWithName:@"SimpleMenu" bundle:nil] instantiateViewControllerWithIdentifier:@"SimpleMenuViewControllerStoryboard"];
+        self.mWindow.rootViewController = self.mViewControllerMenu;
+        [self.mWindow makeKeyAndVisible];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+    NSLog(@"Terminate");
     if (self.mViewControllerMain) [self.mViewControllerMain stop];
-    
     [[UIApplication sharedApplication] performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    NSLog(@"Resign");
     if (self.mViewControllerMain) [self.mViewControllerMain inactivate];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    NSLog(@"Active");
     if (self.mViewControllerMain) [self.mViewControllerMain activate];
 }
 
@@ -57,16 +77,16 @@
 {
     return YES;
 }
-*/
+ */
 
-- (void)go:(NSString*)str :(BOOL)isOn
+- (void)go:(NSString*)str
 {
     [self.mViewControllerMenu release];
     
     // Run Ogre
     self.mViewControllerMain = [[UIStoryboard storyboardWithName:@"MainView" bundle:nil]  instantiateViewControllerWithIdentifier:@"MainViewControllerStoryboard"];
     //    self.mViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    [self.mViewControllerMain startWithWindow:self.mWindow:str:isOn];
+    [self.mViewControllerMain startWithWindow:self.mWindow:str];
     self.mWindow.rootViewController = self.mViewControllerMain;
     [self.mWindow makeKeyAndVisible];
 }

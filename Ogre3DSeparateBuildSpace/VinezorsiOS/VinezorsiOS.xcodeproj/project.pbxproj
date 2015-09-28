@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3F5A87BA18BE90F0003C6741 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F5A87B918BE90F0003C6741 /* Images.xcassets */; };
-		5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15DF4B1825CCFB00DF0F99 /* History.cpp */; };
+		5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */; };
+		5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */; };
 		5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1EAEB11864D54B004C9756 /* Hud.cpp */; };
 		5D2A13B018B82E8E002D8C6F /* Networking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D2A13AF18B82E8E002D8C6F /* Networking.mm */; };
 		5D2D422F18CE32BA0035786C /* Score.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2D422D18CE32BA0035786C /* Score.cpp */; };
@@ -26,8 +27,14 @@
 		5D46024F19080ECF00F73DC3 /* HudStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46024D19080ECF00F73DC3 /* HudStage.cpp */; };
 		5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025019080ED500F73DC3 /* HudLevelSelection.cpp */; };
 		5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D46025519080FEE00F73DC3 /* Powerup.cpp */; };
+		5D709B0619CCF33400A4CEEE /* EngineSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D709B0219CCF33400A4CEEE /* EngineSchedulerMenu.cpp */; };
+		5D709B0719CCF33400A4CEEE /* HudSchedulerMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D709B0419CCF33400A4CEEE /* HudSchedulerMenu.cpp */; };
+		5DC32AC719D0E91900277C5C /* LevelScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC32AC519D0E91900277C5C /* LevelScheduler.cpp */; };
 		5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */; };
 		5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */; };
+		5DDD51D9195CBE5F00F82DBF /* HudMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */; };
+		5DDD51DC195CBE6A00F82DBF /* EngineMainSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */; };
+		5DE7BCB519F6E6B800FA4EEE /* macPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DE7BCB419F6E6B800FA4EEE /* macPath.mm */; };
 		5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF1087118C41BF800FD25E4 /* Player.cpp */; };
 		5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DF141CC190C8F9500AF2960 /* LevelSet.cpp */; };
 		5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DF597A718848E0100F85646 /* AppDelegate.mm */; };
@@ -55,12 +62,21 @@
 		5DFB00D518A4F057005452C6 /* MainView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB00D418A4F057005452C6 /* MainView.storyboard */; };
 		5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB685D19297AFB00B07365 /* HudElements.cpp */; };
 		5DFB686219297B0800B07365 /* TutorialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB686019297B0800B07365 /* TutorialManager.cpp */; };
+		C93653AA1ABAA53500AB16B1 /* HudInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C93653A91ABAA53500AB16B1 /* HudInformation.cpp */; };
+		C93653AD1ABAA55B00AB16B1 /* EngineInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */; };
+		C95D553E1AB8C77E00589A57 /* EngineStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */; };
+		C95D553F1AB8C77E00589A57 /* HudStudySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */; };
+		C96089DF1B14FDF4000EF16D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96089DE1B14FDF4000EF16D /* CoreMotion.framework */; };
+		C964894D1AF0134000157E50 /* EngineTabSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C964894B1AF0134000157E50 /* EngineTabSettings.cpp */; };
+		C96489501AF0138A00157E50 /* HudTabSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C964894E1AF0138A00157E50 /* HudTabSettings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3F5A87B918BE90F0003C6741 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "Vines-Space/Images.xcassets"; sourceTree = "<group>"; };
-		5D15DF4B1825CCFB00DF0F99 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
-		5D15DF4C1825CCFB00DF0F99 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
+		5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineControlsSettings.cpp; sourceTree = "<group>"; };
+		5D196F54193D0E920042DEA0 /* EngineControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineControlSettings.h; sourceTree = "<group>"; };
+		5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudControlSettings.cpp; sourceTree = "<group>"; };
+		5D196F57193D0E990042DEA0 /* HudControlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudControlSettings.h; sourceTree = "<group>"; };
 		5D1EAEB11864D54B004C9756 /* Hud.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hud.cpp; sourceTree = "<group>"; };
 		5D1EAEB21864D54B004C9756 /* Hud.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hud.h; sourceTree = "<group>"; };
 		5D2A13AE18B82E8E002D8C6F /* Networking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Networking.h; sourceTree = "<group>"; };
@@ -93,11 +109,22 @@
 		5D46025119080ED500F73DC3 /* HudLevelSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudLevelSelection.h; sourceTree = "<group>"; };
 		5D46025519080FEE00F73DC3 /* Powerup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Powerup.cpp; sourceTree = "<group>"; };
 		5D46025619080FEE00F73DC3 /* Powerup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Powerup.h; sourceTree = "<group>"; };
-		5DC3697E192549D400E5A53D /* Vines-Space.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Vines-Space.entitlements"; path = "Vines-Space/Vines-Space.entitlements"; sourceTree = "<group>"; };
+		5D709B0219CCF33400A4CEEE /* EngineSchedulerMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineSchedulerMenu.cpp; sourceTree = "<group>"; };
+		5D709B0319CCF33400A4CEEE /* EngineSchedulerMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineSchedulerMenu.h; sourceTree = "<group>"; };
+		5D709B0419CCF33400A4CEEE /* HudSchedulerMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudSchedulerMenu.cpp; sourceTree = "<group>"; };
+		5D709B0519CCF33400A4CEEE /* HudSchedulerMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudSchedulerMenu.h; sourceTree = "<group>"; };
+		5DC32AC519D0E91900277C5C /* LevelScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelScheduler.cpp; sourceTree = "<group>"; };
+		5DC32AC619D0E91900277C5C /* LevelScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelScheduler.h; sourceTree = "<group>"; };
 		5DCDDD8F1911719200CF67F1 /* PlayerLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLevel.cpp; sourceTree = "<group>"; };
 		5DCDDD901911719200CF67F1 /* PlayerLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerLevel.h; sourceTree = "<group>"; };
 		5DCDDD911911719200CF67F1 /* PlayerProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerProgress.cpp; sourceTree = "<group>"; };
 		5DCDDD921911719200CF67F1 /* PlayerProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerProgress.h; sourceTree = "<group>"; };
+		5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudMainSettings.cpp; sourceTree = "<group>"; };
+		5DDD51D8195CBE5F00F82DBF /* HudMainSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudMainSettings.h; sourceTree = "<group>"; };
+		5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineMainSettings.cpp; sourceTree = "<group>"; };
+		5DDD51DB195CBE6A00F82DBF /* EngineMainSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineMainSettings.h; sourceTree = "<group>"; };
+		5DE7BCB419F6E6B800FA4EEE /* macPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = macPath.mm; sourceTree = "<group>"; };
+		5DE7BCB619F6E6DE00FA4EEE /* macPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = macPath.h; sourceTree = "<group>"; };
 		5DF1087118C41BF800FD25E4 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
 		5DF141CC190C8F9500AF2960 /* LevelSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSet.cpp; sourceTree = "<group>"; };
 		5DF141CD190C8F9500AF2960 /* LevelSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelSet.h; sourceTree = "<group>"; };
@@ -106,7 +133,7 @@
 		5DF598A818852ADD00F85646 /* OgreView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreView.mm; sourceTree = "<group>"; };
 		5DF598AC188537FD00F85646 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		5DF598AD188537FD00F85646 /* MainViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
-		5DF9407317F4AF360082C239 /* Vines-Space.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vines-Space.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DF9407317F4AF360082C239 /* RecallGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecallGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF9407617F4AF360082C239 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5DF9407817F4AF360082C239 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5DF9407A17F4AF360082C239 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -144,6 +171,19 @@
 		5DFB685E19297AFB00B07365 /* HudElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudElements.h; sourceTree = "<group>"; };
 		5DFB686019297B0800B07365 /* TutorialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TutorialManager.cpp; sourceTree = "<group>"; };
 		5DFB686119297B0800B07365 /* TutorialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialManager.h; sourceTree = "<group>"; };
+		C93653A81ABAA52400AB16B1 /* HudInformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HudInformation.h; sourceTree = "<group>"; };
+		C93653A91ABAA53500AB16B1 /* HudInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudInformation.cpp; sourceTree = "<group>"; };
+		C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineInformation.cpp; sourceTree = "<group>"; };
+		C93653AC1ABAA55B00AB16B1 /* EngineInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineInformation.h; sourceTree = "<group>"; };
+		C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineStudySettings.cpp; sourceTree = "<group>"; };
+		C95D553B1AB8C77E00589A57 /* EngineStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineStudySettings.h; sourceTree = "<group>"; };
+		C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudStudySettings.cpp; sourceTree = "<group>"; };
+		C95D553D1AB8C77E00589A57 /* HudStudySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudStudySettings.h; sourceTree = "<group>"; };
+		C96089DE1B14FDF4000EF16D /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		C964894B1AF0134000157E50 /* EngineTabSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EngineTabSettings.cpp; sourceTree = "<group>"; };
+		C964894C1AF0134000157E50 /* EngineTabSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineTabSettings.h; sourceTree = "<group>"; };
+		C964894E1AF0138A00157E50 /* HudTabSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HudTabSettings.cpp; sourceTree = "<group>"; };
+		C964894F1AF0138A00157E50 /* HudTabSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HudTabSettings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +191,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C96089DF1B14FDF4000EF16D /* CoreMotion.framework in Frameworks */,
 				5DF940F617F4B4AF0082C239 /* OpenAL.framework in Frameworks */,
 				5DF9407717F4AF360082C239 /* CoreGraphics.framework in Frameworks */,
 				5DF9407917F4AF360082C239 /* Foundation.framework in Frameworks */,
@@ -163,6 +204,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D196F52193D0E490042DEA0 /* EngineControlSettings */ = {
+			isa = PBXGroup;
+			children = (
+				5D196F56193D0E990042DEA0 /* HudControlSettings.cpp */,
+				5D196F57193D0E990042DEA0 /* HudControlSettings.h */,
+				5D196F53193D0E920042DEA0 /* EngineControlsSettings.cpp */,
+				5D196F54193D0E920042DEA0 /* EngineControlSettings.h */,
+			);
+			name = EngineControlSettings;
+			sourceTree = "<group>";
+		};
 		5D260D6D18A9CCC6006C91AC /* Framework */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,6 +231,8 @@
 				5D39FA331827528A009C8A4C /* SimpleMenuViewController.mm */,
 				5D39FA321827528A009C8A4C /* SimpleMenuViewController.h */,
 				5D39FA2E182741C0009C8A4C /* SimpleMenu.storyboard */,
+				5DE7BCB419F6E6B800FA4EEE /* macPath.mm */,
+				5DE7BCB619F6E6DE00FA4EEE /* macPath.h */,
 			);
 			name = Framework;
 			sourceTree = "<group>";
@@ -192,10 +246,10 @@
 				5D2A13AE18B82E8E002D8C6F /* Networking.h */,
 				5DF141CC190C8F9500AF2960 /* LevelSet.cpp */,
 				5DF141CD190C8F9500AF2960 /* LevelSet.h */,
+				5DC32AC519D0E91900277C5C /* LevelScheduler.cpp */,
+				5DC32AC619D0E91900277C5C /* LevelScheduler.h */,
 				5DFB00CD18A15D27005452C6 /* LevelManager.cpp */,
 				5DFB00CE18A15D27005452C6 /* LevelManager.h */,
-				5D15DF4B1825CCFB00DF0F99 /* History.cpp */,
-				5D15DF4C1825CCFB00DF0F99 /* History.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -219,8 +273,14 @@
 				5D46024619080E9400F73DC3 /* BaseClasses */,
 				5D46023319080E6800F73DC3 /* EngineCredits */,
 				5D46023219080E5A00F73DC3 /* EngineMainMenu */,
+				C93653A71ABAA4DA00AB16B1 /* EngineInformation */,
 				5D46023119080E5300F73DC3 /* EngineStage */,
+				5D709B0119CCF31F00A4CEEE /* EngineSchedulerMenu */,
 				5D46022F19080E3700F73DC3 /* EngineLevelSelection */,
+				5D196F52193D0E490042DEA0 /* EngineControlSettings */,
+				5DDD51D6195CBE0E00F82DBF /* EngineMainSettings */,
+				C95D55391AB8C75500589A57 /* EngineStudySettings */,
+				C964894A1AF012EF00157E50 /* EngineTabSettings */,
 			);
 			name = EngineModes;
 			sourceTree = "<group>";
@@ -306,10 +366,31 @@
 			name = Player;
 			sourceTree = "<group>";
 		};
+		5D709B0119CCF31F00A4CEEE /* EngineSchedulerMenu */ = {
+			isa = PBXGroup;
+			children = (
+				5D709B0419CCF33400A4CEEE /* HudSchedulerMenu.cpp */,
+				5D709B0519CCF33400A4CEEE /* HudSchedulerMenu.h */,
+				5D709B0219CCF33400A4CEEE /* EngineSchedulerMenu.cpp */,
+				5D709B0319CCF33400A4CEEE /* EngineSchedulerMenu.h */,
+			);
+			name = EngineSchedulerMenu;
+			sourceTree = "<group>";
+		};
+		5DDD51D6195CBE0E00F82DBF /* EngineMainSettings */ = {
+			isa = PBXGroup;
+			children = (
+				5DDD51D7195CBE5F00F82DBF /* HudMainSettings.cpp */,
+				5DDD51D8195CBE5F00F82DBF /* HudMainSettings.h */,
+				5DDD51DA195CBE6A00F82DBF /* EngineMainSettings.cpp */,
+				5DDD51DB195CBE6A00F82DBF /* EngineMainSettings.h */,
+			);
+			name = EngineMainSettings;
+			sourceTree = "<group>";
+		};
 		5DF9406917F4AF360082C239 = {
 			isa = PBXGroup;
 			children = (
-				5DC3697E192549D400E5A53D /* Vines-Space.entitlements */,
 				3F5A87B918BE90F0003C6741 /* Images.xcassets */,
 				5D39FA3018274B3F009C8A4C /* Default-568h@2x.png */,
 				5DF9408017F4AF360082C239 /* VinezorsiOS */,
@@ -321,7 +402,7 @@
 		5DF9407417F4AF360082C239 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5DF9407317F4AF360082C239 /* Vines-Space.app */,
+				5DF9407317F4AF360082C239 /* RecallGame.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -329,6 +410,7 @@
 		5DF9407517F4AF360082C239 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C96089DE1B14FDF4000EF16D /* CoreMotion.framework */,
 				5DF940F417F4B4A40082C239 /* OpenAL.framework */,
 				5DF9407617F4AF360082C239 /* CoreGraphics.framework */,
 				5DF9407817F4AF360082C239 /* Foundation.framework */,
@@ -383,12 +465,45 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		C93653A71ABAA4DA00AB16B1 /* EngineInformation */ = {
+			isa = PBXGroup;
+			children = (
+				C93653A81ABAA52400AB16B1 /* HudInformation.h */,
+				C93653A91ABAA53500AB16B1 /* HudInformation.cpp */,
+				C93653AB1ABAA55B00AB16B1 /* EngineInformation.cpp */,
+				C93653AC1ABAA55B00AB16B1 /* EngineInformation.h */,
+			);
+			name = EngineInformation;
+			sourceTree = "<group>";
+		};
+		C95D55391AB8C75500589A57 /* EngineStudySettings */ = {
+			isa = PBXGroup;
+			children = (
+				C95D553A1AB8C77E00589A57 /* EngineStudySettings.cpp */,
+				C95D553B1AB8C77E00589A57 /* EngineStudySettings.h */,
+				C95D553C1AB8C77E00589A57 /* HudStudySettings.cpp */,
+				C95D553D1AB8C77E00589A57 /* HudStudySettings.h */,
+			);
+			name = EngineStudySettings;
+			sourceTree = "<group>";
+		};
+		C964894A1AF012EF00157E50 /* EngineTabSettings */ = {
+			isa = PBXGroup;
+			children = (
+				C964894B1AF0134000157E50 /* EngineTabSettings.cpp */,
+				C964894C1AF0134000157E50 /* EngineTabSettings.h */,
+				C964894E1AF0138A00157E50 /* HudTabSettings.cpp */,
+				C964894F1AF0138A00157E50 /* HudTabSettings.h */,
+			);
+			name = EngineTabSettings;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5DF9407217F4AF360082C239 /* Vines-Space */ = {
+		5DF9407217F4AF360082C239 /* RecallGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Vines-Space" */;
+			buildConfigurationList = 5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "RecallGame" */;
 			buildPhases = (
 				5DF9406E17F4AF360082C239 /* Sources */,
 				5DF9406F17F4AF360082C239 /* Frameworks */,
@@ -399,9 +514,9 @@
 			);
 			dependencies = (
 			);
-			name = "Vines-Space";
+			name = RecallGame;
 			productName = VinezorsiOS;
-			productReference = 5DF9407317F4AF360082C239 /* Vines-Space.app */;
+			productReference = 5DF9407317F4AF360082C239 /* RecallGame.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -413,7 +528,7 @@
 				LastUpgradeCheck = 0500;
 				TargetAttributes = {
 					5DF9407217F4AF360082C239 = {
-						DevelopmentTeam = 9GN2WT7Q58;
+						DevelopmentTeam = 242KYAS2N4;
 						SystemCapabilities = {
 							com.apple.DataProtection = {
 								enabled = 0;
@@ -443,7 +558,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5DF9407217F4AF360082C239 /* Vines-Space */,
+				5DF9407217F4AF360082C239 /* RecallGame */,
 			);
 		};
 /* End PBXProject section */
@@ -487,14 +602,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DE7BCB519F6E6B800FA4EEE /* macPath.mm in Sources */,
 				5DF598A918852ADD00F85646 /* OgreView.mm in Sources */,
 				5DF141CE190C8F9500AF2960 /* LevelSet.cpp in Sources */,
+				5D196F58193D0E990042DEA0 /* HudControlSettings.cpp in Sources */,
+				C93653AD1ABAA55B00AB16B1 /* EngineInformation.cpp in Sources */,
 				5D39FA341827528A009C8A4C /* SimpleMenuViewController.mm in Sources */,
 				5DFB685F19297AFB00B07365 /* HudElements.cpp in Sources */,
 				5DF9408817F4AF360082C239 /* main.mm in Sources */,
+				C96489501AF0138A00157E50 /* HudTabSettings.cpp in Sources */,
 				5D46024C19080EC900F73DC3 /* HudMainMenu.cpp in Sources */,
+				C95D553E1AB8C77E00589A57 /* EngineStudySettings.cpp in Sources */,
 				5DCDDD941911719200CF67F1 /* PlayerProgress.cpp in Sources */,
 				5D46024919080EC100F73DC3 /* HudCredits.cpp in Sources */,
+				5DDD51DC195CBE6A00F82DBF /* EngineMainSettings.cpp in Sources */,
 				5DCDDD931911719200CF67F1 /* PlayerLevel.cpp in Sources */,
 				5D46023F19080E8500F73DC3 /* EngineLevelSelection.cpp in Sources */,
 				5DF1087218C41BF800FD25E4 /* Player.cpp in Sources */,
@@ -502,25 +623,32 @@
 				5D46023C19080E7F00F73DC3 /* EngineStage.cpp in Sources */,
 				5DF9408C17F4AF360082C239 /* OgreApp.cpp in Sources */,
 				5D2D422F18CE32BA0035786C /* Score.cpp in Sources */,
+				5DDD51D9195CBE5F00F82DBF /* HudMainSettings.cpp in Sources */,
+				5D709B0719CCF33400A4CEEE /* HudSchedulerMenu.cpp in Sources */,
 				5DFB00CF18A15D27005452C6 /* LevelManager.cpp in Sources */,
 				5DF9408F17F4AF360082C239 /* OgreFramework.cpp in Sources */,
+				C964894D1AF0134000157E50 /* EngineTabSettings.cpp in Sources */,
 				5D46025219080ED500F73DC3 /* HudLevelSelection.cpp in Sources */,
 				5DF940EF17F4B1500082C239 /* Pod.cpp in Sources */,
 				5D46025719080FEE00F73DC3 /* Powerup.cpp in Sources */,
 				5DF597A818848E0100F85646 /* AppDelegate.mm in Sources */,
 				5D46024F19080ECF00F73DC3 /* HudStage.cpp in Sources */,
 				5D46023619080E7200F73DC3 /* EngineCredits.cpp in Sources */,
+				5D709B0619CCF33400A4CEEE /* EngineSchedulerMenu.cpp in Sources */,
 				5DFB686219297B0800B07365 /* TutorialManager.cpp in Sources */,
+				C93653AA1ABAA53500AB16B1 /* HudInformation.cpp in Sources */,
 				5DF940F017F4B1500082C239 /* Tunnel.cpp in Sources */,
 				5DF940F117F4B1500082C239 /* TunnelSlice.cpp in Sources */,
 				5DF598AF188537FD00F85646 /* MainViewController.mm in Sources */,
 				5D46024519080E8E00F73DC3 /* EngineStateManager.cpp in Sources */,
+				5D196F55193D0E920042DEA0 /* EngineControlsSettings.cpp in Sources */,
+				C95D553F1AB8C77E00589A57 /* HudStudySettings.cpp in Sources */,
 				5D46023919080E7900F73DC3 /* EngineMainMenu.cpp in Sources */,
 				5DF940F217F4B1500082C239 /* Util.cpp in Sources */,
+				5DC32AC719D0E91900277C5C /* LevelScheduler.cpp in Sources */,
 				5D46024419080E8E00F73DC3 /* Engine.cpp in Sources */,
 				5D1EAEB31864D54B004C9756 /* Hud.cpp in Sources */,
 				5DF940F317F4B1500082C239 /* Vine.cpp in Sources */,
-				5D15DF4D1825CCFB00DF0F99 /* History.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,7 +669,9 @@
 		5DF940DD17F4AF370082C239 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Calvin Phung (QJ27UTZJS2)";
 				COPY_PHASE_STRIP = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = No;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -551,12 +681,14 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Overlay\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
 					"\"$(OGRE_SDK_ROOT)/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)\"",
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
@@ -567,12 +699,13 @@
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
 				);
-				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGGSOUND_SDK_ROOT = "~/OgreOggSound-v1.26";
 				OGRE_SDK_ROOT = "~/OgreSDKIOS";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -580,7 +713,9 @@
 		5DF940DE17F4AF370082C239 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Calvin Phung (QJ27UTZJS2)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = No;
@@ -591,12 +726,14 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(OGRE_SDK_ROOT)/include/OGRE\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RenderSystems/GLES2\"",
+					"\"$(OGRE_SDK_ROOT)/include/OGRE/Overlay\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/RTShaderSystem\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/iOS\"",
 					"\"$(OGRE_SDK_ROOT)/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OIS\"",
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/include\"",
 					"\"$(OGRE_SDK_ROOT)/include/OGRE/Plugins/ParticleFX\"",
+					"\"$(OGGSOUND_SDK_ROOT)\"",
 					"\"$(OGGSOUND_SDK_ROOT)/include\"",
 				);
 				INFOPLIST_FILE = "VinezorsiOS/VinezorsiOS-Info.plist";
@@ -607,11 +744,12 @@
 					"\"$(OGRE_SDK_ROOT)/iOSDependencies/lib\"",
 					"\"$(OGGSOUND_SDK_ROOT)/build/build\"",
 				);
-				OGGSOUND_SDK_ROOT = "~/ogreoggsound";
+				OGGSOUND_SDK_ROOT = "~/OgreOggSound-v1.26";
 				OGRE_SDK_ROOT = "~/OgreSDKIOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -621,22 +759,27 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DOGRE_USE_GLES2=1";
 				OTHER_LDFLAGS = (
 					"-lOIS",
 					"-lOgreMainStatic",
+					"-lOgreOverlayStatic",
 					"-lRenderSystem_GLES2Static",
 					"-lOgreRTShaderSystemStatic",
-					"-lmesaglsl2",
+					"-lglsl_optimizer",
 					"-lboost_system",
 					"-lboost_chrono",
 					"-lboost_date_time",
 					"-lboost_thread",
+					"-lboost_atomic",
 					"-lFreeType",
 					"-lFreeImage",
 					"-lzzip",
@@ -644,8 +787,9 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
-				PROVISIONING_PROFILE = "";
-				VALID_ARCHS = "armv7 armv7s";
+				PROVISIONING_PROFILE = "333ef143-53b4-40e9-a7b6-67334a8f5736";
+				TARGETED_DEVICE_FAMILY = 2;
+				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -654,6 +798,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -663,13 +809,15 @@
 				OTHER_LDFLAGS = (
 					"-lOIS",
 					"-lOgreMainStatic",
+					"-lOgreOverlayStatic",
 					"-lRenderSystem_GLES2Static",
 					"-lOgreRTShaderSystemStatic",
-					"-lmesaglsl2",
+					"-lglsl_optimizer",
 					"-lboost_system",
 					"-lboost_chrono",
 					"-lboost_date_time",
 					"-lboost_thread",
+					"-lboost_atomic",
 					"-lFreeType",
 					"-lFreeImage",
 					"-lzzip",
@@ -677,8 +825,9 @@
 					"-lOgreOggSoundiOS",
 					"-lPlugin_ParticleFXStatic",
 				);
-				PROVISIONING_PROFILE = "";
-				VALID_ARCHS = "armv7 armv7s";
+				PROVISIONING_PROFILE = "333ef143-53b4-40e9-a7b6-67334a8f5736";
+				TARGETED_DEVICE_FAMILY = 2;
+				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Release;
 		};
@@ -694,7 +843,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "Vines-Space" */ = {
+		5DF940DF17F4AF370082C239 /* Build configuration list for PBXNativeTarget "RecallGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DF940E017F4AF370082C239 /* Debug */,

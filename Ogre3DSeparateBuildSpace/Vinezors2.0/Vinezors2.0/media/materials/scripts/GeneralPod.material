@@ -6,8 +6,9 @@ material General/PodMetal
         {
             lighting on
  
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.3 0.3 0.3 1
+            ambient 0.5 0.5 0.5 1
+            diffuse 0.5 0.5 0.5 1
+            specular 0.3 0.3 0.3 30
         }
     }
 }
@@ -20,9 +21,11 @@ material General/PodUnknown
         pass
         {
             lighting on
- 
-            ambient 0.1 0.1 0.1 1
-            diffuse 0.7 0.7 0.7 1
+
+            ambient 0.2 0.2 0.2 1.0
+            diffuse 0.2 0.2 0.2 1.0
+            emissive 0.2 0.2 0.2 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -35,8 +38,9 @@ material General/PodUnknownTransparent
         {
             lighting on
             
-            ambient 0.1 0.1 0.1 0.3
-            diffuse 0.5 0.5 0.5 0.3
+            ambient 0.2 0.2 0.2 0.3
+            diffuse 0.2 0.2 0.2 0.3
+            emissive 0.2 0.2 0.2 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -50,9 +54,11 @@ material General/PodWhite
         pass
         {
             lighting on
- 
-            ambient 1.0 1.0 1.0 1
-            diffuse 1.0 1.0 1.0 1
+
+            ambient 0.8 0.8 0.8 1.0
+            diffuse 0.8 0.8 0.8 1.0
+            emissive 0.8 0.8 0.8 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -65,8 +71,9 @@ material General/PodWhiteTransparent
         {
             lighting on
             
-            ambient 0.1 0.1 0.1 0.3
+            ambient 0.8 0.8 0.8 0.3
             diffuse 0.8 0.8 0.8 0.3
+            emissive 0.8 0.8 0.8 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -80,10 +87,10 @@ material General/PodRed
         pass
         {
             lighting on
- 
-            ambient 0.3 0.1 0.1 1
-            diffuse 0.8 0.1 0.1 1
-            emissive 0.2 0.0 0.0 1
+            ambient 0.8 0.1 0.1 1.0
+            diffuse 0.8 0.1 0.1 1.0
+            emissive 0.8 0.1 0.1 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -96,8 +103,42 @@ material General/PodRedTransparent
         {
             lighting on
             
-            ambient 0.3 0.1 0.1 0.3
+            ambient 0.8 0.1 0.1 0.3
             diffuse 0.8 0.1 0.1 0.3
+            emissive 0.8 0.1 0.1 0.3
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material General/PodOrange
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.6 0.2 0.0 1.0
+            diffuse 0.6 0.2 0.0 1.0
+            emissive 0.6 0.2 0.0 1.0
+            specular 0.5 0.5 0.5 30
+        }
+    }
+}
+
+material General/PodOrangeTransparent
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.6 0.2 0.0 0.3
+            diffuse 0.6 0.2 0.0 0.3
+            emissive 0.6 0.2 0.0 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -111,10 +152,11 @@ material General/PodPurple
         pass
         {
             lighting on
- 
-            ambient 0.6 0.2 0.6 1
-            diffuse 1.0 0.2 1.0 1
-            emissive 0.4 0.0 0.4 1
+
+            ambient 0.8 0.2 0.8 1.0
+            diffuse 0.8 0.2 0.8 1.0
+            emissive 0.8 0.2 0.8 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -126,9 +168,10 @@ material General/PodPurpleTransparent
         pass
         {
             lighting on
-            
-            ambient 0.6 0.2 0.6 1
-            diffuse 1.0 0.2 1.0 1
+
+            ambient 0.8 0.2 0.8 0.3
+            diffuse 0.8 0.2 0.8 0.3
+            emissive 0.8 0.2 0.8 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -142,10 +185,11 @@ material General/PodGreen
         pass
         {
             lighting on
- 
-            ambient 0.1 0.3 0.1 1
-            diffuse 0.2 0.8 0.2 1
-            emissive 0.1 0.2 0.1 1
+
+            ambient 0.1 0.8 0.2 1.0
+            diffuse 0.1 0.8 0.2 1.0
+            emissive 0.1 0.8 0.2 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -157,9 +201,10 @@ material General/PodGreenTransparent
         pass
         {
             lighting on
-            
-            ambient 0.1 0.3 0.1 0.3
-            diffuse 0.1 0.8 0.1 0.3
+
+            ambient 0.1 0.8 0.2 0.3
+            diffuse 0.1 0.8 0.2 0.3
+            emissive 0.1 0.8 0.2 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -173,10 +218,11 @@ material General/PodBlue
         pass
         {
             lighting on
- 
-            ambient 0.1 0.2 0.3 1
-            diffuse 0.2 0.4 0.8 1
-            emissive 0.1 0.1 0.2 1
+
+            ambient 0.1 0.2 0.8 1.0
+            diffuse 0.1 0.2 0.8 1.0
+            emissive 0.1 0.2 0.8 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -188,9 +234,10 @@ material General/PodBlueTransparent
         pass
         {
             lighting on
-            
-            ambient 0.1 0.2 0.3 0.3
-            diffuse 0.4 0.4 0.8 0.3
+
+            ambient 0.3 0.3 0.8 0.3
+            diffuse 0.3 0.3 0.8 0.3
+            emissive 0.3 0.3 0.8 0.3
             scene_blend alpha_blend
             depth_write off
         }
@@ -204,10 +251,11 @@ material General/PodYellow
         pass
         {
             lighting on
- 
-            ambient 0.3 0.3 0.1 1
-            diffuse 0.8 0.8 0.1 1
-            emissive 0.2 0.2 0.0 1
+
+            ambient 0.8 0.8 0.1 1.0
+            diffuse 0.8 0.8 0.1 1.0
+            emissive 0.8 0.8 0.1 1.0
+            specular 0.5 0.5 0.5 30
         }
     }
 }
@@ -219,9 +267,10 @@ material General/PodYellowTransparent
         pass
         {
             lighting on
-            
-            ambient 0.3 0.3 0.1 0.3
+
+            ambient 0.8 0.8 0.1 0.3
             diffuse 0.8 0.8 0.1 0.3
+            emissive 0.8 0.8 0.1 0.3
             scene_blend alpha_blend
             depth_write off
         }

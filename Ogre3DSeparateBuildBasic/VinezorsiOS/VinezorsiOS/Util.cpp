@@ -18,12 +18,12 @@ Util::ConfigGlobal::ConfigGlobal()
     scheduleMain = "A";
     scheduleRepeat = "A";
     scheduleRepeatRandomPool = "A";
-    sessionTime = 1800.00;
-    stageTime = 120.0;
-    stageTotalSignals = 60;
-    stageTotalTargets1 = 20;
-    stageTotalTargets2 = 35;
-    stageTotalTargets3 = 45;
+    sessionTime = 1200.00;
+    stageTime = 140.0;
+    stageTotalSignals = 300;
+    stageTotalTargets1 = 100;
+    stageTotalTargets2 = 175;
+    stageTotalTargets3 = 225;
     stageTotalCollections = 40;
     stageTotalTargetsVariance = 2;
     stageTimeThreshold1 = 25;
@@ -79,27 +79,27 @@ Util::ConfigGlobal::ConfigGlobal()
     control = 1;
     historyMode = -1;
     startingHP = 0;
-    HPNegativeLimit = -10;
-    HPPositiveLimit = 10;
-    HPNegativeCorrectAnswer = 2;
-    HPNegativeWrongAnswer = -1;
-    HPNegativeDistractor = -1;
+    HPNegativeLimit = -13;
+    HPPositiveLimit = 13;
+    HPNegativeCorrectAnswer = 1;
+    HPNegativeWrongAnswer = 0;
+    HPNegativeDistractor = 0;
     HPPositiveCorrectAnswer = 1;
-    HPPositiveWrongAnswer = -2;
-    HPPositiveDistractor = -1;
-    distractorSpeedPenalty = -1.0;
+    HPPositiveWrongAnswer = 0;
+    HPPositiveDistractor = 0;
+    distractorSpeedPenalty = 0.0;
     distractorTimePenalty = 0.0;
     initCamSpeed = 15.0;
     startupCamSpeed = 60.0;
     globalModifierCamSpeed = 5.0;
     boostModifierCamSpeed = 1.25;
     minCamSpeed = 15.0;
-    maxCamSpeed = 30.0;
+    maxCamSpeed = 15.0;
     nlevelSpeedModifier = 0.8;
     numToSpeedUp = 2;
     numToSpeedDown = 1;
-    stepsizeSpeedUp = 1.0;
-    stepsizeSpeedDown = -1.0;
+    stepsizeSpeedUp = 0.0;
+    stepsizeSpeedDown = -0.0;
     HPBarXRef = 0.05;
     HPBarYRef = 0.05;
     HPBarWidth = 0.9;
@@ -621,16 +621,19 @@ std::string Util::ConfigGlobal::buildPath(std::string ext, std::string playerNam
     strftime(buffer, 80, "%F-%H-%M", timeinfo);
     
 #if defined(OGRE_IS_IOS)
-    std::string logPath = Util::getIOSDir() + "/" + playerName + "/"
+    std::string userPath = Util::getIOSDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #else
-    std::string logPath = Util::getOSXDir() + "/" + playerName + "/"
+    std::string userPath = Util::getOSXDir() + "/" + playerName;
+    std::string logPath = userPath + "/"
     + playerName + "-session" + Util::toStringInt(session) + "-" + std::string(buffer);
 #endif
+    int x = mkdir(userPath.c_str(), 0777);
     
     int i = 1;
-    std::ifstream testExist (std::string(logPath + ext).c_str());
     
+    std::ifstream testExist (std::string(logPath + ext).c_str());
     while (testExist) {
         testExist.close();
         logPath = logPath + "_" + Util::toStringInt(i);
@@ -908,14 +911,15 @@ std::string Util::getOSXDir()
 
 std::string Util::getIOSDir()
 {
-    const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
-    std::string result = "";
-    if (dir)
-        result = std::string(dir) + "/../Documents";
-    else
-        return "";
-    
-    mkdir(result.c_str(), 0777);
+    //const char* dir = OgreFramework::getSingletonPtr()->getMacBundlePath().c_str();
+    //std::string result = "";
+    //if (dir)
+    //    result = std::string(dir) + "/../Documents";
+    //else
+    //    return "";
+    //
+    //mkdir(OgreFramework::getSingletonPtr()->getMacBundlePath().c_str(), 0777);
+    std::string result = OgreFramework::getSingletonPtr()->getMacBundlePath();
     return result;
 }
 

@@ -11,7 +11,6 @@
 #include <OgreOverlay.h>
 #include <OgreOverlayElement.h>
 #include <OgreOverlayManager.h>
-#include <OgrePass.h>
 #include <OgreRoot.h>
 #include <OgreViewport.h>
 #include <OgreSceneManager.h>
@@ -55,7 +54,7 @@
 #    define OGRE_STATIC_GLES 1
 #    ifdef OGRE_USE_GLES2
 #      define OGRE_STATIC_GLES2 1
-#      define USE_RTSHADER_SYSTEM
+#      define INCLUDE_RTSHADER_SYSTEM
 #      undef OGRE_STATIC_GLES
 #    endif
 #    ifdef __OBJC__
@@ -77,9 +76,9 @@ using namespace OgreOggSound;
 //|||||||||||||||||||||||||||||||||||||||||||||||
 
 #ifdef OGRE_IS_IOS
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>
 #else
-class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
+class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 #endif
 {
 public:
@@ -87,9 +86,9 @@ public:
 	~OgreFramework();
     
 #ifdef OGRE_IS_IOS
-    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+    bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height);
 #else
-	bool initOgre(void* uiWindow, void* uiView, unsigned int width, unsigned int height, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0, Ogre::RenderTargetListener *pRenderTargetListener = 0);
+	bool initOgre(OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
 #endif
 	void updateOgre(float timeSinceLastFrame);
     
@@ -97,6 +96,7 @@ public:
 	bool requestOgreShutdown(){m_bShutDownOgre = true;}
 	bool isOgreToBeShutDown()const{return m_bShutDownOgre;}
     void requestResize();
+    void requestOpenURL(std::string url);
     
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
@@ -106,7 +106,6 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 #endif
-    void buttonHit(OgreBites::Button* button);
 	
     float totalElapsed;
     
@@ -138,8 +137,6 @@ public:
     Ogre::CompositorManager*    m_pCompositeMgr;
     
     OgreOggSound::OgreOggSoundManager* m_pSoundMgr;
-    
-	OgreBites::SdkTrayManager*  m_pTrayMgr;
 protected:
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
@@ -152,8 +149,6 @@ private:
 	int                         m_iNumScreenShots;
     
 	bool                        m_bShutDownOgre;
-    
-    OgreBites::Button*          m_quitButton;
     
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader    m_StaticPluginLoader;

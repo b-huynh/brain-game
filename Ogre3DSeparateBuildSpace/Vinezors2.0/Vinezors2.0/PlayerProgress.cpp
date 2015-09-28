@@ -8,7 +8,9 @@
 
 #include "PlayerProgress.h"
 
-PlayerProgress::PlayerProgress() : rating(-1), score(0.0), time(0.0), numCorrect(0), numWrong(0), numSafe(0), numMissed(0), startSpeed(-1), exitSpeed(-1), initSpeedSetting(-1)
+PlayerProgress::PlayerProgress()
+    : rating(-1), score(0.0), time(0.0), numCorrect(0), numWrong(0), numSafe(0), numMissed(0), numPickups(0), numCorrectH(0), numWrongH(0), numSafeH(0), numMissedH(0), numPickupsH(0), startSpeed(-1), exitSpeed(-1), initSpeedSetting(-1),
+    accuracy(0.0), accuracyH(0.0), nBackDelta(0.0), nBackReturn(0.0), nBackSkill(0.0), nBackOffset(0.0), nBackResult(0.0), nBackNoffset(0.0)
 {}
 
 // returns true if the new rating overwrites the old rating
@@ -31,9 +33,23 @@ std::ostream& operator<<(std::ostream& outfile, const PlayerProgress & prg)
             << prg.numWrong << " "
             << prg.numSafe << " "
             << prg.numMissed << " "
+            << prg.numPickups << " "
+            << prg.numCorrectH << " "
+            << prg.numWrongH << " "
+            << prg.numSafeH << " "
+            << prg.numMissedH << " "
+            << prg.numPickupsH << " "
             << prg.startSpeed << " "
             << prg.exitSpeed << " "
-            << prg.initSpeedSetting;
+            << prg.initSpeedSetting << " "
+            << prg.accuracy << " "
+            << prg.accuracyH << " "
+            << prg.nBackDelta << " "
+            << prg.nBackReturn << " "
+            << prg.nBackSkill << " "
+            << prg.nBackOffset << " "
+            << prg.nBackResult << " "
+            << prg.nBackNoffset;
     return outfile;
 }
 
@@ -46,8 +62,22 @@ std::istream& operator>>(std::istream& infile, PlayerProgress & prg)
         >> prg.numWrong
         >> prg.numSafe
         >> prg.numMissed
+        >> prg.numPickups
+        >> prg.numCorrectH
+        >> prg.numWrongH
+        >> prg.numSafeH
+        >> prg.numMissedH
+        >> prg.numPickupsH
         >> prg.startSpeed
         >> prg.exitSpeed
-        >> prg.initSpeedSetting;
+        >> prg.initSpeedSetting
+        >> prg.accuracy
+        >> prg.accuracyH
+        >> prg.nBackDelta
+        >> prg.nBackReturn
+        >> prg.nBackSkill
+        >> prg.nBackOffset
+        >> prg.nBackResult
+        >> prg.nBackNoffset;
     return infile;
 }

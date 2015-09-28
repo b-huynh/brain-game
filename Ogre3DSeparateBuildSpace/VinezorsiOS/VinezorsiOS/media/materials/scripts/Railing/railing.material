@@ -1,0 +1,45 @@
+material Railing/DarkGray
+{
+	technique
+	{
+		pass
+		{
+			lighting on
+
+			ambient 0.3 0.4 0.4 1.0
+			diffuse 0.5 0.6 0.6 0.5
+			specular 0.4 0.5 0.5 1.0 25.0
+			scene_blend alpha_blend
+			depth_write off
+		}
+
+	}
+
+}
+
+material Railing/Gray
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+            ambient 0.8 0.8 0.8 1.0
+            diffuse 0.5 0.5 0.5 1.0
+        }
+    }
+}
+
+material Railing/Gold
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.75 0.70 0.34 1.0
+            diffuse 1.00 0.95 0.46 1.0
+        }
+    }
+}

@@ -47,13 +47,7 @@ public:
     std::vector<SectionInfo> sections;
     std::vector<PodInfo> types;
     
-    struct TargetInfo
-    {
-        bool level1;
-        bool level2;
-        bool level3;
-    };
-    std::vector<TargetInfo> targets;
+    std::vector<bool> targets;
     int sectionSize;
     int podSegmentSize;
     int distractorSegmentSize;
@@ -62,6 +56,12 @@ public:
     int spawnCombo;
     int spawnLimit;
     int numTargets;
+    float fuelMax;      // Total sustainable fuel
+    float fuelReturn;   // Total fuel added when picking up
+    float fuelSize;     // Size of a fuel canister (Related to HP)
+    float fuelTimer;    // Current fuel value
+    float fuelBuffer;   // Buffer value before timer is affected
+    float tsModifier;
     
     // These indices used to track current player's spot
     int sectionIndex;
@@ -73,10 +73,12 @@ public:
     std::list<Pod*> activePods; // Animating pods
     
     // Stage attributes
-    int stageNo;
+    int playNo; //distinguish different tunnel playthroughs in log file
+    int stageNo; // level number in level set
     StageMode mode;
-    char phase;
+    LevelPhase phaseX;
     float stageTime;
+    float totalDistance;
     float totalElapsed;
     float timePenalty;
     int nback;
@@ -98,13 +100,21 @@ public:
     std::vector<CollectionCriteria> collectionCriteria;
     std::vector<PowerupType> powerups;
     bool hasHoldout;
+    int holdoutLevel;
     int holdoutCounter;
     int holdoutPod;
     int holdoutIndex;
     int holdoutFrequency;
+    float holdoutStart;
+    float holdoutEnd;
+    float holdoutPerc;
+    bool holdoutSound;
+    bool holdoutColor;
+    bool holdoutShape;
     int trackNBackA;
     int trackNBackB;
     int trackNBackC;
+    float holdoutRemainder;
     
     bool multiCollectionTask;
     
@@ -122,12 +132,15 @@ public:
     float tSpeed;
     float tAccel;
     
+    int gateKeyCounter;
     float gateDelayTimer;
     float gateDelay;
+    
+    float tutorialTimer;
 public:
 	Tunnel();
     
-	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int stageNo, StageMode mode, char phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
+	Tunnel(Ogre::SceneNode* parentNode, Vector3 start, Quaternion rot, float segmentWidth, float segmentDepth, int segmentMinAngleTurn, int segmentMaxAngleTurn, int playNo, int stageNo, StageMode mode, LevelPhase phase, int nback, float stageTime, Direction sloc, int sectionSize, int podSegmentSize, int distractorSegmentSize, int powerupSegmentSize, const std::vector<std::vector<PodInfo> > & signalTypes, const std::vector<PowerupType> & powerups);
 	
     SceneNode* getMainTunnelNode() const;
 	Vector3 getStart() const;
@@ -157,7 +170,6 @@ public:
 	int getSpawnCombo() const;
 	int getSpawnLimit() const;
 	int getNumTargets() const;
-	int getTotalCollections() const;
 	int getSignalsLeft() const;
 	int getSectionIndex() const;
 	int getPodIndex() const;
@@ -176,27 +188,34 @@ public:
     // Given n-back to test, return the match if any, otherwise return POD_UNKNOWN for no
     bool testForRepeatSignal(PodSignal ps, int numtimes);
     bool testForRepeatMatch(int nvalue, PodSignal ps, int numtime);
-    PodSignal generateItem(int nbackA, int nbackB, int nbackC, int trackA, int trackB, int trackC);
     PodSignal getNBackTest(int nvalue, PodSignal test) const;
     PodSignal getNBackTest(int index, int nvalue) const;
     PodSignal getNBackTest(int nvalue) const;
     // Uses getNBackTest and determines n-back to test by the player's toggleBack
-    bool getPodIsGood(int index) const;
-    bool getPodIsGood() const;
-    int getNBackToggle() const;
+    bool getPodIsGood(int index, int toggle) const;
+    bool getPodIsGood(int toggle) const;
+    bool getIsHoldoutTest(int index, int nvalue);
+    bool getIsHoldoutTest(int nvalue);   // Determines whether one or the other signal has holdout
+    int getNBackToggle(int toggle) const;
     
     StageMode getMode() const;
     float getStageTime() const;
+    float getTotalDistance() const;
     float getTotalElapsed() const;
     float getTimePenalty() const;
     float getTimeLeft() const;
+    float getFuelMax() const;
+    float getFuelReturn() const;
+    float getFuelBuffer() const;
+    float getFuelTimer() const;
     float getPercentComplete() const;
     int getNBack() const;
     int getControl() const;
     Direction getBasis() const;
     bool hasAvailableSide(Direction side) const;
+    int getPlayNo() const;
     int getStageNo() const;
-    char getPhase() const;
+    LevelPhase getPhase() const;
     void determineMaterial();
     std::string getMaterialName() const;
     std::vector<NavigationLevel> getNavLevels() const;
@@ -206,12 +225,20 @@ public:
     bool extractPowerup(PowerupType type);
     std::vector<CollectionCriteria> getCollectionCriteria() const;
     
+    float getTSModifier() const;
+    void updateTSModifier();
+    
     virtual void checkIfDone();
     bool isDone() const;
+    void setEval(Evaluation eval);
     void setDone(Evaluation eval);
     void setSpawnCombo(int level);
+    void setSpawnLimit(int value);
+    void setNumTargets(int value);
     void upgradeControl();
     void addToTimePenalty(float value);
+    void addToFuelBuffer(float value);
+    void addToFuelTimer(float value);
     void setVisible(bool value);
     void setCleaning(bool value);
     bool needsCleaning() const;
@@ -223,16 +250,20 @@ public:
     void setNavigationLevels(int tunnelSectionsPerNavLevel);
     void setNavigationLevels(int startingNavLevel, int navLimit, int tunnelSectionsPerNavLevel);
     void setNavigationLevels(const std::vector<NavigationLevel> & preset, int tunnelSectionsPerNavLevel);
+    void setFuelLevel(float max, float pickup, int numbars);
     void setCollectionCriteria(const std::vector<CollectionCriteria> & value);
-    bool satisfyCriteria(int nback);
+    bool satisfyCriteria(int nback, int amount);
+    bool killCriteria(int amount);
     int loseRandomCriteria();
-    bool isCriteriaSatisfied() const;
+    bool areCriteriaFilled() const;
     bool isMultiCollectionTask() const;
-    bool setAllCriteriaTo(bool value);
+    bool setAllCriteriaTo(int value);
     int getLowestCriteria() const;
     int getHighestCriteria() const;
+    int getFirstCriteria() const; // just get the n-back of the first item, efficient then scanning list
     int getNumRequiredCriteria() const;
     int getNumSatisfiedCriteria() const;
+    int getStarPhase() const;
 	void removeSegment();
     
     SectionInfo getNextSectionInfo() const;
@@ -253,13 +284,17 @@ public:
     
     void unlink();
     void link(Player* player);
-    void presetTargets(int level);
+    void presetTargets();
     void constructTunnel(const std::string & nameTunnelTile, int size);
     
     void update(float elapsed);
     void respondToToggleCheat();
     
+    void setHoldout(bool val);
+    void setHoldout(int holdoutFrequency);
     void setHoldout(bool val, int holdoutFrequency);
+    void setHoldoutSettings( float perc, int level, bool sound, bool color, bool shape);
+    bool levelHasHoldout() const;
     
     void gateAnimation(float elapsed);
     

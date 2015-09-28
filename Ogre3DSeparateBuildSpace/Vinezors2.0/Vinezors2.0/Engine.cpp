@@ -101,6 +101,11 @@ void Engine::activateReleased(float x, float y, float dx,  float dy)
 
 void Engine::activateVelocity(float vel)
 {
+  
+}
+
+void Engine::activateAngleTurn(float angle, float vel)
+{
     
 }
 

@@ -12,6 +12,7 @@
 #include "Util.h"
 
 #include "Engine.h"
+#include "HudMainMenu.h"
 
 class EngineMainMenu : public Engine
 {
@@ -37,10 +38,17 @@ public:
 	virtual void keyReleased(const OIS::KeyEvent &keyEventRef);
 #endif
     
+    
     virtual void requestResize();
+    
+    
 protected:
 	Player* player;
-    Hud* hud;
+    HudMainMenu* hud;
+    
+    bool levelsPressed = false;
+    bool settingsPressed = false;
+
     
     void alloc();
     void dealloc();

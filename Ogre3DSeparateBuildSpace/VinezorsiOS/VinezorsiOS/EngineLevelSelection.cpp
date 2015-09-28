@@ -18,7 +18,6 @@ EngineLevelSelection::EngineLevelSelection(EngineStateManager* engineStateMgr, P
 {
     this->player = player;
     this->hud = NULL;
-    enter();
 }
 
 EngineLevelSelection::~EngineLevelSelection()
@@ -30,8 +29,8 @@ void EngineLevelSelection::enter()
     alloc();
     player->startMenu();
     
+    
     // Set skybox
-    Util::setSkyboxAndFog("General/PurpleSpaceSkyPlane");
 	OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
 	OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -65,13 +64,15 @@ void EngineLevelSelection::activatePerformSwipeDown()
 void EngineLevelSelection::activatePerformSingleTap(float x, float y)
 {
     std::string queryGUI = hud->queryButtons(Vector2(x, y));
-    
+    if (queryGUI != "")
+        player->reactGUI();
     if (testForLevelButtons(queryGUI))
     {
         
     }
     else if (queryGUI == "back")
     {
+        player->saveProgress(globals.savePath);
         engineStateMgr->requestPopEngine();
     }
     else if (queryGUI == "godown")
@@ -84,18 +85,69 @@ void EngineLevelSelection::activatePerformSingleTap(float x, float y)
     }
     else if (queryGUI == "checktutorials")
     {
-        TutorialManager* tutorialMgr = player->getTutorialMgr();
+        /*TutorialManager* tutorialMgr = player->getTutorialMgr();
         if (tutorialMgr->isEnabled())
             tutorialMgr->disable();
         else
-            tutorialMgr->enable();
+            tutorialMgr->enable();*/
+        
+        //Initally its set to No Holdout.
+        
+        if(player->levelsHoldout)
+        {
+            //Disable all levels
+            player->levelsHoldout = false;
+            
+            for(int i = 0; i < 9; i++) //Columns
+            {
+                for(int j =0; j < 6; j++) //Rows
+                {
+                    player->getLevels()->stageList[i][j].holdoutPerc = 0;
+                    player->getLevels()->stageList[i][j].holdoutStart = 0;
+                    player->getLevels()->stageList[i][j].holdoutEnd= 0;
+                    
+                    player->getLevels()->stageList[i][j].holdoutColor = 0;
+                    player->getLevels()->stageList[i][j].holdoutShape = 0;
+                    player->getLevels()->stageList[i][j].holdoutSound = 0;
+                }
+            }
+            
+            
+
+            
+            
+            
+            
+        }
+        else
+        {
+            //Enable all levels
+            player->levelsHoldout = true;
+            for(int i = 0; i < 9; i++) //Columns
+            {
+                for(int j =0; j < 6; j++) //Rows
+                {
+                    player->getLevels()->stageList[i][j].holdoutPerc = 1.00;
+                    player->getLevels()->stageList[i][j].holdoutStart = 0.00;
+                    player->getLevels()->stageList[i][j].holdoutEnd= 0.0;
+                    
+                    player->getLevels()->stageList[i][j].holdoutColor = 1;
+                    player->getLevels()->stageList[i][j].holdoutShape = 1;
+                    player->getLevels()->stageList[i][j].holdoutSound = 1;
+                }
+            }
+            
+            
+            
+        }
+        
     }
 
 }
 
 void EngineLevelSelection::activatePerformPinch()
 {
-#ifdef DEBUG_MODE
+//#if defined(DEBUG_MODE)
     if (player->isLevelAvailable(NUM_LEVELS * NUM_TASKS - 1))
     {
         PlayerProgress value;
@@ -105,10 +157,10 @@ void EngineLevelSelection::activatePerformPinch()
     else
     {
         PlayerProgress value;
-        value.rating = 3;
+        value.rating = 5;
         player->setAllProgressTo(value);
     }
-#endif
+//#endif
 }
 
 #if !defined(OGRE_IS_IOS)
@@ -164,7 +216,7 @@ void EngineLevelSelection::keyPressed(const OIS::KeyEvent &keyEventRef)
         case OIS::KC_L:
         {
             PlayerProgress value;
-            value.rating = 3;
+            value.rating = 5;
             player->setAllProgressTo(value);
             break;
         }

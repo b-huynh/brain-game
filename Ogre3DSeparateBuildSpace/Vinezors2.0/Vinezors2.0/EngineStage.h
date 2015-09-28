@@ -44,6 +44,7 @@ public:
 	virtual void activatePressed(float x, float y);
 	virtual void activateReleased(float x, float y, float dx, float dy);
     virtual void activateVelocity(float vel);
+    virtual void activateAngleTurn(float angle, float vel);
     
     virtual void activateReturnFromPopup();
     
@@ -65,7 +66,7 @@ protected:
     // RUNNING: actual gameplay
     // PROMPT: end prompt and manual pause prompt
     // DONE: cleanup of game state
-    enum StageState { STAGE_STATE_INIT, STAGE_STATE_PAUSE, STAGE_STATE_RUNNING, STAGE_STATE_PROMPT, STAGE_STATE_DONE };
+    enum StageState { STAGE_STATE_INIT, STAGE_STATE_PAUSE, STAGE_STATE_RUNNING, STAGE_STATE_PROMPT, STAGE_STATE_READY, STAGE_STATE_DONE };
     
     StageState stageState;
     
@@ -75,16 +76,62 @@ protected:
 	Player* player;
     HudStage* hud;
     
-    //State of tunnel spin
+    float readyTimer;
+    
+    // Parameters of tunnel Spin
+    float maxVel;
+    float minVelFree;
+    float minVelStopper;
+    float dampingDecayFree;
+    float dampingDecayStop;
+    float dampingDropFree;
+    float dampingDropStop;
+    
+    // State of tunnel spin
+    float spinVelocityTarget;
     float spinVelocity;
-    float damping;
+    float dampingDecay;
+    float dampingDrop;
     bool spinClockwise;
+    bool freeMotion;
+    float freeAngleTraveled;
+    std::vector<float> lastAngles;
+    
+    //Accel Parameters
+    float sumMagPos= 0;
+    float sumMagNeg = 0;
+    bool acc_going_up = false;
+    bool tempJustOnce = false;
+    float accel_Vel = 0.0f;
+    bool isAccel = true;
+    float defIncrement;
+    float modifyer;
+    int currDirection = 0;
+    int prevDirection = 0;
+    
+    float AccelspinVelocity;
+    float AccelSpeedModifyer = 4000;
+    float AcceldampingDrop = 100.0f;
+    float AcceldampingDecay =  .5f;//0.937f;
+    int AccelDirection = 0;
+    float AccelMax = 5000;
+    float AccelminVelStopper = 1150.0f;
+    float currAcc_y;
+    float prevAcc_y = 0.0f;;
+    int AccelJerkTimer = 30; // 30 frames = 1 second
+
     
     void setup();
     void dealloc();
     void setPause(bool value, bool targetAllSounds = true);
     void completeStage(Evaluation forced);
     void updateSpin(float elapsed);
+    void setTaskPrompt();
+    void updateAccel(float elapsed);
+    
+    //SceneRay
+    RaySceneQuery* mRaySceneQuery;
+    
 };
 
 #endif /* defined(__Vinezors2_0__EngineStage__) */

@@ -72,6 +72,13 @@ struct HudSlider
     void setBallDestination(int slot);
     Vector2 getBallPosition() const;
     int getIndex() const;
+    int getRange() const;
+    int getMin() const;
+    int getMax() const;
+    
+    void activateMoved(float x, float y, float dx, float dy);
+    void activatePressed(float x, float y);
+	void activateReleased(float x, float y, float dx, float dy);
     
     void update(float elapsed);
 };

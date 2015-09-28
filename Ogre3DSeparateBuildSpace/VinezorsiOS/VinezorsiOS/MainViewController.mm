@@ -14,6 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <CoreMotion/CoreMotion.h>
 
+
 // To use CADisplayLink for smoother animation on iPhone comment out
 // the following line or define it to 1.  Use with caution, it can
 // sometimes cause input lag.
@@ -25,7 +26,7 @@
 @interface MainViewController ()
 {
     NSTimer* mTimer;
-    OgreApp* mApplication;
+    OgreApp mApplication;
     
     // Use of the CADisplayLink class is the preferred method for controlling your animation timing.
     // CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
@@ -46,6 +47,7 @@
 
 @property (retain) NSTimer *mTimer;
 @property (retain) OgreView* mOgreView;
+
 
 @end
 
@@ -78,18 +80,22 @@
     [self.view addGestureRecognizer:doubleTapRecognizer];
     
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    panRecognizer.minimumNumberOfTouches = 1;
+    panRecognizer.maximumNumberOfTouches = 1;
     [self.view addGestureRecognizer:panRecognizer];
     
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
     
-    UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
+    
+    /*UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
     shortPressRecognizer.minimumPressDuration = 0.01;
     [self.view addGestureRecognizer:shortPressRecognizer];
     
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
     longPressRecognizer.minimumPressDuration = 0.20;
-    [self.view addGestureRecognizer:longPressRecognizer];
+    [self.view addGestureRecognizer:longPressRecognizer];*/
+     
     
     // Required if double tap should override single tap
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
@@ -98,8 +104,50 @@
     doubleTapRecognizer.delegate = self;
     panRecognizer.delegate = self;
     pinchRecognizer.delegate = self;
+    /*
     longPressRecognizer.delegate = self;
     shortPressRecognizer.delegate = self;
+     */
+    
+    //Accelerometer:
+    
+    self.motionManager = [[CMMotionManager alloc] init];
+    self.motionManager.accelerometerUpdateInterval = .05; //50ms
+    
+    [self.motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue]
+                                             withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
+                                                 [self sendAccelertionData:accelerometerData.acceleration];
+                                                 if(error){
+                                                     
+                                                     NSLog(@"%@", error);
+                                                 }
+                                             }];
+
+}
+-(void)sendAccelertionData:(CMAcceleration)acceleration
+{
+    mApplication.sendAccelData(acceleration.x, acceleration.y, acceleration.z);
+    //mApplication.activateAngleTurn(acceleration.y*.1, 1);
+
+    
+    /*self.accX.text = [NSString stringWithFormat:@" %.2fg",acceleration.x];
+    if(fabs(acceleration.x) > fabs(currentMaxAccelX))
+    {
+        currentMaxAccelX = acceleration.x;
+    }
+    self.accY.text = [NSString stringWithFormat:@" %.2fg",acceleration.y];
+    if(fabs(acceleration.y) > fabs(currentMaxAccelY))
+    {
+        currentMaxAccelY = acceleration.y;
+    }
+    self.accZ.text = [NSString stringWithFormat:@" %.2fg",acceleration.z];
+    if(fabs(acceleration.z) > fabs(currentMaxAccelZ))
+    {
+        currentMaxAccelZ = acceleration.z;
+    }
+*/
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -108,17 +156,15 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startWithWindow:(UIWindow*)window :(NSString*)str :(BOOL)isOn
+- (void)startWithWindow:(UIWindow*)window :(NSString*)str
 {
-    unsigned int width  = self.view.frame.size.width;
-    unsigned int height = self.view.frame.size.height;
+    unsigned int width  = self.view.frame.size.width / 2;
+    unsigned int height = self.view.frame.size.height / 2;
  
-    NSLog(@"Yeah: %d %d\n", width, height);
+    NSLog(@"Frame: %d %d\n", width, height);
     
     screenWidth = width;
     screenHeight = height;
-    
-    mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
     
     // A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
     // class is used as fallback when it isn't available.
@@ -134,11 +180,12 @@
     mStartTime = 0;
     mTimer = nil;
     
+    mOgreView = [[OgreView alloc] initWithFrame:CGRectMake(0,0,width,height)];
+    
     try
     {
-        mApplication = new OgreApp();
-        if (isOn) mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_ENABLED);
-        else mApplication->startDemo(window, mOgreView, width, height, [str UTF8String], MUSIC_DISABLED);
+        //mApplication = OgreApp();
+        mApplication.startDemo(window, mOgreView, width, height, [str UTF8String]);
         
         Ogre::Root::getSingleton().getRenderSystem()->_initRenderTargets();
         // Clear event times
@@ -152,6 +199,8 @@
     
     // Linking the ogre view to the render window
     mOgreView.mRenderWindow = OgreFramework::getSingletonPtr()->m_pRenderWnd;
+    
+
     
     // Ogre has created an EAGL2ViewController for the provided mOgreView
     // and assigned it as the root view controller of the window
@@ -221,7 +270,9 @@
 - (void)inactivate
 {
     OgreFramework::getSingletonPtr()->m_pRenderWnd->setActive(false);
-    Ogre::Root::getSingleton().saveConfig();
+    mApplication.saveState();
+    // Throws an exception in iOS 8.0, we don't need the config file anyway
+    //Ogre::Root::getSingleton().saveConfig();
 }
 
 - (void)activate
@@ -231,32 +282,29 @@
 
 - (void)update:(id)sender
 {
+    [self sendOrientation];
+    
+    //NSLog(@"Update");
     if(!OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
         return;
+    //NSLog(@"Pass");
     
     if(!OgreFramework::getSingletonPtr()->isOgreToBeShutDown() &&
        Ogre::Root::getSingletonPtr() && Ogre::Root::getSingleton().isInitialised())
     {
-		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
-		{
-			mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+        //mStartTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
             
-            mApplication->update(mDeltaTime);
-            OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
+        mApplication.update(mDeltaTime);
+        OgreFramework::getSingletonPtr()->updateOgre(mDeltaTime);
             
-			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
+        OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
             
-			mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
-		}
-        if (mOgreView.resized)
-        {
-            mApplication->requestResize();
-        }
+        //mLastFrameTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - mStartTime;
     }
-    else
+    if (mOgreView.resized)
     {
-        [self cleanup];
-        [[UIApplication sharedApplication] performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
+        mApplication.requestResize();
+        mOgreView.resized = false;
     }
 }
 
@@ -266,7 +314,7 @@
     UITouch *touch = [[event allTouches] anyObject];
     start = [touch locationInView:self.view];
     
-    mApplication->activateTouchPress(start.x, start.y);
+    mApplication.activateTouchPress(start.x, start.y);
 }
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -274,7 +322,7 @@
     UITouch *touch = [[event allTouches] anyObject];
     end = [touch locationInView:self.view];
     
-    mApplication->activateTouchRelease(end.x, end.y);
+    mApplication.activateTouchRelease(end.x, end.y);
 }
 
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
@@ -282,39 +330,39 @@
     UITouch *touch = [[event allTouches] anyObject];
     CGPoint loc = [touch locationInView:self.view];
     
-    mApplication->activateTouchMove(loc.x - end.x, loc.y - end.y);
+    mApplication.activateTouchMove(loc.x - end.x, loc.y - end.y);
     
     end = loc;
 }
 
 - (IBAction)handleSwipeLeft:(UISwipeGestureRecognizer*)sender
 {
-    //mApplication->activatePerformLeftMove();
+    //mApplication.activatePerformLeftMove();
 }
 
 - (IBAction)handleSwipeRight:(UISwipeGestureRecognizer*)sender
 {
-    //mApplication->activatePerformRightMove();
+    //mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeDown:(UISwipeGestureRecognizer*)sender
 {
     CGFloat dx = end.x - start.x;
-    mApplication->activateTouchRelease(dx, end.y - start.y);
+    mApplication.activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
-        mApplication->activatePerformLeftMove();
+        mApplication.activatePerformLeftMove();
     else if (dx > 1.0)
-        mApplication->activatePerformRightMove();
+        mApplication.activatePerformRightMove();
 }
 
 - (IBAction)handleSwipeUp:(UISwipeGestureRecognizer*)sender
 {
     CGFloat dx = end.x - start.x;
-    mApplication->activateTouchRelease(dx, end.y - start.y);
+    mApplication.activateTouchRelease(dx, end.y - start.y);
     if (dx < -1.0)
-        mApplication->activatePerformLeftMove();
+        mApplication.activatePerformLeftMove();
     else if (dx > 1.0)
-        mApplication->activatePerformRightMove();
+        mApplication.activatePerformRightMove();
 }
 */
 
@@ -322,14 +370,14 @@
 {
     CGPoint loc = [sender locationInView:self.view];
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformDoubleTap(loc.x, loc.y);
+        mApplication.activatePerformDoubleTap(loc.x, loc.y);
 }
 
 - (IBAction)handleSingleTap:(UITapGestureRecognizer*)sender
 {
     CGPoint loc = [sender locationInView:self.view];
     if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformSingleTap(loc.x, loc.y);
+        mApplication.activatePerformSingleTap(loc.x, loc.y);
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer*)sender
@@ -338,7 +386,7 @@
     {
         NSLog(@"%f\n", sender.scale);
         if (sender.scale <= 0.75 || sender.scale >= 1.5)
-            mApplication->activatePerformPinch();
+            mApplication.activatePerformPinch();
     }
 }
 
@@ -365,8 +413,8 @@
     
     if (sender.state == UIGestureRecognizerStateBegan)
     {
-        mApplication->activateVelocity(0.0);
-        mApplication->activatePressed(p.x, p.y);
+        mApplication.activateVelocity(0.0);
+        mApplication.activatePressed(p.x, p.y);
         
         angleCurrent = angle;
         anglePrevious = angleCurrent;
@@ -383,9 +431,9 @@
         dT = fabs(dT);
         anglePrevious = angleCurrent;
         
-//#ifdef CONTROL_SPIN_DEBUG_OUTPUT
+#ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"DT: %f", dT);
-//#endif
+#endif
         
         /* Calculate Cross Product from center to Velocity vector */
         CGFloat centerX = screenWidth / 2.0;
@@ -408,13 +456,11 @@
 #endif
         
         if (clockwise) {
-            //mApplication->activateVelocity(magnitude);
-            mApplication->activateAngleTurn(-dT);
+            mApplication.activateAngleTurn(-dT, magnitude);
         } else {
-            //mApplication->activateVelocity(-magnitude);
-            mApplication->activateAngleTurn(dT);
+            mApplication.activateAngleTurn(dT, magnitude);
         }
-        mApplication->activateMoved(p.x, p.y, dp.x, dp.y);
+        mApplication.activateMoved(p.x, p.y, dp.x, dp.y);
     }
     else
     {
@@ -439,11 +485,11 @@
 #endif
         
         if (clockwise) {
-            mApplication->activateVelocity(magnitude);
+            mApplication.activateVelocity(magnitude);
         } else {
-            mApplication->activateVelocity(-magnitude);
+            mApplication.activateVelocity(-magnitude);
         }
-        mApplication->activateReleased(p.x, p.y, dp.x, dp.y);
+        mApplication.activateReleased(p.x, p.y, dp.x, dp.y);
         
 #ifdef CONTROL_SPIN_DEBUG_OUTPUT
         NSLog(@"End Pan");
@@ -455,17 +501,19 @@
 - (IBAction)handleLongPress:(UILongPressGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan)
-        mApplication->activatePerformBeginLongPress();
+        mApplication.activatePerformBeginLongPress();
     else if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformEndLongPress();
+        mApplication.activatePerformEndLongPress();
 }
+
+
 
 - (IBAction)handleShortPress:(UILongPressGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan)
-        mApplication->activatePerformBeginShortPress();
+        mApplication.activatePerformBeginShortPress();
     else if (sender.state == UIGestureRecognizerStateEnded)
-        mApplication->activatePerformEndShortPress();
+        mApplication.activatePerformEndShortPress();
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer*)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
@@ -488,23 +536,37 @@
     return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
 }
 
+-(void) sendOrientation {
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+
+    if(orientation == UIInterfaceOrientationLandscapeLeft)
+    {
+        mApplication.recieveOrientation(false);
+    }
+    else
+    {
+        mApplication.recieveOrientation(true);
+
+    }
+    
+}
 /*
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:self.capital forKey:@"UYLKeyCapital"];
     [super encodeRestorableStateWithCoder:coder];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    self.capital = [coder decodeObjectForKey:@"UYLKeyCapital"];
     [super decodeRestorableStateWithCoder:coder];
 }
- */
+*/
+
+//Accelerometer
 
 - (void)cleanup
 {
-    mApplication->endGame();
+    mApplication.endGame();
     try
     {
         Ogre::Root::getSingleton().queueEndRendering();
