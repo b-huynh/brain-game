@@ -12,6 +12,7 @@
 #include "Tunnel.h"
 #include "Player.h"
 #include "LevelSet.h"
+//#include "cmath.h"
 
 extern Util::ConfigGlobal globals;
 
@@ -22,10 +23,13 @@ EngineStage::EngineStage(EngineStateManager* engineStateMgr, Player* player)
     this->tunnel = NULL;
     this->player = player;
     this->hud = NULL;
+    this->mRaySceneQuery = NULL;
 }
 
 EngineStage::~EngineStage()
 {
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->destroyQuery(mRaySceneQuery);
+
 }
 
 void EngineStage::enter()
@@ -43,6 +47,12 @@ void EngineStage::exit()
 
 void EngineStage::update(float elapsed)
 {
+    if(globals.OverallTimerEnabled)
+    {
+        player->totalElapsedGeneral += elapsed;
+    }
+
+    
     OgreFramework::getSingletonPtr()->m_pSoundMgr->update(elapsed);
     bool replayableTutorial = (player->choice0RestartCounter < player->numRetries && player->marbleChoice == 0);
     bool replayableMarble = (player->choice1RestartCounter < player->numRetries && player->marbleChoice == 1) ||
@@ -79,7 +89,15 @@ void EngineStage::update(float elapsed)
         {
 #if defined(OGRE_IS_IOS)
             // Update the game state
-            updateSpin(elapsed);
+            if(globals.accelEnabled)
+            {
+                updateAccel(elapsed);
+            }
+            else
+            {
+                updateSpin(elapsed);
+            }
+                        
 #endif
             tunnel->update(elapsed);
             
@@ -240,12 +258,29 @@ void EngineStage::update(float elapsed)
         case STAGE_STATE_DONE:
         {
             // have a done screen after a certain time limit is reached
-            if ( player->getTotalElapsed() >= globals.sessionTime )
-                player->scheduler->sessionFinished = true;
             
-            std::cout << "\n\n-----------------------------------------\n";
-            std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
-            std::cout << "-----------------------------------------\n\n";
+            if(globals.OverallTimerEnabled)
+            {
+                if ( player->totalElapsedGeneral >= globals.sessionTime )
+                    player->scheduler->sessionFinished = true;
+                
+                std::cout << "\n\n-----------------------------------------\n";
+                std::cout << "Game Time Played: " << player->totalElapsedGeneral << std::endl;
+                std::cout << "-----------------------------------------\n\n";
+            }
+            else
+            {
+                if ( player->getTotalElapsed() >= globals.sessionTime )
+                    player->scheduler->sessionFinished = true;
+                
+                std::cout << "\n\n-----------------------------------------\n";
+                std::cout << "Game Time Played: " << player->getTotalElapsed() << std::endl;
+                std::cout << "-----------------------------------------\n\n";
+            }
+            
+            
+            
+           
             
             // scheduler grading done in here
             // also need to save nback levels after finishing a level
@@ -365,6 +400,20 @@ bool isPathable(SectionInfo info, float roll)
     
     return false;
 }
+TunnelSlice* closestPathable(Tunnel* tunnel, int numSegments, float roll, int & depthDist)
+{
+    std::vector<TunnelSlice*> nextset = tunnel->getNSlices(3);
+    depthDist = 0;
+    for (; depthDist < nextset.size(); ++depthDist)
+    {
+        SectionInfo info = nextset[depthDist]->getSectionInfo();
+        if (isPathable(info, roll))
+        {
+            return nextset[depthDist];
+        }
+    }
+    return NULL;
+}
 
 TunnelSlice* closestUnpathable(Tunnel* tunnel, int numSegments, float roll, int & depthDist)
 {
@@ -381,6 +430,7 @@ TunnelSlice* closestUnpathable(Tunnel* tunnel, int numSegments, float roll, int 
     return NULL;
 }
 
+
 void EngineStage::activatePerformLeftMove()
 {
     switch (stageState)
@@ -393,6 +443,8 @@ void EngineStage::activatePerformLeftMove()
             {
                 float val = player->getDesireRoll();
                 player->setDesireRoll(val + 45);
+                //std::cout<< "LEFT MOVE: "<< val << std::endl;
+
             }
             break;
         }
@@ -629,8 +681,54 @@ void EngineStage::activatePerformSingleTap(float x, float y)
             }
             else
             {
-                std::cout << x << "," << y << std::endl;
+                //Regular tap on Screen!
+                //mRaySceneQuery;
+                mRaySceneQuery = OgreFramework::getSingletonPtr()->m_pSceneMgrMain->createRayQuery( Ogre::Ray() );
+                mRaySceneQuery->setQueryMask(globals.POD_MASK);
+
+
+                Ogre::Ray mouseRay =
+                OgreFramework::getSingletonPtr()->m_pCameraMain->getCameraToViewportRay(
+                                                x/ float(globals.screenWidth),
+                                                y / float(globals.screenHeight));
+                
+                bool mMovableFound = false;
+                
+                mRaySceneQuery->setRay(mouseRay);
+                mRaySceneQuery->setSortByDistance(true);
+                
+                Ogre::RaySceneQueryResult& result = mRaySceneQuery->execute();
+                Ogre::RaySceneQueryResult::iterator it = result.begin();
+                
+                mMovableFound = false;
                 if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
+                {
+                for ( ; it != result.end(); it++)
+                {
+                    //mMovableFound =
+                    //it->movable &&
+                    //it->movable->getName() != "" &&
+                    //it->movable->getName() != "PlayerCam";
+                    
+                   // if (mMovableFound)
+                    //{
+                        //mCurObject = it->movable->getParentSceneNode();
+                    
+                    if(it->movable->getName().substr(0,10) == "headEntity")
+                    {
+                       std:: cout << "POD CLICKED" << std::endl;
+                        // Perform Zap
+                        player->setPowerUp("TractorBeam", true);
+                        player->performPowerUp("TractorBeam");
+                    }
+                    
+                      //  break;
+                    //}
+                }
+                }
+                
+                std::cout << x << "," << y << std::endl;
+                /*if (tunnel && tunnel->getMode() != STAGE_MODE_RECESS)
                 {
                     // Tap we are checking if it is inside circle
                     Vector2 relTap = globals.convertToPercentScreen(Vector2(x, y));
@@ -645,7 +743,7 @@ void EngineStage::activatePerformSingleTap(float x, float y)
                         player->setPowerUp("TractorBeam", true);
                         player->performPowerUp("TractorBeam");
                     }
-                }
+                }*/
             }
             break;
         }
@@ -1066,23 +1164,29 @@ void EngineStage::activateVelocity(float vel)
 
 void EngineStage::activateAngleTurn(float angle, float vel)
 {
-    //std::cout << "ANGLE: " << angle << std::endl;
-    
-    if (tunnel && !tunnel->isDone())
+
+    if(!globals.accelEnabled)
     {
-        //Convert to degrees;
-        double dT = (angle * 180.0) / Ogre::Math::PI;
-        float roll = player->getCamRoll();
-        
-        // If unpathable upahead, don't allow player to traverse through
-        int depthDist = 0;
-        if (!player->inverted)
-            dT = -dT;
-        TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
-        if (!unpathable)
+        //std::cout << "ANGLE: " << angle << std::endl;
+    
+        if (tunnel && !tunnel->isDone())
         {
-            player->setCamRoll(roll + dT);
-            player->offsetRollDest = dT;
+            //Convert to degrees;
+            double dT = (angle * 180.0) / Ogre::Math::PI;
+            float roll = player->getCamRoll();
+            //std::cout << "Degres: " << dT << std::endl;
+
+        
+            // If unpathable upahead, don't allow player to traverse through
+            int depthDist = 0;
+            if (!player->inverted)
+                dT = -dT;
+            TunnelSlice* unpathable = closestUnpathable(tunnel, 3, roll + dT, depthDist);
+            if (!unpathable)
+            {
+                player->setCamRoll(roll + dT);
+                player->offsetRollDest = dT;
+            }
         }
     }
 }
@@ -1603,6 +1707,7 @@ void EngineStage::setup()
 void EngineStage::updateSpin(float elapsed)
 {
     //std::cout << "SPIN: " << spinVelocity << " " << spinVelocityTarget << std::endl;
+    //std::cout << "Elapsed: " << elapsed << std::endl;
     
     float prevRoll = player->getCamRoll();
     Direction prevDir = getDirByRoll(prevRoll);
@@ -1841,4 +1946,288 @@ void EngineStage::completeStage(Evaluation forced)
     Evaluation eval = tunnel->getEval();
     player->rerollCounter = 2;
     player->saveAllResults(eval);
+}
+
+void EngineStage::updateAccel( float elapsed)
+{
+    //New Version (SpinUpdate Inspired)
+    
+    prevAcc_y = currAcc_y;
+    currAcc_y = globals.acc_y;
+    
+    
+    float prevRoll = player->getCamRoll();
+    Direction prevDir = getDirByRoll(prevRoll);
+    float afterRoll;
+    Direction afterDir;
+    float mody;
+    
+    
+    float signV = -1.0f;
+
+    float mag = sqrtf((globals.acc_x*globals.acc_x )  +  (globals.acc_y*globals.acc_y)   + (globals.acc_z*globals.acc_z) );
+
+    
+    if(globals.acc_y >0)
+    {
+        //Going right
+        signV = 1.0f;
+        //AccelDirection = 1;
+    }
+    else if(globals.acc_y <0)
+    {
+        //AccelDirection = -1;
+    }
+    
+
+    prevDirection = currDirection;
+    currDirection = AccelDirection;
+    int speed = hud->speedSlider->getIndex();
+    
+
+ 
+        if(currAcc_y < -.1f)
+        {
+            AccelDirection = -1;
+
+        }
+        
+        if(currAcc_y > .1f)
+        {
+            AccelDirection = 1;
+
+        }
+
+        if( ((currAcc_y< -.1f) && (currAcc_y >= -.2)) || ((currAcc_y > .1f) && (currAcc_y <= .2))   )
+        {
+            //AccelMax = 4000;//2500;
+            mody  = 4000; //2000
+
+        }
+        else if( ((currAcc_y < -.2f)&& (currAcc_y>= -.4)) || ((currAcc_y> .2f) && (currAcc_y<= .4)) )
+        {
+            //AccelMax = 4700;//3300;
+            mody  = 4700; //2700
+        }
+        else if( ((currAcc_y < -.4f)&& (currAcc_y>= -.6)) || ((currAcc_y> .4f) && (currAcc_y<= .6)) )
+        {
+            //AccelMax = 5400;//3700;
+            mody  = 5700; //2700
+        }
+        else
+        {
+            //AccelMax = 5000;
+            mody  = 6500; //4500
+        }
+        
+        if(mag > 1.2)
+        {
+            //std::cout << " JERK "<< std::endl;
+            //AccelMax = 5000;
+            //AccelSpeedModifyer  = 2500;
+
+        }
+        //AccelSpeedModifyer = 2000*currAcc_y;
+    //}
+    mody += (2000*(speed/40));
+    if(currAcc_y < 0)
+    {
+        mody *= -1;
+    }
+    
+    AccelSpeedModifyer = (mody)*(currAcc_y) ;
+    //Figure out when to increment the speed!
+    //AccelspinVelocity += (AccelSpeedModifyer*elapsed);
+    //std::cout << "AccelSpinVel: " << AccelspinVelocity << std::endl;
+    AccelspinVelocity = (AccelSpeedModifyer);
+
+    
+    //std::cout << "Direction: " << AccelDirection << std::endl;
+    
+    // Bound velocity to a max
+    if (AccelspinVelocity >= AccelMax)
+    {
+        //AccelspinVelocity = AccelMax;
+    }
+    
+    if(prevDirection != currDirection)
+    {
+        //AccelspinVelocity = 300;
+    }
+    
+    player->rollSpeed = (AccelspinVelocity / (globals.screenWidth / 2.0)) * (180.0 / Ogre::Math::PI);
+    float dTheta = player->rollSpeed * elapsed;
+    
+    
+    //Actual Movement based on velocity
+    
+    if(currAcc_y < 0)//Moving Left!
+    {
+        if(!globals.orientLeft)
+        {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = -dTheta;
+            freeAngleTraveled -= dTheta;
+        }
+        else
+        {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = dTheta;
+            freeAngleTraveled += dTheta;
+        }
+        
+    }
+    else if (currAcc_y > 0) //Moving Right!
+    {
+        if(!globals.orientLeft)
+        {
+            this->activatePerformRightMove(dTheta);
+            player->offsetRollDest = dTheta;
+            freeAngleTraveled += dTheta;
+        }
+        else
+        {
+            this->activatePerformLeftMove(dTheta);
+            player->offsetRollDest = -dTheta;
+            freeAngleTraveled -= dTheta;
+        }
+        
+    }
+    
+    //Snap to stuff
+    float curRoll = player->getCamRoll();
+    int depthDist = 0;
+    bool rollNeg = false;
+    bool doIt = false;
+    
+    
+    float desiredRoll;
+    
+    //std::cout <<" Curr Cam Roll: " << curRoll << std::endl;
+    if(curRoll < 0)
+    {
+        rollNeg = true;
+        curRoll  = curRoll * -1.0f;
+    }
+    
+    float tempnum = fmodf(curRoll, 45.0f);//Ogre::Math::modff(curRoll, 45.0f);//curRoll % 45.0f;
+    
+    if(tempnum <= 22.5f)
+    {
+        desiredRoll = curRoll-tempnum;
+    }
+    else if(tempnum > 22.5f)
+    {
+        desiredRoll = curRoll+(45.0f-tempnum);
+    }
+    
+    if(rollNeg)
+    {
+        curRoll = curRoll* -1.0f;
+        if(desiredRoll != 0)
+        {
+            desiredRoll = desiredRoll * -1.0f;
+        }
+    }
+    //std::cout<<"Desired Roll: " << desiredRoll << std::endl;
+    
+    float desiredAngle = desiredRoll - curRoll;
+    
+    float snapSpeed = .2f;
+    float angleTurnSpeed = .185f;
+    
+        
+    if(globals.acc_y >= -.08f && globals.acc_y <= .08f)
+    {
+        //Idle
+        //Snap to the closests Side!
+        //player->setCamRoll(desiredRoll); //Hard Snap
+        player->setCamRoll(curRoll+(desiredAngle*snapSpeed));
+    }
+    //End Snap Stuff
+    
+    
+    
+    lastAngles.insert(lastAngles.begin(), player->getCamRoll());
+    while (lastAngles.size() > NUM_ANGLES_SAVED)
+        lastAngles.pop_back();
+    
+    const float DELTA_DEGREE = 15.0;
+    /*float*/ curRoll = player->getCamRoll();
+    //int depthDist = 0;
+    TunnelSlice* unpathable = closestUnpathable(tunnel, 3, curRoll, depthDist);
+    if (unpathable)
+    {
+        SectionInfo info = unpathable->getSectionInfo();
+        
+        // Look for the closest panel using 15 degree delta steps
+        float thetaDistEstimate = DELTA_DEGREE;
+        while (thetaDistEstimate <= 180.0)
+        {
+            if (isPathable(info, curRoll - thetaDistEstimate))
+            {
+                thetaDistEstimate = -thetaDistEstimate;
+                break;
+            }
+            if (isPathable(info, curRoll + thetaDistEstimate))
+            {
+                break;
+            }
+            thetaDistEstimate += DELTA_DEGREE;
+        }
+        
+        thetaDistEstimate = thetaDistEstimate * (3 - depthDist);
+        
+        // Limit the force to 45 degrees
+        if (thetaDistEstimate > 45.0)
+            thetaDistEstimate = 45.0;
+        if (thetaDistEstimate < -45.0)
+            thetaDistEstimate = -45.0;
+        
+        // Assign new roll
+        float recoverRollSpeed = thetaDistEstimate * player->getFinalSpeed() * globals.globalModifierCamSpeed / tunnel->getSegmentDepth();
+        curRoll = curRoll + recoverRollSpeed * elapsed;
+        
+        // Resolve overshooting (if we are back on pathable ground)
+        if (isPathable(info, curRoll))
+        {
+            curRoll = Util::getDegrees(getDirByRoll(curRoll));
+        }
+    }
+    
+    player->setCamRoll(curRoll);
+    
+    // Animating the offset banking
+    double bankingAnimationSpeed = 30.0;
+    if (player->offsetRoll < player->offsetRollDest)
+    {
+        player->offsetRoll += bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll > player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
+    }
+    else if (player->offsetRoll > player->offsetRollDest)
+    {
+        player->offsetRoll -= bankingAnimationSpeed * elapsed;
+        if (player->offsetRoll < player->offsetRollDest)
+            player->offsetRoll = player->offsetRollDest;
+    }
+    
+    afterRoll = player->getCamRoll();
+    afterDir = getDirByRoll(afterRoll);
+    float discreteDegrees = Util::getDegrees(afterDir);
+    
+    
+    // Check dot product  for direction is same. If it switches it means we cross a boom
+    if (prevDir == afterDir &&  // Make sure it is the same panel in the first place
+        (discreteDegrees - prevRoll) * (discreteDegrees - afterRoll) < 0.0 &&   // Check for the transition to the other side of panel
+        AccelspinVelocity <= AccelminVelStopper &&    // Is the spin velocity slow enough?
+        abs(freeAngleTraveled) >= 5.0) // At least travel some degrees before being able to be stopped
+    {
+        activateVelocity(0.0);
+        player->setCamRoll(discreteDegrees);
+    }
+    
+    player->setVineDirRequest(getDirByRoll(player->getCamRoll() + player->offsetRoll));
+
+    
 }

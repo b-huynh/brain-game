@@ -151,8 +151,18 @@ std::vector<TutorialSlide> TutorialManager::getSlides(TutorialSlidesType type) c
     {
         case TUTORIAL_SLIDES_TEXTBOX_NAVIGATION:
             ret.push_back(TutorialSlide("", "General/TutorialTextbox1-1", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox1-2", ""));
-            ret.push_back(TutorialSlide("", "General/TutorialTextbox1-3", ""));
+            if(globals.accelEnabled)
+            {
+                ret.push_back(TutorialSlide("", "General/TutorialTextbox1-4", ""));
+
+            }
+            else
+            {
+                ret.push_back(TutorialSlide("", "General/TutorialTextbox1-2", ""));
+                ret.push_back(TutorialSlide("", "General/TutorialTextbox1-3", ""));
+                
+            }
+            
             break;
         case TUTORIAL_SLIDES_TEXTBOX_1BACK:
             ret.push_back(TutorialSlide("", "General/TutorialTextbox2-1", ""));

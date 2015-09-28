@@ -79,6 +79,9 @@ protected:
     float tempholdoutUpperBoundMinTime;
     float tempholdoutUpperBoundMaxTime;
     int tempholdoutSteps;
+    
+    bool tempOverallTimerEnabled;
+    bool tempaccelEnabled;
 
     
     void alloc();

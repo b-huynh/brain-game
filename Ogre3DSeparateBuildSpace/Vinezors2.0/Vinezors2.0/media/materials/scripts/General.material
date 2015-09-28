@@ -170,109 +170,20 @@ material General/TimeBonusMaterial
     }
 }
 
-material General/UncloakCircleGray
+material General/UncloakCircle
 {
     technique
     {
         pass
         {
             lighting off
-            scene_blend alpha_blend
+            scene_blend add
             depth_write off
+            diffuse vertexcolour
 
             texture_unit
             {
-                texture uncloakpfx_gray.png
-            }
-        }
-    }
-}
-
-material General/UncloakCircleRed
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-            {
-                texture uncloakpfx_red.png
-            }
-        }
-    }
-}
-
-material General/UncloakCircleGreen
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-            {
-                texture uncloakpfx_green.png
-            }
-        }
-    }
-}
-
-material General/UncloakCircleBlue
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-            {
-                texture uncloakpfx_blue.png
-            }
-        }
-    }
-}
-
-material General/UncloakCircleYellow
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-            {
-                texture uncloakpfx_yellow.png
-            }
-        }
-    }
-}
-
-material General/UncloakCircleOrange
-{
-    technique
-    {
-        pass
-        {
-            lighting off
-            scene_blend alpha_blend
-            depth_write off
-
-            texture_unit
-            {
-                texture uncloakpfx_orange.png
+                texture uncloakpfx.png
             }
         }
     }

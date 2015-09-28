@@ -59,8 +59,12 @@ void EngineStudySettings::enter()
     tempholdoutUpperBoundMinTime = globals.holdoutUpperBoundMinTime;
     tempholdoutUpperBoundMaxTime = globals.holdoutUpperBoundMaxTime;
     tempholdoutSteps = globals.holdoutSteps;
+    tempOverallTimerEnabled = globals.OverallTimerEnabled;
+    tempaccelEnabled = globals.accelEnabled;
     
     // Set skybox
+    OgreFramework::getSingletonPtr()->m_pSceneMgrMain->setSkyPlaneEnabled(false);
+    OgreFramework::getSingletonPtr()->m_pViewportMain->setBackgroundColour(ColourValue(0.11f, 0.11f, 0.11f, 1.0f));
     OgreFramework::getSingletonPtr()->m_pCameraMain->setPosition(Vector3(0, 0, 50));
     OgreFramework::getSingletonPtr()->m_pCameraMain->lookAt(Vector3(0, 0, 0));
     if (OgreFramework::getSingletonPtr()->m_pSceneMgrMain->getSkyPlaneNode())
@@ -157,9 +161,6 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             {
                 hud->holdoutMaxUpperBoundString =Util::toStringFloat(globals.holdoutMaxUpperBound,1);
             }
-            
-            
-            
             if(hud->nStatus == hud->HOLDOUT_LOWER_BOUND_TIME)
             {
                 hud->holdoutLowerBoundTimeString = Util::toStringFloat(globals.holdoutLowerBoundTime,3);
@@ -260,6 +261,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->buttons[hud->BUTTON_SESSION_START_NUMBER].hide();
                 hud->buttons[hud->BUTTON_SESSION_END_NUMBER].hide();
                 hud->buttons[hud->BUTTON_NUM_OF_SESSIONS_NUMBER].hide();
+                
+                //Hide Overall Timer
+                overlay1->remove2D(hud->enableOverallTimerBackground);
+                overlay1->remove2D(hud->enableOverallTimerButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_OVERALL_TIMER].hide();
+                
+                //Hide Accel Enabled
+                overlay1->remove2D(hud->enableAccelBackground);
+                overlay1->remove2D(hud->enableAccelButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_ACCEL].hide();
                 
                 
                 //SHOW PAGE 2
@@ -369,6 +382,18 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                 hud->buttons[hud->BUTTON_SESSION_END_NUMBER].show();
                 hud->buttons[hud->BUTTON_NUM_OF_SESSIONS_NUMBER].show();
                 
+                //Hide Overall Timer
+                overlay1->add2D(hud->enableOverallTimerBackground);
+                overlay1->add2D(hud->enableOverallTimerButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_OVERALL_TIMER].show();
+                
+                //Hide Accel
+                overlay1->add2D(hud->enableAccelBackground);
+                overlay1->add2D(hud->enableAccelButtonBackground);
+                
+                hud->buttons[hud->BUTTON_ENABLE_ACCEL].show();
+                
                 //HIDE PAGE 2
                 
                 //Hide Holdout Min Upper Bound
@@ -464,6 +489,8 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
             globals.holdoutUpperBoundMinTime= tempholdoutUpperBoundMinTime;
             globals.holdoutUpperBoundMaxTime= tempholdoutUpperBoundMaxTime;
             globals.holdoutSteps=tempholdoutSteps ;
+            globals.OverallTimerEnabled = tempOverallTimerEnabled;
+            globals.accelEnabled = tempaccelEnabled;
             
             /* Need to do this when I press ok!*/
              
@@ -507,7 +534,9 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
                tempholdoutLowerBoundTime == globals.holdoutLowerBoundTime &&
                tempholdoutUpperBoundMinTime == globals.holdoutUpperBoundMinTime &&
                tempholdoutUpperBoundMaxTime == globals.holdoutUpperBoundMaxTime &&
-               tempholdoutSteps == globals.holdoutSteps)
+               tempholdoutSteps == globals.holdoutSteps &&
+               tempOverallTimerEnabled == globals.OverallTimerEnabled &&
+               tempaccelEnabled == globals.accelEnabled)
                 
             {
                 //Still the same
@@ -591,6 +620,114 @@ void EngineStudySettings::activatePerformSingleTap(float x, float y)
         }
         
     }
+    else if(queryGUI == "checkaccel")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(globals.accelEnabled)
+            {
+                globals.accelEnabled = false;
+            }
+            else
+            {
+                globals.accelEnabled = true;
+            }
+            
+        }
+
+    }
+    
+    else if (queryGUI == "checkoveralltimer")
+    {
+        if(!hud->popUpisOut)
+        {
+            //Fix input fields
+            if(hud->nStatus == hud->INIT_VELOCITY)
+            {
+                hud->initSpeedString =Util::toStringInt(globals.initialVelocity);
+            }
+            if(hud->nStatus == hud->MAN_RECESS)
+            {
+                hud->manRecessString =Util::toStringInt(globals.manRecessLevelLimit);
+            }
+            if(hud->nStatus == hud->NEW_NAV_INC)
+            {
+                hud->newNavigationIncAmountString =Util::toStringFloat(globals.newNavIncrement,2);
+            }
+            if(hud->nStatus == hud->IND_RECESS_INC)
+            {
+                hud->indRecessString =Util::toStringFloat(globals.indRecessIncrement,2);
+            }
+            if(hud->nStatus == hud->HOLDOUT_DELAY)
+            {
+                hud->holdoutDelayString =Util::toStringFloat(globals.holdoutdelayNumber,1);
+            }
+            if(hud->nStatus == hud->SESSION_START_TIME)
+            {
+                hud->sessionStartTimeString =Util::toStringInt(globals.sessionStartTime);
+            }
+            if(hud->nStatus == hud->SESSION_END_TIME)
+            {
+                hud->sessionEndtimeString =Util::toStringInt(globals.sessionEndTime);
+            }
+            if(hud->nStatus == hud->NUM_OF_SESSIONS)
+            {
+                hud->numOfSessionsString =Util::toStringInt(globals.numOfSessions);
+            }
+            hud->enableNumpad = false;
+            hud->showDecimal = false;
+            hud->nStatus = hud->NONE;
+            
+            if(globals.OverallTimerEnabled)
+            {
+                globals.OverallTimerEnabled = false;
+            }
+            else
+            {
+                globals.OverallTimerEnabled = true;
+            }
+            
+        }
+        
+    }
+
     else if (queryGUI == "checkfuel")
     {
         if(!hud->popUpisOut)

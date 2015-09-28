@@ -148,7 +148,7 @@ void addToHoldoutCandidates(std::vector<Bin*> & candidates, std::list<Bin>* v)
     }
 }
 
-void LevelScheduler::populateBins()
+void LevelScheduler::populateBins(bool holdoutOnlyEnabled)
 {
     // Modifiers for each difficulty nBack
     const double N_BACK_EASY = 0.7;
@@ -171,10 +171,13 @@ void LevelScheduler::populateBins()
     /////////////////////
     // Easy Difficulty //
     /////////////////////
-    binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
-    binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
-    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
-    binD->push_back(Bin(PHASE_ALL_SIGNAL, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    if (!holdoutOnlyEnabled)
+    {
+        binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+        binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+        binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+        binD->push_back(Bin(PHASE_ALL_SIGNAL, DIFFICULTY_EASY, DURATION_SHORT, false, N_BACK_EASY));
+    }
     
     ///////////////////////
     // Normal Difficulty //
@@ -190,9 +193,12 @@ void LevelScheduler::populateBins()
     binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_EASY, DURATION_LONG, false, N_BACK_NORMAL));       // long             normal          N
     
     // SOUND ONLY:
-    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));      // normal           normal          N
-    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_NORMAL, false, N_BACK_NORMAL));          // long             easy            N
-    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_LONG, false, N_BACK_NORMAL));        // long             normal          N
+    if (!holdoutOnlyEnabled)
+    {
+        binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));      // normal           normal          N
+        binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_NORMAL, false, N_BACK_NORMAL));          // long             easy            N
+        binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_EASY, DURATION_LONG, false, N_BACK_NORMAL));        // long             normal          N
+    }
     
     // ALL SIGNAL:
     binD->push_back(Bin(PHASE_ALL_SIGNAL, DIFFICULTY_NORMAL, DURATION_NORMAL, false, N_BACK_NORMAL));         // normal           normal          N
@@ -204,7 +210,10 @@ void LevelScheduler::populateBins()
      /////////////////////
     binA->push_back(Bin(PHASE_COLOR_SOUND, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     binB->push_back(Bin(PHASE_SHAPE_SOUND, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
-    binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    if (!holdoutOnlyEnabled)
+    {
+        binC->push_back(Bin(PHASE_SOUND_ONLY, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
+    }
     binD->push_back(Bin(PHASE_ALL_SIGNAL, DIFFICULTY_HARD, DURATION_LONG, false, N_BACK_HARD));
     
     
@@ -214,10 +223,20 @@ void LevelScheduler::populateBins()
     addToHoldoutCandidates(holdoutCandidatesA, binA);
     addToHoldoutCandidates(holdoutCandidatesB, binB);
     addToHoldoutCandidates(holdoutCandidatesD, binD);
-    
-    setHoldoutToCandidates(holdoutCandidatesA, holdoutCandidatesA.size() / 2);
-    setHoldoutToCandidates(holdoutCandidatesB, holdoutCandidatesB.size() / 2);
-    setHoldoutToCandidates(holdoutCandidatesD, holdoutCandidatesD.size() / 2);
+
+    if (holdoutOnlyEnabled)
+    {
+        std::cout << "YESYESYES\n";
+        setHoldoutToCandidates(holdoutCandidatesA, holdoutCandidatesA.size());
+        setHoldoutToCandidates(holdoutCandidatesB, holdoutCandidatesB.size());
+        setHoldoutToCandidates(holdoutCandidatesD, holdoutCandidatesD.size());
+    }
+    else
+    {
+        setHoldoutToCandidates(holdoutCandidatesA, holdoutCandidatesA.size() / 2);
+        setHoldoutToCandidates(holdoutCandidatesB, holdoutCandidatesB.size() / 2);
+        setHoldoutToCandidates(holdoutCandidatesD, holdoutCandidatesD.size() / 2);
+    }
     
     //setHoldout(binA);
     //setHoldout(binB);
@@ -263,11 +282,32 @@ void LevelScheduler::removeBin(LevelPhase phaseX, StageDifficulty difficultyX, S
  
  @return - A bin that has at least 1 element.
  */
-std::list<Bin>* LevelScheduler::pickRandomBin()
+std::list<Bin>* LevelScheduler::pickRandomBin(bool soundOnlyLevelsEnabled, bool holdoutOnlyEnabled)
 {
-    const int MIN_BIN = 0, MAX_BIN = 4;
-    int binNum = rand_num(MIN_BIN, MAX_BIN);
+    
     enum binNums { binNumA, binNumB, binNumC, binNumD, binNumE };
+
+
+    std::vector <int> possibleBins;
+    if (soundOnlyLevelsEnabled)
+    {
+        possibleBins.push_back(binNumA);
+        possibleBins.push_back(binNumB);
+        possibleBins.push_back(binNumC);
+        possibleBins.push_back(binNumD);
+        possibleBins.push_back(binNumE);
+    }
+    else
+    {
+        possibleBins.push_back(binNumA);
+        possibleBins.push_back(binNumB);
+        possibleBins.push_back(binNumD);
+        possibleBins.push_back(binNumE);
+    }
+    
+    int MIN_BIN = 0, MAX_BIN = possibleBins.size()-1;
+    int binNum = rand_num(MIN_BIN, MAX_BIN);
+    binNum = possibleBins[binNum];
     
     // Keep track of the total number of elements in the bins.
     // If there are no elements left, populate the bin with more.
@@ -276,7 +316,7 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     }
     if (totalMarbles < 3) {
         std::cout << "Repopulating " << std::endl;
-        populateBins();
+        populateBins(holdoutOnlyEnabled);
         totalMarbles = binA->size() + binB->size() + binC->size() + binD->size() + binE->size();
     }
     
@@ -289,23 +329,23 @@ std::list<Bin>* LevelScheduler::pickRandomBin()
     
     switch (binNum) {
         case binNumA:
-            if(binA->empty()) return pickRandomBin();
+            if(binA->empty()) return pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return binA;
             break;
         case binNumB:
-            if(binB->empty()) return pickRandomBin();
+            if(binB->empty()) return pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return binB;
             break;
         case binNumC:
-            if(binC->empty()) return pickRandomBin();
+            if(binC->empty()) return pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return binC;
             break;
         case binNumD:
-            if(binD->empty()) return pickRandomBin();
+            if(binD->empty()) return pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return binD;
             break;
         case binNumE:
-            if(binE->empty()) return pickRandomBin();
+            if(binE->empty()) return pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return binE;
             break;
         default:
@@ -333,9 +373,9 @@ void LevelScheduler::setHoldout( std::list<Bin>* b )
 
 
 // can keep a linear list of marbles to randomly pick from instead
-void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
+void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices, bool soundOnlyLevelsEnabled, bool holdoutOnlyEnabled )
 {
-    std::list<Bin>& binRef = *pickRandomBin();
+    std::list<Bin>& binRef = *pickRandomBin(soundOnlyLevelsEnabled, holdoutOnlyEnabled);
     std::list<Bin>::iterator binIt = binRef.begin();
     int binIndex = rand_num(0, binRef.size() - 1);
     for ( int i = 0; i < binIndex; ++i, ++binIt );
@@ -349,7 +389,7 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
                 cout << "Need to pick extra bin & marble due to duplicate" << endl;
             // =========================================================================
             
-            pickRandomMarble(choices);
+            pickRandomMarble(choices, soundOnlyLevelsEnabled, holdoutOnlyEnabled);
             return;
         }
     }
@@ -367,7 +407,9 @@ void LevelScheduler::pickRandomMarble( std::vector<Bin>& choices )
 //________________________________________________________________________________________
 
 
-std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled)
+std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled, double indRecessNBackLevel,
+                                                                                       bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled,
+                                                                                       bool soundOnlyLevelsEnabled, bool holdoutOnlyEnabled)
 {
     
     /* For debugging purposes */
@@ -424,7 +466,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
     
     for(int i = 0; i < 3; ++i)
     {
-        pickRandomMarble( choices );
+        pickRandomMarble( choices, soundOnlyLevelsEnabled, holdoutOnlyEnabled );
         if (recessIndex == i)
         {
             phase = PHASE_COLLECT;
@@ -458,7 +500,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
             case PHASE_COLOR_SOUND:
                 playerSkill = nBackLevelA;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                if(!holdoutOnlyEnabled && (playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
                 {
                     readyForHoldout = false;
                 }
@@ -488,7 +530,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
             case PHASE_SHAPE_SOUND:
                 playerSkill = nBackLevelB;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                if(!holdoutOnlyEnabled && (playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
                 {
                     readyForHoldout = false;
                 }
@@ -523,7 +565,7 @@ std::vector< std::pair<StageRequest, PlayerProgress> > LevelScheduler::generateC
                 break;
             case PHASE_ALL_SIGNAL:
                 playerSkill = nBackLevelD;
-                if((playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
+                if(!holdoutOnlyEnabled && (playerSkill < holdoutDelayNumber) && holdoutDelayEnabled)
                 {
                     readyForHoldout = false;
                 }

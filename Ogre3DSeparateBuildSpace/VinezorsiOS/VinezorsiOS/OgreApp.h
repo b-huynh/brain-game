@@ -119,6 +119,8 @@ public:
     
     void activateVelocity(float v);
     void activateAngleTurn(float angle, float v);
+    void sendAccelData(double x, double y, double z);
+    void recieveOrientation(bool orientLeft);
     
     void saveState();
     void loadState();

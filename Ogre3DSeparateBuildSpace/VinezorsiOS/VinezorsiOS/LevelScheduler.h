@@ -31,8 +31,6 @@ struct Bin
     LevelPhase phaseX;
     StageDifficulty difficultyX;
     StageDuration durationX;
-    
-    // Not checked in comparison
     bool holdout;
     
     // Not checked in comparison
@@ -40,7 +38,7 @@ struct Bin
     
     bool operator==(const Bin rhs) const
     {
-        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (durationX == rhs.durationX))
+        if( (phaseX == rhs.phaseX) && (difficultyX == rhs.difficultyX) && (holdout == rhs.holdout) && (durationX == rhs.durationX))
             return true;
         return false;
     }
@@ -104,12 +102,14 @@ struct LevelScheduler
     
     StageRequest getRandomLevel( LevelSet* levels );
     void initializeSchedule( LevelSet* levels );
-    void populateBins();
+    void populateBins(bool holdoutOnlyEnabled);
     void removeBin(LevelPhase phaseX, StageDifficulty difficultyX, StageDuration durationX, bool hasHoldout);
-    std::list<Bin>* pickRandomBin();
-    void pickRandomMarble( std::vector<Bin>& choices );
+    std::list<Bin>* pickRandomBin( bool soundOnlyLevelsEnabled, bool holdoutOnly );
+    void pickRandomMarble( std::vector<Bin>& choices,bool soundOnlyLevelsEnabled, bool holdoutOnlyEnabled );
     void setHoldout( std::list<Bin>* b );
-    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled,double indRecessNBackLevel, bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled);
+    std::vector< std::pair<StageRequest, PlayerProgress> > generateChoices(bool holdoutEnabled, bool newNavEnabled, bool indRecessEnabled,double indRecessNBackLevel,
+                                                                           bool holdoutDelayEnabled, float holdoutDelayNumber, bool manRecess, bool indRecessFixedEnabled,
+                                                                           bool soundOnlyLevelsEnabled, bool holdoutOnlyEnabled);
     int rand_num( int lower, int upper );
     int predictAverageStartingSpeed(int initVel);
     

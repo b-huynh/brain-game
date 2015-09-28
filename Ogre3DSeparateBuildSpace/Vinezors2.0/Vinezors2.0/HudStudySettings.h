@@ -108,7 +108,7 @@ public:
     
     int nStatus = NONE;
     
-    static const int NUM_UNIQUE_BUTTONS = 43;
+    static const int NUM_UNIQUE_BUTTONS = 45;
     enum Buttons {
         BUTTON_BACK,BUTTON_ENABLE_UNLIMITED_FUEL, BUTTON_ENABLE_HOLDOUT, BUTTON_INPUT_INIT_SPEED, BUTTON_ENABLE_MANDATORY_RECESS,
         BUTTON_MANDATORY_RECESS_NUMBER, BUTTON_NUMPAD_0, BUTTON_NUMPAD_1, BUTTON_NUMPAD_2, BUTTON_NUMPAD_3,
@@ -120,7 +120,7 @@ public:
         BUTTON_POPUP_OK, BUTTON_POPUP_REVERT, BUTTON_NEXT_SETTINGS,
         BUTTON_HOLDOUT_MIN_UPPER_BOUND, BUTTON_HOLDOUT_MAX_UPPER_BOUND,
         BUTTON_HOLDOUT_LOWER_BOUND_TIME, BUTTON_HOLDOUT_MIN_UPPER_BOUND_TIME, BUTTON_HOLDOUT_MAX_UPPER_BOUND_TIME,
-        BUTTON_HOLDOUT_STEPS
+        BUTTON_HOLDOUT_STEPS, BUTTON_ENABLE_OVERALL_TIMER, BUTTON_ENABLE_ACCEL
         
         
     };
@@ -286,6 +286,16 @@ public:
     //Next/Back Settings Button
     TextAreaOverlayElement* nextButtonTextDisplay;
     PanelOverlayElement* nextButtonBackground;
+    
+    //OverallTimer Toggle
+    PanelOverlayElement* enableOverallTimerBackground;
+    TextAreaOverlayElement* enableOverallTimerTextDisplay;
+    PanelOverlayElement* enableOverallTimerButtonBackground;
+    
+    //Accel Toggle
+    PanelOverlayElement* enableAccelBackground;
+    TextAreaOverlayElement* enableAccelTextDisplay;
+    PanelOverlayElement* enableAccelButtonBackground;
     
     //Page 2
     

@@ -14,6 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <CoreMotion/CoreMotion.h>
 
+
 // To use CADisplayLink for smoother animation on iPhone comment out
 // the following line or define it to 1.  Use with caution, it can
 // sometimes cause input lag.
@@ -46,6 +47,7 @@
 
 @property (retain) NSTimer *mTimer;
 @property (retain) OgreView* mOgreView;
+
 
 @end
 
@@ -85,15 +87,15 @@
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
     
-    /*
-    UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
+    
+    /*UILongPressGestureRecognizer *shortPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleShortPress:)];
     shortPressRecognizer.minimumPressDuration = 0.01;
     [self.view addGestureRecognizer:shortPressRecognizer];
     
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
     longPressRecognizer.minimumPressDuration = 0.20;
-    [self.view addGestureRecognizer:longPressRecognizer];
-     */
+    [self.view addGestureRecognizer:longPressRecognizer];*/
+     
     
     // Required if double tap should override single tap
     //[singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
@@ -106,6 +108,46 @@
     longPressRecognizer.delegate = self;
     shortPressRecognizer.delegate = self;
      */
+    
+    //Accelerometer:
+    
+    self.motionManager = [[CMMotionManager alloc] init];
+    self.motionManager.accelerometerUpdateInterval = .05; //50ms
+    
+    [self.motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue]
+                                             withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
+                                                 [self sendAccelertionData:accelerometerData.acceleration];
+                                                 if(error){
+                                                     
+                                                     NSLog(@"%@", error);
+                                                 }
+                                             }];
+
+}
+-(void)sendAccelertionData:(CMAcceleration)acceleration
+{
+    mApplication.sendAccelData(acceleration.x, acceleration.y, acceleration.z);
+    //mApplication.activateAngleTurn(acceleration.y*.1, 1);
+
+    
+    /*self.accX.text = [NSString stringWithFormat:@" %.2fg",acceleration.x];
+    if(fabs(acceleration.x) > fabs(currentMaxAccelX))
+    {
+        currentMaxAccelX = acceleration.x;
+    }
+    self.accY.text = [NSString stringWithFormat:@" %.2fg",acceleration.y];
+    if(fabs(acceleration.y) > fabs(currentMaxAccelY))
+    {
+        currentMaxAccelY = acceleration.y;
+    }
+    self.accZ.text = [NSString stringWithFormat:@" %.2fg",acceleration.z];
+    if(fabs(acceleration.z) > fabs(currentMaxAccelZ))
+    {
+        currentMaxAccelZ = acceleration.z;
+    }
+*/
+    
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -157,6 +199,8 @@
     
     // Linking the ogre view to the render window
     mOgreView.mRenderWindow = OgreFramework::getSingletonPtr()->m_pRenderWnd;
+    
+
     
     // Ogre has created an EAGL2ViewController for the provided mOgreView
     // and assigned it as the root view controller of the window
@@ -238,6 +282,8 @@
 
 - (void)update:(id)sender
 {
+    [self sendOrientation];
+    
     //NSLog(@"Update");
     if(!OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
         return;
@@ -460,6 +506,8 @@
         mApplication.activatePerformEndLongPress();
 }
 
+
+
 - (IBAction)handleShortPress:(UILongPressGestureRecognizer*)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan)
@@ -488,6 +536,20 @@
     return (orientation == UIInterfaceOrientationLandscapeLeft) || (orientation == UIInterfaceOrientationLandscapeRight);
 }
 
+-(void) sendOrientation {
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+
+    if(orientation == UIInterfaceOrientationLandscapeLeft)
+    {
+        mApplication.recieveOrientation(false);
+    }
+    else
+    {
+        mApplication.recieveOrientation(true);
+
+    }
+    
+}
 /*
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
@@ -499,6 +561,8 @@
     [super decodeRestorableStateWithCoder:coder];
 }
 */
+
+//Accelerometer
 
 - (void)cleanup
 {

@@ -243,6 +243,8 @@ void HudStage::update(float elapsed)
 void HudStage::alloc()
 {
     // Allocate Resources
+    amberBG = static_cast<PanelOverlayElement*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "amberBGLOL"));
+    
     panelText = static_cast<OverlayContainer*>(OgreFramework::getSingletonPtr()->m_pOverlayMgr->createOverlayElement("Panel", "StageTextInterface"));
     panelText->setMetricsMode(GMM_PIXELS);
     panelText->setPosition(10, 10);
@@ -354,6 +356,13 @@ void HudStage::alloc()
     overlay3->add2D(timeWarpContainer);
     timeWarpContainer->addChild(timeWarpLabel);
     
+    //Only add the amberBG for the Amber level.
+    if ( tunnel->getPhase() == PHASE_SHAPE_SOUND)
+    {
+        //overlay1->add2D(amberBG);
+
+    }
+    
     overlay1->add2D(HudEntire);
     HudEntire->addChild(HudLeftPanel);
     HudEntire->addChild (HudRightPanel);
@@ -402,6 +411,7 @@ void HudStage::alloc()
     overlay1->add2D(sliderRangeBackground);
     sliderRangeBackground->addChild(sliderBallBackground);
     
+
     overlays.push_back(overlay1);
     overlays.push_back(overlay2);
     overlays.push_back(overlay3);
@@ -437,6 +447,8 @@ void HudStage::alloc()
             }
             case PHASE_SHAPE_SOUND:
             {
+                //overlay1->add2D(amberBG);
+
                 if (!player->scheduler->firstTimeB)
                     startingSpeed = player->scheduler->speedB;
                 else
@@ -490,6 +502,9 @@ void HudStage::alloc()
 void HudStage::dealloc()
 {
     // Delete children first, then parents
+    OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(amberBG);
+
+    
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(pauseBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBackground);
     OgreFramework::getSingletonPtr()->m_pOverlayMgr->destroyOverlayElement(goBaseBackground);
@@ -550,6 +565,12 @@ void HudStage::dealloc()
 void HudStage::initOverlay()
 {
     float AR = static_cast<float>(globals.screenHeight) / globals.screenWidth;
+    
+    
+    amberBG->setMetricsMode(GMM_RELATIVE);
+    amberBG->setPosition(0.0, 0.0);
+    amberBG->setDimensions(1, 1);
+    amberBG->setMaterialName("General/BackGroundOrange");
     
     // Link and Set Resources
     panelText->setMetricsMode(GMM_PIXELS);

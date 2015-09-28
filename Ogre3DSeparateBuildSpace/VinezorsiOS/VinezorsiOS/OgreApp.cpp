@@ -477,6 +477,7 @@ void OgreApp::activateVelocity(float vel)
 
 void OgreApp::activateAngleTurn(float angle, float vel)
 {
+    //std::cout << "ACTIVATEANGLE" << std::endl;
     if (player->getTutorialMgr()->isVisible())
     {
         return;
@@ -484,6 +485,35 @@ void OgreApp::activateAngleTurn(float angle, float vel)
     
     Engine* activeEngine = engineStateMgr->getActiveEngine();
     if (activeEngine) activeEngine->activateAngleTurn(angle, vel);
+}
+
+void OgreApp::sendAccelData(double x, double y, double z)
+{
+    globals.acc_x = x;
+    globals.acc_y = y;
+    globals.acc_z = z;
+    
+    /*player->addAction(ACTION_SINGLE_TAP);
+    if (player->getTutorialMgr()->isVisible())
+    {
+        if (player->getTutorialMgr()->processInput(Vector2(x, y)))
+            player->reactGUI();
+        if (player->getTutorialMgr()->isHidden())
+        {
+            Engine* activeEngine = engineStateMgr->getActiveEngine();
+            if (activeEngine)
+                activeEngine->activateReturnFromPopup();
+        }
+        return;
+    }
+    Engine* activeEngine = engineStateMgr->getActiveEngine();
+    if (activeEngine)
+        activeEngine->activatePerformSingleTap(x, y);
+     */
+}
+void OgreApp::recieveOrientation(bool orientLeft)
+{
+    globals.orientLeft = orientLeft;
 }
 
 void OgreApp::saveState()

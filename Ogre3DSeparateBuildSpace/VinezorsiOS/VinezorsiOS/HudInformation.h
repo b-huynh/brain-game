@@ -22,7 +22,8 @@ public:
     virtual void adjust();
     virtual void update(float elapsed);
     
-    
+    PanelOverlayElement* paragraphTextBackground;
+
     
 protected:
     Player* player;
@@ -43,7 +44,6 @@ protected:
     PanelOverlayElement* backButtonBackground;
     
     
-    PanelOverlayElement* paragraphTextBackground;
     
     TextAreaOverlayElement* gameTitleText;
     TextAreaOverlayElement* BGCTopLinkText;
@@ -57,6 +57,7 @@ protected:
 
     
     TextAreaOverlayElement* paragraphText;
+
 
 
 

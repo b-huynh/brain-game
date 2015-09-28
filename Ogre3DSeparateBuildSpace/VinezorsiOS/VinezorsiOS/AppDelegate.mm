@@ -13,8 +13,16 @@ extern Util::ConfigGlobal globals;
 {
     NSLog(@"Launch");
     self.mWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
     globals.initGlobalSettingsPath();
+
+    //Check the settings if accel ever existed.
+    
+    if(globals.checkSetting(globals.globalPath, "accelEnabled") == 2)
+    {
+        //Show popup at start!
+        globals.showAccelMainMenuPopUp = true;
+    }
+    
     globals.loadGlobalSettings(globals.globalPath);
     
     if (!globals.sessionScreenEnabled)
